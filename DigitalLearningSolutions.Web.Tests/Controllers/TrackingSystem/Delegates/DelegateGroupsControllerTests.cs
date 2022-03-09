@@ -34,12 +34,14 @@
         private IGroupsService groupsService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         [SetUp]
         public void Setup()
         {
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             groupsService = A.Fake<IGroupsService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             A.CallTo(() => groupsService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
             A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(A<int>._))
@@ -52,7 +54,8 @@
 
             delegateGroupsController = new DelegateGroupsController(
                     centreRegistrationPromptsService,
-                    groupsService
+                    groupsService,
+                    searchSortFilterPaginateService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -63,6 +66,12 @@
         [Test]
         public void Index_with_no_query_parameters_uses_cookie_value_for_existingFilterString()
         {
+            // Given
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<Group>(
+                    searchSortFilterPaginateService
+                );
+
             // When
             var result = delegateGroupsController.Index();
 
@@ -77,6 +86,10 @@
             // Given
             const string existingFilterString = "LinkedToField|LinkedToField|4";
             A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<Group>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = delegateGroupsController.Index(existingFilterString: existingFilterString);
@@ -91,6 +104,10 @@
         {
             // Given
             const string? existingFilterString = "CLEAR";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<Group>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = delegateGroupsController.Index(existingFilterString: existingFilterString);
@@ -107,6 +124,10 @@
             // Given
             const string? existingFilterString = null;
             const string? newFilterValue = "LinkedToField|LinkedToField|4";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<Group>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = delegateGroupsController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
@@ -124,6 +145,10 @@
             // Given
             const string? existingFilterString = "CLEAR";
             const string? newFilterValue = "LinkedToField|LinkedToField|4";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<Group>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = delegateGroupsController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);

@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -81,16 +82,20 @@
             var availableFilters = CourseStatisticsViewModelFilterOptions
                 .GetFilterOptions(details.Categories, details.Topics).ToList();
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters,
+                    CourseStatusFilterOptions.IsActive.FilterValue
+                ),
+                new PaginationOptions(page, itemsPerPage)
+            );
+
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 details.Courses,
-                searchString,
-                sortBy: sortBy,
-                sortDirection: sortDirection,
-                filterString: existingFilterString,
-                defaultFilterString: CourseStatusFilterOptions.IsActive.FilterValue,
-                availableFilters: availableFilters,
-                pageNumber: page,
-                itemsPerPage: itemsPerPage ?? SearchSortFilterPaginateService.DefaultItemsPerPage
+                searchSortPaginationOptions
             );
 
             var model = new CourseSetupViewModel(
@@ -421,14 +426,20 @@
             var currentFilterString =
                 FilteringHelper.GetCategoryAndTopicFilterString(categoryFilterString, topicFilterString);
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                null,
+                new SortOptions(nameof(ApplicationDetails.ApplicationName), GenericSortingHelper.Ascending),
+                new FilterOptions(
+                    currentFilterString,
+                    availableFilters,
+                    null
+                ),
+                null
+            );
+
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 applications,
-                sortBy: nameof(ApplicationDetails.ApplicationName),
-                sortDirection: GenericSortingHelper.Ascending,
-                filterString: currentFilterString,
-                availableFilters: availableFilters,
-                pageNumber: 1,
-                itemsPerPage: int.MaxValue
+                searchSortPaginationOptions
             );
 
             return new SelectCourseViewModel(

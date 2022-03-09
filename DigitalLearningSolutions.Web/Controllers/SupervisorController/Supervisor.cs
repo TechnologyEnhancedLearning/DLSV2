@@ -10,6 +10,7 @@
     using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
 
@@ -51,12 +52,16 @@
             );
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                null,
+                new PaginationOptions(page)
+            );
+
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 supervisorDelegateDetailViewModels,
-                searchString,
-                sortBy: sortBy,
-                sortDirection: sortDirection,
-                pageNumber: page
+                searchSortPaginationOptions
             );
 
             var model = new MyStaffListViewModel(

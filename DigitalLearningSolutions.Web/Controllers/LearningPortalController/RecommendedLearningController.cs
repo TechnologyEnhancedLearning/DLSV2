@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -30,8 +31,8 @@
         private readonly IConfiguration configuration;
         private readonly IFilteredApiHelperService filteredApiHelperService;
         private readonly IRecommendedLearningService recommendedLearningService;
-        private readonly ISelfAssessmentService selfAssessmentService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly ISelfAssessmentService selfAssessmentService;
 
         public RecommendedLearningController(
             IFilteredApiHelperService filteredApiHelperService,
@@ -306,12 +307,16 @@
             var (recommendedResources, apiIsAccessible) =
                 await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(nameof(RecommendedResource.RecommendationScore), GenericSortingHelper.Descending),
+                null,
+                new PaginationOptions(page)
+            );
+
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 recommendedResources,
-                searchString,
-                sortBy: nameof(RecommendedResource.RecommendationScore),
-                sortDirection: GenericSortingHelper.Descending,
-                pageNumber: page
+                searchSortPaginationOptions
             );
 
             var model = new RecommendedLearningViewModel(

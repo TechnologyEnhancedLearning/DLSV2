@@ -84,14 +84,20 @@
                 ),
             };
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters,
+                    null
+                ),
+                new PaginationOptions(page)
+            );
+
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 groups,
-                searchString,
-                sortBy: sortBy,
-                sortDirection: sortDirection,
-                filterString: existingFilterString,
-                availableFilters: availableFilters,
-                pageNumber: page
+                searchSortPaginationOptions
             );
 
             var model = new DelegateGroupsViewModel(

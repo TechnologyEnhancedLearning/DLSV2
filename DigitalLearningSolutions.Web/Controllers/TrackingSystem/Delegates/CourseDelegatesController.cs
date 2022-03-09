@@ -3,8 +3,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Migrations;
-    using DigitalLearningSolutions.Data.Models.CourseDelegates;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -12,7 +11,6 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
-    using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -77,14 +75,20 @@
                     courseDelegatesData.CourseAdminFields
                 );
 
+                var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                    null,
+                    new SortOptions(sortBy, sortDirection),
+                    new FilterOptions(
+                        newFilterString,
+                        availableFilters,
+                        CourseDelegateAccountStatusFilterOptions.Active.FilterValue
+                    ),
+                    new PaginationOptions(page)
+                );
+
                 var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                     courseDelegatesData.Delegates,
-                    sortBy: sortBy,
-                    sortDirection: sortDirection,
-                    filterString: newFilterString,
-                    defaultFilterString: CourseDelegateAccountStatusFilterOptions.Active.FilterValue,
-                    availableFilters: availableFilters,
-                    pageNumber: page
+                    searchSortPaginationOptions
                 );
 
                 var model = new CourseDelegatesViewModel(

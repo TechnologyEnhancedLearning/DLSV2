@@ -67,7 +67,8 @@
                 A.Fake<ISelfAssessmentService>(),
                 A.Fake<IConfiguration>(),
                 A.Fake<IRecommendedLearningService>(),
-                A.Fake<IActionPlanService>()
+                A.Fake<IActionPlanService>(),
+                A.Fake<ISearchSortFilterPaginateService>()
             ).WithDefaultContext().WithMockUser(true, delegateId: DelegateId);
             var context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);
             context.RouteData.Values["selfAssessmentId"] = SelfAssessmentId;

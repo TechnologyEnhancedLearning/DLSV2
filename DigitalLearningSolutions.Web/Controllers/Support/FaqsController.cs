@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -55,13 +56,16 @@
             var faqs = faqsService.GetPublishedFaqsForTargetGroup(dlsSubApplication.FaqTargetGroupId!.Value)
                 .Select(f => new SearchableFaq(f));
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString, matchCutOffScore),
+                new SortOptions(faqSortBy, GenericSortingHelper.Descending),
+                null,
+                new PaginationOptions(page)
+            );
+
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 faqs,
-                searchString,
-                matchCutOffScore,
-                faqSortBy,
-                GenericSortingHelper.Descending,
-                pageNumber: page
+                searchSortPaginationOptions
             );
 
             var model = new FaqsPageViewModel(

@@ -3,6 +3,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -25,8 +26,8 @@
         private readonly PromptsService promptsService;
         private readonly IGroupsService groupsService;
         private readonly IJobGroupsService jobGroupsService;
-        private readonly IUserService userService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly IUserService userService;
 
         public GroupDelegatesController(
             IJobGroupsService jobGroupsService,
@@ -51,7 +52,16 @@
 
             var groupDelegates = groupsService.GetGroupDelegates(groupId);
 
-            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(groupDelegates, pageNumber: page);
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                null,
+                null,
+                null,
+                new PaginationOptions(page)
+            );
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                groupDelegates,
+                searchSortPaginationOptions
+            );
 
             var model = new GroupDelegatesViewModel(groupId, groupName!, result);
 
@@ -85,14 +95,22 @@
                 promptsWithOptions
             );
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(
+                    DefaultSortByOptions.Name.PropertyName,
+                    GenericSortingHelper.Ascending
+                ),
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters,
+                    null
+                ),
+                new PaginationOptions(page)
+            );
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 delegateUsers,
-                searchString,
-                sortBy: DefaultSortByOptions.Name.PropertyName,
-                sortDirection: GenericSortingHelper.Ascending,
-                filterString: existingFilterString,
-                availableFilters: availableFilters,
-                pageNumber: page
+                searchSortPaginationOptions
             );
 
             var model = new AddGroupDelegateViewModel(

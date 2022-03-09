@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -73,14 +74,20 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 promptsWithOptions
             );
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                null,
+                null,
+                new FilterOptions(
+                    newFilterString,
+                    availableFilters,
+                    null
+                ),
+                null
+            );
+
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 delegateUsers,
-                sortBy: null,
-                sortDirection: null,
-                filterString: newFilterString,
-                availableFilters: availableFilters,
-                pageNumber: 1,
-                itemsPerPage: int.MaxValue
+                searchSortPaginationOptions
             );
 
             var model = new EmailDelegatesViewModel(
@@ -120,14 +127,20 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     promptsWithOptions
                 );
 
+                var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                    null,
+                    null,
+                    new FilterOptions(
+                        newFilterString,
+                        availableFilters,
+                        null
+                    ),
+                    null
+                );
+
                 var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                     delegateUsers,
-                    sortBy: null,
-                    sortDirection: null,
-                    filterString: newFilterString,
-                    availableFilters: availableFilters,
-                    pageNumber: 1,
-                    itemsPerPage: int.MaxValue
+                    searchSortPaginationOptions
                 );
 
                 var viewModel = new EmailDelegatesViewModel(result, availableFilters, formData);

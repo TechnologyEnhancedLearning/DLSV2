@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewComponents
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
@@ -37,15 +38,33 @@
             var viewComponent = new CurrentFiltersViewComponent { ViewComponentContext = viewComponentContext };
             var categories = new[] { "Word", "Excel" };
             const string searchString = "test";
+
+            var availableFilters = new List<FilterModel>
+            {
+                new FilterModel("Role", "Role", AdministratorsViewModelFilterOptions.RoleOptions),
+                new FilterModel(
+                    "CategoryName",
+                    "Category",
+                    AdministratorsViewModelFilterOptions.GetCategoryOptions(categories)
+                ),
+                new FilterModel(
+                    "AccountStatus",
+                    "Account Status",
+                    AdministratorsViewModelFilterOptions.AccountStatusOptions
+                ),
+            };
+
             var inputViewModel = new CentreAdministratorsViewModel(
                 1,
-                new List<AdminUser>(),
-                categories,
-                searchString,
-                "CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true",
-                1,
-                UserTestHelper.GetDefaultAdminUser(),
-                null
+                new SearchSortFilterPaginateResult<AdminUser>(
+                    new PaginateResult<AdminUser>(new List<AdminUser>(), 1, 1, 10, 0),
+                    searchString,
+                    null,
+                    null,
+                    "CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true"
+                ),
+                availableFilters,
+                UserTestHelper.GetDefaultAdminUser()
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>
             {

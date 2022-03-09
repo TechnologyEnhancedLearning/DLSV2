@@ -3,6 +3,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -52,10 +53,15 @@
             }
 
             const int numberOfNotificationsPerPage = 1;
-            var result = searchSortFilterPaginateService.PaginateItems(
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                null,
+                null,
+                null,
+                new PaginationOptions(page, numberOfNotificationsPerPage)
+            );
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 unacknowledgedNotifications,
-                page,
-                numberOfNotificationsPerPage
+                searchSortPaginationOptions
             );
 
             var model = new SystemNotificationsViewModel(result);

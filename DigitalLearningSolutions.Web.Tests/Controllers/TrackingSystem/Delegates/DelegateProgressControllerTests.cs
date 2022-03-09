@@ -18,6 +18,7 @@
         private DelegateProgressController delegateProgressController = null!;
         private IProgressService progressService = null!;
         private IUserService userService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         private static IEnumerable<TestCaseData> EditEndpointRedirectTestData
         {
@@ -51,12 +52,14 @@
             courseService = A.Fake<ICourseService>();
             userService = A.Fake<IUserService>();
             progressService = A.Fake<IProgressService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             var config = A.Fake<IConfiguration>();
             delegateProgressController = new DelegateProgressController(
                     courseService,
                     userService,
                     progressService,
-                    config
+                    config,
+                    searchSortFilterPaginateService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true);

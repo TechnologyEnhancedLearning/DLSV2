@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -23,6 +25,7 @@
         private IUserService userService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         [SetUp]
         public void Setup()
@@ -30,6 +33,7 @@
             groupsService = A.Fake<IGroupsService>();
             userService = A.Fake<IUserService>();
             courseService = A.Fake<ICourseService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             A.CallTo(() => groupsService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
 
@@ -41,7 +45,8 @@
             groupCoursesController = new GroupCoursesController(
                     userService,
                     courseService,
-                    groupsService
+                    groupsService,
+                    searchSortFilterPaginateService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -72,6 +77,12 @@
         [Test]
         public void AddCourseToGroupSelectCourse_with_no_query_parameters_uses_cookie_value_for_existingFilterString()
         {
+            // Given
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseAssessmentDetails>(
+                    searchSortFilterPaginateService
+                );
+
             // When
             var result = groupCoursesController.AddCourseToGroupSelectCourse(1);
 
@@ -86,6 +97,10 @@
             // Given
             const string existingFilterString = "CategoryName|CategoryName|Category";
             A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseAssessmentDetails>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = groupCoursesController.AddCourseToGroupSelectCourse(1, existingFilterString: existingFilterString);
@@ -100,6 +115,10 @@
         {
             // Given
             const string? existingFilterString = "CLEAR";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseAssessmentDetails>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = groupCoursesController.AddCourseToGroupSelectCourse(1, existingFilterString: existingFilterString);
@@ -119,6 +138,10 @@
             // Given
             const string? existingFilterString = null;
             const string? newFilterValue = "CategoryName|CategoryName|Category";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseAssessmentDetails>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = groupCoursesController.AddCourseToGroupSelectCourse(1, existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
@@ -139,6 +162,10 @@
             // Given
             const string? existingFilterString = "CLEAR";
             const string? newFilterValue = "CategoryName|CategoryName|Category";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseAssessmentDetails>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = groupCoursesController.AddCourseToGroupSelectCourse(1, existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);

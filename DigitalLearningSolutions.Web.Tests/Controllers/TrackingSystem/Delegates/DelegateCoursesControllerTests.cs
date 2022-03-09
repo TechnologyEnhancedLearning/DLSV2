@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
@@ -45,21 +46,27 @@
         private ICourseService courseService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         [SetUp]
         public void Setup()
         {
             courseService = A.Fake<ICourseService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);
             A.CallTo(
                 () => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._, A<int?>._)
             ).Returns(applicationOptions);
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
+                    searchSortFilterPaginateService
+                );
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
 
-            controller = new DelegateCoursesController(courseService)
+            controller = new DelegateCoursesController(courseService, searchSortFilterPaginateService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
                 .WithMockTempData();
@@ -67,7 +74,7 @@
             const string cookieName = "DelegateCoursesFilter";
             const string cookieValue = "Status|Active|false";
 
-            controllerWithCookies = new DelegateCoursesController(courseService)
+            controllerWithCookies = new DelegateCoursesController(courseService, searchSortFilterPaginateService)
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
                 .WithMockTempData();

@@ -2,7 +2,9 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -22,6 +24,7 @@
         private HttpResponse httpResponse = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IUserDataService userDataService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         [SetUp]
         public void Setup()
@@ -30,6 +33,7 @@
             promptsHelper = new PromptsService(centreRegistrationPromptsService);
             userDataService = A.Fake<IUserDataService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
@@ -39,7 +43,8 @@
             allDelegatesController = new AllDelegatesController(
                     userDataService,
                     promptsHelper,
-                    jobGroupsDataService
+                    jobGroupsDataService,
+                    searchSortFilterPaginateService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -50,6 +55,12 @@
         [Test]
         public void Index_with_no_query_parameters_uses_cookie_value_for_existingFilterString()
         {
+            // Given
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
+                    searchSortFilterPaginateService
+                );
+
             // When
             var result = allDelegatesController.Index();
 
@@ -64,6 +75,10 @@
             // Given
             const string existingFilterString = "PasswordStatus|IsPasswordSet|true";
             A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = allDelegatesController.Index(existingFilterString: existingFilterString);
@@ -78,6 +93,10 @@
         {
             // Given
             const string existingFilterString = "CLEAR";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = allDelegatesController.Index(existingFilterString: existingFilterString);
@@ -94,6 +113,10 @@
             // Given
             const string? existingFilterString = null;
             const string newFilterValue = "PasswordStatus|IsPasswordSet|true";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = allDelegatesController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
@@ -111,6 +134,10 @@
             // Given
             const string existingFilterString = "CLEAR";
             const string newFilterValue = "PasswordStatus|IsPasswordSet|true";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = allDelegatesController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
@@ -127,6 +154,10 @@
         {
             // Given
             A.CallTo(() => httpRequest.Cookies).Returns(A.Fake<IRequestCookieCollection>());
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = allDelegatesController.Index();

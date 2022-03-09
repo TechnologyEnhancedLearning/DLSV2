@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -25,8 +26,8 @@
         private const string GroupAddCourseFilterCookieName = "GroupAddCourseFilter";
         private readonly ICourseService courseService;
         private readonly IGroupsService groupsService;
-        private readonly IUserService userService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly IUserService userService;
 
         public GroupCoursesController(
             IUserService userService,
@@ -51,7 +52,16 @@
 
             var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, categoryIdFilter);
 
-            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(groupCourses, pageNumber: page);
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                null,
+                null,
+                null,
+                new PaginationOptions(page)
+            );
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                groupCourses,
+                searchSortPaginationOptions
+            );
 
             var model = new GroupCoursesViewModel(groupId, groupName!, result);
 
@@ -123,15 +133,19 @@
                 ? AddCourseToGroupViewModelFilterOptions.GetAllCategoriesFilters(categories, topics)
                 : AddCourseToGroupViewModelFilterOptions.GetSingleCategoryFilters(courses)).ToList();
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(nameof(CourseAssessmentDetails.CourseName), GenericSortingHelper.Ascending),
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters,
+                    null
+                ),
+                new PaginationOptions(page)
+            );
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 courses,
-                searchString,
-                sortBy: nameof(CourseAssessmentDetails.CourseName),
-                sortDirection:
-                GenericSortingHelper.Ascending,
-                filterString: existingFilterString,
-                availableFilters: availableFilters,
-                pageNumber: page
+                searchSortPaginationOptions
             );
 
             var model = new AddCourseToGroupCoursesViewModel(

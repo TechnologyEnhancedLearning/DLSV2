@@ -66,26 +66,24 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             MyFrameworksViewModel myFrameworksViewModel;
             AllFrameworksViewModel allFrameworksViewModel;
+
+            var searchSortPaginateOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString, 60),
+                new SortOptions(sortBy, sortDirection),
+                null,
+                new PaginationOptions(page, 12)
+            );
+
             if (tabname == "All")
             {
                 var myFrameworksResult = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                     new List<BrandedFramework>(),
-                    searchString,
-                    60,
-                    sortBy,
-                    sortDirection,
-                    pageNumber: page,
-                    itemsPerPage: 12
+                    searchSortPaginateOptions
                 );
                 myFrameworksViewModel = new MyFrameworksViewModel(myFrameworksResult, isFrameworkDeveloper);
                 var allFrameworksResult = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                     frameworks,
-                    searchString,
-                    60,
-                    sortBy,
-                    sortDirection,
-                    pageNumber: page,
-                    itemsPerPage: 12
+                    searchSortPaginateOptions
                 );
                 allFrameworksViewModel = new AllFrameworksViewModel(allFrameworksResult);
             }
@@ -93,22 +91,12 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 var myFrameworksResult = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                     frameworks,
-                    searchString,
-                    60,
-                    sortBy,
-                    sortDirection,
-                    pageNumber: page,
-                    itemsPerPage: 12
+                    searchSortPaginateOptions
                 );
                 myFrameworksViewModel = new MyFrameworksViewModel(myFrameworksResult, isFrameworkDeveloper);
                 var allFrameworksResult = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                     new List<BrandedFramework>(),
-                    searchString,
-                    60,
-                    sortBy,
-                    sortDirection,
-                    pageNumber: page,
-                    itemsPerPage: 12
+                    searchSortPaginateOptions
                 );
                 allFrameworksViewModel = new AllFrameworksViewModel(allFrameworksResult);
             }

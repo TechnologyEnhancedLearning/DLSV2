@@ -10,115 +10,81 @@
     {
         SearchSortFilterPaginateResult<T> SearchFilterSortAndPaginate<T>(
             IEnumerable<T> items,
-            string? searchString = null,
-            int searchMatchCutoff = GenericSearchHelper.MatchCutoffScore,
-            string? sortBy = GenericSortingHelper.DefaultSortOption,
-            string? sortDirection = GenericSortingHelper.Ascending,
-            string? filterString = null,
-            string? defaultFilterString = null,
-            IEnumerable<FilterModel>? availableFilters = null,
-            int pageNumber = 1,
-            int itemsPerPage = SearchSortFilterPaginateService.DefaultItemsPerPage
+            SearchSortFilterAndPaginateOptions searchSortFilterAndPaginateOptions
         ) where T : BaseSearchableItem;
-
-        PaginateResult<T> PaginateItems<T>(
-            IEnumerable<T> items,
-            int pageNumber,
-            int itemsPerPage = SearchSortFilterPaginateService.DefaultItemsPerPage
-        )
-            where T : BaseSearchableItem;
     }
 
     public class SearchSortFilterPaginateService : ISearchSortFilterPaginateService
     {
-        public const int DefaultItemsPerPage = 10;
-
         public SearchSortFilterPaginateResult<T> SearchFilterSortAndPaginate<T>(
             IEnumerable<T> items,
-            string? searchString = null,
-            int searchMatchCutoff = GenericSearchHelper.MatchCutoffScore,
-            string? sortBy = GenericSortingHelper.DefaultSortOption,
-            string? sortDirection = GenericSortingHelper.Ascending,
-            string? filterString = null,
-            string? defaultFilterString = null,
-            IEnumerable<FilterModel>? availableFilters = null,
-            int pageNumber = 1,
-            int itemsPerPage = DefaultItemsPerPage
+            SearchSortFilterAndPaginateOptions searchSortFilterAndPaginateOptions
         ) where T : BaseSearchableItem
         {
-            var searchedItems = Search(items, searchString);
-            var (filteredItems, appliedFilterString) = FilterOrResetFilterToDefault(
-                searchedItems,
-                availableFilters,
-                filterString,
-                defaultFilterString
-            );
-            var sortedItems = sortBy != null && sortDirection != null ? Sort(filteredItems, sortBy, sortDirection) : filteredItems;
-            var paginateResult = PaginateItems(sortedItems, pageNumber, itemsPerPage);
+            var itemsToReturn = items;
+            string? appliedFilterString = null;
+
+            if (searchSortFilterAndPaginateOptions.SearchOptions != null)
+            {
+                itemsToReturn = GenericSearchHelper.SearchItems(
+                    itemsToReturn,
+                    searchSortFilterAndPaginateOptions.SearchOptions.SearchString,
+                    searchSortFilterAndPaginateOptions.SearchOptions.SearchMatchCutoff
+                );
+            }
+
+            if (searchSortFilterAndPaginateOptions.FilterOptions != null)
+            {
+                (itemsToReturn, appliedFilterString) = FilterOrResetFilterToDefault(
+                    itemsToReturn,
+                    searchSortFilterAndPaginateOptions.FilterOptions
+                );
+            }
+
+            if (searchSortFilterAndPaginateOptions.SortOptions != null)
+            {
+                itemsToReturn = GenericSortingHelper.SortAllItems(
+                    itemsToReturn.AsQueryable(),
+                    searchSortFilterAndPaginateOptions.SortOptions.SortBy,
+                    searchSortFilterAndPaginateOptions.SortOptions.SortDirection
+                );
+            }
+
+            var paginateResult = PaginateItems(itemsToReturn, searchSortFilterAndPaginateOptions.PaginationOptions);
+
             return new SearchSortFilterPaginateResult<T>(
                 paginateResult,
-                searchString,
-                sortBy,
-                sortDirection,
+                searchSortFilterAndPaginateOptions.SearchOptions?.SearchString,
+                searchSortFilterAndPaginateOptions.SortOptions?.SortBy,
+                searchSortFilterAndPaginateOptions.SortOptions?.SortDirection,
                 appliedFilterString
             );
         }
 
-        public PaginateResult<T> PaginateItems<T>(
-            IEnumerable<T> items,
-            int pageNumber,
-            int itemsPerPage = DefaultItemsPerPage
-        )
-            where T : BaseSearchableItem
-        {
-            var listedItems = items.ToList();
-            var matchingSearchResults = listedItems.Count;
-            var totalPages = GetTotalPages(matchingSearchResults, itemsPerPage);
-            var itemsToDisplay = GetItemsOnCurrentPage(listedItems, pageNumber, itemsPerPage);
-            return new PaginateResult<T>(itemsToDisplay, pageNumber, totalPages, itemsPerPage, matchingSearchResults);
-        }
-
-        private IEnumerable<T> Sort<T>(
-            IEnumerable<T> items,
-            string sortBy,
-            string sortDirection
-        ) where T : BaseSearchableItem
-        {
-            return GenericSortingHelper.SortAllItems(items.AsQueryable(), sortBy, sortDirection);
-        }
-
         private static (IEnumerable<T>, string?) FilterOrResetFilterToDefault<T>(
             IEnumerable<T> items,
-            IEnumerable<FilterModel>? availableFilters,
-            string? filterString,
-            string? defaultFilterString
+            FilterOptions filterOptions
         )
             where T : BaseSearchableItem
         {
-            if (AvailableFiltersContainsAllFilters(availableFilters, filterString))
+            if (AvailableFiltersContainsAllFilters(filterOptions))
             {
-                return (FilteringHelper.FilterItems(items.AsQueryable(), filterString), filterString);
+                return (FilteringHelper.FilterItems(items.AsQueryable(), filterOptions.FilterString),
+                    filterOptions.FilterString);
             }
 
-            return defaultFilterString != null
-                ? (FilteringHelper.FilterItems(items.AsQueryable(), defaultFilterString), defaultFilterString)
+            return filterOptions.DefaultFilterString != null
+                ? (FilteringHelper.FilterItems(items.AsQueryable(), filterOptions.DefaultFilterString),
+                    filterOptions.DefaultFilterString)
                 : (items, null);
         }
 
-        private static bool AvailableFiltersContainsAllFilters(
-            IEnumerable<FilterModel>? availableFilters,
-            string? filterString
-        )
+        private static bool AvailableFiltersContainsAllFilters(FilterOptions filterOptions)
         {
-            if (availableFilters == null)
-            {
-                return filterString == null;
-            }
-
-            var currentFilters = filterString?.Split(FilteringHelper.FilterSeparator).ToList() ??
+            var currentFilters = filterOptions.FilterString?.Split(FilteringHelper.FilterSeparator).ToList() ??
                                  new List<string>();
 
-            return currentFilters.All(filter => AvailableFiltersContainsFilter(availableFilters, filter));
+            return currentFilters.All(filter => AvailableFiltersContainsFilter(filterOptions.AvailableFilters, filter));
         }
 
         private static bool AvailableFiltersContainsFilter(IEnumerable<FilterModel> availableFilters, string filter)
@@ -134,30 +100,44 @@
             return filterOptions.Any(filterOption => filterOption.FilterValue == filter);
         }
 
-        private IEnumerable<T> Search<T>(IEnumerable<T> items, string? searchString = null)
+        private static PaginateResult<T> PaginateItems<T>(
+            IEnumerable<T> items,
+            PaginationOptions? paginationOptions
+        )
             where T : BaseSearchableItem
         {
-            return GenericSearchHelper.SearchItems(items, searchString);
+            var paginationOptionsToUse = paginationOptions ?? new PaginationOptions(1, int.MaxValue);
+
+            var listedItems = items.ToList();
+            var matchingSearchResults = listedItems.Count;
+            var totalPages = GetTotalPages(matchingSearchResults, paginationOptionsToUse.ItemsPerPage);
+            var itemsToDisplay = GetItemsOnCurrentPage(
+                listedItems,
+                paginationOptionsToUse
+            );
+            return new PaginateResult<T>(
+                itemsToDisplay,
+                paginationOptionsToUse,
+                totalPages,
+                matchingSearchResults
+            );
         }
 
-        protected IEnumerable<T> GetItemsOnCurrentPage<T>(IList<T> items, int pageNumber, int itemsPerPage)
+        private static IEnumerable<T> GetItemsOnCurrentPage<T>(IList<T> items, PaginationOptions paginationOptions)
         {
-            if (items.Count > itemsPerPage)
-            {
-                items = items.Skip(OffsetFromPageNumber(pageNumber, itemsPerPage)).Take(itemsPerPage).ToList();
-            }
-
-            return items;
+            return items.Count > paginationOptions.ItemsPerPage
+                ? items.Skip(OffsetFromPageNumber(paginationOptions)).Take(paginationOptions.ItemsPerPage).ToList()
+                : items;
         }
 
-        private int GetTotalPages(int matchingSearchResults, int itemsPerPage)
+        private static int GetTotalPages(int matchingSearchResults, int itemsPerPage)
         {
             return (int)Math.Ceiling(matchingSearchResults / (double)itemsPerPage);
         }
 
-        private int OffsetFromPageNumber(int pageNumber, int itemsPerPage)
+        private static int OffsetFromPageNumber(PaginationOptions paginationOptions)
         {
-            return (pageNumber - 1) * itemsPerPage;
+            return (paginationOptions.PageNumber - 1) * paginationOptions.ItemsPerPage;
         }
     }
 }

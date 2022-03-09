@@ -6,6 +6,20 @@
     {
         public PaginateResult(
             IEnumerable<T> itemsToDisplay,
+            PaginationOptions paginationOptions,
+            int totalPages,
+            int matchingSearchResults
+        )
+        {
+            ItemsToDisplay = itemsToDisplay;
+            Page = paginationOptions.PageNumber;
+            TotalPages = totalPages;
+            ItemsPerPage = paginationOptions.ItemsPerPage;
+            MatchingSearchResults = matchingSearchResults;
+        }
+
+        public PaginateResult(
+            IEnumerable<T> itemsToDisplay,
             int page,
             int totalPages,
             int itemsPerPage,

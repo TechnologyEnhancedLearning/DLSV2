@@ -86,13 +86,16 @@
                 ),
             };
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
+                new FilterOptions(existingFilterString, availableFilters, null),
+                new PaginationOptions(page, itemsPerPage)
+            );
+
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 adminUsersAtCentre,
-                searchString,
-                filterString: existingFilterString,
-                availableFilters: availableFilters,
-                pageNumber: page,
-                itemsPerPage: itemsPerPage ?? SearchSortFilterPaginateService.DefaultItemsPerPage
+                searchSortPaginationOptions
             );
 
             var model = new CentreAdministratorsViewModel(

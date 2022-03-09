@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -22,6 +24,7 @@
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IPasswordResetService passwordResetService = null!;
         private IUserService userService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IConfiguration config = null!;
 
         [SetUp]
@@ -33,6 +36,7 @@
             userService = A.Fake<IUserService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             passwordResetService = A.Fake<IPasswordResetService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             config = A.Fake<IConfiguration>();
 
             httpRequest = A.Fake<HttpRequest>();
@@ -46,12 +50,18 @@
                     jobGroupsDataService,
                     passwordResetService,
                     userService,
+                    searchSortFilterPaginateService,
                     config
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();
+
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
+                    searchSortFilterPaginateService
+                );
         }
 
         [Test]

@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
@@ -92,6 +93,7 @@
         private HttpResponse httpResponse = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IConfiguration config = null!;
 
         [SetUp]
@@ -100,6 +102,7 @@
             courseService = A.Fake<ICourseService>();
             tutorialService = A.Fake<ITutorialService>();
             sectionService = A.Fake<ISectionService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             config = A.Fake<IConfiguration>();
 
             A.CallTo(
@@ -118,6 +121,7 @@
                     courseService,
                     tutorialService,
                     sectionService,
+                    searchSortFilterPaginateService,
                     config
                 )
                 .WithDefaultContext()
@@ -131,6 +135,7 @@
                     courseService,
                     tutorialService,
                     sectionService,
+                    searchSortFilterPaginateService,
                     config
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
@@ -141,6 +146,12 @@
         [Test]
         public void Index_with_no_query_parameters_uses_cookie_value_for_existingFilterString()
         {
+            // Given
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
+                    searchSortFilterPaginateService
+                );
+
             // When
             var result = controllerWithCookies.Index();
 
@@ -156,6 +167,10 @@
             const string existingFilterString = "Status|HideInLearnerPortal|true";
 
             A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = controllerWithCookies.Index(existingFilterString: existingFilterString);
@@ -170,6 +185,10 @@
         {
             // Given
             const string existingFilterString = "CLEAR";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = controllerWithCookies.Index(existingFilterString: existingFilterString);
@@ -191,6 +210,10 @@
             const string newFilterToAdd = "Status|HideInLearnerPortal|true";
 
             A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
@@ -211,6 +234,10 @@
             // Given
             const string existingFilterString = "CLEAR";
             const string newFilterToAdd = "Status|HideInLearnerPortal|true";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
@@ -228,6 +255,12 @@
         [Test]
         public void Index_with_no_filtering_should_default_to_Active_courses()
         {
+            // Given
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
+                    searchSortFilterPaginateService
+                );
+
             // When
             var result = controller.Index();
 

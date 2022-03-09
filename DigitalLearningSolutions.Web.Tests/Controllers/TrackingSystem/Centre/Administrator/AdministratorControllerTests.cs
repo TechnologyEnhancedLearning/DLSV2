@@ -54,6 +54,7 @@
         private HttpResponse httpResponse = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         [SetUp]
         public void Setup()
@@ -62,6 +63,7 @@
             userDataService = A.Fake<IUserDataService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             userService = A.Fake<IUserService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(A<int>._)).Returns(adminUsers);
             A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
@@ -76,7 +78,8 @@
                     userDataService,
                     courseCategoriesDataService,
                     centreContractAdminUsageService,
-                    userService
+                    userService,
+                    searchSortFilterPaginateService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -87,6 +90,12 @@
         [Test]
         public void Index_with_no_query_parameters_uses_cookie_value_for_existingFilterString()
         {
+            // Given
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<AdminUser>(
+                    searchSortFilterPaginateService
+                );
+
             // When
             var result = administratorController.Index();
 
@@ -101,6 +110,10 @@
             // Given
             const string existingFilterString = "Role|IsCmsManager|true";
             A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<AdminUser>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = administratorController.Index(existingFilterString: existingFilterString);
@@ -115,6 +128,10 @@
         {
             // Given
             const string? existingFilterString = "CLEAR";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<AdminUser>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = administratorController.Index(existingFilterString: existingFilterString);
@@ -134,6 +151,10 @@
             // Given
             const string? existingFilterString = null;
             const string? newFilterValue = "Role|IsCmsManager|true";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<AdminUser>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = administratorController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
@@ -154,6 +175,10 @@
             // Given
             const string? existingFilterString = "CLEAR";
             const string? newFilterValue = "Role|IsCmsManager|true";
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<AdminUser>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = administratorController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);

@@ -3,6 +3,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -61,15 +62,20 @@
             var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
                 .GetFilterOptions(details.Categories, details.Topics).ToList();
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters,
+                    null
+                ),
+                new PaginationOptions(page, itemsPerPage)
+            );
+
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 details.Courses,
-                searchString,
-                sortBy: sortBy,
-                sortDirection: sortDirection,
-                filterString: existingFilterString,
-                availableFilters: availableFilters,
-                pageNumber: page,
-                itemsPerPage: itemsPerPage ?? SearchSortFilterPaginateService.DefaultItemsPerPage
+                searchSortPaginationOptions
             );
 
             var model = new DelegateCoursesViewModel(

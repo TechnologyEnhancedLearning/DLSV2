@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -72,16 +73,20 @@
                 promptsWithOptions
             );
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters,
+                    DelegateActiveStatusFilterOptions.IsActive.FilterValue
+                ),
+                new PaginationOptions(page, itemsPerPage)
+            );
+
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 delegateUsers,
-                searchString,
-                sortBy: sortBy,
-                sortDirection : sortDirection,
-                filterString: existingFilterString,
-                defaultFilterString: DelegateActiveStatusFilterOptions.IsActive.FilterValue,
-                availableFilters: availableFilters,
-                pageNumber: page,
-                itemsPerPage: itemsPerPage ?? SearchSortFilterPaginateService.DefaultItemsPerPage
+                searchSortPaginationOptions
             );
 
             var model = new AllDelegatesViewModel(

@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -41,12 +42,16 @@
             allItems.AddRange(selfAssessments);
             allItems.AddRange(learningResources);
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                null,
+                new PaginationOptions(page)
+            );
+
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 allItems,
-                searchString,
-                sortBy: sortBy,
-                sortDirection: sortDirection,
-                pageNumber: page
+                searchSortPaginationOptions
             );
 
             var model = new CurrentPageViewModel(

@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -236,12 +237,16 @@
                 return NotFound();
             }
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                null,
+                new SortOptions(sortBy, sortDirection),
+                null,
+                null
+            );
+
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 learningLog.Entries,
-                sortBy: sortBy,
-                sortDirection: sortDirection,
-                pageNumber: 1,
-                itemsPerPage: int.MaxValue
+                searchSortPaginationOptions
             );
 
             var model = new LearningLogViewModel(accessedVia, learningLog, result);
