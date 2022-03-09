@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class DelegateGroupsViewModel : BaseSearchablePageViewModel
@@ -32,7 +33,13 @@
             var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
             DelegateGroups = paginatedItems.Select(g => new SearchableDelegateGroupViewModel(g, returnPage));
 
-            var admins = groups.Select(g => (g.AddedByAdminId, g.AddedByName)).Distinct();
+            var admins = groups.Select(
+                g => (g.AddedByAdminId, DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                    g.AddedByFirstName,
+                    g.AddedByLastName,
+                    g.AddedByAdminActive
+                ))
+            ).Distinct();
 
             Filters = new[]
             {

@@ -23,9 +23,11 @@
                 SupervisorAdminId = null,
                 SupervisorForename = null,
                 SupervisorSurname = null,
+                SupervisorAdminActive = true,
                 EnrolledByAdminId = null,
-                EnrolledByForename = "Geezer",
-                EnrolledBySurname = "Butler",
+                EnrolledByForename = null,
+                EnrolledBySurname = null,
+                EnrolledByAdminActive = true,
                 DelegateId = 1,
             };
             var missingNamesViewModel = new DelegateProgressViewModel(
@@ -45,9 +47,11 @@
                 SupervisorAdminId = 1,
                 SupervisorForename = "Tony",
                 SupervisorSurname = "Iommi",
+                SupervisorAdminActive = true,
                 EnrolledByAdminId = 1,
                 EnrolledByForename = "Geezer",
                 EnrolledBySurname = "Butler",
+                EnrolledByAdminActive = true,
                 DelegateId = 2,
             };
             var fullNamesViewModel = new DelegateProgressViewModel(
@@ -63,12 +67,10 @@
             // Then
             using (new AssertionScope())
             {
-                missingNamesViewModel.DelegateFullName.Should().Be("Osbourne");
-                missingNamesViewModel.DelegateNameAndEmail.Should().Be("Osbourne (Prince@Darkness)");
+                missingNamesViewModel.DelegateName.Should().Be("Osbourne");
                 missingNamesViewModel.Supervisor.Should().Be("None");
                 missingNamesViewModel.EnrolledByFullName.Should().BeNull();
-                fullNamesViewModel.DelegateFullName.Should().Be("Ozzy Osbourne");
-                fullNamesViewModel.DelegateNameAndEmail.Should().Be("Ozzy Osbourne (Prince@Darkness)");
+                fullNamesViewModel.DelegateName.Should().Be("Ozzy Osbourne");
                 fullNamesViewModel.Supervisor.Should().Be("Tony Iommi");
                 fullNamesViewModel.EnrolledByFullName.Should().Be("Geezer Butler");
             }
@@ -96,7 +98,7 @@
             );
 
             // Then
-            viewModel.DelegateNameAndEmail.Should().Be("Bill Ward");
+            viewModel.DelegateName.Should().Be("Bill Ward");
         }
 
         [Test]
@@ -113,6 +115,7 @@
                 EnrolledByAdminId = 1,
                 EnrolledByForename = "Ronnie",
                 EnrolledBySurname = "Dio",
+                EnrolledByAdminActive = true,
                 DelegateId = 1,
             };
             var viewModel = new DelegateProgressViewModel(

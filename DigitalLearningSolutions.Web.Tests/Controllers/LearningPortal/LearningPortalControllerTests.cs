@@ -3,7 +3,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using FakeItEasy;

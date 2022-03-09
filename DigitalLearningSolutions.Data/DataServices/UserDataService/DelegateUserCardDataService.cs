@@ -38,6 +38,7 @@
                                                             AND au.Password = cd.Password
                                                                 AND au.CentreID = cd.CentreID
                                                                 AND au.Email != ''
+                                                                AND au.Active = 1
                                                         ) AS AdminID,
                                                         cd.AliasID
                                                         FROM Candidates AS cd

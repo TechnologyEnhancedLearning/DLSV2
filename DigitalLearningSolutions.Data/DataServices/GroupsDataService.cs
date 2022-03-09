@@ -106,6 +106,7 @@
                         gc.SupervisorAdminID,
                         au.Forename AS SupervisorFirstName,
                         au.Surname AS SupervisorLastName,
+                        au.Active AS SupervisorAdminActive,
                         gc.CompleteWithinMonths,
                         ValidityMonths,
                         c.Active,
@@ -147,9 +148,10 @@
                         GroupDescription,
                         (SELECT COUNT(*) FROM GroupDelegates AS gd WHERE gd.GroupID = g.GroupID) AS DelegateCount,
                         ({CourseCountSql}) AS CoursesCount,
-                        g.CreatedByAdminUserID As AddedByAdminId,
+                        g.CreatedByAdminUserID AS AddedByAdminId,
                         au.Forename AS AddedByFirstName,
                         au.Surname AS AddedByLastName,
+                        au.Active AS AddedByAdminActive,
                         LinkedToField,
                         CASE
                             WHEN LinkedToField = 0 THEN 'None'

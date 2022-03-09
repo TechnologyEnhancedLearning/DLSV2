@@ -132,12 +132,15 @@
         void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset);
 
         //Export Candidate Assessment
-        CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(int candidateAssessmentId, int candidateId);
-
-        List<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(
-            int candidateAssessmentId, int candidateId
+        CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(
+            int candidateAssessmentId,
+            int candidateId
         );
 
+        List<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(
+            int candidateAssessmentId,
+            int candidateId
+        );
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService

@@ -17,22 +17,28 @@
         ) : base(details)
         {
             AccessedVia = accessedVia;
-            CustomisationCentreId = details.DelegateCourseInfo.CustomisationCentreId;
             IsCourseActive = details.DelegateCourseInfo.IsCourseActive;
-            AllCentresCourse = details.DelegateCourseInfo.AllCentresCourse;
-            CourseCategoryId = details.DelegateCourseInfo.CourseCategoryId;
-            SupervisorAdminId = details.DelegateCourseInfo.SupervisorAdminId;
             ProfessionalRegistrationNumber = details.DelegateCourseInfo.ProfessionalRegistrationNumber;
+            Supervisor = details.DelegateCourseInfo.SupervisorAdminId != null
+                ? DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                    details.DelegateCourseInfo.SupervisorForename,
+                    details.DelegateCourseInfo.SupervisorSurname,
+                    details.DelegateCourseInfo.SupervisorAdminActive!.Value
+                )
+                : "None";
             EnrolmentMethodId = details.DelegateCourseInfo.EnrolmentMethodId;
-            EnrolledByAdminId = details.DelegateCourseInfo.EnrolledByAdminId;
-            EnrolledByForename = details.DelegateCourseInfo.EnrolledByForename;
-            EnrolledBySurname = details.DelegateCourseInfo.EnrolledBySurname;
+            EnrolledByFullName = DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                details.DelegateCourseInfo.EnrolledByForename,
+                details.DelegateCourseInfo.EnrolledBySurname,
+                details.DelegateCourseInfo.EnrolledByAdminActive
+            );
             RemovedDate = details.DelegateCourseInfo.RemovedDate?.ToString(DateHelper.StandardDateFormat);
             DelegateId = details.DelegateCourseInfo.DelegateId;
-            DelegateFirstName = details.DelegateCourseInfo.DelegateFirstName;
-            DelegateLastName = details.DelegateCourseInfo.DelegateLastName;
+            DelegateName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+                details.DelegateCourseInfo.DelegateFirstName,
+                details.DelegateCourseInfo.DelegateLastName
+            );
             DelegateEmail = details.DelegateCourseInfo.DelegateEmail;
-            DelegateCentreId = details.DelegateCourseInfo.DelegateCentreId;
             AdminFields = details.CourseAdminFields.Select(
                     cp =>
                         new DelegateCourseAdminField(
@@ -46,31 +52,14 @@
         }
 
         public DelegateProgressAccessRoute AccessedVia { get; set; }
-        public int CustomisationCentreId { get; set; }
         public bool IsCourseActive { get; set; }
-        public bool AllCentresCourse { get; set; }
-        public int CourseCategoryId { get; set; }
-        public int? SupervisorAdminId { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
         public string? RemovedDate { get; set; }
         public int EnrolmentMethodId { get; set; }
-        public int? EnrolledByAdminId { get; set; }
-        public string? EnrolledByForename { get; set; }
-        public string? EnrolledBySurname { get; set; }
-        public string? DelegateFirstName { get; set; }
-        public string DelegateLastName { get; set; }
-        public string? DelegateEmail { get; set; }
-        public int DelegateCentreId { get; set; }
         public IEnumerable<DelegateCourseAdminField> AdminFields { get; set; }
-
-        public string DelegateFullName =>
-            DelegateFirstName == null ? DelegateLastName : $"{DelegateFirstName} {DelegateLastName}";
-
-        public string DelegateNameAndEmail =>
-            string.IsNullOrWhiteSpace(DelegateEmail) ? DelegateFullName : $"{DelegateFullName} ({DelegateEmail})";
-
-        public string? EnrolledByFullName =>
-            EnrolledByAdminId == null ? null : $"{EnrolledByForename} {EnrolledBySurname}";
+        public string DelegateName { get; set; }
+        public string? DelegateEmail { get; set; }
+        public string? EnrolledByFullName { get; set; }
 
         public new string EnrolmentMethod
         {

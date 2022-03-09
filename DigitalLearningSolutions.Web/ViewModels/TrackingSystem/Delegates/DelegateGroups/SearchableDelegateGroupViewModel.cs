@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class SearchableDelegateGroupViewModel
     {
@@ -18,7 +19,11 @@
             LinkedToField = group.LinkedToField;
             LinkedField = group.LinkedToFieldName;
             AddedByAdminId = group.AddedByAdminId;
-            AddedBy = group.AddedByName;
+            AddedBy = DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                group.AddedByFirstName,
+                group.AddedByLastName,
+                group.AddedByAdminActive
+            );
             ShouldAddNewRegistrantsToGroup = group.ShouldAddNewRegistrantsToGroup ? Yes : No;
             ChangesToRegistrationDetailsShouldChangeGroupMembership =
                 group.ChangesToRegistrationDetailsShouldChangeGroupMembership ? Yes : No;
@@ -41,7 +46,7 @@
 
         public int AddedByAdminId { get; set; }
 
-        public string AddedBy { get; set; }
+        public string? AddedBy { get; set; }
 
         public string AddedByFilter => nameof(Group.AddedByAdminId) + FilteringHelper.Separator +
                                        nameof(Group.AddedByAdminId) +

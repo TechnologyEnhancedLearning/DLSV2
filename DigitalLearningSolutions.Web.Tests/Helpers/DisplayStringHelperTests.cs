@@ -169,7 +169,7 @@
         }
 
         [Test]
-        public void GetSortableFullName_returns_correctly_formatted_name_with_email_when_both_are_provided()
+        public void GetNameWithEmailForDisplay_returns_correctly_formatted_name_with_email_when_both_are_provided()
         {
             // Given
             const string fullName = "FirstName LastName";
@@ -180,6 +180,46 @@
 
             // Then
             result.Should().Be("FirstName LastName (email@email.com)");
+        }
+
+        [Test]
+        public void GetPotentiallyInactiveAdminName_returns_correctly_formatted_name_for_active_admin()
+        {
+            // Given
+            const string firstName = "FirstName";
+            const string lastName = "LastName";
+            const bool active = true;
+
+            // When
+            var result = DisplayStringHelper.GetPotentiallyInactiveAdminName(firstName, lastName, active);
+
+            // Then
+            result.Should().Be("FirstName LastName");
+        }
+
+        [Test]
+        public void GetPotentiallyInactiveAdminName_returns_correctly_formatted_name_for_inactive_admin()
+        {
+            // Given
+            const string firstName = "FirstName";
+            const string lastName = "LastName";
+            const bool active = false;
+
+            // When
+            var result = DisplayStringHelper.GetPotentiallyInactiveAdminName(firstName, lastName, active);
+
+            // Then
+            result.Should().Be("FirstName LastName (inactive)");
+        }
+
+        [Test]
+        public void GetPotentiallyInactiveAdminName_returns_null_for_null_input()
+        {
+            // When
+            var result = DisplayStringHelper.GetPotentiallyInactiveAdminName(null, null, null);
+
+            // Then
+            result.Should().BeNull();
         }
 
         [Test]
