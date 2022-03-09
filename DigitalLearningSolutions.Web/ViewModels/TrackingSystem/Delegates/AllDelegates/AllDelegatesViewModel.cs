@@ -13,7 +13,7 @@
     {
         public AllDelegatesViewModel(
             SearchSortFilterPaginateResult<DelegateUserCard> result,
-            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts,
+            IReadOnlyCollection<CentreRegistrationPrompt> centreRegistrationPrompts,
             IEnumerable<FilterModel> availableFilters
         ) : base(
             result,

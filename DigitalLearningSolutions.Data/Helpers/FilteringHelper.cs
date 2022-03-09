@@ -130,7 +130,13 @@
             {
                 var splitFilter = filterOption.Split(Separator);
                 Group = splitFilter[0];
-                PropertyName = splitFilter[1];
+                // Course Admin Fields and Centre Registration Prompt filters rely on properties of the models
+                // called Answer1, Answer2 etc. We append the prompt text in brackets to the property
+                // name when setting up these filters so that we can check whether they are valid filters for another course etc.
+                // e.g. Answer1(Access Permission)|Answer1(Access Permissions)|FREETEXTBLANKVALUE would not be a valid filter for
+                // a course without that admin field at position 1, but would be able to be used for filtering the models.
+                // We have to strip the bracketed value here so we return back to just the property name string
+                PropertyName = splitFilter[1].Split('(')[0];
                 PropertyValue = splitFilter[2];
             }
 

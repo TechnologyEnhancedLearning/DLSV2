@@ -95,6 +95,20 @@
         }
 
         [Test]
+        public void FilterItems_returns_expected_items_with_filter_with_bracket_in_it()
+        {
+            // Given
+            var expectedItems = new[] { ItemA1, ItemA3 }.AsQueryable();
+            const string filterString = "Name(Field name)|Name(Field name)|a";
+
+            // When
+            var result = FilteringHelper.FilterItems(InputItems, filterString);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedItems);
+        }
+
+        [Test]
         public void AddNewFilterToFilterString_doesnt_append_with_null_new_filter()
         {
             // When

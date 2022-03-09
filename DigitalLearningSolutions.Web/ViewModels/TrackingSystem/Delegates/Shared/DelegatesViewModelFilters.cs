@@ -34,10 +34,10 @@
         public static IEnumerable<FilterOptionModel> GetPromptOptions(Prompt prompt)
         {
             var filterValueName = prompt is CentreRegistrationPrompt registrationPrompt
-                ? DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(
+                ? @$"{DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(
                     registrationPrompt.RegistrationField.Id
-                )
-                : CourseDelegate.GetPropertyNameForAdminFieldAnswer(((CourseAdminField)prompt).PromptNumber);
+                )}({prompt.PromptText})"
+                : $"{CourseDelegate.GetPropertyNameForAdminFieldAnswer(((CourseAdminField)prompt).PromptNumber)}({prompt.PromptText})";
 
             var options = prompt.Options.Select(
                 option => new FilterOptionModel(
@@ -83,7 +83,7 @@
         private static string GetFilterValueForRegistrationPrompt(DelegatePrompt delegatePrompt)
         {
             var filterValueName =
-                DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(delegatePrompt.PromptNumber);
+                $"{DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(delegatePrompt.PromptNumber)}({delegatePrompt.Prompt})";
             var propertyValue = string.IsNullOrEmpty(delegatePrompt.Answer)
                 ? FilteringHelper.EmptyValue
                 : delegatePrompt.Answer;

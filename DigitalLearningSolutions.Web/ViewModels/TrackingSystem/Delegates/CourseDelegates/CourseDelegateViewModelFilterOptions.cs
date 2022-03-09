@@ -98,8 +98,7 @@
                 return DelegatesViewModelFilters.GetPromptOptions(adminField);
             }
 
-            var filterValueName =
-                AdminFieldsHelper.GetAdminFieldAnswerName(adminField.PromptNumber);
+            var filterValueName = $"{AdminFieldsHelper.GetAdminFieldAnswerName(adminField.PromptNumber)}({adminField.PromptText})";
 
             var options = new List<FilterOptionModel>
             {
