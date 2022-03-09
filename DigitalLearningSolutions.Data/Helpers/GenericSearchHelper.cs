@@ -5,7 +5,6 @@
     using System.Collections.Specialized;
     using System.Linq;
     using System.Text;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using FuzzySharp;
     using FuzzySharp.SimilarityRatio;
@@ -100,17 +99,17 @@
 
             // transform search string into array of words
             char[] wordSeparators = { ' ', '\n', '\r', ',', ';', '.', '!', '?', '-', ' ', '"', '\'' };
-            string[] words = searchedWords.Split(wordSeparators, StringSplitOptions.RemoveEmptyEntries);
+            var words = searchedWords.Split(wordSeparators, StringSplitOptions.RemoveEmptyEntries);
 
             // Create and initializes a new StringCollection.
-            StringCollection myStopWordsCol = new StringCollection();
+            var myStopWordsCol = new StringCollection();
             // Add a range of elements from an array to the end of the StringCollection.
             myStopWordsCol.AddRange(StopWordsArray);
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             for (var i = 0; i < words.Length; i++)
             {
-                string word = words[i].ToLowerInvariant().Trim();
+                var word = words[i].ToLowerInvariant().Trim();
                 if (word.Length > 1 && !myStopWordsCol.Contains(word))
                 {
                     sb.Append(word + " ");
