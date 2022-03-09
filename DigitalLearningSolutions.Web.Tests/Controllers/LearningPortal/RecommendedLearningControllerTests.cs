@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
@@ -13,11 +12,13 @@
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
+    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
 
     public class RecommendedLearningControllerTests
     {
         private const int DelegateId = 2;
         private const int SelfAssessmentId = 1;
+
         private IActionPlanService actionPlanService = null!;
         private IConfiguration configuration = null!;
         private RecommendedLearningController controller = null!;
@@ -50,7 +51,7 @@
             SelfAssessmentResults_redirect_to_expected_action_does_not_call_filtered_api_when_using_signposting()
         {
             // Given
-            A.CallTo(() => configuration[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => configuration[ConfigurationExtensions.UseSignposting]).Returns("true");
 
             // When
             var result = await controller.SelfAssessmentResults(SelfAssessmentId);
@@ -71,7 +72,7 @@
         {
             // Given
             var expectedBookmarkString = $"/LearningPortal/SelfAssessment/{SelfAssessmentId}/RecommendedLearning";
-            A.CallTo(() => configuration[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => configuration[ConfigurationExtensions.UseSignposting]).Returns("true");
 
             // When
             var result = await controller.RecommendedLearning(SelfAssessmentId);

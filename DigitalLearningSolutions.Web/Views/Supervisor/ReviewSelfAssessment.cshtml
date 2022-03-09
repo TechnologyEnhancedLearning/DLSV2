@@ -57,7 +57,7 @@
       }
       @if (Model.DelegateSelfAssessment.ResultsVerificationRequests > 1)
       {
-        <a role="button" asp-action="VerifyMultipleResults" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Verify multiple results</a>
+        <a role="button" asp-action="VerifyMultipleResults" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Confirm multiple results</a>
       }
     </div>
   </div>
@@ -83,7 +83,7 @@
             @if (Model.IsSupervisorResultsReviewed)
             {
               <th role="columnheader" class="" scope="col">
-                Verification status
+                Confirmation status
               </th>
             }
             <th role="columnheader" class="" scope="col">

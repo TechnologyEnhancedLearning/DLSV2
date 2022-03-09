@@ -14,15 +14,15 @@
 
     public partial class FrameworkControllerTests
     {
-        private FrameworksController controller;
-        private IFrameworkService frameworkService;
-        private ICommonService commonService;
-        private IConfigService configService;
-        private IConfiguration config;
-        private IFrameworkNotificationService frameworkNotificationService;
-        private IImportCompetenciesFromFileService importCompetenciesFromFileService;
-        private ICompetencyLearningResourcesDataService competencyLearningResourcesDataService;
-        private ILearningHubApiClient learningHubApiClient;
+        private FrameworksController controller = null!;
+        private IFrameworkService frameworkService = null!;
+        private ICommonService commonService = null!;
+        private IConfiguration config = null!;
+        private IFrameworkNotificationService frameworkNotificationService = null!;
+        private IImportCompetenciesFromFileService importCompetenciesFromFileService = null!;
+        private ICompetencyLearningResourcesDataService competencyLearningResourcesDataService = null!;
+        private ILearningHubApiClient learningHubApiClient = null!;
+        
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CentreId = 101;
         private const int AdminId = 1;
@@ -30,11 +30,11 @@
         [SetUp]
         public void SetUp()
         {
+            var logger = A.Fake<ILogger<FrameworksController>>();
+
             frameworkService = A.Fake<IFrameworkService>();
             frameworkNotificationService = A.Fake<IFrameworkNotificationService>();
             commonService = A.Fake<ICommonService>();
-            configService = A.Fake<ConfigService>();
-            var logger = A.Fake<ILogger<FrameworksController>>();
             config = A.Fake<IConfiguration>();
             importCompetenciesFromFileService = A.Fake<IImportCompetenciesFromFileService>();
             competencyLearningResourcesDataService = A.Fake<ICompetencyLearningResourcesDataService>();
@@ -48,6 +48,7 @@
                 new Claim("UserCentreID", CentreId.ToString()),
                 new Claim("IsFrameworkDeveloper", "True")
             }, "mock"));
+
             controller = new FrameworksController(
                 frameworkService,
                 commonService,

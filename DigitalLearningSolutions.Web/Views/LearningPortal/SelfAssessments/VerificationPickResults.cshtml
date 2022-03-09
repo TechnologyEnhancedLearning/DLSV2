@@ -29,7 +29,7 @@
   }
   @if (Model.CompetencyGroups.Any())
   {
-    <h2>Choose the @Model.Vocabulary.ToLower() self assessment results that you wish to verify.</h2>
+    <h2>Choose the @Model.Vocabulary.ToLower() self assessment results that you wish to confirm.</h2>
     <form method="post">
       <nhs-form-group nhs-validation-for="ResultIds">
         @foreach (var competencyGroup in Model.CompetencyGroups)
@@ -120,7 +120,7 @@
   else
   {
     <p>
-      There are no self assessment results ready for verification.
+      There are no self assessment results ready for confirmation.
     </p>
     <a class="nhsuk-button nhsuk-button--secondary" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
       Cancel

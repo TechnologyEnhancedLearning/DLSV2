@@ -1,27 +1,26 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
-    using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using NUnit.Framework;
     using FluentAssertions;
+    using NUnit.Framework;
 
-    public class ConfigServiceTests
+    public class ConfigDataServiceTests
     {
-        private ConfigService configService;
+        private ConfigDataService configDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            configService = new ConfigService(connection);
+            configDataService = new ConfigDataService(connection);
         }
 
         [Test]
         public void Get_config_value_returns_the_expected_value()
         {
             // When
-            var result = configService.GetConfigValue(ConfigService.MailFromAddress);
+            var result = configDataService.GetConfigValue(ConfigDataService.MailFromAddress);
 
             // Then
             result.Should().Be("noreply@itskills.nhs.uk");

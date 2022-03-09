@@ -22,6 +22,7 @@
             AllCentresCourse = details.DelegateCourseInfo.AllCentresCourse;
             CourseCategoryId = details.DelegateCourseInfo.CourseCategoryId;
             SupervisorAdminId = details.DelegateCourseInfo.SupervisorAdminId;
+            ProfessionalRegistrationNumber = details.DelegateCourseInfo.ProfessionalRegistrationNumber;
             EnrolmentMethodId = details.DelegateCourseInfo.EnrolmentMethodId;
             EnrolledByAdminId = details.DelegateCourseInfo.EnrolledByAdminId;
             EnrolledByForename = details.DelegateCourseInfo.EnrolledByForename;
@@ -50,6 +51,7 @@
         public bool AllCentresCourse { get; set; }
         public int CourseCategoryId { get; set; }
         public int? SupervisorAdminId { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
         public string? RemovedDate { get; set; }
         public int EnrolmentMethodId { get; set; }
         public int? EnrolledByAdminId { get; set; }

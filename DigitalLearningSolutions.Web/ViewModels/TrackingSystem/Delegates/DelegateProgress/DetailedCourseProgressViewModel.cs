@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
@@ -26,6 +25,7 @@
             );
             DelegateEmail = progress.DelegateEmail;
             DelegateNumber = progress.DelegateNumber;
+            ProfessionalRegistrationNumber = progress.ProfessionalRegistrationNumber;
 
             LastUpdated = progress.LastUpdated.ToString(DateHelper.StandardDateAndTimeFormat);
             Enrolled = progress.Enrolled.ToString(DateHelper.StandardDateAndTimeFormat);
@@ -48,6 +48,7 @@
         public string DelegateName { get; set; }
         public string? DelegateEmail { get; set; }
         public string DelegateNumber { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
 
         public string LastUpdated { get; set; }
         public string Enrolled { get; set; }

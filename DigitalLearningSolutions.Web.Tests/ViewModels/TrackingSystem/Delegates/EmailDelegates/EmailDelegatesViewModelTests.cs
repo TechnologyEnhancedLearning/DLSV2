@@ -88,14 +88,14 @@
         public void EmailDelegatesViewModel_should_filter_delegates_correctly()
         {
             // Given
-            var filterBy = "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator + "C 2";
+            var existingFilterString = "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator + "C 2";
 
             // When
             var model = new EmailDelegatesViewModel(
                 delegateUsers,
                 new List<(int id, string name)>(),
                 new List<CentreRegistrationPrompt>(),
-                filterBy
+                existingFilterString
             );
 
             // Then
@@ -109,7 +109,7 @@
         public void EmailDelegatesViewModel_should_filter_delegates_correctly_by_empty_values()
         {
             // Given
-            var filterBy = "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator +
+            var existingFilterString = "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator +
                            FilteringHelper.EmptyValue;
 
             // When
@@ -117,7 +117,7 @@
                 delegateUsers,
                 new List<(int id, string name)>(),
                 new List<CentreRegistrationPrompt>(),
-                filterBy
+                existingFilterString
             );
 
             // Then
@@ -132,7 +132,7 @@
         }
 
         [Test]
-        public void EmailDelegatesViewModel_should_set_all_delegates_if_filterBy_is_null()
+        public void EmailDelegatesViewModel_should_set_all_delegates_if_existingFilterString_is_null()
         {
             // When
             var model = new EmailDelegatesViewModel(

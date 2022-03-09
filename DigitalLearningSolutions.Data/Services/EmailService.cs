@@ -21,20 +21,20 @@
 
     public class EmailService : IEmailService
     {
-        private readonly IConfigService configService;
+        private readonly IConfigDataService configDataService;
         private readonly IEmailDataService emailDataService;
         private readonly ILogger<EmailService> logger;
         private readonly ISmtpClientFactory smtpClientFactory;
 
         public EmailService(
             IEmailDataService emailDataService,
-            IConfigService configService,
+            IConfigDataService configDataService,
             ISmtpClientFactory smtpClientFactory,
             ILogger<EmailService> logger
         )
         {
             this.emailDataService = emailDataService;
-            this.configService = configService;
+            this.configDataService = configDataService;
             this.smtpClientFactory = smtpClientFactory;
             this.logger = logger;
         }
@@ -100,30 +100,30 @@
         private (string MailServerUsername, string MailServerPassword, string MailServerAddress, int MailServerPort,
             string MailSenderAddress) GetMailConfig()
         {
-            var mailServerUsername = configService.GetConfigValue(ConfigService.MailUsername)
+            var mailServerUsername = configDataService.GetConfigValue(ConfigDataService.MailUsername)
                                      ?? throw new ConfigValueMissingException
                                      (
-                                         configService.GetConfigValueMissingExceptionMessage("MailServerUsername")
+                                         configDataService.GetConfigValueMissingExceptionMessage("MailServerUsername")
                                      );
-            var mailServerPassword = configService.GetConfigValue(ConfigService.MailPassword)
+            var mailServerPassword = configDataService.GetConfigValue(ConfigDataService.MailPassword)
                                      ?? throw new ConfigValueMissingException
                                      (
-                                         configService.GetConfigValueMissingExceptionMessage("MailServerPassword")
+                                         configDataService.GetConfigValueMissingExceptionMessage("MailServerPassword")
                                      );
-            var mailServerAddress = configService.GetConfigValue(ConfigService.MailServer)
+            var mailServerAddress = configDataService.GetConfigValue(ConfigDataService.MailServer)
                                     ?? throw new ConfigValueMissingException
                                     (
-                                        configService.GetConfigValueMissingExceptionMessage("MailServerAddress")
+                                        configDataService.GetConfigValueMissingExceptionMessage("MailServerAddress")
                                     );
-            var mailServerPortString = configService.GetConfigValue(ConfigService.MailPort)
+            var mailServerPortString = configDataService.GetConfigValue(ConfigDataService.MailPort)
                                        ?? throw new ConfigValueMissingException
                                        (
-                                           configService.GetConfigValueMissingExceptionMessage("MailServerPortString")
+                                           configDataService.GetConfigValueMissingExceptionMessage("MailServerPortString")
                                        );
-            var mailSenderAddress = configService.GetConfigValue(ConfigService.MailFromAddress)
+            var mailSenderAddress = configDataService.GetConfigValue(ConfigDataService.MailFromAddress)
                                     ?? throw new ConfigValueMissingException
                                     (
-                                        configService.GetConfigValueMissingExceptionMessage("MailFromAddress")
+                                        configDataService.GetConfigValueMissingExceptionMessage("MailFromAddress")
                                     );
 
             var mailServerPort = int.Parse(mailServerPortString);
@@ -158,15 +158,15 @@
 
         private MultipartAlternative GetMultipartAlternativeFromBody(BodyBuilder body)
         {
-            //Sets body content encooding to quoated-printable to avoid rejection by NHS email servers
+            //Sets body content encoding to quoted-printable to avoid rejection by NHS email servers
             var htmlPart = new TextPart(TextFormat.Html)
             {
-                ContentTransferEncoding = ContentEncoding.QuotedPrintable
+                ContentTransferEncoding = ContentEncoding.QuotedPrintable,
             };
             htmlPart.SetText(Encoding.UTF8, body.HtmlBody);
             var textPart = new TextPart(TextFormat.Plain)
             {
-                ContentTransferEncoding = ContentEncoding.QuotedPrintable
+                ContentTransferEncoding = ContentEncoding.QuotedPrintable,
             };
             textPart.SetText(Encoding.UTF8, body.TextBody);
             var multipartAlternative = new MultipartAlternative

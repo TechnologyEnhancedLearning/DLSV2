@@ -3,7 +3,6 @@
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.LearningMenuController;
     using FakeItEasy;
@@ -15,18 +14,18 @@
 
     public partial class LearningMenuControllerTests
     {
-        private LearningMenuController controller;
-        private ICourseContentService courseContentService;
-        private ITutorialContentDataService tutorialContentDataService;
-        private ISessionService sessionService;
-        private ISectionContentDataService sectionContentDataService;
-        private IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
-        private IDiagnosticAssessmentService diagnosticAssessmentService;
-        private IPostLearningAssessmentService postLearningAssessmentService;
-        private ICourseCompletionService courseCompletionService;
-        private ISession httpContextSession;
-        private IConfiguration config;
-        private IConfigService configService;
+        private LearningMenuController controller = null!;
+        private ICourseContentService courseContentService = null!;
+        private ITutorialContentDataService tutorialContentDataService = null!;
+        private ISessionService sessionService = null!;
+        private ISectionContentDataService sectionContentDataService = null!;
+        private IDiagnosticAssessmentService diagnosticAssessmentService = null!;
+        private IPostLearningAssessmentService postLearningAssessmentService = null!;
+        private ICourseCompletionService courseCompletionService = null!;
+        private ISession httpContextSession = null!;
+        private IConfiguration config = null!;
+        private IConfigDataService configDataService = null!;
+        
         private const int CandidateId = 11;
         private const int CentreId = 2;
         private const int CustomisationId = 12;
@@ -38,12 +37,11 @@
         {
             var logger = A.Fake<ILogger<LearningMenuController>>();
             config = A.Fake<IConfiguration>();
-            configService = A.Fake<IConfigService>();
+            configDataService = A.Fake<IConfigDataService>();
             courseContentService = A.Fake<ICourseContentService>();
             tutorialContentDataService = A.Fake<ITutorialContentDataService>();
             sessionService = A.Fake<ISessionService>();
             sectionContentDataService = A.Fake<ISectionContentDataService>();
-            diagnosticAssessmentDataService = A.Fake<IDiagnosticAssessmentDataService>();
             diagnosticAssessmentService = A.Fake<IDiagnosticAssessmentService>();
             postLearningAssessmentService = A.Fake<IPostLearningAssessmentService>();
             courseCompletionService = A.Fake<ICourseCompletionService>();
@@ -58,11 +56,10 @@
             controller = new LearningMenuController(
                 logger,
                 config,
-                configService,
+                configDataService,
                 courseContentService,
                 sectionContentDataService,
                 tutorialContentDataService,
-                diagnosticAssessmentDataService,
                 diagnosticAssessmentService,
                 postLearningAssessmentService,
                 sessionService,
