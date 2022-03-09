@@ -119,7 +119,7 @@
         {
             // Given
             const string? existingFilterString = null;
-            const string newFilterValue = "PasswordStatus|IsPasswordSet|true";
+            const string newFilterToAdd = "PasswordStatus|IsPasswordSet|true";
             SearchSortFilterAndPaginateTestHelper
                 .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
                     searchSortFilterPaginateService
@@ -128,14 +128,14 @@
             // When
             var result = allDelegatesController.Index(
                 existingFilterString: existingFilterString,
-                newFilterToAdd: newFilterValue
+                newFilterToAdd: newFilterToAdd
             );
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Append("DelegateFilter", newFilterValue, A<CookieOptions>._))
+            A.CallTo(() => httpResponse.Cookies.Append("DelegateFilter", newFilterToAdd, A<CookieOptions>._))
                 .MustHaveHappened();
             result.As<ViewResult>().Model.As<AllDelegatesViewModel>().ExistingFilterString.Should()
-                .Be(newFilterValue);
+                .Be(newFilterToAdd);
         }
 
         [Test]

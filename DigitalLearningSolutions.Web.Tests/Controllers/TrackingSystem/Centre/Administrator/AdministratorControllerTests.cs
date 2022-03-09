@@ -157,7 +157,7 @@
         {
             // Given
             const string? existingFilterString = null;
-            const string? newFilterValue = "Role|IsCmsManager|true";
+            const string? newFilterToAdd = "Role|IsCmsManager|true";
             SearchSortFilterAndPaginateTestHelper
                 .GivenACallToSearchSortFilterPaginateServiceReturnsResult<AdminUser>(
                     searchSortFilterPaginateService
@@ -166,16 +166,16 @@
             // When
             var result = administratorController.Index(
                 existingFilterString: existingFilterString,
-                newFilterToAdd: newFilterValue
+                newFilterToAdd: newFilterToAdd
             );
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => httpResponse.Cookies.Append("AdminFilter", newFilterValue, A<CookieOptions>._))
+                A.CallTo(() => httpResponse.Cookies.Append("AdminFilter", newFilterToAdd, A<CookieOptions>._))
                     .MustHaveHappened();
                 result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().ExistingFilterString.Should()
-                    .Be(newFilterValue);
+                    .Be(newFilterToAdd);
             }
         }
 

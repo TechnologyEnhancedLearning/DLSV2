@@ -131,7 +131,7 @@
         {
             // Given
             const string? existingFilterString = null;
-            const string? newFilterValue = "LinkedToField|LinkedToField|4";
+            const string? newFilterToAdd = "LinkedToField|LinkedToField|4";
             SearchSortFilterAndPaginateTestHelper
                 .GivenACallToSearchSortFilterPaginateServiceReturnsResult<Group>(
                     searchSortFilterPaginateService
@@ -140,14 +140,14 @@
             // When
             var result = delegateGroupsController.Index(
                 existingFilterString: existingFilterString,
-                newFilterToAdd: newFilterValue
+                newFilterToAdd: newFilterToAdd
             );
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Append("DelegateGroupsFilter", newFilterValue, A<CookieOptions>._))
+            A.CallTo(() => httpResponse.Cookies.Append("DelegateGroupsFilter", newFilterToAdd, A<CookieOptions>._))
                 .MustHaveHappened();
             result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().ExistingFilterString.Should()
-                .Be(newFilterValue);
+                .Be(newFilterToAdd);
         }
 
         [Test]
