@@ -86,6 +86,7 @@
             {
                 AdminRoleFilterOptions.CentreAdministrator,
                 AdminRoleFilterOptions.Supervisor,
+                AdminRoleFilterOptions.NominatedSupervisor,
                 AdminRoleFilterOptions.Trainer,
                 AdminRoleFilterOptions.ContentCreatorLicense,
                 AdminRoleFilterOptions.CmsAdministrator,

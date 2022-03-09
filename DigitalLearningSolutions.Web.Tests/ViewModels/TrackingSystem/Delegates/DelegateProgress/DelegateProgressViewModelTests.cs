@@ -67,10 +67,10 @@
             // Then
             using (new AssertionScope())
             {
-                missingNamesViewModel.DelegateNameAndEmail.Should().Be("Osbourne (Prince@Darkness)");
+                missingNamesViewModel.DelegateName.Should().Be("Osbourne");
                 missingNamesViewModel.Supervisor.Should().Be("None");
                 missingNamesViewModel.EnrolledByFullName.Should().BeNull();
-                fullNamesViewModel.DelegateNameAndEmail.Should().Be("Ozzy Osbourne (Prince@Darkness)");
+                fullNamesViewModel.DelegateName.Should().Be("Ozzy Osbourne");
                 fullNamesViewModel.Supervisor.Should().Be("Tony Iommi");
                 fullNamesViewModel.EnrolledByFullName.Should().Be("Geezer Butler");
             }
@@ -98,7 +98,7 @@
             );
 
             // Then
-            viewModel.DelegateNameAndEmail.Should().Be("Bill Ward");
+            viewModel.DelegateName.Should().Be("Bill Ward");
         }
 
         [Test]

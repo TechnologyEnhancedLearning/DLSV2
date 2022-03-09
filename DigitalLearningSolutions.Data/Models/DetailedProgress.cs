@@ -6,7 +6,11 @@
 
     public class DetailedCourseProgress
     {
-        public DetailedCourseProgress(Progress progress, IEnumerable<DetailedSectionProgress> sections, DelegateCourseInfo delegateCourseInfo)
+        public DetailedCourseProgress(
+            Progress progress,
+            IEnumerable<DetailedSectionProgress> sections,
+            DelegateCourseInfo delegateCourseInfo
+        )
         {
             DiagnosticScore = progress.DiagnosticScore;
             ProgressId = progress.ProgressId;
@@ -17,6 +21,7 @@
             DelegateLastName = delegateCourseInfo.DelegateLastName;
             DelegateEmail = delegateCourseInfo.DelegateEmail;
             DelegateNumber = delegateCourseInfo.DelegateNumber;
+            ProfessionalRegistrationNumber = delegateCourseInfo.ProfessionalRegistrationNumber;
 
             LastUpdated = delegateCourseInfo.LastUpdated;
             Enrolled = delegateCourseInfo.Enrolled;
@@ -35,6 +40,7 @@
         public string DelegateLastName { get; set; }
         public string? DelegateEmail { get; set; }
         public string DelegateNumber { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
 
         public DateTime LastUpdated { get; set; }
         public DateTime Enrolled { get; set; }

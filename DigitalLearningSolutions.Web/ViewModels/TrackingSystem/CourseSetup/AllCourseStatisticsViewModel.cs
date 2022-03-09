@@ -5,12 +5,13 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using Microsoft.Extensions.Configuration;
 
     public class AllCourseStatisticsViewModel : BaseJavaScriptFilterableViewModel
     {
-        public AllCourseStatisticsViewModel(CentreCourseDetails details)
+        public AllCourseStatisticsViewModel(CentreCourseDetails details, IConfiguration config)
         {
-            Courses = details.Courses.Select(c => new SearchableCourseStatisticsViewModel(c));
+            Courses = details.Courses.Select(c => new SearchableCourseStatisticsViewModel(c, config));
 
             Filters = CourseStatisticsViewModelFilterOptions.GetFilterOptions(details.Categories, details.Topics)
                 .SelectAppliedFilterViewModels();

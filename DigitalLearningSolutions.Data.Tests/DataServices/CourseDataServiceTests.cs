@@ -58,7 +58,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             "",
             101,
             false,
-            "HG1"
+            "HG1",
+            null
         );
 
         private SqlConnection connection = null!;

@@ -18,6 +18,7 @@
         {
             AccessedVia = accessedVia;
             IsCourseActive = details.DelegateCourseInfo.IsCourseActive;
+            ProfessionalRegistrationNumber = details.DelegateCourseInfo.ProfessionalRegistrationNumber;
             Supervisor = details.DelegateCourseInfo.SupervisorAdminId != null
                 ? DisplayStringHelper.GetPotentiallyInactiveAdminName(
                     details.DelegateCourseInfo.SupervisorForename,
@@ -33,14 +34,11 @@
             );
             RemovedDate = details.DelegateCourseInfo.RemovedDate?.ToString(DateHelper.StandardDateFormat);
             DelegateId = details.DelegateCourseInfo.DelegateId;
-            var delegateFullName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+            DelegateName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
                 details.DelegateCourseInfo.DelegateFirstName,
                 details.DelegateCourseInfo.DelegateLastName
             );
-            DelegateNameAndEmail = DisplayStringHelper.GetNameWithEmailForDisplay(
-                delegateFullName,
-                details.DelegateCourseInfo.DelegateEmail
-            );
+            DelegateEmail = details.DelegateCourseInfo.DelegateEmail;
             AdminFields = details.CourseAdminFields.Select(
                     cp =>
                         new DelegateCourseAdminField(
@@ -55,10 +53,12 @@
 
         public DelegateProgressAccessRoute AccessedVia { get; set; }
         public bool IsCourseActive { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
         public string? RemovedDate { get; set; }
         public int EnrolmentMethodId { get; set; }
         public IEnumerable<DelegateCourseAdminField> AdminFields { get; set; }
-        public string DelegateNameAndEmail { get; set; }
+        public string DelegateName { get; set; }
+        public string? DelegateEmail { get; set; }
         public string? EnrolledByFullName { get; set; }
 
         public new string EnrolmentMethod

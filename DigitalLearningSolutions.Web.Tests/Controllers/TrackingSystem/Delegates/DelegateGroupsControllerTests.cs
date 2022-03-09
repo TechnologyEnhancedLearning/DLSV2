@@ -61,77 +61,77 @@
         }
 
         [Test]
-        public void Index_with_no_query_parameters_uses_cookie_value_for_filterBy()
+        public void Index_with_no_query_parameters_uses_cookie_value_for_existingFilterString()
         {
             // When
             var result = delegateGroupsController.Index();
 
             // Then
-            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
+            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().ExistingFilterString.Should()
                 .Be("LinkedToField|LinkedToField|0");
         }
 
         [Test]
-        public void Index_with_query_parameters_uses_query_parameter_value_for_filterBy()
+        public void Index_with_query_parameters_uses_query_parameter_value_for_existingFilterString()
         {
             // Given
-            const string filterBy = "LinkedToField|LinkedToField|4";
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+            const string existingFilterString = "LinkedToField|LinkedToField|4";
+            A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
 
             // When
-            var result = delegateGroupsController.Index(filterBy: filterBy);
+            var result = delegateGroupsController.Index(existingFilterString: existingFilterString);
 
             // Then
-            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
-                .Be(filterBy);
+            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().ExistingFilterString.Should()
+                .Be(existingFilterString);
         }
 
         [Test]
-        public void Index_with_CLEAR_filterBy_query_parameter_removes_cookie()
+        public void Index_with_CLEAR_existingFilterString_query_parameter_removes_cookie()
         {
             // Given
-            const string? filterBy = "CLEAR";
+            const string? existingFilterString = "CLEAR";
 
             // When
-            var result = delegateGroupsController.Index(filterBy: filterBy);
+            var result = delegateGroupsController.Index(existingFilterString: existingFilterString);
 
             // Then
             A.CallTo(() => httpResponse.Cookies.Delete("DelegateGroupsFilter")).MustHaveHappened();
-            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
+            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().ExistingFilterString.Should()
                 .BeNull();
         }
 
         [Test]
-        public void Index_with_null_filterBy_and_new_filter_query_parameter_add_new_cookie_value()
+        public void Index_with_null_existingFilterString_and_new_filter_query_parameter_add_new_cookie_value()
         {
             // Given
-            const string? filterBy = null;
+            const string? existingFilterString = null;
             const string? newFilterValue = "LinkedToField|LinkedToField|4";
 
             // When
-            var result = delegateGroupsController.Index(filterBy: filterBy, filterValue: newFilterValue);
+            var result = delegateGroupsController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
 
             // Then
             A.CallTo(() => httpResponse.Cookies.Append("DelegateGroupsFilter", newFilterValue, A<CookieOptions>._))
                 .MustHaveHappened();
-            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
+            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().ExistingFilterString.Should()
                 .Be(newFilterValue);
         }
 
         [Test]
-        public void Index_with_CLEAR_filterBy_and_new_filter_value_query_parameter_sets_cookie()
+        public void Index_with_CLEAR_existingFilterString_and_new_filter_value_query_parameter_sets_cookie()
         {
             // Given
-            const string? filterBy = "CLEAR";
+            const string? existingFilterString = "CLEAR";
             const string? newFilterValue = "LinkedToField|LinkedToField|4";
 
             // When
-            var result = delegateGroupsController.Index(filterBy: filterBy, filterValue: newFilterValue);
+            var result = delegateGroupsController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
 
             // Then
             A.CallTo(() => httpResponse.Cookies.Append("DelegateGroupsFilter", newFilterValue, A<CookieOptions>._))
                 .MustHaveHappened();
-            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
+            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().ExistingFilterString.Should()
                 .Be(newFilterValue);
         }
 

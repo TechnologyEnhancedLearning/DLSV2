@@ -434,7 +434,7 @@
                 first.IsAssessed.Should().BeTrue();
                 first.Attempts.Should().Be(0);
                 first.Outcome.Should().Be(0);
-                first.Passed.Should().BeTrue();
+                first.Passed.Should().BeFalse();
 
                 first.Tutorials.Should().BeNull();
             }

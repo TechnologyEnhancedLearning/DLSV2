@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Services;
@@ -44,8 +44,8 @@
                 featureManager
             );
 
-            A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("https://new-tracking-system.com");
-            A.CallTo(() => configuration[ConfigHelper.CurrentSystemBaseUrlName])
+            A.CallTo(() => configuration["AppRootPath"]).Returns("https://new-tracking-system.com");
+            A.CallTo(() => configuration["CurrentSystemBaseUrl"])
                 .Returns("https://old-tracking-system.com");
         }
 
@@ -64,7 +64,7 @@
         {
             // Given
             A.CallTo(() => featureManager.IsEnabledAsync(A<string>._)).Returns(false);
-            A.CallTo(() => configuration[ConfigHelper.CurrentSystemBaseUrlName]).Returns("");
+            A.CallTo(() => configuration["CurrentSystemBaseUrl"]).Returns("");
 
             // Then
             Assert.ThrowsAsync<ConfigValueMissingException>(async () => await notificationService.SendUnlockRequest(1));

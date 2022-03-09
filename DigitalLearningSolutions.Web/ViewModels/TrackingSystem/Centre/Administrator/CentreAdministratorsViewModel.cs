@@ -13,7 +13,7 @@
             IEnumerable<AdminUser> adminUsers,
             IEnumerable<string> categories,
             string? searchString,
-            string? filterBy,
+            string? existingFilterString,
             int page,
             AdminUser loggedInAdminUser,
             int? itemsPerPage
@@ -21,7 +21,7 @@
             searchString,
             page,
             true,
-            filterBy: filterBy,
+            existingFilterString: existingFilterString,
             itemsPerPage: itemsPerPage ?? DefaultItemsPerPage,
             searchLabel: "Search administrators"
         )
@@ -33,7 +33,7 @@
                 GenericSortingHelper.Ascending
             );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
-            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterBy).ToList();
+            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), existingFilterString).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);

@@ -16,39 +16,39 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
     public class EmailServiceTests
     {
-        private IConfigService configService;
-        private IEmailDataService emailDataService;
-        private EmailService emailService;
-        private ISmtpClient smtpClient;
+        private IConfigDataService configDataService = null!;
+        private IEmailDataService emailDataService = null!;
+        private EmailService emailService = null!;
+        private ISmtpClient smtpClient = null!;
 
         [SetUp]
         public void Setup()
         {
             emailDataService = A.Fake<IEmailDataService>();
-            configService = A.Fake<IConfigService>();
+            configDataService = A.Fake<IConfigDataService>();
             var smtpClientFactory = A.Fake<ISmtpClientFactory>();
             smtpClient = A.Fake<ISmtpClient>();
             A.CallTo(() => smtpClientFactory.GetSmtpClient()).Returns(smtpClient);
 
-            A.CallTo(() => configService.GetConfigValue(ConfigService.MailPort)).Returns("25");
-            A.CallTo(() => configService.GetConfigValue(ConfigService.MailUsername)).Returns("username");
-            A.CallTo(() => configService.GetConfigValue(ConfigService.MailPassword)).Returns("password");
-            A.CallTo(() => configService.GetConfigValue(ConfigService.MailServer)).Returns("smtp.example.com");
-            A.CallTo(() => configService.GetConfigValue(ConfigService.MailFromAddress)).Returns("test@example.com");
+            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailPort)).Returns("25");
+            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailUsername)).Returns("username");
+            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailPassword)).Returns("password");
+            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailServer)).Returns("smtp.example.com");
+            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailFromAddress)).Returns("test@example.com");
 
             var logger = A.Fake<ILogger<EmailService>>();
-            emailService = new EmailService(emailDataService, configService, smtpClientFactory, logger);
+            emailService = new EmailService(emailDataService, configDataService, smtpClientFactory, logger);
         }
 
-        [TestCase(ConfigService.MailPort)]
-        [TestCase(ConfigService.MailUsername)]
-        [TestCase(ConfigService.MailPassword)]
-        [TestCase(ConfigService.MailServer)]
-        [TestCase(ConfigService.MailFromAddress)]
+        [TestCase(ConfigDataService.MailPort)]
+        [TestCase(ConfigDataService.MailUsername)]
+        [TestCase(ConfigDataService.MailPassword)]
+        [TestCase(ConfigDataService.MailServer)]
+        [TestCase(ConfigDataService.MailFromAddress)]
         public void Trying_to_send_mail_with_null_config_values_should_throw_an_exception(string configKey)
         {
             // Given
-            A.CallTo(() => configService.GetConfigValue(configKey)).Returns(null);
+            A.CallTo(() => configDataService.GetConfigValue(configKey)).Returns(null);
 
             // Then
             Assert.Throws<ConfigValueMissingException>(() => emailService.SendEmail(EmailTestHelper.GetDefaultEmail()));
@@ -183,7 +183,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void The_recipient_email_addresses_are_correct()
         {
             // When
-            emailService.SendEmail(EmailTestHelper.GetDefaultEmail(new string[2] { "recipient1@example.com", "recipient2@example.com" }));
+            emailService.SendEmail(EmailTestHelper.GetDefaultEmail(new [] { "recipient1@example.com", "recipient2@example.com" }));
 
             // Then
             A.CallTo(() =>
@@ -221,7 +221,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void The_cc_email_addresses_are_correct()
         {
             // When
-            emailService.SendEmail(EmailTestHelper.GetDefaultEmail(cc: new string[2] { "cc1@example.com", "cc2@example.com" }));
+            emailService.SendEmail(EmailTestHelper.GetDefaultEmail(cc: new[] { "cc1@example.com", "cc2@example.com" }));
 
             // Then
             A.CallTo(() =>
@@ -259,7 +259,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void The_bcc_email_addresses_are_correct()
         {
             // When
-            emailService.SendEmail(EmailTestHelper.GetDefaultEmail(bcc: new string[2] { "bcc1@example.com", "bcc2@example.com" }));
+            emailService.SendEmail(EmailTestHelper.GetDefaultEmail(bcc: new [] { "bcc1@example.com", "bcc2@example.com" }));
 
             // Then
             A.CallTo(() =>

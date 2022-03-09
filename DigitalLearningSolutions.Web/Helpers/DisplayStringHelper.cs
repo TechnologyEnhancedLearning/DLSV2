@@ -73,5 +73,12 @@
 
             return Regex.Replace(input, "[^ a-zA-Z0-9]", replacement);
         }
+
+        public static string GetPrnDisplayString(bool hasBeenPromptedForPrn, string? professionalRegistrationNumber)
+        {
+            return hasBeenPromptedForPrn
+                ? professionalRegistrationNumber ?? "Not professionally registered"
+                : "Not yet provided";
+        }
     }
 }

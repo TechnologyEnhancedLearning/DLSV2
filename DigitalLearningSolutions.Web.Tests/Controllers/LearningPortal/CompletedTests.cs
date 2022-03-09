@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
@@ -23,7 +23,7 @@
         )
         {
             // Given
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
             var completedCourses = new[]
             {
                 CompletedCourseHelper.CreateDefaultCompletedCourse(),
@@ -61,7 +61,7 @@
         public async Task Completed_action_should_have_banner_text()
         {
             // Given
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
             const string bannerText = "Banner text";
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
@@ -77,7 +77,7 @@
         {
             // Given
             GivenCompletedActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("false");
 
             // When
             await controller.Completed();
@@ -91,7 +91,7 @@
         {
             // Given
             GivenCompletedActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
 
             // When
             await controller.Completed();
@@ -106,7 +106,7 @@
         {
             // Given
             GivenCompletedActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("false");
 
             // When
             await controller.AllCompletedItems();
@@ -120,7 +120,7 @@
         {
             // Given
             GivenCompletedActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
 
             // When
             await controller.AllCompletedItems();

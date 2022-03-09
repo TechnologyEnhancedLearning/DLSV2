@@ -4,8 +4,8 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using MimeKit;
-    using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
 
     public interface IFrameworkNotificationService
@@ -29,7 +29,7 @@
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
-        private readonly IConfigService configService;
+        private readonly IConfigDataService configDataService;
         private readonly IEmailService emailService;
         private readonly IFrameworkService frameworkService;
         private readonly IRoleProfileService roleProfileService;
@@ -37,7 +37,7 @@
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
         public FrameworkNotificationService(
            IFrameworkService frameworkService,
-           IConfigService configService,
+           IConfigDataService configDataService,
            IEmailService emailService,
            IRoleProfileService roleProfileService,
            ISupervisorService supervisorService,
@@ -45,7 +45,7 @@
        )
         {
             this.frameworkService = frameworkService;
-            this.configService = configService;
+            this.configDataService = configDataService;
             this.emailService = emailService;
             this.roleProfileService = roleProfileService;
             this.supervisorService = supervisorService;
@@ -159,8 +159,8 @@
         }
         public UriBuilder GetDLSUriBuilder()
         {
-            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.AppBaseUrl) ??
-                                       throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
+            var trackingSystemBaseUrl = configDataService.GetConfigValue(ConfigDataService.AppBaseUrl) ??
+                                       throw new ConfigValueMissingException(configDataService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
             ;
             return new UriBuilder(trackingSystemBaseUrl);
         }
@@ -275,7 +275,7 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
             var competency = selfAssessmentDataService.GetCompetencyByCandidateAssessmentResultId(resultId, candidateAssessmentId, adminId);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
             var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
-            var commentString = supervisorDelegate.SupervisorName + ((bool)competency.AssessmentQuestions.First().SignedOff ? " verified your self assessment " : " did not verify your self assessment ") + (competency.AssessmentQuestions.First().SupervisorComments != null ? "and left the following review comment: " + competency.AssessmentQuestions.First().SupervisorComments : "but did not leave a review comment.");
+            var commentString = supervisorDelegate.SupervisorName + ((bool)competency.AssessmentQuestions.First().SignedOff ? " confirmed your self assessment " : " did not confirm your self assessment ") + (competency.AssessmentQuestions.First().SupervisorComments != null ? "and left the following review comment: " + competency.AssessmentQuestions.First().SupervisorComments : "but did not leave a review comment.");
             string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Reviewed {competency.Vocabulary} - Digital Learning Solutions";
             var builder = new BodyBuilder();
             builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
@@ -324,12 +324,12 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
             var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
-            string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Verified {countResults} Results - Digital Learning Solutions";
+            string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Confirmed {countResults} Results - Digital Learning Solutions";
             var builder = new BodyBuilder();
             builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
-                               {supervisorDelegate.SupervisorName} has verified {countResults} of your self assessment results against the {delegateSelfAssessment.RoleName} profile assessment in the NHS Health Education England, Digital Learning Solutions platform.
+                               {supervisorDelegate.SupervisorName} has confirmed {countResults} of your self assessment results against the {delegateSelfAssessment.RoleName} profile assessment in the NHS Health Education England, Digital Learning Solutions platform.
                                To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
-            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p> {supervisorDelegate.SupervisorName} has signed-off {countResults} of your self assessment results against the {delegateSelfAssessment.RoleName} profile assessment in the NHS Health Education England, Digital Learning Solutions platform.</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p> {supervisorDelegate.SupervisorName} has confirmed {countResults} of your self assessment results against the {delegateSelfAssessment.RoleName} profile assessment in the NHS Health Education England, Digital Learning Solutions platform.</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
 

@@ -97,20 +97,21 @@
     </dd>
 
   </div>
-  @if (Model.CandidateAssessmentSupervisorVerificationSummaries.Any()) {
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Response verifiers
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @foreach (var candidateAssessmentSupervisorVerificationSummary in Model.CandidateAssessmentSupervisorVerificationSummaries) {
-          <span>@DisplayStringHelper.GetPotentiallyInactiveAdminName(
-                    candidateAssessmentSupervisorVerificationSummary.Forename,
-                  candidateAssessmentSupervisorVerificationSummary.Surname,
-                  candidateAssessmentSupervisorVerificationSummary.AdminActive) (@candidateAssessmentSupervisorVerificationSummary.Email) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span>
-          <br />
-        }
-      </dd>
+  @if (Model.CandidateAssessmentSupervisorVerificationSummaries.Any())
+  {
+  <div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Response confirmers
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @foreach (var candidateAssessmentSupervisorVerificationSummary in Model.CandidateAssessmentSupervisorVerificationSummaries)
+      {
+    <span>@DisplayStringHelper.GetPotentiallyInactiveAdminName(
+            candidateAssessmentSupervisorVerificationSummary.Forename,
+            candidateAssessmentSupervisorVerificationSummary.Surname,
+            candidateAssessmentSupervisorVerificationSummary.AdminActive) (@candidateAssessmentSupervisorVerificationSummary.Email) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span><br />
+      }
+  </dd>
 
     </div>
   }

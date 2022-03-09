@@ -6,7 +6,6 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Services;
@@ -16,6 +15,7 @@
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
+    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
 
     public class ActionPlanServiceTests
     {
@@ -371,7 +371,7 @@
         public void VerifyDelegateCanAccessActionPlanResource_returns_null_if_signposting_is_deactivated()
         {
             // Given
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("false");
 
             // When
             var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
@@ -392,7 +392,7 @@
             VerifyDelegateCanAccessActionPlanResource_returns_null_if_LearningLogItem_with_given_id_does_not_exist()
         {
             // Given
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId)).Returns(null);
 
             // When
@@ -414,7 +414,7 @@
         public void VerifyDelegateCanAccessActionPlanResource_returns_null_if_LearningLogItem_is_removed()
         {
             // Given
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
             var learningLogItem = Builder<LearningLogItem>.CreateNew()
                 .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
                 .And(i => i.ArchivedDate = DateTime.UtcNow)
@@ -441,7 +441,7 @@
         public void VerifyDelegateCanAccessActionPlanResource_returns_null_if_LearningLogItem_has_no_linked_resource()
         {
             // Given
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
             var learningLogItem = Builder<LearningLogItem>.CreateNew()
                 .With(i => i.LearningHubResourceReferenceId = null)
                 .And(i => i.ArchivedDate = null)
@@ -469,7 +469,7 @@
             VerifyDelegateCanAccessActionPlanResource_returns_false_if_LearningLogItem_is_for_different_delegate()
         {
             // Given
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
             var learningLogItem = Builder<LearningLogItem>.CreateNew()
                 .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
                 .And(i => i.ArchivedDate = null)
@@ -496,7 +496,7 @@
         public void VerifyDelegateCanAccessActionPlanResource_returns_true_if_all_conditions_met()
         {
             // Given
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
             var learningLogItem = Builder<LearningLogItem>.CreateNew()
                 .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
                 .And(i => i.ArchivedDate = null)

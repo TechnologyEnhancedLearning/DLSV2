@@ -14,10 +14,10 @@
             CourseDelegatesData courseDelegatesData,
             string sortBy,
             string sortDirection,
-            string? filterBy,
+            string? existingFilterString,
             int page,
             Dictionary<string, string> routeData
-        ) : base(null, page, true, sortBy, sortDirection, filterBy, routeData: routeData)
+        ) : base(null, page, true, sortBy, sortDirection, existingFilterString, routeData: routeData)
         {
             Active = courseDelegatesData.Courses.Single(c => c.CustomisationId == courseDelegatesData.CustomisationId)
                 .Active;

@@ -61,8 +61,8 @@
                 courseCompletion.TutorialsCompletionThreshold
             );
 
-            DownloadSummaryUrl = config.GetDownloadSummaryUrl(progressId);
-            FinaliseUrl = config.GetEvaluateUrl(progressId, false);
+            DownloadSummaryUrl = OldSystemEndpointHelper.GetDownloadSummaryUrl(config, progressId);
+            FinaliseUrl = OldSystemEndpointHelper.GetEvaluateUrl(config, progressId);
         }
 
         private string? GetEvaluationOrCertificateText(DateTime? completed, DateTime? evaluated, bool isAssessed)
