@@ -26,8 +26,16 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateAndCourseNames.cshtml"
-             model="(Model.DelegateNameAndEmail, Model.CourseName)" />
+    <partial name="_DelegateDetails" model="Model" />
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
+        Course
+      </div>
+      <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold">
+        @Model.CourseName
+      </div>
+    </div>
 
     @if (!Model.IsCourseActive) {
       <partial name="~/Views/TrackingSystem/Shared/_InactiveCourseInset.cshtml" />
