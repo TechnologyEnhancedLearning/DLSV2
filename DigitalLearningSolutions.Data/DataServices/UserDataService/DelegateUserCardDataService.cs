@@ -29,6 +29,7 @@
                                                         cd.SelfReg,
                                                         cd.ExternalReg,
                                                         cd.Active,
+                                                        cd.HasBeenPromptedForPrn,
                                                         cd.ProfessionalRegistrationNumber,
                                                         (SELECT AdminID
                                                             FROM AdminUsers au
