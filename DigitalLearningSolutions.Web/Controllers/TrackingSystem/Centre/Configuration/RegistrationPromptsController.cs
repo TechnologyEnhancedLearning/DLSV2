@@ -67,7 +67,8 @@
         {
             var centreId = User.GetCentreId();
 
-            var customPrompt = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId).CustomPrompts
+            var customPrompt = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId)
+                .CustomPrompts
                 .Single(cp => cp.RegistrationField.Id == promptNumber);
 
             var data = TempData.Get<EditRegistrationPromptData>();
@@ -166,9 +167,19 @@
                 return View(model);
             }
 
+            PromptAlreadyExistsAtUserCentre(model.CustomPromptId);
+
             UpdateTempDataWithSelectPromptModelValues(model);
 
             return RedirectToAction("AddRegistrationPromptConfigureAnswers");
+        }
+
+        private bool PromptAlreadyExistsAtUserCentre(int? promptId)
+        {
+            var existingPrompts =
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(User.GetCentreId());
+
+            return promptId.HasValue && existingPrompts.CustomPrompts.Select(p => p.PromptId).Contains(promptId.Value);
         }
 
         [HttpGet]
@@ -259,11 +270,11 @@
             var data = TempData.Peek<AddRegistrationPromptData>()!;
 
             if (centreRegistrationPromptsService.AddCentreRegistrationPrompt(
-                User.GetCentreId(),
-                data.SelectPromptViewModel.CustomPromptId!.Value,
-                data.SelectPromptViewModel.Mandatory,
-                data.ConfigureAnswersViewModel.OptionsString
-            ))
+                    User.GetCentreId(),
+                    data.SelectPromptViewModel.CustomPromptId!.Value,
+                    data.SelectPromptViewModel.Mandatory,
+                    data.ConfigureAnswersViewModel.OptionsString
+                ))
             {
                 TempData.Clear();
                 return RedirectToAction("Index");
@@ -285,7 +296,10 @@
             }
 
             var promptName =
-                centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(User.GetCentreId(), promptNumber);
+                centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
+                    User.GetCentreId(),
+                    promptNumber
+                );
 
             var model = new RemoveRegistrationPromptViewModel(promptName, delegateWithAnswerCount);
 
