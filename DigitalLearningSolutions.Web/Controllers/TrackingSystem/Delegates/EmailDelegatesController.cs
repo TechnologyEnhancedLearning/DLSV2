@@ -55,12 +55,14 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         public IActionResult Index(
             string? existingFilterString = null,
             string? newFilterToAdd = null,
+            bool clearFilters = false,
             bool selectAll = false
         )
         {
             var newFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
+                clearFilters,
                 Request,
                 EmailDelegateFilterCookieName
             );
@@ -96,7 +98,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 selectAll
             );
 
-            Response.UpdateOrDeleteFilterCookie(EmailDelegateFilterCookieName, result.FilterString);
+            Response.UpdateFilterCookie(EmailDelegateFilterCookieName, result.FilterString);
 
             return View(model);
         }
@@ -105,7 +107,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         public IActionResult Index(
             EmailDelegatesFormData formData,
             string? existingFilterString = null,
-            string? newFilterToAdd = null
+            string? newFilterToAdd = null,
+            bool clearFilters = false
         )
         {
             var delegateUsers = GetDelegateUserCards();
@@ -115,6 +118,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 var newFilterString = FilteringHelper.GetFilterString(
                     existingFilterString,
                     newFilterToAdd,
+                    clearFilters,
                     Request,
                     EmailDelegateFilterCookieName
                 );

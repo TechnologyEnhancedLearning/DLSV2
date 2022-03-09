@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -58,15 +59,15 @@
             },
         };
 
-        private PromptsService promptsService = null!;
-
         private GroupDelegatesController groupDelegatesController = null!;
         private IGroupsService groupsService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IJobGroupsService jobGroupsService = null!;
-        private IUserService userService = null!;
+
+        private PromptsService promptsService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -161,22 +162,28 @@
         }
 
         [Test]
-        public void SelectDelegate_with_CLEAR_existingFilterString_query_parameter_removes_cookie()
+        public void SelectDelegate_with_clearFilters_query_parameter_true_sets_cookie_to_CLEAR()
         {
             // Given
-            const string existingFilterString = "CLEAR";
             SearchSortFilterAndPaginateTestHelper
                 .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
                     searchSortFilterPaginateService
                 );
 
             // When
-            var result = groupDelegatesController.SelectDelegate(1, existingFilterString: existingFilterString);
+            var result = groupDelegatesController.SelectDelegate(1, clearFilters: true);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => httpResponse.Cookies.Delete(AddGroupDelegateFilterCookieName)).MustHaveHappened();
+                A.CallTo(
+                        () => httpResponse.Cookies.Append(
+                            AddGroupDelegateFilterCookieName,
+                            FilteringHelper.EmptyFiltersCookieValue,
+                            A<CookieOptions>._
+                        )
+                    )
+                    .MustHaveHappened();
                 result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().ExistingFilterString.Should()
                     .BeNull();
             }
@@ -194,37 +201,11 @@
                 );
 
             // When
-            var result = groupDelegatesController.SelectDelegate(1, existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(
-                        () => httpResponse.Cookies.Append(
-                            AddGroupDelegateFilterCookieName,
-                            newFilterToAdd,
-                            A<CookieOptions>._
-                        )
-                    )
-                    .MustHaveHappened();
-                result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().ExistingFilterString.Should()
-                    .Be(newFilterToAdd);
-            }
-        }
-
-        [Test]
-        public void SelectDelegate_with_CLEAR_existingFilterString_and_new_filter_query_parameter_sets_new_cookie_value()
-        {
-            // Given
-            const string existingFilterString = "CLEAR";
-            const string newFilterToAdd = "PasswordStatus|IsPasswordSet|true";
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = groupDelegatesController.SelectDelegate(1, existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
+            var result = groupDelegatesController.SelectDelegate(
+                1,
+                existingFilterString: existingFilterString,
+                newFilterToAdd: newFilterToAdd
+            );
 
             // Then
             using (new AssertionScope())
@@ -287,7 +268,7 @@
             result.Should().BeRedirectToActionResult()
                 .WithActionName(nameof(GroupDelegatesController.ConfirmDelegateAdded));
         }
-        
+
         [Test]
         public void RemoveGroupDelegate_should_call_remove_progress_but_keep_started_enrolments_if_unchecked()
         {

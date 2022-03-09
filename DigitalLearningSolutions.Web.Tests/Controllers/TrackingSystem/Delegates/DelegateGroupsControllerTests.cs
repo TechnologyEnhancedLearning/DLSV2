@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Services;
@@ -24,7 +25,8 @@
         private static readonly CentreRegistrationPrompt ExpectedPrompt1 =
             PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: null, mandatory: true);
 
-        private static readonly List<CentreRegistrationPrompt> CustomPrompts = new List<CentreRegistrationPrompt> { ExpectedPrompt1 };
+        private static readonly List<CentreRegistrationPrompt> CustomPrompts = new List<CentreRegistrationPrompt>
+            { ExpectedPrompt1 };
 
         private readonly CentreRegistrationPrompts prompts =
             PromptsTestHelper.GetDefaultCentreRegistrationPrompts(CustomPrompts);
@@ -100,20 +102,26 @@
         }
 
         [Test]
-        public void Index_with_CLEAR_existingFilterString_query_parameter_removes_cookie()
+        public void Index_with_clearFilters_query_parameter_true_sets_cookie_to_CLEAR()
         {
             // Given
-            const string? existingFilterString = "CLEAR";
             SearchSortFilterAndPaginateTestHelper
                 .GivenACallToSearchSortFilterPaginateServiceReturnsResult<Group>(
                     searchSortFilterPaginateService
                 );
 
             // When
-            var result = delegateGroupsController.Index(existingFilterString: existingFilterString);
+            var result = delegateGroupsController.Index(clearFilters: true);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Delete("DelegateGroupsFilter")).MustHaveHappened();
+            A.CallTo(
+                    () => httpResponse.Cookies.Append(
+                        "DelegateGroupsFilter",
+                        FilteringHelper.EmptyFiltersCookieValue,
+                        A<CookieOptions>._
+                    )
+                )
+                .MustHaveHappened();
             result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().ExistingFilterString.Should()
                 .BeNull();
         }
@@ -130,28 +138,10 @@
                 );
 
             // When
-            var result = delegateGroupsController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
-
-            // Then
-            A.CallTo(() => httpResponse.Cookies.Append("DelegateGroupsFilter", newFilterValue, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().ExistingFilterString.Should()
-                .Be(newFilterValue);
-        }
-
-        [Test]
-        public void Index_with_CLEAR_existingFilterString_and_new_filter_value_query_parameter_sets_cookie()
-        {
-            // Given
-            const string? existingFilterString = "CLEAR";
-            const string? newFilterValue = "LinkedToField|LinkedToField|4";
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<Group>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = delegateGroupsController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
+            var result = delegateGroupsController.Index(
+                existingFilterString: existingFilterString,
+                newFilterToAdd: newFilterValue
+            );
 
             // Then
             A.CallTo(() => httpResponse.Cookies.Append("DelegateGroupsFilter", newFilterValue, A<CookieOptions>._))
@@ -380,7 +370,11 @@
             var customPrompt2 = new CentreRegistrationPrompt(2, customPromptName2, "Test", false);
             var customPrompts = new List<CentreRegistrationPrompt> { customPrompt1, customPrompt2 };
 
-            A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId))
+            A.CallTo(
+                    () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
+                        centreId
+                    )
+                )
                 .Returns(customPrompts);
 
             // When
@@ -390,7 +384,9 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                        () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(A<int>._)
+                        () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
+                            A<int>._
+                        )
                     )
                     .MustHaveHappenedOnceExactly();
                 result.Should().BeViewResult().ModelAs<GenerateGroupsViewModel>().RegistrationFieldOptions.Should()
@@ -415,7 +411,11 @@
             var customPrompt2 = new CentreRegistrationPrompt(2, customPromptName, "Test", false);
             var customPrompts = new List<CentreRegistrationPrompt> { customPrompt1, customPrompt2 };
 
-            A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId))
+            A.CallTo(
+                    () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
+                        centreId
+                    )
+                )
                 .Returns(customPrompts);
 
             // When
@@ -425,7 +425,9 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                        () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(A<int>._)
+                        () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
+                            A<int>._
+                        )
                     )
                     .MustHaveHappenedOnceExactly();
                 result.Should().BeViewResult().ModelAs<GenerateGroupsViewModel>().RegistrationFieldOptions.Should()
@@ -457,7 +459,11 @@
                 false
             );
 
-            A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(A<int>._))
+            A.CallTo(
+                    () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
+                        A<int>._
+                    )
+                )
                 .Returns(customPrompts);
 
             A.CallTo(() => groupsService.GenerateGroupsFromRegistrationField(A<GroupGenerationDetails>._))
@@ -531,7 +537,11 @@
                 false
             );
 
-            A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(A<int>._))
+            A.CallTo(
+                    () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
+                        A<int>._
+                    )
+                )
                 .Returns(customPrompts);
 
             A.CallTo(() => groupsService.GenerateGroupsFromRegistrationField(A<GroupGenerationDetails>._))

@@ -109,12 +109,14 @@
             string? searchString = null,
             string? existingFilterString = null,
             string? newFilterToAdd = null,
+            bool clearFilters = false,
             int page = 1
         )
         {
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
+                clearFilters,
                 Request,
                 GroupAddCourseFilterCookieName
             );
@@ -156,7 +158,7 @@
                 groupName!
             );
 
-            Response.UpdateOrDeleteFilterCookie(GroupAddCourseFilterCookieName, result.FilterString);
+            Response.UpdateFilterCookie(GroupAddCourseFilterCookieName, result.FilterString);
 
             return View(model);
         }

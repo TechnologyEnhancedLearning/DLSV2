@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -108,18 +109,22 @@
         }
 
         [Test]
-        public void Index_with_CLEAR_existingFilterString_query_parameter_removes_cookie()
+        public void Index_with_clearFilters_query_parameter_true_sets_cookie_to_CLEAR()
         {
-            // Given
-            const string existingFilterString = "CLEAR";
-
             // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString);
+            var result = controllerWithCookies.Index(clearFilters: true);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => httpResponse.Cookies.Delete("DelegateCoursesFilter")).MustHaveHappened();
+                A.CallTo(
+                        () => httpResponse.Cookies.Append(
+                            "DelegateCoursesFilter",
+                            FilteringHelper.EmptyFiltersCookieValue,
+                            A<CookieOptions>._
+                        )
+                    )
+                    .MustHaveHappened();
                 result.As<ViewResult>().Model.As<DelegateCoursesViewModel>().ExistingFilterString.Should()
                     .BeNull();
             }
@@ -135,27 +140,10 @@
             A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
 
             // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => httpResponse.Cookies.Append("DelegateCoursesFilter", newFilterValue, A<CookieOptions>._))
-                    .MustHaveHappened();
-                result.As<ViewResult>().Model.As<DelegateCoursesViewModel>().ExistingFilterString.Should()
-                    .Be(newFilterValue);
-            }
-        }
-
-        [Test]
-        public void Index_with_CLEAR_existingFilterString_and_new_filter_query_parameter_sets_new_cookie_value()
-        {
-            // Given
-            const string existingFilterString = "CLEAR";
-            const string newFilterValue = "Status|HideInLearnerPortal|true";
-
-            // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
+            var result = controllerWithCookies.Index(
+                existingFilterString: existingFilterString,
+                newFilterToAdd: newFilterValue
+            );
 
             // Then
             using (new AssertionScope())

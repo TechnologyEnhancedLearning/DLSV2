@@ -74,12 +74,14 @@
             string? searchString = null,
             string? existingFilterString = null,
             string? newFilterToAdd = null,
+            bool clearFilters = false,
             int page = 1
         )
         {
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
+                clearFilters,
                 Request,
                 AddGroupDelegateCookieName
             );
@@ -121,7 +123,7 @@
                 groupName!
             );
 
-            Response.UpdateOrDeleteFilterCookie(AddGroupDelegateCookieName, result.FilterString);
+            Response.UpdateFilterCookie(AddGroupDelegateCookieName, result.FilterString);
             return View(model);
         }
 

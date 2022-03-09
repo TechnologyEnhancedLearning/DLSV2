@@ -61,6 +61,7 @@
             string sortDirection = GenericSortingHelper.Ascending,
             string? existingFilterString = null,
             string? newFilterToAdd = null,
+            bool clearFilters = false,
             int page = 1,
             int? itemsPerPage = null
         )
@@ -69,6 +70,7 @@
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
+                clearFilters,
                 Request,
                 CourseFilterCookieName,
                 CourseStatusFilterOptions.IsActive.FilterValue
@@ -104,7 +106,7 @@
                 config
             );
 
-            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, result.FilterString);
+            Response.UpdateFilterCookie(CourseFilterCookieName, result.FilterString);
 
             return View(model);
         }

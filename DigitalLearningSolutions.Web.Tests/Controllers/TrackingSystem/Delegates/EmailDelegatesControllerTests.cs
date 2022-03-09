@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -17,15 +18,15 @@
 
     public class EmailDelegatesControllerTests
     {
-        private PromptsService promptsHelper = null!;
+        private IConfiguration config = null!;
         private EmailDelegatesController emailDelegatesController = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IPasswordResetService passwordResetService = null!;
-        private IUserService userService = null!;
+        private PromptsService promptsHelper = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
-        private IConfiguration config = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -91,16 +92,20 @@
         }
 
         [Test]
-        public void Index_with_CLEAR_existingFilterString_query_parameter_removes_cookie()
+        public void Index_with_clearFilters_query_parameter_true_sets_cookie_to_CLEAR()
         {
-            // Given
-            const string existingFilterString = "CLEAR";
-
             // When
-            var result = emailDelegatesController.Index(existingFilterString);
+            var result = emailDelegatesController.Index(clearFilters: true);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Delete("EmailDelegateFilter")).MustHaveHappened();
+            A.CallTo(
+                    () => httpResponse.Cookies.Append(
+                        "EmailDelegateFilter",
+                        FilteringHelper.EmptyFiltersCookieValue,
+                        A<CookieOptions>._
+                    )
+                )
+                .MustHaveHappened();
             result.As<ViewResult>().Model.As<EmailDelegatesViewModel>().ExistingFilterString.Should()
                 .BeNull();
         }
@@ -110,23 +115,6 @@
         {
             // Given
             const string? existingFilterString = null;
-            const string newFilterValue = "JobGroupId|JobGroupId|2";
-
-            // When
-            var result = emailDelegatesController.Index(existingFilterString, newFilterValue);
-
-            // Then
-            A.CallTo(() => httpResponse.Cookies.Append("EmailDelegateFilter", newFilterValue, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<EmailDelegatesViewModel>().ExistingFilterString.Should()
-                .Be(newFilterValue);
-        }
-
-        [Test]
-        public void Index_with_CLEAR_existingFilterString_and_new_filter_query_parameter_sets_new_cookie_value()
-        {
-            // Given
-            const string existingFilterString = "CLEAR";
             const string newFilterValue = "JobGroupId|JobGroupId|2";
 
             // When

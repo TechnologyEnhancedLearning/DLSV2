@@ -48,6 +48,7 @@
             string sortDirection = GenericSortingHelper.Ascending,
             string? existingFilterString = null,
             string? newFilterToAdd = null,
+            bool clearFilters = false,
             int page = 1
         )
         {
@@ -55,6 +56,7 @@
             var newFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
+                clearFilters,
                 Request,
                 CourseDelegatesFilterCookieName,
                 CourseDelegateAccountStatusFilterOptions.Active.FilterValue
@@ -98,7 +100,7 @@
                     "customisationId"
                 );
 
-                Response.UpdateOrDeleteFilterCookie(CourseDelegatesFilterCookieName, result.FilterString);
+                Response.UpdateFilterCookie(CourseDelegatesFilterCookieName, result.FilterString);
                 return View(model);
             }
             catch (CourseAccessDeniedException)

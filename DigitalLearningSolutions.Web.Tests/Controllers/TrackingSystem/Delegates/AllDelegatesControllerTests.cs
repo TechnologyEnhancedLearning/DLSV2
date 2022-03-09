@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -18,13 +19,13 @@
     public class AllDelegatesControllerTests
     {
         private AllDelegatesController allDelegatesController = null!;
-        private PromptsService promptsHelper = null!;
 
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
-        private IUserDataService userDataService = null!;
+        private PromptsService promptsHelper = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -89,20 +90,26 @@
         }
 
         [Test]
-        public void Index_with_CLEAR_existingFilterString_query_parameter_removes_cookie()
+        public void Index_with_clearFilters_query_parameter_true_sets_cookie_to_CLEAR()
         {
             // Given
-            const string existingFilterString = "CLEAR";
             SearchSortFilterAndPaginateTestHelper
                 .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
                     searchSortFilterPaginateService
                 );
 
             // When
-            var result = allDelegatesController.Index(existingFilterString: existingFilterString);
+            var result = allDelegatesController.Index(clearFilters: true);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Delete("DelegateFilter")).MustHaveHappened();
+            A.CallTo(
+                    () => httpResponse.Cookies.Append(
+                        "DelegateFilter",
+                        FilteringHelper.EmptyFiltersCookieValue,
+                        A<CookieOptions>._
+                    )
+                )
+                .MustHaveHappened();
             result.As<ViewResult>().Model.As<AllDelegatesViewModel>().ExistingFilterString.Should()
                 .BeNull();
         }
@@ -119,28 +126,10 @@
                 );
 
             // When
-            var result = allDelegatesController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
-
-            // Then
-            A.CallTo(() => httpResponse.Cookies.Append("DelegateFilter", newFilterValue, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<AllDelegatesViewModel>().ExistingFilterString.Should()
-                .Be(newFilterValue);
-        }
-
-        [Test]
-        public void Index_with_CLEAR_existingFilterString_and_new_filter_query_parameter_sets_new_cookie_value()
-        {
-            // Given
-            const string existingFilterString = "CLEAR";
-            const string newFilterValue = "PasswordStatus|IsPasswordSet|true";
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = allDelegatesController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
+            var result = allDelegatesController.Index(
+                existingFilterString: existingFilterString,
+                newFilterToAdd: newFilterValue
+            );
 
             // Then
             A.CallTo(() => httpResponse.Cookies.Append("DelegateFilter", newFilterValue, A<CookieOptions>._))

@@ -13,7 +13,7 @@
         public const char Separator = '|';
         public const char FilterSeparator = '╡';
         public const string EmptyValue = "╳";
-        public const string ClearString = "CLEAR";
+        public const string EmptyFiltersCookieValue = "CLEAR";
         public const string FreeTextBlankValue = "FREETEXTBLANKVALUE";
         public const string FreeTextNotBlankValue = "FREETEXTNOTBLANKVALUE";
 
@@ -40,19 +40,20 @@
         public static string? GetFilterString(
             string? existingFilterString,
             string? newFilterToAdd,
+            bool clearFilters,
             HttpRequest request,
             string cookieName,
             string? defaultFilterValue = null
         )
         {
-            if (existingFilterString == null && newFilterToAdd == null)
+            if (existingFilterString == null && newFilterToAdd == null && !clearFilters)
             {
                 return request.Cookies.ContainsKey(cookieName)
-                    ? request.Cookies[cookieName]
+                    ? request.Cookies[cookieName] == EmptyFiltersCookieValue ? null : request.Cookies[cookieName]
                     : defaultFilterValue;
             }
 
-            if (existingFilterString?.ToUpper() == ClearString)
+            if (clearFilters)
             {
                 existingFilterString = null;
             }

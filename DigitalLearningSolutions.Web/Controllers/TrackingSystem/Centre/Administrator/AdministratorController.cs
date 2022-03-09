@@ -54,6 +54,7 @@
             string? searchString = null,
             string? existingFilterString = null,
             string? newFilterToAdd = null,
+            bool clearFilters = false,
             int page = 1,
             int? itemsPerPage = null
         )
@@ -61,6 +62,7 @@
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
+                clearFilters,
                 Request,
                 AdminFilterCookieName
             );
@@ -105,7 +107,7 @@
                 loggedInAdminUser!
             );
 
-            Response.UpdateOrDeleteFilterCookie(AdminFilterCookieName, result.FilterString);
+            Response.UpdateFilterCookie(AdminFilterCookieName, result.FilterString);
 
             return View(model);
         }

@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -52,9 +53,9 @@
 
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
-        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         [SetUp]
         public void Setup()
@@ -124,22 +125,28 @@
         }
 
         [Test]
-        public void Index_with_CLEAR_existingFilterString_query_parameter_removes_cookie()
+        public void Index_with_clearFilters_query_parameter_true_sets_cookie_to_CLEAR()
         {
             // Given
-            const string? existingFilterString = "CLEAR";
             SearchSortFilterAndPaginateTestHelper
                 .GivenACallToSearchSortFilterPaginateServiceReturnsResult<AdminUser>(
                     searchSortFilterPaginateService
                 );
 
             // When
-            var result = administratorController.Index(existingFilterString: existingFilterString);
+            var result = administratorController.Index(clearFilters: true);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => httpResponse.Cookies.Delete("AdminFilter")).MustHaveHappened();
+                A.CallTo(
+                        () => httpResponse.Cookies.Append(
+                            "AdminFilter",
+                            FilteringHelper.EmptyFiltersCookieValue,
+                            A<CookieOptions>._
+                        )
+                    )
+                    .MustHaveHappened();
                 result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().ExistingFilterString.Should()
                     .BeNull();
             }
@@ -157,31 +164,10 @@
                 );
 
             // When
-            var result = administratorController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => httpResponse.Cookies.Append("AdminFilter", newFilterValue, A<CookieOptions>._))
-                    .MustHaveHappened();
-                result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().ExistingFilterString.Should()
-                    .Be(newFilterValue);
-            }
-        }
-
-        [Test]
-        public void Index_with_CLEAR_existingFilterString_and_new_filter_query_parameter_sets_new_cookie_value()
-        {
-            // Given
-            const string? existingFilterString = "CLEAR";
-            const string? newFilterValue = "Role|IsCmsManager|true";
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<AdminUser>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = administratorController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
+            var result = administratorController.Index(
+                existingFilterString: existingFilterString,
+                newFilterToAdd: newFilterValue
+            );
 
             // Then
             using (new AssertionScope())

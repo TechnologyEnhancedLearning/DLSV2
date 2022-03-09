@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
@@ -49,6 +50,22 @@
             },
         };
 
+        private readonly List<CourseStatisticsWithAdminFieldResponseCounts> courses =
+            new List<CourseStatisticsWithAdminFieldResponseCounts>
+            {
+                new CourseStatisticsWithAdminFieldResponseCounts
+                {
+                    ApplicationName = "Course",
+                    CustomisationName = "Customisation",
+                    Active = true,
+                    CourseTopic = "Topic 1",
+                    CategoryName = "Category 1",
+                    HideInLearnerPortal = true,
+                    DelegateCount = 1,
+                    CompletedCount = 1,
+                },
+            };
+
         private readonly CentreCourseDetails details = Builder<CentreCourseDetails>.CreateNew()
             .With(
                 x => x.Courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
@@ -70,31 +87,16 @@
             .And(x => x.Topics = new List<string> { "Topic 1", "Topic 2" })
             .Build();
 
-        private readonly List<CourseStatisticsWithAdminFieldResponseCounts> courses =
-            new List<CourseStatisticsWithAdminFieldResponseCounts>
-            {
-                new CourseStatisticsWithAdminFieldResponseCounts
-                {
-                    ApplicationName = "Course",
-                    CustomisationName = "Customisation",
-                    Active = true,
-                    CourseTopic = "Topic 1",
-                    CategoryName = "Category 1",
-                    HideInLearnerPortal = true,
-                    DelegateCount = 1,
-                    CompletedCount = 1,
-                },
-            };
+        private IConfiguration config = null!;
 
         private CourseSetupController controller = null!;
         private CourseSetupController controllerWithCookies = null!;
         private ICourseService courseService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
-        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
-        private IConfiguration config = null!;
 
         [SetUp]
         public void Setup()
@@ -181,22 +183,28 @@
         }
 
         [Test]
-        public void Index_with_CLEAR_existingFilterString_query_parameter_removes_cookie()
+        public void Index_with_clearFilters_query_parameter_true_sets_cookie_to_CLEAR()
         {
             // Given
-            const string existingFilterString = "CLEAR";
             SearchSortFilterAndPaginateTestHelper
                 .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
                     searchSortFilterPaginateService
                 );
 
             // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString);
+            var result = controllerWithCookies.Index(clearFilters: true);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => httpResponse.Cookies.Delete("CourseFilter")).MustHaveHappened();
+                A.CallTo(
+                        () => httpResponse.Cookies.Append(
+                            "CourseFilter",
+                            FilteringHelper.EmptyFiltersCookieValue,
+                            A<CookieOptions>._
+                        )
+                    )
+                    .MustHaveHappened();
                 result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
                     .BeNull();
             }
@@ -216,31 +224,10 @@
                 );
 
             // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterToAdd, A<CookieOptions>._))
-                    .MustHaveHappened();
-                result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
-                    .Be(newFilterToAdd);
-            }
-        }
-
-        [Test]
-        public void Index_with_CLEAR_existingFilterString_and_new_filter_query_parameter_sets_new_cookie_value()
-        {
-            // Given
-            const string existingFilterString = "CLEAR";
-            const string newFilterToAdd = "Status|HideInLearnerPortal|true";
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
+            var result = controllerWithCookies.Index(
+                existingFilterString: existingFilterString,
+                newFilterToAdd: newFilterToAdd
+            );
 
             // Then
             using (new AssertionScope())

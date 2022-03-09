@@ -145,7 +145,7 @@ function addNewFilterValueToExistingFilterString(newFilterValue: string): void {
 function clearFilters(): void {
   updateAllExistingFilterStringHiddenInputs('');
   updateExistingFilterString('');
-  clearFilterCookie();
+  updateFilterCookieValue('CLEAR');
   clearAppliedFilters();
   hideAppliedFilters();
 }
@@ -200,10 +200,6 @@ export function updateExistingFilterString(newFilter: string): void {
 
 function updateFilterCookieValue(newFilter: string): void {
   Cookies.set(cookieName, newFilter, { expires: cookieMaxLifeInDays });
-}
-
-function clearFilterCookie(): void {
-  Cookies.remove(cookieName);
 }
 
 function getExistingFilterStringElement(): HTMLInputElement {

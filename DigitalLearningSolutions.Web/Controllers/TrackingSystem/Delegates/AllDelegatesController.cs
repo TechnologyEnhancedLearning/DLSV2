@@ -50,6 +50,7 @@
             string sortDirection = GenericSortingHelper.Ascending,
             string? existingFilterString = null,
             string? newFilterToAdd = null,
+            bool clearFilters = false,
             int? itemsPerPage = null
         )
         {
@@ -57,6 +58,7 @@
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
+                clearFilters,
                 Request,
                 DelegateFilterCookieName,
                 DelegateActiveStatusFilterOptions.IsActive.FilterValue
@@ -95,7 +97,7 @@
                 availableFilters
             );
 
-            Response.UpdateOrDeleteFilterCookie(DelegateFilterCookieName, result.FilterString);
+            Response.UpdateFilterCookie(DelegateFilterCookieName, result.FilterString);
 
             return View(model);
         }

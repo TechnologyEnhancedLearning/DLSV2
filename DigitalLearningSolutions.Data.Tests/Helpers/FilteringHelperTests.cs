@@ -176,7 +176,7 @@
             A.CallTo(() => httpRequest.Cookies[CookieName]).Returns(cookieValue);
 
             // When
-            var result = FilteringHelper.GetFilterString(null, null, httpRequest, CookieName);
+            var result = FilteringHelper.GetFilterString(null, null, false, httpRequest, CookieName);
 
             // Then
             result.Should().Be(cookieValue);
@@ -186,37 +186,33 @@
         public void GetFilterString_with_no_parameters_and_no_cookies_returns_defaultFilterValue()
         {
             // When
-            var result = FilteringHelper.GetFilterString(null, null, httpRequest, CookieName, "default-filter");
+            var result = FilteringHelper.GetFilterString(null, null, false, httpRequest, CookieName, "default-filter");
 
             // Then
             result.Should().Be("default-filter");
         }
 
         [Test]
-        public void GetFilterString_with_CLEAR_existingFilterString_and_no_filterValue_returns_null()
+        public void GetFilterString_with_clearFilters_true_returns_null()
         {
             // When
-            var result = FilteringHelper.GetFilterString("CLEAR", null, httpRequest, CookieName);
+            var result = FilteringHelper.GetFilterString("FilterString", null, true, httpRequest, CookieName);
 
             // Then
             result.Should().BeNull();
         }
 
         [Test]
-        public void GetFilterString_with_CLEAR_existingFilterString_and_set_filterValue_returns_filterValue()
-        {
-            // When
-            var result = FilteringHelper.GetFilterString("CLEAR", "filter-value", httpRequest, CookieName);
-
-            // Then
-            result.Should().Be("filter-value");
-        }
-
-        [Test]
         public void GetFilterString_with_existingFilterString_and_newFilterToAdd_returns_combined_filter_by()
         {
             // When
-            var result = FilteringHelper.GetFilterString("existing-filter-string", "filter-value", httpRequest, CookieName);
+            var result = FilteringHelper.GetFilterString(
+                "existing-filter-string",
+                "filter-value",
+                false,
+                httpRequest,
+                CookieName
+            );
 
             // Then
             result.Should().Be("existing-filter-string╡filter-value");
