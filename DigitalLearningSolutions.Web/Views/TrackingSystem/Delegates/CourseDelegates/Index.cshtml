@@ -12,24 +12,19 @@
   ViewData["Title"] = "Course delegates";
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-one-quarter">
-    <nav class="side-nav-menu" aria-label="Side navigation bar">
-      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.CourseDelegates" />
-    </nav>
-  </div>
+@section NavBreadcrumbs {
+  <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCoursesBreadcrumbs.cshtml" model="@Model.CustomisationId" />
+}
 
-  <div class="nhsuk-grid-column-three-quarters">
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
     <vc:loading-spinner page-has-side-nav-menu="true" />
     <div id="area-to-hide-while-loading">
       <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-one-third">
+        <div class="nhsuk-grid-column-three-quarters">
           <h1 id="page-heading" class="nhsuk-heading-xl">Course delegates</h1>
         </div>
-        <div class="nhsuk-grid-column-two-thirds heading-button-group">
-          <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
-            Export all
-          </a>
+        <div class="nhsuk-grid-column-one-quarter heading-button-group">
           <a class="nhsuk-button nhsuk-button--secondary heading-button"
              id="export-current"
              asp-controller="CourseDelegates"
