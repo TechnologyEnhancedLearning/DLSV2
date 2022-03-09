@@ -18,6 +18,7 @@
             int? supervisorAdminId,
             string? supervisorForename,
             string? supervisorSurname,
+            bool? supervisorAdminActive,
             DateTime enrolled,
             DateTime lastUpdated,
             DateTime? completeBy,
@@ -28,6 +29,7 @@
             int? enrolledByAdminId,
             string? enrolledByForename,
             string? enrolledBySurname,
+            bool? enrolledByAdminActive,
             int loginCount,
             int learningTime,
             int? diagnosticScore,
@@ -41,7 +43,8 @@
             string? delegateEmail,
             int delegateCentreId,
             bool isProgressLocked,
-            string delegateNumber
+            string delegateNumber,
+            string? professionalRegistrationNumber
         )
         {
             ProgressId = progressId;
@@ -55,6 +58,7 @@
             SupervisorAdminId = supervisorAdminId;
             SupervisorForename = supervisorForename;
             SupervisorSurname = supervisorSurname;
+            SupervisorAdminActive = supervisorAdminActive;
             Enrolled = enrolled;
             LastUpdated = lastUpdated;
             CompleteBy = completeBy;
@@ -65,6 +69,7 @@
             EnrolledByAdminId = enrolledByAdminId;
             EnrolledByForename = enrolledByForename;
             EnrolledBySurname = enrolledBySurname;
+            EnrolledByAdminActive = enrolledByAdminActive;
             LoginCount = loginCount;
             LearningTime = learningTime;
             DiagnosticScore = diagnosticScore;
@@ -79,6 +84,7 @@
             DelegateNumber = delegateNumber;
             DelegateCentreId = delegateCentreId;
             IsProgressLocked = isProgressLocked;
+            ProfessionalRegistrationNumber = professionalRegistrationNumber;
         }
 
         public int ProgressId { get; set; }
@@ -90,6 +96,7 @@
         public int? SupervisorAdminId { get; set; }
         public string? SupervisorForename { get; set; }
         public string? SupervisorSurname { get; set; }
+        public bool? SupervisorAdminActive { get; set; }
         public DateTime Enrolled { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime? CompleteBy { get; set; }
@@ -100,6 +107,7 @@
         public int? EnrolledByAdminId { get; set; }
         public string? EnrolledByForename { get; set; }
         public string? EnrolledBySurname { get; set; }
+        public bool? EnrolledByAdminActive { get; set; }
         public int LoginCount { get; set; }
         public int LearningTime { get; set; }
         public int? DiagnosticScore { get; set; }
@@ -114,5 +122,6 @@
         public string DelegateNumber { get; set; }
         public int DelegateCentreId { get; set; }
         public bool IsProgressLocked { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
     }
 }

@@ -33,6 +33,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             1,
             "Kevin",
             "Whittaker (Developer)",
+            true,
             EnrollmentDate,
             EnrollmentDate,
             null,
@@ -43,6 +44,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             1,
             "Kevin",
             "Whittaker (Developer)",
+            true,
             0,
             0,
             null,
@@ -56,7 +58,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             "",
             101,
             false,
-            "HG1"
+            "HG1",
+            null
         );
 
         private SqlConnection connection = null!;

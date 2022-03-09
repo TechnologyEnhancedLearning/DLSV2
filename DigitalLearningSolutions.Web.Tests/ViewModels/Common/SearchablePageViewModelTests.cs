@@ -6,18 +6,23 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
+    using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class SearchablePageViewModelTests
     {
         private CentreCourseDetails details = null!;
+        private IConfiguration config = null!;
 
         [SetUp]
         public void Setup()
         {
+            config = A.Fake<IConfiguration>();
+
             details = Builder<CentreCourseDetails>.CreateNew()
                 .With(x => x.Courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
                 {
@@ -53,7 +58,8 @@
                 GenericSortingHelper.Ascending,
                 null,
                 1,
-                null
+                null,
+                config
             );
 
             // Then
@@ -76,7 +82,8 @@
                 GenericSortingHelper.Ascending,
                 null,
                 2,
-                null
+                null,
+                config
             );
 
             // Then
@@ -100,7 +107,8 @@
                 GenericSortingHelper.Ascending,
                 null,
                 2,
-                null
+                null,
+                config
             );
 
             // Then
@@ -121,7 +129,8 @@
                 GenericSortingHelper.Ascending,
                 null,
                 1,
-                itemsPerPage
+                itemsPerPage,
+                config
             );
 
             // Then

@@ -21,6 +21,12 @@
             FilterStatus.Default
         );
 
+        public static readonly FilterOptionViewModel NominatedSupervisor = new FilterOptionViewModel(
+            "Nominated supervisor",
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsNominatedSupervisor), "true"),
+            FilterStatus.Default
+        );
+
         public static readonly FilterOptionViewModel Trainer = new FilterOptionViewModel(
             "Trainer",
             FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsTrainer), "true"),

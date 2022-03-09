@@ -43,15 +43,15 @@
             int? customisationId = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
             int page = 1
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            var newFilterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            var newFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
                 Request,
                 CourseDelegatesFilterCookieName,
                 CourseDelegateAccountStatusFilterOptions.Active.FilterValue
@@ -80,11 +80,11 @@
                 "customisationId",
                 sortBy,
                 sortDirection,
-                newFilterBy,
+                newFilterString,
                 page
             );
 
-            Response.UpdateOrDeleteFilterCookie(CourseDelegatesFilterCookieName, newFilterBy);
+            Response.UpdateOrDeleteFilterCookie(CourseDelegatesFilterCookieName, newFilterString);
             return View(model);
         }
 
@@ -105,7 +105,7 @@
             int customisationId,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
-            string? filterBy = null
+            string? existingFilterString = null
         )
         {
             var centreId = User.GetCentreId();
@@ -113,7 +113,7 @@
                 customisationId,
                 centreId,
                 sortBy,
-                filterBy,
+                existingFilterString,
                 sortDirection
             );
 

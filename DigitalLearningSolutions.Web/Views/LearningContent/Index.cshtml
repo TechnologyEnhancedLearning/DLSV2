@@ -1,11 +1,9 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Helpers
-@using DigitalLearningSolutions.Web.ViewModels.LearningContent
+﻿@using DigitalLearningSolutions.Data.Extensions
 @using Microsoft.Extensions.Configuration
-@model LearningContentViewModel
+@inject IConfiguration configuration
 @{
   ViewData["Title"] = "Learning Content";
-  var url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/Learning?brand=" + Model.Brand + "&nonav=true";
+  var url = $"{configuration.GetCurrentSystemBaseUrl()}/Learning?brand={Model.Brand}&nonav=true";
 }
 
 @section NavBreadcrumbs {

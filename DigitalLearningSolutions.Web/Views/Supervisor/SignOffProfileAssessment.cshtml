@@ -1,50 +1,60 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Supervisor
 @model SignOffProfileAssessmentViewModel;
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = $"Sign-off Self Assessment";
+  ViewData["Title"] = "Sign-off Self Assessment";
   ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
+
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a>
+        </li>
         <li class="nhsuk-breadcrumb__item">
           <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
              asp-action="DelegateProfileAssessments"
-             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">@Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName</a>
-          </li>
-          <li class="nhsuk-breadcrumb__item">
-            <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
-               asp-action="ReviewDelegateSelfAssessment"
-               asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
-               asp-route-candidateAssessmentId="@Model.SelfAssessmentResultSummary.ID">
-              @(Model.SelfAssessmentResultSummary.RoleName.Length > 35 ? Model.SelfAssessmentResultSummary.RoleName.Substring(0,32) + "..." : Model.SelfAssessmentResultSummary.RoleName )
-            </a>
-          </li>
-          <li class="nhsuk-breadcrumb__item">
-            Sign-off Self Assessment
-          </li>
-        </ol>
-      </div>
-      <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-           asp-action="ReviewDelegateSelfAssessment"
-           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
-           asp-route-candidateAssessmentId="@Model.SelfAssessmentResultSummary.ID">
-          Back to @(Model.SelfAssessmentResultSummary.RoleName.Length > 35 ?
-    Model.SelfAssessmentResultSummary.RoleName.Substring(0,32) + "..." : Model.SelfAssessmentResultSummary.RoleName )
-        </a>
-      </p>
-    </nav>
+             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+            @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName
+          </a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
+             asp-action="ReviewDelegateSelfAssessment"
+             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+             asp-route-candidateAssessmentId="@Model.SelfAssessmentResultSummary.ID">
+            @(Model.SelfAssessmentResultSummary.RoleName.Length > 35 ? Model.SelfAssessmentResultSummary.RoleName.Substring(0, 32) + "..." : Model.SelfAssessmentResultSummary.RoleName)
+          </a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+          Sign-off Self Assessment
+        </li>
+      </ol>
+    </div>
+    <p class="nhsuk-breadcrumb__back">
+      <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
+         asp-action="ReviewDelegateSelfAssessment"
+         asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+         asp-route-candidateAssessmentId="@Model.SelfAssessmentResultSummary.ID">
+        Back to @(Model.SelfAssessmentResultSummary.RoleName.Length > 35 ?
+                  Model.SelfAssessmentResultSummary.RoleName.Substring(0, 32) + "..." : Model.SelfAssessmentResultSummary.RoleName)
+      </a>
+    </p>
+  </nav>
 }
+
 <details class="nhsuk-details nhsuk-expander">
   <summary class="nhsuk-details__summary">
     <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
@@ -59,87 +69,89 @@
 <dl class="nhsuk-summary-list">
 
   <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Assessment questions in profile
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.SelfAssessmentResultSummary.CompetencyAssessmentQuestionCount
-  </dd>
+    <dt class="nhsuk-summary-list__key">
+      Assessment questions in profile
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.SelfAssessmentResultSummary.CompetencyAssessmentQuestionCount
+    </dd>
 
   </div>
 
   <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Assessment question responses
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.SelfAssessmentResultSummary.ResultCount
-  </dd>
+    <dt class="nhsuk-summary-list__key">
+      Assessment question responses
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.SelfAssessmentResultSummary.ResultCount
+    </dd>
 
   </div>
 
   <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Responses verified
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.SelfAssessmentResultSummary.VerifiedCount
-  </dd>
+    <dt class="nhsuk-summary-list__key">
+      Responses verified
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.SelfAssessmentResultSummary.VerifiedCount
+    </dd>
 
   </div>
   @if (Model.CandidateAssessmentSupervisorVerificationSummaries.Any())
   {
   <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
-    Response verifiers
+    Response confirmers
   </dt>
   <dd class="nhsuk-summary-list__value">
     @foreach (var candidateAssessmentSupervisorVerificationSummary in Model.CandidateAssessmentSupervisorVerificationSummaries)
       {
-    <span>@candidateAssessmentSupervisorVerificationSummary.Forename @candidateAssessmentSupervisorVerificationSummary.Surname (@candidateAssessmentSupervisorVerificationSummary.Email) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span><br />
+    <span>@DisplayStringHelper.GetPotentiallyInactiveAdminName(
+            candidateAssessmentSupervisorVerificationSummary.Forename,
+            candidateAssessmentSupervisorVerificationSummary.Surname,
+            candidateAssessmentSupervisorVerificationSummary.AdminActive) (@candidateAssessmentSupervisorVerificationSummary.Email) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span><br />
       }
   </dd>
 
-  </div>
+    </div>
   }
 
-  @if (@Model.SelfAssessmentResultSummary.UngradedCount < Model.SelfAssessmentResultSummary.ResultCount)
-  {
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Responses meeting role requirements
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.SelfAssessmentResultSummary.MeetingCount
-  </dd>
+  @if (Model.SelfAssessmentResultSummary.UngradedCount < Model.SelfAssessmentResultSummary.ResultCount) {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Responses meeting role requirements
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.SelfAssessmentResultSummary.MeetingCount
+      </dd>
 
-  </div>
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Responses partially meeting role requirements
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.SelfAssessmentResultSummary.PartiallyMeetingCount
-  </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Responses partially meeting role requirements
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.SelfAssessmentResultSummary.PartiallyMeetingCount
+      </dd>
 
-  </div>
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Responses not meeting role requirements
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.SelfAssessmentResultSummary.NotMeetingCount
-  </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Responses not meeting role requirements
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.SelfAssessmentResultSummary.NotMeetingCount
+      </dd>
 
-  </div>
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Responses with no role requirements set
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.SelfAssessmentResultSummary.UngradedCount
-  </dd>
-  </div>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Responses with no role requirements set
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.SelfAssessmentResultSummary.UngradedCount
+      </dd>
+    </div>
   }
 </dl>
 <div class="nhsuk-card">
@@ -164,12 +176,11 @@
                 Sign-off profile self-assessment
               </label>
               <div class="nhsuk-hint nhsuk-summary-list" id="cb-verify-item-hint">
-                @Html.Raw(
-                (Model.SelfAssessmentResultSummary.SignOffSupervisorStatement == null ?
-                $"I confirm that this profile self-assessment accurately captures" +
-                $" {Model.SupervisorDelegate.FirstName} {Model.SupervisorDelegate.LastName}'s " +
-                $"current capability in the areas assessed." :
-                Model.SelfAssessmentResultSummary.SignOffSupervisorStatement))
+                @(Model.SelfAssessmentResultSummary.SignOffSupervisorStatement == null ?
+                  "I confirm that this profile self-assessment accurately captures" +
+                  $" {Model.SupervisorDelegate.FirstName} {Model.SupervisorDelegate.LastName}'s " +
+                  "current capability in the areas assessed." :
+                  Model.SelfAssessmentResultSummary.SignOffSupervisorStatement)
               </div>
             </div>
             <div class="nhsuk-radios__item">
@@ -197,12 +208,13 @@
      asp-action="ReviewDelegateSelfAssessment"
      asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
      asp-route-candidateAssessmentId="@Model.SelfAssessmentResultSummary.ID">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
     </svg>
     Cancel
   </a>
 </div>
+
 @section scripts {
   <script src="@Url.Content("~/js/supervisor/assessmentVerify.js")" asp-append-version="true"></script>
 }

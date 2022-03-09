@@ -2,8 +2,8 @@
 @model CategoryTopicFilterViewModel
 
 @{
-  var isDropdownUnselected = Model.ActionParameterName == "categoryFilterBy" && Model.CategoryFilterBy == null ||
-                             Model.ActionParameterName == "topicFilterBy" && Model.TopicFilterBy == null;
+  var isDropdownUnselected = Model.ActionParameterName == "categoryFilterString" && Model.CategoryFilterString == null ||
+                             Model.ActionParameterName == "topicFilterString" && Model.TopicFilterString == null;
 }
 
 <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Filter by @Model.FilterName.ToLower()</label>
@@ -11,10 +11,10 @@
 <div class="" id="filter-@Model.FilterProperty">
   <form class="filter-form" method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
 
-    @if (Model.ActionParameterName == "topicFilterBy") {
-      <input type="hidden" name="CategoryFilterBy" value="@Model.CategoryFilterBy" />
+    @if (Model.ActionParameterName == "topicFilterString") {
+      <input type="hidden" name="CategoryFilterString" value="@Model.CategoryFilterString" />
     } else {
-      <input type="hidden" name="TopicFilterBy" value="@Model.TopicFilterBy" />
+      <input type="hidden" name="TopicFilterString" value="@Model.TopicFilterString" />
     }
 
     <div class="filter-value-container">
@@ -27,7 +27,7 @@
         </option>
         @foreach (var filterOption in Model.FilterOptions) {
           <option value="@filterOption.FilterValue"
-                  selected="@(filterOption.FilterValue == Model.CategoryFilterBy || filterOption.FilterValue == Model.TopicFilterBy)">
+                  selected="@(filterOption.FilterValue == Model.CategoryFilterString || filterOption.FilterValue == Model.TopicFilterString)">
             @filterOption.DisplayText
           </option>
         }

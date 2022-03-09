@@ -9,7 +9,7 @@
 
     public abstract class BaseSearchablePageViewModel : BasePaginatedViewModel
     {
-        public readonly string? FilterBy;
+        public readonly string? ExistingFilterString;
 
         public readonly bool FilterEnabled;
 
@@ -23,7 +23,7 @@
             bool filterEnabled,
             string sortBy = GenericSortingHelper.DefaultSortOption,
             string sortDirection = GenericSortingHelper.Ascending,
-            string? filterBy = null,
+            string? existingFilterString = null,
             int itemsPerPage = DefaultItemsPerPage,
             string? searchLabel = null,
             Dictionary<string, string>? routeData = null
@@ -33,7 +33,7 @@
             SortDirection = sortDirection;
             SearchString = searchString;
             SearchLabel = searchLabel;
-            FilterBy = filterBy;
+            ExistingFilterString = existingFilterString;
             FilterEnabled = filterEnabled;
             Filters = new List<FilterViewModel>();
             RouteData = routeData ?? new Dictionary<string, string>();
@@ -50,7 +50,7 @@
 
         public abstract bool NoDataFound { get; }
 
-        public bool NoSearchOrFilter => SearchString == null && FilterBy == null;
+        public bool NoSearchOrFilter => SearchString == null && ExistingFilterString == null;
 
         public IEnumerable<FilterViewModel> Filters { get; set; }
 
@@ -74,7 +74,7 @@
 
         protected IEnumerable<T> FilterItems<T>(IEnumerable<T> items) where T:BaseSearchableItem
         {
-            return FilteringHelper.FilterItems(items.AsQueryable(), FilterBy).ToList();
+            return FilteringHelper.FilterItems(items.AsQueryable(), ExistingFilterString).ToList();
         }
     }
 }

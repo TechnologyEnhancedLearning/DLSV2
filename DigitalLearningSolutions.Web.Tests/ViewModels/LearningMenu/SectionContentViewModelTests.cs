@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
     using System;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FakeItEasy;
@@ -11,7 +10,8 @@
 
     public class SectionContentViewModelTests
     {
-        private IConfiguration config;
+        private IConfiguration config = null!;
+
         private const int CustomisationId = 5;
         private const int SectionId = 5;
         private const string BaseUrl = "https://example.com";

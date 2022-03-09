@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -11,6 +12,7 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -26,13 +28,15 @@
         private readonly ICourseService courseService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IUserDataService userDataService;
+        private readonly IConfiguration config;
 
         public ViewDelegateController(
             IUserDataService userDataService,
             PromptsService promptsService,
             ICourseService courseService,
             IPasswordResetService passwordResetService,
-            ICourseDataService courseDataService
+            ICourseDataService courseDataService,
+            IConfiguration config
         )
         {
             this.userDataService = userDataService;
@@ -40,6 +44,7 @@
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
             this.courseDataService = courseDataService;
+            this.config = config;
         }
 
         public IActionResult Index(int delegateId)
@@ -62,7 +67,7 @@
         {
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
 
-            var baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
+            var baseUrl = config.GetAppRootPath();
 
             passwordResetService.GenerateAndSendDelegateWelcomeEmail(
                 delegateUser.EmailAddress!,

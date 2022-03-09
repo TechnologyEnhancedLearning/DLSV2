@@ -31,7 +31,7 @@
           </a>
         </li>
         <li>
-          Verify results
+          Confirm results
         </li>
       </ol>
     </div>
@@ -56,10 +56,10 @@
       <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
     </div>
   </details>
-  <h2>Verify Multiple Results for @Model.DelegateSelfAssessment.RoleName</h2>
+  <h2>Confirm Multiple Results for @Model.DelegateSelfAssessment.RoleName</h2>
   @if (Model.CompetencyGroups.Any())
 {
-  <h3>Tick each self assessment result that you wish to verify and then click Submit</h3>
+  <h3>Tick each self assessment result that you wish to confirm and then click Submit</h3>
   <form method="post">
     @foreach (var competencyGroup in Model.CompetencyGroups)
     {
@@ -127,7 +127,7 @@
 else
 {
   <p>
-    Oops. There are no results awaiting verification.
+    Oops. There are no results awaiting confirmation.
   </p>
   <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Supervisor" asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]">Cancel</a>
 }

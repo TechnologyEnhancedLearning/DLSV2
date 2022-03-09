@@ -7,7 +7,7 @@
   <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
   @if (Model.FilterEnabled)
   {
-    <input type="hidden" name="filterBy" value="@Model.FilterBy" />
+    <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
   }
   @foreach (var (key, value) in Model.RouteData)
   {

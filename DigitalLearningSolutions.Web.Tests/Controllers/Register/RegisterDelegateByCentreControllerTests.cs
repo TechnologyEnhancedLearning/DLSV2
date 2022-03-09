@@ -22,6 +22,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
     using SummaryViewModel = DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.SummaryViewModel;
 
@@ -34,6 +35,7 @@
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private IConfiguration config = null!;
 
         [SetUp]
         public void Setup()
@@ -44,13 +46,16 @@
             promptsService = A.Fake<PromptsService>();
             cryptoService = A.Fake<ICryptoService>();
             registrationService = A.Fake<IRegistrationService>();
+            config = A.Fake<IConfiguration>();
+
             controller = new RegisterDelegateByCentreController(
                     jobGroupsDataService,
                     userService,
                     promptsService,
                     cryptoService,
                     userDataService,
-                    registrationService
+                    registrationService,
+                    config
                 )
                 .WithDefaultContext()
                 .WithMockTempData();

@@ -3,7 +3,7 @@
     using System;
     using System.Security.Cryptography;
     using System.Text;
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Extensions;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
