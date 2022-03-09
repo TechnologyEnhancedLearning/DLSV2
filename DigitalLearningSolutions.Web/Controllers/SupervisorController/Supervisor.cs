@@ -42,8 +42,10 @@
         )
         {
             var adminId = GetAdminID();
+            var loggedInUserId = User.GetAdminId();
             var centreId = GetCentreId();
-            var centreCustomPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+            var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select( supervisor =>
             {
@@ -51,8 +53,9 @@
             });
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             var model = new MyStaffListViewModel(
+                loggedInAdminUser,
                 supervisorDelegateDetailViewModels,
-                centreCustomPrompts,
+                centreRegistrationPrompts,
                 searchString,
                 sortBy,
                 sortDirection,
@@ -165,12 +168,14 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessments")]
         public IActionResult DelegateProfileAssessments(int supervisorDelegateId)
         {
-            var superviseDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
-            var delegateSelfAssessments =
-                supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, GetAdminID());
+            var adminId = GetAdminID();
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
+            var loggedInUserId = User.GetAdminId();
+            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+            var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, adminId);
             var model = new DelegateSelfAssessmentsViewModel()
             {
+                IsNominatedSupervisor = loggedInAdminUser?.IsNominatedSupervisor ?? false,
                 SupervisorDelegateDetail = superviseDelegate,
                 DelegateSelfAssessments = delegateSelfAssessments
             };
@@ -182,7 +187,7 @@
         {
             var adminId = GetAdminID();
             var centreId = GetCentreId();
-            var centreCustomPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var centreCustomPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId)
                 .Select(supervisor =>
                 {

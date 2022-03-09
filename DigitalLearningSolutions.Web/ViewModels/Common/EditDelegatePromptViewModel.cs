@@ -4,9 +4,9 @@
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class EditCustomFieldViewModel : CustomFieldViewModel
+    public class EditDelegateRegistrationPromptViewModel : DelegateRegistrationPrompt
     {
-        public EditCustomFieldViewModel(
+        public EditDelegateRegistrationPromptViewModel(
             int fieldId,
             string prompt,
             bool mandatory,

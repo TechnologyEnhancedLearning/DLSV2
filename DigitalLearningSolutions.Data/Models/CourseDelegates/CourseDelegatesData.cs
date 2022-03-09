@@ -10,7 +10,7 @@
             int? customisationId,
             IEnumerable<Course> courses,
             IEnumerable<CourseDelegate> delegates,
-            IEnumerable<CustomPrompt> courseAdminFields
+            IEnumerable<CourseAdminField> courseAdminFields
         )
         {
             CustomisationId = customisationId;
@@ -25,6 +25,6 @@
 
         public IEnumerable<CourseDelegate> Delegates { get; set; }
 
-        public IEnumerable<CustomPrompt> CourseAdminFields { get; set; }
+        public IEnumerable<CourseAdminField> CourseAdminFields { get; set; }
     }
 }

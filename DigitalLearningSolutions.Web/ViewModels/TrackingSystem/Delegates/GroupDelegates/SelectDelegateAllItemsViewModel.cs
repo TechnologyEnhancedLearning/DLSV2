@@ -10,7 +10,7 @@
         public SelectDelegateAllItemsViewModel(
             IEnumerable<DelegateUserCard> delegateUserCards,
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CustomPrompt> customPrompts,
+            IEnumerable<CentreRegistrationPrompt> customPrompts,
             int groupId
         )
             : base(delegateUserCards, jobGroups, customPrompts)

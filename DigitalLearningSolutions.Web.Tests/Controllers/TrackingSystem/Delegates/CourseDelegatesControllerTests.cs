@@ -53,7 +53,7 @@
                         1,
                         new List<Course> { course },
                         new List<CourseDelegate>(),
-                        new List<CustomPrompt>()
+                        new List<CourseAdminField>()
                     )
                 );
 
@@ -103,7 +103,7 @@
                         customisationId,
                         new List<Course> { course },
                         courseDelegate,
-                        new List<CustomPrompt>()
+                        new List<CourseAdminField>()
                     )
                 );
 

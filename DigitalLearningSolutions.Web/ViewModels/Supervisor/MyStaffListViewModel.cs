@@ -8,19 +8,22 @@
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public class MyStaffListViewModel : BaseSearchablePageViewModel
     {
         public MyStaffListViewModel(
+            AdminUser adminUser,
             IEnumerable<SupervisorDelegateDetailViewModel> supervisorDelegateDetailViewModels,
-            CentreCustomPrompts centreCustomPrompts,
+            CentreRegistrationPrompts centreRegistrationPrompts,
             string? searchString,
             string sortBy,
             string sortDirection,
             int page
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search administrators")
         {
-            CentreCustomPrompts = centreCustomPrompts;
+            AdminUser = adminUser;
+            CentreRegistrationPrompts = centreRegistrationPrompts;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 supervisorDelegateDetailViewModels.AsQueryable(),
                 sortBy,
@@ -33,7 +36,7 @@
             SuperviseDelegateDetailViewModels = paginatedItems;
         }
 
-        public MyStaffListViewModel() : this(Enumerable.Empty<SupervisorDelegateDetailViewModel>(), new CentreCustomPrompts(), null, string.Empty, string.Empty, 1)
+        public MyStaffListViewModel() : this(null, Enumerable.Empty<SupervisorDelegateDetailViewModel>(), new CentreRegistrationPrompts(), null, string.Empty, string.Empty, 1)
         {
 
         }
@@ -45,7 +48,15 @@
             DefaultSortByOptions.Name,
         };
 
-        public CentreCustomPrompts CentreCustomPrompts { get; set; }
+        public CentreRegistrationPrompts CentreRegistrationPrompts { get; set; }
+
+        public bool IsNominatedSupervisor
+        {
+            get
+            {
+                return AdminUser?.IsSupervisor == true ? false : AdminUser?.IsNominatedSupervisor ?? false;
+            }
+        }
 
         public override bool NoDataFound => !SuperviseDelegateDetailViewModels.Any() && NoSearchOrFilter;
 
@@ -54,5 +65,7 @@
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? DelegateEmail { get; set; }
+
+        private AdminUser AdminUser;
     }
 }

@@ -3,16 +3,17 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
 
     public class DisplayPromptsViewModel
     {
-        public DisplayPromptsViewModel(IEnumerable<CustomPrompt> customPrompts)
+        public DisplayPromptsViewModel(IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts)
         {
-            CustomFields = customPrompts.Select(
+            CustomFields = centreRegistrationPrompts.Select(
                     cp =>
-                        new CustomPromptManagementViewModel(
-                            cp.CustomPromptNumber,
-                            cp.CustomPromptText,
+                        new CentreRegistrationPromptManagementViewModel(
+                            cp.RegistrationField.Id,
+                            cp.PromptText,
                             cp.Mandatory,
                             cp.Options
                         )
@@ -20,6 +21,6 @@
                 .ToList();
         }
 
-        public List<CustomPromptManagementViewModel> CustomFields { get; set; }
+        public List<CentreRegistrationPromptManagementViewModel> CustomFields { get; set; }
     }
 }

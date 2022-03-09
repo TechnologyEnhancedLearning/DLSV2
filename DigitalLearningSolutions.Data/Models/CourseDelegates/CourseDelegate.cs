@@ -37,5 +37,16 @@
             get => SearchableNameOverrideForFuzzySharp ?? FullNameForSearchingSorting;
             set => SearchableNameOverrideForFuzzySharp = value;
         }
+
+        public static string GetPropertyNameForAdminFieldAnswer(int coursePromptNumber)
+        {
+            return coursePromptNumber switch
+            {
+                1 => nameof(Answer1),
+                2 => nameof(Answer2),
+                3 => nameof(Answer3),
+                _ => throw new ArgumentOutOfRangeException(),
+            };
+        }
     }
 }

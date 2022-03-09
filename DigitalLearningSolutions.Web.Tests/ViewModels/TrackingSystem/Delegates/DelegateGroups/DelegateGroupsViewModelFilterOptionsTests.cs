@@ -13,12 +13,12 @@
         public void GetLinkedFieldOptions_returns_expected_filter_options()
         {
             // Given
-            var prompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "Prompt 1");
-            var prompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2, "Prompt 2");
-            var prompt3 = CustomPromptsTestHelper.GetDefaultCustomPrompt(3, "Prompt 3");
-            var prompt4 = CustomPromptsTestHelper.GetDefaultCustomPrompt(4, "Prompt 4");
-            var prompt5 = CustomPromptsTestHelper.GetDefaultCustomPrompt(5, "Prompt 5");
-            var prompt6 = CustomPromptsTestHelper.GetDefaultCustomPrompt(6, "Prompt 6");
+            var prompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, "Prompt 1");
+            var prompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2, "Prompt 2");
+            var prompt3 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(3, "Prompt 3");
+            var prompt4 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(4, "Prompt 4");
+            var prompt5 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(5, "Prompt 5");
+            var prompt6 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(6, "Prompt 6");
             var prompts = new[] { prompt1, prompt2, prompt3, prompt4, prompt5, prompt6 };
 
             // When

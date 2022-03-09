@@ -13,7 +13,7 @@
     {
         public ViewDelegateViewModel(
             DelegateUserCard delegateUser,
-            IEnumerable<CustomFieldViewModel> customFields,
+            IEnumerable<DelegateRegistrationPrompt> customFields,
             IEnumerable<DelegateCourseDetails> delegateCourses
         )
         {
