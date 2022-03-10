@@ -144,37 +144,24 @@
         )
         {
             return connection.Query<SelfAssessmentSupervisor>(
-                @"SELECT
-                        0 AS ID,
-                        sd.ID AS SupervisorDelegateID,
-                        sd.SupervisorAdminID,
-                        sd.SupervisorEmail,
-                        sd.NotificationSent,
-                        au.Forename + ' ' + au.Surname AS SupervisorName,
-                        'Supervisor' AS RoleName
-                    FROM SupervisorDelegates AS sd
-                    INNER JOIN CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId
-                    INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
-                    INNER JOIN AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID
-                    WHERE (sd.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId)
-                    EXCEPT
-                    SELECT
-                        0 AS ID,
-                        sd.ID AS SupervisorDelegateID,
-                        sd.SupervisorAdminID,
-                        sd.SupervisorEmail,
-                        sd.NotificationSent,
-                        au.Forename + ' ' + au.Surname AS SupervisorName,
-                        'Supervisor' AS RoleName
-                    FROM SupervisorDelegates AS sd
-                    INNER JOIN CandidateAssessmentSupervisors AS cas
-                        ON sd.ID = cas.SupervisorDelegateId
-                    INNER JOIN CandidateAssessments AS ca
-                        ON cas.CandidateAssessmentID = ca.ID
-                    INNER JOIN AdminUsers AS au
-                        ON sd.SupervisorAdminID = au.AdminID
-                    WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
-                    GROUP BY sd.ID, SupervisorAdminID, SupervisorEmail, sd.NotificationSent, au.Forename + ' ' + au.Surname",
+                @"SELECT 
+                   ca.ID, cas.id,ca.SelfAssessmentID,ca.UserBookmark,
+                    sd.ID AS SupervisorDelegateID,
+                    sd.SupervisorAdminID,
+                    sd.SupervisorEmail,
+                    sd.NotificationSent,
+                    au.Forename + ' ' + au.Surname AS SupervisorName,
+                    (CASE WHEN au.Supervisor = 1 THEN 'Supervisor'
+			             WHEN au.NominatedSupervisor = 1 THEN 'Nominated supervisor'
+		                 ELSE 'Learner'
+		            END) AS RoleName
+                FROM SupervisorDelegates AS sd
+                INNER JOIN CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId
+                INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
+                INNER JOIN AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID AND au.Active = 1 
+                WHERE (sd.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId)
+		            AND (au.Supervisor = 1 OR au.NominatedSupervisor = 1) AND (au.Active = 1)
+		            AND (ca.SelfAssessmentID <> @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
             );
         }
@@ -322,9 +309,9 @@
                         IsFrameworkDeveloper
                     FROM AdminUsers
                     WHERE (
-                        (Supervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId)
+                        (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId)
                         OR
-                        (Supervisor = 1) AND (Active = 1) AND (CategoryID = (SELECT CategoryID FROM SelfAssessments WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)
+                        (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (CategoryID = (SELECT CategoryID FROM SelfAssessments WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)
                     )
                         AND AdminID NOT IN (
                             SELECT sd.SupervisorAdminID
