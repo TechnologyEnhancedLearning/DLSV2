@@ -82,22 +82,38 @@ function filterElements(
 }
 
 function displaySearchableElements(searchableElements: ISearchableElement[]): void {
-  const searchableElementsContainer = document.getElementById('searchable-elements');
+  const searchableElementsContainer = <HTMLSelectElement>document.getElementById('searchable-elements');
   if (!searchableElementsContainer) {
     return;
   }
+
+  const selectedApplicationId = searchableElementsContainer.value;
 
   const defaultOption = document.getElementById('default-option');
   if (!defaultOption) {
     return;
   }
-  defaultOption.innerText = searchableElements.length === 0 ? 'No matching courses' : 'Select a course';
+  if (searchableElements.length === 0) {
+    defaultOption.innerText = 'No matching courses';
+    searchableElementsContainer.value = '';
+  } else {
+    defaultOption.innerText = 'Select a course';
+  }
 
   searchableElementsContainer.textContent = '';
   searchableElementsContainer.appendChild(defaultOption);
   searchableElements.forEach(
     (searchableElement) => searchableElementsContainer.appendChild(searchableElement.element),
   );
+
+  const selectedElement = searchableElements.find(
+    (x) => (<HTMLOptionElement>x.element).value === selectedApplicationId,
+  );
+  if (!selectedElement) {
+    searchableElementsContainer.selectedIndex = 0;
+  } else {
+    searchableElementsContainer.selectedIndex = searchableElements.indexOf(selectedElement) + 1;
+  }
 
   // This is required to polyfill the new elements in IE
   Details();
