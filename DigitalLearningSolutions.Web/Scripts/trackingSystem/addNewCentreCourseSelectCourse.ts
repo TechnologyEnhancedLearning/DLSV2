@@ -104,14 +104,17 @@ function displaySearchableElements(searchableElements: ISearchableElement[]): vo
 }
 
 function getCategoryAndTopicFilterStringAndUpdateHiddenInputs() {
-  const categoryFilterElement = <HTMLSelectElement>document.getElementById('CategoryName');
-  const categoryFilterValue = categoryFilterElement.value;
-
   const topicFilterElement = <HTMLSelectElement>document.getElementById('CourseTopic');
   const topicFilterValue = topicFilterElement.value;
-
-  updateExistingFilterStringHiddenInput(categoryHiddenInputName, categoryFilterValue);
   updateExistingFilterStringHiddenInput(topicHiddenInputName, topicFilterValue);
+
+  const categoryFilterElement = <HTMLSelectElement>document.getElementById('CategoryName');
+  if (!categoryFilterElement) {
+    return topicFilterValue;
+  }
+
+  const categoryFilterValue = categoryFilterElement.value;
+  updateExistingFilterStringHiddenInput(categoryHiddenInputName, categoryFilterValue);
 
   if (isNullOrEmpty(categoryFilterValue) && isNullOrEmpty(topicFilterValue)) {
     return '';
