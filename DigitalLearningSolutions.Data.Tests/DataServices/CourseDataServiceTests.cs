@@ -59,6 +59,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             101,
             false,
             "HG1",
+            false,
             null
         );
 
