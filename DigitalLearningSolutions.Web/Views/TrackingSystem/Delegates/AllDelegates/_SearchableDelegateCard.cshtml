@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Common
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates
 @model SearchableDelegateViewModel
 
 <div class="searchable-element nhsuk-expander-group word-break" id="@Model.DelegateInfo.Id-card">
@@ -57,10 +56,10 @@
           <dt class="nhsuk-summary-list__key">
             Professional Registration Number
           </dt>
-          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.ProfessionalRegistrationNumber" />
+          <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
         </div>
 
-        @foreach (DelegateRegistrationPrompt delegateRegistrationPrompt in Model.DelegateInfo.DelegateRegistrationPrompts) {
+        @foreach (var delegateRegistrationPrompt in Model.DelegateInfo.DelegateRegistrationPrompts) {
           <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">@delegateRegistrationPrompt.Prompt</dt>
             <partial name="_SummaryFieldValue" model="@delegateRegistrationPrompt.Answer" />
@@ -78,7 +77,7 @@
          asp-action="Index"
          asp-route-delegateId="@Model.DelegateInfo.Id"
          asp-route-isFromViewDelegatePage="false"
-         asp-route-returnPage="@Model.Page" >
+         asp-route-returnPage="@Model.Page">
         Set password
       </a>
     </div>

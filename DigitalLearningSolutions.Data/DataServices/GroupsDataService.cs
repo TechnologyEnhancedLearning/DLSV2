@@ -195,6 +195,7 @@
                         EmailAddress,
                         CandidateNumber,
                         AddedDate,
+                        HasBeenPromptedForPrn,
                         ProfessionalRegistrationNumber
                     FROM GroupDelegates AS gd
                     JOIN Candidates AS c ON c.CandidateID = gd.DelegateID

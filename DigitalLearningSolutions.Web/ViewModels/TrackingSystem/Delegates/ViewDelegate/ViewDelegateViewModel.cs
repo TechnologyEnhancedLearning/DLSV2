@@ -21,8 +21,8 @@
             DelegateCourses = delegateCourses.Select(x => new DelegateCourseInfoViewModel(x)).ToList();
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
             ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
-                delegateUser.HasBeenPromptedForPrn,
-                delegateUser.ProfessionalRegistrationNumber
+                DelegateInfo.HasBeenPromptedForPrn,
+                DelegateInfo.ProfessionalRegistrationNumber
             );
         }
 

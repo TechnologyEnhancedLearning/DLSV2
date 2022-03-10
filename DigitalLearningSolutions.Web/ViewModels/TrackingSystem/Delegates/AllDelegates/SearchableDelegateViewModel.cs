@@ -19,6 +19,10 @@
         )
         {
             DelegateInfo = new DelegateInfoViewModel(delegateUser, delegateRegistrationPrompts);
+            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+                DelegateInfo.HasBeenPromptedForPrn,
+                DelegateInfo.ProfessionalRegistrationNumber
+            );
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
             RegistrationPromptFilters = DelegatesViewModelFilters.GetRegistrationPromptFilters(
                 DelegateInfo.DelegateRegistrationPrompts,
@@ -28,6 +32,8 @@
         }
 
         public DelegateInfoViewModel DelegateInfo { get; set; }
+
+        public string ProfessionalRegistrationNumber { get; set; }
 
         public string JobGroupFilter => FilteringHelper.BuildFilterValueString(
             nameof(DelegateUserCard.JobGroupId),
