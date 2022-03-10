@@ -20,10 +20,7 @@
             DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
             DelegateCourses = delegateCourses.Select(x => new DelegateCourseInfoViewModel(x)).ToList();
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
-            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
-                DelegateInfo.HasBeenPromptedForPrn,
-                DelegateInfo.ProfessionalRegistrationNumber
-            );
+            ProfessionalRegistrationNumber = DelegateInfo.ProfessionalRegistrationNumber;
         }
 
         public DelegateInfoViewModel DelegateInfo { get; set; }
