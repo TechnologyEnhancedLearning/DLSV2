@@ -1,8 +1,8 @@
 import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
-import {getExistingFilterStringValue} from "../searchSortFilterAndPaginate/filter";
-import {getSortBy, getSortDirection} from "../searchSortFilterAndPaginate/sort";
-import getPathForEndpoint from "../common";
-import {getQuery} from "../searchSortFilterAndPaginate/search";
+import { getExistingFilterStringValue } from '../searchSortFilterAndPaginate/filter';
+import { getSortBy, getSortDirection } from '../searchSortFilterAndPaginate/sort';
+import getPathForEndpoint from '../common';
+import { getQuery } from '../searchSortFilterAndPaginate/search';
 
 const exportAllLink = <HTMLAnchorElement>document.getElementById('export-all');
 exportAllLink.addEventListener('click', () => {
