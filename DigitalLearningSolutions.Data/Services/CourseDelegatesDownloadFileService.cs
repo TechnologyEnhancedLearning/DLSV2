@@ -262,7 +262,7 @@
 
         private static int GetNextEmptyRowNumber(IXLWorksheet sheet)
         {
-            return sheet.LastRowUsed().RangeAddress.FirstAddress.RowNumber + 1;
+            return sheet.LastRowUsed().RowNumber() + 1;
         }
 
         private static void SetUpDataTableColumns(
