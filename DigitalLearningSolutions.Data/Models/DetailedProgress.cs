@@ -21,6 +21,7 @@
             DelegateLastName = delegateCourseInfo.DelegateLastName;
             DelegateEmail = delegateCourseInfo.DelegateEmail;
             DelegateNumber = delegateCourseInfo.DelegateNumber;
+            HasBeenPromptedForPrn = delegateCourseInfo.HasBeenPromptedForPrn;
             ProfessionalRegistrationNumber = delegateCourseInfo.ProfessionalRegistrationNumber;
 
             LastUpdated = delegateCourseInfo.LastUpdated;
@@ -40,6 +41,7 @@
         public string DelegateLastName { get; set; }
         public string? DelegateEmail { get; set; }
         public string DelegateNumber { get; set; }
+        public bool HasBeenPromptedForPrn { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
 
         public DateTime LastUpdated { get; set; }

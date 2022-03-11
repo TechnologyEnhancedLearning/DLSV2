@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class RejectDelegateViewModel
     {
@@ -11,8 +12,12 @@
             FullName = delegateUser.FirstName + " " + delegateUser.LastName;
             Email = delegateUser.EmailAddress;
             DateRegistered = delegateUser.DateRegistered;
-            ProfessionalRegistrationNumber = delegateUser.ProfessionalRegistrationNumber;
+            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+                delegateUser.HasBeenPromptedForPrn,
+                delegateUser.ProfessionalRegistrationNumber
+            );
         }
+
         public int Id { get; set; }
         public string FullName { get; set; }
         public string? Email { get; set; }
