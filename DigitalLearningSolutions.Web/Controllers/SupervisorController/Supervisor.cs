@@ -123,10 +123,6 @@
                 supervisorEmail,
                 centreId
             );
-            if (supervisorDelegateId > 0)
-            {
-                frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId, GetAdminID());
-            }
         }
 
         public IActionResult ConfirmSupervise(int supervisorDelegateId)

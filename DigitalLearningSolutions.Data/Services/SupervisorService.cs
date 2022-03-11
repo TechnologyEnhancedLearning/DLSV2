@@ -128,7 +128,6 @@
             sd.Added,
             sd.AddedByDelegate,
             sd.NotificationSent,
-            sd.Confirmed,
             sd.Removed,
             sd.InviteHash,
             c.FirstName,
