@@ -265,6 +265,7 @@
 
             var prompt1 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 1,
+                result.CentreRegistrationPrompt1Id,
                 result.CentreRegistrationPrompt1Prompt,
                 result.CentreRegistrationPrompt1Options,
                 result.CentreRegistrationPrompt1Mandatory,
@@ -277,6 +278,7 @@
 
             var prompt2 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 2,
+                result.CentreRegistrationPrompt2Id,
                 result.CentreRegistrationPrompt2Prompt,
                 result.CentreRegistrationPrompt2Options,
                 result.CentreRegistrationPrompt2Mandatory,
@@ -289,6 +291,7 @@
 
             var prompt3 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 3,
+                result.CentreRegistrationPrompt3Id,
                 result.CentreRegistrationPrompt3Prompt,
                 result.CentreRegistrationPrompt3Options,
                 result.CentreRegistrationPrompt3Mandatory,
@@ -301,6 +304,7 @@
 
             var prompt4 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 4,
+                result.CentreRegistrationPrompt4Id,
                 result.CentreRegistrationPrompt4Prompt,
                 result.CentreRegistrationPrompt4Options,
                 result.CentreRegistrationPrompt4Mandatory,
@@ -313,6 +317,7 @@
 
             var prompt5 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 5,
+                result.CentreRegistrationPrompt5Id,
                 result.CentreRegistrationPrompt5Prompt,
                 result.CentreRegistrationPrompt5Options,
                 result.CentreRegistrationPrompt5Mandatory,
@@ -325,6 +330,7 @@
 
             var prompt6 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 6,
+                result.CentreRegistrationPrompt6Id,
                 result.CentreRegistrationPrompt6Prompt,
                 result.CentreRegistrationPrompt6Options,
                 result.CentreRegistrationPrompt6Mandatory,

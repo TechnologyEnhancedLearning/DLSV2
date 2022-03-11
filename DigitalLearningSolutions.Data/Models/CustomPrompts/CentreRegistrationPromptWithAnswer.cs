@@ -2,8 +2,8 @@
 {
     public class CentreRegistrationPromptWithAnswer : CentreRegistrationPrompt
     {
-        public CentreRegistrationPromptWithAnswer(int customPromptNumber, string text, string? options, bool mandatory, string? answer)
-            : base(customPromptNumber, text, options, mandatory)
+        public CentreRegistrationPromptWithAnswer(int customPromptNumber, int promptId, string text, string? options, bool mandatory, string? answer)
+            : base(customPromptNumber, promptId, text, options, mandatory)
         {
             Answer = answer;
         }

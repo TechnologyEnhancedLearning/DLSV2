@@ -28,6 +28,7 @@
 
         public static CentreRegistrationPromptWithAnswer? PopulateCentreRegistrationPromptWithAnswer(
             int promptNumber,
+            int promptId,
             string? prompt,
             string? options,
             bool mandatory,
@@ -35,7 +36,7 @@
         )
         {
             return prompt != null
-                ? new CentreRegistrationPromptWithAnswer(promptNumber, prompt, options, mandatory, answer)
+                ? new CentreRegistrationPromptWithAnswer(promptNumber, promptId, prompt, options, mandatory, answer)
                 : null;
         }
 
