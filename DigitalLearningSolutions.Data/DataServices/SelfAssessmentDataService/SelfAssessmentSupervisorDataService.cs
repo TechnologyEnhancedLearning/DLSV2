@@ -127,7 +127,7 @@
                     EXCEPT
                     {selectQuery}
                     WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
-                    GROUP BY sd.ID, SupervisorAdminID, SupervisorEmail, sd.NotificationSent, au.Forename + ' ' + au.Surname",
+                    GROUP BY sd.ID, SupervisorAdminID, SupervisorEmail, sd.NotificationSent, au.Forename + ' ' + au.Surname, au.Active",
                 new { selfAssessmentId, candidateId }
             );
         }

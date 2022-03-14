@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Data.Models.Supervisor
+@using DigitalLearningSolutions.Web.Extensions
 @model SupervisorDelegateDetail
 <dl class="nhsuk-summary-list">
   <div class="nhsuk-summary-list__row">
@@ -93,4 +94,12 @@
     </dd>
     </div>
   }
+  <div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    DLS Role
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @Model.DlsRole.GetDescription()
+  </dd>
+  </div>
 </dl>
