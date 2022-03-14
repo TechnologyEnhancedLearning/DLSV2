@@ -17,7 +17,7 @@
             int groupId,
             string groupName,
             string? searchString,
-            string? filterBy,
+            string? existingFilterString,
             int page
         ) : base(
             searchString,
@@ -25,7 +25,7 @@
             true,
             nameof(CourseAssessmentDetails.CourseName),
             GenericSortingHelper.Ascending,
-            filterBy,
+            existingFilterString,
             searchLabel: "Search courses"
         )
         {

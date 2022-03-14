@@ -1,19 +1,20 @@
 namespace DigitalLearningSolutions.Web.ViewModels.FindYourCentre
 {
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Extensions;
+    using Microsoft.Extensions.Configuration;
 
     public class FindYourCentreViewModel
     {
         public string Url { get; set; }
 
-        public FindYourCentreViewModel()
+        public FindYourCentreViewModel(IConfiguration config)
         {
-            Url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/findyourcentre?nonav=true";
+            Url = $"{config.GetCurrentSystemBaseUrl()}/findyourcentre?nonav=true";
         }
 
-        public FindYourCentreViewModel(string centreId)
+        public FindYourCentreViewModel(string centreId, IConfiguration config)
         {
-            Url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/findyourcentre?nonav=true&centreid=" + centreId;
+            Url = $"{config.GetCurrentSystemBaseUrl()}/findyourcentre?nonav=true&centreid={centreId}";
         }
     }
 }

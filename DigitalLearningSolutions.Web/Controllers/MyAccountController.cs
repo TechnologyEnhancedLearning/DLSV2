@@ -21,10 +21,10 @@
     [Authorize]
     public class MyAccountController : Controller
     {
-        private readonly PromptsService promptsService;
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly PromptsService promptsService;
         private readonly IUserService userService;
 
         public MyAccountController(
@@ -142,7 +142,7 @@
 
             if (!ModelState.IsValid)
             {
-                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication, userDelegateId);
+                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
             if (!userService.NewEmailAddressIsValid(formData.Email!, userAdminId, userDelegateId, User.GetCentreId()))
@@ -151,7 +151,7 @@
                     nameof(MyAccountEditDetailsFormData.Email),
                     "A user with this email address is already registered at this centre"
                 );
-                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication, userDelegateId);
+                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
             var (accountDetailsData, centreAnswersData) = AccountDetailsDataHelper.MapToUpdateAccountData(
@@ -167,14 +167,12 @@
 
         private IActionResult ReturnToEditDetailsViewWithErrors(
             MyAccountEditDetailsFormData formData,
-            DlsSubApplication dlsSubApplication,
-            int? userDelegateId
+            DlsSubApplication dlsSubApplication
         )
         {
-            var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(formData, User.GetCentreId());
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);
         }

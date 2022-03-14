@@ -1,6 +1,8 @@
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @model IEnumerable<TutorialProgressViewModel>
 
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/progress.css")" asp-append-version="true">
+
 @{
   var showDiagnosticColumn = Model.Any(t => t.DiagnosticScore.HasValue);
 }
@@ -13,7 +15,7 @@
   </summary>
   <div class="nhsuk-details__text">
     <table role="table" class="nhsuk-table-responsive">
-      <thead role="rowgroup" class="nhsuk-table__head">
+      <thead role="rowgroup" class="nhsuk-table__head" id="tutorial-progress-table-headers">
         <tr role="row">
           <th role="columnheader" scope="col">
             Tutorial
@@ -58,7 +60,7 @@
               <td role="cell" class="nhsuk-table__cell">
                 <span class="nhsuk-table-responsive__heading">Diagnostic score </span>
                 @if (tut.DiagnosticScore.HasValue) {
-                  <div>tut.DiagnosticScore / tut.PossibleScore</div>
+                  <div>@tut.DiagnosticScore / @tut.PossibleScore</div>
                 } else {
                   <div>N/A</div>
                 }

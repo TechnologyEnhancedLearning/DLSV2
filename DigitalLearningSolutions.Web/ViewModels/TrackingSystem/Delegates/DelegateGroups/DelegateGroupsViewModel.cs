@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class DelegateGroupsViewModel : BaseSearchablePageViewModel
@@ -15,9 +16,9 @@
             string searchString,
             string sortBy,
             string sortDirection,
-            string? filterBy,
+            string? existingFilterString,
             int page
-        ) : base(searchString, page, true, sortBy, sortDirection, filterBy)
+        ) : base(searchString, page, true, sortBy, sortDirection, existingFilterString)
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 groups.AsQueryable(),
@@ -25,14 +26,20 @@
                 sortDirection
             );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
-            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterBy).ToList();
+            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), existingFilterString).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
             var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
             DelegateGroups = paginatedItems.Select(g => new SearchableDelegateGroupViewModel(g, returnPage));
 
-            var admins = groups.Select(g => (g.AddedByAdminId, g.AddedByName)).Distinct();
+            var admins = groups.Select(
+                g => (g.AddedByAdminId, DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                    g.AddedByFirstName,
+                    g.AddedByLastName,
+                    g.AddedByAdminActive
+                ))
+            ).Distinct();
 
             Filters = new[]
             {

@@ -8,14 +8,14 @@ import {
 import {
   filterSeparator,
   getAppliedFilters,
-  getFilterByValue,
+  getExistingFilterStringValue,
   IAppliedFilter,
-  updateFilterBy,
+  updateExistingFilterString,
 } from '../searchSortFilterAndPaginate/filter';
 import { isNullOrEmpty, sendBrowserAgnosticEvent } from '../common';
 
-const categoryHiddenInputName = 'CategoryFilterBy';
-const topicHiddenInputName = 'TopicFilterBy';
+const categoryHiddenInputName = 'CategoryFilterString';
+const topicHiddenInputName = 'TopicFilterString';
 
 // eslint-disable-next-line no-new
 SearchSortFilterAndPaginate.getSearchableElements('TrackingSystem/CourseSetup/AddCourse/SelectCourseAllCourses', ['title'])
@@ -32,7 +32,7 @@ SearchSortFilterAndPaginate.getSearchableElements('TrackingSystem/CourseSetup/Ad
 function setUpFilter(onFilterUpdated: VoidFunction): void {
   setUpFilterDropdowns();
 
-  document.getElementById('filter-by')?.addEventListener('change', onFilterUpdated);
+  document.getElementById('existing-filter-string')?.addEventListener('change', onFilterUpdated);
 }
 
 function setUpFilterDropdowns() {
@@ -43,21 +43,18 @@ function setUpFilterDropdowns() {
   filterDropdowns.forEach((filterDropdown) => {
     filterDropdown.addEventListener('change', (e) => {
       e.preventDefault();
-      const newFilter = getCategoryAndTopicFilterByAndUpdateHiddenInputs();
-
-      if (newFilter != null) {
-        updateFilterBy(newFilter);
-      }
+      const newFilter = getCategoryAndTopicFilterStringAndUpdateHiddenInputs();
+      updateExistingFilterString(newFilter);
     });
   });
 }
 
 function filter(searchableData: ISearchableData): void {
   let filteredSearchableElements = searchableData.searchableElements;
-  const filterBy = getFilterByValue();
+  const existingFilterString = getExistingFilterStringValue();
 
-  if (typeof filterBy !== undefined && filterBy) {
-    const appliedFilters = getAppliedFilters(filterBy);
+  if (!isNullOrEmpty(existingFilterString)) {
+    const appliedFilters = getAppliedFilters(existingFilterString);
 
     const filterGroups = _.groupBy(appliedFilters, (appliedFilter) => appliedFilter.group);
 
@@ -106,38 +103,36 @@ function displaySearchableElements(searchableElements: ISearchableElement[]): vo
   Details();
 }
 
-function getCategoryAndTopicFilterByAndUpdateHiddenInputs() {
+function getCategoryAndTopicFilterStringAndUpdateHiddenInputs() {
   const categoryFilterElement = <HTMLSelectElement>document.getElementById('CategoryName');
   const categoryFilterValue = categoryFilterElement.value;
 
   const topicFilterElement = <HTMLSelectElement>document.getElementById('CourseTopic');
   const topicFilterValue = topicFilterElement.value;
 
+  updateExistingFilterStringHiddenInput(categoryHiddenInputName, categoryFilterValue);
+  updateExistingFilterStringHiddenInput(topicHiddenInputName, topicFilterValue);
+
   if (isNullOrEmpty(categoryFilterValue) && isNullOrEmpty(topicFilterValue)) {
-    return null;
+    return '';
   }
 
   if (isNullOrEmpty(categoryFilterValue)) {
-    updateFilterByHiddenInput(topicHiddenInputName, topicFilterValue);
     return topicFilterValue;
   }
 
   if (isNullOrEmpty(topicFilterValue)) {
-    updateFilterByHiddenInput(categoryHiddenInputName, categoryFilterValue);
     return categoryFilterValue;
   }
-
-  updateFilterByHiddenInput(categoryHiddenInputName, categoryFilterValue);
-  updateFilterByHiddenInput(topicHiddenInputName, topicFilterValue);
 
   return topicFilterValue + filterSeparator + categoryFilterValue;
 }
 
-function updateFilterByHiddenInput(elementName: string, newFilter: string): void {
-  const filterByElements = Array.from(document.getElementsByName(elementName));
+function updateExistingFilterStringHiddenInput(elementName: string, newFilter: string): void {
+  const existingFilterStringElements = Array.from(document.getElementsByName(elementName));
 
-  filterByElements.forEach((filterByElement) => {
-    const hiddenInput = <HTMLInputElement>filterByElement;
+  existingFilterStringElements.forEach((existingFilterStringElement) => {
+    const hiddenInput = <HTMLInputElement>existingFilterStringElement;
     hiddenInput.value = newFilter;
     sendBrowserAgnosticEvent(hiddenInput, 'change');
   });

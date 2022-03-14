@@ -132,12 +132,12 @@ function getPossibleFilters(): IAppliedFilterTag[] {
   }));
 }
 
-function createFilterableElements(filterBy: string) {
+function createFilterableElements(existingFilterString: string) {
   global.document = new JSDOM(`
       <html>
       <head></head>
       <body>
-        <input type="text" id="filter-by" value="${filterBy}"/>
+        <input type="text" id="existing-filter-string" value="${existingFilterString}"/>
         <div id="applied-filters" hidden>
             <div class="applied-filter-container" id="applied-filter-container"></div>
         </div>

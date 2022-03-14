@@ -84,7 +84,7 @@ else
           <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
             <span class="nhsuk-table-responsive__heading">User </span>
             <span class="framework-collaborator-user">
-              @collaborator.UserEmail
+              @collaborator.UserEmail @(collaborator.UserActive == true ? "" : "(inactive)")
             </span>
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">

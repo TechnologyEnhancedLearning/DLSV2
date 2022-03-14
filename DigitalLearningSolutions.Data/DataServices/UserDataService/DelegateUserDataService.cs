@@ -178,6 +178,7 @@
                         cd.Answer5,
                         cd.Answer6,
                         cd.JobGroupID,
+                        cd.HasBeenPromptedForPrn,
                         cd.ProfessionalRegistrationNumber,
                         jg.JobGroupName
                     FROM Candidates AS cd

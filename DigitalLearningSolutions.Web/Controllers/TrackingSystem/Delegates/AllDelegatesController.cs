@@ -42,15 +42,15 @@
             string? searchString = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
             int? itemsPerPage = null
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
                 Request,
                 DelegateFilterCookieName,
                 DelegateActiveStatusFilterOptions.IsActive.FilterValue
@@ -69,11 +69,11 @@
                 searchString,
                 sortBy,
                 sortDirection,
-                filterBy,
+                existingFilterString,
                 itemsPerPage
             );
 
-            Response.UpdateOrDeleteFilterCookie(DelegateFilterCookieName, filterBy);
+            Response.UpdateOrDeleteFilterCookie(DelegateFilterCookieName, existingFilterString);
 
             return View(model);
         }

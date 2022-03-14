@@ -21,10 +21,11 @@
                 CoursesCount = 10,
                 AddedByFirstName = "Test",
                 AddedByLastName = "Person",
+                AddedByAdminActive = true,
                 LinkedToField = 0,
                 LinkedToFieldName = "None",
                 ShouldAddNewRegistrantsToGroup = false,
-                ChangesToRegistrationDetailsShouldChangeGroupMembership = false
+                ChangesToRegistrationDetailsShouldChangeGroupMembership = false,
             };
 
             // When

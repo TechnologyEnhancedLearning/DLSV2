@@ -4,6 +4,17 @@ namespace DigitalLearningSolutions.Web.Extensions
 {
     public static class EnumExtensions
     {
+        public static string GetDescription(this DlsRole role)
+        {
+            switch (role)
+            {
+                case DlsRole.NominatedSupervisor:
+                    return "Nominated supervisor";
+                default:
+                    return role.ToString();                   
+            }
+        }
+
         public static string GetDescription(this SelfAssessmentCompetencyFilter status)
         {
             switch (status)

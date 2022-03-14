@@ -9,7 +9,8 @@
 
     public class ContentViewerViewModelTests
     {
-        private IConfiguration config;
+        private IConfiguration config = null!;
+
         private const string BaseUrl = "https://example.com";
         private const int CustomisationId = 37545;
         private const int CentreId = 101;

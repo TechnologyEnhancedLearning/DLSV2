@@ -5,7 +5,7 @@
   <input type="hidden" name="searchString" value="@Model.SearchString" />
   @if (Model.FilterEnabled)
   {
-    <input type="hidden" name="filterBy" value="@Model.FilterBy" />
+    <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
   }
   @foreach (var (key, value) in Model.RouteData)
   {
