@@ -159,6 +159,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 ca.EmailAddress AS DelegateEmail,
                 ca.CentreID AS DelegateCentreId,
                 ca.CandidateNumber AS DelegateNumber,
+                ca.HasBeenPromptedForPrn,
                 ca.ProfessionalRegistrationNumber
             FROM Customisations cu
             INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
