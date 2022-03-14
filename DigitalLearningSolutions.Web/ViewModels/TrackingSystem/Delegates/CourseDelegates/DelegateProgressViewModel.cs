@@ -18,7 +18,10 @@
         {
             AccessedVia = accessedVia;
             IsCourseActive = details.DelegateCourseInfo.IsCourseActive;
-            ProfessionalRegistrationNumber = details.DelegateCourseInfo.ProfessionalRegistrationNumber;
+            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+                details.DelegateCourseInfo.HasBeenPromptedForPrn,
+                details.DelegateCourseInfo.ProfessionalRegistrationNumber
+            );
             Supervisor = details.DelegateCourseInfo.SupervisorAdminId != null
                 ? DisplayStringHelper.GetPotentiallyInactiveAdminName(
                     details.DelegateCourseInfo.SupervisorForename,

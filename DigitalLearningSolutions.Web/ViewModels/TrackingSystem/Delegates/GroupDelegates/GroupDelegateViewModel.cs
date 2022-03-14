@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 {
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class GroupDelegateViewModel
     {
@@ -11,10 +11,16 @@
             GroupId = groupDelegate.GroupId;
             DelegateId = groupDelegate.DelegateId;
             TitleName = groupDelegate.SearchableName;
-            Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(groupDelegate.FirstName, groupDelegate.LastName);
+            Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+                groupDelegate.FirstName,
+                groupDelegate.LastName
+            );
             EmailAddress = groupDelegate.EmailAddress;
             CandidateNumber = groupDelegate.CandidateNumber;
-            ProfessionalRegistrationNumber = groupDelegate.ProfessionalRegistrationNumber;
+            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+                groupDelegate.HasBeenPromptedForPrn,
+                groupDelegate.ProfessionalRegistrationNumber
+            );
         }
 
         public int GroupDelegateId { get; set; }
