@@ -16,10 +16,10 @@
 
     public class CourseDelegatesDownloadFileServiceTests
     {
-        public const string CourseDelegateExportCurrentDataDownloadRelativeFilePath =
+        private const string CourseDelegateExportCurrentDataDownloadRelativeFilePath =
             "\\TestData\\CourseDelegateExportCurrentDataDownloadTest.xlsx";
 
-        public const string CourseDelegateExportAllDataDownloadRelativeFilePath =
+        private const string CourseDelegateExportAllDataDownloadRelativeFilePath =
             "\\TestData\\CourseDelegateExportAllDataDownloadTest.xlsx";
 
         private readonly List<CourseDelegateForExport> courseDelegates = new List<CourseDelegateForExport>

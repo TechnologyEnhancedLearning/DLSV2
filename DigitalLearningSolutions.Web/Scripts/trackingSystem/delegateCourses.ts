@@ -10,8 +10,7 @@ exportAllLink.addEventListener('click', () => {
   const existingFilterString = getExistingFilterStringValue();
   const sortBy = getSortBy();
   const sortDirection = getSortDirection();
-  const pathWithCurrentSortFilter = getPathForEndpoint(`TrackingSystem/Delegates/Courses/DownloadAll?searchString=${searchString}&sortBy=${sortBy}&sortDirection=${sortDirection}&existingFilterString=${existingFilterString}`);
-  exportAllLink.href = pathWithCurrentSortFilter;
+  exportAllLink.href = getPathForEndpoint(`TrackingSystem/Delegates/Courses/DownloadAll?searchString=${searchString}&sortBy=${sortBy}&sortDirection=${sortDirection}&existingFilterString=${existingFilterString}`);
 });
 
 // eslint-disable-next-line no-new

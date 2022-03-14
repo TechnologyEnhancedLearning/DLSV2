@@ -103,7 +103,7 @@
                 sortDirection
             );
 
-            const string fileName = "Digital Learning Solutions Course Delegates.xlsx";
+            const string fileName = "Digital Learning Solutions Delegate Courses.xlsx";
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),
