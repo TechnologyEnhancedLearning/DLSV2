@@ -9,12 +9,16 @@
 
   <ItemGroup>
     <None Remove="TestData\ActivityDataDownloadTest.xlsx" />
+    <None Remove="TestData\CourseDelegateExportAllDataDownloadTest.xlsx" />
     <None Remove="TestData\CourseDelegateExportCurrentDataDownloadTest.xlsx" />
     <None Remove="TestData\DelegateUploadTest.xlsx" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="TestData\ActivityDataDownloadTest.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\CourseDelegateExportAllDataDownloadTest.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestData\CourseDelegateExportCurrentDataDownloadTest.xlsx">
