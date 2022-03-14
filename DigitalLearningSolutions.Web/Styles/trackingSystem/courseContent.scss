@@ -1,5 +1,5 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "../shared/searchableElements/common";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "../shared/searchableElements/common" as *;
 
 .summary-list-right-align-tags {
   @include mq($from: tablet) {

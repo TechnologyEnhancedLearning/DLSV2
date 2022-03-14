@@ -5,15 +5,15 @@
   "scripts": {
     "prebuild": "npm run clean",
     "build": "run-p build:*",
-    "build:sass": "npm run sass -- --output-style compressed",
+    "build:sass": "npm run sass -- --quiet",
     "build:webpack": "webpack",
     "lint": "eslint ./Scripts/**/*.ts",
     "lint-fix": "eslint --fix ./Scripts/**/*.ts",
     "dev": "run-p dev:*",
-    "dev:sass": "npm run sass && npm run sass -- --watch",
+    "dev:sass": "npm run sass -- --watch --quiet",
     "dev:webpack": "webpack --config webpack.config.dev.js",
     "clean": "rimraf wwwroot/css/ && rimraf wwwroot/js/",
-    "sass": "node-sass Styles/ --importer node_modules/node-sass-package-importer/dist/cli.js --output wwwroot/css/",
+    "sass": "sass Styles:wwwroot/css --load-path=node_modules --quiet-deps --style=compressed",
     "test": "jest"
   },
   "dependencies": {
@@ -26,7 +26,7 @@
     "js-search": "^2.0.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
-    "nhsuk-frontend": "4.0.0",
+    "nhsuk-frontend": "6.1.0",
     "regenerator-runtime": "^0.13.7"
   },
   "devDependencies": {

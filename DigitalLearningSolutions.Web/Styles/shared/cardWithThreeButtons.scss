@@ -1,4 +1,4 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
 
 .nhsuk-button.expander-card__button {
   margin-right: nhsuk-spacing(2);

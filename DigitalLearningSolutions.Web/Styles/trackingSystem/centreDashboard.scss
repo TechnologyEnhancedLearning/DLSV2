@@ -1,4 +1,4 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
 
 .dashboard-4-1-card {
   @include mq($until: large-desktop) {

@@ -1,5 +1,5 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "~chartist/dist/scss/chartist";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "chartist/dist/scss/chartist";
 
 $dark-blue: #005EB8;
 $medium-blue: #699AFC;
