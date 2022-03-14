@@ -13,7 +13,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Group
         public GroupCoursesViewModel(
             int groupId,
             string groupName,
-            PaginateResult<GroupCourse> result
+            PaginationResult<GroupCourse> result
         ) : base(result)
         {
             GroupId = groupId;

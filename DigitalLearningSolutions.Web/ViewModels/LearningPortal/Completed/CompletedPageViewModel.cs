@@ -15,7 +15,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
         public readonly string? BannerText;
 
         public CompletedPageViewModel(
-            SearchSortFilterPaginateResult<CompletedLearningItem> result,
+            SearchSortFilterPaginationResult<CompletedLearningItem> result,
             bool apiIsAccessible,
             IConfiguration config,
             string? bannerText

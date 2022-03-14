@@ -10,7 +10,7 @@
     public class EmailDelegatesViewModel : BaseSearchablePageViewModel<DelegateUserCard>
     {
         public EmailDelegatesViewModel(
-            SearchSortFilterPaginateResult<DelegateUserCard> result,
+            SearchSortFilterPaginationResult<DelegateUserCard> result,
             IEnumerable<FilterModel> availableFilters,
             bool selectAll = false
         ) : base(result, true, availableFilters)
@@ -29,7 +29,7 @@
         }
 
         public EmailDelegatesViewModel(
-            SearchSortFilterPaginateResult<DelegateUserCard> result,
+            SearchSortFilterPaginationResult<DelegateUserCard> result,
             IEnumerable<FilterModel> availableFilters,
             EmailDelegatesFormData formData
         ) : this(result, availableFilters)

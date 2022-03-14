@@ -16,7 +16,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
         public readonly string? BannerText;
 
         public CurrentPageViewModel(
-            SearchSortFilterPaginateResult<CurrentLearningItem> result,
+            SearchSortFilterPaginationResult<CurrentLearningItem> result,
             bool apiIsAccessible,
             string? bannerText
         ) : base(result, false, searchLabel: "Search your current courses")

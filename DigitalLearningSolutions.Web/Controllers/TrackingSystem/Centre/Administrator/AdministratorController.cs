@@ -91,7 +91,7 @@
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
                 new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
-                new FilterOptions(existingFilterString, availableFilters, null),
+                new FilterOptions(existingFilterString, availableFilters),
                 new PaginationOptions(page, itemsPerPage)
             );
 

@@ -11,7 +11,7 @@
     {
         public CentreAdministratorsViewModel(
             int centreId,
-            SearchSortFilterPaginateResult<AdminUser> result,
+            SearchSortFilterPaginationResult<AdminUser> result,
             IEnumerable<FilterModel> availableFilters,
             AdminUser loggedInAdminUser
         ) : base(

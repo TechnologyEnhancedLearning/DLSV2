@@ -52,8 +52,8 @@
 
             // Then
             var expectedModel = new CompletedPageViewModel(
-                new SearchSortFilterPaginateResult<CompletedLearningItem>(
-                    new PaginateResult<CompletedLearningItem>(allItems, 1, 1, 10, 4),
+                new SearchSortFilterPaginationResult<CompletedLearningItem>(
+                    new PaginationResult<CompletedLearningItem>(allItems, 1, 1, 10, 4),
                     null,
                     "Completed",
                     "Descending",

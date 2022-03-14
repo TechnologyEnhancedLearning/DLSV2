@@ -11,7 +11,7 @@
     public class CourseSetupViewModel : BaseSearchablePageViewModel<CourseStatisticsWithAdminFieldResponseCounts>
     {
         public CourseSetupViewModel(
-            SearchSortFilterPaginateResult<CourseStatisticsWithAdminFieldResponseCounts> result,
+            SearchSortFilterPaginationResult<CourseStatisticsWithAdminFieldResponseCounts> result,
             IEnumerable<FilterModel> availableFilters,
             IConfiguration config
         ) : base(

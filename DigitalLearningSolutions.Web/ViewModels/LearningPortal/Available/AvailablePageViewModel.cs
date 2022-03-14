@@ -13,7 +13,7 @@
         public readonly string? BannerText;
 
         public AvailablePageViewModel(
-            SearchSortFilterPaginateResult<AvailableCourse> result,
+            SearchSortFilterPaginationResult<AvailableCourse> result,
             string? bannerText
         ) : base(result, false, searchLabel: "Search courses")
         {

@@ -12,7 +12,7 @@
     public class AddGroupDelegateViewModel : BaseSearchablePageViewModel<DelegateUserCard>
     {
         public AddGroupDelegateViewModel(
-            SearchSortFilterPaginateResult<DelegateUserCard> result,
+            SearchSortFilterPaginationResult<DelegateUserCard> result,
             IEnumerable<FilterModel> availableFilters,
             List<CentreRegistrationPrompt> customPrompts,
             int groupId,

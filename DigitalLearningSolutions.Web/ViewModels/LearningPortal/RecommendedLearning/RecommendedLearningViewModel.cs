@@ -12,7 +12,7 @@
     {
         public RecommendedLearningViewModel(
             SelfAssessment selfAssessment,
-            SearchSortFilterPaginateResult<RecommendedResource> result,
+            SearchSortFilterPaginationResult<RecommendedResource> result,
             bool apiIsAccessible
         ) : base(
             result,

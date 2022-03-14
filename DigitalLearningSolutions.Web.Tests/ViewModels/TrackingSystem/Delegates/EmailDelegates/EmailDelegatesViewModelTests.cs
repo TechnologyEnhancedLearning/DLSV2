@@ -43,8 +43,8 @@
         {
             // When
             var model = new EmailDelegatesViewModel(
-                new SearchSortFilterPaginateResult<DelegateUserCard>(
-                    new PaginateResult<DelegateUserCard>(delegateUsers, 1, 1, int.MaxValue, 15),
+                new SearchSortFilterPaginationResult<DelegateUserCard>(
+                    new PaginationResult<DelegateUserCard>(delegateUsers, 1, 1, int.MaxValue, 15),
                     null,
                     null,
                     null,
@@ -67,8 +67,8 @@
 
             // When
             var model = new EmailDelegatesViewModel(
-                    new SearchSortFilterPaginateResult<DelegateUserCard>(
-                        new PaginateResult<DelegateUserCard>(delegateUsers, 1, 1, int.MaxValue, 15),
+                    new SearchSortFilterPaginationResult<DelegateUserCard>(
+                        new PaginationResult<DelegateUserCard>(delegateUsers, 1, 1, int.MaxValue, 15),
                         null,
                         null,
                         null,
@@ -90,8 +90,8 @@
         {
             // When
             var model = new EmailDelegatesViewModel(
-                new SearchSortFilterPaginateResult<DelegateUserCard>(
-                    new PaginateResult<DelegateUserCard>(delegateUsers, 1, 1, int.MaxValue, 15),
+                new SearchSortFilterPaginationResult<DelegateUserCard>(
+                    new PaginationResult<DelegateUserCard>(delegateUsers, 1, 1, int.MaxValue, 15),
                     null,
                     null,
                     null,

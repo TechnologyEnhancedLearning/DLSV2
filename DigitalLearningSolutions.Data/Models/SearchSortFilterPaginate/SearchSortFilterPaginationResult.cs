@@ -2,15 +2,15 @@
 {
     using System.Collections.Generic;
 
-    public class SearchSortFilterPaginateResult<T> : PaginateResult<T> where T : BaseSearchableItem
+    public class SearchSortFilterPaginationResult<T> : PaginationResult<T> where T : BaseSearchableItem
     {
-        public SearchSortFilterPaginateResult(
-            PaginateResult<T> paginateResult,
+        public SearchSortFilterPaginationResult(
+            PaginationResult<T> paginationResult,
             string? searchString,
             string? sortBy,
             string? sortDirection,
             string? filterString
-        ) : base(paginateResult)
+        ) : base(paginationResult)
         {
             SearchString = searchString;
             SortBy = sortBy;
@@ -18,7 +18,7 @@
             FilterString = filterString;
         }
 
-        public SearchSortFilterPaginateResult(
+        public SearchSortFilterPaginationResult(
             IEnumerable<T> itemsToDisplay,
             int page,
             int totalPages,

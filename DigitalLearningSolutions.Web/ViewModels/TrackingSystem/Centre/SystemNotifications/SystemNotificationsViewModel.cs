@@ -8,7 +8,7 @@
     public class SystemNotificationsViewModel : BasePaginatedViewModel<SystemNotification>
     {
         public SystemNotificationsViewModel(
-            PaginateResult<SystemNotification> result
+            PaginationResult<SystemNotification> result
         ) : base(result)
         {
             UnacknowledgedNotification =

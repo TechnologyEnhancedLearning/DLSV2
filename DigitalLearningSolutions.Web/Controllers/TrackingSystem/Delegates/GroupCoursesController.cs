@@ -138,11 +138,7 @@
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
                 new SortOptions(nameof(CourseAssessmentDetails.CourseName), GenericSortingHelper.Ascending),
-                new FilterOptions(
-                    existingFilterString,
-                    availableFilters,
-                    null
-                ),
+                new FilterOptions(existingFilterString, availableFilters),
                 new PaginationOptions(page)
             );
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(

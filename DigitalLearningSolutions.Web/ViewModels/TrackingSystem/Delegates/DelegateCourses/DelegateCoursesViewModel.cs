@@ -10,7 +10,7 @@
     public class DelegateCoursesViewModel : BaseSearchablePageViewModel<CourseStatisticsWithAdminFieldResponseCounts>
     {
         public DelegateCoursesViewModel(
-            SearchSortFilterPaginateResult<CourseStatisticsWithAdminFieldResponseCounts> result,
+            SearchSortFilterPaginationResult<CourseStatisticsWithAdminFieldResponseCounts> result,
             IEnumerable<FilterModel> availableFilters
         ) : base(
             result,

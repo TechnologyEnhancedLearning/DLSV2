@@ -431,11 +431,7 @@
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,
                 new SortOptions(nameof(ApplicationDetails.ApplicationName), GenericSortingHelper.Ascending),
-                new FilterOptions(
-                    currentFilterString,
-                    availableFilters,
-                    null
-                ),
+                new FilterOptions(currentFilterString, availableFilters),
                 null
             );
 

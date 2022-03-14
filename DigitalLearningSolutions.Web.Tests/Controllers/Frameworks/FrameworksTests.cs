@@ -34,8 +34,8 @@
 
             // Then
             var allFrameworksViewModel = new AllFrameworksViewModel(
-                new SearchSortFilterPaginateResult<BrandedFramework>(
-                    new PaginateResult<BrandedFramework>(new List<BrandedFramework>(), 1, 1, 12, 0),
+                new SearchSortFilterPaginationResult<BrandedFramework>(
+                    new PaginationResult<BrandedFramework>(new List<BrandedFramework>(), 1, 1, 12, 0),
                     null,
                     "CreatedDate",
                     "Descending",
@@ -43,8 +43,8 @@
                 )
             );
             var myFrameworksViewModel = new MyFrameworksViewModel(
-                new SearchSortFilterPaginateResult<BrandedFramework>(
-                    new PaginateResult<BrandedFramework>(dashboardFrameworks, 1, 1, 12, 2),
+                new SearchSortFilterPaginationResult<BrandedFramework>(
+                    new PaginationResult<BrandedFramework>(dashboardFrameworks, 1, 1, 12, 2),
                     null,
                     "CreatedDate",
                     "Descending",
@@ -83,8 +83,8 @@
 
             // Then
             var allFrameworksViewModel = new AllFrameworksViewModel(
-                new SearchSortFilterPaginateResult<BrandedFramework>(
-                    new PaginateResult<BrandedFramework>(dashboardFrameworks, 1, 1, 12, 3),
+                new SearchSortFilterPaginationResult<BrandedFramework>(
+                    new PaginationResult<BrandedFramework>(dashboardFrameworks, 1, 1, 12, 3),
                     null,
                     "FrameworkName",
                     "Ascending",
@@ -92,8 +92,8 @@
                 )
             );
             var myFrameworksViewModel = new MyFrameworksViewModel(
-                new SearchSortFilterPaginateResult<BrandedFramework>(
-                    new PaginateResult<BrandedFramework>(new List<BrandedFramework>(), 1, 1, 12, 0),
+                new SearchSortFilterPaginationResult<BrandedFramework>(
+                    new PaginationResult<BrandedFramework>(new List<BrandedFramework>(), 1, 1, 12, 0),
                     null,
                     "FrameworkName",
                     "Ascending",

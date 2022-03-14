@@ -79,11 +79,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,
                 null,
-                new FilterOptions(
-                    newFilterString,
-                    availableFilters,
-                    null
-                ),
+                new FilterOptions(newFilterString, availableFilters),
                 null
             );
 
@@ -134,11 +130,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                     null,
                     null,
-                    new FilterOptions(
-                        newFilterString,
-                        availableFilters,
-                        null
-                    ),
+                    new FilterOptions(newFilterString, availableFilters),
                     null
                 );
 

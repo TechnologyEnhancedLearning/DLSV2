@@ -7,7 +7,7 @@
         public FilterOptions(
             string? filterString,
             IEnumerable<FilterModel> availableFilters,
-            string? defaultFilterString
+            string? defaultFilterString = null
         )
         {
             FilterString = filterString;

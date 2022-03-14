@@ -12,7 +12,7 @@
         public readonly IEnumerable<BrandedFramework> BrandedFrameworks;
 
         public AllFrameworksViewModel(
-            SearchSortFilterPaginateResult<BrandedFramework> result
+            SearchSortFilterPaginationResult<BrandedFramework> result
         ) : base(result, false)
         {
             BrandedFrameworks = result.ItemsToDisplay;

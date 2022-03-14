@@ -12,7 +12,7 @@
     public class SelectedCourseDetailsViewModel : BaseSearchablePageViewModel<CourseDelegate>
     {
         public SelectedCourseDetailsViewModel(
-            SearchSortFilterPaginateResult<CourseDelegate> result,
+            SearchSortFilterPaginationResult<CourseDelegate> result,
             IEnumerable<FilterModel> availableFilters,
             CourseDelegatesData courseDelegatesData,
             Dictionary<string, string> routeData

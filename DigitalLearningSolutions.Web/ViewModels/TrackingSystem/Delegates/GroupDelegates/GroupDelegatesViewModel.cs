@@ -13,7 +13,7 @@
         public GroupDelegatesViewModel(
             int groupId,
             string groupName,
-            PaginateResult<GroupDelegate> result
+            PaginationResult<GroupDelegate> result
         ) : base(result)
         {
             GroupId = groupId;

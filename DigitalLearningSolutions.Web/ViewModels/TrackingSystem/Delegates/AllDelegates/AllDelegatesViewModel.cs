@@ -12,7 +12,7 @@
     public class AllDelegatesViewModel : BaseSearchablePageViewModel<DelegateUserCard>
     {
         public AllDelegatesViewModel(
-            SearchSortFilterPaginateResult<DelegateUserCard> result,
+            SearchSortFilterPaginationResult<DelegateUserCard> result,
             IReadOnlyCollection<CentreRegistrationPrompt> centreRegistrationPrompts,
             IEnumerable<FilterModel> availableFilters
         ) : base(

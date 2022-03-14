@@ -13,7 +13,7 @@
         public readonly bool IsFrameworkDeveloper;
 
         public MyFrameworksViewModel(
-            SearchSortFilterPaginateResult<BrandedFramework> result,
+            SearchSortFilterPaginationResult<BrandedFramework> result,
             bool isFrameworkDeveloper
         ) : base(result, false)
         {

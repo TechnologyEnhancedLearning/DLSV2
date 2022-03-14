@@ -44,8 +44,8 @@
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(allItems, options);
 
             // Then
-            var expectedResult = new SearchSortFilterPaginateResult<SortableItem>(
-                new PaginateResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1),
+            var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
+                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1),
                 "A",
                 null,
                 null,
@@ -69,8 +69,8 @@
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(allItems, options);
 
             // Then
-            var expectedResult = new SearchSortFilterPaginateResult<SortableItem>(
-                new PaginateResult<SortableItem>(allItems.OrderBy(x => x.Number), 1, 1, int.MaxValue, 10),
+            var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
+                new PaginationResult<SortableItem>(allItems.OrderBy(x => x.Number), 1, 1, int.MaxValue, 10),
                 null,
                 "Number",
                 GenericSortingHelper.Ascending,
@@ -102,8 +102,8 @@
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(allItems, options);
 
             // Then
-            var expectedResult = new SearchSortFilterPaginateResult<SortableItem>(
-                new PaginateResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1),
+            var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
+                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1),
                 null,
                 null,
                 null,
@@ -135,8 +135,8 @@
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(allItems, options);
 
             // Then
-            var expectedResult = new SearchSortFilterPaginateResult<SortableItem>(
-                new PaginateResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1),
+            var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
+                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1),
                 null,
                 null,
                 null,
@@ -168,8 +168,8 @@
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(allItems, options);
 
             // Then
-            var expectedResult = new SearchSortFilterPaginateResult<SortableItem>(
-                new PaginateResult<SortableItem>(allItems, 1, 1, int.MaxValue, 10),
+            var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
+                new PaginationResult<SortableItem>(allItems, 1, 1, int.MaxValue, 10),
                 null,
                 null,
                 null,
@@ -194,8 +194,8 @@
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(allItems, options);
 
             // Then
-            var expectedResult = new SearchSortFilterPaginateResult<SortableItem>(
-                new PaginateResult<SortableItem>(allItems.Take(8), 1, 2, 8, 10),
+            var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
+                new PaginationResult<SortableItem>(allItems.Take(8), 1, 2, 8, 10),
                 null,
                 null,
                 null,
@@ -219,8 +219,8 @@
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(allItems, options);
 
             // Then
-            var expectedResult = new SearchSortFilterPaginateResult<SortableItem>(
-                new PaginateResult<SortableItem>(allItems.Skip(8), 2, 2, 8, 10),
+            var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
+                new PaginationResult<SortableItem>(allItems.Skip(8), 2, 2, 8, 10),
                 null,
                 null,
                 null,

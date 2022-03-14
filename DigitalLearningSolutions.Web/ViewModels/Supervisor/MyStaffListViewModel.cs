@@ -17,7 +17,7 @@
 
         public MyStaffListViewModel(
             AdminUser adminUser,
-            SearchSortFilterPaginateResult<SupervisorDelegateDetailViewModel> result,
+            SearchSortFilterPaginationResult<SupervisorDelegateDetailViewModel> result,
             CentreRegistrationPrompts centreRegistrationPrompts
         ) : base(result, false, searchLabel: "Search administrators")
         {
@@ -28,7 +28,7 @@
 
         public MyStaffListViewModel() : this(
             null,
-            new SearchSortFilterPaginateResult<SupervisorDelegateDetailViewModel>(
+            new SearchSortFilterPaginationResult<SupervisorDelegateDetailViewModel>(
                 Enumerable.Empty<SupervisorDelegateDetailViewModel>(),
                 1,
                 1,

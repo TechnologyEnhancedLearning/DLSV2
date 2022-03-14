@@ -10,7 +10,7 @@
     public class SelectCourseViewModel : BaseSearchablePageViewModel<ApplicationDetails>
     {
         public SelectCourseViewModel(
-            SearchSortFilterPaginateResult<ApplicationDetails> result,
+            SearchSortFilterPaginationResult<ApplicationDetails> result,
             IEnumerable<FilterModel> availableFilters,
             string? categoryFilterString,
             string? topicFilterString

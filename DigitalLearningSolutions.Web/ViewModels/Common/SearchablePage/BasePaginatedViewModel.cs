@@ -21,12 +21,12 @@
 
     public abstract class BasePaginatedViewModel<T> : IBasePaginatedViewModel where T : BaseSearchableItem
     {
-        protected BasePaginatedViewModel(PaginateResult<T> paginateResult)
+        protected BasePaginatedViewModel(PaginationResult<T> paginationResult)
         {
-            Page = paginateResult.Page;
-            ItemsPerPage = paginateResult.ItemsPerPage;
-            MatchingSearchResults = paginateResult.MatchingSearchResults;
-            TotalPages = paginateResult.TotalPages;
+            Page = paginationResult.Page;
+            ItemsPerPage = paginationResult.ItemsPerPage;
+            MatchingSearchResults = paginationResult.MatchingSearchResults;
+            TotalPages = paginationResult.TotalPages;
         }
 
         public int MatchingSearchResults { get; set; }

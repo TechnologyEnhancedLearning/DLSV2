@@ -57,7 +57,7 @@
                 .Select(f => new SearchableFaq(f));
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
-                new SearchOptions(searchString, matchCutOffScore),
+                new SearchOptions(searchString, matchCutOffScore, true),
                 new SortOptions(faqSortBy, GenericSortingHelper.Descending),
                 null,
                 new PaginationOptions(page)

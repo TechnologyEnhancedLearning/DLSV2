@@ -4,7 +4,6 @@
     using System.ComponentModel;
     using System.Linq;
     using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using Microsoft.AspNetCore.Http;
 

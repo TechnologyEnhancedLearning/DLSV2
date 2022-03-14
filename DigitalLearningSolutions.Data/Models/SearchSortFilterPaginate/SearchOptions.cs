@@ -4,14 +4,20 @@
 
     public class SearchOptions
     {
-        public SearchOptions(string? searchString, int? searchMatchCutoff = null)
+        public SearchOptions(
+            string? searchString,
+            int searchMatchCutoff = GenericSearchHelper.MatchCutoffScore,
+            bool useTokeniseScore = false
+        )
         {
             SearchString = searchString;
-            SearchMatchCutoff = searchMatchCutoff ?? GenericSearchHelper.MatchCutoffScore;
+            SearchMatchCutoff = searchMatchCutoff;
         }
 
         public string? SearchString { get; set; }
 
         public int SearchMatchCutoff { get; set; }
+
+        public bool UseTokeniseScorer { get; set; }
     }
 }

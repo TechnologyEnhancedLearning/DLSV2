@@ -14,7 +14,7 @@
         public LearningLogViewModel(
             DelegateProgressAccessRoute accessedVia,
             LearningLog learningLog,
-            SearchSortFilterPaginateResult<LearningLogEntry> result
+            SearchSortFilterPaginationResult<LearningLogEntry> result
         ) : base(result, false)
         {
             AccessedVia = accessedVia;

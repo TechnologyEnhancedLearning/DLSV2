@@ -89,11 +89,7 @@
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
                 new SortOptions(sortBy, sortDirection),
-                new FilterOptions(
-                    existingFilterString,
-                    availableFilters,
-                    null
-                ),
+                new FilterOptions(existingFilterString, availableFilters),
                 new PaginationOptions(page)
             );
 

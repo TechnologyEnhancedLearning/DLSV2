@@ -24,8 +24,8 @@
                                 new List<T>();
                     var options =
                         x.Arguments.Get<SearchSortFilterAndPaginateOptions>("searchSortFilterAndPaginateOptions");
-                    return new SearchSortFilterPaginateResult<T>(
-                        new PaginateResult<T>(
+                    return new SearchSortFilterPaginationResult<T>(
+                        new PaginationResult<T>(
                             items,
                             options!.PaginationOptions?.PageNumber ?? 1,
                             1,

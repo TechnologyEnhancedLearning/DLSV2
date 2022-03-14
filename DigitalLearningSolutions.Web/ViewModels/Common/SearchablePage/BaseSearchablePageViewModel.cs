@@ -37,20 +37,20 @@
         where T : BaseSearchableItem
     {
         protected BaseSearchablePageViewModel(
-            SearchSortFilterPaginateResult<T> searchSortFilterPaginateResult,
+            SearchSortFilterPaginationResult<T> searchSortFilterPaginationResult,
             bool filterEnabled,
             IEnumerable<FilterModel>? availableFilters = null,
             string? searchLabel = null,
             Dictionary<string, string>? routeData = null
-        ) : base(searchSortFilterPaginateResult)
+        ) : base(searchSortFilterPaginationResult)
         {
-            SortBy = searchSortFilterPaginateResult.SortBy;
-            SortDirection = searchSortFilterPaginateResult.SortDirection;
+            SortBy = searchSortFilterPaginationResult.SortBy;
+            SortDirection = searchSortFilterPaginationResult.SortDirection;
 
-            SearchString = searchSortFilterPaginateResult.SearchString;
+            SearchString = searchSortFilterPaginationResult.SearchString;
             SearchLabel = searchLabel;
 
-            ExistingFilterString = searchSortFilterPaginateResult.FilterString;
+            ExistingFilterString = searchSortFilterPaginationResult.FilterString;
             FilterEnabled = filterEnabled;
 
             Filters = availableFilters ?? new List<FilterModel>();

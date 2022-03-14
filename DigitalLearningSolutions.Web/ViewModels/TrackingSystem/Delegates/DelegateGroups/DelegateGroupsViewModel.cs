@@ -10,7 +10,7 @@
     public class DelegateGroupsViewModel : BaseSearchablePageViewModel<Group>
     {
         public DelegateGroupsViewModel(
-            SearchSortFilterPaginateResult<Group> result,
+            SearchSortFilterPaginationResult<Group> result,
             IEnumerable<FilterModel> availableFilters
         ) : base(result, true, availableFilters)
         {

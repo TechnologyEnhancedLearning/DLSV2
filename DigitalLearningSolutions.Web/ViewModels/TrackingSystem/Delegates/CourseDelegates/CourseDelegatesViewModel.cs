@@ -11,7 +11,7 @@
     {
         public CourseDelegatesViewModel(
             CourseDelegatesData courseDelegatesData,
-            SearchSortFilterPaginateResult<CourseDelegate> result,
+            SearchSortFilterPaginationResult<CourseDelegate> result,
             IEnumerable<FilterModel> availableFilters,
             string customisationIdQueryParameterName
         )

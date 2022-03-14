@@ -10,7 +10,7 @@
     public class AddCourseToGroupCoursesViewModel : BaseSearchablePageViewModel<CourseAssessmentDetails>
     {
         public AddCourseToGroupCoursesViewModel(
-            SearchSortFilterPaginateResult<CourseAssessmentDetails> result,
+            SearchSortFilterPaginationResult<CourseAssessmentDetails> result,
             IEnumerable<FilterModel> availableFilters,
             int? adminCategoryFilter,
             int groupId,
