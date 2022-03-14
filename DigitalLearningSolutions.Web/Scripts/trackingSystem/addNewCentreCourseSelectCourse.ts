@@ -109,11 +109,8 @@ function displaySearchableElements(searchableElements: ISearchableElement[]): vo
   const selectedElement = searchableElements.find(
     (x) => (<HTMLOptionElement>x.element).value === selectedApplicationId,
   );
-  if (!selectedElement) {
-    searchableElementsContainer.selectedIndex = 0;
-  } else {
-    searchableElementsContainer.selectedIndex = searchableElements.indexOf(selectedElement) + 1;
-  }
+  searchableElementsContainer.selectedIndex = selectedElement
+    ? searchableElements.indexOf(selectedElement) + 1 : 0;
 
   // This is required to polyfill the new elements in IE
   Details();
