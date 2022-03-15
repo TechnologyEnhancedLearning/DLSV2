@@ -1,11 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -20,6 +19,7 @@
 
     public class GroupCoursesControllerTests
     {
+        private const string CookieName = "GroupAddCourseFilter";
         private ICourseService courseService = null!;
         private GroupCoursesController groupCoursesController = null!;
         private IGroupsService groupsService = null!;
@@ -40,7 +40,6 @@
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
-            const string cookieName = "GroupAddCourseFilter";
             const string cookieValue = "CategoryName|CategoryName|Category";
 
             groupCoursesController = new GroupCoursesController(
@@ -49,7 +48,7 @@
                     groupsService,
                     searchSortFilterPaginateService
                 )
-                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
+                .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();
@@ -76,99 +75,35 @@
         }
 
         [Test]
-        public void AddCourseToGroupSelectCourse_with_no_query_parameters_uses_cookie_value_for_existingFilterString()
+        public void AddCourseToGroupSelectCourse_calls_expected_methods_and_returns_view()
         {
-            // Given
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseAssessmentDetails>(
-                    searchSortFilterPaginateService
-                );
-
             // When
             var result = groupCoursesController.AddCourseToGroupSelectCourse(1);
 
             // Then
-            result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().ExistingFilterString.Should()
-                .Be("CategoryName|CategoryName|Category");
-        }
-
-        [Test]
-        public void
-            AddCourseToGroupSelectCourse_with_query_parameters_uses_query_parameter_value_for_existingFilterString()
-        {
-            // Given
-            const string existingFilterString = "CategoryName|CategoryName|Category";
-            A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseAssessmentDetails>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = groupCoursesController.AddCourseToGroupSelectCourse(
-                1,
-                existingFilterString: existingFilterString
-            );
-
-            // Then
-            result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().ExistingFilterString.Should()
-                .Be(existingFilterString);
-        }
-
-        [Test]
-        public void AddCourseToGroupSelectCourse_with_clearFilters_query_parameter_true_sets_cookie_to_CLEAR()
-        {
-            // Given
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseAssessmentDetails>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = groupCoursesController.AddCourseToGroupSelectCourse(1, clearFilters: true);
-
-            // Then
             using (new AssertionScope())
             {
+                A.CallTo(() => courseService.GetEligibleCoursesToAddToGroup(A<int>._, A<int?>._, A<int>._))
+                    .MustHaveHappened();
+                A.CallTo(() => courseService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
+                    .MustHaveHappened();
+                A.CallTo(() => courseService.GetTopicsForCentreAndCentrallyManagedCourses(A<int>._)).MustHaveHappened();
+                A.CallTo(() => groupsService.GetGroupName(A<int>._, A<int>._)).MustHaveHappened();
+                A.CallTo(
+                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                        A<IEnumerable<CourseAssessmentDetails>>._,
+                        A<SearchSortFilterAndPaginateOptions>._
+                    )
+                ).MustHaveHappened();
                 A.CallTo(
                         () => httpResponse.Cookies.Append(
-                            "GroupAddCourseFilter",
-                            FilteringHelper.EmptyFiltersCookieValue,
+                            CookieName,
+                            A<string>._,
                             A<CookieOptions>._
                         )
                     )
                     .MustHaveHappened();
-                result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().ExistingFilterString.Should()
-                    .BeNull();
-            }
-        }
-
-        [Test]
-        public void
-            AddCourseToGroupSelectCourse_with_null_existingFilterString_and_new_filter_query_parameter_add_new_cookie_value()
-        {
-            // Given
-            const string? existingFilterString = null;
-            const string? newFilterValue = "CategoryName|CategoryName|Category";
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseAssessmentDetails>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = groupCoursesController.AddCourseToGroupSelectCourse(
-                1,
-                existingFilterString: existingFilterString,
-                newFilterToAdd: newFilterValue
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => httpResponse.Cookies.Append("GroupAddCourseFilter", newFilterValue, A<CookieOptions>._))
-                    .MustHaveHappened();
-                result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().ExistingFilterString.Should()
-                    .Be(newFilterValue);
+                result.Should().BeViewResult().WithDefaultViewName();
             }
         }
 

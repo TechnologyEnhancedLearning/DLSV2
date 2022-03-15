@@ -71,7 +71,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var delegateUsers = GetDelegateUserCards();
 
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
-            var availableFilters = EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterViewModels(
+            var availableFilters = EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterModels(
                 jobGroups,
                 promptsWithOptions
             );
@@ -122,7 +122,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreId());
 
                 var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
-                var availableFilters = EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterViewModels(
+                var availableFilters = EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterModels(
                     jobGroups,
                     promptsWithOptions
                 );

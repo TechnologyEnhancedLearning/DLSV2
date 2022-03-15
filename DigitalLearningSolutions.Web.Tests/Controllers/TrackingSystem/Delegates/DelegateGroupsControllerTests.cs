@@ -2,11 +2,10 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -16,21 +15,12 @@
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using NUnit.Framework;
 
     public class DelegateGroupsControllerTests
     {
-        private static readonly CentreRegistrationPrompt ExpectedPrompt1 =
-            PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: null, mandatory: true);
-
-        private static readonly List<CentreRegistrationPrompt> CustomPrompts = new List<CentreRegistrationPrompt>
-            { ExpectedPrompt1 };
-
-        private readonly CentreRegistrationPrompts prompts =
-            PromptsTestHelper.GetDefaultCentreRegistrationPrompts(CustomPrompts);
-
+        private const string CookieName = "DelegateGroupsFilter";
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsService groupsService = null!;
@@ -45,13 +35,8 @@
             groupsService = A.Fake<IGroupsService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
-            A.CallTo(() => groupsService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
-            A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(A<int>._))
-                .Returns(prompts);
-
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
-            const string cookieName = "DelegateGroupsFilter";
             const string cookieValue = "LinkedToField|LinkedToField|0";
 
             delegateGroupsController = new DelegateGroupsController(
@@ -59,95 +44,38 @@
                     groupsService,
                     searchSortFilterPaginateService
                 )
-                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
+                .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();
         }
 
         [Test]
-        public void Index_with_no_query_parameters_uses_cookie_value_for_existingFilterString()
+        public void Index_calls_expected_methods_and_returns_view()
         {
-            // Given
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<Group>(
-                    searchSortFilterPaginateService
-                );
-
             // When
             var result = delegateGroupsController.Index();
 
             // Then
-            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().ExistingFilterString.Should()
-                .Be("LinkedToField|LinkedToField|0");
-        }
-
-        [Test]
-        public void Index_with_query_parameters_uses_query_parameter_value_for_existingFilterString()
-        {
-            // Given
-            const string existingFilterString = "LinkedToField|LinkedToField|4";
-            A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<Group>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = delegateGroupsController.Index(existingFilterString: existingFilterString);
-
-            // Then
-            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().ExistingFilterString.Should()
-                .Be(existingFilterString);
-        }
-
-        [Test]
-        public void Index_with_clearFilters_query_parameter_true_sets_cookie_to_CLEAR()
-        {
-            // Given
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<Group>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = delegateGroupsController.Index(clearFilters: true);
-
-            // Then
-            A.CallTo(
-                    () => httpResponse.Cookies.Append(
-                        "DelegateGroupsFilter",
-                        FilteringHelper.EmptyFiltersCookieValue,
-                        A<CookieOptions>._
+            using (new AssertionScope())
+            {
+                A.CallTo(() => groupsService.GetGroupsForCentre(A<int>._)).MustHaveHappened();
+                A.CallTo(
+                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                        A<IEnumerable<Group>>._,
+                        A<SearchSortFilterAndPaginateOptions>._
                     )
-                )
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().ExistingFilterString.Should()
-                .BeNull();
-        }
-
-        [Test]
-        public void Index_with_null_existingFilterString_and_new_filter_query_parameter_add_new_cookie_value()
-        {
-            // Given
-            const string? existingFilterString = null;
-            const string? newFilterToAdd = "LinkedToField|LinkedToField|4";
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<Group>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = delegateGroupsController.Index(
-                existingFilterString: existingFilterString,
-                newFilterToAdd: newFilterToAdd
-            );
-
-            // Then
-            A.CallTo(() => httpResponse.Cookies.Append("DelegateGroupsFilter", newFilterToAdd, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().ExistingFilterString.Should()
-                .Be(newFilterToAdd);
+                ).MustHaveHappened();
+                A.CallTo(
+                        () => httpResponse.Cookies.Append(
+                            CookieName,
+                            A<string>._,
+                            A<CookieOptions>._
+                        )
+                    )
+                    .MustHaveHappened();
+                result.Should().BeViewResult().WithDefaultViewName();
+            }
         }
 
         [Test]

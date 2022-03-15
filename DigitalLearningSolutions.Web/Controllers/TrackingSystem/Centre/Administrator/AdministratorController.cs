@@ -69,24 +69,12 @@
 
             var centreId = User.GetCentreId();
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
-            var categories = GetCourseCategories(centreId);
+            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var loggedInUserId = User.GetAdminId();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
 
-            var availableFilters = new List<FilterModel>
-            {
-                new FilterModel("Role", "Role", AdministratorsViewModelFilterOptions.RoleOptions),
-                new FilterModel(
-                    "CategoryName",
-                    "Category",
-                    AdministratorsViewModelFilterOptions.GetCategoryOptions(categories)
-                ),
-                new FilterModel(
-                    "AccountStatus",
-                    "Account Status",
-                    AdministratorsViewModelFilterOptions.AccountStatusOptions
-                ),
-            };
+            var availableFilters =
+                AdministratorsViewModelFilterOptions.GetAllAdministratorsFilterModels(categories);
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
@@ -120,7 +108,7 @@
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
 
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
-            var categories = GetCourseCategories(centreId);
+            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var model = new AllAdminsViewModel(
                 adminUsersAtCentre,
                 categories,
@@ -205,14 +193,6 @@
             userService.DeactivateOrDeleteAdmin(adminId);
 
             return View("DeactivateOrDeleteAdminConfirmation");
-        }
-
-        private IEnumerable<string> GetCourseCategories(int centreId)
-        {
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
-                .Select(c => c.CategoryName);
-            categories = categories.Prepend("All");
-            return categories;
         }
 
         private bool CurrentUserCanDeactivateAdmin(AdminUser adminToDeactivate)

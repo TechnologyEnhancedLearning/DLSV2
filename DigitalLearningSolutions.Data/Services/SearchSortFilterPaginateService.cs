@@ -41,7 +41,7 @@
 
             if (searchSortFilterAndPaginateOptions.FilterOptions != null)
             {
-                (itemsToReturn, appliedFilterString) = FilterOrResetFilterToDefault(
+                (itemsToReturn, appliedFilterString) = FilteringHelper.FilterOrResetFilterToDefault(
                     itemsToReturn,
                     searchSortFilterAndPaginateOptions.FilterOptions
                 );
@@ -65,45 +65,6 @@
                 searchSortFilterAndPaginateOptions.SortOptions?.SortDirection,
                 appliedFilterString
             );
-        }
-
-        private static (IEnumerable<T>, string?) FilterOrResetFilterToDefault<T>(
-            IEnumerable<T> items,
-            FilterOptions filterOptions
-        )
-            where T : BaseSearchableItem
-        {
-            if (AvailableFiltersContainsAllSelectedFilters(filterOptions))
-            {
-                return (FilteringHelper.FilterItems(items.AsQueryable(), filterOptions.FilterString),
-                    filterOptions.FilterString);
-            }
-
-            return filterOptions.DefaultFilterString != null
-                ? (FilteringHelper.FilterItems(items.AsQueryable(), filterOptions.DefaultFilterString),
-                    filterOptions.DefaultFilterString)
-                : (items, null);
-        }
-
-        private static bool AvailableFiltersContainsAllSelectedFilters(FilterOptions filterOptions)
-        {
-            var currentFilters = filterOptions.FilterString?.Split(FilteringHelper.FilterSeparator).ToList() ??
-                                 new List<string>();
-
-            return currentFilters.All(filter => AvailableFiltersContainsFilter(filterOptions.AvailableFilters, filter));
-        }
-
-        private static bool AvailableFiltersContainsFilter(IEnumerable<FilterModel> availableFilters, string filter)
-        {
-            return availableFilters.Any(filterModel => FilterOptionsContainsFilter(filter, filterModel.FilterOptions));
-        }
-
-        private static bool FilterOptionsContainsFilter(
-            string filter,
-            IEnumerable<FilterOptionModel> filterOptions
-        )
-        {
-            return filterOptions.Any(filterOption => filterOption.FilterValue == filter);
         }
 
         private static PaginationResult<T> PaginateItems<T>(

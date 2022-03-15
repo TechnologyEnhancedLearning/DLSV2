@@ -13,7 +13,7 @@
     public class EmailDelegatesViewModelTests
     {
         private readonly IEnumerable<FilterModel> availableFilters =
-            EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterViewModels(
+            EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterModels(
                 new List<(int, string)>(),
                 new List<CentreRegistrationPrompt>()
             );

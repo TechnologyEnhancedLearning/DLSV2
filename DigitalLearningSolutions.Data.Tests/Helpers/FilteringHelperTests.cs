@@ -1,7 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
@@ -183,6 +186,20 @@
         }
 
         [Test]
+        public void GetFilterString_with_EmptyFiltersCookieValue_returns_null()
+        {
+            // Given
+            A.CallTo(() => httpRequest.Cookies.ContainsKey(CookieName)).Returns(true);
+            A.CallTo(() => httpRequest.Cookies[CookieName]).Returns(FilteringHelper.EmptyFiltersCookieValue);
+
+            // When
+            var result = FilteringHelper.GetFilterString(null, null, false, httpRequest, CookieName);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
         public void GetFilterString_with_no_parameters_and_no_cookies_returns_defaultFilterValue()
         {
             // When
@@ -216,6 +233,78 @@
 
             // Then
             result.Should().Be("existing-filter-string╡filter-value");
+        }
+
+        [Test]
+        public void FilterOrResetFilterToDefault_returns_expected_items_with_valid_filter()
+        {
+            // Given
+            var expectedItems = new[] { ItemA1, ItemA3 }.AsQueryable();
+            const string filterString = "Name|Name|a";
+            var availableFilters = new List<FilterModel>
+            {
+                new FilterModel(
+                    "Name",
+                    "Name",
+                    new List<FilterOptionModel> { new FilterOptionModel("A", "Name|Name|a", FilterStatus.Default) }
+                ),
+            };
+            var filterOptions = new FilterOptions(filterString, availableFilters);
+
+            // When
+            var (resultItems, resultString) = FilteringHelper.FilterOrResetFilterToDefault(InputItems, filterOptions);
+
+            // Then
+            resultItems.Should().BeEquivalentTo(expectedItems);
+            resultString.Should().BeEquivalentTo(filterString);
+        }
+
+        [Test]
+        public void FilterOrResetFilterToDefault_returns_expected_default_filtered_items_with_invalid_filter()
+        {
+            // Given
+            var expectedItems = new[] { ItemA1, ItemA3 }.AsQueryable();
+            const string defaultFilterString = "Name|Name|a";
+            const string invalidFilterString = "Name|INVALID|a";
+            var availableFilters = new List<FilterModel>
+            {
+                new FilterModel(
+                    "Name",
+                    "Name",
+                    new List<FilterOptionModel> { new FilterOptionModel("A", "Name|Name|A", FilterStatus.Default) }
+                ),
+            };
+            var filterOptions = new FilterOptions(invalidFilterString, availableFilters, defaultFilterString);
+
+            // When
+            var (resultItems, resultString) = FilteringHelper.FilterOrResetFilterToDefault(InputItems, filterOptions);
+
+            // Then
+            resultItems.Should().BeEquivalentTo(expectedItems);
+            resultString.Should().BeEquivalentTo(defaultFilterString);
+        }
+
+        [Test]
+        public void FilterOrResetFilterToDefault_returns_expected_unfiltered_items_with_invalid_filter_and_no_default()
+        {
+            // Given
+            const string invalidFilterString = "Name|INVALID|a";
+            var availableFilters = new List<FilterModel>
+            {
+                new FilterModel(
+                    "Name",
+                    "Name",
+                    new List<FilterOptionModel> { new FilterOptionModel("A", "Name|Name|A", FilterStatus.Default) }
+                ),
+            };
+            var filterOptions = new FilterOptions(invalidFilterString, availableFilters);
+
+            // When
+            var (resultItems, resultString) = FilteringHelper.FilterOrResetFilterToDefault(InputItems, filterOptions);
+
+            // Then
+            resultItems.Should().BeEquivalentTo(InputItems);
+            resultString.Should().BeNull();
         }
     }
 }

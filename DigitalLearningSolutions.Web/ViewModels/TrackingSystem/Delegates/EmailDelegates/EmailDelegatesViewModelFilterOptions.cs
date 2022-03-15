@@ -9,11 +9,12 @@
 
     public static class EmailDelegatesViewModelFilterOptions
     {
-        public static List<FilterModel> GetEmailDelegatesFilterViewModels(
+        public static List<FilterModel> GetEmailDelegatesFilterModels(
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CentreRegistrationPrompt> promptsWithOptions
+            IEnumerable<CentreRegistrationPrompt> customPrompts
         )
         {
+            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             var filters = new List<FilterModel>
             {
                 new FilterModel(

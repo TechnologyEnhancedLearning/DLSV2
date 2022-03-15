@@ -30,7 +30,7 @@
                 delegateUser =>
                 {
                     var customFields = PromptsService.GetDelegateRegistrationPrompts(delegateUser, customPrompts);
-                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions,Page);
+                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions, Page);
                 }
             );
         }

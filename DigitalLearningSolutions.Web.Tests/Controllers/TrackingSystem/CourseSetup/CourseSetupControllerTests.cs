@@ -1,16 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using FakeItEasy;
@@ -19,12 +17,13 @@
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class CourseSetupControllerTests
     {
+        private const string CookieName = "CourseFilter";
+
         private readonly ApplicationDetails application = new ApplicationDetails
         {
             ApplicationId = 1,
@@ -129,8 +128,6 @@
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
                 .WithMockTempData();
-
-            const string cookieName = "CourseFilter";
             const string cookieValue = "Status|Active|false";
 
             controllerWithCookies = new CourseSetupController(
@@ -140,120 +137,37 @@
                     searchSortFilterPaginateService,
                     config
                 )
-                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
+                .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
                 .WithMockTempData();
         }
 
         [Test]
-        public void Index_with_no_query_parameters_uses_cookie_value_for_existingFilterString()
+        public void Index_calls_expected_methods_and_returns_view()
         {
-            // Given
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
-                    searchSortFilterPaginateService
-                );
-
             // When
             var result = controllerWithCookies.Index();
 
             // Then
-            result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
-                .Be("Status|Active|false");
-        }
-
-        [Test]
-        public void Index_with_query_parameters_uses_query_parameter_value_for_existingFilterString()
-        {
-            // Given
-            const string existingFilterString = "Status|HideInLearnerPortal|true";
-
-            A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString);
-
-            // Then
-            result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
-                .Be(existingFilterString);
-        }
-
-        [Test]
-        public void Index_with_clearFilters_query_parameter_true_sets_cookie_to_CLEAR()
-        {
-            // Given
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = controllerWithCookies.Index(clearFilters: true);
-
-            // Then
             using (new AssertionScope())
             {
+                A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).MustHaveHappened();
+                A.CallTo(
+                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                        A<IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>>._,
+                        A<SearchSortFilterAndPaginateOptions>._
+                    )
+                ).MustHaveHappened();
                 A.CallTo(
                         () => httpResponse.Cookies.Append(
-                            "CourseFilter",
-                            FilteringHelper.EmptyFiltersCookieValue,
+                            CookieName,
+                            A<string>._,
                             A<CookieOptions>._
                         )
                     )
                     .MustHaveHappened();
-                result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
-                    .BeNull();
+                result.Should().BeViewResult().WithDefaultViewName();
             }
-        }
-
-        [Test]
-        public void Index_with_null_existingFilterString_and_new_filter_query_parameter_adds_new_cookie_value()
-        {
-            // Given
-            const string? existingFilterString = null;
-            const string newFilterToAdd = "Status|HideInLearnerPortal|true";
-
-            A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = controllerWithCookies.Index(
-                existingFilterString: existingFilterString,
-                newFilterToAdd: newFilterToAdd
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterToAdd, A<CookieOptions>._))
-                    .MustHaveHappened();
-                result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
-                    .Be(newFilterToAdd);
-            }
-        }
-
-        [Test]
-        public void Index_with_no_filtering_should_default_to_Active_courses()
-        {
-            // Given
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseStatisticsWithAdminFieldResponseCounts>(
-                    searchSortFilterPaginateService
-                );
-
-            // When
-            var result = controller.Index();
-
-            // Then
-            result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
-                .Be("Status|Active|true");
         }
 
         [Test]

@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
@@ -39,6 +40,27 @@
                     FilterStatus.Default
                 )
             );
+        }
+
+        public static List<FilterModel> GetAllAdministratorsFilterModels(IEnumerable<Category> categories)
+        {
+            var categoryStrings = categories.Select(c => c.CategoryName);
+            categoryStrings = categoryStrings.Prepend("All");
+            var filters = new List<FilterModel>
+            {
+                new FilterModel("Role", "Role", RoleOptions),
+                new FilterModel(
+                    "CategoryName",
+                    "Category",
+                    GetCategoryOptions(categoryStrings)
+                ),
+                new FilterModel(
+                    "AccountStatus",
+                    "Account Status",
+                    AccountStatusOptions
+                ),
+            };
+            return filters;
         }
     }
 }

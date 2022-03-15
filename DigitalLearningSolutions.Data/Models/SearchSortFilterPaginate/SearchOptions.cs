@@ -12,6 +12,7 @@
         {
             SearchString = searchString;
             SearchMatchCutoff = searchMatchCutoff;
+            UseTokeniseScorer = useTokeniseScore;
         }
 
         public string? SearchString { get; set; }

@@ -104,6 +104,45 @@
             return items;
         }
 
+        public static (IEnumerable<T> filteredItems, string? appliedFilterString) FilterOrResetFilterToDefault<T>(
+            IEnumerable<T> items,
+            FilterOptions filterOptions
+        )
+            where T : BaseSearchableItem
+        {
+            if (AvailableFiltersContainsAllSelectedFilters(filterOptions))
+            {
+                return (FilterItems(items.AsQueryable(), filterOptions.FilterString),
+                    filterOptions.FilterString);
+            }
+
+            return filterOptions.DefaultFilterString != null
+                ? (FilterItems(items.AsQueryable(), filterOptions.DefaultFilterString),
+                    filterOptions.DefaultFilterString)
+                : (items, null);
+        }
+
+        private static bool AvailableFiltersContainsAllSelectedFilters(FilterOptions filterOptions)
+        {
+            var currentFilters = filterOptions.FilterString?.Split(FilterSeparator).ToList() ??
+                                 new List<string>();
+
+            return currentFilters.All(filter => AvailableFiltersContainsFilter(filterOptions.AvailableFilters, filter));
+        }
+
+        private static bool AvailableFiltersContainsFilter(IEnumerable<FilterModel> availableFilters, string filter)
+        {
+            return availableFilters.Any(filterModel => FilterOptionsContainsFilter(filter, filterModel.FilterOptions));
+        }
+
+        private static bool FilterOptionsContainsFilter(
+            string filter,
+            IEnumerable<FilterOptionModel> filterOptions
+        )
+        {
+            return filterOptions.Any(filterOption => filterOption.FilterValue == filter);
+        }
+
         private static IQueryable<T> FilterGroupItems<T>(
             IQueryable<T> items,
             string propertyName,
@@ -134,7 +173,8 @@
                 // called Answer1, Answer2 etc. We append the prompt text in brackets to the property
                 // name when setting up these filters so that we can check whether they are valid filters for another course etc.
                 // e.g. Answer1(Access Permission)|Answer1(Access Permissions)|FREETEXTBLANKVALUE would not be a valid filter for
-                // a course without that admin field at position 1, but would be able to be used for filtering the models.
+                // a course with admin field "Priority Access" at position 1, or a course with no admin field at position 1,
+                // but would technically be able to be used for filtering the models.
                 // We have to strip the bracketed value here so we return back to just the property name string
                 PropertyName = splitFilter[1].Split('(')[0];
                 PropertyValue = splitFilter[2];

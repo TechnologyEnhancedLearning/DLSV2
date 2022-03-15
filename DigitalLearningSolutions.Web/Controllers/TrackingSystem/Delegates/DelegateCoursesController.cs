@@ -67,7 +67,11 @@
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
                 new SortOptions(sortBy, sortDirection),
-                new FilterOptions(existingFilterString, availableFilters),
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters,
+                    CourseStatusFilterOptions.IsActive.FilterValue
+                ),
                 new PaginationOptions(page, itemsPerPage)
             );
 

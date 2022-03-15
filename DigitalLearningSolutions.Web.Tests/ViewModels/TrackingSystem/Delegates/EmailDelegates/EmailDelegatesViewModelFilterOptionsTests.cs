@@ -1,13 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.EmailDelegates
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates;
     using FluentAssertions;
     using NUnit.Framework;
@@ -15,39 +14,24 @@
     public class EmailDelegatesViewModelFilterOptionsTests
     {
         [Test]
-        public void GetEmailDelegatesFilterViewModels_should_return_correct_job_group_filter()
+        public void GetEmailDelegatesFilterModels_should_return_expected_filters()
         {
             // Given
-            var (jobGroups, expectedFilter) = GetSampleJobGroupsAndFilter();
+            var (jobGroups, jobGroupsFilter) = GetSampleJobGroupsAndFilter();
+            var (customPrompts, promptFilters) = GetSampleCustomPromptsAndFilters();
 
             // When
-            var result =
-                EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterViewModels(
-                    jobGroups,
-                    new List<CentreRegistrationPrompt>()
-                );
-
-            // Then
-            result.Should().ContainEquivalentOf(expectedFilter);
-        }
-
-        [Test]
-        public void GetEmailDelegatesFilterViewModels_should_return_correct_custom_prompt_filters()
-        {
-            // Given
-            var (customPrompts, expectedFilters) = GetSampleCustomPromptsAndFilters();
-
-            // When
-            var result = EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterViewModels(
-                new List<(int, string)>(),
+            var result = EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterModels(
+                jobGroups,
                 customPrompts
             );
 
             // Then
-            expectedFilters.ForEach(expectedFilter => result.Should().ContainEquivalentOf(expectedFilter));
+            var expectedFilters = promptFilters.Prepend(jobGroupsFilter);
+            result.Should().BeEquivalentTo(expectedFilters);
         }
 
-        private (IEnumerable<(int id, string name)> jobGroups, FilterModel filter) GetSampleJobGroupsAndFilter()
+        private static (IEnumerable<(int id, string name)> jobGroups, FilterModel filter) GetSampleJobGroupsAndFilter()
         {
             var jobGroups = new List<(int id, string name)> { (1, "J 1"), (2, "J 2") };
 
@@ -71,7 +55,7 @@
             return (jobGroups, jobGroupFilter);
         }
 
-        private (List<CentreRegistrationPrompt> customPrompts, List<FilterModel> filters) GetSampleCustomPromptsAndFilters()
+        private static (List<CentreRegistrationPrompt> customPrompts, List<FilterModel> filters) GetSampleCustomPromptsAndFilters()
         {
             var customPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(
                 1,

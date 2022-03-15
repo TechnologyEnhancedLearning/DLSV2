@@ -1,23 +1,24 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates;
     using FakeItEasy;
-    using FluentAssertions;
+    using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class EmailDelegatesControllerTests
     {
+        private const string CookieName = "EmailDelegateFilter";
         private IConfiguration config = null!;
         private EmailDelegatesController emailDelegatesController = null!;
         private HttpRequest httpRequest = null!;
@@ -27,13 +28,13 @@
         private PromptsService promptsHelper = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IUserService userService = null!;
+        private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
 
         [SetUp]
         public void Setup()
         {
-            var centreCustomPromptsService = A.Fake<ICentreRegistrationPromptsService>();
-
-            promptsHelper = new PromptsService(centreCustomPromptsService);
+            centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
+            promptsHelper = new PromptsService(centreRegistrationPromptsService);
             userService = A.Fake<IUserService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             passwordResetService = A.Fake<IPasswordResetService>();
@@ -43,7 +44,6 @@
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
 
-            const string cookieName = "EmailDelegateFilter";
             const string cookieValue = "JobGroupId|JobGroupId|1";
 
             emailDelegatesController = new EmailDelegatesController(
@@ -54,77 +54,40 @@
                     searchSortFilterPaginateService,
                     config
                 )
-                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
+                .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();
-
-            SearchSortFilterAndPaginateTestHelper
-                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<DelegateUserCard>(
-                    searchSortFilterPaginateService
-                );
         }
 
         [Test]
-        public void Index_with_no_query_parameters_uses_cookie_value_for_existingFilterString()
+        public void Index_calls_expected_methods_and_returns_view()
         {
             // When
             var result = emailDelegatesController.Index();
 
             // Then
-            result.As<ViewResult>().Model.As<EmailDelegatesViewModel>().ExistingFilterString.Should()
-                .Be("JobGroupId|JobGroupId|1");
-        }
-
-        [Test]
-        public void Index_with_query_parameters_uses_query_parameter_value_for_existingFilterString()
-        {
-            // Given
-            const string existingFilterString = "JobGroupId|JobGroupId|2";
-            A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
-
-            // When
-            var result = emailDelegatesController.Index(existingFilterString);
-
-            // Then
-            result.As<ViewResult>().Model.As<EmailDelegatesViewModel>().ExistingFilterString.Should()
-                .Be(existingFilterString);
-        }
-
-        [Test]
-        public void Index_with_clearFilters_query_parameter_true_sets_cookie_to_CLEAR()
-        {
-            // When
-            var result = emailDelegatesController.Index(clearFilters: true);
-
-            // Then
-            A.CallTo(
-                    () => httpResponse.Cookies.Append(
-                        "EmailDelegateFilter",
-                        FilteringHelper.EmptyFiltersCookieValue,
-                        A<CookieOptions>._
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userService.GetDelegateUserCardsForWelcomeEmail(A<int>._)).MustHaveHappened();
+                A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(A<int>._))
+                    .MustHaveHappened();
+                A.CallTo(
+                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                        A<IEnumerable<DelegateUserCard>>._,
+                        A<SearchSortFilterAndPaginateOptions>._
                     )
-                )
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<EmailDelegatesViewModel>().ExistingFilterString.Should()
-                .BeNull();
-        }
-
-        [Test]
-        public void Index_with_null_existingFilterString_and_new_filter_query_parameter_adds_new_cookie_value()
-        {
-            // Given
-            const string? existingFilterString = null;
-            const string newFilterValue = "JobGroupId|JobGroupId|2";
-
-            // When
-            var result = emailDelegatesController.Index(existingFilterString, newFilterValue);
-
-            // Then
-            A.CallTo(() => httpResponse.Cookies.Append("EmailDelegateFilter", newFilterValue, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<EmailDelegatesViewModel>().ExistingFilterString.Should()
-                .Be(newFilterValue);
+                ).MustHaveHappened();
+                A.CallTo(
+                        () => httpResponse.Cookies.Append(
+                            CookieName,
+                            A<string>._,
+                            A<CookieOptions>._
+                        )
+                    )
+                    .MustHaveHappened();
+                result.Should().BeViewResult().WithDefaultViewName();
+            }
         }
     }
 }

@@ -7,7 +7,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    [Obsolete]
+    [Obsolete("The BasePaginatedViewModel should be used for new pages")]
     public abstract class OldBasePaginatedViewModel : IBasePaginatedViewModel
     {
         public const int DefaultItemsPerPage = 10;

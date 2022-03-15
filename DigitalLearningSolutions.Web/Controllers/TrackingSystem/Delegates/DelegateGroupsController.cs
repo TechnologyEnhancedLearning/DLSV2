@@ -63,28 +63,8 @@
 
             var centreId = User.GetCentreId();
             var groups = groupsService.GetGroupsForCentre(centreId).ToList();
-            var admins = groups.Select(
-                g => (g.AddedByAdminId,
-                    DisplayStringHelper.GetPotentiallyInactiveAdminName(
-                        g.AddedByFirstName,
-                        g.AddedByLastName,
-                        g.AddedByAdminActive
-                    ))
-            ).Distinct();
             var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
-            var availableFilters = new[]
-            {
-                new FilterModel(
-                    nameof(Group.AddedByAdminId),
-                    "Added by",
-                    DelegateGroupsViewModelFilterOptions.GetAddedByOptions(admins)
-                ),
-                new FilterModel(
-                    nameof(Group.LinkedToField),
-                    "Linked field",
-                    DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(registrationPrompts)
-                ),
-            };
+            var availableFilters = DelegateGroupsViewModelFilterOptions.GetDelegateGroupFilterModels(groups, registrationPrompts);
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),

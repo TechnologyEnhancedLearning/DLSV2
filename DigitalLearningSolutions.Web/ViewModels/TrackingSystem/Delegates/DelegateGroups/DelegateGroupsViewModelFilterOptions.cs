@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -47,6 +48,30 @@
                     FilterStatus.Default
                 )
             );
+        }
+
+        public static IEnumerable<FilterModel> GetDelegateGroupFilterModels(List<Group> groups, IEnumerable<CentreRegistrationPrompt> registrationPrompts)
+        {
+            var admins = groups.Select(
+                g => (g.AddedByAdminId, DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                    g.AddedByFirstName,
+                    g.AddedByLastName,
+                    g.AddedByAdminActive
+                ))
+            ).Distinct();
+            return new[]
+            {
+                new FilterModel(
+                    nameof(Group.AddedByAdminId),
+                    "Added by",
+                    GetAddedByOptions(admins)
+                ),
+                new FilterModel(
+                    nameof(Group.LinkedToField),
+                    "Linked field",
+                    GetLinkedFieldOptions(registrationPrompts)
+                ),
+            };
         }
     }
 }

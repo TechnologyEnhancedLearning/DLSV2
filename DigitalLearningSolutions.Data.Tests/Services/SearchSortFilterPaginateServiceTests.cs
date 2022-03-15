@@ -228,5 +228,32 @@
             );
             result.Should().BeEquivalentTo(expectedResult);
         }
+
+        [Test]
+        [TestCase(-1)]
+        [TestCase(100)]
+        public void SearchFilterSortAndPaginate_with_paginate_only_returns_first_page_with_invalid_page_numbers(int pageNumber)
+        {
+            // Given
+            var options = new SearchSortFilterAndPaginateOptions(
+                null,
+                null,
+                null,
+                new PaginationOptions(pageNumber, 5)
+            );
+
+            // When
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(allItems, options);
+
+            // Then
+            var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
+                new PaginationResult<SortableItem>(allItems.Take(5), 1, 2, 5, 10),
+                null,
+                null,
+                null,
+                null
+            );
+            result.Should().BeEquivalentTo(expectedResult);
+        }
     }
 }

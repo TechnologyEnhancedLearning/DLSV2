@@ -19,18 +19,17 @@
             IEnumerable<int> selectedDelegateIds
         )
         {
-            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             Delegates = delegateUserCards.Select(
                 delegateUser =>
                 {
                     var isDelegateSelected = selectedDelegateIds.Contains(delegateUser.Id);
                     var customFields = PromptsService.GetDelegateRegistrationPrompts(delegateUser, customPrompts);
-                    return new EmailDelegatesItemViewModel(delegateUser, isDelegateSelected, customFields, promptsWithOptions);
+                    return new EmailDelegatesItemViewModel(delegateUser, isDelegateSelected, customFields, customPrompts);
                 }
             );
 
             Filters = EmailDelegatesViewModelFilterOptions
-                .GetEmailDelegatesFilterViewModels(jobGroups, promptsWithOptions)
+                .GetEmailDelegatesFilterModels(jobGroups, customPrompts)
                 .SelectAppliedFilterViewModels();
         }
     }
