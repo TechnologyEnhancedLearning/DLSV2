@@ -15,7 +15,7 @@
                 .WithColumn("LastName").AsString(100).NotNullable()
                 .WithColumn("JobGroupID").AsInt32().NotNullable().ForeignKey("JobGroups", "JobGroupID")
                 .WithColumn("ProfessionalRegistrationNumber").AsString(32).Nullable()
-                .WithColumn("ProfileImage").AsCustom("image")
+                .WithColumn("ProfileImage").AsCustom("image").Nullable()
                 .WithColumn("Active").AsBoolean().NotNullable()
                 .WithColumn("ResetPasswordID").AsInt32().Nullable().ForeignKey("ResetPassword", "ID")
                 .WithColumn("TermsAgreed").AsDateTime().Nullable()
