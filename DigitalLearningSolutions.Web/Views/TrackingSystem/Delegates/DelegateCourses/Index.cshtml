@@ -23,7 +23,15 @@
           <h1 class="nhsuk-heading-xl">Delegate courses</h1>
         </div>
         <div class="nhsuk-grid-column-one-third heading-button-group">
-          <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
+          <a class="nhsuk-button nhsuk-button--secondary heading-button"
+             id="export-all"
+             asp-controller="DelegateCourses"
+             asp-action="DownloadAll"
+             asp-route-searchString="@Model.SearchString"
+             asp-route-sortBy="@Model.SortBy"
+             asp-route-sortDirection="@Model.SortDirection"
+             asp-route-existingFilterString="@Model.ExistingFilterString"
+             role="button">
             Export
           </a>
         </div>
