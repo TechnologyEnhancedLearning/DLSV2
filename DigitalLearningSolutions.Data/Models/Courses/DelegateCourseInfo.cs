@@ -44,6 +44,7 @@
             int delegateCentreId,
             bool isProgressLocked,
             string delegateNumber,
+            bool hasBeenPromptedForPrn,
             string? professionalRegistrationNumber
         )
         {
@@ -84,6 +85,7 @@
             DelegateNumber = delegateNumber;
             DelegateCentreId = delegateCentreId;
             IsProgressLocked = isProgressLocked;
+            HasBeenPromptedForPrn = hasBeenPromptedForPrn;
             ProfessionalRegistrationNumber = professionalRegistrationNumber;
         }
 
@@ -122,6 +124,7 @@
         public string DelegateNumber { get; set; }
         public int DelegateCentreId { get; set; }
         public bool IsProgressLocked { get; set; }
+        public bool HasBeenPromptedForPrn { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
     }
 }

@@ -59,6 +59,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             101,
             false,
             "HG1",
+            false,
             null
         );
 
@@ -284,6 +285,16 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // Then
             count.Should().Be(3);
+        }
+
+        [Test]
+        public void GetNumberOfActiveCoursesAtCentreFilteredByCategory_excludes_courses_from_archived_applications()
+        {
+            // When
+            var count = courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(101, null);
+
+            // Then
+            count.Should().Be(141);
         }
 
         [Test]

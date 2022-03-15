@@ -17,7 +17,10 @@
         {
             DelegateId = courseDelegate.DelegateId;
             CandidateNumber = courseDelegate.CandidateNumber;
-            ProfessionalRegistrationNumber = courseDelegate.ProfessionalRegistrationNumber;
+            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+                courseDelegate.HasBeenPromptedForPrn,
+                courseDelegate.ProfessionalRegistrationNumber
+            );
             TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(
                 courseDelegate.FullNameForSearchingSorting,
                 courseDelegate.EmailAddress

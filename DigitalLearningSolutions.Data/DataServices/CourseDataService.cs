@@ -159,6 +159,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 ca.EmailAddress AS DelegateEmail,
                 ca.CentreID AS DelegateCentreId,
                 ca.CandidateNumber AS DelegateNumber,
+                ca.HasBeenPromptedForPrn,
                 ca.ProfessionalRegistrationNumber
             FROM Customisations cu
             INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
@@ -278,11 +279,15 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             return (int)connection.ExecuteScalar(
                 @"SELECT COUNT(*)
-                        FROM Customisations AS c
-                        JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                        WHERE Active = 1 AND CentreID = @centreId
-	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)
-                        AND a.DefaultContentTypeID <> 4",
+                        FROM dbo.Customisations AS cu
+                        INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
+                        INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                        WHERE (ap.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)
+                            AND cu.Active = 1
+                            AND cu.CentreID = @centreId
+                            AND ca.CentreID = @centreId
+                            AND ap.ArchivedDate IS NULL
+                            AND ap.DefaultContentTypeID <> 4",
                 new { centreId, adminCategoryId }
             );
         }

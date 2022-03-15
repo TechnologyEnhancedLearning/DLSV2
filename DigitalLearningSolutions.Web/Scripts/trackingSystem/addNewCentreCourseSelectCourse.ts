@@ -82,16 +82,23 @@ function filterElements(
 }
 
 function displaySearchableElements(searchableElements: ISearchableElement[]): void {
-  const searchableElementsContainer = document.getElementById('searchable-elements');
+  const searchableElementsContainer = <HTMLSelectElement>document.getElementById('searchable-elements');
   if (!searchableElementsContainer) {
     return;
   }
+
+  const selectedApplicationId = searchableElementsContainer.value;
 
   const defaultOption = document.getElementById('default-option');
   if (!defaultOption) {
     return;
   }
-  defaultOption.innerText = searchableElements.length === 0 ? 'No matching courses' : 'Select a course';
+  if (searchableElements.length === 0) {
+    defaultOption.innerText = 'No matching courses';
+    searchableElementsContainer.value = '';
+  } else {
+    defaultOption.innerText = 'Select a course';
+  }
 
   searchableElementsContainer.textContent = '';
   searchableElementsContainer.appendChild(defaultOption);
@@ -99,19 +106,28 @@ function displaySearchableElements(searchableElements: ISearchableElement[]): vo
     (searchableElement) => searchableElementsContainer.appendChild(searchableElement.element),
   );
 
+  const selectedElement = searchableElements.find(
+    (x) => (<HTMLOptionElement>x.element).value === selectedApplicationId,
+  );
+  searchableElementsContainer.selectedIndex = selectedElement
+    ? searchableElements.indexOf(selectedElement) + 1 : 0;
+
   // This is required to polyfill the new elements in IE
   Details();
 }
 
 function getCategoryAndTopicFilterStringAndUpdateHiddenInputs() {
-  const categoryFilterElement = <HTMLSelectElement>document.getElementById('CategoryName');
-  const categoryFilterValue = categoryFilterElement.value;
-
   const topicFilterElement = <HTMLSelectElement>document.getElementById('CourseTopic');
   const topicFilterValue = topicFilterElement.value;
-
-  updateExistingFilterStringHiddenInput(categoryHiddenInputName, categoryFilterValue);
   updateExistingFilterStringHiddenInput(topicHiddenInputName, topicFilterValue);
+
+  const categoryFilterElement = <HTMLSelectElement>document.getElementById('CategoryName');
+  if (!categoryFilterElement) {
+    return topicFilterValue;
+  }
+
+  const categoryFilterValue = categoryFilterElement.value;
+  updateExistingFilterStringHiddenInput(categoryHiddenInputName, categoryFilterValue);
 
   if (isNullOrEmpty(categoryFilterValue) && isNullOrEmpty(topicFilterValue)) {
     return '';

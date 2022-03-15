@@ -13,6 +13,7 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Enums;
 
     public partial class SupervisorController
     {
@@ -47,9 +48,10 @@
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
-            var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
-                supervisor => new SupervisorDelegateDetailViewModel(supervisor, page)
-            );
+            var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select( supervisor =>
+            {
+                return new SupervisorDelegateDetailViewModel(supervisor, page);
+            });
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
@@ -195,9 +197,14 @@
         {
             var adminId = GetAdminID();
             var centreId = GetCentreId();
-            var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
-            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreRegistrationPrompts);
+            var centreCustomPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId)
+                .Select(supervisor =>
+                {
+                    return supervisor;
+                }
+            );
+            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts);
             return View("AllStaffList", model);
         }
 

@@ -18,6 +18,7 @@
             string lastName = "xxxx",
             string? emailAddress = "gslectik.m@vao",
             string candidateNumber = "KT553",
+            bool hasBeenPromptedForPrn = false,
             string? professionalRegistrationNumber = null
         )
         {
@@ -33,6 +34,7 @@
                 EmailAddress = emailAddress,
                 CandidateNumber = candidateNumber,
                 AddedDate = addedDate,
+                HasBeenPromptedForPrn = hasBeenPromptedForPrn,
                 ProfessionalRegistrationNumber = professionalRegistrationNumber,
             };
         }

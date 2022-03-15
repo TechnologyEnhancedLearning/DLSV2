@@ -25,7 +25,10 @@
             );
             DelegateEmail = progress.DelegateEmail;
             DelegateNumber = progress.DelegateNumber;
-            ProfessionalRegistrationNumber = progress.ProfessionalRegistrationNumber;
+            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+                progress.HasBeenPromptedForPrn,
+                progress.ProfessionalRegistrationNumber
+            );
 
             LastUpdated = progress.LastUpdated.ToString(DateHelper.StandardDateAndTimeFormat);
             Enrolled = progress.Enrolled.ToString(DateHelper.StandardDateAndTimeFormat);

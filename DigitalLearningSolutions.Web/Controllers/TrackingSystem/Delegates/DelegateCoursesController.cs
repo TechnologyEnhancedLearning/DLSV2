@@ -22,15 +22,18 @@
     public class DelegateCoursesController : Controller
     {
         private const string CourseFilterCookieName = "DelegateCoursesFilter";
+        private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
         private readonly ICourseService courseService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public DelegateCoursesController(
             ICourseService courseService,
+            ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.courseService = courseService;
+            this.courseDelegatesDownloadFileService = courseDelegatesDownloadFileService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
@@ -100,6 +103,33 @@
             var model = new AllDelegateCourseStatisticsViewModel(details);
 
             return View(model);
+        }
+
+        [Route("DownloadAll")]
+        public IActionResult DownloadAll(
+            string? searchString = null,
+            string? sortBy = null,
+            string sortDirection = GenericSortingHelper.Ascending,
+            string? existingFilterString = null
+        )
+        {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCourseCategoryFilter();
+            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFile(
+                centreId,
+                categoryId,
+                searchString,
+                sortBy,
+                existingFilterString,
+                sortDirection
+            );
+
+            const string fileName = "Digital Learning Solutions Delegate Courses.xlsx";
+            return File(
+                content,
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
+            );
         }
     }
 }
