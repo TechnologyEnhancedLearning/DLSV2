@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -140,7 +141,8 @@
         {
             TempData.Clear();
 
-            var addRegistrationPromptData = new AddRegistrationPromptData();
+            var existingPrompts = GetPromptIdsAlreadyAtUserCentre();
+            var addRegistrationPromptData = new AddRegistrationPromptData(existingPrompts);
             TempData.Set(addRegistrationPromptData);
 
             return RedirectToAction("AddRegistrationPromptSelectPrompt");
@@ -162,7 +164,7 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
         public IActionResult AddRegistrationPromptSelectPrompt(AddRegistrationPromptSelectPromptViewModel model)
         {
-            if (!ModelState.IsValid || PromptAlreadyExistsAtUserCentre(model.CustomPromptId))
+            if (!ModelState.IsValid)
             {
                 SetViewBagCustomPromptNameOptions();
                 return View(model);
@@ -313,12 +315,12 @@
             return RemoveRegistrationPromptAndRedirect(promptNumber);
         }
 
-        private bool PromptAlreadyExistsAtUserCentre(int? promptId)
+        private IEnumerable<int> GetPromptIdsAlreadyAtUserCentre()
         {
             var existingPrompts =
                 centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(User.GetCentreId());
 
-            return promptId.HasValue && existingPrompts.CustomPrompts.Select(p => p.PromptId).Contains(promptId.Value);
+            return existingPrompts.CustomPrompts.Select(p => p.PromptId);
         }
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
@@ -340,7 +342,7 @@
             bool saveToTempData = false
         )
         {
-            if (!ModelState.IsValid || OptionsStringContainsDuplicateAnswer(model))
+            if (!ModelState.IsValid)
             {
                 return View(model);
             }
@@ -362,14 +364,6 @@
             }
 
             return View(model);
-        }
-
-        private bool OptionsStringContainsDuplicateAnswer(RegistrationPromptAnswersViewModel model)
-        {
-            var options = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.OptionsString);
-
-            return !string.IsNullOrWhiteSpace(model.Answer) &&
-                   options.Any(o => o.Trim().Equals(model.Answer.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 
         private IActionResult RegistrationPromptAnswersPostRemovePrompt(
