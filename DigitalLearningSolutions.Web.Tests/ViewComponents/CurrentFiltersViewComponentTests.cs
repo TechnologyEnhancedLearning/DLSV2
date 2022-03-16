@@ -46,7 +46,7 @@
             var inputViewModel = new CentreAdministratorsViewModel(
                 1,
                 new SearchSortFilterPaginationResult<AdminUser>(
-                    new PaginationResult<AdminUser>(new List<AdminUser>(), 1, 1, 10, 0),
+                    new PaginationResult<AdminUser>(new List<AdminUser>(), 1, 1, 10, 0, 0),
                     searchString,
                     null,
                     null,

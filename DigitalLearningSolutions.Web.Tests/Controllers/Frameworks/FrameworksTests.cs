@@ -35,7 +35,7 @@
             // Then
             var allFrameworksViewModel = new AllFrameworksViewModel(
                 new SearchSortFilterPaginationResult<BrandedFramework>(
-                    new PaginationResult<BrandedFramework>(new List<BrandedFramework>(), 1, 1, 12, 0),
+                    new PaginationResult<BrandedFramework>(new List<BrandedFramework>(), 1, 1, 12, 0, 0),
                     null,
                     "CreatedDate",
                     "Descending",
@@ -44,7 +44,7 @@
             );
             var myFrameworksViewModel = new MyFrameworksViewModel(
                 new SearchSortFilterPaginationResult<BrandedFramework>(
-                    new PaginationResult<BrandedFramework>(dashboardFrameworks, 1, 1, 12, 2),
+                    new PaginationResult<BrandedFramework>(dashboardFrameworks, 1, 1, 12, 2, 2),
                     null,
                     "CreatedDate",
                     "Descending",
@@ -84,7 +84,7 @@
             // Then
             var allFrameworksViewModel = new AllFrameworksViewModel(
                 new SearchSortFilterPaginationResult<BrandedFramework>(
-                    new PaginationResult<BrandedFramework>(dashboardFrameworks, 1, 1, 12, 3),
+                    new PaginationResult<BrandedFramework>(dashboardFrameworks, 1, 1, 12, 3, 3),
                     null,
                     "FrameworkName",
                     "Ascending",
@@ -93,7 +93,7 @@
             );
             var myFrameworksViewModel = new MyFrameworksViewModel(
                 new SearchSortFilterPaginationResult<BrandedFramework>(
-                    new PaginationResult<BrandedFramework>(new List<BrandedFramework>(), 1, 1, 12, 0),
+                    new PaginationResult<BrandedFramework>(new List<BrandedFramework>(), 1, 1, 12, 0, 0),
                     null,
                     "FrameworkName",
                     "Ascending",

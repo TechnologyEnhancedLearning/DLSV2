@@ -64,7 +64,7 @@
             // Then
             var expectedModel = new CurrentPageViewModel(
                 new SearchSortFilterPaginationResult<CurrentLearningItem>(
-                    new PaginationResult<CurrentLearningItem>(allItems, 1, 1, 10, 6),
+                    new PaginationResult<CurrentLearningItem>(allItems, 1, 1, 10, 6, 6),
                     null,
                     "LastAccessed",
                     "Descending",

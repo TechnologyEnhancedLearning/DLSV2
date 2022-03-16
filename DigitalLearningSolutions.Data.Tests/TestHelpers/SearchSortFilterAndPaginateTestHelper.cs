@@ -30,7 +30,8 @@
                             options!.PaginationOptions?.PageNumber ?? 1,
                             1,
                             options.PaginationOptions?.ItemsPerPage ?? int.MaxValue,
-                            items.Count()
+                            items.Count,
+                            items.Count
                         ),
                         options.SearchOptions?.SearchString,
                         options.SortOptions?.SortBy,

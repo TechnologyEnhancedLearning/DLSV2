@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
@@ -21,12 +22,13 @@
             SearchSortFilterAndPaginateOptions searchSortFilterAndPaginateOptions
         ) where T : BaseSearchableItem
         {
-            var itemsToReturn = items;
+            var allItems = items.ToList();
+            var itemsToReturn = allItems;
             string? appliedFilterString = null;
 
             if (searchSortFilterAndPaginateOptions.SearchOptions != null)
             {
-                itemsToReturn = searchSortFilterAndPaginateOptions.SearchOptions.UseTokeniseScorer
+                itemsToReturn = (searchSortFilterAndPaginateOptions.SearchOptions.UseTokeniseScorer
                     ? GenericSearchHelper.SearchItemsUsingTokeniseScorer(
                         itemsToReturn,
                         searchSortFilterAndPaginateOptions.SearchOptions.SearchString,
@@ -36,15 +38,17 @@
                         itemsToReturn,
                         searchSortFilterAndPaginateOptions.SearchOptions.SearchString,
                         searchSortFilterAndPaginateOptions.SearchOptions.SearchMatchCutoff
-                    );
+                    )).ToList();
             }
 
             if (searchSortFilterAndPaginateOptions.FilterOptions != null)
             {
-                (itemsToReturn, appliedFilterString) = FilteringHelper.FilterOrResetFilterToDefault(
+                var filteringReturnTuple = FilteringHelper.FilterOrResetFilterToDefault(
                     itemsToReturn,
                     searchSortFilterAndPaginateOptions.FilterOptions
                 );
+                itemsToReturn = filteringReturnTuple.filteredItems.ToList();
+                appliedFilterString = filteringReturnTuple.appliedFilterString;
             }
 
             if (searchSortFilterAndPaginateOptions.SortOptions != null)
@@ -53,10 +57,10 @@
                     itemsToReturn.AsQueryable(),
                     searchSortFilterAndPaginateOptions.SortOptions.SortBy,
                     searchSortFilterAndPaginateOptions.SortOptions.SortDirection
-                );
+                ).ToList();
             }
 
-            var paginateResult = PaginateItems(itemsToReturn, searchSortFilterAndPaginateOptions.PaginationOptions);
+            var paginateResult = PaginateItems(itemsToReturn, searchSortFilterAndPaginateOptions.PaginationOptions, allItems.Count);
 
             return new SearchSortFilterPaginationResult<T>(
                 paginateResult,
@@ -69,7 +73,8 @@
 
         private static PaginationResult<T> PaginateItems<T>(
             IEnumerable<T> items,
-            PaginationOptions? paginationOptions
+            PaginationOptions? paginationOptions,
+            int totalItems
         )
             where T : BaseSearchableItem
         {
@@ -91,7 +96,8 @@
                 page,
                 totalPages,
                 paginationOptionsToUse.ItemsPerPage,
-                matchingSearchResults
+                matchingSearchResults,
+                totalItems
             );
         }
 

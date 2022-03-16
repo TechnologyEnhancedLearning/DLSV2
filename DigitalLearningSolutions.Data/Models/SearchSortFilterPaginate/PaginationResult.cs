@@ -9,7 +9,8 @@
             int page,
             int totalPages,
             int itemsPerPage,
-            int matchingSearchResults
+            int matchingSearchResults,
+            int totalItems
         )
         {
             ItemsToDisplay = itemsToDisplay;
@@ -17,6 +18,7 @@
             TotalPages = totalPages;
             ItemsPerPage = itemsPerPage;
             MatchingSearchResults = matchingSearchResults;
+            TotalItems = totalItems;
         }
 
         public PaginationResult(
@@ -28,6 +30,7 @@
             TotalPages = paginationResult.TotalPages;
             ItemsPerPage = paginationResult.ItemsPerPage;
             MatchingSearchResults = paginationResult.MatchingSearchResults;
+            TotalItems = paginationResult.TotalItems;
         }
 
         public IEnumerable<T> ItemsToDisplay { get; set; }
@@ -39,5 +42,7 @@
         public int ItemsPerPage { get; set; }
 
         public int MatchingSearchResults { get; set; }
+
+        public int TotalItems { get; set; }
     }
 }

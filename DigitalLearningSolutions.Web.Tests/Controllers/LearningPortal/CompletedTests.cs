@@ -53,7 +53,7 @@
             // Then
             var expectedModel = new CompletedPageViewModel(
                 new SearchSortFilterPaginationResult<CompletedLearningItem>(
-                    new PaginationResult<CompletedLearningItem>(allItems, 1, 1, 10, 4),
+                    new PaginationResult<CompletedLearningItem>(allItems, 1, 1, 10, 4, 4),
                     null,
                     "Completed",
                     "Descending",

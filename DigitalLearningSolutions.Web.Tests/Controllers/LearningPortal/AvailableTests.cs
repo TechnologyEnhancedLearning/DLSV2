@@ -33,7 +33,7 @@
             // Then
             var expectedModel = new AvailablePageViewModel(
                 new SearchSortFilterPaginationResult<AvailableCourse>(
-                    new PaginationResult<AvailableCourse>(availableCourses, 1, 1, 10, 2),
+                    new PaginationResult<AvailableCourse>(availableCourses, 1, 1, 10, 2, 2),
                     null,
                     "Name",
                     "Ascending",
