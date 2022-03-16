@@ -12,7 +12,7 @@
     {
         public EditSupervisorViewModel(
             int progressId,
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             IEnumerable<AdminUser> supervisors,
             DelegateCourseInfo info,
             int? returnPage
@@ -26,7 +26,7 @@
         public EditSupervisorViewModel(
             EditSupervisorFormData formData,
             int progressId,
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             IEnumerable<AdminUser> supervisors
         ) : base(formData)
         {
@@ -37,7 +37,7 @@
 
         public int ProgressId { get; set; }
 
-        public DelegateProgressAccessRoute AccessedVia { get; set; }
+        public DelegateAccessRoute AccessedVia { get; set; }
 
         public IEnumerable<SelectListItem> Supervisors { get; set; }
 

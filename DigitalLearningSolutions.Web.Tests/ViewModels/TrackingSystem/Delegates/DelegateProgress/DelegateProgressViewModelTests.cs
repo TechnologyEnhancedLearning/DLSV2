@@ -31,7 +31,7 @@
                 DelegateId = 1,
             };
             var missingNamesViewModel = new DelegateProgressViewModel(
-                DelegateProgressAccessRoute.ViewDelegate,
+                DelegateAccessRoute.ViewDelegate,
                 new DelegateCourseDetails(
                     missingNamesDelegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
@@ -55,7 +55,7 @@
                 DelegateId = 2,
             };
             var fullNamesViewModel = new DelegateProgressViewModel(
-                DelegateProgressAccessRoute.ViewDelegate,
+                DelegateAccessRoute.ViewDelegate,
                 new DelegateCourseDetails(
                     fullNamesDelegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
@@ -88,7 +88,7 @@
                 DelegateId = 1,
             };
             var viewModel = new DelegateProgressViewModel(
-                DelegateProgressAccessRoute.ViewDelegate,
+                DelegateAccessRoute.ViewDelegate,
                 new DelegateCourseDetails(
                     delegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
@@ -119,7 +119,7 @@
                 DelegateId = 1,
             };
             var viewModel = new DelegateProgressViewModel(
-                DelegateProgressAccessRoute.ViewDelegate,
+                DelegateAccessRoute.ViewDelegate,
                 new DelegateCourseDetails(
                     delegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),

@@ -10,7 +10,7 @@
 
   string cancelLinkController;
 
-  if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
     routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());

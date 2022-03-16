@@ -1,4 +1,4 @@
-﻿@inject IConfiguration Configuration
+﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @using Microsoft.Extensions.Configuration
@@ -9,7 +9,7 @@
   ViewData["Title"] = errorHasOccured ? "Error: Edit supervisor" : "Edit supervisor";
   var routeParamsForBackLink = new Dictionary<string, string?>();
 
-  if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
     routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());
@@ -19,7 +19,7 @@
 }
 
 @section NavBreadcrumbs {
-  @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesBreadcrumbs.cshtml" model="Model.CustomisationId" />
   } else {
     <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateBreadcrumbs.cshtml" model="Model.DelegateId" />
@@ -59,7 +59,7 @@
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
       <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
     } else {
       <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />

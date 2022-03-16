@@ -7,7 +7,7 @@
     {
         public EditCompleteByDateViewModel(
             int progressId,
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             DelegateCourseInfo info,
             int? returnPage
         ) : base(info, returnPage)
@@ -19,7 +19,7 @@
         public EditCompleteByDateViewModel(
             EditCompleteByDateFormData formData,
             int progressId,
-            DelegateProgressAccessRoute accessedVia
+            DelegateAccessRoute accessedVia
         ) : base(formData)
         {
             ProgressId = progressId;
@@ -28,6 +28,6 @@
 
         public int ProgressId { get; set; }
 
-        public DelegateProgressAccessRoute AccessedVia { get; set; }
+        public DelegateAccessRoute AccessedVia { get; set; }
     }
 }
