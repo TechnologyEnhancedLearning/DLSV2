@@ -178,7 +178,6 @@
             result.Should().BeEquivalentTo(expectedResult);
         }
 
-
         [Test]
         public void SearchFilterSortAndPaginate_with_paginate_only_returns_expected_first_page()
         {

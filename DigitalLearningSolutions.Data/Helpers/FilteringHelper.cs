@@ -3,8 +3,12 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.AspNetCore.Http;
 
     public static class FilteringHelper
@@ -45,19 +49,22 @@
             string? defaultFilterValue = null
         )
         {
-            if (existingFilterString == null && newFilterToAdd == null && !clearFilters)
-            {
-                return request.Cookies.ContainsKey(cookieName)
-                    ? request.Cookies[cookieName] == EmptyFiltersCookieValue ? null : request.Cookies[cookieName]
-                    : defaultFilterValue;
-            }
+            var cookieHasBeenSet = request.Cookies.ContainsKey(cookieName);
+            var noFiltersInQueryParams = existingFilterString == null && newFilterToAdd == null;
 
             if (clearFilters)
             {
-                existingFilterString = null;
+                return null;
             }
 
-            return AddNewFilterToFilterString(existingFilterString, newFilterToAdd);
+            if (cookieHasBeenSet)
+            {
+                return request.Cookies[cookieName] == EmptyFiltersCookieValue ? null : request.Cookies[cookieName];
+            }
+
+            return noFiltersInQueryParams
+                ? defaultFilterValue
+                : AddNewFilterToFilterString(existingFilterString, newFilterToAdd);
         }
 
         public static string? GetCategoryAndTopicFilterString(
@@ -120,6 +127,117 @@
                 ? (FilterItems(items.AsQueryable(), filterOptions.DefaultFilterString),
                     filterOptions.DefaultFilterString)
                 : (items, null);
+        }
+
+        public static IEnumerable<FilterOptionModel> GetPromptFilterOptions(Prompt prompt)
+        {
+            return prompt.Options.Count > 0
+                ? GetFilterOptionsForPromptWithOptions(prompt)
+                : GetFilterOptionsForPromptWithoutOptions(prompt);
+        }
+
+        public static string GetFilterValueForAdminField(
+            int promptNumber,
+            string? answer,
+            string prompt,
+            bool adminFieldHasOptions
+        )
+        {
+            var filterValueName = GetFilterValueForAdminField(promptNumber, prompt);
+
+            string propertyValue;
+
+            if (adminFieldHasOptions)
+            {
+                propertyValue = string.IsNullOrEmpty(answer)
+                    ? EmptyValue
+                    : answer;
+            }
+            else
+            {
+                propertyValue = string.IsNullOrEmpty(answer)
+                    ? FreeTextBlankValue
+                    : FreeTextNotBlankValue;
+            }
+
+            return BuildFilterValueString(filterValueName, filterValueName, propertyValue);
+        }
+
+        public static string GetFilterValueForRegistrationPrompt(int promptNumber, string? answer, string prompt)
+        {
+            var filterValueName = GetFilterValueForRegistrationPrompt(promptNumber, prompt);
+            var propertyValue = string.IsNullOrEmpty(answer)
+                ? EmptyValue
+                : answer;
+            return BuildFilterValueString(filterValueName, filterValueName, propertyValue);
+        }
+
+        private static IEnumerable<FilterOptionModel> GetFilterOptionsForPromptWithOptions(Prompt prompt)
+        {
+            var filterValueName = prompt is CentreRegistrationPrompt registrationPrompt
+                ? GetFilterValueForRegistrationPrompt(registrationPrompt.RegistrationField.Id, prompt.PromptText)
+                : GetFilterValueForAdminField(((CourseAdminField)prompt).PromptNumber, prompt.PromptText);
+
+            var options = prompt.Options.Select(
+                option => new FilterOptionModel(
+                    option,
+                    BuildFilterValueString(filterValueName, filterValueName, option),
+                    FilterStatus.Default
+                )
+            ).ToList();
+            options.Add(
+                new FilterOptionModel(
+                    "No option selected",
+                    BuildFilterValueString(
+                        filterValueName,
+                        filterValueName,
+                        EmptyValue
+                    ),
+                    FilterStatus.Default
+                )
+            );
+            return options;
+        }
+
+        private static IEnumerable<FilterOptionModel> GetFilterOptionsForPromptWithoutOptions(Prompt prompt)
+        {
+            var filterValueName = prompt is CentreRegistrationPrompt registrationPrompt
+                ? GetFilterValueForRegistrationPrompt(registrationPrompt.RegistrationField.Id, prompt.PromptText)
+                : GetFilterValueForAdminField(((CourseAdminField)prompt).PromptNumber, prompt.PromptText);
+
+            var options = new List<FilterOptionModel>
+            {
+                new FilterOptionModel(
+                    "Not blank",
+                    BuildFilterValueString(
+                        filterValueName,
+                        filterValueName,
+                        FreeTextNotBlankValue
+                    ),
+                    FilterStatus.Default
+                ),
+                new FilterOptionModel(
+                    "Blank",
+                    BuildFilterValueString(
+                        filterValueName,
+                        filterValueName,
+                        FreeTextBlankValue
+                    ),
+                    FilterStatus.Default
+                ),
+            };
+            return options;
+        }
+
+        private static string GetFilterValueForRegistrationPrompt(int promptNumber, string promptText)
+        {
+            return
+                $"{DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(promptNumber)}({promptText})";
+        }
+
+        private static string GetFilterValueForAdminField(int promptNumber, string promptText)
+        {
+            return $"{CourseDelegate.GetPropertyNameForAdminFieldAnswer(promptNumber)}({promptText})";
         }
 
         private static bool AvailableFiltersContainsAllSelectedFilters(FilterOptions filterOptions)

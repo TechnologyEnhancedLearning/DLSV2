@@ -220,6 +220,16 @@
         }
 
         [Test]
+        public void GetFilterString_with_clearFilters_true_does_not_append_new_filter()
+        {
+            // When
+            var result = FilteringHelper.GetFilterString("FilterString", "newFilter", true, httpRequest, CookieName);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
         public void GetFilterString_with_existingFilterString_and_newFilterToAdd_returns_combined_filter_by()
         {
             // When

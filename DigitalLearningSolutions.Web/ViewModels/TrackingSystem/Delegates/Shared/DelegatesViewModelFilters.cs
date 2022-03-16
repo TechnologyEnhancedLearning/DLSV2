@@ -4,13 +4,10 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class DelegatesViewModelFilters
     {
@@ -31,35 +28,6 @@
             );
         }
 
-        public static IEnumerable<FilterOptionModel> GetPromptOptions(Prompt prompt)
-        {
-            var filterValueName = prompt is CentreRegistrationPrompt registrationPrompt
-                ? @$"{DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(
-                    registrationPrompt.RegistrationField.Id
-                )}({prompt.PromptText})"
-                : $"{CourseDelegate.GetPropertyNameForAdminFieldAnswer(((CourseAdminField)prompt).PromptNumber)}({prompt.PromptText})";
-
-            var options = prompt.Options.Select(
-                option => new FilterOptionModel(
-                    option,
-                    FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, option),
-                    FilterStatus.Default
-                )
-            ).ToList();
-            options.Add(
-                new FilterOptionModel(
-                    "No option selected",
-                    FilteringHelper.BuildFilterValueString(
-                        filterValueName,
-                        filterValueName,
-                        FilteringHelper.EmptyValue
-                    ),
-                    FilterStatus.Default
-                )
-            );
-            return options;
-        }
-
         public static Dictionary<int, string> GetRegistrationPromptFilters(
             IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts,
             IEnumerable<CentreRegistrationPrompt> promptsWithOptions
@@ -75,19 +43,13 @@
                 .Select(
                     delegateRegistrationPrompt => new KeyValuePair<int, string>(
                         delegateRegistrationPrompt.PromptNumber,
-                        GetFilterValueForRegistrationPrompt(delegateRegistrationPrompt)
+                        FilteringHelper.GetFilterValueForRegistrationPrompt(
+                            delegateRegistrationPrompt.PromptNumber,
+                            delegateRegistrationPrompt.Answer,
+                            delegateRegistrationPrompt.Prompt
+                        )
                     )
                 ).ToDictionary(x => x.Key, x => x.Value);
-        }
-
-        private static string GetFilterValueForRegistrationPrompt(DelegatePrompt delegatePrompt)
-        {
-            var filterValueName =
-                $"{DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(delegatePrompt.PromptNumber)}({delegatePrompt.Prompt})";
-            var propertyValue = string.IsNullOrEmpty(delegatePrompt.Answer)
-                ? FilteringHelper.EmptyValue
-                : delegatePrompt.Answer;
-            return FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, propertyValue);
         }
     }
 }

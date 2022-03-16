@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
 
     public static class GroupDelegatesViewModelFilterOptions
@@ -27,7 +27,7 @@
                     customPrompt => new FilterModel(
                         $"CentreRegistrationPrompt{customPrompt.RegistrationField.Id}",
                         customPrompt.PromptText,
-                        DelegatesViewModelFilters.GetPromptOptions(customPrompt)
+                        FilteringHelper.GetPromptFilterOptions(customPrompt)
                     )
                 )
             );
