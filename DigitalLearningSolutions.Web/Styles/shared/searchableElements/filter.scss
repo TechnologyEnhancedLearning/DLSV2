@@ -15,12 +15,14 @@
   @extend .left-dropdown;
   display: none;
 
-  .js-enabled & {
-    display: flex;
-    width: 100%;
+  #area-to-hide-while-loading & {
+    .js-enabled & {
+      display: flex;
+      width: 100%;
 
-    @include mq($from: desktop) {
-      width: 40%;
+      @include mq($from: desktop) {
+        width: 40%;
+      }
     }
   }
 }
@@ -35,8 +37,10 @@
   width: 100%;
   display: flex;
 
-  .js-enabled & {
-    display: none;
+  #area-to-hide-while-loading & {
+    .js-enabled & {
+      display: none;
+    }
   }
 }
 
@@ -68,8 +72,10 @@
     }
 
     @include mq($from: desktop) {
-      .js-enabled & {
-        width: 33.3333%;
+      #area-to-hide-while-loading & {
+        .js-enabled & {
+          width: 33.3333%;
+        }
       }
     }
   }
@@ -109,7 +115,9 @@
   padding-bottom: 11px;
   margin-bottom: 4px;
 
-  .js-enabled & {
-    margin-right: 4px;
+  #area-to-hide-while-loading & {
+    .js-enabled & {
+      margin-right: 4px;
+    }
   }
 }

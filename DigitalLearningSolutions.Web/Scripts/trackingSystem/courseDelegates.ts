@@ -15,5 +15,8 @@ exportCurrentLink.addEventListener('click', () => {
   exportCurrentLink.href = pathWithCurrentSortFilter;
 });
 
-// eslint-disable-next-line no-new
-new SearchSortFilterAndPaginate(`TrackingSystem/Delegates/CourseDelegates/AllCourseDelegates/${customisationId}`, false, true, true, 'CourseDelegatesFilter');
+const javascriptSearchEnabledElement = <HTMLInputElement>document.getElementById('javascript-search-enabled');
+if (javascriptSearchEnabledElement?.value.trim() === 'true') {
+  // eslint-disable-next-line no-new
+  new SearchSortFilterAndPaginate(`TrackingSystem/Delegates/CourseDelegates/AllCourseDelegates/${customisationId}`, false, true, true, 'CourseDelegatesFilter');
+}

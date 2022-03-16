@@ -23,8 +23,10 @@
   <li class="nhsuk-breadcrumb__item">Recommended Learning</li>
 }
 
-<vc:loading-spinner page-has-side-nav-menu="false" />
-<div class="nhsuk-grid-row" id="area-to-hide-while-loading">
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+  <vc:loading-spinner page-has-side-nav-menu="false" />
+}
+<div class="nhsuk-grid-row" id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "area-to-hide-while-loading" : "no-js-styling")">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
@@ -62,6 +64,8 @@
   </div>
 </div>
 
-@section scripts {
-  <script src="@Url.Content("~/js/learningPortal/recommendedLearning.js")" asp-append-version="true"></script>
-}
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+  @section scripts {
+    <script src="@Url.Content("~/js/learningPortal/recommendedLearning.js")" asp-append-version="true"></script>
+  }
+} 

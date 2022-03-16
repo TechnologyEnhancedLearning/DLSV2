@@ -47,7 +47,13 @@
 .items-per-page-submit {
   @extend .right-submit-button;
   background-color: $button-dark-blue;
-  
+
+  #area-to-hide-while-loading & {
+    .js-enabled & {
+      display: none;
+    }
+  }
+
   @include mq($from: tablet) {
     &.non-js-only {
       width: 33.3333%;

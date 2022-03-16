@@ -25,8 +25,10 @@
   </nav>
 }
 
-<vc:loading-spinner page-has-side-nav-menu="false" />
-<div id="area-to-hide-while-loading">
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+  <vc:loading-spinner page-has-side-nav-menu="false" />
+}
+<div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "area-to-hide-while-loading" : "no-js-styling")">
   @if (errorHasOccurred)
   {
     <vc:error-summary order-of-property-names="@(new[] { nameof(Model.DelegateEmail) })" />
@@ -111,6 +113,9 @@
     </div>
   }
 </div>
-@section scripts {
-  <script src="@Url.Content("~/js/supervisor/staffList.js")" asp-append-version="true"></script>
+
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+  @section scripts {
+    <script src="@Url.Content("~/js/supervisor/staffList.js")" asp-append-version="true"></script>
+  }
 }

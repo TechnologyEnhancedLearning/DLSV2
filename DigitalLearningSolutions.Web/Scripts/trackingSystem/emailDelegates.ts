@@ -7,8 +7,12 @@ const queryParams = selectedIds.map((id, index) => `selectedIds[${index}]=${id}`
 const route = `TrackingSystem/Delegates/Email/AllEmailDelegateItems?${queryParams.join('&')}`;
 const checkboxSelector = '.delegate-checkbox';
 
-// eslint-disable-next-line no-new
-new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter');
+const javascriptSearchEnabledElement = <HTMLInputElement>document.getElementById('javascript-search-enabled');
+if (javascriptSearchEnabledElement?.value.trim() === 'true') {
+  // eslint-disable-next-line no-new
+  new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter');
+}
+
 setUpSelectAndDeselectButtons();
 
 function alertResultCount(): void {

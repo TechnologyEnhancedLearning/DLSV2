@@ -35,12 +35,14 @@ $button-hover-colour: #4c6272;
 .input-with-no-js-submit-button {
   @extend .input-with-submit-button;
 
-  .js-enabled & {
-    border-right: 2px solid $nhsuk-form-border-color;
-    border-radius: 4px;
+  #area-to-hide-while-loading & {
+    .js-enabled & {
+      border-right: 2px solid $nhsuk-form-border-color;
+      border-radius: 4px;
 
-    &:focus {
-      border-right: 4px solid $color_nhsuk-black;
+      &:focus {
+        border-right: 4px solid $color_nhsuk-black;
+      }
     }
   }
 }

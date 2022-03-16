@@ -39,7 +39,7 @@
     flex: 1;
   }
 
-  .js-enabled & {
+  #area-to-hide-while-loading & {
     width: 100%;
   }
 }
@@ -47,6 +47,10 @@
 .sort-submit {
   @extend .right-submit-button;
   background-color: $button-dark-blue;
+
+  #area-to-hide-while-loading & {
+    .js-enabled & { display: none; }
+  }
 
   @include mq($from: tablet) {
     &.non-js-only {
