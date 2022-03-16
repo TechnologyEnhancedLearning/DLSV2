@@ -108,6 +108,15 @@
                 competencyNumber,
                 assessment.NumberOfCompetencies
             );
+
+            var commentSubmittedWithoutSelectingQuestionId = (int?)TempData["CommentSubmittedWithoutSelectingQuestionId"];
+            if (commentSubmittedWithoutSelectingQuestionId.HasValue)
+            {
+                var question = competency.AssessmentQuestions.FirstOrDefault(q => q.Id == commentSubmittedWithoutSelectingQuestionId);
+                var htmlTagId = $"radio-{question?.Id}-{question?.LevelDescriptors?.FirstOrDefault()?.LevelValue}";
+                ModelState.AddModelError(htmlTagId, "Selecting a question is mandatory when a comment is provided.");
+            }
+
             return View("SelfAssessments/SelfAssessmentCompetency", model);
         }
 
@@ -121,6 +130,13 @@
             int? competencyGroupId
         )
         {
+            var unansweredRadioQuestion = assessmentQuestions.FirstOrDefault(q => q.AssessmentQuestionInputTypeID != 2 && q.Result == null && q.SupportingComments != null);
+            if (unansweredRadioQuestion?.SupportingComments != null)
+            {
+                TempData["CommentSubmittedWithoutSelectingQuestionId"] = unansweredRadioQuestion.Id;
+                return RedirectToAction("SelfAssessmentCompetency", new { selfAssessmentId, competencyNumber });
+            }
+
             var candidateId = User.GetCandidateIdKnownNotNull();
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
             if (assessment == null)
