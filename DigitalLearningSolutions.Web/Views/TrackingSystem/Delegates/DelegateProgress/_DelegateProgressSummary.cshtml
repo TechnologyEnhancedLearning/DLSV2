@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
 @model DelegateProgressViewModel
 
 <dl class="nhsuk-summary-list">
@@ -12,11 +11,8 @@
       @Model.Supervisor
     </dd>
     <dd class="nhsuk-summary-list__actions">
-      <a asp-controller="DelegateProgress"
-         asp-action="EditSupervisor"
-         asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@Model.AccessedVia"
-         asp-route-returnPage="@Model.Page">
+      <a asp-controller="DelegateProgress" asp-action="EditSupervisor" asp-route-progressId="@Model.ProgressId"
+        asp-route-accessedVia="@Model.AccessedVia" asp-route-returnPage="@Model.Page">
         Edit<span class="nhsuk-u-visually-hidden"> supervisor</span>
       </a>
     </dd>
@@ -38,11 +34,8 @@
     </dt>
     <partial name="_SummaryFieldValue" model="Model.CompleteBy" />
     <dd class="nhsuk-summary-list__actions">
-      <a asp-controller="DelegateProgress"
-         asp-action="EditCompleteByDate"
-         asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@Model.AccessedVia"
-         asp-route-returnPage="@Model.Page">
+      <a asp-controller="DelegateProgress" asp-action="EditCompleteByDate" asp-route-progressId="@Model.ProgressId"
+        asp-route-accessedVia="@Model.AccessedVia" asp-route-returnPage="@Model.Page">
         Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
       </a>
     </dd>
@@ -64,11 +57,8 @@
     </dt>
     <partial name="_SummaryFieldValue" model="Model.Completed" />
     <dd class="nhsuk-summary-list__actions">
-      <a asp-controller="DelegateProgress"
-         asp-action="EditCompletionDate"
-         asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates"
-         asp-route-returnPage="@Model.Page">
+      <a asp-controller="DelegateProgress" asp-action="EditCompletionDate" asp-route-progressId="@Model.ProgressId"
+        asp-route-accessedVia="@Model.AccessedVia" asp-route-returnPage="@Model.Page">
         Edit
       </a>
     </dd>
@@ -130,7 +120,8 @@
     <dd class="nhsuk-summary-list__actions" />
   </div>
 
-  @if (Model.IsAssessed) {
+  @if (Model.IsAssessed)
+  {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
         Assessments passed
@@ -162,7 +153,8 @@
     </div>
   }
 
-  @foreach (var prompt in Model.AdminFields) {
+  @foreach (var prompt in Model.AdminFields)
+  {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
         @prompt.Prompt

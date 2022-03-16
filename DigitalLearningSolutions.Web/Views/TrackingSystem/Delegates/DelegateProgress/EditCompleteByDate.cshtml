@@ -1,4 +1,4 @@
-﻿@inject IConfiguration Configuration
+﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @using Microsoft.Extensions.Configuration
@@ -25,9 +25,9 @@
 
 @section NavBreadcrumbs {
   @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesBreadcrumbs.cshtml" model="Model.CustomisationId" />
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesProgressBreadcrumbs.cshtml" model="(Model.CustomisationId, Model.ProgressId)" />
   } else {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateBreadcrumbs.cshtml" model="Model.DelegateId" />
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateProgressBreadcrumbs.cshtml" model="(Model.DelegateId, Model.ProgressId)" />
   }
 }
 

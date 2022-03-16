@@ -20,9 +20,11 @@
 
 @section NavBreadcrumbs {
   @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesBreadcrumbs.cshtml" model="Model.CustomisationId" />
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesProgressBreadcrumbs.cshtml"
+             model="(Model.CustomisationId, Model.ProgressId)" />
   } else {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateBreadcrumbs.cshtml" model="Model.DelegateId" />
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateProgressBreadcrumbs.cshtml"
+             model="(Model.DelegateId, Model.ProgressId)" />
   }
 }
 
@@ -47,22 +49,19 @@
       <input type="hidden" asp-for="DelegateId" />
       <input type="hidden" asp-for="ProgressId" />
       <input type="hidden" asp-for="ReturnPage" />
-      <vc:select-list asp-for="@nameof(Model.SupervisorId)"
-                      label="Supervisor"
-                      value="@Model.SupervisorId.ToString()"
-                      hint-text=""
-                      deselectable="true"
-                      css-class="nhsuk-u-width-one-half"
-                      default-option="No supervisor"
+      <vc:select-list asp-for="@nameof(Model.SupervisorId)" label="Supervisor" value="@Model.SupervisorId.ToString()"
+                      hint-text="" deselectable="true" css-class="nhsuk-u-width-one-half" default-option="No supervisor"
                       select-list-options="@Model.Supervisors" />
 
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
     @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-      <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+      <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back"
+                      asp-all-route-data="@routeParamsForBackLink" />
     } else {
-      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back"
+                      asp-all-route-data="@routeParamsForBackLink" />
     }
   </div>
 </div>
