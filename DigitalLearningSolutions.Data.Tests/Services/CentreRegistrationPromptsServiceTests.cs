@@ -38,7 +38,7 @@
         {
             // Given
             var expectedPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: null, mandatory: true);
-            var expectedPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2, "Department / team", null, true);
+            var expectedPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2, "Department / team", null, true, 2);
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt> { expectedPrompt1, expectedPrompt2 };
             var expectedPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(centreRegistrationPrompts);
             A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(29))
@@ -99,7 +99,7 @@
                     answer: answer1
                 );
             var expectedPrompt2 =
-                PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2, "Department / team", null, true);
+                PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2, "Department / team", null, true, promptId: 2);
             var centreRegistrationPrompts = new List<CentreRegistrationPromptWithAnswer> { expectedPrompt1, expectedPrompt2 };
             var expectedCustomerPrompts =
                 PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(centreRegistrationPrompts);
@@ -135,7 +135,7 @@
                 answer: answer1
             );
             var expectedPrompt2 =
-                PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2, "Department / team", null, true);
+                PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2, "Department / team", null, true, promptId: 2);
             var expectedPrompt3 = PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(
                 1,
                 options: null,
