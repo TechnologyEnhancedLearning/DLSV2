@@ -72,8 +72,8 @@
             // Given
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt>
             {
-                new CentreRegistrationPrompt(1, "free text", null, true),
-                new CentreRegistrationPrompt(2, "with options", "A\r\nB", true),
+                new CentreRegistrationPrompt(1, 1, "free text", null, true),
+                new CentreRegistrationPrompt(2, 2,  "with options", "A\r\nB", true),
             };
 
             // When

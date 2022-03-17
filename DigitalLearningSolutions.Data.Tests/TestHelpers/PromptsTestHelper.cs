@@ -25,10 +25,11 @@
             int promptNumber,
             string text = "Custom Prompt",
             string? options = "",
-            bool mandatory = false
+            bool mandatory = false,
+            int promptId = 1
         )
         {
-            return new CentreRegistrationPrompt(promptNumber, text, options, mandatory);
+            return new CentreRegistrationPrompt(promptNumber, promptId, text, options, mandatory);
         }
 
         public static CourseAdminField GetDefaultCourseAdminField(
@@ -53,10 +54,11 @@
             string text = "Custom Prompt",
             string? options = "",
             bool mandatory = false,
-            string? answer = null
+            string? answer = null,
+            int promptId = 1
         )
         {
-            return new CentreRegistrationPromptWithAnswer(promptNumber, text, options, mandatory, answer);
+            return new CentreRegistrationPromptWithAnswer(promptNumber, promptId, text, options, mandatory, answer);
         }
 
         public static CourseAdminFieldWithAnswer GetDefaultCourseAdminFieldWithAnswer(
