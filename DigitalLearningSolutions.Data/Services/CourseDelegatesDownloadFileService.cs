@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System.Collections.Generic;
     using System.Data;
     using System.IO;
     using System.Linq;
@@ -7,6 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
     public interface ICourseDelegatesDownloadFileService
@@ -15,7 +17,16 @@
             int customisationId,
             int centreId,
             string? sortBy,
-            string? filterBy,
+            string? filterString,
+            string sortDirection = GenericSortingHelper.Ascending
+        );
+
+        public byte[] GetCourseDelegateDownloadFile(
+            int centreId,
+            int? adminCategoryId,
+            string? searchString,
+            string? sortBy,
+            string? filterString,
             string sortDirection = GenericSortingHelper.Ascending
         );
     }
@@ -38,33 +49,72 @@
         private const string Active = "Active";
         private const string RemovedDate = "Removed date";
         private const string Locked = "Locked";
+        private const string AdminFieldOne = "Admin field 1";
+        private const string AdminFieldTwo = "Admin field 2";
+        private const string AdminFieldThree = "Admin field 3";
 
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDelegatesDataService courseDelegatesDataService;
+        private readonly ICourseService courseService;
         private readonly ICentreRegistrationPromptsService registrationPromptsService;
 
         public CourseDelegatesDownloadFileService(
             ICourseDelegatesDataService courseDelegatesDataService,
             ICourseAdminFieldsService courseAdminFieldsService,
-            ICentreRegistrationPromptsService registrationPromptsService
+            ICentreRegistrationPromptsService registrationPromptsService,
+            ICourseService courseService
         )
         {
             this.courseDelegatesDataService = courseDelegatesDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.registrationPromptsService = registrationPromptsService;
+            this.courseService = courseService;
         }
 
         public byte[] GetCourseDelegateDownloadFileForCourse(
             int customisationId,
             int centreId,
             string? sortBy,
-            string? filterBy,
+            string? filterString,
             string sortDirection = GenericSortingHelper.Ascending
         )
         {
             using var workbook = new XLWorkbook();
 
-            PopulateCourseDelegatesSheetForCourse(workbook, customisationId, centreId, sortBy, filterBy, sortDirection);
+            PopulateCourseDelegatesSheetForCourse(
+                workbook,
+                customisationId,
+                centreId,
+                sortBy,
+                filterString,
+                sortDirection
+            );
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return stream.ToArray();
+        }
+
+        public byte[] GetCourseDelegateDownloadFile(
+            int centreId,
+            int? adminCategoryId,
+            string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection = GenericSortingHelper.Ascending
+        )
+        {
+            using var workbook = new XLWorkbook();
+
+            PopulateCourseDelegatesSheetForExportAll(
+                workbook,
+                centreId,
+                adminCategoryId,
+                searchString,
+                sortBy,
+                filterString,
+                sortDirection
+            );
 
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
@@ -76,7 +126,7 @@
             int customisationId,
             int centreId,
             string? sortBy,
-            string? filterBy,
+            string? filterString,
             string sortDirection
         )
         {
@@ -87,7 +137,8 @@
             var courseDelegates = courseDelegatesDataService.GetDelegatesOnCourseForExport(customisationId, centreId)
                 .ToList();
 
-            var filteredCourseDelegates = FilteringHelper.FilterItems(courseDelegates.AsQueryable(), filterBy).ToList();
+            var filteredCourseDelegates =
+                FilteringHelper.FilterItems(courseDelegates.AsQueryable(), filterString).ToList();
             var sortedCourseDelegates =
                 GenericSortingHelper.SortAllItems(
                     filteredCourseDelegates.AsQueryable(),
@@ -114,9 +165,143 @@
             FormatWorksheetColumns(workbook, dataTable);
         }
 
+        private void PopulateCourseDelegatesSheetForExportAll(
+            IXLWorkbook workbook,
+            int centreId,
+            int? adminCategoryId,
+            string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection
+        )
+        {
+            var sheet = workbook.Worksheets.Add("Course Delegates");
+
+            var customRegistrationPrompts =
+                registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
+
+            var courses = GetCoursesToExport(
+                centreId,
+                adminCategoryId,
+                searchString,
+                sortBy,
+                filterString,
+                sortDirection
+            );
+
+            var emptyTable = new DataTable();
+            SetUpDataTableColumnsForExportAll(customRegistrationPrompts, emptyTable);
+            var headerTable = sheet.Cell(1, 1).InsertTable(emptyTable);
+            headerTable.Theme = XLTableTheme.None;
+
+            foreach (var course in courses)
+            {
+                AddCourseToSheet(sheet, centreId, course, customRegistrationPrompts);
+            }
+
+            sheet.Columns(2, sheet.LastColumnUsed().RangeAddress.FirstAddress.ColumnNumber).AdjustToContents();
+            headerTable.Resize(1, 1, sheet.LastRowUsed().RowNumber(), sheet.LastColumnUsed().ColumnNumber());
+
+            sheet.CollapseRows();
+
+            FormatWorksheetColumns(workbook, emptyTable);
+        }
+
+        private IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> GetCoursesToExport(
+            int centreId,
+            int? adminCategoryId,
+            string? searchString,
+            string? sortBy,
+            string? filterString,
+            string sortDirection
+        )
+        {
+            var details = courseService.GetCentreCourseDetails(centreId, adminCategoryId);
+            var searchedCourses = GenericSearchHelper.SearchItems(details.Courses, searchString);
+            var filteredCourses = FilteringHelper.FilterItems(searchedCourses.AsQueryable(), filterString);
+            var sortedCourses = GenericSortingHelper.SortAllItems(
+                filteredCourses.AsQueryable(),
+                sortBy ?? nameof(CourseStatisticsWithAdminFieldResponseCounts.CourseName),
+                sortDirection
+            );
+            return sortedCourses;
+        }
+
+        private void AddCourseToSheet(
+            IXLWorksheet sheet,
+            int centreId,
+            Course course,
+            CentreRegistrationPrompts customRegistrationPrompts
+        )
+        {
+            var courseNameCell = sheet.Cell(GetNextEmptyRowNumber(sheet), 1);
+            courseNameCell.Value = course.CourseName;
+            courseNameCell.Style.Font.Bold = true;
+
+            var sortedCourseDelegates =
+                GenericSortingHelper.SortAllItems(
+                    courseDelegatesDataService.GetDelegatesOnCourseForExport(course.CustomisationId, centreId)
+                        .AsQueryable(),
+                    nameof(CourseDelegateForExport.FullNameForSearchingSorting),
+                    GenericSortingHelper.Ascending
+                );
+
+            var dataTable = new DataTable();
+
+            SetUpDataTableColumnsForExportAll(customRegistrationPrompts, dataTable);
+
+            foreach (var courseDelegate in sortedCourseDelegates)
+            {
+                AddDelegateToDataTableForExportAll(dataTable, courseDelegate, customRegistrationPrompts);
+            }
+
+            var insertedDataRange = sheet.Cell(GetNextEmptyRowNumber(sheet), 1).InsertData(dataTable.Rows);
+            sheet.Rows(insertedDataRange.FirstRow().RowNumber(), insertedDataRange.LastRow().RowNumber())
+                .Group(true);
+        }
+
+        private static int GetNextEmptyRowNumber(IXLWorksheet sheet)
+        {
+            return sheet.LastRowUsed().RowNumber() + 1;
+        }
+
         private static void SetUpDataTableColumns(
             CentreRegistrationPrompts registrationRegistrationPrompts,
             CourseAdminFields adminFields,
+            DataTable dataTable
+        )
+        {
+            SetUpCommonDataTableColumns(registrationRegistrationPrompts, dataTable);
+
+            foreach (var prompt in adminFields.AdminFields)
+            {
+                dataTable.Columns.Add(
+                    !dataTable.Columns.Contains(prompt.PromptText)
+                        ? prompt.PromptText
+                        : $"{prompt.PromptText} (Prompt {prompt.PromptNumber})"
+                );
+            }
+        }
+
+        private static void SetUpDataTableColumnsForExportAll(
+            CentreRegistrationPrompts registrationRegistrationPrompts,
+            DataTable dataTable
+        )
+        {
+            SetUpCommonDataTableColumns(registrationRegistrationPrompts, dataTable);
+
+            dataTable.Columns.AddRange(
+                new[]
+                {
+                    new DataColumn(AdminFieldOne),
+                    new DataColumn(AdminFieldTwo),
+                    new DataColumn(AdminFieldThree),
+                }
+            );
+        }
+
+        private static void SetUpCommonDataTableColumns(
+            CentreRegistrationPrompts registrationRegistrationPrompts,
             DataTable dataTable
         )
         {
@@ -143,15 +328,6 @@
                     new DataColumn(RemovedDate), new DataColumn(Locked),
                 }
             );
-
-            foreach (var prompt in adminFields.AdminFields)
-            {
-                dataTable.Columns.Add(
-                    !dataTable.Columns.Contains(prompt.PromptText)
-                        ? prompt.PromptText
-                        : $"{prompt.PromptText} (Prompt {prompt.PromptNumber})"
-                );
-            }
         }
 
         private static void AddDelegateToDataTable(
@@ -163,6 +339,49 @@
         {
             var row = dataTable.NewRow();
 
+            SetCommonRowValues(dataTable, courseDelegate, registrationRegistrationPrompts, row);
+
+            foreach (var prompt in adminFields.AdminFields)
+            {
+                if (dataTable.Columns.Contains($"{prompt.PromptText} (Prompt {prompt.PromptNumber})"))
+                {
+                    row[$"{prompt.PromptText} (Prompt {prompt.PromptNumber})"] =
+                        courseDelegate.DelegateCourseAdminFields[prompt.PromptNumber - 1];
+                }
+                else
+                {
+                    row[prompt.PromptText] =
+                        courseDelegate.DelegateCourseAdminFields[prompt.PromptNumber - 1];
+                }
+            }
+
+            dataTable.Rows.Add(row);
+        }
+
+        private static void AddDelegateToDataTableForExportAll(
+            DataTable dataTable,
+            CourseDelegateForExport courseDelegate,
+            CentreRegistrationPrompts registrationRegistrationPrompts
+        )
+        {
+            var row = dataTable.NewRow();
+
+            SetCommonRowValues(dataTable, courseDelegate, registrationRegistrationPrompts, row);
+
+            row[AdminFieldOne] = courseDelegate.CourseAnswer1;
+            row[AdminFieldTwo] = courseDelegate.CourseAnswer2;
+            row[AdminFieldThree] = courseDelegate.CourseAnswer3;
+
+            dataTable.Rows.Add(row);
+        }
+
+        private static void SetCommonRowValues(
+            DataTable dataTable,
+            CourseDelegateForExport courseDelegate,
+            CentreRegistrationPrompts registrationRegistrationPrompts,
+            DataRow row
+        )
+        {
             row[LastName] = courseDelegate.LastName;
             row[FirstName] = courseDelegate.FirstName;
             row[Email] = courseDelegate.EmailAddress;
@@ -194,22 +413,6 @@
             row[Active] = courseDelegate.Active;
             row[RemovedDate] = courseDelegate.RemovedDate?.Date;
             row[Locked] = courseDelegate.Locked;
-
-            foreach (var prompt in adminFields.AdminFields)
-            {
-                if (dataTable.Columns.Contains($"{prompt.PromptText} (Prompt {prompt.PromptNumber})"))
-                {
-                    row[$"{prompt.PromptText} (Prompt {prompt.PromptNumber})"] =
-                        courseDelegate.DelegateCourseAdminFields[prompt.PromptNumber - 1];
-                }
-                else
-                {
-                    row[prompt.PromptText] =
-                        courseDelegate.DelegateCourseAdminFields[prompt.PromptNumber - 1];
-                }
-            }
-
-            dataTable.Rows.Add(row);
         }
 
         private static void FormatWorksheetColumns(IXLWorkbook workbook, DataTable dataTable)

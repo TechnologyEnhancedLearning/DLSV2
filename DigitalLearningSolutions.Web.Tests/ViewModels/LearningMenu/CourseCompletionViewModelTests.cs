@@ -8,9 +8,10 @@
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
-    class CourseCompletionViewModelTests
+    public class CourseCompletionViewModelTests
     {
-        private IConfiguration config;
+        private IConfiguration config = null!;
+
         private const string BaseUrl = "https://example.com";
         private const int ProgressId = 23;
 

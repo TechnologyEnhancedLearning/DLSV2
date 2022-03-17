@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DigitalLearningSolutions.Data.Models.Frameworks
+﻿namespace DigitalLearningSolutions.Data.Models.Frameworks
 {
     public class FrameworkReviewOutcomeNotification : FrameworkReview
     {
@@ -11,5 +7,6 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
         public string? OwnerFirstName { get; set; }
         public string? ReviewerFirstName { get; set; }
         public string? ReviewerLastName { get; set; }
+        public bool? ReviewerActive { get; set; }
     }
 }

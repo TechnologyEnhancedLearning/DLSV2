@@ -32,6 +32,11 @@
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.Supervisor));
             }
 
+            if(adminUser.IsNominatedSupervisor)
+            {
+                tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.NominatedSupervisor));
+            }
+
             if (adminUser.IsTrainer)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.Trainer));

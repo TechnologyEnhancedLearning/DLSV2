@@ -17,6 +17,7 @@
         public int? SupervisorAdminId { get; set; }
         public string? SupervisorFirstName { get; set; }
         public string? SupervisorLastName { get; set; }
+        public bool SupervisorAdminActive { get; set; }
         public int CompleteWithinMonths { get; set; }
         public int ValidityMonths { get; set; }
         public bool Active { get; set; }

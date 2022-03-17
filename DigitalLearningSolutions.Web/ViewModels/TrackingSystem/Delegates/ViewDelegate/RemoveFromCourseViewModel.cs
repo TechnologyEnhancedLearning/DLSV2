@@ -19,7 +19,7 @@
             {
                 validationResults.Add(
                     new ValidationResult(
-                        "Please confirm with the checkbox that you wish to remove this delegate from this course",
+                        "Confirm you wish to remove this delegate from this course",
                         new[]
                         {
                             nameof(Confirm)

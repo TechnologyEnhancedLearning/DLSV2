@@ -4,8 +4,8 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using MimeKit;
-    using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
 
     public interface IFrameworkNotificationService
@@ -29,7 +29,7 @@
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
-        private readonly IConfigService configService;
+        private readonly IConfigDataService configDataService;
         private readonly IEmailService emailService;
         private readonly IFrameworkService frameworkService;
         private readonly IRoleProfileService roleProfileService;
@@ -37,7 +37,7 @@
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
         public FrameworkNotificationService(
            IFrameworkService frameworkService,
-           IConfigService configService,
+           IConfigDataService configDataService,
            IEmailService emailService,
            IRoleProfileService roleProfileService,
            ISupervisorService supervisorService,
@@ -45,7 +45,7 @@
        )
         {
             this.frameworkService = frameworkService;
-            this.configService = configService;
+            this.configDataService = configDataService;
             this.emailService = emailService;
             this.roleProfileService = roleProfileService;
             this.supervisorService = supervisorService;
@@ -101,13 +101,17 @@
                 throw new NotificationDataException($"No record found when trying to fetch collaboratorNotification Data. id: {id}, invitedByAdminId: {invitedByAdminId})");
             }
             var frameworkUrl = GetFrameworkUrl(collaboratorNotification.FrameworkID, "Structure");
-            string emailSubjectLine = $"Framework {collaboratorNotification?.FrameworkRole} Invitation - Digital Learning Solutions";
+            string emailSubjectLine = $"Framework {collaboratorNotification.FrameworkRole} Invitation - Digital Learning Solutions";
             var builder = new BodyBuilder
             {
                 TextBody = $@"Dear colleague,
-                              You have been identified as a {collaboratorNotification?.FrameworkRole} for the framework, {collaboratorNotification?.FrameworkName}, by {collaboratorNotification?.InvitedByName} ({collaboratorNotification?.InvitedByEmail}).
+                              You have been identified as a {collaboratorNotification.FrameworkRole} for the framework, {collaboratorNotification.FrameworkName}, by {collaboratorNotification.InvitedByName} ({collaboratorNotification.InvitedByEmail}).
                               To access the framework, visit this url: {frameworkUrl}. You will need to be registered on the Digital Learning Solutions platform to view the framework.",
-                HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear colleague,</p><p>You have been identified as a {collaboratorNotification?.FrameworkRole} for the  framework, {collaboratorNotification?.FrameworkName}, by <a href='mailto:{collaboratorNotification?.InvitedByEmail}'>{collaboratorNotification?.InvitedByName}</a>.</p><p><a href='{frameworkUrl}'>Click here</a> to access the framework. You will need to be registered on the Digital Learning Solutions platform to view the framework.</p></body>"
+                HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
+                                <p>Dear colleague,</p>
+                                <p>You have been identified as a {collaboratorNotification.FrameworkRole} for the  framework, {collaboratorNotification.FrameworkName}, by <a href='mailto:{collaboratorNotification.InvitedByEmail}'>{collaboratorNotification.InvitedByName}</a>.</p>
+                                <p><a href='{frameworkUrl}'>Click here</a> to access the framework. You will need to be registered on the Digital Learning Solutions platform to view the framework.</p>
+                            </body>",
             };
             emailService.SendEmail(new Email(emailSubjectLine, builder, collaboratorNotification.UserEmail, collaboratorNotification.InvitedByEmail));
         }
@@ -155,11 +159,12 @@
         }
         public UriBuilder GetDLSUriBuilder()
         {
-            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.AppBaseUrl) ??
-                                       throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
+            var trackingSystemBaseUrl = configDataService.GetConfigValue(ConfigDataService.AppBaseUrl) ??
+                                       throw new ConfigValueMissingException(configDataService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
             ;
             return new UriBuilder(trackingSystemBaseUrl);
         }
+
         public void SendReviewOutcomeNotification(int reviewId)
         {
             var outcomeNotification = frameworkService.GetFrameworkReviewNotification(reviewId);
@@ -169,20 +174,30 @@
             }
             var frameworkUrl = GetFrameworkUrl(outcomeNotification.FrameworkID, "Publish");
             string emailSubjectLine = $"Framework Review Outcome - {(outcomeNotification.SignedOff ? "Approved" : "Rejected")} - Digital Learning Solutions";
-            string approvalStatus = outcomeNotification?.ReviewerFirstName + (outcomeNotification.SignedOff ? " approved the framework for publishing." : " did not approve the framework for publishing.");
-            string commentsText = outcomeNotification?.ReviewerFirstName + (outcomeNotification.Comment != null ? " left the following review comment: " + outcomeNotification.Comment : " did not leave a review comment.");
-            string commentsHtml = "<p>" + outcomeNotification?.ReviewerFirstName + (outcomeNotification.Comment != null ? " left the following review comment:</p><hr/><p>" + outcomeNotification.Comment + "</p><hr/>" : " did not leave a review comment.</p>");
+            string approvalStatus = outcomeNotification.ReviewerFirstName + (outcomeNotification.SignedOff ? " approved the framework for publishing." : " did not approve the framework for publishing.");
+            string commentsText = outcomeNotification.ReviewerFirstName + (outcomeNotification.Comment != null ? " left the following review comment: " + outcomeNotification.Comment : " did not leave a review comment.");
+            string commentsHtml = "<p>" + outcomeNotification.ReviewerFirstName + (outcomeNotification.Comment != null ? " left the following review comment:</p><hr/><p>" + outcomeNotification.Comment + "</p><hr/>" : " did not leave a review comment.</p>");
+
+            string reviewerFullName = $"{outcomeNotification.ReviewerFirstName} {outcomeNotification.ReviewerLastName} {(outcomeNotification.ReviewerActive == true ? "" : " (inactive)")}";
             var builder = new BodyBuilder
             {
                 TextBody = $@"Dear {outcomeNotification.OwnerFirstName},
-                              Your framework, {outcomeNotification?.FrameworkName}, has been reviewed by {outcomeNotification?.ReviewerFirstName + " " + outcomeNotification?.ReviewerLastName} ({outcomeNotification?.UserEmail}).
+                              Your framework, {outcomeNotification.FrameworkName}, has been reviewed by {reviewerFullName} ({outcomeNotification.UserEmail}).
                               {approvalStatus}
                               {commentsText}
                               The full framework review status, can be viewed by visiting: {frameworkUrl}. Once all of the required reviewers have approved the framework, you may publish it. You will need to login to the Digital Learning Solutions platform to access the framework.",
-                HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {outcomeNotification.OwnerFirstName},</p><p>Your framework, {outcomeNotification?.FrameworkName}, has been reviewed by <a href='mailto:{outcomeNotification?.UserEmail}'>{outcomeNotification?.ReviewerFirstName + " " + outcomeNotification.ReviewerLastName}</a>.</p><p>{approvalStatus}</p>{commentsHtml}<p><a href='{frameworkUrl}'>Click here</a> to view the full review status for the framework. Once all of the required reviewers have approved the framework, you may publish it.</p><p>You will need to login to the Digital Learning Solutions platform to access the framework.</p></body>"
+                HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
+                                <p>Dear {outcomeNotification.OwnerFirstName},</p>
+                                <p>Your framework, {outcomeNotification.FrameworkName}, has been reviewed by <a href='mailto:{outcomeNotification.UserEmail}'>{reviewerFullName}</a>.</p>
+                                <p>{approvalStatus}</p>
+                                {commentsHtml}
+                                <p><a href='{frameworkUrl}'>Click here</a> to view the full review status for the framework. Once all of the required reviewers have approved the framework, you may publish it.</p>
+                                <p>You will need to login to the Digital Learning Solutions platform to access the framework.</p>
+                            </body>",
             };
             emailService.SendEmail(new Email(emailSubjectLine, builder, outcomeNotification.OwnerEmail, outcomeNotification.UserEmail));
         }
+
         public void SendSupervisorDelegateInvite(int supervisorDelegateId, int adminId)
         {
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
@@ -260,7 +275,7 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
             var competency = selfAssessmentDataService.GetCompetencyByCandidateAssessmentResultId(resultId, candidateAssessmentId, adminId);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
             var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
-            var commentString = supervisorDelegate.SupervisorName + ((bool)competency.AssessmentQuestions.First().SignedOff ? " verified your self assessment " : " did not verify your self assessment ") + (competency.AssessmentQuestions.First().SupervisorComments != null ? "and left the following review comment: " + competency.AssessmentQuestions.First().SupervisorComments : "but did not leave a review comment.");
+            var commentString = supervisorDelegate.SupervisorName + ((bool)competency.AssessmentQuestions.First().SignedOff ? " confirmed your self assessment " : " did not confirm your self assessment ") + (competency.AssessmentQuestions.First().SupervisorComments != null ? "and left the following review comment: " + competency.AssessmentQuestions.First().SupervisorComments : "but did not leave a review comment.");
             string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Reviewed {competency.Vocabulary} - Digital Learning Solutions";
             var builder = new BodyBuilder();
             builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
@@ -309,12 +324,12 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
             var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
-            string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Verified {countResults} Results - Digital Learning Solutions";
+            string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Confirmed {countResults} Results - Digital Learning Solutions";
             var builder = new BodyBuilder();
             builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
-                               {supervisorDelegate.SupervisorName} has verified {countResults} of your self assessment results against the {delegateSelfAssessment.RoleName} profile assessment in the NHS Health Education England, Digital Learning Solutions platform.
+                               {supervisorDelegate.SupervisorName} has confirmed {countResults} of your self assessment results against the {delegateSelfAssessment.RoleName} profile assessment in the NHS Health Education England, Digital Learning Solutions platform.
                                To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
-            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p> {supervisorDelegate.SupervisorName} has signed-off {countResults} of your self assessment results against the {delegateSelfAssessment.RoleName} profile assessment in the NHS Health Education England, Digital Learning Solutions platform.</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p> {supervisorDelegate.SupervisorName} has confirmed {countResults} of your self assessment results against the {delegateSelfAssessment.RoleName} profile assessment in the NHS Health Education England, Digital Learning Solutions platform.</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
 

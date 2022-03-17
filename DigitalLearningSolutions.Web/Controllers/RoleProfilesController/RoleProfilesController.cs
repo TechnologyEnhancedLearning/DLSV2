@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.RoleProfilesController
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Authorization;
@@ -13,21 +14,21 @@
         private readonly IRoleProfileService roleProfileService;
         private readonly ICommonService commonService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
-        private readonly IConfigService configService;
+        private readonly IConfigDataService configDataService;
         private readonly ILogger<RoleProfilesController> logger;
         private readonly IConfiguration config;
         public RoleProfilesController(
            IRoleProfileService roleProfileService,
            ICommonService commonService,
            IFrameworkNotificationService frameworkNotificationService,
-          IConfigService configService,
+          IConfigDataService configDataService,
            ILogger<RoleProfilesController> logger,
            IConfiguration config)
         {
             this.roleProfileService = roleProfileService;
             this.commonService = commonService;
             this.frameworkNotificationService = frameworkNotificationService;
-            this.configService = configService;
+            this.configDataService = configDataService;
             this.logger = logger;
             this.config = config;
         }

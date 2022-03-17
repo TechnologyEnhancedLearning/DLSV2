@@ -33,6 +33,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             1,
             "Kevin",
             "Whittaker (Developer)",
+            true,
             EnrollmentDate,
             EnrollmentDate,
             null,
@@ -43,6 +44,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             1,
             "Kevin",
             "Whittaker (Developer)",
+            true,
             0,
             0,
             null,
@@ -56,7 +58,9 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             "",
             101,
             false,
-            "HG1"
+            "HG1",
+            false,
+            null
         );
 
         private SqlConnection connection = null!;
@@ -281,6 +285,16 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // Then
             count.Should().Be(3);
+        }
+
+        [Test]
+        public void GetNumberOfActiveCoursesAtCentreFilteredByCategory_excludes_courses_from_archived_applications()
+        {
+            // When
+            var count = courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(101, null);
+
+            // Then
+            count.Should().Be(141);
         }
 
         [Test]

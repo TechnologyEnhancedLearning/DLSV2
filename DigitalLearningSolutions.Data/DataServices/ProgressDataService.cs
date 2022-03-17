@@ -241,23 +241,23 @@
         public IEnumerable<LearningLogEntry> GetLearningLogEntries(int progressId)
         {
             return connection.Query<LearningLogEntry>(
-                @"SELECT 
+                @"SELECT
                         ses.LoginTime AS [When],
                         ses.Duration  AS LearningTime,
                         NULL AS AssessmentTaken,
                         NULL AS AssessmentScore,
                         NULL AS AssessmentStatus
-                    FROM [Sessions] AS ses 
+                    FROM [Sessions] AS ses
                     INNER JOIN Progress AS pr ON pr.CustomisationID = ses.CustomisationID AND pr.CandidateID = ses.CandidateID
                     WHERE pr.ProgressID = @progressId
                     UNION ALL
-                    SELECT 
+                    SELECT
                         aa.[Date] AS [When],
                         NULL AS Duration,
                         sec.SectionName AS AssessmentTaken,
                         aa.Score AS AssessmentScore,
                         aa.[Status] AS AssessmentStatus
-                    FROM AssessAttempts AS aa 
+                    FROM AssessAttempts AS aa
                     INNER JOIN dbo.Customisations AS cu ON cu.CustomisationID = aa.CustomisationID
                     LEFT JOIN Sections AS sec ON sec.ApplicationID = cu.ApplicationID AND sec.SectionNumber = aa.SectionNumber
                     WHERE aa.ProgressID = @progressId",
@@ -302,7 +302,7 @@
                         (SELECT COUNT(AssessAttemptID) AS PLAttempts
                             FROM AssessAttempts AS a_a
                             WHERE (ProgressID = @progressId) AND (SectionNumber = s.SectionNumber)) AS Attempts,
-                        MAX(ISNULL(CAST(ct.Status AS INT), 0)) AS Passed
+                        MAX(ISNULL(CAST(aa.Status AS INT), 0)) AS Passed
                     FROM
                         aspProgress AS asp1
                         INNER JOIN Progress AS p ON asp1.ProgressID = p.ProgressID

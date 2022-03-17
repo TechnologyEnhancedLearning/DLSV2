@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Enums;
 
     public partial class SupervisorController
     {
@@ -46,9 +47,10 @@
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
-            var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
-                supervisor => new SupervisorDelegateDetailViewModel(supervisor, page)
-            );
+            var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select( supervisor =>
+            {
+                return new SupervisorDelegateDetailViewModel(supervisor, page);
+            });
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             var model = new MyStaffListViewModel(
                 loggedInAdminUser,
@@ -185,9 +187,14 @@
         {
             var adminId = GetAdminID();
             var centreId = GetCentreId();
-            var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
-            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreRegistrationPrompts);
+            var centreCustomPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId)
+                .Select(supervisor =>
+                {
+                    return supervisor;
+                }
+            );
+            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts);
             return View("AllStaffList", model);
         }
 
@@ -354,7 +361,7 @@
             return model;
         }
 
-        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/VerifyMultiple/")]
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/ConfirmMultiple/")]
         public IActionResult VerifyMultipleResults(int supervisorDelegateId, int candidateAssessmentId)
         {
             var adminId = GetAdminID();
@@ -376,7 +383,7 @@
         }
 
         [HttpPost]
-        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/VerifyMultiple/")]
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/ConfirmMultiple/")]
         public IActionResult SubmitVerifyMultipleResults(
             int supervisorDelegateId,
             int candidateAssessmentId,

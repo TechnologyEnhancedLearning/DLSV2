@@ -20,11 +20,16 @@
     public class DelegateCoursesController : Controller
     {
         private const string CourseFilterCookieName = "DelegateCoursesFilter";
+        private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
         private readonly ICourseService courseService;
 
-        public DelegateCoursesController(ICourseService courseService)
+        public DelegateCoursesController(
+            ICourseService courseService,
+            ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService
+        )
         {
             this.courseService = courseService;
+            this.courseDelegatesDownloadFileService = courseDelegatesDownloadFileService;
         }
 
         [Route("{page=1:int}")]
@@ -32,16 +37,16 @@
             string? searchString = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
             int page = 1,
             int? itemsPerPage = null
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
                 Request,
                 CourseFilterCookieName,
                 CourseStatusFilterOptions.IsActive.FilterValue
@@ -57,12 +62,12 @@
                 searchString,
                 sortBy,
                 sortDirection,
-                filterBy,
+                existingFilterString,
                 page,
                 itemsPerPage
             );
 
-            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, filterBy);
+            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, existingFilterString);
 
             return View(model);
         }
@@ -77,6 +82,33 @@
             var model = new AllDelegateCourseStatisticsViewModel(details);
 
             return View(model);
+        }
+
+        [Route("DownloadAll")]
+        public IActionResult DownloadAll(
+            string? searchString = null,
+            string? sortBy = null,
+            string sortDirection = GenericSortingHelper.Ascending,
+            string? existingFilterString = null
+        )
+        {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCourseCategoryFilter();
+            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFile(
+                centreId,
+                categoryId,
+                searchString,
+                sortBy,
+                existingFilterString,
+                sortDirection
+            );
+
+            const string fileName = "Digital Learning Solutions Delegate Courses.xlsx";
+            return File(
+                content,
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
+            );
         }
     }
 }

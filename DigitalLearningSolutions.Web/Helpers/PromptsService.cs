@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     public class PromptsService
@@ -30,6 +31,22 @@
                 delegateUser?.Answer4,
                 delegateUser?.Answer5,
                 delegateUser?.Answer6
+            );
+        }
+
+        public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
+            MyAccountEditDetailsFormData formData,
+            int centreId
+        )
+        {
+            return GetEditDelegateRegistrationPromptViewModelsForCentre(
+                centreId,
+                formData.Answer1,
+                formData.Answer2,
+                formData.Answer3,
+                formData.Answer4,
+                formData.Answer5,
+                formData.Answer6
             );
         }
 
