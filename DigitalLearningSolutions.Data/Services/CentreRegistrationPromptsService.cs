@@ -14,7 +14,8 @@
     {
         public CentreRegistrationPrompts GetCentreRegistrationPromptsByCentreId(int centreId);
 
-        public IEnumerable<CentreRegistrationPrompt> GetCentreRegistrationPromptsThatHaveOptionsByCentreId(int centreId);
+        public IEnumerable<CentreRegistrationPrompt>
+            GetCentreRegistrationPromptsThatHaveOptionsByCentreId(int centreId);
 
         public CentreRegistrationPromptsWithAnswers? GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
             int centreId,
@@ -105,7 +106,12 @@
 
         public void UpdateCentreRegistrationPrompt(int centreId, int promptNumber, bool mandatory, string? options)
         {
-            centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(centreId, promptNumber, mandatory, options);
+            centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(
+                centreId,
+                promptNumber,
+                mandatory,
+                options
+            );
         }
 
         public List<(int id, string value)> GetCentreRegistrationPromptsAlphabeticalList()
@@ -162,7 +168,10 @@
 
         public string GetCentreRegistrationPromptNameAndNumber(int centreId, int promptNumber)
         {
-            return centreRegistrationPromptsDataService.GetCentreRegistrationPromptNameAndPromptNumber(centreId, promptNumber);
+            return centreRegistrationPromptsDataService.GetCentreRegistrationPromptNameAndPromptNumber(
+                centreId,
+                promptNumber
+            );
         }
 
         private static List<CentreRegistrationPrompt> PopulateCentreRegistrationPromptListFromResult(
@@ -251,10 +260,11 @@
             return list;
         }
 
-        private static List<CentreRegistrationPromptWithAnswer> PopulateCentreRegistrationPromptWithAnswerListFromResult(
-            CentreRegistrationPromptsResult? result,
-            DelegateUser delegateUser
-        )
+        private static List<CentreRegistrationPromptWithAnswer>
+            PopulateCentreRegistrationPromptWithAnswerListFromResult(
+                CentreRegistrationPromptsResult? result,
+                DelegateUser delegateUser
+            )
         {
             var list = new List<CentreRegistrationPromptWithAnswer>();
 

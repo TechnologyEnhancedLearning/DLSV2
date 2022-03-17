@@ -55,7 +55,7 @@
                 validationResults.Add(
                     new ValidationResult(
                         "The list of answers contains duplicate options.",
-                        new string[]{}
+                        new string[] { }
                     )
                 );
             }

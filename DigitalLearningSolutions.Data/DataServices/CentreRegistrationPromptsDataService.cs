@@ -9,6 +9,7 @@
     public interface ICentreRegistrationPromptsDataService
     {
         public CentreRegistrationPromptsResult GetCentreRegistrationPromptsByCentreId(int centreId);
+
         public void UpdateCentreRegistrationPrompt(int centreId, int promptNumber, bool mandatory, string? options);
 
         public IEnumerable<(int, string)> GetCustomPromptsAlphabetical();
