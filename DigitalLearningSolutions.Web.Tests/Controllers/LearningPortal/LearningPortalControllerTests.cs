@@ -5,6 +5,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -69,10 +70,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 config,
                 actionPlanService,
                 candidateAssessmentDownloadFileService
-            )
-            {
-                ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } },
-            };
+            );
+            controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
+            controller = controller.WithMockTempData();
+
         }
     }
 }

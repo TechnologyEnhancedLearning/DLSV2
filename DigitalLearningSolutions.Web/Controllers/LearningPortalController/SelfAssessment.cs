@@ -140,14 +140,6 @@
             int? competencyGroupId
         )
         {
-            var unansweredRadioQuestion = assessmentQuestions.FirstOrDefault(q => q.AssessmentQuestionInputTypeID != 2 && q.Result == null && q.SupportingComments != null);
-            if (unansweredRadioQuestion?.SupportingComments != null)
-            {
-                TempData["CommentSubmittedWithoutSelectingQuestionId"] = unansweredRadioQuestion.Id;
-                TempData.Set<List<AssessmentQuestion>>(assessmentQuestions.ToList());
-                return RedirectToAction("SelfAssessmentCompetency", new { selfAssessmentId, competencyNumber });
-            }
-
             var candidateId = User.GetCandidateIdKnownNotNull();
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
             if (assessment == null)
@@ -156,6 +148,14 @@
                     $"Attempt to set self assessment competency for candidate {candidateId} with no self assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+
+            var unansweredRadioQuestion = assessmentQuestions.FirstOrDefault(q => q.AssessmentQuestionInputTypeID != 2 && q.Result == null && q.SupportingComments != null);
+            if (unansweredRadioQuestion?.SupportingComments != null)
+            {
+                TempData["CommentSubmittedWithoutSelectingQuestionId"] = unansweredRadioQuestion.Id;
+                TempData.Set<List<AssessmentQuestion>>(assessmentQuestions.ToList());
+                return RedirectToAction("SelfAssessmentCompetency", new { selfAssessmentId, competencyNumber });
             }
 
             foreach (var assessmentQuestion in assessmentQuestions)
