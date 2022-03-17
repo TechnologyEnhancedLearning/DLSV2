@@ -1,0 +1,80 @@
+﻿CREATE VIEW AdminUsers AS
+SELECT dbo.Users.ID                                      AS AdminID,
+       dbo.AdminAccounts.Login_deprecated                AS Login,
+       dbo.Users.PasswordHash                            AS Password,
+       dbo.AdminAccounts.CentreID,
+       dbo.AdminAccounts.IsCentreAdmin                   AS CentreAdmin,
+       dbo.AdminAccounts.ConfigAdmin_deprecated          AS ConfigAdmin,
+       dbo.AdminAccounts.IsReportsViewer                 AS SummaryReports,
+       dbo.AdminAccounts.IsSuperAdmin                    AS UserAdmin,
+       dbo.Users.FirstName                               AS Forename,
+       dbo.Users.LastName                                AS Surname,
+       dbo.AdminAccounts.Email,
+       dbo.AdminAccounts.IsCentreManager,
+       dbo.AdminAccounts.Approved_deprecated             AS Approved,
+       dbo.AdminAccounts.PasswordReminder_deprecated     AS PasswordReminder,
+       dbo.AdminAccounts.EITSProfile_deprecated          AS EITSProfile,
+       dbo.AdminAccounts.PasswordReminderHash_deprecated AS PasswordReminderHash,
+       dbo.AdminAccounts.PasswordReminderDate_deprecated AS PasswordReminderDate,
+       dbo.AdminAccounts.Active,
+       dbo.AdminAccounts.IsContentManager                AS ContentManager,
+       dbo.AdminAccounts.PublishToAll,
+       dbo.AdminAccounts.ImportOnly,
+       dbo.Users.TermsAgreed                             AS TCAgreed,
+       dbo.AdminAccounts.IsContentCreator                AS ContentCreator,
+       dbo.Users.FailedLoginCount,
+       dbo.Users.ProfileImage,
+       dbo.AdminAccounts.IsSupervisor                    AS Supervisor,
+       dbo.AdminAccounts.IsTrainer                       AS Trainer,
+       dbo.AdminAccounts.CategoryID,
+       dbo.AdminAccounts.SkypeHandle_deprecated          AS SkypeHandle,
+       dbo.AdminAccounts.PublicSkypeLink_deprecated      AS PublicSkypeLink,
+       dbo.AdminAccounts.IsFrameworkDeveloper,
+       dbo.Users.ResetPasswordID,
+       dbo.AdminAccounts.IsFrameworkContributor,
+       dbo.AdminAccounts.IsWorkforceManager,
+       dbo.AdminAccounts.IsWorkforceContributor,
+       dbo.AdminAccounts.IsLocalWorkforceManager,
+       dbo.AdminAccounts.IsNominatedSupervisor           AS NominatedSupervisor
+FROM dbo.Users
+         INNER JOIN
+     dbo.AdminAccounts ON dbo.Users.ID = dbo.AdminAccounts.UserID
+WHERE dbo.AdminAccounts.UserID <> NULL
+    GO
+
+CREATE VIEW Candidates AS
+SELECT dbo.DelegateAccounts.CandidateID,
+       dbo.DelegateAccounts.Active,
+       dbo.DelegateAccounts.CentreID,
+       dbo.Users.FirstName,
+       dbo.Users.LastName,
+       dbo.DelegateAccounts.DateRegistered,
+       dbo.DelegateAccounts.CandidateNumber,
+       dbo.Users.JobGroupID,
+       dbo.DelegateAccounts.Answer1,
+       dbo.DelegateAccounts.Answer2,
+       dbo.DelegateAccounts.Answer3,
+       dbo.DelegateAccounts.AliasID_deprecated         AS AliasID,
+       dbo.DelegateAccounts.Approved,
+       dbo.DelegateAccounts.Email                      AS EmailAddress,
+       dbo.DelegateAccounts.ExternalReg,
+       dbo.DelegateAccounts.SelfReg,
+       dbo.Users.PasswordHash                          AS Password,
+       dbo.DelegateAccounts.SkipPW_deprecated          AS SkipPW,
+       dbo.DelegateAccounts.ResetHash_deprecated       AS ResetHash,
+       dbo.DelegateAccounts.Answer4,
+       dbo.DelegateAccounts.Answer5,
+       dbo.DelegateAccounts.Answer6,
+       dbo.DelegateAccounts.SkypeHandle_deprecated     AS SkypeHandle,
+       dbo.DelegateAccounts.PublicSkypeLink_deprecated AS PublicSkypeLink,
+       dbo.Users.ProfileImage,
+       dbo.Users.ResetPasswordID,
+       dbo.Users.HasBeenPromptedForPrn,
+       dbo.Users.ProfessionalRegistrationNumber,
+       dbo.Users.LearningHubAuthId,
+       dbo.Users.HasDismissedLhLoginWarning
+FROM dbo.Users
+         INNER JOIN
+     dbo.DelegateAccounts ON dbo.Users.ID = dbo.DelegateAccounts.UserID
+WHERE dbo.DelegateAccounts.UserID <> NULL
+    GO

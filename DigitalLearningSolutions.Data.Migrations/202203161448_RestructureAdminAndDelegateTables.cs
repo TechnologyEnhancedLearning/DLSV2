@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Migrations
 {
     using System;
+    using DigitalLearningSolutions.Data.Migrations.Properties;
     using FluentMigrator;
 
     [Migration(202203161448)]
@@ -58,19 +59,11 @@
             Alter.Column("CandidateNumber").OnTable("DelegateAccounts").AsString(20).NotNullable();
             Create.Index("IX_Candidates_CandidateNumber").OnTable("DelegateAccounts").OnColumn("CandidateNumber")
                 .Ascending().WithOptions().Unique().WithOptions().NonClustered();
-            Create.Index("IX_Candidates_CentreID_FirstName_LastName").OnTable("DelegateAccounts").OnColumn("CentreID")
-                .Ascending()
-                .OnColumn("FirstName").Ascending().OnColumn("LastName").Ascending().WithOptions().NonClustered();
-            Create.Index("IX_Candidates_CentreID_LastName").OnTable("DelegateAccounts").OnColumn("CentreID").Ascending()
-                .OnColumn("LastName").Ascending().WithOptions().NonClustered();
             Create.Index("IX_Candidates_Active_CentreID").OnTable("DelegateAccounts").OnColumn("Active").Ascending()
                 .OnColumn("CentreID").Ascending().WithOptions().NonClustered();
             Create.Index("IX_Candidates_CentreID_DateRegistered").OnTable("DelegateAccounts").OnColumn("CentreID")
                 .Ascending()
                 .OnColumn("DateRegistered").Ascending().WithOptions().NonClustered();
-            Create.Index("IX_Candidates_CentreID_FirstName").OnTable("DelegateAccounts").OnColumn("CentreID")
-                .Ascending()
-                .OnColumn("FirstName").Ascending().WithOptions().NonClustered();
             Create.Index("IX_Candidates_CentreID").OnTable("DelegateAccounts").OnColumn("CentreID").Ascending()
                 .WithOptions().NonClustered();
 
@@ -97,10 +90,14 @@
             Rename.Column("LearningHubAuthID").OnTable("DelegateAccounts").To("LearningHubAuthID_deprecated");
             Rename.Column("HasDismissedLhLoginWarning").OnTable("DelegateAccounts")
                 .To("HasDismissedLhLoginWarning_deprecated");
+
+            Execute.Sql(Resources.UAR_831_CreateViewsForAdminUsersAndCandidatesTables_UP);
         }
 
         public override void Down()
         {
+            Execute.Sql(Resources.UAR_831_CreateViewsForAdminUsersAndCandidatesTables_DOWN);
+
             Rename.Column("Login_deprecated").OnTable("AdminAccounts").To("Login");
             Rename.Column("Password_deprecated").OnTable("AdminAccounts").To("Password");
             Rename.Column("ConfigAdmin_deprecated").OnTable("AdminAccounts").To("ConfigAdmin");
@@ -155,11 +152,8 @@
                 .To("HasDismissedLhLoginWarning");
 
             Delete.Index("IX_Candidates_CandidateNumber").OnTable("DelegateAccounts");
-            Delete.Index("IX_Candidates_CentreID_LastName").OnTable("DelegateAccounts");
-            Delete.Index("IX_Candidates_CentreID_FirstName_LastName").OnTable("DelegateAccounts");
             Delete.Index("IX_Candidates_Active_CentreID").OnTable("DelegateAccounts");
             Delete.Index("IX_Candidates_CentreID_DateRegistered").OnTable("DelegateAccounts");
-            Delete.Index("IX_Candidates_CentreID_FirstName").OnTable("DelegateAccounts");
             Delete.Index("IX_Candidates_CentreID").OnTable("DelegateAccounts");
             Alter.Column("DateRegistered").OnTable("DelegateAccounts").AsDateTime().NotNullable();
             Alter.Column("CandidateNumber").OnTable("DelegateAccounts").AsCustom("varchar(250)").NotNullable();

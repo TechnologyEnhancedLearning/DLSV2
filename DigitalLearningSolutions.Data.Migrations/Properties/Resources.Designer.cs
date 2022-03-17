@@ -516,7 +516,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///DROP TABLE dbo.FrameworkCompetencyGroupsHistory;
         ///GO
         ///
-        ///-- Remove versioni [rest of string was truncated]&quot;;.
+        ///--  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_95_RemoveSystemVersioning {
             get {
@@ -666,6 +666,36 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP {
             get {
                 return ResourceManager.GetString("HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DROP VIEW AdminUsers
+        ///GO
+        ///DROP VIEW Candidates
+        ///GO
+        ///.
+        /// </summary>
+        internal static string UAR_831_CreateViewsForAdminUsersAndCandidatesTables_DOWN {
+            get {
+                return ResourceManager.GetString("UAR-831-CreateViewsForAdminUsersAndCandidatesTables-DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CREATE VIEW AdminUsers AS
+        ///SELECT dbo.Users.ID                                      AS AdminID,
+        ///       dbo.AdminAccounts.Login_deprecated                AS Login,
+        ///       dbo.Users.PasswordHash                            AS Password,
+        ///       dbo.AdminAccounts.CentreID,
+        ///       dbo.AdminAccounts.IsCentreAdmin                   AS CentreAdmin,
+        ///       dbo.AdminAccounts.ConfigAdmin_deprecated          AS ConfigAdmin,
+        ///       dbo.AdminAccounts.IsReportsViewer                 AS SummaryReports,
+        ///       dbo.Admi [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string UAR_831_CreateViewsForAdminUsersAndCandidatesTables_UP {
+            get {
+                return ResourceManager.GetString("UAR-831-CreateViewsForAdminUsersAndCandidatesTables-UP", resourceCulture);
             }
         }
     }
