@@ -42,7 +42,7 @@
 	                    cp1.CustomPrompt AS CentreRegistrationPrompt1Prompt,
 	                    c.F1Options AS CentreRegistrationPrompt1Options,
 	                    c.F1Mandatory AS CentreRegistrationPrompt1Mandatory,
-                        cp2.CustomPromptID AS CentreRegistrationPrompt2d,
+                        cp2.CustomPromptID AS CentreRegistrationPrompt2Id,
 	                    cp2.CustomPrompt AS CentreRegistrationPrompt2Prompt,
 	                    c.F2Options AS CentreRegistrationPrompt2Options,
 	                    c.F2Mandatory AS CentreRegistrationPrompt2Mandatory,
