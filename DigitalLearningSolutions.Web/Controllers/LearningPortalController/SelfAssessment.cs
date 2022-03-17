@@ -112,8 +112,18 @@
             var commentSubmittedWithoutSelectingQuestionId = (int?)TempData["CommentSubmittedWithoutSelectingQuestionId"];
             if (commentSubmittedWithoutSelectingQuestionId.HasValue)
             {
-                var question = competency.AssessmentQuestions.FirstOrDefault(q => q.Id == commentSubmittedWithoutSelectingQuestionId);
-                var htmlTagId = $"radio-{question?.Id}-{question?.LevelDescriptors?.FirstOrDefault()?.LevelValue}";
+                var unansweredRadioQuestion = competency.AssessmentQuestions.FirstOrDefault(q => q.Id == commentSubmittedWithoutSelectingQuestionId);
+                var htmlTagId = $"radio-{unansweredRadioQuestion?.Id}-{unansweredRadioQuestion?.LevelDescriptors?.FirstOrDefault()?.LevelValue}";
+                var postedBackQuestions = TempData.Get<List<AssessmentQuestion>>();
+                foreach (var question in competency.AssessmentQuestions)
+                {
+                    var postedBackQuestion = postedBackQuestions.FirstOrDefault(p => p.Id == question.Id);
+                    if(postedBackQuestion != null)
+                    {
+                        question.Result = postedBackQuestion.Result;
+                        question.SupportingComments = postedBackQuestion.SupportingComments;
+                    }
+                }
                 ModelState.AddModelError(htmlTagId, "Selecting a question is mandatory when a comment is provided.");
             }
 
@@ -134,6 +144,7 @@
             if (unansweredRadioQuestion?.SupportingComments != null)
             {
                 TempData["CommentSubmittedWithoutSelectingQuestionId"] = unansweredRadioQuestion.Id;
+                TempData.Set<List<AssessmentQuestion>>(assessmentQuestions.ToList());
                 return RedirectToAction("SelfAssessmentCompetency", new { selfAssessmentId, competencyNumber });
             }
 
