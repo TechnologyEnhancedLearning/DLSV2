@@ -288,6 +288,16 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
+        public void GetNumberOfActiveCoursesAtCentreFilteredByCategory_excludes_courses_from_archived_applications()
+        {
+            // When
+            var count = courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(101, null);
+
+            // Then
+            count.Should().Be(141);
+        }
+
+        [Test]
         public void GetCourseStatisticsAtCentreFilteredByCategory_should_return_course_statistics_correctly()
         {
             // Given
