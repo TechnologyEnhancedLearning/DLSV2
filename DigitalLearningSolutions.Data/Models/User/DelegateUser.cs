@@ -28,7 +28,7 @@
         public string? ProfessionalRegistrationNumber { get; set; }
         public bool HasDismissedLhLoginWarning { get; set; }
 
-        public override string[] SearchableContent => new[] { SearchableName, CandidateNumber };
+        public override string[] SearchableContent => new[] { SearchableName, EmailAddress ?? string.Empty, CandidateNumber };
 
         public override UserReference ToUserReference()
         {
