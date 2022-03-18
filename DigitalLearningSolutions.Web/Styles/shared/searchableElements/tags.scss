@@ -1,5 +1,5 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "common";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "common" as *;
 
 .tags {
   display: flex;
@@ -34,4 +34,8 @@
 
 .card-tag {
   margin: 0 4px 4px 0;
+}
+
+.card-filter-tag {
+  @extend .card-tag;
 }

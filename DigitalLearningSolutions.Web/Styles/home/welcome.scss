@@ -1,4 +1,4 @@
-@import "~nhsuk-frontend/packages/core/all";
+@use "nhsuk-frontend/packages/core/all" as *;
 
 .welcome-page-button-container {
   margin-bottom: 32px;
@@ -25,4 +25,3 @@
     margin-right: 8px;
   }
 }
-
