@@ -143,7 +143,7 @@
             bool adminFieldHasOptions
         )
         {
-            var filterValueName = GetFilterValueForAdminField(promptNumber, prompt);
+            var propertyName = GetFilterPropertyNameForAdminField(promptNumber, prompt);
 
             string propertyValue;
 
@@ -160,28 +160,28 @@
                     : FreeTextNotBlankValue;
             }
 
-            return BuildFilterValueString(filterValueName, filterValueName, propertyValue);
+            return BuildFilterValueString(propertyName, propertyName, propertyValue);
         }
 
         public static string GetFilterValueForRegistrationPrompt(int promptNumber, string? answer, string prompt)
         {
-            var filterValueName = GetFilterValueForRegistrationPrompt(promptNumber, prompt);
+            var propertyName = GetFilterPropertyNameForRegistrationPrompt(promptNumber, prompt);
             var propertyValue = string.IsNullOrEmpty(answer)
                 ? EmptyValue
                 : answer;
-            return BuildFilterValueString(filterValueName, filterValueName, propertyValue);
+            return BuildFilterValueString(propertyName, propertyName, propertyValue);
         }
 
         private static IEnumerable<FilterOptionModel> GetFilterOptionsForPromptWithOptions(Prompt prompt)
         {
-            var filterValueName = prompt is CentreRegistrationPrompt registrationPrompt
-                ? GetFilterValueForRegistrationPrompt(registrationPrompt.RegistrationField.Id, prompt.PromptText)
-                : GetFilterValueForAdminField(((CourseAdminField)prompt).PromptNumber, prompt.PromptText);
+            var propertyName = prompt is CentreRegistrationPrompt registrationPrompt
+                ? GetFilterPropertyNameForRegistrationPrompt(registrationPrompt.RegistrationField.Id, prompt.PromptText)
+                : GetFilterPropertyNameForAdminField(((CourseAdminField)prompt).PromptNumber, prompt.PromptText);
 
             var options = prompt.Options.Select(
                 option => new FilterOptionModel(
                     option,
-                    BuildFilterValueString(filterValueName, filterValueName, option),
+                    BuildFilterValueString(propertyName, propertyName, option),
                     FilterStatus.Default
                 )
             ).ToList();
@@ -189,8 +189,8 @@
                 new FilterOptionModel(
                     "No option selected",
                     BuildFilterValueString(
-                        filterValueName,
-                        filterValueName,
+                        propertyName,
+                        propertyName,
                         EmptyValue
                     ),
                     FilterStatus.Default
@@ -201,17 +201,17 @@
 
         private static IEnumerable<FilterOptionModel> GetFilterOptionsForPromptWithoutOptions(Prompt prompt)
         {
-            var filterValueName = prompt is CentreRegistrationPrompt registrationPrompt
-                ? GetFilterValueForRegistrationPrompt(registrationPrompt.RegistrationField.Id, prompt.PromptText)
-                : GetFilterValueForAdminField(((CourseAdminField)prompt).PromptNumber, prompt.PromptText);
+            var propertyName = prompt is CentreRegistrationPrompt registrationPrompt
+                ? GetFilterPropertyNameForRegistrationPrompt(registrationPrompt.RegistrationField.Id, prompt.PromptText)
+                : GetFilterPropertyNameForAdminField(((CourseAdminField)prompt).PromptNumber, prompt.PromptText);
 
             var options = new List<FilterOptionModel>
             {
                 new FilterOptionModel(
                     "Not blank",
                     BuildFilterValueString(
-                        filterValueName,
-                        filterValueName,
+                        propertyName,
+                        propertyName,
                         FreeTextNotBlankValue
                     ),
                     FilterStatus.Default
@@ -219,8 +219,8 @@
                 new FilterOptionModel(
                     "Blank",
                     BuildFilterValueString(
-                        filterValueName,
-                        filterValueName,
+                        propertyName,
+                        propertyName,
                         FreeTextBlankValue
                     ),
                     FilterStatus.Default
@@ -229,13 +229,13 @@
             return options;
         }
 
-        private static string GetFilterValueForRegistrationPrompt(int promptNumber, string promptText)
+        private static string GetFilterPropertyNameForRegistrationPrompt(int promptNumber, string promptText)
         {
             return
                 $"{DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(promptNumber)}({promptText})";
         }
 
-        private static string GetFilterValueForAdminField(int promptNumber, string promptText)
+        private static string GetFilterPropertyNameForAdminField(int promptNumber, string promptText)
         {
             return $"{CourseDelegate.GetPropertyNameForAdminFieldAnswer(promptNumber)}({promptText})";
         }
