@@ -14,7 +14,7 @@
         )
         {
             Id = delegateUser.Id;
-            TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(delegateUser.SearchableName, delegateUser.EmailAddress);
+            TitleName = delegateUser.SearchableName;
             Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
                 delegateUser.FirstName,
                 delegateUser.LastName

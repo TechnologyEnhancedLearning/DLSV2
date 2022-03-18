@@ -27,11 +27,11 @@
         {
             Id = delegateUser.Id;
             CandidateNumber = delegateUser.CandidateNumber;
-            var fullName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+            TitleName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
                 delegateUser.FirstName,
                 delegateUser.LastName
             );
-            TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(fullName, delegateUser.EmailAddress);
+            Email = delegateUser.EmailAddress;
             DateRegistered = delegateUser.DateRegistered;
             JobGroup = delegateUser.JobGroupName;
             ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
@@ -53,6 +53,7 @@
         public int Id { get; set; }
         public string CandidateNumber { get; set; }
         public string TitleName { get; set; }
+        public string? Email { get; set; }
         public DateTime? DateRegistered { get; set; }
         public string? JobGroup { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }

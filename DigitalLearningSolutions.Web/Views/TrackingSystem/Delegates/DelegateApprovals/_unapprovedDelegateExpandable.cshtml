@@ -1,11 +1,16 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model UnapprovedDelegate
 
+@{
+  var emailTitleString = !string.IsNullOrEmpty(Model.Email) ? $" ({Model.Email})" : "";
+}
+
 <div class="card-with-buttons word-break nhsuk-panel" id="@Model.Id-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text">
         @Model.TitleName
+        @emailTitleString
       </span>
     </summary>
     <div class="nhsuk-details__text">
