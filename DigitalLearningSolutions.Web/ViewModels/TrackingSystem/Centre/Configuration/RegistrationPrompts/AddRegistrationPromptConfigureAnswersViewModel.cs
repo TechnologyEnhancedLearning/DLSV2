@@ -68,7 +68,7 @@
             return ComparableOptions.Contains(Answer?.Trim().ToLower());
         }
 
-        private bool OptionsStringContainsDuplicates()
+        public bool OptionsStringContainsDuplicates()
         {
             var optionsList = ComparableOptions.ToList();
 

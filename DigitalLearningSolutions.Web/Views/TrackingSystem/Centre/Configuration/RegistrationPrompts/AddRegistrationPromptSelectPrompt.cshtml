@@ -17,9 +17,6 @@
     <h1 class="nhsuk-heading-xl">Add delegate registration prompt</h1>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="AddRegistrationPromptSelectPrompt">
-      @foreach (var promptId in Model.ExistingPromptIds) {
-        <input type="hidden" value="@promptId" name="ExistingPromptIds" />
-      }
       <vc:select-list asp-for="CustomPromptId"
                       label="Prompt name"
                       value="@Model.CustomPromptId?.ToString()"

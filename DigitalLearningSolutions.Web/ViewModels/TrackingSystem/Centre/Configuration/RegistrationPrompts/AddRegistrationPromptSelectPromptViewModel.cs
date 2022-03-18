@@ -4,23 +4,15 @@
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
 
-    public class AddRegistrationPromptSelectPromptViewModel : IValidatableObject
+    public class AddRegistrationPromptSelectPromptViewModel
     {
         public AddRegistrationPromptSelectPromptViewModel()
-        {
-            ExistingPromptIds = new List<int>();
-        }
-
-        public AddRegistrationPromptSelectPromptViewModel(IEnumerable<int> existingPromptIds)
-        {
-            ExistingPromptIds = existingPromptIds;
-        }
+        { }
 
         public AddRegistrationPromptSelectPromptViewModel(int customPromptId, bool mandatory)
         {
             CustomPromptId = customPromptId;
             Mandatory = mandatory;
-            ExistingPromptIds = new List<int>();
         }
 
         [Required(ErrorMessage = "Select a prompt name")]
@@ -28,26 +20,9 @@
 
         public bool Mandatory { get; set; }
 
-        public IEnumerable<int> ExistingPromptIds { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public bool CustomPromptIdIsInPromptIdList(IEnumerable<int> idList)
         {
-            var validationResults = new List<ValidationResult>();
-
-            if (CustomPromptId.HasValue && ExistingPromptIds.Contains(CustomPromptId.Value))
-            {
-                validationResults.Add(
-                    new ValidationResult(
-                        "That custom prompt already exists at this centre",
-                        new[]
-                        {
-                            nameof(CustomPromptId),
-                        }
-                    )
-                );
-            }
-
-            return validationResults;
+            return CustomPromptId.HasValue && idList.Contains(CustomPromptId.Value);
         }
     }
 }

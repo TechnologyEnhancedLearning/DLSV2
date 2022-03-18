@@ -141,8 +141,7 @@
         {
             TempData.Clear();
 
-            var existingPrompts = GetPromptIdsAlreadyAtUserCentre();
-            var addRegistrationPromptData = new AddRegistrationPromptData(existingPrompts);
+            var addRegistrationPromptData = new AddRegistrationPromptData();
             TempData.Set(addRegistrationPromptData);
 
             return RedirectToAction("AddRegistrationPromptSelectPrompt");
@@ -164,6 +163,14 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
         public IActionResult AddRegistrationPromptSelectPrompt(AddRegistrationPromptSelectPromptViewModel model)
         {
+            if (model.CustomPromptIdIsInPromptIdList(GetPromptIdsAlreadyAtUserCentre()))
+            {
+                ModelState.AddModelError(
+                    nameof(AddRegistrationPromptSelectPromptViewModel.CustomPromptId),
+                    "That custom prompt already exists at this user centre."
+                );
+            }
+
             if (!ModelState.IsValid)
             {
                 SetViewBagCustomPromptNameOptions();
@@ -262,6 +269,12 @@
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
 
+            if (data.SelectPromptViewModel.CustomPromptIdIsInPromptIdList(GetPromptIdsAlreadyAtUserCentre())
+                || data.ConfigureAnswersViewModel.OptionsStringContainsDuplicates())
+            {
+                return new StatusCodeResult(500);
+            }
+
             if (centreRegistrationPromptsService.AddCentreRegistrationPrompt(
                     User.GetCentreId(),
                     data.SelectPromptViewModel.CustomPromptId!.Value,
@@ -326,6 +339,12 @@
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
         {
             ModelState.ClearAllErrors();
+
+            if (model.OptionsStringContainsDuplicates())
+            {
+                ModelState.AddModelError("", "The list of answers contains duplicate options.");
+                return View("EditRegistrationPrompt", model);
+            }
 
             centreRegistrationPromptsService.UpdateCentreRegistrationPrompt(
                 User.GetCentreId(),
