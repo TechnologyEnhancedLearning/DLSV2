@@ -38,14 +38,6 @@
         </div>
       </div>
 
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-full">
-          <p>
-            Choose a course to see delegates enrolled on it. If you'd like to export delegates on all courses, click "Export" above.
-          </p>
-        </div>
-      </div>
-
       @if (Model.Courses.Any() && Model.CourseDetails != null) {
         @if (!Model.CourseDetails.Active) {
           <partial name="~/Views/TrackingSystem/Shared/_InactiveCourseInset.cshtml" />
