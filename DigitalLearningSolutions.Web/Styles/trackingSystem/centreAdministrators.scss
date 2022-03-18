@@ -1,5 +1,6 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "../shared/searchableElements/searchableElements";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "../shared/searchableElements/searchableElements" as *;
+@use "../shared/breakpoints" as *;
 
 button.nhsuk-pagination__link {
   &.nhsuk-pagination__link--next {

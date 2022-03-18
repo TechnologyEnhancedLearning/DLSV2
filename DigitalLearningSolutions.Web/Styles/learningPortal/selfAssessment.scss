@@ -1,8 +1,7 @@
-﻿@import "inputrange";
-@import "~nhsuk-frontend/packages/core/tools/sass-mq";
-@import "~nhsuk-frontend/packages/core/all";
-@import "courses";
-@import "../shared/searchableElements/searchableElements";
+﻿@use "inputrange" as *;
+@use "nhsuk-frontend/packages/core/all" as *;
+@use "courses" as *;
+@use "../shared/searchableElements/searchableElements" as *;
 
 .competency-group-header {
   padding-top: 0;

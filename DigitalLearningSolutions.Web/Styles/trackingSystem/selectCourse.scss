@@ -1,4 +1,5 @@
-﻿@import "../shared/searchableElements/filter";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "../shared/searchableElements/filter" as *;
 
 .filter-dropdown {
   @extend .input-with-no-js-submit-button;

@@ -1,4 +1,4 @@
-@import "~nhsuk-frontend/packages/core/all";
+@use "nhsuk-frontend/packages/core/all" as *;
 
 .learning-content-item {
   margin-bottom: 72px;

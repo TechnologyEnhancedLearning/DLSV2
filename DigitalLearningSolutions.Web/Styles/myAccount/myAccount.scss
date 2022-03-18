@@ -1,5 +1,4 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "../shared/formElements.scss";
+﻿@use "../shared/formElements.scss";
 
 .profile-picture__label {
   vertical-align: top;

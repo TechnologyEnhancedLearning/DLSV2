@@ -1,6 +1,6 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "../shared/headingButtons";
-@import "../shared/searchableElements/searchableElements";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "../shared/headingButtons" as *;
+@use "../shared/searchableElements/searchableElements" as *;
 $nhs-dark-grey: #425563;
 
 // These overrides for the search/sort components are so that the no-js buttons can
