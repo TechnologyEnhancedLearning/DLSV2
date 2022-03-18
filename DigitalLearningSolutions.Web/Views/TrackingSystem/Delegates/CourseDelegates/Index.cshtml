@@ -25,7 +25,7 @@
         </div>
         <div class="nhsuk-grid-column-one-quarter heading-button-group">
           <a class="nhsuk-button nhsuk-button--secondary heading-button"
-             id="export-current"
+             id="export"
              asp-controller="CourseDelegates"
              asp-action="DownloadCurrent"
              asp-route-customisationId="@Model.CustomisationId"
@@ -35,6 +35,14 @@
              role="button">
             Export
           </a>
+        </div>
+      </div>
+
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+          <p>
+            Choose a course to see delegates enrolled on it.
+          </p>
         </div>
       </div>
 
