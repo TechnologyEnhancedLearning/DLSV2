@@ -50,7 +50,7 @@
               <div class="nhsuk-checkboxes__item">
                 <input class="nhsuk-checkboxes__input" id="user-check-@collaborator.ID" name="UserChecked" type="checkbox" value="@collaborator.ID">
                 <label class="nhsuk-label nhsuk-checkboxes__label" for="user-check-@collaborator.ID">
-                  @collaborator.UserEmail
+                  @collaborator.UserEmail @(collaborator.UserActive == true ? "" : "(inactive)")
                 </label>
               </div>
             </td>

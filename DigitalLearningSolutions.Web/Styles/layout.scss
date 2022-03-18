@@ -1,4 +1,5 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+
 html {
   height: 100%;
   overflow-y: auto !important;

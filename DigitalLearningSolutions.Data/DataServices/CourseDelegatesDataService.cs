@@ -45,6 +45,7 @@
                         c.LastName,
                         c.EmailAddress,
                         c.Active,
+                        c.HasBeenPromptedForPrn,
                         c.ProfessionalRegistrationNumber,
                         p.ProgressID,
                         p.PLLocked AS Locked,

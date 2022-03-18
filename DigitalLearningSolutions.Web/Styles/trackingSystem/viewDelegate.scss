@@ -1,5 +1,5 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "../shared/searchableElements/searchableElements";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "../shared/searchableElements/searchableElements";
 
 .view-delegate-top-button-group {
   text-align: right;

@@ -18,6 +18,7 @@
             string lastName = "xxxx",
             string? emailAddress = "gslectik.m@vao",
             string candidateNumber = "KT553",
+            bool hasBeenPromptedForPrn = false,
             string? professionalRegistrationNumber = null
         )
         {
@@ -33,6 +34,7 @@
                 EmailAddress = emailAddress,
                 CandidateNumber = candidateNumber,
                 AddedDate = addedDate,
+                HasBeenPromptedForPrn = hasBeenPromptedForPrn,
                 ProfessionalRegistrationNumber = professionalRegistrationNumber,
             };
         }
@@ -51,6 +53,7 @@
             int? supervisorAdminId = null,
             string? supervisorFirstName = null,
             string? supervisorLastName = null,
+            bool supervisorActive = true,
             int completeWithinMonths = 12,
             int validityMonths = 0,
             bool active = true,
@@ -73,6 +76,7 @@
                 SupervisorAdminId = supervisorAdminId,
                 SupervisorFirstName = supervisorFirstName,
                 SupervisorLastName = supervisorLastName,
+                SupervisorAdminActive = supervisorActive,
                 CompleteWithinMonths = completeWithinMonths,
                 ValidityMonths = validityMonths,
                 Active = active,
@@ -107,6 +111,7 @@
             int addedByAdminId = 1,
             string addedByFirstName = "Kevin",
             string addedByLastName = "Whittaker (Developer)",
+            bool addedByAdminActive = true,
             int linkedToField = 4,
             string linkedToFieldName = "Job group",
             bool shouldAddNewRegistrantsToGroup = true,
@@ -123,6 +128,7 @@
                 AddedByAdminId = addedByAdminId,
                 AddedByFirstName = addedByFirstName,
                 AddedByLastName = addedByLastName,
+                AddedByAdminActive = addedByAdminActive,
                 LinkedToField = linkedToField,
                 LinkedToFieldName = linkedToFieldName,
                 ShouldAddNewRegistrantsToGroup = shouldAddNewRegistrantsToGroup,

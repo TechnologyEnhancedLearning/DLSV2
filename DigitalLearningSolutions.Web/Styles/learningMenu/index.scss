@@ -1,5 +1,5 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "~nhsuk-frontend/packages/components/tag/_tag";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@import "nhsuk-frontend/packages/components/tag/_tag";
 
 .learning-menu-card {
   border: none;

@@ -1,5 +1,4 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "../shared/searchableElements/searchableElements";
+﻿@use "../shared/searchableElements/searchableElements";
 
 .searchable-element .nhsuk-expander {
   border: none

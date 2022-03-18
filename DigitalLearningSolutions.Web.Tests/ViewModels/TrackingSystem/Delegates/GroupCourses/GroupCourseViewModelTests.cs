@@ -14,7 +14,7 @@
         {
             // Given
             var expectedDateTime = new DateTime(2018, 11, 02, 10, 53, 38, 920);
-            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(addedToGroup: expectedDateTime);
+            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(addedToGroup: expectedDateTime, supervisorActive: true);
 
             // When
             var result = new GroupCourseViewModel(groupCourse);
@@ -39,7 +39,8 @@
             // Given
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(
                 supervisorFirstName: "Test",
-                supervisorLastName: "Name"
+                supervisorLastName: "Name",
+                supervisorActive: true
             );
 
             // When

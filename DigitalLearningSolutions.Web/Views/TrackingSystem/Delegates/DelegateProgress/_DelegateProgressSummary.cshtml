@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
 @model DelegateProgressViewModel
 
 <dl class="nhsuk-summary-list">
@@ -67,7 +66,7 @@
       <a asp-controller="DelegateProgress"
          asp-action="EditCompletionDate"
          asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates"
+         asp-route-accessedVia="@Model.AccessedVia"
          asp-route-returnPage="@Model.Page">
         Edit
       </a>

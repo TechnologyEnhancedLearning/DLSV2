@@ -1,4 +1,4 @@
-@import "~nhsuk-frontend/packages/core/all";
+@use "nhsuk-frontend/packages/core/all" as *;
 
 $iframe-padding-bottom: nhsuk-spacing(8) * 2;
 

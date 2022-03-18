@@ -1,5 +1,5 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "common";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "common" as *;
 
 .nhsuk-pagination {
   padding: 0;

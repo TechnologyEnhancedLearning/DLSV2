@@ -43,6 +43,7 @@
         private DelegateCoursesController controller = null!;
         private DelegateCoursesController controllerWithCookies = null!;
         private ICourseService courseService = null!;
+        private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
 
@@ -50,6 +51,7 @@
         public void Setup()
         {
             courseService = A.Fake<ICourseService>();
+            courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
 
             A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);
             A.CallTo(
@@ -59,7 +61,7 @@
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
 
-            controller = new DelegateCoursesController(courseService)
+            controller = new DelegateCoursesController(courseService, courseDelegatesDownloadFileService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
                 .WithMockTempData();
@@ -67,7 +69,7 @@
             const string cookieName = "DelegateCoursesFilter";
             const string cookieValue = "Status|Active|false";
 
-            controllerWithCookies = new DelegateCoursesController(courseService)
+            controllerWithCookies = new DelegateCoursesController(courseService, courseDelegatesDownloadFileService)
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
                 .WithMockTempData();
