@@ -205,11 +205,11 @@
 
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt>
             {
-                new CentreRegistrationPrompt(1, "Role type", null, true),
-                new CentreRegistrationPrompt(2, "Manager", null, true),
-                new CentreRegistrationPrompt(3, "Base / office / place of work", null, true),
-                new CentreRegistrationPrompt(4, "Base / office / place of work", null, true),
-                new CentreRegistrationPrompt(5, "Contact telephone number", null, true),
+                new CentreRegistrationPrompt(1, 1, "Role type", null, true),
+                new CentreRegistrationPrompt(2, 2, "Manager", null, true),
+                new CentreRegistrationPrompt(3, 3, "Base / office / place of work", null, true),
+                new CentreRegistrationPrompt(4, 4, "Base / office / place of work", null, true),
+                new CentreRegistrationPrompt(5, 5, "Contact telephone number", null, true),
             };
             A.CallTo(() => registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId))
                 .Returns(new CentreRegistrationPrompts(centreId, centreRegistrationPrompts));
