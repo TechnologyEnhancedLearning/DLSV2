@@ -124,7 +124,7 @@
                         question.SupportingComments = postedBackQuestion.SupportingComments;
                     }
                 }
-                ModelState.AddModelError(htmlTagId, "Selecting a question is mandatory when a comment is provided.");
+                ModelState.AddModelError(htmlTagId, "Please choose a response to the question before submitting comments.");
             }
 
             return View("SelfAssessments/SelfAssessmentCompetency", model);
