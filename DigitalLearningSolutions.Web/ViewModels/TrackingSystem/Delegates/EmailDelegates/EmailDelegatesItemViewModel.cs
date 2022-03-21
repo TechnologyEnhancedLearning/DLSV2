@@ -33,7 +33,7 @@
             DelegateUser delegateUser,
             bool isDelegateSelected,
             IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts,
-            IEnumerable<CentreRegistrationPrompt> customPrompts
+            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts
         )
         {
             Id = delegateUser.Id;
@@ -46,7 +46,7 @@
 
             IsDelegateSelected = isDelegateSelected;
             JobGroupId = delegateUser.JobGroupId;
-            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var promptsWithOptions = centreRegistrationPrompts.Where(prompt => prompt.Options.Count > 0);
             RegistrationPromptFilters = DelegatesViewModelFilters.GetRegistrationPromptFilters(delegateRegistrationPrompts, promptsWithOptions);
         }
 

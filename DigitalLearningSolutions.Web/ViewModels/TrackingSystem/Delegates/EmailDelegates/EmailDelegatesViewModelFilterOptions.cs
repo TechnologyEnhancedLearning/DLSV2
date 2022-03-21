@@ -11,10 +11,10 @@
     {
         public static List<FilterModel> GetEmailDelegatesFilterModels(
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CentreRegistrationPrompt> customPrompts
+            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts
         )
         {
-            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var promptsWithOptions = centreRegistrationPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             var filters = new List<FilterModel>
             {
                 new FilterModel(

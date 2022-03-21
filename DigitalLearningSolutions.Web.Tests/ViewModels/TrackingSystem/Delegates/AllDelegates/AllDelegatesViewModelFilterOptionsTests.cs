@@ -6,8 +6,6 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using FluentAssertions;
     using NUnit.Framework;
@@ -22,7 +20,10 @@
 
             // When
             var result =
-                AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, new List<CentreRegistrationPrompt>());
+                AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(
+                    jobGroups,
+                    new List<CentreRegistrationPrompt>()
+                );
 
             // Then
             result.Should().ContainEquivalentOf(expectedFilter);
@@ -68,7 +69,8 @@
             return (jobGroups, jobGroupFilter);
         }
 
-        private (List<CentreRegistrationPrompt> centreRegistrationPrompts, List<FilterModel> filters) GetSampleCentreRegistrationPromptsAndFilters()
+        private (List<CentreRegistrationPrompt> centreRegistrationPrompts, List<FilterModel> filters)
+            GetSampleCentreRegistrationPromptsAndFilters()
         {
             var prompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(
                 1,
@@ -84,19 +86,19 @@
                 new FilterOptionModel(
                     "Clinical",
                     "Answer1(First prompt)" + FilteringHelper.Separator +
-                    "Answer1(First prompt)" + FilteringHelper.Separator + "Clinical",
+                    "Answer1" + FilteringHelper.Separator + "Clinical",
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "Non-Clinical",
                     "Answer1(First prompt)" + FilteringHelper.Separator +
-                    "Answer1(First prompt)" + FilteringHelper.Separator + "Non-Clinical",
+                    "Answer1" + FilteringHelper.Separator + "Non-Clinical",
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "No option selected",
                     "Answer1(First prompt)" + FilteringHelper.Separator +
-                    "Answer1(First prompt)" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
+                    "Answer1" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
                     FilterStatus.Default
                 ),
             };
@@ -105,25 +107,25 @@
                 new FilterOptionModel(
                     "C 1",
                     "Answer4(Fourth prompt)" + FilteringHelper.Separator +
-                    "Answer4(Fourth prompt)" + FilteringHelper.Separator + "C 1",
+                    "Answer4" + FilteringHelper.Separator + "C 1",
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "C 2",
                     "Answer4(Fourth prompt)" + FilteringHelper.Separator +
-                    "Answer4(Fourth prompt)" + FilteringHelper.Separator + "C 2",
+                    "Answer4" + FilteringHelper.Separator + "C 2",
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "C 3",
                     "Answer4(Fourth prompt)" + FilteringHelper.Separator +
-                    "Answer4(Fourth prompt)" + FilteringHelper.Separator + "C 3",
+                    "Answer4" + FilteringHelper.Separator + "C 3",
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "No option selected",
                     "Answer4(Fourth prompt)" + FilteringHelper.Separator +
-                    "Answer4(Fourth prompt)" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
+                    "Answer4" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
                     FilterStatus.Default
                 ),
             };

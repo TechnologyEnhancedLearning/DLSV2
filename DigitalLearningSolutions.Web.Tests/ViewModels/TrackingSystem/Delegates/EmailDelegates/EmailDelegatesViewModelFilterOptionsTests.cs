@@ -71,19 +71,19 @@
                 new FilterOptionModel(
                     "Clinical",
                     "Answer1(First prompt)" + FilteringHelper.Separator +
-                    "Answer1(First prompt)" + FilteringHelper.Separator + "Clinical",
+                    "Answer1" + FilteringHelper.Separator + "Clinical",
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "Non-Clinical",
                     "Answer1(First prompt)" + FilteringHelper.Separator +
-                    "Answer1(First prompt)" + FilteringHelper.Separator + "Non-Clinical",
+                    "Answer1" + FilteringHelper.Separator + "Non-Clinical",
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "No option selected",
                     "Answer1(First prompt)" + FilteringHelper.Separator +
-                    "Answer1(First prompt)" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
+                    "Answer1" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
                     FilterStatus.Default
                 ),
             };
@@ -92,25 +92,25 @@
                 new FilterOptionModel(
                     "C 1",
                     "Answer4(Fourth prompt)" + FilteringHelper.Separator +
-                    "Answer4(Fourth prompt)" + FilteringHelper.Separator + "C 1",
+                    "Answer4" + FilteringHelper.Separator + "C 1",
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "C 2",
                     "Answer4(Fourth prompt)" + FilteringHelper.Separator +
-                    "Answer4(Fourth prompt)" + FilteringHelper.Separator + "C 2",
+                    "Answer4" + FilteringHelper.Separator + "C 2",
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "C 3",
                     "Answer4(Fourth prompt)" + FilteringHelper.Separator +
-                    "Answer4(Fourth prompt)" + FilteringHelper.Separator + "C 3",
+                    "Answer4" + FilteringHelper.Separator + "C 3",
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "No option selected",
                     "Answer4(Fourth prompt)" + FilteringHelper.Separator +
-                    "Answer4(Fourth prompt)" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
+                    "Answer4" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
                     FilterStatus.Default
                 ),
             };

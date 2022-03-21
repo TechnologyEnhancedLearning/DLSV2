@@ -102,7 +102,7 @@
         {
             // Given
             var expectedItems = new[] { ItemA1, ItemA3 }.AsQueryable();
-            const string filterString = "Name(Field name)|Name(Field name)|a";
+            const string filterString = "Name(Field name)|Name|a";
 
             // When
             var result = FilteringHelper.FilterItems(InputItems, filterString);
@@ -183,6 +183,22 @@
 
             // Then
             result.Should().Be(cookieValue);
+        }
+
+        [Test]
+        public void GetFilterString_with_newFilterToAdd_and_cookie_returns_new_filter()
+        {
+            // Given
+            const string cookieValue = "Cookie Value";
+            const string newFilter = "newFilter";
+            A.CallTo(() => httpRequest.Cookies.ContainsKey(CookieName)).Returns(true);
+            A.CallTo(() => httpRequest.Cookies[CookieName]).Returns(cookieValue);
+
+            // When
+            var result = FilteringHelper.GetFilterString(null, newFilter, false, httpRequest, CookieName);
+
+            // Then
+            result.Should().Be(newFilter);
         }
 
         [Test]

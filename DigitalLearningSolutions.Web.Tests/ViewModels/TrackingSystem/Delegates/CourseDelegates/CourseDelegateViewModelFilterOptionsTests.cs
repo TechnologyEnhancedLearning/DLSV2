@@ -6,8 +6,6 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using FluentAssertions;
     using NUnit.Framework;
@@ -44,19 +42,19 @@
                 new FilterOptionModel(
                     "Yes",
                     "Answer1(System access)" + FilteringHelper.Separator +
-                    "Answer1(System access)" + FilteringHelper.Separator + "Yes",
+                    "Answer1" + FilteringHelper.Separator + "Yes",
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "No",
                     "Answer1(System access)" + FilteringHelper.Separator +
-                    "Answer1(System access)" + FilteringHelper.Separator + "No",
+                    "Answer1" + FilteringHelper.Separator + "No",
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "No option selected",
                     "Answer1(System access)" + FilteringHelper.Separator +
-                    "Answer1(System access)" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
+                    "Answer1" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
                     FilterStatus.Default
                 ),
             };
@@ -65,13 +63,13 @@
                 new FilterOptionModel(
                     "Not blank",
                     "Answer3(Some Free Text Field)" + FilteringHelper.Separator +
-                    "Answer3(Some Free Text Field)" + FilteringHelper.Separator + FilteringHelper.FreeTextNotBlankValue,
+                    "Answer3" + FilteringHelper.Separator + FilteringHelper.FreeTextNotBlankValue,
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "Blank",
                     "Answer3(Some Free Text Field)" + FilteringHelper.Separator +
-                    "Answer3(Some Free Text Field)" + FilteringHelper.Separator + FilteringHelper.FreeTextBlankValue,
+                    "Answer3" + FilteringHelper.Separator + FilteringHelper.FreeTextBlankValue,
                     FilterStatus.Default
                 ),
             };

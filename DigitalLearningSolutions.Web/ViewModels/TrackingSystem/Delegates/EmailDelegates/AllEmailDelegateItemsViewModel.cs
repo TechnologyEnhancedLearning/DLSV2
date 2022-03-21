@@ -15,7 +15,7 @@
         public AllEmailDelegateItemsViewModel(
             IEnumerable<DelegateUserCard> delegateUserCards,
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CentreRegistrationPrompt> customPrompts,
+            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts,
             IEnumerable<int> selectedDelegateIds
         )
         {
@@ -23,13 +23,13 @@
                 delegateUser =>
                 {
                     var isDelegateSelected = selectedDelegateIds.Contains(delegateUser.Id);
-                    var customFields = PromptsService.GetDelegateRegistrationPrompts(delegateUser, customPrompts);
-                    return new EmailDelegatesItemViewModel(delegateUser, isDelegateSelected, customFields, customPrompts);
+                    var delegateRegistrationPrompts = PromptsService.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
+                    return new EmailDelegatesItemViewModel(delegateUser, isDelegateSelected, delegateRegistrationPrompts, centreRegistrationPrompts);
                 }
             );
 
             Filters = EmailDelegatesViewModelFilterOptions
-                .GetEmailDelegatesFilterModels(jobGroups, customPrompts)
+                .GetEmailDelegatesFilterModels(jobGroups, centreRegistrationPrompts)
                 .SelectAppliedFilterViewModels();
         }
     }

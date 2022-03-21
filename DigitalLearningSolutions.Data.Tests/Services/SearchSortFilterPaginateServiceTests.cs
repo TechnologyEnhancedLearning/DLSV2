@@ -94,7 +94,7 @@
             var options = new SearchSortFilterAndPaginateOptions(
                 null,
                 null,
-                new FilterOptions("Name|Name|A", availableFilters, null),
+                new FilterOptions("Name|Name|A", availableFilters),
                 null
             );
 
@@ -160,7 +160,7 @@
             var options = new SearchSortFilterAndPaginateOptions(
                 null,
                 null,
-                new FilterOptions("Name|INVALID|A", availableFilters, null),
+                new FilterOptions("Name|INVALID|A", availableFilters),
                 null
             );
 

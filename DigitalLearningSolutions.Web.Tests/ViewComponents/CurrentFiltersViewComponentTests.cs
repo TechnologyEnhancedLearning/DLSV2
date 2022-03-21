@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewComponents
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -36,23 +37,11 @@
         {
             // Given
             var viewComponent = new CurrentFiltersViewComponent { ViewComponentContext = viewComponentContext };
-            var categories = new[] { "Word", "Excel" };
+            var categories = new List<Category>
+                { new Category { CategoryName = "Word" }, new Category { CategoryName = "Excel" } };
             const string searchString = "test";
 
-            var availableFilters = new List<FilterModel>
-            {
-                new FilterModel("Role", "Role", AdministratorsViewModelFilterOptions.RoleOptions),
-                new FilterModel(
-                    "CategoryName",
-                    "Category",
-                    AdministratorsViewModelFilterOptions.GetCategoryOptions(categories)
-                ),
-                new FilterModel(
-                    "AccountStatus",
-                    "Account Status",
-                    AdministratorsViewModelFilterOptions.AccountStatusOptions
-                ),
-            };
+            var availableFilters = AdministratorsViewModelFilterOptions.GetAllAdministratorsFilterModels(categories);
 
             var inputViewModel = new CentreAdministratorsViewModel(
                 1,
