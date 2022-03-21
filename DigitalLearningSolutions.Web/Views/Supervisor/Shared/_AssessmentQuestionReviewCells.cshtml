@@ -2,7 +2,10 @@
 @model AssessmentQuestion
 @{
   var actionLinkText = Model.Requested != null && Model.Verified == null ? "Confirm" : "View";
-  if (!String.IsNullOrEmpty(Model.SupportingComments)) actionLinkText += " (comments)";
+  if (!String.IsNullOrEmpty(Model.SupportingComments) || !String.IsNullOrEmpty(Model.SupervisorComments))
+  {
+    actionLinkText += " (comments)";
+  }
 }
 
 <partial name="Shared/_AssessmentQuestionCells" model="Model" />
