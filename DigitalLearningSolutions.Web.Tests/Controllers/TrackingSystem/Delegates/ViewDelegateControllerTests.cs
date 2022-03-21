@@ -122,14 +122,17 @@
             A.CallTo(() => courseService.DelegateHasCurrentProgress(1, 1))
                 .Returns(false);
 
-            var model = new RemoveFromCourseViewModel { Confirm = true };
+            var model = new RemoveFromCourseViewModel
+            {
+                Confirm = true,
+                AccessedVia = DelegateAccessRoute.ViewDelegate,
+            };
 
             // When
             var result = viewDelegateController.ExecuteRemoveFromCourse(
                 1,
                 1,
-                model,
-                DelegateAccessRoute.ViewDelegate
+                model
             );
 
             // Then
@@ -137,9 +140,11 @@
         }
 
         [Test]
-        public void Delegate_removal_for_valid_delegate_returns_redirect_to_action()
+        public void Delegate_removal_for_valid_delegate_returns_redirect_to_action_view_delegate()
         {
             // Given
+            var delegateId = 1;
+
             A.CallTo(() => userDataService.GetDelegateUserCardById(1))
                 .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
 
@@ -152,18 +157,58 @@
             var model = new RemoveFromCourseViewModel
             {
                 Confirm = true,
+                AccessedVia = DelegateAccessRoute.ViewDelegate,
+            };
+
+            // When
+            var result = viewDelegateController.ExecuteRemoveFromCourse(
+                delegateId,
+                1,
+                model
+            );
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithActionName("Index")
+                .WithControllerName("ViewDelegate")
+                .WithRouteValue("delegateId", delegateId);
+        }
+
+        [Test]
+        public void Delegate_removal_for_valid_delegate_returns_redirect_to_action_delegate_courses()
+        {
+            // Given
+            var customisationId = 1;
+
+            A.CallTo(() => userDataService.GetDelegateUserCardById(1))
+                .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
+
+            A.CallTo(() => courseDataService.GetCourseNameAndApplication(1))
+                .Returns(new CourseNameInfo());
+
+            A.CallTo(() => courseService.DelegateHasCurrentProgress(1, 1))
+                .Returns(true);
+
+            var model = new RemoveFromCourseViewModel
+            {
+                Confirm = true,
+                AccessedVia = DelegateAccessRoute.CourseDelegates,
             };
 
             // When
             var result = viewDelegateController.ExecuteRemoveFromCourse(
                 1,
-                1,
-                model,
-                DelegateAccessRoute.ViewDelegate
+                customisationId,
+                model
             );
 
             // Then
-            result.Should().BeRedirectToActionResult();
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithActionName("Index")
+                .WithControllerName("CourseDelegates")
+                .WithRouteValue("customisationId", customisationId);
         }
 
         [Test]

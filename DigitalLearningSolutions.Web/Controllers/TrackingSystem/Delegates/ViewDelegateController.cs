@@ -90,7 +90,8 @@
         }
 
         [HttpGet]
-        [Route("{customisationId:int}/Remove")]
+        [Route("{customisationId:int}/{accessedVia}/Remove")]
+        [ServiceFilter(typeof(VerifyDelegateAccessedViaValidRoute))]
         [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         public IActionResult ConfirmRemoveFromCourse(
             int delegateId,
@@ -127,8 +128,7 @@
         public IActionResult ExecuteRemoveFromCourse(
             int delegateId,
             int customisationId,
-            RemoveFromCourseViewModel model,
-            DelegateAccessRoute accessedVia
+            RemoveFromCourseViewModel model
         )
         {
             if (!ModelState.IsValid)
@@ -147,7 +147,7 @@
                 RemovalMethod.RemovedByAdmin
             );
 
-            return accessedVia.Equals(DelegateAccessRoute.CourseDelegates)
+            return model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)
                 ? RedirectToAction("Index", "CourseDelegates", new { customisationId })
                 : RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }

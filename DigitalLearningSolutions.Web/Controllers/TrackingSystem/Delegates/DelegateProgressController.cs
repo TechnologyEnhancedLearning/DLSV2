@@ -21,7 +21,7 @@
     [Route("TrackingSystem/Delegates/{accessedVia}/DelegateProgress/{progressId:int}")]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
-    [ServiceFilter(typeof(VerifyDelegateProgressAccessedViaValidRoute))]
+    [ServiceFilter(typeof(VerifyDelegateAccessedViaValidRoute))]
     [ServiceFilter(typeof(VerifyAdminUserCanAccessProgress))]
     public class DelegateProgressController : Controller
     {

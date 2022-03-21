@@ -4,7 +4,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
-    public class VerifyDelegateProgressAccessedViaValidRoute : IActionFilter
+    public class VerifyDelegateAccessedViaValidRoute : IActionFilter
     {
         public void OnActionExecuted(ActionExecutedContext context) { }
 
