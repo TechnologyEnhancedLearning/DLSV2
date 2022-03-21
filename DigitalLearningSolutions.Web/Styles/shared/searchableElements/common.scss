@@ -1,5 +1,5 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "../breakpoints";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "../breakpoints";
 
 $nhs-dark-grey: #425563;
 $button-dark-blue: #003d78;

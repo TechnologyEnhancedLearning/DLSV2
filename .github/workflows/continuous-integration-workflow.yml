@@ -28,7 +28,7 @@ jobs:
         working-directory: ./DigitalLearningSolutions.Web
 
       - name: Typescript build
-        run: npm run build 
+        run: npm run build:webpack 
         working-directory: ./DigitalLearningSolutions.Web
 
       - name: Typescript test

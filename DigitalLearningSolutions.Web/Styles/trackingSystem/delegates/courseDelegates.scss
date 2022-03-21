@@ -1,6 +1,8 @@
-﻿@import '../../shared/searchableElements/searchableElements';
-@import '../../shared/headingButtons';
-@import '../../shared/cardWithThreeButtons';
+﻿@use 'nhsuk-frontend/packages/core/all' as *;
+@use '../../shared/searchableElements/searchableElements' as *;
+@use '../../shared/headingButtons' as *;
+@use '../../shared/cardWithThreeButtons' as *;
+@use '../../shared/searchableElements/common' as *;
 
 .course-dropdown-container {
   display: flex;

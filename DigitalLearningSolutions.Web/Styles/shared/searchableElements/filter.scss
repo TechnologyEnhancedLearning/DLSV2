@@ -1,5 +1,5 @@
-﻿@import "common";
-@import "tags";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use '../../shared/searchableElements/common' as *;
 
 .filter-container {
   display: flex;
@@ -112,8 +112,4 @@
   .js-enabled & {
     margin-right: 4px;
   }
-}
-
-.card-filter-tag {
-  @extend .card-tag;
 }

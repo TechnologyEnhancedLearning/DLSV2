@@ -8,6 +8,9 @@
   Layout = "SelfAssessments/_Layout";
   ViewData["Title"] = "Self Assessment";
   ViewData["SelfAssessmentTitle"] = Model.SelfAssessment.Name;
+  var selfAssessedTotal = 0;
+  var verifiedTotal = 0;
+  var questionsTotal = 0;
 }
 @section breadcrumbs {
   <li class="nhsuk-breadcrumb__item">
@@ -35,9 +38,22 @@
 {
   foreach (var competencyGroup in Model.CompetencyGroups)
   {
+    var questions = competencyGroup.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required);
+    var selfAssessedCount = questions.Count(q => q.ResultId.HasValue);
+    var verifiedCount = questions.Count(q => q.Verified.HasValue);
+    var competencySummaryViewData = new ViewDataDictionary(ViewData)
+    {
+      { "isSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed },
+      { "questionsCount", questions.Count() },
+      { "selfAssessedCount", selfAssessedCount },
+      { "verifiedCount", verifiedCount }
+    };
+    selfAssessedTotal += selfAssessedCount;
+    verifiedTotal += verifiedCount;
+    questionsTotal += questions.Count();
     <div class="nhsuk-panel competency-group-panel nhsuk-u-padding-0">
       @{
-        var expanderOpen = Model.CompetencyGroups.Count() == 1
+          var expanderOpen = Model.CompetencyGroups.Count() == 1
           ? "open"
           : ViewContext.RouteData.Values.ContainsKey("competencyGroupId")
             ? ViewContext.RouteData.Values["competencyGroupId"].Equals(competencyGroup.First().CompetencyGroupID.ToString()) ? "open" : ""
@@ -50,8 +66,7 @@
           </span>
         </summary>
         <div class="nhsuk-details__text">
-          <partial name="SelfAssessments/_CompetencySummary"
-                   view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup }, { "selfAssessment", Model.SelfAssessment } })" />
+          <partial name="SelfAssessments/_CompetencySummary" view-data="@competencySummaryViewData" />
 
           @if (Model.SelfAssessment.LinearNavigation)
           {
@@ -66,8 +81,7 @@
         </div>
       </details>
       <div class="outer-score-container">
-        <partial name="SelfAssessments/_CompetencySummary"
-                 view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup }, { "selfAssessment", Model.SelfAssessment } })" />
+        <partial name="SelfAssessments/_CompetencySummary" view-data="@competencySummaryViewData" />
       </div>
       @if (Model.SelfAssessment.LinearNavigation)
       {
@@ -109,6 +123,14 @@
 @if (Model.SelfAssessment.IsSupervised)
 {
   <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
+    <h2>Overall Progress</h2>
+    <p class="nhsuk-body-l">
+      <span class="score">Self assessed: @selfAssessedTotal / @questionsTotal</span>
+      @if (Model.SelfAssessment.IsSupervisorResultsReviewed)
+      {
+        <span class="score">Confirmed: @verifiedTotal / @questionsTotal</span>
+      }
+    </p>
     <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
     <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
     @if (Model.AllQuestionsVerifiedOrNotRequired())
