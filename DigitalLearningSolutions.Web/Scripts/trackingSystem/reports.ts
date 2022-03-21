@@ -85,12 +85,18 @@ function drawChart() {
         && element.classes().indexOf('ct-label') >= 0) {
         const xOrigin = Number(element.getNode().getAttribute('x'));
         const yOrigin = element.getNode().getAttribute('y');
-        const width = Number(element.getNode().getAttribute('width'));
+        const labelTextLength = element.getNode().textContent.length;
         // this should match the NHS tablet breakpoint
         const mediaQuery = window.matchMedia('(min-width: 641px)');
         const rotation = mediaQuery.matches ? -45 : -60;
+        // Since we're rotating the elements, we need to shift them slightly left and down a
+        // variable amount based on the length of the label being displayed. The following
+        // formulae set up this adjustment. We include the translateX as a modifier in
+        // the rotation so that the labels will still come out at the correct angle.
+        const translateX = labelTextLength * -5;
+        const translateY = labelTextLength - 4;
         element.attr({
-          transform: `translate(-${width}) rotate(${rotation} ${xOrigin + width} ${yOrigin})`,
+          transform: `translate(${translateX} ${translateY}) rotate(${rotation} ${xOrigin - translateX} ${yOrigin})`,
         });
       }
     });
