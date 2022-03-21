@@ -143,7 +143,7 @@
             bool adminFieldHasOptions
         )
         {
-            var propertyName = GetFilterPropertyNameForAdminField(promptNumber, prompt);
+            var group = GetFilterGroupForAdminField(promptNumber, prompt);
 
             string propertyValue;
 
@@ -160,26 +160,26 @@
                     : FreeTextNotBlankValue;
             }
 
-            return BuildFilterValueString(propertyName, propertyName.Split('(')[0], propertyValue);
+            return BuildFilterValueString(group, group.Split('(')[0], propertyValue);
         }
 
         public static string GetFilterValueForRegistrationPrompt(int promptNumber, string? answer, string prompt)
         {
-            var propertyName = GetFilterPropertyNameForRegistrationPrompt(promptNumber, prompt);
+            var group = GetFilterGroupForRegistrationPrompt(promptNumber, prompt);
             var propertyValue = string.IsNullOrEmpty(answer)
                 ? EmptyValue
                 : answer;
-            return BuildFilterValueString(propertyName, propertyName.Split('(')[0], propertyValue);
+            return BuildFilterValueString(group, group.Split('(')[0], propertyValue);
         }
 
         private static IEnumerable<FilterOptionModel> GetFilterOptionsForPromptWithOptions(Prompt prompt)
         {
-            var propertyName = GetFilterPropertyNameForPrompt(prompt);
+            var group = GetFilterGroupForPrompt(prompt);
 
             var options = prompt.Options.Select(
                 option => new FilterOptionModel(
                     option,
-                    BuildFilterValueString(propertyName, propertyName.Split('(')[0], option),
+                    BuildFilterValueString(group, group.Split('(')[0], option),
                     FilterStatus.Default
                 )
             ).ToList();
@@ -187,8 +187,8 @@
                 new FilterOptionModel(
                     "No option selected",
                     BuildFilterValueString(
-                        propertyName,
-                        propertyName.Split('(')[0],
+                        group,
+                        group.Split('(')[0],
                         EmptyValue
                     ),
                     FilterStatus.Default
@@ -199,15 +199,15 @@
 
         private static IEnumerable<FilterOptionModel> GetFilterOptionsForPromptWithoutOptions(Prompt prompt)
         {
-            var propertyName = GetFilterPropertyNameForPrompt(prompt);
+            var group = GetFilterGroupForPrompt(prompt);
 
             var options = new List<FilterOptionModel>
             {
                 new FilterOptionModel(
                     "Not blank",
                     BuildFilterValueString(
-                        propertyName,
-                        propertyName.Split('(')[0],
+                        group,
+                        group.Split('(')[0],
                         FreeTextNotBlankValue
                     ),
                     FilterStatus.Default
@@ -215,8 +215,8 @@
                 new FilterOptionModel(
                     "Blank",
                     BuildFilterValueString(
-                        propertyName,
-                        propertyName.Split('(')[0],
+                        group,
+                        group.Split('(')[0],
                         FreeTextBlankValue
                     ),
                     FilterStatus.Default
@@ -225,11 +225,11 @@
             return options;
         }
 
-        private static string GetFilterPropertyNameForPrompt(Prompt prompt)
+        private static string GetFilterGroupForPrompt(Prompt prompt)
         {
             return prompt is CentreRegistrationPrompt registrationPrompt
-                ? GetFilterPropertyNameForRegistrationPrompt(registrationPrompt.RegistrationField.Id, prompt.PromptText)
-                : GetFilterPropertyNameForAdminField(((CourseAdminField)prompt).PromptNumber, prompt.PromptText);
+                ? GetFilterGroupForRegistrationPrompt(registrationPrompt.RegistrationField.Id, prompt.PromptText)
+                : GetFilterGroupForAdminField(((CourseAdminField)prompt).PromptNumber, prompt.PromptText);
         }
 
         // Course Admin Fields and Centre Registration Prompt filters rely on properties of the models
@@ -238,13 +238,13 @@
         // e.g. Answer1(Access Permission)|Answer1|FREETEXTBLANKVALUE would not be a valid filter for
         // a course with admin field "Priority Access" at position 1, or a course with no admin field at position 1,
         // but would technically be able to be used for filtering the models.
-        private static string GetFilterPropertyNameForRegistrationPrompt(int promptNumber, string promptText)
+        private static string GetFilterGroupForRegistrationPrompt(int promptNumber, string promptText)
         {
             return
                 $"{DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(promptNumber)}({promptText})";
         }
 
-        private static string GetFilterPropertyNameForAdminField(int promptNumber, string promptText)
+        private static string GetFilterGroupForAdminField(int promptNumber, string promptText)
         {
             return $"{CourseDelegate.GetPropertyNameForAdminFieldAnswer(promptNumber)}({promptText})";
         }
