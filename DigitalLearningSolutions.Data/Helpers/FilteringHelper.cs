@@ -240,7 +240,6 @@
 
         private static string GetFilterGroupForRegistrationPrompt(int promptNumber, string promptText)
         {
-            
             return
                 $"{DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(promptNumber)}({promptText})";
         }
