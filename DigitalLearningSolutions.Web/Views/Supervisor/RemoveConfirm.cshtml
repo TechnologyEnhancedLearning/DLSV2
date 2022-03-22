@@ -8,6 +8,7 @@
   ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "My Staff - Confirm Remove";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/Supervisor/MyStaff";
   ViewData["HeaderPathName"] = "My Staff";
+  var cancelLinkRouteData = new Dictionary<string, string> {{"page", Model.ReturnPage.ToString()}};
 }
 
 @section NavMenuItems {
@@ -47,6 +48,6 @@
       @Html.HiddenFor(m=> m.DelegateEmail)
       @Html.HiddenFor(m=> m.CandidateAssessmentCount)
     </form>
-    <vc:cancel-link asp-controller="Supervisor" asp-action="MyStaffList" asp-route-returnPage="@Model.ReturnPage">Cancel</vc:cancel-link>
+    <vc:cancel-link asp-controller="Supervisor" asp-action="MyStaffList" asp-all-route-data="@cancelLinkRouteData" />
   </div>
 </div>

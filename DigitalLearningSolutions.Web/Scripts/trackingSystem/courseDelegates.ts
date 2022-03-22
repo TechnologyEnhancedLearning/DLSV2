@@ -16,4 +16,4 @@ exportCurrentLink.addEventListener('click', () => {
 });
 
 // eslint-disable-next-line no-new
-new SearchSortFilterAndPaginate(`TrackingSystem/Delegates/CourseDelegates/AllCourseDelegates/${customisationId}`, false, true, true, 'CourseDelegatesFilter');
+new SearchSortFilterAndPaginate(`TrackingSystem/Delegates/CourseDelegates/AllCourseDelegates/${customisationId}`, false, true, true, 'CourseDelegatesFilter', undefined, 'CUSTOMISATIONID');
