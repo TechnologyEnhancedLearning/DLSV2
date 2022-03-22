@@ -10,7 +10,7 @@
     {
         public DetailedCourseProgressViewModel(
             DetailedCourseProgress progress,
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             string currentSystemBaseUrl
         )
         {
@@ -42,7 +42,7 @@
             Sections = progress.Sections.Select(s => new SectionProgressViewModel(s));
         }
 
-        public DelegateProgressAccessRoute AccessedVia { get; set; }
+        public DelegateAccessRoute AccessedVia { get; set; }
         public int ProgressId { get; set; }
         public int DelegateId { get; set; }
         public int CustomisationId { get; set; }
