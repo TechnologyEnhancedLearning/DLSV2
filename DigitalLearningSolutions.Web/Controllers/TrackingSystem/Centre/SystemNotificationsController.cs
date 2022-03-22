@@ -3,6 +3,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -20,15 +21,18 @@
     public class SystemNotificationsController : Controller
     {
         private readonly IClockService clockService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly ISystemNotificationsDataService systemNotificationsDataService;
 
         public SystemNotificationsController(
             ISystemNotificationsDataService systemNotificationsDataService,
-            IClockService clockService
+            IClockService clockService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.systemNotificationsDataService = systemNotificationsDataService;
             this.clockService = clockService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [HttpGet]
@@ -48,7 +52,19 @@
                 Response.Cookies.DeleteSkipSystemNotificationCookie();
             }
 
-            var model = new SystemNotificationsViewModel(unacknowledgedNotifications, page);
+            const int numberOfNotificationsPerPage = 1;
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                null,
+                null,
+                null,
+                new PaginationOptions(page, numberOfNotificationsPerPage)
+            );
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                unacknowledgedNotifications,
+                searchSortPaginationOptions
+            );
+
+            var model = new SystemNotificationsViewModel(result);
             return View(model);
         }
 

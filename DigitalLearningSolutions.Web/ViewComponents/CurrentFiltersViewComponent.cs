@@ -3,13 +3,14 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using Microsoft.AspNetCore.Mvc;
 
     public class CurrentFiltersViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
-            BaseSearchablePageViewModel searchablePageViewModel
+            IBaseSearchablePageViewModel searchablePageViewModel
         )
         {
             var currentFilters = searchablePageViewModel.ExistingFilterString?.Split(FilteringHelper.FilterSeparator).ToList() ??
@@ -29,7 +30,7 @@
         }
 
         private static AppliedFilterViewModel PopulateAppliedFilterViewModel(
-            BaseSearchablePageViewModel searchablePageViewModel,
+            IBaseSearchablePageViewModel searchablePageViewModel,
             string currentFilter
         )
         {
@@ -46,7 +47,7 @@
 
         private static string GetFilterDisplayText(
             string currentFilter,
-            IEnumerable<FilterOptionViewModel> filterOptions
+            IEnumerable<FilterOptionModel> filterOptions
         )
         {
             return filterOptions.First(filterOption => filterOption.FilterValue == currentFilter).DisplayText;
@@ -54,7 +55,7 @@
 
         private static string GetFilterValue(
             string currentFilter,
-            IEnumerable<FilterOptionViewModel> filterOptions
+            IEnumerable<FilterOptionModel> filterOptions
         )
         {
             return filterOptions.First(filterOption => filterOption.FilterValue == currentFilter).FilterValue;
@@ -62,7 +63,7 @@
 
         private static bool FilterOptionsContainsFilter(
             string currentFilter,
-            IEnumerable<FilterOptionViewModel> filterOptions
+            IEnumerable<FilterOptionModel> filterOptions
         )
         {
             return filterOptions.Any(filterOption => filterOption.FilterValue == currentFilter);

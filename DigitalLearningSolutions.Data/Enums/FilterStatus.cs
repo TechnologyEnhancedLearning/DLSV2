@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Models.Enums
+﻿namespace DigitalLearningSolutions.Data.Enums
 {
     public enum FilterStatus
     {

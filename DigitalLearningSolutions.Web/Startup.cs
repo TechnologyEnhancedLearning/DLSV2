@@ -207,6 +207,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IResourcesService, ResourcesService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
+            services.AddScoped<ISearchSortFilterPaginateService, SearchSortFilterPaginateService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<ISessionService, SessionService>();
@@ -296,7 +297,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyAdminUserCanAccessDelegateUser>();
             services.AddScoped<VerifyAdminUserCanAccessProgress>();
             services.AddScoped<VerifyDelegateCanAccessActionPlanResource>();
-            services.AddScoped<VerifyDelegateProgressAccessedViaValidRoute>();
+            services.AddScoped<VerifyDelegateAccessedViaValidRoute>();
             services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
             services.AddScoped<AddNewCentreCourseData>();
         }

@@ -21,17 +21,19 @@
         private readonly IUserDataService userDataService;
         private readonly ILogger<SupervisorController> logger;
         private readonly IConfiguration config;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public SupervisorController(
-            ISupervisorService supervisorService,
-            ICommonService commonService,
-            IFrameworkNotificationService frameworkNotificationService,
-            ISelfAssessmentService selfAssessmentService,
-            IConfigDataService configDataService,
-            ICentreRegistrationPromptsService centreRegistrationPromptsService,
-            IUserDataService userDataService,
-            ILogger<SupervisorController> logger,
-            IConfiguration config
+           ISupervisorService supervisorService,
+           ICommonService commonService,
+           IFrameworkNotificationService frameworkNotificationService,
+           ISelfAssessmentService selfAssessmentService,
+           IConfigDataService configDataService,
+           ICentreRegistrationPromptsService centreRegistrationPromptsService,
+           IUserDataService userDataService,
+           ILogger<SupervisorController> logger,
+           IConfiguration config,
+           ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.supervisorService = supervisorService;
@@ -43,6 +45,7 @@
             this.userDataService = userDataService;
             this.logger = logger;
             this.config = config;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         private int GetCentreId()

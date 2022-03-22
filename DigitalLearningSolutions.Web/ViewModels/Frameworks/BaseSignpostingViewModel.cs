@@ -2,7 +2,7 @@
 
 namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 {
-    public class BaseSignpostingViewModel : BasePaginatedViewModel
+    public class BaseSignpostingViewModel : OldBasePaginatedViewModel
     {
         public int FrameworkId { get; set; }
         public int? FrameworkCompetencyId { get; set; }

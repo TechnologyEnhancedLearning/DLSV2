@@ -110,7 +110,7 @@
          asp-controller="DelegateProgress"
          asp-action="Index"
          asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
+         asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates">
         View progress
       </a>
       @if (Model.Locked) {
@@ -120,12 +120,19 @@
            asp-action="UnlockProgress"
            asp-route-progressId="@Model.ProgressId"
            asp-route-customisationId="@Model.CustomisationId"
-           asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
+           asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates">
           Unlock progress
         </a>
       }
-      @if (Model.RemovedDate == null) {
-        <a class="nhsuk-button delete-button expander-card__button" role="button">
+
+      @if (string.IsNullOrEmpty(Model.Completed) && Model.RemovedDate == null) {
+        <a class="nhsuk-button delete-button expander-card__button"
+           role="button"
+           asp-controller="ViewDelegate"
+           asp-action="ConfirmRemoveFromCourse"
+           asp-route-delegateId="@Model.DelegateId"
+           asp-route-customisationId="@Model.CustomisationId"
+           asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates">
           Remove from course
         </a>
       }

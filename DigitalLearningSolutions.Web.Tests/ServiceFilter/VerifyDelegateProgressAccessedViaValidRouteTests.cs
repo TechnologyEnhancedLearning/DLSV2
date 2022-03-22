@@ -43,7 +43,7 @@
             context.RouteData.Values["accessedVia"] = "WrongRoute";
 
             // When
-            new VerifyDelegateProgressAccessedViaValidRoute().OnActionExecuting(context);
+            new VerifyDelegateAccessedViaValidRoute().OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
@@ -53,10 +53,10 @@
         public void Does_not_return_NotFound_if_route_is_from_ViewDelegate()
         {
             // Given
-            context.RouteData.Values["accessedVia"] = DelegateProgressAccessRoute.ViewDelegate.Name;
+            context.RouteData.Values["accessedVia"] = DelegateAccessRoute.ViewDelegate.Name;
 
             // When
-            new VerifyDelegateProgressAccessedViaValidRoute().OnActionExecuting(context);
+            new VerifyDelegateAccessedViaValidRoute().OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNull();
@@ -66,10 +66,10 @@
         public void Does_not_return_NotFound_if_route_is_from_CourseDelegates()
         {
             // Given
-            context.RouteData.Values["accessedVia"] = DelegateProgressAccessRoute.CourseDelegates.Name;
+            context.RouteData.Values["accessedVia"] = DelegateAccessRoute.CourseDelegates.Name;
 
             // When
-            new VerifyDelegateProgressAccessedViaValidRoute().OnActionExecuting(context);
+            new VerifyDelegateAccessedViaValidRoute().OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNull();

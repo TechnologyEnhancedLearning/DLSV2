@@ -21,6 +21,7 @@
         private SystemNotificationsController controller = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ISystemNotificationsDataService systemNotificationsDataService = null!;
 
         [SetUp]
@@ -29,8 +30,13 @@
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
             systemNotificationsDataService = A.Fake<ISystemNotificationsDataService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             controller =
-                new SystemNotificationsController(systemNotificationsDataService, clockService)
+                new SystemNotificationsController(
+                        systemNotificationsDataService,
+                        clockService,
+                        searchSortFilterPaginateService
+                    )
                     .WithMockHttpContext(httpRequest, response: httpResponse)
                     .WithMockUser(true)
                     .WithMockServices()

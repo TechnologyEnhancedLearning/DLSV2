@@ -2,14 +2,35 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Web.Models.Enums;
 
     public class RemoveFromCourseViewModel : IValidatableObject
     {
+        public RemoveFromCourseViewModel() {}
+
+        public RemoveFromCourseViewModel(
+            int delegateId,
+            string name,
+            int customisationId,
+            string courseName,
+            bool confirm,
+            DelegateAccessRoute accessedVia
+        )
+        {
+            DelegateId = delegateId;
+            Name = name;
+            CustomisationId = customisationId;
+            CourseName = courseName;
+            Confirm = confirm;
+            AccessedVia = accessedVia;
+        }
+
         public int DelegateId { get; set; }
         public string Name { get; set; }
         public int CustomisationId { get; set; }
         public string CourseName { get; set; }
         public bool Confirm { get; set; }
+        public DelegateAccessRoute AccessedVia { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

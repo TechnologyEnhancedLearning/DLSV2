@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class CourseDelegate : BaseSearchableItem
     {

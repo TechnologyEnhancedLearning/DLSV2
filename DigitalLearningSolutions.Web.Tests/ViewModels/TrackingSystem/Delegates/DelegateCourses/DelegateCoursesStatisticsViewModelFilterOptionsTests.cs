@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateCourses
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
@@ -10,18 +12,18 @@
 
     public class DelegateCoursesStatisticsViewModelFilterOptionsTests
     {
-        private readonly FilterViewModel expectedCategoriesFilterViewModel = new FilterViewModel(
+        private readonly FilterModel expectedCategoriesFilterViewModel = new FilterModel(
             "CategoryName",
             "Category",
             new[]
             {
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Category 1",
                     "CategoryName" + FilteringHelper.Separator + "CategoryName" + FilteringHelper.Separator +
                     "Category 1",
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Category 2",
                     "CategoryName" + FilteringHelper.Separator + "CategoryName" + FilteringHelper.Separator +
                     "Category 2",
@@ -30,18 +32,18 @@
             }
         );
 
-        private readonly FilterViewModel expectedStatusFilterViewModel = new FilterViewModel(
+        private readonly FilterModel expectedStatusFilterViewModel = new FilterModel(
             "Active",
             "Status",
             new[]
             {
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Inactive",
                     "Status" + FilteringHelper.Separator + "Active" + FilteringHelper.Separator +
                     "false",
                     FilterStatus.Warning
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Active",
                     "Status" + FilteringHelper.Separator + "Active" + FilteringHelper.Separator +
                     "true",
@@ -50,18 +52,18 @@
             }
         );
 
-        private readonly FilterViewModel expectedTopicsFilterViewModel = new FilterViewModel(
+        private readonly FilterModel expectedTopicsFilterViewModel = new FilterModel(
             "CourseTopic",
             "Topic",
             new[]
             {
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Topic 1",
                     "CourseTopic" + FilteringHelper.Separator + "CourseTopic" + FilteringHelper.Separator +
                     "Topic 1",
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Topic 2",
                     "CourseTopic" + FilteringHelper.Separator + "CourseTopic" + FilteringHelper.Separator +
                     "Topic 2",
@@ -70,18 +72,18 @@
             }
         );
 
-        private readonly FilterViewModel expectedHasAdminFieldsFilterViewModel = new FilterViewModel(
+        private readonly FilterModel expectedHasAdminFieldsFilterViewModel = new FilterModel(
             "HasAdminFields",
             "Admin fields",
             new[]
             {
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Has admin fields",
                     "HasAdminFields" + FilteringHelper.Separator + "HasAdminFields" + FilteringHelper.Separator +
                     "true",
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Doesn't have admin fields",
                     "HasAdminFields" + FilteringHelper.Separator + "HasAdminFields" + FilteringHelper.Separator +
                     "false",
@@ -103,7 +105,7 @@
 
             // Then
             result.Should().BeEquivalentTo(
-                new List<FilterViewModel>
+                new List<FilterModel>
                 {
                     expectedCategoriesFilterViewModel,
                     expectedTopicsFilterViewModel,

@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -21,29 +22,32 @@
     [Route("TrackingSystem/Delegates/{accessedVia}/DelegateProgress/{progressId:int}")]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
-    [ServiceFilter(typeof(VerifyDelegateProgressAccessedViaValidRoute))]
+    [ServiceFilter(typeof(VerifyDelegateAccessedViaValidRoute))]
     [ServiceFilter(typeof(VerifyAdminUserCanAccessProgress))]
     public class DelegateProgressController : Controller
     {
         private readonly IConfiguration configuration;
         private readonly ICourseService courseService;
         private readonly IProgressService progressService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IUserService userService;
 
         public DelegateProgressController(
             ICourseService courseService,
             IUserService userService,
             IProgressService progressService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.courseService = courseService;
             this.userService = userService;
             this.progressService = progressService;
             this.configuration = configuration;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        public IActionResult Index(int progressId, DelegateProgressAccessRoute accessedVia, int? returnPage)
+        public IActionResult Index(int progressId, DelegateAccessRoute accessedVia, int? returnPage)
         {
             var courseDelegatesData =
                 courseService.GetDelegateCourseProgress(progressId);
@@ -58,7 +62,7 @@
 
         [HttpGet]
         [Route("EditSupervisor")]
-        public IActionResult EditSupervisor(int progressId, DelegateProgressAccessRoute accessedVia, int? returnPage)
+        public IActionResult EditSupervisor(int progressId, DelegateAccessRoute accessedVia, int? returnPage)
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
@@ -83,7 +87,7 @@
         public IActionResult EditSupervisor(
             EditSupervisorFormData formData,
             int progressId,
-            DelegateProgressAccessRoute accessedVia
+            DelegateAccessRoute accessedVia
         )
         {
             if (!ModelState.IsValid)
@@ -102,7 +106,7 @@
         [Route("EditCompleteByDate")]
         public IActionResult EditCompleteByDate(
             int progressId,
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             int? returnPage
         )
         {
@@ -123,7 +127,7 @@
         public IActionResult EditCompleteByDate(
             EditCompleteByDateFormData formData,
             int progressId,
-            DelegateProgressAccessRoute accessedVia
+            DelegateAccessRoute accessedVia
         )
         {
             if (!ModelState.IsValid)
@@ -145,7 +149,7 @@
         [Route("EditCompletionDate")]
         public IActionResult EditCompletionDate(
             int progressId,
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             int? returnPage
         )
         {
@@ -166,7 +170,7 @@
         public IActionResult EditCompletionDate(
             EditCompletionDateFormData formData,
             int progressId,
-            DelegateProgressAccessRoute accessedVia
+            DelegateAccessRoute accessedVia
         )
         {
             if (!ModelState.IsValid)
@@ -186,11 +190,11 @@
         private IActionResult RedirectToPreviousPage(
             int delegateId,
             int progressId,
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             int? returnPage = 1
         )
         {
-            if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
+            if (accessedVia.Equals(DelegateAccessRoute.CourseDelegates))
             {
                 return RedirectToAction("Index", new { progressId, accessedVia, returnPage });
             }
@@ -204,12 +208,12 @@
             int progressId,
             int customisationId,
             int delegateId,
-            DelegateProgressAccessRoute accessedVia
+            DelegateAccessRoute accessedVia
         )
         {
             progressService.UnlockProgress(progressId);
 
-            if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
+            if (accessedVia.Equals(DelegateAccessRoute.CourseDelegates))
             {
                 return RedirectToAction("Index", "CourseDelegates", new { customisationId });
             }
@@ -220,7 +224,7 @@
         [Route("LearningLog")]
         public IActionResult LearningLog(
             int progressId,
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Descending
         )
@@ -233,14 +237,26 @@
                 return NotFound();
             }
 
-            var model = new LearningLogViewModel(accessedVia, learningLog, sortBy, sortDirection);
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                null,
+                new SortOptions(sortBy, sortDirection),
+                null,
+                null
+            );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                learningLog.Entries,
+                searchSortPaginationOptions
+            );
+
+            var model = new LearningLogViewModel(accessedVia, learningLog, result);
             return View(model);
         }
 
         [Route("AllLearningLogEntries")]
         public IActionResult AllLearningLogEntries(
             int progressId,
-            DelegateProgressAccessRoute accessedVia
+            DelegateAccessRoute accessedVia
         )
         {
             var learningLog = courseService.GetLearningLogDetails(progressId);
@@ -255,7 +271,7 @@
         }
 
         [HttpGet("DetailedProgress")]
-        public IActionResult DetailedProgress(int progressId, DelegateProgressAccessRoute accessedVia)
+        public IActionResult DetailedProgress(int progressId, DelegateAccessRoute accessedVia)
         {
             var progressData = progressService.GetDetailedCourseProgress(progressId);
             if (progressData == null)

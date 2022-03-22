@@ -1,27 +1,18 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.SystemNotifications
 {
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class SystemNotificationsViewModel : BasePaginatedViewModel
+    public class SystemNotificationsViewModel : BasePaginatedViewModel<SystemNotification>
     {
-        private const int NumberOfNotificationsPerPage = 1;
-
         public SystemNotificationsViewModel(
-            IList<SystemNotification> unacknowledgedNotifications,
-            int page
-        ) : base(
-            page,
-            NumberOfNotificationsPerPage
-        )
+            PaginationResult<SystemNotification> result
+        ) : base(result)
         {
-            MatchingSearchResults = unacknowledgedNotifications.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(unacknowledgedNotifications);
             UnacknowledgedNotification =
-                paginatedItems.Select(notification => new UnacknowledgedNotificationViewModel(notification))
+                result.ItemsToDisplay.Select(notification => new UnacknowledgedNotificationViewModel(notification))
                     .FirstOrDefault();
         }
 

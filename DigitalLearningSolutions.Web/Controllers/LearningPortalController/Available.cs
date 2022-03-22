@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using Microsoft.AspNetCore.Mvc;
@@ -22,13 +23,21 @@
                 User.GetCentreId()
             );
             var bannerText = GetBannerText();
-            var model = new AvailablePageViewModel(
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                null,
+                new PaginationOptions(page)
+            );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 availableCourses,
-                searchString,
-                sortBy,
-                sortDirection,
-                bannerText,
-                page
+                searchSortPaginationOptions
+            );
+
+            var model = new AvailablePageViewModel(
+                result,
+                bannerText
             );
             return View("Available/Available", model);
         }

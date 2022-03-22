@@ -108,6 +108,25 @@
                 competencyNumber,
                 assessment.NumberOfCompetencies
             );
+
+            var commentSubmittedWithoutSelectingQuestionId = (int?)TempData["CommentSubmittedWithoutSelectingQuestionId"];
+            if (commentSubmittedWithoutSelectingQuestionId.HasValue)
+            {
+                var unansweredRadioQuestion = competency.AssessmentQuestions.FirstOrDefault(q => q.Id == commentSubmittedWithoutSelectingQuestionId);
+                var htmlTagId = $"radio-{unansweredRadioQuestion?.Id}-{unansweredRadioQuestion?.LevelDescriptors?.FirstOrDefault()?.LevelValue}";
+                var postedBackQuestions = TempData.Get<List<AssessmentQuestion>>();
+                foreach (var question in competency.AssessmentQuestions)
+                {
+                    var postedBackQuestion = postedBackQuestions.FirstOrDefault(p => p.Id == question.Id);
+                    if(postedBackQuestion != null)
+                    {
+                        question.Result = postedBackQuestion.Result;
+                        question.SupportingComments = postedBackQuestion.SupportingComments;
+                    }
+                }
+                ModelState.AddModelError(htmlTagId, "Please choose a response to the question before submitting comments.");
+            }
+
             return View("SelfAssessments/SelfAssessmentCompetency", model);
         }
 
@@ -129,6 +148,14 @@
                     $"Attempt to set self assessment competency for candidate {candidateId} with no self assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+
+            var unansweredRadioQuestion = assessmentQuestions.FirstOrDefault(q => q.AssessmentQuestionInputTypeID != 2 && q.Result == null && q.SupportingComments != null);
+            if (unansweredRadioQuestion?.SupportingComments != null)
+            {
+                TempData["CommentSubmittedWithoutSelectingQuestionId"] = unansweredRadioQuestion.Id;
+                TempData.Set<List<AssessmentQuestion>>(assessmentQuestions.ToList());
+                return RedirectToAction("SelfAssessmentCompetency", new { selfAssessmentId, competencyNumber });
             }
 
             foreach (var assessmentQuestion in assessmentQuestions)
