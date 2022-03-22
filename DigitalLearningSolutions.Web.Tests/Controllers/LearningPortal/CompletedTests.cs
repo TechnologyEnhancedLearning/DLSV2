@@ -4,15 +4,18 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.LearningResources;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
+    using CompletedCourseHelper = DigitalLearningSolutions.Web.Tests.TestHelpers.CompletedCourseHelper;
 
     public partial class LearningPortalControllerTests
     {
@@ -37,21 +40,28 @@
             A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId))
                 .Returns((completedActionPlanResources, apiIsAccessible));
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
+            var allItems = completedCourses.Cast<CompletedLearningItem>().ToList();
+            allItems.AddRange(mappedActionPlanResources);
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CompletedLearningItem>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = await controller.Completed();
 
             // Then
             var expectedModel = new CompletedPageViewModel(
-                completedCourses,
-                mappedActionPlanResources,
+                new SearchSortFilterPaginationResult<CompletedLearningItem>(
+                    new PaginationResult<CompletedLearningItem>(allItems, 1, 1, 10, 4),
+                    null,
+                    "Completed",
+                    "Descending",
+                    null
+                ),
                 apiIsAccessible,
                 config,
-                null,
-                "Completed",
-                "Descending",
-                bannerText,
-                1
+                bannerText
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);

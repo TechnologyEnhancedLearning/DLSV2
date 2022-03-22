@@ -3,47 +3,30 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class RecommendedLearningViewModel : BaseSearchablePageViewModel
+    public class RecommendedLearningViewModel : BaseSearchablePageViewModel<RecommendedResource>
     {
         public RecommendedLearningViewModel(
             SelfAssessment selfAssessment,
-            IEnumerable<RecommendedResource> recommendedResources,
-            bool apiIsAccessible,
-            string? searchString,
-            int page
+            SearchSortFilterPaginationResult<RecommendedResource> result,
+            bool apiIsAccessible
         ) : base(
-            searchString,
-            page,
+            result,
             false,
-            nameof(RecommendedResource.RecommendationScore),
-            GenericSortingHelper.Descending,
-            itemsPerPage: DefaultItemsPerPage,
             searchLabel: "Search resources"
         )
         {
             ApiIsAccessible = apiIsAccessible;
             SelfAssessment = selfAssessment;
 
-            var searchedItems = GenericSearchHelper.SearchItems(recommendedResources, SearchString);
-
-            var sortedResources = GenericSortingHelper.SortAllItems(
-                searchedItems.AsQueryable(),
-                nameof(RecommendedResource.RecommendationScore),
-                GenericSortingHelper.Descending
-            ).ToList();
-
-            MatchingSearchResults = sortedResources.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(sortedResources);
-            var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
+            var returnPage = string.IsNullOrWhiteSpace(SearchString) ? Page : 1;
 
             RecommendedResources =
-                paginatedItems.Select(
+                result.ItemsToDisplay.Select(
                     r => new SearchableRecommendedResourceViewModel(r, selfAssessment.Id, returnPage)
                 );
         }

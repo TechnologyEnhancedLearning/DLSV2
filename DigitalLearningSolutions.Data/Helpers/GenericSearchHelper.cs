@@ -5,7 +5,7 @@
     using System.Collections.Specialized;
     using System.Linq;
     using System.Text;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using FuzzySharp;
     using FuzzySharp.SimilarityRatio;
     using FuzzySharp.SimilarityRatio.Scorer;
@@ -17,7 +17,7 @@
         // as was the scorer strategy. If there are any issues with strange search results, changing this value or
         // the scorer strategy would be a good place to start. See https://github.com/JakeBayer/FuzzySharp for
         // documentation on the different scorer strategies.
-        private const int MatchCutoffScore = 80;
+        public const int MatchCutoffScore = 80;
 
         private static readonly string[] StopWordsArray =
         {
@@ -99,17 +99,17 @@
 
             // transform search string into array of words
             char[] wordSeparators = { ' ', '\n', '\r', ',', ';', '.', '!', '?', '-', ' ', '"', '\'' };
-            string[] words = searchedWords.Split(wordSeparators, StringSplitOptions.RemoveEmptyEntries);
+            var words = searchedWords.Split(wordSeparators, StringSplitOptions.RemoveEmptyEntries);
 
             // Create and initializes a new StringCollection.
-            StringCollection myStopWordsCol = new StringCollection();
+            var myStopWordsCol = new StringCollection();
             // Add a range of elements from an array to the end of the StringCollection.
             myStopWordsCol.AddRange(StopWordsArray);
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             for (var i = 0; i < words.Length; i++)
             {
-                string word = words[i].ToLowerInvariant().Trim();
+                var word = words[i].ToLowerInvariant().Trim();
                 if (word.Length > 1 && !myStopWordsCol.Contains(word))
                 {
                     sb.Append(word + " ");

@@ -3,57 +3,19 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class DelegateGroupsViewModel : BaseSearchablePageViewModel
+    public class DelegateGroupsViewModel : BaseSearchablePageViewModel<Group>
     {
         public DelegateGroupsViewModel(
-            List<Group> groups,
-            IEnumerable<CentreRegistrationPrompt> registrationPrompts,
-            string searchString,
-            string sortBy,
-            string sortDirection,
-            string? existingFilterString,
-            int page
-        ) : base(searchString, page, true, sortBy, sortDirection, existingFilterString)
+            SearchSortFilterPaginationResult<Group> result,
+            IEnumerable<FilterModel> availableFilters
+        ) : base(result, true, availableFilters)
         {
-            var sortedItems = GenericSortingHelper.SortAllItems(
-                groups.AsQueryable(),
-                sortBy,
-                sortDirection
-            );
-            var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
-            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), existingFilterString).ToList();
-            MatchingSearchResults = filteredItems.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
-            var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
-            DelegateGroups = paginatedItems.Select(g => new SearchableDelegateGroupViewModel(g, returnPage));
-
-            var admins = groups.Select(
-                g => (g.AddedByAdminId, DisplayStringHelper.GetPotentiallyInactiveAdminName(
-                    g.AddedByFirstName,
-                    g.AddedByLastName,
-                    g.AddedByAdminActive
-                ))
-            ).Distinct();
-
-            Filters = new[]
-            {
-                new FilterViewModel(
-                    nameof(Group.AddedByAdminId),
-                    "Added by",
-                    DelegateGroupsViewModelFilterOptions.GetAddedByOptions(admins)
-                ),
-                new FilterViewModel(
-                    nameof(Group.LinkedToField),
-                    "Linked field",
-                    DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(registrationPrompts)
-                ),
-            };
+            var returnPage = string.IsNullOrWhiteSpace(SearchString) ? Page : 1;
+            DelegateGroups = result.ItemsToDisplay.Select(g => new SearchableDelegateGroupViewModel(g, returnPage));
         }
 
         public IEnumerable<SearchableDelegateGroupViewModel> DelegateGroups { get; set; }

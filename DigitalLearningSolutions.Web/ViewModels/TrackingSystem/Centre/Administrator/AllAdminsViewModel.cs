@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -10,27 +11,17 @@
     {
         public readonly IEnumerable<SearchableAdminViewModel> Admins;
 
-        public AllAdminsViewModel(IEnumerable<AdminUser> adminUsers,
-            IEnumerable<string> categories,
-            AdminUser loggedInAdminUser)
-        
+        public AllAdminsViewModel(
+            IEnumerable<AdminUser> adminUsers,
+            IEnumerable<Category> categories,
+            AdminUser loggedInAdminUser
+        )
+
         {
             Admins = adminUsers.Select(au => new SearchableAdminViewModel(au, loggedInAdminUser, 1));
 
-            Filters = new[]
-            {
-                new FilterViewModel("Role", "Role", AdministratorsViewModelFilterOptions.RoleOptions),
-                new FilterViewModel(
-                    "CategoryName",
-                    "Category",
-                    AdministratorsViewModelFilterOptions.GetCategoryOptions(categories)
-                ),
-                new FilterViewModel(
-                    "AccountStatus",
-                    "Account Status",
-                    AdministratorsViewModelFilterOptions.AccountStatusOptions
-                )
-            }.SelectAppliedFilterViewModels();
+            Filters = AdministratorsViewModelFilterOptions.GetAllAdministratorsFilterModels(categories)
+                .SelectAppliedFilterViewModels();
         }
     }
 }

@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DigitalLearningSolutions.Data.Models.Frameworks
 {
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+
     public class BaseFramework : BaseSearchableItem
     {
         public int ID { get; set; }

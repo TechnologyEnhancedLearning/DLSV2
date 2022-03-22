@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates;
     using FluentAssertions;
@@ -12,6 +12,12 @@
 
     public class EmailDelegatesViewModelTests
     {
+        private readonly IEnumerable<FilterModel> availableFilters =
+            EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterModels(
+                new List<(int, string)>(),
+                new List<CentreRegistrationPrompt>()
+            );
+
         private readonly DelegateUserCard[] delegateUsers =
         {
             new DelegateUserCard { Id = 1, FirstName = "a", LastName = "Surname", Answer4 = string.Empty },
@@ -33,118 +39,24 @@
         };
 
         [Test]
-        public void EmailDelegatesViewModel_should_return_all_delegates_on_one_page()
-        {
-            // When
-            var model = new EmailDelegatesViewModel(
-                delegateUsers,
-                new List<(int, string)>(),
-                new List<CentreRegistrationPrompt>(),
-                null
-            );
-
-            // Then
-            model.Delegates!.Should().HaveCount(delegateUsers.Length);
-            model.Delegates!.First().Name.Should().Be("a Surname");
-            model.Delegates!.Last().Name.Should().Be("o Surname");
-        }
-
-        [Test]
         public void EmailDelegatesViewModel_sets_delivery_date_today_by_default()
         {
             // When
             var model = new EmailDelegatesViewModel(
-                delegateUsers,
-                new List<(int, string)>(),
-                new List<CentreRegistrationPrompt>(),
-                null
+                new SearchSortFilterPaginationResult<DelegateUserCard>(
+                    new PaginationResult<DelegateUserCard>(delegateUsers, 1, 1, int.MaxValue, 15),
+                    null,
+                    null,
+                    null,
+                    null
+                ),
+                availableFilters
             );
 
             // Then
             model.Day.Should().Be(DateTime.Today.Day);
             model.Month.Should().Be(DateTime.Today.Month);
             model.Year.Should().Be(DateTime.Today.Year);
-        }
-
-        [Test]
-        public void EmailDelegatesViewModel_should_only_include_custom_prompts_with_options()
-        {
-            // Given
-            var centreRegistrationPrompts = new List<CentreRegistrationPrompt>
-            {
-                new CentreRegistrationPrompt(1, "free text", null, true),
-                new CentreRegistrationPrompt(2, "with options", "A\r\nB", true),
-            };
-
-            // When
-            var model = new EmailDelegatesViewModel(delegateUsers, new List<(int, string)>(), centreRegistrationPrompts, null);
-
-            // Then
-            model.Filters.Should().NotContain(filter => filter.FilterProperty == "CentreRegistrationPrompt1");
-            model.Filters.Should().Contain(filter => filter.FilterProperty == "CentreRegistrationPrompt2");
-        }
-
-        [Test]
-        public void EmailDelegatesViewModel_should_filter_delegates_correctly()
-        {
-            // Given
-            var existingFilterString = "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator + "C 2";
-
-            // When
-            var model = new EmailDelegatesViewModel(
-                delegateUsers,
-                new List<(int id, string name)>(),
-                new List<CentreRegistrationPrompt>(),
-                existingFilterString
-            );
-
-            // Then
-            model.Delegates!.Should().HaveCount(2);
-            model.Delegates!.ToList()[0].Name.Should().Be("m Surname");
-            model.Delegates!.ToList()[1].Name.Should().Be("n Surname");
-            model.MatchingSearchResults.Should().Be(2);
-        }
-
-        [Test]
-        public void EmailDelegatesViewModel_should_filter_delegates_correctly_by_empty_values()
-        {
-            // Given
-            var existingFilterString = "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator +
-                           FilteringHelper.EmptyValue;
-
-            // When
-            var model = new EmailDelegatesViewModel(
-                delegateUsers,
-                new List<(int id, string name)>(),
-                new List<CentreRegistrationPrompt>(),
-                existingFilterString
-            );
-
-            // Then
-            model.Delegates!.Should().HaveCount(6);
-            model.Delegates!.ToList()[0].Name.Should().Be("a Surname");
-            model.Delegates!.ToList()[1].Name.Should().Be("b purple Surname");
-            model.Delegates!.ToList()[2].Name.Should().Be("c Surname");
-            model.Delegates!.ToList()[3].Name.Should().Be("d purple Surname");
-            model.Delegates!.ToList()[4].Name.Should().Be("k Surname");
-            model.Delegates!.ToList()[5].Name.Should().Be("o Surname");
-            model.MatchingSearchResults.Should().Be(6);
-        }
-
-        [Test]
-        public void EmailDelegatesViewModel_should_set_all_delegates_if_existingFilterString_is_null()
-        {
-            // When
-            var model = new EmailDelegatesViewModel(
-                delegateUsers,
-                new List<(int id, string name)>(),
-                new List<CentreRegistrationPrompt>(),
-                null
-            );
-
-            // Then
-            model.Delegates!.Count().Should().Be(delegateUsers.Length);
-            model.MatchingSearchResults.Should().Be(delegateUsers.Length);
         }
 
         [Test]
@@ -155,11 +67,16 @@
 
             // When
             var model = new EmailDelegatesViewModel(
-                delegateUsers,
-                new List<(int id, string name)>(),
-                new List<CentreRegistrationPrompt>(),
-                null
-            ) { SelectedDelegateIds = selectedDelegateIds };
+                    new SearchSortFilterPaginationResult<DelegateUserCard>(
+                        new PaginationResult<DelegateUserCard>(delegateUsers, 1, 1, int.MaxValue, 15),
+                        null,
+                        null,
+                        null,
+                        null
+                    ),
+                    availableFilters
+                )
+                { SelectedDelegateIds = selectedDelegateIds };
 
             // Then
             model.Delegates!.Count().Should().Be(delegateUsers.Length);
@@ -173,10 +90,14 @@
         {
             // When
             var model = new EmailDelegatesViewModel(
-                delegateUsers,
-                new List<(int id, string name)>(),
-                new List<CentreRegistrationPrompt>(),
-                null,
+                new SearchSortFilterPaginationResult<DelegateUserCard>(
+                    new PaginationResult<DelegateUserCard>(delegateUsers, 1, 1, int.MaxValue, 15),
+                    null,
+                    null,
+                    null,
+                    null
+                ),
+                availableFilters,
                 true
             );
 

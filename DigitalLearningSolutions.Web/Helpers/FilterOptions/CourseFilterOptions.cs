@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers.FilterOptions
 {
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
@@ -9,13 +11,13 @@
     {
         private const string Group = "Status";
 
-        public static readonly FilterOptionViewModel IsInactive = new FilterOptionViewModel(
+        public static readonly FilterOptionModel IsInactive = new FilterOptionModel(
             "Inactive",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "false"),
             FilterStatus.Warning
         );
 
-        public static readonly FilterOptionViewModel IsActive = new FilterOptionViewModel(
+        public static readonly FilterOptionModel IsActive = new FilterOptionModel(
             "Active",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "true"),
             FilterStatus.Success
@@ -26,13 +28,13 @@
     {
         private const string Group = "Visibility";
 
-        public static readonly FilterOptionViewModel IsHiddenInLearningPortal = new FilterOptionViewModel(
+        public static readonly FilterOptionModel IsHiddenInLearningPortal = new FilterOptionModel(
             "Hidden in Learning Portal",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.HideInLearnerPortal), "true"),
             FilterStatus.Warning
         );
 
-        public static readonly FilterOptionViewModel IsNotHiddenInLearningPortal = new FilterOptionViewModel(
+        public static readonly FilterOptionModel IsNotHiddenInLearningPortal = new FilterOptionModel(
             "Visible in Learning Portal",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.HideInLearnerPortal), "false"),
             FilterStatus.Success
@@ -43,7 +45,7 @@
     {
         private const string Group = "HasAdminFields";
 
-        public static readonly FilterOptionViewModel HasAdminFields = new FilterOptionViewModel(
+        public static readonly FilterOptionModel HasAdminFields = new FilterOptionModel(
             "Has admin fields",
             FilteringHelper.BuildFilterValueString(
                 Group,
@@ -53,7 +55,7 @@
             FilterStatus.Default
         );
 
-        public static readonly FilterOptionViewModel DoesNotHaveAdminFields = new FilterOptionViewModel(
+        public static readonly FilterOptionModel DoesNotHaveAdminFields = new FilterOptionModel(
             "Doesn't have admin fields",
             FilteringHelper.BuildFilterValueString(
                 Group,

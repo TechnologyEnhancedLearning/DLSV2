@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -10,13 +11,13 @@
     {
         private const string Group = "PasswordStatus";
 
-        public static readonly FilterOptionViewModel PasswordSet = new FilterOptionViewModel(
+        public static readonly FilterOptionModel PasswordSet = new FilterOptionModel(
             "Password set",
             FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.IsPasswordSet), "true"),
             FilterStatus.Success
         );
 
-        public static readonly FilterOptionViewModel PasswordNotSet = new FilterOptionViewModel(
+        public static readonly FilterOptionModel PasswordNotSet = new FilterOptionModel(
             "Password not set",
             FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.IsPasswordSet), "false"),
             FilterStatus.Warning
@@ -27,13 +28,13 @@
     {
         private const string Group = "AdminStatus";
 
-        public static readonly FilterOptionViewModel IsAdmin = new FilterOptionViewModel(
+        public static readonly FilterOptionModel IsAdmin = new FilterOptionModel(
             "Admin",
             FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.IsAdmin), "true"),
             FilterStatus.Default
         );
 
-        public static readonly FilterOptionViewModel IsNotAdmin = new FilterOptionViewModel(
+        public static readonly FilterOptionModel IsNotAdmin = new FilterOptionModel(
             "Not admin",
             FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.IsAdmin), "false"),
             FilterStatus.Default
@@ -44,13 +45,13 @@
     {
         private const string Group = "ActiveStatus";
 
-        public static readonly FilterOptionViewModel IsActive = new FilterOptionViewModel(
+        public static readonly FilterOptionModel IsActive = new FilterOptionModel(
             "Active",
             FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.Active), "true"),
             FilterStatus.Success
         );
 
-        public static readonly FilterOptionViewModel IsNotActive = new FilterOptionViewModel(
+        public static readonly FilterOptionModel IsNotActive = new FilterOptionModel(
             "Inactive",
             FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.Active), "false"),
             FilterStatus.Warning
@@ -61,25 +62,25 @@
     {
         private const string Group = "RegistrationType";
 
-        public static readonly FilterOptionViewModel SelfRegistered = new FilterOptionViewModel(
+        public static readonly FilterOptionModel SelfRegistered = new FilterOptionModel(
             RegistrationType.SelfRegistered.DisplayText,
             FilteringHelper.BuildFilterValueString(Group, Group, nameof(RegistrationType.SelfRegistered)),
             FilterStatus.Default
         );
 
-        public static readonly FilterOptionViewModel SelfRegisteredExternal = new FilterOptionViewModel(
+        public static readonly FilterOptionModel SelfRegisteredExternal = new FilterOptionModel(
             RegistrationType.SelfRegisteredExternal.DisplayText,
             FilteringHelper.BuildFilterValueString(Group, Group, nameof(RegistrationType.SelfRegisteredExternal)),
             FilterStatus.Default
         );
 
-        public static readonly FilterOptionViewModel RegisteredByCentre = new FilterOptionViewModel(
+        public static readonly FilterOptionModel RegisteredByCentre = new FilterOptionModel(
             RegistrationType.RegisteredByCentre.DisplayText,
             FilteringHelper.BuildFilterValueString(Group, Group, nameof(RegistrationType.RegisteredByCentre)),
             FilterStatus.Default
         );
 
-        public static FilterOptionViewModel FromRegistrationType(RegistrationType registrationType)
+        public static FilterOptionModel FromRegistrationType(RegistrationType registrationType)
         {
             return Equals(registrationType, RegistrationType.SelfRegisteredExternal)
                 ? SelfRegisteredExternal

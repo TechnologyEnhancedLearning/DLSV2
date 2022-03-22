@@ -24,6 +24,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly ISupervisorService supervisorService;
         private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public LearningPortalController(
             ICentresDataService centresDataService,
@@ -35,7 +36,8 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             ILogger<LearningPortalController> logger,
             IConfiguration config,
             IActionPlanService actionPlanService,
-            ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService
+            ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.centresDataService = centresDataService;
@@ -48,6 +50,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.config = config;
             this.actionPlanService = actionPlanService;
             this.candidateAssessmentDownloadFileService = candidateAssessmentDownloadFileService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]

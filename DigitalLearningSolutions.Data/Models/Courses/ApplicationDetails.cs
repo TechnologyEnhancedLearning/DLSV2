@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Courses
 {
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+
     public class ApplicationDetails : BaseSearchableItem
     {
         public override string SearchableName

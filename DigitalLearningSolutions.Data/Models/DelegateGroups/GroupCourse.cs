@@ -1,8 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DelegateGroups
 {
     using System;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
-    public class GroupCourse
+    public class GroupCourse : BaseSearchableItem
     {
         public int GroupCustomisationId { get; set; }
         public int GroupId { get; set; }
@@ -30,5 +31,11 @@
         public string CourseName => string.IsNullOrWhiteSpace(CustomisationName)
             ? ApplicationName
             : ApplicationName + " - " + CustomisationName;
+
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? CourseName;
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
     }
 }

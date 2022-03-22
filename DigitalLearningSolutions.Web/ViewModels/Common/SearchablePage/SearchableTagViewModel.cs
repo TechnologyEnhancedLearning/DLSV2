@@ -1,10 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 {
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Models.Enums;
 
-    public class SearchableTagViewModel : FilterOptionViewModel
+    public class SearchableTagViewModel : FilterOptionModel
     {
-        public SearchableTagViewModel(FilterOptionViewModel filterOption, bool hidden = false)
+        public SearchableTagViewModel(FilterOptionModel filterOption, bool hidden = false)
             : base(
                 filterOption.DisplayText,
                 filterOption.FilterValue,
