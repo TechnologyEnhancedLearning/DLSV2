@@ -227,19 +227,20 @@
 
         private static string GetFilterGroupForPrompt(Prompt prompt)
         {
+            // Course Admin Fields and Centre Registration Prompt filters rely on properties of the models
+            // called Answer1, Answer2 etc. We append the prompt text in brackets to the property
+            // name when setting up these filters so that we can check whether they are valid filters for another course etc.
+            // e.g. Answer1(Access Permission)|Answer1|FREETEXTBLANKVALUE would not be a valid filter for
+            // a course with admin field "Priority Access" at position 1, or a course with no admin field at position 1,
+            // but would technically be able to be used for filtering the models.
             return prompt is CentreRegistrationPrompt registrationPrompt
                 ? GetFilterGroupForRegistrationPrompt(registrationPrompt.RegistrationField.Id, prompt.PromptText)
                 : GetFilterGroupForAdminField(((CourseAdminField)prompt).PromptNumber, prompt.PromptText);
         }
 
-        // Course Admin Fields and Centre Registration Prompt filters rely on properties of the models
-        // called Answer1, Answer2 etc. We append the prompt text in brackets to the property
-        // name when setting up these filters so that we can check whether they are valid filters for another course etc.
-        // e.g. Answer1(Access Permission)|Answer1|FREETEXTBLANKVALUE would not be a valid filter for
-        // a course with admin field "Priority Access" at position 1, or a course with no admin field at position 1,
-        // but would technically be able to be used for filtering the models.
         private static string GetFilterGroupForRegistrationPrompt(int promptNumber, string promptText)
         {
+            
             return
                 $"{DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(promptNumber)}({promptText})";
         }
