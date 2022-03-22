@@ -49,8 +49,13 @@
       <input type="hidden" asp-for="DelegateId" />
       <input type="hidden" asp-for="ProgressId" />
       <input type="hidden" asp-for="ReturnPage" />
-      <vc:select-list asp-for="@nameof(Model.SupervisorId)" label="Supervisor" value="@Model.SupervisorId.ToString()"
-                      hint-text="" deselectable="true" css-class="nhsuk-u-width-one-half" default-option="No supervisor"
+      <vc:select-list asp-for="@nameof(Model.SupervisorId)"
+                      label="Supervisor"
+                      value="@Model.SupervisorId.ToString()"
+                      hint-text=""
+                      deselectable="true"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="No supervisor"
                       select-list-options="@Model.Supervisors" />
 
       <button class="nhsuk-button" type="submit">Save</button>
