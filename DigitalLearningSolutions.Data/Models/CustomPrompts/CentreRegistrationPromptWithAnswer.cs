@@ -9,8 +9,7 @@
             string? options,
             bool mandatory,
             string? answer
-        )
-            : base(customPromptNumber, promptId, text, options, mandatory)
+        ) : base(customPromptNumber, promptId, text, options, mandatory)
         {
             Answer = answer;
         }

@@ -41,7 +41,7 @@
             {
                 validationResults.Add(
                     new ValidationResult(
-                        "That answer is already in the list of options.",
+                        "That answer is already in the list of options",
                         new[]
                         {
                             nameof(Answer),
@@ -54,7 +54,7 @@
             {
                 validationResults.Add(
                     new ValidationResult(
-                        "The list of answers contains duplicate options.",
+                        "The list of answers contains duplicate options",
                         new string[] { }
                     )
                 );

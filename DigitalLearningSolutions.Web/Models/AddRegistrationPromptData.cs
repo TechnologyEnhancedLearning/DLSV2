@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Models
 {
     using System;
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts;
 
     public class AddRegistrationPromptData

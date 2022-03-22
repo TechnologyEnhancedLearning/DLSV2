@@ -167,7 +167,7 @@
             {
                 ModelState.AddModelError(
                     nameof(AddRegistrationPromptSelectPromptViewModel.CustomPromptId),
-                    "That custom prompt already exists at this user centre."
+                    "That custom prompt already exists at this centre"
                 );
             }
 
@@ -342,7 +342,7 @@
 
             if (model.OptionsStringContainsDuplicates())
             {
-                ModelState.AddModelError("", "The list of answers contains duplicate options.");
+                ModelState.AddModelError("", "The list of answers contains duplicate options");
                 return View("EditRegistrationPrompt", model);
             }
 
@@ -409,6 +409,12 @@
         private IActionResult AddRegistrationPromptConfigureAnswersPostNext(RegistrationPromptAnswersViewModel model)
         {
             ModelState.ClearAllErrors();
+
+            if (model.OptionsStringContainsDuplicates())
+            {
+                ModelState.AddModelError("", "The list of answers contains duplicate options");
+                return View("AddRegistrationPromptConfigureAnswers", model);
+            }
 
             UpdateTempDataWithAnswersModelValues(model);
 

@@ -11,7 +11,7 @@
         public void CentreRegistrationPrompt_constructor_populates_options_with_null()
         {
             // When
-            var result = new CentreRegistrationPrompt(1, 1,"Test", null, false);
+            var result = new CentreRegistrationPrompt(1, 1, "Test", null, false);
 
             // Then
             using (new AssertionScope())
@@ -25,7 +25,7 @@
         public void CentreRegistrationPrompt_constructor_populates_options_with_single_entry()
         {
             // When
-            var result = new CentreRegistrationPrompt(1, 1,"Test", "Option", false);
+            var result = new CentreRegistrationPrompt(1, 1, "Test", "Option", false);
 
             // Then
             using (new AssertionScope())
@@ -42,7 +42,7 @@
             var options = "Option1\r\nOption2\r\nOption3\r\nOption4";
 
             // When
-            var result = new CentreRegistrationPrompt(1, 1,"Test", options, false);
+            var result = new CentreRegistrationPrompt(1, 1, "Test", options, false);
 
             // Then
             using (new AssertionScope())
@@ -59,7 +59,7 @@
             var options = "Option1\r\nOption2\r\n\r\nOption3\r\n\r\n\r\n\r\nOption4";
 
             // When
-            var result = new CentreRegistrationPrompt(1, 1,"Test", options, false);
+            var result = new CentreRegistrationPrompt(1, 1, "Test", options, false);
 
             // Then
             using (new AssertionScope())
@@ -73,7 +73,7 @@
         public void CourseAdminField_constructor_populates_options_with_null()
         {
             // When
-            var result = new CourseAdminField(1,"Test", null);
+            var result = new CourseAdminField(1, "Test", null);
 
             // Then
             using (new AssertionScope())
@@ -87,7 +87,7 @@
         public void CourseAdminField_constructor_populates_options_with_single_entry()
         {
             // When
-            var result = new CourseAdminField(1,"Test", "Option");
+            var result = new CourseAdminField(1, "Test", "Option");
 
             // Then
             using (new AssertionScope())
@@ -104,7 +104,7 @@
             var options = "Option1\r\nOption2\r\nOption3\r\nOption4";
 
             // When
-            var result = new CourseAdminField(1,"Test", options);
+            var result = new CourseAdminField(1, "Test", options);
 
             // Then
             using (new AssertionScope())
@@ -121,7 +121,7 @@
             var options = "Option1\r\nOption2\r\n\r\nOption3\r\n\r\n\r\n\r\nOption4";
 
             // When
-            var result = new CourseAdminField(1,"Test", options);
+            var result = new CourseAdminField(1, "Test", options);
 
             // Then
             using (new AssertionScope())

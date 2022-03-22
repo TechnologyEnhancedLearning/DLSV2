@@ -18,13 +18,13 @@
             bool expectedResult
         )
         {
-            // given
+            // Given
             var model = new RegistrationPromptAnswersViewModel(optionsString);
 
-            // when
+            // When
             var result = model.OptionsStringContainsDuplicates();
 
-            // then
+            // Then
             result.Should().Be(expectedResult);
         }
     }
