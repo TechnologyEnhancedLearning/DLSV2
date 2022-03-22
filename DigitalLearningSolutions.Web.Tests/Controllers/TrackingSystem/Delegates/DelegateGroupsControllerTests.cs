@@ -294,8 +294,8 @@
             var registrationFieldOptions = new List<SelectListItem>
                 { customPromptSelectListItem1, customPromptSelectListItem2, jobGroupSelectListItem };
 
-            var customPrompt1 = new CentreRegistrationPrompt(1, customPromptName1, "Test", false);
-            var customPrompt2 = new CentreRegistrationPrompt(2, customPromptName2, "Test", false);
+            var customPrompt1 = new CentreRegistrationPrompt(1, 1, customPromptName1, "Test", false);
+            var customPrompt2 = new CentreRegistrationPrompt(2, 2, customPromptName2, "Test", false);
             var customPrompts = new List<CentreRegistrationPrompt> { customPrompt1, customPrompt2 };
 
             A.CallTo(
@@ -335,8 +335,8 @@
             var registrationFieldOptions = new List<SelectListItem>
                 { customPromptSelectListItem1, customPromptSelectListItem2, jobGroupSelectListItem };
 
-            var customPrompt1 = new CentreRegistrationPrompt(1, customPromptName, "Test", false);
-            var customPrompt2 = new CentreRegistrationPrompt(2, customPromptName, "Test", false);
+            var customPrompt1 = new CentreRegistrationPrompt(1, 1, customPromptName, "Test", false);
+            var customPrompt2 = new CentreRegistrationPrompt(2, 2, customPromptName, "Test", false);
             var customPrompts = new List<CentreRegistrationPrompt> { customPrompt1, customPrompt2 };
 
             A.CallTo(
@@ -374,7 +374,7 @@
             var jobGroup = new SelectListItem("Job group", "2");
             var registrationFieldOptions = new List<SelectListItem> { customPromptSelectListItem, jobGroup };
 
-            var customPrompt1 = new CentreRegistrationPrompt(1, groupNamePrefix, "Test", false);
+            var customPrompt1 = new CentreRegistrationPrompt(1, 1, groupNamePrefix, "Test", false);
             var customPrompts = new List<CentreRegistrationPrompt> { customPrompt1 };
 
             var model = new GenerateGroupsViewModel(
@@ -450,7 +450,7 @@
         public void GenerateGroups_POST_should_not_call_service_if_selected_field_is_a_free_text_field()
         {
             // Given
-            var customPrompt1 = new CentreRegistrationPrompt(1, "Role", "Test", false);
+            var customPrompt1 = new CentreRegistrationPrompt(1, 2, "Role", "Test", false);
             var customPrompts = new List<CentreRegistrationPrompt> { customPrompt1 };
 
             var registrationField = RegistrationField.CentreRegistrationField3;

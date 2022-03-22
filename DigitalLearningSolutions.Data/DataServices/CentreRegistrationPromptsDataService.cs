@@ -9,6 +9,7 @@
     public interface ICentreRegistrationPromptsDataService
     {
         public CentreRegistrationPromptsResult GetCentreRegistrationPromptsByCentreId(int centreId);
+
         public void UpdateCentreRegistrationPrompt(int centreId, int promptNumber, bool mandatory, string? options);
 
         public IEnumerable<(int, string)> GetCustomPromptsAlphabetical();
@@ -38,21 +39,27 @@
             var result = connection.Query<CentreRegistrationPromptsResult>(
                 @"SELECT
 	                    c.CentreID,
+                        cp1.CustomPromptID AS CentreRegistrationPrompt1Id,
 	                    cp1.CustomPrompt AS CentreRegistrationPrompt1Prompt,
 	                    c.F1Options AS CentreRegistrationPrompt1Options,
 	                    c.F1Mandatory AS CentreRegistrationPrompt1Mandatory,
+                        cp2.CustomPromptID AS CentreRegistrationPrompt2Id,
 	                    cp2.CustomPrompt AS CentreRegistrationPrompt2Prompt,
 	                    c.F2Options AS CentreRegistrationPrompt2Options,
 	                    c.F2Mandatory AS CentreRegistrationPrompt2Mandatory,
+                        cp3.CustomPromptID AS CentreRegistrationPrompt3Id,
 	                    cp3.CustomPrompt AS CentreRegistrationPrompt3Prompt,
 	                    c.F3Options AS CentreRegistrationPrompt3Options,
 	                    c.F3Mandatory AS CentreRegistrationPrompt3Mandatory,
+                        cp4.CustomPromptID AS CentreRegistrationPrompt4Id,
 	                    cp4.CustomPrompt AS CentreRegistrationPrompt4Prompt,
 	                    c.F4Options AS CentreRegistrationPrompt4Options,
 	                    c.F4Mandatory AS CentreRegistrationPrompt4Mandatory,
+                        cp5.CustomPromptID AS CentreRegistrationPrompt5Id,
 	                    cp5.CustomPrompt AS CentreRegistrationPrompt5Prompt,
 	                    c.F5Options AS CentreRegistrationPrompt5Options,
 	                    c.F5Mandatory AS CentreRegistrationPrompt5Mandatory,
+                        cp6.CustomPromptID AS CentreRegistrationPrompt6Id,
 	                    cp6.CustomPrompt AS CentreRegistrationPrompt6Prompt,
 	                    c.F6Options AS CentreRegistrationPrompt6Options,
 	                    c.F6Mandatory AS CentreRegistrationPrompt6Mandatory

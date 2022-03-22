@@ -25,10 +25,11 @@
             int promptNumber,
             string text = "Custom Prompt",
             string? options = "",
-            bool mandatory = false
+            bool mandatory = false,
+            int promptId = 1
         )
         {
-            return new CentreRegistrationPrompt(promptNumber, text, options, mandatory);
+            return new CentreRegistrationPrompt(promptNumber, promptId, text, options, mandatory);
         }
 
         public static CourseAdminField GetDefaultCourseAdminField(
@@ -53,10 +54,11 @@
             string text = "Custom Prompt",
             string? options = "",
             bool mandatory = false,
-            string? answer = null
+            string? answer = null,
+            int promptId = 1
         )
         {
-            return new CentreRegistrationPromptWithAnswer(promptNumber, text, options, mandatory, answer);
+            return new CentreRegistrationPromptWithAnswer(promptNumber, promptId, text, options, mandatory, answer);
         }
 
         public static CourseAdminFieldWithAnswer GetDefaultCourseAdminFieldWithAnswer(
@@ -71,21 +73,27 @@
 
         public static CentreRegistrationPromptsResult GetDefaultCentreRegistrationPromptsResult(
             int centreId = 29,
+            int centreRegistrationPrompt1Id = 3,
             string? centreRegistrationPrompt1Prompt = "Group",
             string? centreRegistrationPrompt1Options = "Clinical\r\nNon-Clinical",
             bool centreRegistrationPrompt1Mandatory = true,
+            int centreRegistrationPrompt2Id = 1,
             string? centreRegistrationPrompt2Prompt = "Department / team",
             string? centreRegistrationPrompt2Options = null,
             bool centreRegistrationPrompt2Mandatory = true,
+            int centreRegistrationPrompt3Id = 0,
             string? centreRegistrationPrompt3Prompt = null,
             string? centreRegistrationPrompt3Options = null,
             bool centreRegistrationPrompt3Mandatory = false,
+            int centreRegistrationPrompt4Id = 0,
             string? centreRegistrationPrompt4Prompt = null,
             string? centreRegistrationPrompt4Options = null,
             bool centreRegistrationPrompt4Mandatory = false,
+            int centreRegistrationPrompt5Id = 0,
             string? centreRegistrationPrompt5Prompt = null,
             string? centreRegistrationPrompt5Options = null,
             bool centreRegistrationPrompt5Mandatory = false,
+            int centreRegistrationPrompt6Id = 0,
             string? centreRegistrationPrompt6Prompt = null,
             string? centreRegistrationPrompt6Options = null,
             bool centreRegistrationPrompt6Mandatory = false
@@ -94,21 +102,27 @@
             return new CentreRegistrationPromptsResult
             {
                 CentreId = centreId,
+                CentreRegistrationPrompt1Id = centreRegistrationPrompt1Id,
                 CentreRegistrationPrompt1Prompt = centreRegistrationPrompt1Prompt,
                 CentreRegistrationPrompt1Options = centreRegistrationPrompt1Options,
                 CentreRegistrationPrompt1Mandatory = centreRegistrationPrompt1Mandatory,
+                CentreRegistrationPrompt2Id = centreRegistrationPrompt2Id,
                 CentreRegistrationPrompt2Prompt = centreRegistrationPrompt2Prompt,
                 CentreRegistrationPrompt2Options = centreRegistrationPrompt2Options,
                 CentreRegistrationPrompt2Mandatory = centreRegistrationPrompt2Mandatory,
+                CentreRegistrationPrompt3Id = centreRegistrationPrompt3Id,
                 CentreRegistrationPrompt3Prompt = centreRegistrationPrompt3Prompt,
                 CentreRegistrationPrompt3Options = centreRegistrationPrompt3Options,
                 CentreRegistrationPrompt3Mandatory = centreRegistrationPrompt3Mandatory,
+                CentreRegistrationPrompt4Id = centreRegistrationPrompt4Id,
                 CentreRegistrationPrompt4Prompt = centreRegistrationPrompt4Prompt,
                 CentreRegistrationPrompt4Options = centreRegistrationPrompt4Options,
                 CentreRegistrationPrompt4Mandatory = centreRegistrationPrompt4Mandatory,
+                CentreRegistrationPrompt5Id = centreRegistrationPrompt5Id,
                 CentreRegistrationPrompt5Prompt = centreRegistrationPrompt5Prompt,
                 CentreRegistrationPrompt5Options = centreRegistrationPrompt5Options,
                 CentreRegistrationPrompt5Mandatory = centreRegistrationPrompt5Mandatory,
+                CentreRegistrationPrompt6Id = centreRegistrationPrompt6Id,
                 CentreRegistrationPrompt6Prompt = centreRegistrationPrompt6Prompt,
                 CentreRegistrationPrompt6Options = centreRegistrationPrompt6Options,
                 CentreRegistrationPrompt6Mandatory = centreRegistrationPrompt6Mandatory,
