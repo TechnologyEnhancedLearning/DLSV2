@@ -22,7 +22,7 @@ export interface ISearchableData {
 export class SearchSortFilterAndPaginate {
   private page: number;
 
-  private queryParameterToRetain: string;
+  private readonly queryParameterToRetain: string;
 
   private readonly searchEnabled: boolean;
 
