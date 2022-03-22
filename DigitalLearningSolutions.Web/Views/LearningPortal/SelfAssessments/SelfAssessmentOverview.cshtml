@@ -5,12 +5,21 @@
 @model SelfAssessmentOverviewViewModel
 
 @{
-  Layout = "SelfAssessments/_Layout";
-  ViewData["Title"] = "Self Assessment";
-  ViewData["SelfAssessmentTitle"] = Model.SelfAssessment.Name;
   var selfAssessedTotal = 0;
   var verifiedTotal = 0;
   var questionsTotal = 0;
+  var latestSignoff = Model.SupervisorSignOffs
+      .Select(s => s.Verified)
+      .DefaultIfEmpty(DateTime.MinValue)
+      .Max();
+  var latestResult = Model.CompetencyGroups
+    .SelectMany(g => g.SelectMany(c => c.AssessmentQuestions))
+    .Select(q => q.ResultDateTime)
+    .DefaultIfEmpty(DateTime.MinValue)
+    .Max();
+  Layout = "SelfAssessments/_Layout";
+  ViewData["Title"] = "Self Assessment";
+  ViewData["SelfAssessmentTitle"] = Model.SelfAssessment.Name;
 }
 @section breadcrumbs {
   <li class="nhsuk-breadcrumb__item">
@@ -138,6 +147,21 @@
       @if (!Model.SupervisorSignOffs.Any())
       {
         <p class="nhsuk-body-l">You have not yet requested @Model.SelfAssessment.SignOffRoleName sign-off for this self assessment.</p>
+      }
+      else if (latestResult > latestSignoff)
+      {
+        <div class="nhsuk-warning-callout">
+          <h3 class="nhsuk-warning-callout__label">
+            <span role="text">
+              <span class="nhsuk-u-visually-hidden">New self assessment results</span>
+              New self assessment results
+            </span>
+          </h3>
+          <p>
+            You have submitted new self assessment results since this self assessment was signed off.
+            Please resubmit your self assessment for sign off once these results are confirmed.
+          </p>
+        </div>
       }
       <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
          asp-action="RequestSignOff"
