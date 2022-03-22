@@ -1,4 +1,4 @@
-import {SearchSortFilterAndPaginate} from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
+import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
 
 const groupIdElement = <HTMLSelectElement>document.getElementById('selected-group-Id');
 const groupId = groupIdElement?.value.trim();

@@ -1,16 +1,13 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 @model GroupDelegateViewModel
-
-@{
-  var emailTitleString = !string.IsNullOrEmpty(Model.EmailAddress) ? $" ({Model.EmailAddress})" : "";
-}
 
 <div class="nhsuk-panel word-break" id="@Model.GroupDelegateId-card">
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text" id="@Model.GroupDelegateId-name" name="name">
         @Model.TitleName
-        @emailTitleString
+        @DisplayStringHelper.GetEmailDisplayString(Model.EmailAddress)
       </span>
     </summary>
     <div class="nhsuk-details__text">
