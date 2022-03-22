@@ -11,7 +11,7 @@
     public class DelegateProgressViewModel : DelegateCourseInfoViewModel
     {
         public DelegateProgressViewModel(
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             DelegateCourseDetails details,
             int? page
         ) : base(details)
@@ -54,7 +54,7 @@
             Page = page;
         }
 
-        public DelegateProgressAccessRoute AccessedVia { get; set; }
+        public DelegateAccessRoute AccessedVia { get; set; }
         public bool IsCourseActive { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
         public string? RemovedDate { get; set; }

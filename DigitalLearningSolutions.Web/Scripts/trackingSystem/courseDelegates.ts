@@ -6,7 +6,7 @@ import getPathForEndpoint from '../common';
 const courseSelectBox = <HTMLSelectElement>document.getElementById('selected-customisation-Id');
 const customisationId = courseSelectBox?.value.trim();
 
-const exportCurrentLink = <HTMLAnchorElement>document.getElementById('export-current');
+const exportCurrentLink = <HTMLAnchorElement>document.getElementById('export');
 exportCurrentLink.addEventListener('click', () => {
   const existingFilterString = getExistingFilterStringValue();
   const sortBy = getSortBy();

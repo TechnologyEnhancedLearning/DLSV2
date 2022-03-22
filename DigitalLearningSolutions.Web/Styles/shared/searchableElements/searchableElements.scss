@@ -1,7 +1,6 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "search";
-@import "sort";
-@import "filter";
-@import "pagination";
-@import "tags";
-@import "itemsPerPage";
+﻿@use "search";
+@use "sort";
+@use "filter";
+@use "pagination";
+@use "tags";
+@use "itemsPerPage";

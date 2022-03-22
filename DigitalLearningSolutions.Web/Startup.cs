@@ -296,7 +296,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyAdminUserCanAccessDelegateUser>();
             services.AddScoped<VerifyAdminUserCanAccessProgress>();
             services.AddScoped<VerifyDelegateCanAccessActionPlanResource>();
-            services.AddScoped<VerifyDelegateProgressAccessedViaValidRoute>();
+            services.AddScoped<VerifyDelegateAccessedViaValidRoute>();
             services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
             services.AddScoped<AddNewCentreCourseData>();
         }

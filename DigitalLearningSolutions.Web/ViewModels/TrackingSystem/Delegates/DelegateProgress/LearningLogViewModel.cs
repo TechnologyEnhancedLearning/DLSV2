@@ -11,7 +11,7 @@
     public class LearningLogViewModel : BaseSearchablePageViewModel
     {
         public LearningLogViewModel(
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             LearningLog learningLog,
             string sortBy,
             string sortDirection
@@ -31,7 +31,7 @@
             Entries = sortedItems.Select(entry => new LearningLogEntryViewModel(entry));
         }
 
-        public DelegateProgressAccessRoute AccessedVia { get; set; }
+        public DelegateAccessRoute AccessedVia { get; set; }
         public int ProgressId { get; set; }
         public int CustomisationId { get; set; }
         public string CourseName { get; set; }

@@ -1,4 +1,4 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
 
 .float-right-additional-information {
   @include mq($until: desktop) {

@@ -1,8 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @model SelfAssessmentCompetencyViewModel
 @{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
     Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = "Self Assessment";
+    ViewData["Title"] = errorHasOccurred ? "Error: Self Assessment" : "Self Assessment";
     ViewData["SelfAssessmentTitle"] = @Model.Assessment.Name;
 }
 @section breadcrumbs {
@@ -24,6 +25,10 @@
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">
+@if (errorHasOccurred)
+{
+  <vc:error-summary order-of-property-names="@(new[] { nameof(Model) })" />
+}
 <h1 class="competency-group-header nhsuk-u-font-size-32">@Model.Competency.CompetencyGroup</h1>
 <div class=" nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
     @if (Model.Competency.Description != null && Model.Assessment.UseDescriptionExpanders && !Model.Competency.AlwaysShowDescription)
@@ -63,21 +68,22 @@
         }
         else
         {
-            <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
+            <nhs-form-group nhs-validation-for="Competency.AssessmentQuestions[1].Result">
+              <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
+            </nhs-form-group>
         }
-        @if (question.value.SignedOff != null)
-            if ((bool)question.value.SignedOff)
-            {
-                <div class="nhsuk-warning-callout">
-                    <h3 class="nhsuk-warning-callout__label">
-                        <span role="text">
-                            <span class="nhsuk-u-visually-hidden">Important: </span>
-                            Response confirmed
-                        </span>
-                    </h3>
-                    <p>Your self assessment response against this question has been confirmed. Changing your response will reset confirmation.</p>
-                </div>
-            }
+        @if (question.value.SignedOff != null && question.value.SignedOff == true)
+        {
+            <div class="nhsuk-warning-callout">
+                <h3 class="nhsuk-warning-callout__label">
+                    <span role="text">
+                        <span class="nhsuk-u-visually-hidden">Important: </span>
+                        Response confirmed
+                    </span>
+                </h3>
+                <p>Your self assessment response against this question has been confirmed. Changing your response will reset confirmation.</p>
+            </div>
+        }
         @if (question.value.IncludeComments)
         {
             <partial name="SelfAssessments/_CommentsInput" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
