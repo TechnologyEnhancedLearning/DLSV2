@@ -8,7 +8,10 @@
   var selfAssessedTotal = 0;
   var verifiedTotal = 0;
   var questionsTotal = 0;
-  var latestSignoff = Model.SupervisorSignOffs.Max(s => s.Verified);
+  var latestSignoff = Model.SupervisorSignOffs
+      .Select(s => s.Verified)
+      .DefaultIfEmpty(DateTime.MinValue)
+      .Max();
   var latestResult = Model.CompetencyGroups
     .SelectMany(g => g.SelectMany(c => c.AssessmentQuestions))
     .Select(q => q.ResultDateTime)
