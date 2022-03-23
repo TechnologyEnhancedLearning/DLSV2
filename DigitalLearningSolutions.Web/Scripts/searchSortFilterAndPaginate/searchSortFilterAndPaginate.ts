@@ -22,6 +22,8 @@ export interface ISearchableData {
 export class SearchSortFilterAndPaginate {
   private page: number;
 
+  private readonly queryParameterToRetain: string;
+
   private readonly searchEnabled: boolean;
 
   private readonly paginationEnabled: boolean;
@@ -42,12 +44,14 @@ export class SearchSortFilterAndPaginate {
     filterEnabled: boolean,
     filterCookieName = '',
     searchableElementClassSuffixes = ['title'],
+    queryParameterToRetain = '',
   ) {
     this.spinnerContainer = document.getElementById('loading-spinner-container') as HTMLElement;
     this.spinner = document.getElementById('dynamic-loading-spinner') as HTMLElement;
     this.areaToHide = document.getElementById('area-to-hide-while-loading') as HTMLElement;
     this.startLoadingSpinner();
-    this.page = paginationEnabled ? SearchSortFilterAndPaginate.getPageNumber() : 1;
+    this.queryParameterToRetain = queryParameterToRetain;
+    this.page = paginationEnabled ? this.getPageNumber() : 1;
     this.searchEnabled = searchEnabled;
     this.paginationEnabled = paginationEnabled;
     this.filterEnabled = filterEnabled;
@@ -245,37 +249,55 @@ export class SearchSortFilterAndPaginate {
     }
 
     this.page = pageNumber;
-
-    SearchSortFilterAndPaginate.ensurePageNumberSetInUrl();
-    const currentPath = window.location.pathname;
-    const urlParts = currentPath.split('/');
-    const newUrl = `${urlParts.slice(0, -1).join('/')}/${pageNumber.toString()}`;
-    window.history.replaceState({}, '', newUrl);
-
+    this.ensurePageNumberSetInUrl();
     this.updateSearchableElementLinks(searchableData);
   }
 
-  private static getPageNumber(): number {
-    SearchSortFilterAndPaginate.ensurePageNumberSetInUrl();
+  private getPageNumber(): number {
+    this.ensurePageNumberSetInUrl();
     const currentPath = window.location.pathname;
     const urlParts = currentPath.split('/');
     return parseInt(urlParts[urlParts.length - 1], 10);
   }
 
-  /* Guarantees the last element of the path is a number with no trailing slashes */
-  private static ensurePageNumberSetInUrl(): void {
+  /* Guarantees the last element of the path is a number
+   * with any query parameters necessary and no trailing slashes */
+  private ensurePageNumberSetInUrl(): void {
     const currentPath = window.location.pathname;
     const urlParts = currentPath.split('/');
     if (urlParts[urlParts.length - 1] === '') {
       urlParts.pop();
     }
 
-    const pageNumber = parseInt(urlParts[urlParts.length - 1], 10);
-
-    if (Number.isNaN(pageNumber)) {
-      const newUrl = `${urlParts.join('/')}/1`;
-      window.history.replaceState({}, '', newUrl);
+    let currentPageNumber = parseInt(urlParts[urlParts.length - 1], 10);
+    if (Number.isNaN(currentPageNumber)) {
+      currentPageNumber = 1;
+    } else {
+      urlParts.pop();
     }
+
+    const pageNumber = this.page ?? currentPageNumber;
+    const queryParametersToRetain = this.getQueryParametersForUpdatedURL();
+    const newUrl = `${urlParts.join('/')}/${pageNumber}${queryParametersToRetain}`;
+    window.history.replaceState({}, '', newUrl);
+  }
+
+  private getQueryParametersForUpdatedURL(): string {
+    const currentQueryParameters = window.location.search.replace('?', '');
+    if (currentQueryParameters.length === 0 || this.queryParameterToRetain === '') {
+      return '';
+    }
+
+    const separatedParameters = currentQueryParameters.split('&');
+    const keptQueryParameters: string[] = [];
+    separatedParameters.forEach((param) => {
+      const paramName = param.split('=')[0];
+      if (paramName.toUpperCase() === this.queryParameterToRetain.toUpperCase()) {
+        keptQueryParameters.push(param);
+      }
+    });
+
+    return keptQueryParameters.length > 0 ? `?${keptQueryParameters.join('&')}` : '';
   }
 
   private updateSearchableElementLinks(searchableData: ISearchableData): void {
