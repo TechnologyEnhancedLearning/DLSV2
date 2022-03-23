@@ -1,16 +1,14 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates
 @model SearchableDelegateViewModel
-
-@{
-  var emailString = !string.IsNullOrEmpty(Model.DelegateInfo.Email) ? $" ({Model.DelegateInfo.Email})" : "";
-}
 
 <div class="searchable-element nhsuk-expander-group card-with-buttons word-break" id="@Model.DelegateInfo.Id-card">
 
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text" id="@Model.DelegateInfo.Id-name">
-        <span class="searchable-element-title" name="name">@Model.DelegateInfo.TitleName</span>@emailString
+        <span class="searchable-element-title" name="name">@Model.DelegateInfo.TitleName</span>
+        @DisplayStringHelper.GetEmailDisplayString(Model.DelegateInfo.Email)
       </span>
     </summary>
 
@@ -27,17 +25,17 @@
     </div>
 
     <div class="nhsuk-summary-list__row details-list-with-button__row">
-      <dt class="nhsuk-summary-list__key">
+      <dt class="nhsuk-summary-list__key ">
         Email
       </dt>
-      <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.Email" />
+      <partial name="_SearchableSummaryFieldValue" model=@(Model.DelegateInfo.Email, "email") />
     </div>
 
     <div class="nhsuk-summary-list__row details-list-with-button__row">
       <dt class="nhsuk-summary-list__key">
         ID
       </dt>
-      <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.CandidateNumber" />
+      <partial name="_SearchableSummaryFieldValue" model=@(Model.DelegateInfo.CandidateNumber, "candidate-number") />
     </div>
 
     <div class="nhsuk-summary-list__row details-list-with-button__row">

@@ -316,5 +316,18 @@
             // Then
             result.Should().Be("Not yet provided");
         }
+
+        [Test]
+        [TestCase(null, "")]
+        [TestCase("", "")]
+        [TestCase("some@fake.email", " (some@fake.email)")]
+        public void GetEmailDisplayString_returns_expected_result(string? email, string expectedResult)
+        {
+            // When
+            var result = DisplayStringHelper.GetEmailDisplayString(email);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
     }
 }
