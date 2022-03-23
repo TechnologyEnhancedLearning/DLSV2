@@ -118,7 +118,6 @@
                     au.Forename + ' ' + au.Surname AS SupervisorName,
                     (CASE WHEN au.Supervisor = 1 THEN 'Supervisor'
 			             WHEN au.NominatedSupervisor = 1 THEN 'Nominated supervisor'
-		                 ELSE 'Learner'
 		            END) AS RoleName
                 FROM SupervisorDelegates AS sd
                 INNER JOIN CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId
