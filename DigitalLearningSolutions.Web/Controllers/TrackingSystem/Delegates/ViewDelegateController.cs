@@ -111,7 +111,7 @@
             var model = new RemoveFromCourseViewModel(
                 delegateId,
                 DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
-                    delegateUser.FirstName,
+                    delegateUser!.FirstName,
                     delegateUser.LastName
                 ),
                 customisationId,
@@ -150,7 +150,11 @@
             );
 
             return model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)
-                ? RedirectToAction("Index", "CourseDelegates", new { customisationId })
+                ? RedirectToAction(
+                    "Index",
+                    "CourseDelegates",
+                    new { customisationId, page = model.ReturnPage.ToString() }
+                )
                 : RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
 
@@ -160,6 +164,7 @@
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+
             if (delegateUser?.CentreId != centreId)
             {
                 return new NotFoundResult();
