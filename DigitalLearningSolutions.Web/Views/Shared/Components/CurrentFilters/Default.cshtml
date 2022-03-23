@@ -6,6 +6,9 @@
   <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
     <input type="hidden" name="clearFilters" value="true" />
     <input type="hidden" name="searchString" value="@Model.SearchString" />
+    <input type="hidden" name="sortBy" value="@Model.SortBy" />
+    <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
+    <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
     @foreach (var (key, value) in Model.RouteData) {
       <input type="hidden" name="@key" value="@value" />
     }

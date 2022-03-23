@@ -23,6 +23,9 @@
             var model = new CurrentFiltersViewModel(
                 appliedFilters,
                 searchablePageViewModel.SearchString,
+                searchablePageViewModel.SortBy,
+                searchablePageViewModel.SortDirection,
+                searchablePageViewModel.ItemsPerPage,
                 searchablePageViewModel.RouteData
             );
 

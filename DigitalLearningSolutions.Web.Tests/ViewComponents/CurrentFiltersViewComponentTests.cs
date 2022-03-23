@@ -68,6 +68,9 @@
             var expectedFilterViewModel = new CurrentFiltersViewModel(
                 expectedAppliedFilters,
                 searchString,
+                null,
+                null,
+                10,
                 new Dictionary<string, string>()
             );
 
