@@ -96,7 +96,8 @@
         public IActionResult ConfirmRemoveFromCourse(
             int delegateId,
             int customisationId,
-            DelegateAccessRoute accessedVia
+            DelegateAccessRoute accessedVia,
+            int? returnPage
         )
         {
             if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
@@ -116,7 +117,8 @@
                 customisationId,
                 course!.CourseName,
                 false,
-                accessedVia
+                accessedVia,
+                returnPage
             );
 
             return View("ConfirmRemoveFromCourse", model);
