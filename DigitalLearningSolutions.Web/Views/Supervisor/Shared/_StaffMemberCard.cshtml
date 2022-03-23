@@ -81,14 +81,17 @@
   </div>
 
   </details>
-  <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
-      aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
-      asp-controller="Supervisor"
-      asp-action="DelegateProfileAssessments"
-      asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
-    View self assessments (@Model.SupervisorDelegateDetail.CandidateAssessmentCount)
-  </a>
-  @if (Model.SupervisorDelegateDetail.AddedByDelegate)
+  @if (Model.SupervisorDelegateDetail.CandidateID != null)
+  {
+    <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
+        aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
+        asp-controller="Supervisor"
+        asp-action="DelegateProfileAssessments"
+        asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+      View self assessments (@Model.SupervisorDelegateDetail.CandidateAssessmentCount)
+    </a>
+  }
+  else if (Model.SupervisorDelegateDetail.AddedByDelegate)
   {
         <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
            aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
