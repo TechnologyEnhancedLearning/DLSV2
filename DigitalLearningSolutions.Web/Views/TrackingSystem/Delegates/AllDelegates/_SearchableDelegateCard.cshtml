@@ -28,18 +28,14 @@
           <dt class="nhsuk-summary-list__key ">
             Email
           </dt>
-          <div class="searchable-element-email">
-            <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.Email" />
-          </div>
+          <partial name="_SearchableSummaryFieldValue" model=@(Model.DelegateInfo.Email, "email") />
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
           <dt class="nhsuk-summary-list__key">
             ID
           </dt>
-          <div class="searchable-element-candidate-number">
-            <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.CandidateNumber" />
-          </div>
+          <partial name="_SearchableSummaryFieldValue" model=@(Model.DelegateInfo.CandidateNumber, "candidate-number") />
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">

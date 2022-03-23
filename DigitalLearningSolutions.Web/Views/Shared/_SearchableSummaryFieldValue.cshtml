@@ -1,0 +1,15 @@
+﻿@model (string? value, string searchTag)
+
+@{
+  var searchClass = $"searchable-element-{Model.searchTag}";
+}
+
+@if (string.IsNullOrEmpty(Model.value)) {
+  <dd class="nhsuk-summary-list__value">
+    - <span class="nhsuk-u-visually-hidden">No value set</span>
+  </dd>
+} else {
+  <dd class="nhsuk-summary-list__value @searchClass">
+    @Model
+  </dd>
+}
