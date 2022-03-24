@@ -17,7 +17,7 @@
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
   <vc:loading-spinner page-has-side-nav-menu="false" />
 }
-<div class="nhsuk-grid-row" id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "area-to-hide-while-loading" : "no-js-styling")">
+<div class="nhsuk-grid-row" id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">Send welcome messages</h1>
     @if (errorHasOccurred) {
@@ -69,7 +69,6 @@
   </div>
 </div>
 
-<input type="hidden" id="javascript-search-enabled" asp-for="@Model.JavascriptSearchSortFilterPaginateEnabled" />
 @section scripts {
   <script src="@Url.Content("~/js/trackingSystem/emailDelegates.js")" asp-append-version="true"></script>
 }

@@ -19,7 +19,7 @@
     @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
       <vc:loading-spinner page-has-side-nav-menu="true" />
     }
-    <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "area-to-hide-while-loading" : "no-js-styling")">
+    <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-two-thirds">
           <h1 class="nhsuk-heading-xl">Delegate courses</h1>
@@ -59,7 +59,6 @@
   </div>
 </div>
 
-<input type="hidden" id="javascript-search-enabled" asp-for="@Model.JavascriptSearchSortFilterPaginateEnabled" />
 @section scripts {
   <script src="@Url.Content("~/js/trackingSystem/delegateCourses.js")" asp-append-version="true"></script>
 }

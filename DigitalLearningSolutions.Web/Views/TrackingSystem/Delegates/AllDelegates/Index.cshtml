@@ -21,7 +21,7 @@
     @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
       <vc:loading-spinner page-has-side-nav-menu="true" />
     }
-    <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "area-to-hide-while-loading" : "no-js-styling")">
+    <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-one-third">
           <h1 id="page-heading" class="nhsuk-heading-xl">Delegates</h1>

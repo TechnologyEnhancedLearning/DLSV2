@@ -45,7 +45,7 @@ export class SearchSortFilterAndPaginate {
   ) {
     this.spinnerContainer = document.getElementById('loading-spinner-container') as HTMLElement;
     this.spinner = document.getElementById('dynamic-loading-spinner') as HTMLElement;
-    this.areaToHide = document.getElementById('area-to-hide-while-loading') as HTMLElement;
+    this.areaToHide = document.getElementById('js-styling-hidden-area-while-loading') as HTMLElement;
     this.startLoadingSpinner();
     this.page = paginationEnabled ? SearchSortFilterAndPaginate.getPageNumber() : 1;
     this.searchEnabled = searchEnabled;

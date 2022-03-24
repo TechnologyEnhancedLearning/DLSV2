@@ -26,7 +26,7 @@
     @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
       <vc:loading-spinner page-has-side-nav-menu="true" />
     }
-    <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "area-to-hide-while-loading" : "no-js-styling")">
+    <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
       <h1 class="nhsuk-heading-xl">FAQs</h1>
 
       <partial name="SearchablePage/_Search" model="Model" />

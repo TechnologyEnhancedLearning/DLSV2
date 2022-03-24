@@ -13,8 +13,8 @@ exportAllLink.addEventListener('click', () => {
   exportAllLink.href = getPathForEndpoint(`TrackingSystem/Delegates/Courses/DownloadAll?searchString=${searchString}&sortBy=${sortBy}&sortDirection=${sortDirection}&existingFilterString=${existingFilterString}`);
 });
 
-const javascriptSearchEnabledElement = <HTMLInputElement>document.getElementById('javascript-search-enabled');
-if (javascriptSearchEnabledElement?.value.trim() === 'true') {
+const noJsStyling = document.getElementById('no-js-styling');
+if (noJsStyling === null) {
   // eslint-disable-next-line no-new
   new SearchSortFilterAndPaginate('TrackingSystem/Delegates/Courses/AllCourseStatistics', true, true, true, 'DelegateCoursesFilter');
 }

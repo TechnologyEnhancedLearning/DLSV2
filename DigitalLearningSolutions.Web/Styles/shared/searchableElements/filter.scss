@@ -15,7 +15,7 @@
   @extend .left-dropdown;
   display: none;
 
-  #area-to-hide-while-loading & {
+  #js-styling-hidden-area-while-loading & {
     .js-enabled & {
       display: flex;
       width: 100%;
@@ -37,7 +37,7 @@
   width: 100%;
   display: flex;
 
-  #area-to-hide-while-loading & {
+  #js-styling-hidden-area-while-loading & {
     .js-enabled & {
       display: none;
     }
@@ -72,7 +72,7 @@
     }
 
     @include mq($from: desktop) {
-      #area-to-hide-while-loading & {
+      #js-styling-hidden-area-while-loading & {
         .js-enabled & {
           width: 33.3333%;
         }
@@ -115,7 +115,7 @@
   padding-bottom: 11px;
   margin-bottom: 4px;
 
-  #area-to-hide-while-loading & {
+  #js-styling-hidden-area-while-loading & {
     .js-enabled & {
       margin-right: 4px;
     }

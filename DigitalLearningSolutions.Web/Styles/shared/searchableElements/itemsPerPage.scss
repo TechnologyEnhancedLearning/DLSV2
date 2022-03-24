@@ -48,7 +48,7 @@
   @extend .right-submit-button;
   background-color: $button-dark-blue;
 
-  #area-to-hide-while-loading & {
+  #js-styling-hidden-area-while-loading & {
     .js-enabled & {
       display: none;
     }

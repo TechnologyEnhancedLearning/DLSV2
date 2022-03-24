@@ -28,7 +28,7 @@
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
   <vc:loading-spinner page-has-side-nav-menu="false" />
 }
-<div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "area-to-hide-while-loading" : "no-js-styling")">
+<div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
   @if (errorHasOccurred)
   {
     <vc:error-summary order-of-property-names="@(new[] { nameof(Model.DelegateEmail) })" />

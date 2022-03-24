@@ -38,18 +38,16 @@
   @include mq($from: tablet) {
     flex: 1;
   }
-
-  #area-to-hide-while-loading & {
-    width: 100%;
-  }
 }
 
 .sort-submit {
   @extend .right-submit-button;
   background-color: $button-dark-blue;
 
-  #area-to-hide-while-loading & {
-    .js-enabled & { display: none; }
+  #js-styling-hidden-area-while-loading & {
+    .js-enabled & {
+      display: none;
+    }
   }
 
   @include mq($from: tablet) {

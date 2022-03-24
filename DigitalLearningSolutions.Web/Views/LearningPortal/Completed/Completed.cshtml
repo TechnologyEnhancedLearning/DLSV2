@@ -11,7 +11,7 @@
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
   <vc:loading-spinner page-has-side-nav-menu="false" />
 }
-<div class="nhsuk-grid-row" id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "area-to-hide-while-loading" : "no-js-styling")">
+<div class="nhsuk-grid-row" id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading">My Completed Activities</h1>
     @if (Model.BannerText != null) {

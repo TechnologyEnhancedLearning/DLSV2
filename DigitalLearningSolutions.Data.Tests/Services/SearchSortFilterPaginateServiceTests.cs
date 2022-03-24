@@ -45,7 +45,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1, 10),
+                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1, allItems.Count()),
                 "A",
                 null,
                 null,
@@ -70,7 +70,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(allItems.OrderBy(x => x.Number), 1, 1, int.MaxValue, 10, 10),
+                new PaginationResult<SortableItem>(allItems.OrderBy(x => x.Number), 1, 1, int.MaxValue, 10, allItems.Count()),
                 null,
                 "Number",
                 GenericSortingHelper.Ascending,
@@ -103,7 +103,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1, 10),
+                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1, allItems.Count()),
                 null,
                 null,
                 null,
@@ -136,7 +136,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1, 10),
+                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1, allItems.Count()),
                 null,
                 null,
                 null,
@@ -169,7 +169,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(allItems, 1, 1, int.MaxValue, 10, 10),
+                new PaginationResult<SortableItem>(allItems, 1, 1, int.MaxValue, 10, allItems.Count()),
                 null,
                 null,
                 null,
@@ -194,7 +194,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(allItems.Take(8), 1, 2, 8, 10, 10),
+                new PaginationResult<SortableItem>(allItems.Take(8), 1, 2, 8, 10, allItems.Count()),
                 null,
                 null,
                 null,
@@ -219,7 +219,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(allItems.Skip(8), 2, 2, 8, 10, 10),
+                new PaginationResult<SortableItem>(allItems.Skip(8), 2, 2, 8, 10, allItems.Count()),
                 null,
                 null,
                 null,
@@ -246,7 +246,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(allItems.Take(5), 1, 2, 5, 10, 10),
+                new PaginationResult<SortableItem>(allItems.Take(5), 1, 2, 5, 10, allItems.Count()),
                 null,
                 null,
                 null,

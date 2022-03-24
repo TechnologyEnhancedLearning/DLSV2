@@ -15,8 +15,8 @@ exportCurrentLink.addEventListener('click', () => {
   exportCurrentLink.href = pathWithCurrentSortFilter;
 });
 
-const javascriptSearchEnabledElement = <HTMLInputElement>document.getElementById('javascript-search-enabled');
-if (javascriptSearchEnabledElement?.value.trim() === 'true') {
+const noJsStyling = document.getElementById('no-js-styling');
+if (noJsStyling === null) {
   // eslint-disable-next-line no-new
   new SearchSortFilterAndPaginate(`TrackingSystem/Delegates/CourseDelegates/AllCourseDelegates/${customisationId}`, false, true, true, 'CourseDelegatesFilter');
 }
