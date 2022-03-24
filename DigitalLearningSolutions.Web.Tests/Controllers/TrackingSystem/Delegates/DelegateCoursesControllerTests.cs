@@ -130,7 +130,10 @@
             A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
 
             // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
+            var result = controllerWithCookies.Index(
+                existingFilterString: existingFilterString,
+                newFilterToAdd: newFilterValue
+            );
 
             // Then
             using (new AssertionScope())
@@ -150,7 +153,10 @@
             const string newFilterValue = "Status|HideInLearnerPortal|true";
 
             // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
+            var result = controllerWithCookies.Index(
+                existingFilterString: existingFilterString,
+                newFilterToAdd: newFilterValue
+            );
 
             // Then
             using (new AssertionScope())
