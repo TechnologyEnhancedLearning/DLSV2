@@ -36,6 +36,8 @@ export class SearchSortFilterAndPaginate {
 
   private areaToHide: HTMLElement;
 
+  private readonly functionToRunAfterDisplayingData: VoidFunction;
+
   // Route provided should be a relative path with no leading /
   constructor(
     route: string,
@@ -45,10 +47,13 @@ export class SearchSortFilterAndPaginate {
     filterCookieName = '',
     searchableElementClassSuffixes = ['title'],
     queryParameterToRetain = '',
+    functionToRunAfterDisplayingData: VoidFunction = defaultVoidFunction,
   ) {
     this.spinnerContainer = document.getElementById('loading-spinner-container') as HTMLElement;
     this.spinner = document.getElementById('dynamic-loading-spinner') as HTMLElement;
     this.areaToHide = document.getElementById('area-to-hide-while-loading') as HTMLElement;
+    this.functionToRunAfterDisplayingData = functionToRunAfterDisplayingData;
+
     this.startLoadingSpinner();
     this.queryParameterToRetain = queryParameterToRetain;
     this.page = paginationEnabled ? this.getPageNumber() : 1;
@@ -131,7 +136,7 @@ export class SearchSortFilterAndPaginate {
     const paginatedElements = this.paginationEnabled
       ? paginateResults(sortedUniqueElements, this.page)
       : sortedUniqueElements;
-    SearchSortFilterAndPaginate.displaySearchableElements(paginatedElements);
+    this.displaySearchableElements(paginatedElements);
   }
 
   static getSearchableElements(route: string, searchableElementClassSuffixes: string[]):
@@ -191,7 +196,7 @@ export class SearchSortFilterAndPaginate {
     return element.getAttribute('data-filter-value')?.trim() ?? '';
   }
 
-  static displaySearchableElements(searchableElements: ISearchableElement[]): void {
+  private displaySearchableElements(searchableElements: ISearchableElement[]): void {
     const searchableElementsContainer = document.getElementById('searchable-elements');
     if (!searchableElementsContainer) {
       return;
@@ -202,6 +207,8 @@ export class SearchSortFilterAndPaginate {
     );
     // This is required to polyfill the new elements in IE
     Details();
+
+    this.functionToRunAfterDisplayingData();
   }
 
   static updateResultCount(count: number): void {
@@ -331,4 +338,8 @@ export class SearchSortFilterAndPaginate {
       this.areaToHide.style.display = 'inline';
     }
   }
+}
+
+function defaultVoidFunction(): void {
+  return undefined;
 }
