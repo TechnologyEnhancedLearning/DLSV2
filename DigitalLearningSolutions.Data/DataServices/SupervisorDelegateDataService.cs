@@ -14,8 +14,6 @@
         IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email);
 
         void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int candidateId);
-
-        void UpdateSupervisorDelegateRecordConfirmed(int supervisorDelegateId, DateTime? confirmed);
     }
 
     public class SupervisorDelegateDataService : ISupervisorDelegateDataService
@@ -43,7 +41,6 @@
                         sd.Added,
                         sd.AddedByDelegate,
                         sd.NotificationSent,
-                        sd.Confirmed,
                         sd.Removed,
                         au.CentreID
                     FROM SupervisorDelegates sd
@@ -71,7 +68,6 @@
                         sd.Added,
                         sd.AddedByDelegate,
                         sd.NotificationSent,
-                        sd.Confirmed,
                         sd.Removed,
                         au.CentreID
                     FROM SupervisorDelegates sd
@@ -88,20 +84,9 @@
         {
             connection.Execute(
                 @"UPDATE SupervisorDelegates
-                    SET CandidateID = @candidateId,
-                        Confirmed = NULL
+                    SET CandidateID = @candidateId
                     WHERE ID IN @supervisorDelegateIds",
                 new { supervisorDelegateIds, candidateId }
-            );
-        }
-
-        public void UpdateSupervisorDelegateRecordConfirmed(int supervisorDelegateId, DateTime? confirmed)
-        {
-            connection.Execute(
-                @"UPDATE SupervisorDelegates
-                    SET Confirmed = @confirmed
-                    WHERE ID = @supervisorDelegateId",
-                new { supervisorDelegateId, confirmed }
             );
         }
     }
