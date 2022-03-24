@@ -53,7 +53,7 @@
             courseService = A.Fake<ICourseService>();
             courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
 
-            A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);
+            A.CallTo(() => courseService.GetDelegateCourseDetails(A<int>._, A<int?>._)).Returns(details);
             A.CallTo(
                 () => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._, A<int?>._)
             ).Returns(applicationOptions);

@@ -17,6 +17,12 @@
                 int? categoryId
             );
 
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
+            GetAllCourseStatisticsWithAdminFieldResponseCounts(
+                int centreId,
+                int? categoryId
+            );
+
         public bool DelegateHasCurrentProgress(int delegateId, int customisationId);
 
         public void RemoveDelegateFromCourse(
@@ -62,6 +68,8 @@
         );
 
         public CentreCourseDetails GetCentreCourseDetails(int centreId, int? categoryId);
+
+        public CentreCourseDetails GetDelegateCourseDetails(int centreId, int? categoryId);
 
         public bool DoesCourseNameExistAtCentre(
             string customisationName,
@@ -139,6 +147,22 @@
         {
             var allCourses = courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId);
             return allCourses.Where(c => c.CentreId == centreId).Select(
+                c => new CourseStatisticsWithAdminFieldResponseCounts(
+                    c,
+                    courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(c.CustomisationId, centreId)
+                )
+            );
+        }
+
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
+            GetAllCourseStatisticsWithAdminFieldResponseCounts(
+                int centreId,
+                int? categoryId
+            )
+        {
+            var allCourses = courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId);
+
+            return allCourses.Where(c => c.CentreId == centreId || c.AllCentres).Select(
                 c => new CourseStatisticsWithAdminFieldResponseCounts(
                     c,
                     courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(c.CustomisationId, centreId)
@@ -242,6 +266,17 @@
                 .Where(c => c.Active = true);
             var orderedCourses = activeCourses.OrderBy(c => c.ApplicationName);
             return orderedCourses.Select(c => (c.CustomisationId, c.CourseName));
+        }
+
+        public CentreCourseDetails GetDelegateCourseDetails(int centreId, int? categoryId)
+        {
+            var (courses, categories, topics) = (
+                GetAllCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId),
+                courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+                    .Select(c => c.CategoryName),
+                courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic));
+
+            return new CentreCourseDetails(courses, categories, topics);
         }
 
         public bool DoesCourseNameExistAtCentre(

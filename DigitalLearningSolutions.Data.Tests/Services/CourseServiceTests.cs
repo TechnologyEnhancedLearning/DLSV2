@@ -53,7 +53,7 @@
         public void GetTopCourseStatistics_should_return_active_course_statistics_ordered_by_InProgress()
         {
             // Given
-            var expectedIdOrder = new List<int> { 3, 1 };
+            var expectedIdOrder = new List<int> { 3, 4, 1 };
 
             // When
             var resultIdOrder = courseService.GetTopCourseStatistics(CentreId, AdminCategoryId)
@@ -79,6 +79,22 @@
             resultIdOrder.Should().BeEquivalentTo(expectedIdOrder);
         }
 
+        [Test]
+        public void
+            GetAllCourseStatisticsWithAdminFieldResponseCounts_should_return_course_statistics_for_centre_and_all_centre_courses()
+        {
+            // Given
+            var expectedIdOrder = new List<int> { 1, 2, 4 };
+
+            // When
+            var resultIdOrder = courseService
+                .GetAllCourseStatisticsWithAdminFieldResponseCounts(CentreId, AdminCategoryId)
+                .Select(r => r.CustomisationId).ToList();
+
+            // Then
+            resultIdOrder.Should().BeEquivalentTo(expectedIdOrder);
+        }
+
         private IEnumerable<CourseStatistics> GetSampleCourses()
         {
             return new List<CourseStatistics>
@@ -90,6 +106,7 @@
                     Active = true,
                     DelegateCount = 100,
                     CompletedCount = 41,
+                    AllCentres = false,
                 },
                 new CourseStatistics
                 {
@@ -98,6 +115,7 @@
                     Active = false,
                     DelegateCount = 50,
                     CompletedCount = 30,
+                    AllCentres = false,
                 },
                 new CourseStatistics
                 {
@@ -106,6 +124,16 @@
                     Active = true,
                     DelegateCount = 500,
                     CompletedCount = 99,
+                    AllCentres = false,
+                },
+                new CourseStatistics
+                {
+                    CustomisationId = 4,
+                    CentreId = 5,
+                    Active = true,
+                    DelegateCount = 500,
+                    CompletedCount = 134,
+                    AllCentres = true,
                 },
             };
         }
