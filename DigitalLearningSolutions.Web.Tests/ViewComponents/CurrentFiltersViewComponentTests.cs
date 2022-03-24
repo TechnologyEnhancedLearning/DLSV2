@@ -40,16 +40,19 @@
             var categories = new List<Category>
                 { new Category { CategoryName = "Word" }, new Category { CategoryName = "Excel" } };
             const string searchString = "test";
+            const string sortBy = "sort";
+            const string sortDirection = "sortDirection";
+            const int itemsPerPage = 10;
 
             var availableFilters = AdministratorsViewModelFilterOptions.GetAllAdministratorsFilterModels(categories);
 
             var inputViewModel = new CentreAdministratorsViewModel(
                 1,
                 new SearchSortFilterPaginationResult<AdminUser>(
-                    new PaginationResult<AdminUser>(new List<AdminUser>(), 1, 1, 10, 0),
+                    new PaginationResult<AdminUser>(new List<AdminUser>(), 1, 1, itemsPerPage, 0),
                     searchString,
-                    null,
-                    null,
+                    sortBy,
+                    sortDirection,
                     "CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true"
                 ),
                 availableFilters,
@@ -68,9 +71,9 @@
             var expectedFilterViewModel = new CurrentFiltersViewModel(
                 expectedAppliedFilters,
                 searchString,
-                null,
-                null,
-                10,
+                sortBy,
+                sortDirection,
+                itemsPerPage,
                 new Dictionary<string, string>()
             );
 
