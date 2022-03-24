@@ -53,7 +53,7 @@
                     s.AssessmentQuestionID,
                     s.ID AS ResultID,
                     s.Result,
-                    s.ResultDateTime,
+                    s.DateTime AS ResultDateTime,
                     s.SupportingComments,
                     sv.ID AS SelfAssessmentResultSupervisorVerificationId,
                     sv.Requested,
