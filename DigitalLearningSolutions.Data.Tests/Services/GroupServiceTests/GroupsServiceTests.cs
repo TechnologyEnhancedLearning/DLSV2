@@ -475,7 +475,7 @@
                 true
             );
 
-            var centreRegistrationPrompt = new CentreRegistrationPrompt(1, groupNamePrefix, groupName, false);
+            var centreRegistrationPrompt = new CentreRegistrationPrompt(1, 1, groupNamePrefix, groupName, false);
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt> { centreRegistrationPrompt };
 
             SetUpGenerateGroupFakes(timeNow, centreRegistrationPrompts);
@@ -554,7 +554,7 @@
                 true
             );
 
-            var centreRegistrationPrompt = new CentreRegistrationPrompt(1, groupNamePrefix, groupName, false);
+            var centreRegistrationPrompt = new CentreRegistrationPrompt(1, 1, groupNamePrefix, groupName, false);
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt> { centreRegistrationPrompt };
 
             SetUpGenerateGroupFakes(timeNow, centreRegistrationPrompts);
@@ -596,6 +596,7 @@
             GivenCurrentTimeIs(timeNow);
 
             var centreRegistrationPrompt = new CentreRegistrationPrompt(
+                1,
                 1,
                 groupNamePrefix,
                 $"{duplicateGroupName}\r\n{nonDuplicateGroupName}",

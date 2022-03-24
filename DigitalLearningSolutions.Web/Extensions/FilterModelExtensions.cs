@@ -2,12 +2,13 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class FilterModelExtensions
     {
         public static IEnumerable<AppliedFilterViewModel> SelectAppliedFilterViewModels(
-            this IEnumerable<FilterViewModel> filterViewModels
+            this IEnumerable<FilterModel> filterViewModels
         )
         {
             return filterViewModels.Select(

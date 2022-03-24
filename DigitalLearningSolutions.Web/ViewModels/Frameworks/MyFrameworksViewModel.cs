@@ -4,32 +4,20 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Frameworks;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class MyFrameworksViewModel : BaseSearchablePageViewModel
+    public class MyFrameworksViewModel : BaseSearchablePageViewModel<BrandedFramework>
     {
         public readonly IEnumerable<BrandedFramework> BrandedFrameworks;
         public readonly bool IsFrameworkDeveloper;
 
         public MyFrameworksViewModel(
-            IEnumerable<BrandedFramework> brandedFrameworks,
-            string? searchString,
-            string sortBy,
-            string sortDirection,
-            int page,
+            SearchSortFilterPaginationResult<BrandedFramework> result,
             bool isFrameworkDeveloper
-        ) : base(searchString, page,  false, sortBy, sortDirection, itemsPerPage: 12)
+        ) : base(result, false)
         {
-            var sortedItems = GenericSortingHelper.SortAllItems(
-                brandedFrameworks.AsQueryable(),
-                sortBy,
-                sortDirection
-            );
-            var filteredItems = GenericSearchHelper.SearchItems(sortedItems, SearchString, 60).ToList();
-            MatchingSearchResults = filteredItems.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
-            BrandedFrameworks = paginatedItems;
+            BrandedFrameworks = result.ItemsToDisplay;
             IsFrameworkDeveloper = isFrameworkDeveloper;
         }
 

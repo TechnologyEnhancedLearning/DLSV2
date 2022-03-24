@@ -31,6 +31,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private ISelfAssessmentService selfAssessmentService = null!;
         private ISupervisorService supervisorService = null!;
         private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         [SetUp]
         public void SetUp()
@@ -46,6 +47,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             filteredApiHelperService = A.Fake<IFilteredApiHelperService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
@@ -69,7 +71,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 logger,
                 config,
                 actionPlanService,
-                candidateAssessmentDownloadFileService
+                candidateAssessmentDownloadFileService,
+                searchSortFilterPaginateService
             );
             controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
             controller = controller.WithMockTempData();

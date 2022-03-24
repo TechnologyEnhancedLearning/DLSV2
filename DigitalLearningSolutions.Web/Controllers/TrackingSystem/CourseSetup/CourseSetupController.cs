@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -33,6 +34,7 @@
         public const string SaveAction = "save";
         private const string CourseFilterCookieName = "CourseFilter";
         private readonly ICourseService courseService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
         private readonly IConfiguration config;
@@ -41,12 +43,14 @@
             ICourseService courseService,
             ITutorialService tutorialService,
             ISectionService sectionService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
             IConfiguration config
         )
         {
             this.courseService = courseService;
             this.tutorialService = tutorialService;
             this.sectionService = sectionService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.config = config;
         }
 
@@ -57,6 +61,7 @@
             string sortDirection = GenericSortingHelper.Ascending,
             string? existingFilterString = null,
             string? newFilterToAdd = null,
+            bool clearFilters = false,
             int page = 1,
             int? itemsPerPage = null
         )
@@ -65,6 +70,7 @@
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
+                clearFilters,
                 Request,
                 CourseFilterCookieName,
                 CourseStatusFilterOptions.IsActive.FilterValue
@@ -75,18 +81,32 @@
 
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
+            var availableFilters = CourseStatisticsViewModelFilterOptions
+                .GetFilterOptions(details.Categories, details.Topics).ToList();
+
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters,
+                    CourseStatusFilterOptions.IsActive.FilterValue
+                ),
+                new PaginationOptions(page, itemsPerPage)
+            );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                details.Courses,
+                searchSortPaginationOptions
+            );
+
             var model = new CourseSetupViewModel(
-                details,
-                searchString,
-                sortBy,
-                sortDirection,
-                existingFilterString,
-                page,
-                itemsPerPage,
+                result,
+                availableFilters,
                 config
             );
 
-            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, existingFilterString);
+            Response.UpdateFilterCookie(CourseFilterCookieName, result.FilterString);
 
             return View(model);
         }
@@ -388,15 +408,41 @@
             var categoryIdFilter = User.GetAdminCourseCategoryFilter()!;
 
             var applications = courseService
-                .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter);
+                .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter).ToList();
             var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var topics = courseService.GetTopicsForCentreAndCentrallyManagedCourses(centreId);
 
-            return new SelectCourseViewModel(
+            var availableFilters = (categoryIdFilter == null
+                ? SelectCourseViewModelFilterOptions.GetAllCategoriesFilters(
+                    categories,
+                    topics,
+                    categoryFilterString,
+                    topicFilterString
+                )
+                : SelectCourseViewModelFilterOptions.GetSingleCategoryFilters(
+                    applications,
+                    categoryFilterString,
+                    topicFilterString
+                )).ToList();
+
+            var currentFilterString =
+                FilteringHelper.GetCategoryAndTopicFilterString(categoryFilterString, topicFilterString);
+
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                null,
+                new SortOptions(nameof(ApplicationDetails.ApplicationName), GenericSortingHelper.Ascending),
+                new FilterOptions(currentFilterString, availableFilters),
+                null
+            );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 applications,
-                categories,
-                topics,
-                categoryIdFilter,
+                searchSortPaginationOptions
+            );
+
+            return new SelectCourseViewModel(
+                result,
+                availableFilters,
                 categoryFilterString,
                 topicFilterString
             );

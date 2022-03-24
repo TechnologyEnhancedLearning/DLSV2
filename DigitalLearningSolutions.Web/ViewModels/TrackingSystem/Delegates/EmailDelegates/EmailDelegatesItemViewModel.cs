@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
@@ -32,7 +33,7 @@
             DelegateUser delegateUser,
             bool isDelegateSelected,
             IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts,
-            IEnumerable<CentreRegistrationPrompt> promptsWithOptions
+            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts
         )
         {
             Id = delegateUser.Id;
@@ -45,6 +46,7 @@
 
             IsDelegateSelected = isDelegateSelected;
             JobGroupId = delegateUser.JobGroupId;
+            var promptsWithOptions = centreRegistrationPrompts.Where(prompt => prompt.Options.Count > 0);
             RegistrationPromptFilters = DelegatesViewModelFilters.GetRegistrationPromptFilters(delegateRegistrationPrompts, promptsWithOptions);
         }
 

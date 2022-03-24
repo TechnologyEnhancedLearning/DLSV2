@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers.FilterOptions
 {
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
@@ -9,13 +11,13 @@
     {
         private const string Group = "Assessed";
 
-        public static readonly FilterOptionViewModel IsAssessed = new FilterOptionViewModel(
+        public static readonly FilterOptionModel IsAssessed = new FilterOptionModel(
             "Assessed",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseAssessmentDetails.IsAssessed), "true"),
             FilterStatus.Default
         );
 
-        public static readonly FilterOptionViewModel IsNotAssessed = new FilterOptionViewModel(
+        public static readonly FilterOptionModel IsNotAssessed = new FilterOptionModel(
             "Not assessed",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseAssessmentDetails.IsAssessed), "false"),
             FilterStatus.Default
@@ -26,13 +28,13 @@
     {
         private const string Group = "Learning";
 
-        public static readonly FilterOptionViewModel HasLearning = new FilterOptionViewModel(
+        public static readonly FilterOptionModel HasLearning = new FilterOptionModel(
             "Has learning",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseAssessmentDetails.HasLearning), "true"),
             FilterStatus.Default
         );
 
-        public static readonly FilterOptionViewModel NoLearning = new FilterOptionViewModel(
+        public static readonly FilterOptionModel NoLearning = new FilterOptionModel(
             "No learning",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseAssessmentDetails.HasLearning), "false"),
             FilterStatus.Default
@@ -43,13 +45,13 @@
     {
         private const string Group = "Diagnostic";
 
-        public static readonly FilterOptionViewModel HasDiagnostic = new FilterOptionViewModel(
+        public static readonly FilterOptionModel HasDiagnostic = new FilterOptionModel(
             "Has diagnostic",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseAssessmentDetails.HasDiagnostic), "true"),
             FilterStatus.Default
         );
 
-        public static readonly FilterOptionViewModel NoDiagnostic = new FilterOptionViewModel(
+        public static readonly FilterOptionModel NoDiagnostic = new FilterOptionModel(
             "No diagnostic",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseAssessmentDetails.HasDiagnostic), "false"),
             FilterStatus.Default

@@ -10,6 +10,7 @@
     using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Enums;
@@ -52,14 +53,23 @@
                 return new SupervisorDelegateDetailViewModel(supervisor, page);
             });
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
+
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                null,
+                new PaginationOptions(page)
+            );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                supervisorDelegateDetailViewModels,
+                searchSortPaginationOptions
+            );
+
             var model = new MyStaffListViewModel(
                 loggedInAdminUser,
-                supervisorDelegateDetailViewModels,
-                centreRegistrationPrompts,
-                searchString,
-                sortBy,
-                sortDirection,
-                page
+                result,
+                centreRegistrationPrompts
             );
             ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
             return View("MyStaffList", model);
@@ -175,7 +185,7 @@
             var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, adminId);
             var model = new DelegateSelfAssessmentsViewModel()
             {
-                IsNominatedSupervisor = loggedInAdminUser?.IsNominatedSupervisor ?? false,
+                IsNominatedSupervisor = loggedInAdminUser?.IsSupervisor == true ? false : loggedInAdminUser?.IsNominatedSupervisor ?? false,
                 SupervisorDelegateDetail = superviseDelegate,
                 DelegateSelfAssessments = delegateSelfAssessments
             };

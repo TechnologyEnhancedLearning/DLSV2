@@ -2,10 +2,10 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class SelectCourseViewModelFilterOptions
     {
@@ -57,10 +57,10 @@
             };
         }
 
-        private static IEnumerable<FilterOptionViewModel> GetCategoryOptions(IEnumerable<string> categories)
+        private static IEnumerable<FilterOptionModel> GetCategoryOptions(IEnumerable<string> categories)
         {
             return categories.Distinct().Select(
-                c => new FilterOptionViewModel(
+                c => new FilterOptionModel(
                     c,
                     nameof(ApplicationDetails.CategoryName) + FilteringHelper.Separator +
                     nameof(ApplicationDetails.CategoryName) +
@@ -70,10 +70,10 @@
             );
         }
 
-        private static IEnumerable<FilterOptionViewModel> GetTopicOptions(IEnumerable<string> topics)
+        private static IEnumerable<FilterOptionModel> GetTopicOptions(IEnumerable<string> topics)
         {
             return topics.Distinct().Select(
-                c => new FilterOptionViewModel(
+                c => new FilterOptionModel(
                     c,
                     nameof(ApplicationDetails.CourseTopic) + FilteringHelper.Separator +
                     nameof(ApplicationDetails.CourseTopic) +

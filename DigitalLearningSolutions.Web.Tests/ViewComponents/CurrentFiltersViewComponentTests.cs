@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewComponents
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.Common;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
@@ -35,17 +37,26 @@
         {
             // Given
             var viewComponent = new CurrentFiltersViewComponent { ViewComponentContext = viewComponentContext };
-            var categories = new[] { "Word", "Excel" };
+            var categories = new List<Category>
+                { new Category { CategoryName = "Word" }, new Category { CategoryName = "Excel" } };
             const string searchString = "test";
+            const string sortBy = "sort";
+            const string sortDirection = "sortDirection";
+            const int itemsPerPage = 10;
+
+            var availableFilters = AdministratorsViewModelFilterOptions.GetAllAdministratorsFilterModels(categories);
+
             var inputViewModel = new CentreAdministratorsViewModel(
                 1,
-                new List<AdminUser>(),
-                categories,
-                searchString,
-                "CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true",
-                1,
-                UserTestHelper.GetDefaultAdminUser(),
-                null
+                new SearchSortFilterPaginationResult<AdminUser>(
+                    new PaginationResult<AdminUser>(new List<AdminUser>(), 1, 1, itemsPerPage, 0),
+                    searchString,
+                    sortBy,
+                    sortDirection,
+                    "CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true"
+                ),
+                availableFilters,
+                UserTestHelper.GetDefaultAdminUser()
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>
             {
@@ -60,6 +71,9 @@
             var expectedFilterViewModel = new CurrentFiltersViewModel(
                 expectedAppliedFilters,
                 searchString,
+                sortBy,
+                sortDirection,
+                itemsPerPage,
                 new Dictionary<string, string>()
             );
 

@@ -270,35 +270,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void Registering_delegate_should_add_Confirmed_only_to_SupervisorDelegate_record_with_matching_id()
-        {
-            // Given
-            const int matchingSupervisorDelegateId = 2;
-            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
-            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
-
-            // When
-            registrationService.RegisterDelegate(
-                model,
-                string.Empty,
-                false,
-                null,
-                matchingSupervisorDelegateId
-            );
-
-            // Then
-            A.CallTo(
-                () => supervisorDelegateService.ConfirmSupervisorDelegateRecord(matchingSupervisorDelegateId)
-            ).MustHaveHappened();
-            A.CallTo(
-                () => supervisorDelegateService.ConfirmSupervisorDelegateRecord(
-                    A<int>.That.Matches(id => id != matchingSupervisorDelegateId)
-                )
-            ).MustNotHaveHappened();
-        }
-
-        [Test]
         public void Registering_delegate_should_not_update_any_SupervisorDelegate_records_if_none_found()
         {
             // Given
@@ -315,8 +286,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     A<int>._
                 )
             ).MustNotHaveHappened();
-            A.CallTo(() => supervisorDelegateService.ConfirmSupervisorDelegateRecord(A<int>._))
-                .MustNotHaveHappened();
         }
 
         [Test]
@@ -642,23 +611,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     777
                 )
             ).MustHaveHappened();
-        }
-
-        [Test]
-        public void RegisterDelegateByCentre_should_not_add_Confirmed_to_any_SupervisorDelegate_record()
-        {
-            // Given
-            const string baseUrl = "base.com";
-            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
-            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
-
-            // When
-            registrationService.RegisterDelegateByCentre(model, baseUrl);
-
-            // Then
-            A.CallTo(() => supervisorDelegateService.ConfirmSupervisorDelegateRecord(A<int>._))
-                .MustNotHaveHappened();
         }
 
         [Test]

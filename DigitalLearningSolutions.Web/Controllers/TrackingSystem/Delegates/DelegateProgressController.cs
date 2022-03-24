@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -28,19 +29,22 @@
         private readonly IConfiguration configuration;
         private readonly ICourseService courseService;
         private readonly IProgressService progressService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IUserService userService;
 
         public DelegateProgressController(
             ICourseService courseService,
             IUserService userService,
             IProgressService progressService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.courseService = courseService;
             this.userService = userService;
             this.progressService = progressService;
             this.configuration = configuration;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         public IActionResult Index(int progressId, DelegateAccessRoute accessedVia, int? returnPage)
@@ -233,7 +237,19 @@
                 return NotFound();
             }
 
-            var model = new LearningLogViewModel(accessedVia, learningLog, sortBy, sortDirection);
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                null,
+                new SortOptions(sortBy, sortDirection),
+                null,
+                null
+            );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                learningLog.Entries,
+                searchSortPaginationOptions
+            );
+
+            var model = new LearningLogViewModel(accessedVia, learningLog, result);
             return View(model);
         }
 

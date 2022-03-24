@@ -35,26 +35,5 @@
             // Then
             result.Should().Be(record);
         }
-
-        [Test]
-        public void AddConfirmedToSupervisorDelegateRecord_updates_record_with_correct_values_not_confirmed()
-        {
-            // Given
-            var timeBeforeConfirmCalled = DateTime.UtcNow;
-
-            // When
-            supervisorDelegateService.ConfirmSupervisorDelegateRecord(2);
-
-            // Then
-            var timeAfterConfirmCalled = DateTime.UtcNow;
-            A.CallTo(
-                () => supervisorDelegateDataService.UpdateSupervisorDelegateRecordConfirmed(
-                    2,
-                    A<DateTime>.That.Matches(
-                        dateTime => timeBeforeConfirmCalled < dateTime && dateTime < timeAfterConfirmCalled
-                    )
-                )
-            ).MustHaveHappened();
-        }
     }
 }

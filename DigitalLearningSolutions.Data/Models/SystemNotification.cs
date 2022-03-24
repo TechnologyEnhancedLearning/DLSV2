@@ -1,8 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Models
 {
     using System;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
-    public class SystemNotification
+    public class SystemNotification : BaseSearchableItem
     {
         public SystemNotification(
             int systemNotificationId,
@@ -32,5 +33,11 @@
         public DateTime DateAdded { get; set; }
 
         public int TargetUserRoleId { get; set; }
+
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? SubjectLine;
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
     }
 }

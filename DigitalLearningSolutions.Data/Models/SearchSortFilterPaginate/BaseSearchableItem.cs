@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Models
+﻿namespace DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate
 {
     /// <summary>
     /// Base class for classes to implement to allow searching of a list of that class

@@ -2,26 +2,26 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class AddCourseToGroupViewModelFilterOptions
     {
-        public static FilterViewModel[] GetAllCategoriesFilters(
+        public static FilterModel[] GetAllCategoriesFilters(
             IEnumerable<string> categories,
             IEnumerable<string> topics
         )
         {
             return new[]
             {
-                new FilterViewModel(
+                new FilterModel(
                     nameof(CourseAssessmentDetails.CategoryName),
                     "Category",
                     GetCategoryOptions(categories)
                 ),
-                new FilterViewModel(
+                new FilterModel(
                     nameof(CourseAssessmentDetails.CourseTopic),
                     "Topic",
                     GetTopicOptions(topics)
@@ -29,12 +29,12 @@
             };
         }
 
-        public static IEnumerable<FilterViewModel> GetSingleCategoryFilters(List<CourseAssessmentDetails> courseList)
+        public static IEnumerable<FilterModel> GetSingleCategoryFilters(IEnumerable<CourseAssessmentDetails> courseList)
         {
             var topics = courseList.Select(c => c.CourseTopic);
             return new[]
             {
-                new FilterViewModel(
+                new FilterModel(
                     nameof(CourseAssessmentDetails.CourseTopic),
                     "Topic",
                     GetTopicOptions(topics)
@@ -42,10 +42,10 @@
             };
         }
 
-        private static IEnumerable<FilterOptionViewModel> GetCategoryOptions(IEnumerable<string> categories)
+        private static IEnumerable<FilterOptionModel> GetCategoryOptions(IEnumerable<string> categories)
         {
             return categories.Distinct().Select(
-                c => new FilterOptionViewModel(
+                c => new FilterOptionModel(
                     c,
                     nameof(CourseAssessmentDetails.CategoryName) + FilteringHelper.Separator +
                     nameof(CourseAssessmentDetails.CategoryName) +
@@ -55,10 +55,10 @@
             );
         }
 
-        private static IEnumerable<FilterOptionViewModel> GetTopicOptions(IEnumerable<string> topics)
+        private static IEnumerable<FilterOptionModel> GetTopicOptions(IEnumerable<string> topics)
         {
             return topics.Distinct().Select(
-                c => new FilterOptionViewModel(
+                c => new FilterOptionModel(
                     c,
                     nameof(CourseAssessmentDetails.CourseTopic) + FilteringHelper.Separator +
                     nameof(CourseAssessmentDetails.CourseTopic) +

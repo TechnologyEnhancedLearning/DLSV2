@@ -20,8 +20,7 @@
                 COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
                 sasr.SelfAssessmentReview,
                 sasr.ResultsReview,
-                sd.AddedByDelegate,
-                sd.Confirmed
+                sd.AddedByDelegate
             FROM SupervisorDelegates AS sd
             INNER JOIN CandidateAssessmentSupervisors AS cas
                 ON sd.ID = cas.SupervisorDelegateId
@@ -43,8 +42,7 @@
                 COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
                 sasr.SelfAssessmentReview,
                 sasr.ResultsReview,
-                sd.AddedByDelegate,
-                sd.Confirmed
+                sd.AddedByDelegate
             FROM SupervisorDelegates AS sd
             INNER JOIN CandidateAssessmentSupervisors AS cas
                 ON sd.ID = cas.SupervisorDelegateId
@@ -59,7 +57,7 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{BaseGetSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId)
+                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
             ).FirstOrDefault();
@@ -72,7 +70,7 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{BaseGetSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId)
+                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
             );
@@ -97,7 +95,7 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId)
+                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sd.SupervisorAdminID IS NOT NULL)
                         AND (coalesce(sasr.ResultsReview, 1) = 1)",
                 new { selfAssessmentId, candidateId }
@@ -123,7 +121,7 @@
                 INNER JOIN CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId
                 INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
                 INNER JOIN AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID AND au.Active = 1 
-                WHERE (sd.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId)
+                WHERE (sd.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.CandidateID = @candidateId)
 		            AND (au.Supervisor = 1 OR au.NominatedSupervisor = 1) AND (au.Active = 1)
 		            AND (ca.SelfAssessmentID <> @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
@@ -148,7 +146,7 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
+                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
                         AND (sd.SupervisorAdminID IS NOT NULL) AND (coalesce(sasr.SelfAssessmentReview, 1) = 1)
                         AND (cas.ID NOT IN (SELECT CandidateAssessmentSupervisorID FROM CandidateAssessmentSupervisorVerifications WHERE Verified IS NULL))",
                 new { selfAssessmentId, candidateId }

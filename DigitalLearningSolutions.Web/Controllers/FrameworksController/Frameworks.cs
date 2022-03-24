@@ -15,6 +15,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
 
     public partial class FrameworksController
@@ -65,37 +66,39 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             MyFrameworksViewModel myFrameworksViewModel;
             AllFrameworksViewModel allFrameworksViewModel;
+
+            var searchSortPaginateOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString, 60),
+                new SortOptions(sortBy, sortDirection),
+                null,
+                new PaginationOptions(page, 12)
+            );
+
             if (tabname == "All")
             {
-                myFrameworksViewModel = new MyFrameworksViewModel(
-                new List<BrandedFramework>(),
-                searchString,
-                sortBy,
-                sortDirection,
-                page,
-                isFrameworkDeveloper);
-                allFrameworksViewModel = new AllFrameworksViewModel(
+                var myFrameworksResult = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                    new List<BrandedFramework>(),
+                    searchSortPaginateOptions
+                );
+                myFrameworksViewModel = new MyFrameworksViewModel(myFrameworksResult, isFrameworkDeveloper);
+                var allFrameworksResult = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                     frameworks,
-                searchString,
-                sortBy,
-                sortDirection,
-                page);
+                    searchSortPaginateOptions
+                );
+                allFrameworksViewModel = new AllFrameworksViewModel(allFrameworksResult);
             }
             else
             {
-                myFrameworksViewModel = new MyFrameworksViewModel(
-                frameworks,
-                 searchString,
-                 sortBy,
-                 sortDirection,
-                 page,
-                 isFrameworkDeveloper);
-                allFrameworksViewModel = new AllFrameworksViewModel(
-                     new List<BrandedFramework>(),
-                searchString,
-                sortBy,
-                sortDirection,
-                page);
+                var myFrameworksResult = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                    frameworks,
+                    searchSortPaginateOptions
+                );
+                myFrameworksViewModel = new MyFrameworksViewModel(myFrameworksResult, isFrameworkDeveloper);
+                var allFrameworksResult = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                    new List<BrandedFramework>(),
+                    searchSortPaginateOptions
+                );
+                allFrameworksViewModel = new AllFrameworksViewModel(allFrameworksResult);
             }
             var frameworksViewModel = new FrameworksViewModel(
                 isFrameworkDeveloper,

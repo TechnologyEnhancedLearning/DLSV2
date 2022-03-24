@@ -12,6 +12,7 @@
         public string? MinValueDescription { get; set; }
         public int? ResultId { get; set; }
         public int? Result { get; set; }
+        public DateTime ResultDateTime { get; set; }
         public string? ScoringInstructions { get; set; }
         public int MinValue { get; set; }
         public int MaxValue { get; set; }

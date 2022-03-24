@@ -8,6 +8,8 @@ using DigitalLearningSolutions.Web.Extensions;
 
 namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+
     public class SearchSelfAssessmentOvervieviewViewModel
     {
         public int SelfAssessmentId { get; set; }
@@ -16,7 +18,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
         public string SearchText { get; set; }
         public SelfAssessmentCompetencyFilter? ResponseStatus { get; set; }
         public int Page { get; set; }
-        public List<FilterViewModel> Filters { get; set; }
+        public List<FilterModel> Filters { get; set; }
         public List<AppliedFilterViewModel> AppliedFilters { get; set; }
         public string FilterBy { get; set; }
 
@@ -40,20 +42,20 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
             SearchText = searchText ?? string.Empty;
             SelfAssessmentId = selfAssessmentId;
             Vocabulary = vocabulary;
-            Filters = new List<FilterViewModel>()
+            Filters = new List<FilterModel>()
             {
-                new FilterViewModel(
+                new FilterModel(
                         filterProperty: FilterBy,
                         filterName: FilterBy,
                         filterOptions: Enum.GetValues(typeof(SelfAssessmentCompetencyFilter))
                             .Cast<SelfAssessmentCompetencyFilter>()
-                            .Select(f => new FilterOptionViewModel(f.GetDescription(), f.ToString(), FilterStatus.Default)))
+                            .Select(f => new FilterOptionModel(f.GetDescription(), f.ToString(), FilterStatus.Default)))
             };
             AppliedFilters = appliedFilters ?? new List<AppliedFilterViewModel>();
         }
         public SearchSelfAssessmentOvervieviewViewModel()
         {
-            Filters = new List<FilterViewModel>();
+            Filters = new List<FilterModel>();
             AppliedFilters = new List<AppliedFilterViewModel>();
         }
     }

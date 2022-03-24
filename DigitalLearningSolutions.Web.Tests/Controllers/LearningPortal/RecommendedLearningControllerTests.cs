@@ -25,6 +25,7 @@
         private IFilteredApiHelperService filteredApiHelperService = null!;
         private IRecommendedLearningService recommendedLearningService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         [SetUp]
         public void Setup()
@@ -34,13 +35,15 @@
             configuration = A.Fake<IConfiguration>();
             recommendedLearningService = A.Fake<IRecommendedLearningService>();
             actionPlanService = A.Fake<IActionPlanService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             controller = new RecommendedLearningController(
                     filteredApiHelperService,
                     selfAssessmentService,
                     configuration,
                     recommendedLearningService,
-                    actionPlanService
+                    actionPlanService,
+                    searchSortFilterPaginateService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, delegateId: DelegateId);

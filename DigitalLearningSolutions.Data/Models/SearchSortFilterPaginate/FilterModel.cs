@@ -1,13 +1,13 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
+﻿namespace DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate
 {
     using System.Collections.Generic;
 
-    public class FilterViewModel
+    public class FilterModel
     {
-        public FilterViewModel(
+        public FilterModel(
             string filterProperty,
             string filterName,
-            IEnumerable<FilterOptionViewModel> filterOptions
+            IEnumerable<FilterOptionModel> filterOptions
         )
         {
             FilterProperty = filterProperty;
@@ -19,6 +19,6 @@
 
         public string FilterName { get; set; }
 
-        public IEnumerable<FilterOptionViewModel> FilterOptions { get; set; }
+        public IEnumerable<FilterOptionModel> FilterOptions { get; set; }
     }
 }

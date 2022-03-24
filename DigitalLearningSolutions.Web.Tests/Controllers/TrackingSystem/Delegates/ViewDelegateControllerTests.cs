@@ -78,7 +78,8 @@
             var result = viewDelegateController.ConfirmRemoveFromCourse(
                 1,
                 1,
-                DelegateAccessRoute.ViewDelegate
+                DelegateAccessRoute.ViewDelegate,
+                1
             );
 
             // Then
@@ -102,7 +103,8 @@
             var result = viewDelegateController.ConfirmRemoveFromCourse(
                 1,
                 1,
-                DelegateAccessRoute.ViewDelegate
+                DelegateAccessRoute.ViewDelegate,
+                1
             );
 
             // Then
