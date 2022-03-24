@@ -37,7 +37,7 @@
         public void GetCentreRegistrationPromptsByCentreId_Returns_Populated_CentreRegistrationPrompts()
         {
             // Given
-            var expectedPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: null, mandatory: true);
+            var expectedPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: null, mandatory: true, promptId: 3);
             var expectedPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2, "Department / team", null, true);
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt> { expectedPrompt1, expectedPrompt2 };
             var expectedPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(centreRegistrationPrompts);
@@ -66,7 +66,8 @@
                 1,
                 "Group",
                 "Clinical\r\nNon-Clinical",
-                true
+                true,
+                promptId: 3
             );
             var expectedPrompts = new List<CentreRegistrationPrompt> { expectedPrompt };
 
@@ -96,7 +97,8 @@
                     1,
                     options: null,
                     mandatory: true,
-                    answer: answer1
+                    answer: answer1,
+                    promptId: 3
                 );
             var expectedPrompt2 =
                 PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2, "Department / team", null, true);
@@ -132,7 +134,8 @@
                 1,
                 options: null,
                 mandatory: true,
-                answer: answer1
+                answer: answer1,
+                promptId: 3
             );
             var expectedPrompt2 =
                 PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2, "Department / team", null, true);
@@ -140,7 +143,8 @@
                 1,
                 options: null,
                 mandatory: true,
-                answer: answer2
+                answer: answer2,
+                promptId: 3
             );
             A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(29))
                 .Returns(

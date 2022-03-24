@@ -22,7 +22,7 @@
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);
             ValidatePageHeading("Add delegate registration prompt");
             var selectPromptResult = new AxeBuilder(Driver).Analyze();
-            Driver.SelectDropdownItemValue("CustomPromptId", "1");
+            Driver.SelectDropdownItemValue("CustomPromptId", "20");
             Driver.SubmitForm();
 
             ValidatePageHeading("Configure answers");

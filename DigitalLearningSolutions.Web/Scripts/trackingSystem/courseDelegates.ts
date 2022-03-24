@@ -18,5 +18,5 @@ exportCurrentLink.addEventListener('click', () => {
 const noJsStyling = document.getElementById('no-js-styling');
 if (noJsStyling === null) {
   // eslint-disable-next-line no-new
-  new SearchSortFilterAndPaginate(`TrackingSystem/Delegates/CourseDelegates/AllCourseDelegates/${customisationId}`, false, true, true, 'CourseDelegatesFilter');
+  new SearchSortFilterAndPaginate(`TrackingSystem/Delegates/CourseDelegates/AllCourseDelegates/${customisationId}`, false, true, true, 'CourseDelegatesFilter', undefined, 'CUSTOMISATIONID');
 }

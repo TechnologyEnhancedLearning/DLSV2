@@ -6,4 +6,4 @@ new SearchSortFilterAndPaginate('TrackingSystem/Delegates/All/AllDelegateItems',
   true,
   true,
   'DelegateFilter',
-  ['title', 'candidate-number']);
+  ['title', 'email', 'candidate-number']);

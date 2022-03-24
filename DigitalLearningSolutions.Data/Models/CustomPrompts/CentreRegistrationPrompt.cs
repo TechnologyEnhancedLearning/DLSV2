@@ -6,6 +6,7 @@
     {
         public CentreRegistrationPrompt(
             RegistrationField registrationField,
+            int promptId,
             string promptText,
             string? options,
             bool mandatory
@@ -13,8 +14,10 @@
         {
             RegistrationField = registrationField;
             Mandatory = mandatory;
+            PromptId = promptId;
         }
 
+        public int PromptId { get; set; }
         public RegistrationField RegistrationField { get; set; }
         public bool Mandatory { get; set; }
     }
