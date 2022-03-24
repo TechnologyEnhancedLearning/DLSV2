@@ -1,5 +1,5 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "courses";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "courses";
 
 .searchable-element {
   &.overdue {

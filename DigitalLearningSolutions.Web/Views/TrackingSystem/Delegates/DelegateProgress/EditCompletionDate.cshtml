@@ -10,7 +10,7 @@
 
   string cancelLinkController;
 
-  if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
     routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());
@@ -24,6 +24,14 @@
     $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the completed date",
   };
 
+}
+
+@section NavBreadcrumbs {
+  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesProgressBreadcrumbs.cshtml" model="(Model.CustomisationId, Model.ProgressId)" />
+  } else {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateProgressBreadcrumbs.cshtml" model="(Model.DelegateId, Model.ProgressId)" />
+  }
 }
 
 <div class="nhsuk-grid-row">

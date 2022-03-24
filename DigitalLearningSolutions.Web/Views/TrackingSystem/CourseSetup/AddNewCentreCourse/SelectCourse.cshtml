@@ -44,9 +44,9 @@
                   aria-describedby="@nameof(Model.ApplicationId)-error @nameof(Model.ApplicationId)-hint"
                   id="searchable-elements"
                   name="@nameof(Model.ApplicationId)"
-                  value="@Model.ApplicationId?.ToString()">
+                  value="@Model.ApplicationId">
 
-            <option id="default-option" disabled selected=@(Model.ApplicationId?.ToString() != null ? "" : "selected")>@defaultOptionText</option>
+            <option id="default-option" disabled selected=@(Model.ApplicationId != null ? "" : "selected")>@defaultOptionText</option>
             @foreach (var item in Model.ApplicationOptions) {
               <partial name="AddNewCentreCourse/_SelectCourseFilterableSelectListItem" model="@item" />
             }

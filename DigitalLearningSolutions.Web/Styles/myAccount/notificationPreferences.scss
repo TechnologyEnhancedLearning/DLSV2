@@ -1,4 +1,4 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
 
 .top-spaced-goback {
   margin-top: 32px;

@@ -25,7 +25,7 @@
         </div>
         <div class="nhsuk-grid-column-one-quarter heading-button-group">
           <a class="nhsuk-button nhsuk-button--secondary heading-button"
-             id="export-current"
+             id="export"
              asp-controller="CourseDelegates"
              asp-action="DownloadCurrent"
              asp-route-customisationId="@Model.CustomisationId"
@@ -33,7 +33,7 @@
              asp-route-sortDirection="@Model.CourseDetails?.SortDirection"
              asp-route-existingFilterString="@Model.CourseDetails?.ExistingFilterString"
              role="button">
-            Export current
+            Export
           </a>
         </div>
       </div>
@@ -41,7 +41,7 @@
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
           <p>
-            Choose a course to see delegates enrolled on it. If you'd like to export delegates on all courses, click "Export all" above.
+            Choose a course to see delegates enrolled on it.
           </p>
         </div>
       </div>
