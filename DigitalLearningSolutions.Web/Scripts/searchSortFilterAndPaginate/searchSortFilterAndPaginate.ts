@@ -136,7 +136,7 @@ export class SearchSortFilterAndPaginate {
     const paginatedElements = this.paginationEnabled
       ? paginateResults(sortedUniqueElements, this.page)
       : sortedUniqueElements;
-    this.displaySearchableElements(paginatedElements);
+    this.displaySearchableElementsAndRunSuppliedFunction(paginatedElements);
   }
 
   static getSearchableElements(route: string, searchableElementClassSuffixes: string[]):
@@ -196,7 +196,13 @@ export class SearchSortFilterAndPaginate {
     return element.getAttribute('data-filter-value')?.trim() ?? '';
   }
 
-  private displaySearchableElements(searchableElements: ISearchableElement[]): void {
+  private displaySearchableElementsAndRunSuppliedFunction(searchableElements: ISearchableElement[])
+    : void {
+    SearchSortFilterAndPaginate.displaySearchableElements(searchableElements);
+    this.functionToRunAfterDisplayingData();
+  }
+
+  static displaySearchableElements(searchableElements: ISearchableElement[]): void {
     const searchableElementsContainer = document.getElementById('searchable-elements');
     if (!searchableElementsContainer) {
       return;
@@ -207,8 +213,6 @@ export class SearchSortFilterAndPaginate {
     );
     // This is required to polyfill the new elements in IE
     Details();
-
-    this.functionToRunAfterDisplayingData();
   }
 
   static updateResultCount(count: number): void {
