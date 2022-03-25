@@ -67,11 +67,11 @@ pipeline {
         }
         stage('Deploy to UAR test') {
             when {
-                branch 'uar-test-but-I-will-add-some-guff-here-so-it-does-not-get-deployed-before-everything-is-ready'
+                branch 'uar-test'
             }
             steps {
                 withCredentials([string(credentialsId: 'deploy-test-password', variable: 'PASSWORD')]) {
-                    bat "dotnet publish DigitalLearningSolutions.Web/DigitalLearningSolutions.Web.csproj /p:PublishProfile=DigitalLearningSolutions.Web/Properties/PublishProfiles/PublishToTest.pubxml /p:Password=$PASSWORD /p:AllowUntrustedCertificate=True"
+                    bat "dotnet publish DigitalLearningSolutions.Web/DigitalLearningSolutions.Web.csproj /p:PublishProfile=DigitalLearningSolutions.Web/Properties/PublishProfiles/PublishToUARTest.pubxml /p:Password=$PASSWORD /p:AllowUntrustedCertificate=True"
                 }
             }
         }
