@@ -31,7 +31,7 @@
                             1,
                             options.PaginationOptions?.ItemsPerPage ?? int.MaxValue,
                             items.Count,
-                            items.Count
+                            items.Count <= 250
                         ),
                         options.SearchOptions?.SearchString,
                         options.SortOptions?.SortBy,

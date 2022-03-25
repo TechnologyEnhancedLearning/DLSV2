@@ -10,7 +10,7 @@
             int totalPages,
             int itemsPerPage,
             int matchingSearchResults,
-            int totalItems
+            bool javascriptSearchSortFilterPaginateEnabled
         )
         {
             ItemsToDisplay = itemsToDisplay;
@@ -18,7 +18,7 @@
             TotalPages = totalPages;
             ItemsPerPage = itemsPerPage;
             MatchingSearchResults = matchingSearchResults;
-            TotalItems = totalItems;
+            JavascriptSearchSortFilterPaginateEnabled = javascriptSearchSortFilterPaginateEnabled;
         }
 
         public PaginationResult(
@@ -30,7 +30,7 @@
             TotalPages = paginationResult.TotalPages;
             ItemsPerPage = paginationResult.ItemsPerPage;
             MatchingSearchResults = paginationResult.MatchingSearchResults;
-            TotalItems = paginationResult.TotalItems;
+            JavascriptSearchSortFilterPaginateEnabled = paginationResult.JavascriptSearchSortFilterPaginateEnabled;
         }
 
         public IEnumerable<T> ItemsToDisplay { get; set; }
@@ -43,6 +43,6 @@
 
         public int MatchingSearchResults { get; set; }
 
-        public int TotalItems { get; set; }
+        public bool JavascriptSearchSortFilterPaginateEnabled { get; set; }
     }
 }

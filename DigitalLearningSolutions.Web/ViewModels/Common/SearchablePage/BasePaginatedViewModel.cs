@@ -27,7 +27,7 @@
             ItemsPerPage = paginationResult.ItemsPerPage;
             MatchingSearchResults = paginationResult.MatchingSearchResults;
             TotalPages = paginationResult.TotalPages;
-            JavascriptSearchSortFilterPaginateEnabled = paginationResult.TotalItems <= 100;
+            JavascriptSearchSortFilterPaginateEnabled = paginationResult.JavascriptSearchSortFilterPaginateEnabled;
         }
 
         public int MatchingSearchResults { get; set; }

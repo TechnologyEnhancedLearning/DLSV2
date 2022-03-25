@@ -24,12 +24,12 @@
             int totalPages,
             int itemsPerPage,
             int matchingSearchResults,
-            int totalItems,
+            bool javascriptPaginationShouldBeEnabled,
             string? searchString,
             string? sortBy,
             string? sortDirection,
             string? filterString
-        ) : base(itemsToDisplay, page, totalPages, itemsPerPage, matchingSearchResults, totalItems)
+        ) : base(itemsToDisplay, page, totalPages, itemsPerPage, matchingSearchResults, javascriptPaginationShouldBeEnabled)
         {
             SearchString = searchString;
             SortBy = sortBy;

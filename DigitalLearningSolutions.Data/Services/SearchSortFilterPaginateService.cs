@@ -3,8 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using Microsoft.Extensions.Configuration;
 
     public interface ISearchSortFilterPaginateService
     {
@@ -16,6 +18,13 @@
 
     public class SearchSortFilterPaginateService : ISearchSortFilterPaginateService
     {
+        private readonly IConfiguration configuration;
+
+        public SearchSortFilterPaginateService(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+
         public SearchSortFilterPaginationResult<T> SearchFilterSortAndPaginate<T>(
             IEnumerable<T> items,
             SearchSortFilterAndPaginateOptions searchSortFilterAndPaginateOptions
@@ -24,6 +33,8 @@
             var allItems = items.ToList();
             var itemsToReturn = allItems;
             string? appliedFilterString = null;
+            var javascriptShouldBeEnabled =
+                allItems.Count <= configuration.GetJavascriptSearchSortFilterPaginateItemLimit();
 
             if (searchSortFilterAndPaginateOptions.SearchOptions != null)
             {
@@ -59,7 +70,11 @@
                 ).ToList();
             }
 
-            var paginateResult = PaginateItems(itemsToReturn, searchSortFilterAndPaginateOptions.PaginationOptions, allItems.Count);
+            var paginateResult = PaginateItems(
+                itemsToReturn,
+                searchSortFilterAndPaginateOptions.PaginationOptions,
+                javascriptShouldBeEnabled
+            );
 
             return new SearchSortFilterPaginationResult<T>(
                 paginateResult,
@@ -73,7 +88,7 @@
         private static PaginationResult<T> PaginateItems<T>(
             IEnumerable<T> items,
             PaginationOptions? paginationOptions,
-            int totalItems
+            bool javascriptShouldBeEnabled
         )
             where T : BaseSearchableItem
         {
@@ -96,7 +111,7 @@
                 totalPages,
                 paginationOptionsToUse.ItemsPerPage,
                 matchingSearchResults,
-                totalItems
+                javascriptShouldBeEnabled
             );
         }
 

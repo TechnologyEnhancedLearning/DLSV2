@@ -7,7 +7,9 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class SearchSortFilterPaginateServiceTests
@@ -27,11 +29,14 @@
         };
 
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IConfiguration configuration = null!;
 
         [SetUp]
         public void Setup()
         {
-            searchSortFilterPaginateService = new SearchSortFilterPaginateService();
+            configuration = A.Fake<IConfiguration>();
+            searchSortFilterPaginateService = new SearchSortFilterPaginateService(configuration);
+            A.CallTo(() => configuration["JavascriptSearchSortFilterPaginateItemLimit"]).Returns("250");
         }
 
         [Test]
@@ -45,7 +50,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1, allItems.Count()),
+                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1, true),
                 "A",
                 null,
                 null,
@@ -70,7 +75,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(allItems.OrderBy(x => x.Number), 1, 1, int.MaxValue, 10, allItems.Count()),
+                new PaginationResult<SortableItem>(allItems.OrderBy(x => x.Number), 1, 1, int.MaxValue, 10, true),
                 null,
                 "Number",
                 GenericSortingHelper.Ascending,
@@ -103,7 +108,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1, allItems.Count()),
+                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1, true),
                 null,
                 null,
                 null,
@@ -136,7 +141,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1, allItems.Count()),
+                new PaginationResult<SortableItem>(new[] { new SortableItem("A", 10) }, 1, 1, int.MaxValue, 1, true),
                 null,
                 null,
                 null,
@@ -169,7 +174,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(allItems, 1, 1, int.MaxValue, 10, allItems.Count()),
+                new PaginationResult<SortableItem>(allItems, 1, 1, int.MaxValue, 10, true),
                 null,
                 null,
                 null,
@@ -194,7 +199,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(allItems.Take(8), 1, 2, 8, 10, allItems.Count()),
+                new PaginationResult<SortableItem>(allItems.Take(8), 1, 2, 8, 10, true),
                 null,
                 null,
                 null,
@@ -219,7 +224,7 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(allItems.Skip(8), 2, 2, 8, 10, allItems.Count()),
+                new PaginationResult<SortableItem>(allItems.Skip(8), 2, 2, 8, 10, true),
                 null,
                 null,
                 null,
@@ -246,7 +251,33 @@
 
             // Then
             var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
-                new PaginationResult<SortableItem>(allItems.Take(5), 1, 2, 5, 10, allItems.Count()),
+                new PaginationResult<SortableItem>(allItems.Take(5), 1, 2, 5, 10, true),
+                null,
+                null,
+                null,
+                null
+            );
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public void SearchFilterSortAndPaginate_with_low_configured_item_limit_returns_javascript_enabled_false()
+        {
+            // Given
+            var options = new SearchSortFilterAndPaginateOptions(
+                null,
+                null,
+                null,
+                new PaginationOptions(1, 8)
+            );
+            A.CallTo(() => configuration["JavascriptSearchSortFilterPaginateItemLimit"]).Returns("2");
+
+            // When
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(allItems, options);
+
+            // Then
+            var expectedResult = new SearchSortFilterPaginationResult<SortableItem>(
+                new PaginationResult<SortableItem>(allItems.Take(8), 1, 2, 8, 10, false),
                 null,
                 null,
                 null,
