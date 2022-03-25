@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -11,6 +12,7 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -26,13 +28,15 @@
         private readonly ICourseService courseService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IUserDataService userDataService;
+        private readonly IConfiguration config;
 
         public ViewDelegateController(
             IUserDataService userDataService,
             PromptsService promptsService,
             ICourseService courseService,
             IPasswordResetService passwordResetService,
-            ICourseDataService courseDataService
+            ICourseDataService courseDataService,
+            IConfiguration config
         )
         {
             this.userDataService = userDataService;
@@ -40,6 +44,7 @@
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
             this.courseDataService = courseDataService;
+            this.config = config;
         }
 
         public IActionResult Index(int delegateId)
@@ -62,7 +67,7 @@
         {
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
 
-            var baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
+            var baseUrl = config.GetAppRootPath();
 
             passwordResetService.GenerateAndSendDelegateWelcomeEmail(
                 delegateUser.EmailAddress!,
@@ -85,9 +90,15 @@
         }
 
         [HttpGet]
-        [Route("{customisationId:int}/Remove")]
+        [Route("{customisationId:int}/{accessedVia}/Remove")]
+        [ServiceFilter(typeof(VerifyDelegateAccessedViaValidRoute))]
         [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
-        public IActionResult ConfirmRemoveFromCourse(int delegateId, int customisationId)
+        public IActionResult ConfirmRemoveFromCourse(
+            int delegateId,
+            int customisationId,
+            DelegateAccessRoute accessedVia,
+            int? returnPage
+        )
         {
             if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
             {
@@ -97,17 +108,19 @@
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
             var course = courseDataService.GetCourseNameAndApplication(customisationId);
 
-            var model = new RemoveFromCourseViewModel
-            {
-                DelegateId = delegateUser!.Id,
-                CustomisationId = customisationId,
-                CourseName = course!.CourseName,
-                Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
-                    delegateUser.FirstName,
+            var model = new RemoveFromCourseViewModel(
+                delegateId,
+                DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+                    delegateUser!.FirstName,
                     delegateUser.LastName
                 ),
-                Confirm = false,
-            };
+                customisationId,
+                course!.CourseName,
+                false,
+                accessedVia,
+                returnPage
+            );
+
             return View("ConfirmRemoveFromCourse", model);
         }
 
@@ -136,7 +149,13 @@
                 RemovalMethod.RemovedByAdmin
             );
 
-            return RedirectToAction("Index", new { delegateId });
+            return model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)
+                ? RedirectToAction(
+                    "Index",
+                    "CourseDelegates",
+                    new { customisationId, page = model.ReturnPage.ToString() }
+                )
+                : RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
 
         [HttpPost]
@@ -145,6 +164,7 @@
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+
             if (delegateUser?.CentreId != centreId)
             {
                 return new NotFoundResult();

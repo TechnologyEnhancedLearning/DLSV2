@@ -10,6 +10,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
@@ -169,7 +170,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<IClockService, ClockService>();
             services.AddScoped<ICommonService, CommonService>();
-            services.AddScoped<IConfigService, ConfigService>();
+            services.AddScoped<IConfigDataService, ConfigDataService>();
             services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
             services.AddScoped<ICourseCompletionService, CourseCompletionService>();
             services.AddScoped<ICourseContentService, CourseContentService>();
@@ -206,6 +207,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IResourcesService, ResourcesService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
+            services.AddScoped<ISearchSortFilterPaginateService, SearchSortFilterPaginateService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<ISessionService, SessionService>();
@@ -295,7 +297,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyAdminUserCanAccessDelegateUser>();
             services.AddScoped<VerifyAdminUserCanAccessProgress>();
             services.AddScoped<VerifyDelegateCanAccessActionPlanResource>();
-            services.AddScoped<VerifyDelegateProgressAccessedViaValidRoute>();
+            services.AddScoped<VerifyDelegateAccessedViaValidRoute>();
             services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
             services.AddScoped<AddNewCentreCourseData>();
         }

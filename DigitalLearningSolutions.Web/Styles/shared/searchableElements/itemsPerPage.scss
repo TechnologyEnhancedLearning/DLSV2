@@ -1,5 +1,5 @@
-@import "~nhsuk-frontend/packages/core/all";
-@import "common";
+@use "nhsuk-frontend/packages/core/all" as *;
+@use "common" as *;
 
 .items-per-page-box-container {
   display: flex;
@@ -47,7 +47,13 @@
 .items-per-page-submit {
   @extend .right-submit-button;
   background-color: $button-dark-blue;
-  
+
+  #js-styling-hidden-area-while-loading & {
+    .js-enabled & {
+      display: none;
+    }
+  }
+
   @include mq($from: tablet) {
     &.non-js-only {
       width: 33.3333%;

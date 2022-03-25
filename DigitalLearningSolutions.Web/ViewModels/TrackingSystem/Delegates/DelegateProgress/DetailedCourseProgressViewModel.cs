@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
@@ -11,7 +10,7 @@
     {
         public DetailedCourseProgressViewModel(
             DetailedCourseProgress progress,
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             string currentSystemBaseUrl
         )
         {
@@ -26,6 +25,10 @@
             );
             DelegateEmail = progress.DelegateEmail;
             DelegateNumber = progress.DelegateNumber;
+            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+                progress.HasBeenPromptedForPrn,
+                progress.ProfessionalRegistrationNumber
+            );
 
             LastUpdated = progress.LastUpdated.ToString(DateHelper.StandardDateAndTimeFormat);
             Enrolled = progress.Enrolled.ToString(DateHelper.StandardDateAndTimeFormat);
@@ -39,7 +42,7 @@
             Sections = progress.Sections.Select(s => new SectionProgressViewModel(s));
         }
 
-        public DelegateProgressAccessRoute AccessedVia { get; set; }
+        public DelegateAccessRoute AccessedVia { get; set; }
         public int ProgressId { get; set; }
         public int DelegateId { get; set; }
         public int CustomisationId { get; set; }
@@ -48,6 +51,7 @@
         public string DelegateName { get; set; }
         public string? DelegateEmail { get; set; }
         public string DelegateNumber { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
 
         public string LastUpdated { get; set; }
         public string Enrolled { get; set; }

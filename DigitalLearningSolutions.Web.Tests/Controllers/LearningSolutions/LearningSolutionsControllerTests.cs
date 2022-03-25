@@ -19,14 +19,14 @@
         private const int CandidateId = 11;
         private const int CentreId = 2;
         private ICentresDataService centresDataService = null!;
-        private IConfigService configService = null!;
+        private IConfigDataService configDataService = null!;
         private LearningSolutionsController controller = null!;
 
         [SetUp]
         public void SetUp()
         {
             centresDataService = A.Fake<ICentresDataService>();
-            configService = A.Fake<IConfigService>();
+            configDataService = A.Fake<IConfigDataService>();
             var logger = A.Fake<ILogger<LearningSolutionsController>>();
 
             var user = new ClaimsPrincipal(
@@ -40,7 +40,7 @@
                 )
             );
             controller = new LearningSolutionsController(
-                configService,
+                configDataService,
                 logger,
                 centresDataService
             )

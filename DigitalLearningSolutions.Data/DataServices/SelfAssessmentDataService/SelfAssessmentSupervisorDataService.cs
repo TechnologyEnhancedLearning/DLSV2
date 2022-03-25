@@ -9,31 +9,55 @@
 
     public partial class SelfAssessmentDataService
     {
+        private const string BaseGetSelfAssessmentSupervisorQuery =
+            @"SELECT
+                sd.ID,
+                sd.ID AS SupervisorDelegateID,
+                sd.SupervisorAdminID,
+                sd.SupervisorEmail,
+                sd.NotificationSent,
+                au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END) AS SupervisorName,
+                COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
+                sasr.SelfAssessmentReview,
+                sasr.ResultsReview,
+                sd.AddedByDelegate
+            FROM SupervisorDelegates AS sd
+            INNER JOIN CandidateAssessmentSupervisors AS cas
+                ON sd.ID = cas.SupervisorDelegateId
+            INNER JOIN CandidateAssessments AS ca
+                ON cas.CandidateAssessmentID = ca.ID
+            INNER JOIN AdminUsers AS au
+                ON sd.SupervisorAdminID = au.AdminID
+            LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
+                ON cas.SelfAssessmentSupervisorRoleID = sasr.ID";
+
+        private const string SelectSelfAssessmentSupervisorQuery =
+            @"SELECT
+                cas.ID,
+                sd.ID AS SupervisorDelegateID,
+                sd.SupervisorAdminID,
+                sd.SupervisorEmail,
+                sd.NotificationSent,
+                COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS SupervisorName,
+                COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
+                sasr.SelfAssessmentReview,
+                sasr.ResultsReview,
+                sd.AddedByDelegate
+            FROM SupervisorDelegates AS sd
+            INNER JOIN CandidateAssessmentSupervisors AS cas
+                ON sd.ID = cas.SupervisorDelegateId
+            INNER JOIN CandidateAssessments AS ca
+                ON cas.CandidateAssessmentID = ca.ID
+            LEFT OUTER JOIN AdminUsers AS au
+                ON sd.SupervisorAdminID = au.AdminID
+            LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
+                ON cas.SelfAssessmentSupervisorRoleID = sasr.ID";
+
         public SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int candidateId)
         {
             return connection.Query<SelfAssessmentSupervisor>(
-                @"SELECT
-                        sd.ID,
-                        sd.ID AS SupervisorDelegateID,
-                        sd.SupervisorAdminID,
-                        sd.SupervisorEmail,
-                        sd.NotificationSent,
-                        au.Forename + ' ' + au.Surname AS SupervisorName,
-                        COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
-                        sasr.SelfAssessmentReview,
-                        sasr.ResultsReview,
-                        sd.AddedByDelegate,
-                        sd.Confirmed
-                    FROM SupervisorDelegates AS sd
-                    INNER JOIN CandidateAssessmentSupervisors AS cas
-                        ON sd.ID = cas.SupervisorDelegateId
-                    INNER JOIN CandidateAssessments AS ca
-                        ON cas.CandidateAssessmentID = ca.ID
-                    INNER JOIN AdminUsers AS au
-                        ON sd.SupervisorAdminID = au.AdminID
-                    LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                        ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                    WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId)
+                @$"{BaseGetSelfAssessmentSupervisorQuery}
+                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
             ).FirstOrDefault();
@@ -45,28 +69,8 @@
         )
         {
             return connection.Query<SelfAssessmentSupervisor>(
-                @"SELECT
-                        sd.ID,
-                        sd.ID AS SupervisorDelegateID,
-                        sd.SupervisorAdminID,
-                        sd.SupervisorEmail,
-                        sd.NotificationSent,
-                        au.Forename + ' ' + au.Surname AS SupervisorName,
-                        COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
-                        sasr.SelfAssessmentReview,
-                        sasr.ResultsReview,
-                        sd.AddedByDelegate,
-                        sd.Confirmed
-                    FROM SupervisorDelegates AS sd
-                    INNER JOIN CandidateAssessmentSupervisors AS cas
-                        ON sd.ID = cas.SupervisorDelegateId
-                    INNER JOIN CandidateAssessments AS ca
-                        ON cas.CandidateAssessmentID = ca.ID
-                    INNER JOIN AdminUsers AS au
-                        ON sd.SupervisorAdminID = au.AdminID
-                    LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                        ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                    WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId)
+                @$"{BaseGetSelfAssessmentSupervisorQuery}
+                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
             );
@@ -78,27 +82,7 @@
         )
         {
             return connection.Query<SelfAssessmentSupervisor>(
-                @"SELECT
-                        cas.ID,
-                        sd.ID AS SupervisorDelegateID,
-                        sd.SupervisorAdminID,
-                        sd.SupervisorEmail,
-                        sd.NotificationSent,
-                        COALESCE(au.Forename + ' ' + au.Surname, sd.SupervisorEmail) AS SupervisorName,
-                        COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
-                        sasr.SelfAssessmentReview,
-                        sasr.ResultsReview,
-                        sd.AddedByDelegate,
-                        sd.Confirmed
-                    FROM SupervisorDelegates AS sd
-                    INNER JOIN CandidateAssessmentSupervisors AS cas
-                        ON sd.ID = cas.SupervisorDelegateId
-                    INNER JOIN CandidateAssessments AS ca
-                        ON cas.CandidateAssessmentID = ca.ID
-                    LEFT OUTER JOIN AdminUsers AS au
-                        ON sd.SupervisorAdminID = au.AdminID
-                    LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                        ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+                @$"{SelectSelfAssessmentSupervisorQuery}
                     WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
             );
@@ -110,28 +94,8 @@
         )
         {
             return connection.Query<SelfAssessmentSupervisor>(
-                @"SELECT
-                        cas.ID,
-                        sd.ID AS SupervisorDelegateID,
-                        sd.SupervisorAdminID,
-                        sd.SupervisorEmail,
-                        sd.NotificationSent,
-                        COALESCE(au.Forename + ' ' + au.Surname, sd.SupervisorEmail) AS SupervisorName,
-                        COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
-                        sasr.SelfAssessmentReview,
-                        sasr.ResultsReview,
-                        sd.AddedByDelegate,
-                        sd.Confirmed
-                    FROM SupervisorDelegates AS sd
-                    INNER JOIN CandidateAssessmentSupervisors AS cas
-                        ON sd.ID = cas.SupervisorDelegateId
-                    INNER JOIN CandidateAssessments AS ca
-                        ON cas.CandidateAssessmentID = ca.ID
-                    LEFT OUTER JOIN AdminUsers AS au
-                        ON sd.SupervisorAdminID = au.AdminID
-                    LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                        ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                    WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId)
+                @$"{SelectSelfAssessmentSupervisorQuery}
+                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sd.SupervisorAdminID IS NOT NULL)
                         AND (coalesce(sasr.ResultsReview, 1) = 1)",
                 new { selfAssessmentId, candidateId }
@@ -143,38 +107,27 @@
             int candidateId
         )
         {
-            return connection.Query<SelfAssessmentSupervisor>(
+            const string selectQuery =
                 @"SELECT
-                        0 AS ID,
-                        sd.ID AS SupervisorDelegateID,
-                        sd.SupervisorAdminID,
-                        sd.SupervisorEmail,
-                        sd.NotificationSent,
-                        au.Forename + ' ' + au.Surname AS SupervisorName,
-                        'Supervisor' AS RoleName
-                    FROM SupervisorDelegates AS sd
-                    INNER JOIN CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId
-                    INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
-                    INNER JOIN AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID
-                    WHERE (sd.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId)
+                    0 AS ID,
+                    sd.ID AS SupervisorDelegateID,
+                    sd.SupervisorAdminID,
+                    sd.SupervisorEmail,
+                    sd.NotificationSent,
+                    au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END) AS SupervisorName,
+                    'Supervisor' AS RoleName
+                FROM SupervisorDelegates AS sd
+                INNER JOIN CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId
+                INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
+                INNER JOIN AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID";
+
+            return connection.Query<SelfAssessmentSupervisor>(
+                @$"{selectQuery}
+                    WHERE (sd.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.CandidateID = @candidateId)
                     EXCEPT
-                    SELECT
-                        0 AS ID,
-                        sd.ID AS SupervisorDelegateID,
-                        sd.SupervisorAdminID,
-                        sd.SupervisorEmail,
-                        sd.NotificationSent,
-                        au.Forename + ' ' + au.Surname AS SupervisorName,
-                        'Supervisor' AS RoleName
-                    FROM SupervisorDelegates AS sd
-                    INNER JOIN CandidateAssessmentSupervisors AS cas
-                        ON sd.ID = cas.SupervisorDelegateId
-                    INNER JOIN CandidateAssessments AS ca
-                        ON cas.CandidateAssessmentID = ca.ID
-                    INNER JOIN AdminUsers AS au
-                        ON sd.SupervisorAdminID = au.AdminID
-                    WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
-                    GROUP BY sd.ID, SupervisorAdminID, SupervisorEmail, sd.NotificationSent, au.Forename + ' ' + au.Surname",
+                    {selectQuery}
+                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
+                    GROUP BY sd.ID, SupervisorAdminID, SupervisorEmail, sd.NotificationSent, au.Forename + ' ' + au.Surname, au.Active",
                 new { selfAssessmentId, candidateId }
             );
         }
@@ -184,27 +137,7 @@
         )
         {
             return connection.Query<SelfAssessmentSupervisor>(
-                @"SELECT
-                        cas.ID,
-                        sd.ID AS SupervisorDelegateID,
-                        sd.SupervisorAdminID,
-                        sd.SupervisorEmail,
-                        sd.NotificationSent,
-                        COALESCE(au.Forename + ' ' + au.Surname, sd.SupervisorEmail) AS SupervisorName,
-                        COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
-                        sasr.SelfAssessmentReview,
-                        sasr.ResultsReview,
-                        sd.AddedByDelegate,
-                        sd.Confirmed
-                    FROM SupervisorDelegates AS sd
-                    INNER JOIN CandidateAssessmentSupervisors AS cas
-                        ON sd.ID = cas.SupervisorDelegateId
-                    INNER JOIN CandidateAssessments AS ca
-                        ON cas.CandidateAssessmentID = ca.ID
-                    LEFT OUTER JOIN AdminUsers AS au
-                        ON sd.SupervisorAdminID = au.AdminID
-                    LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                        ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+                @$"{SelectSelfAssessmentSupervisorQuery}
                     WHERE cas.ID = @candidateAssessmentSupervisorId",
                 new { candidateAssessmentSupervisorId }
             ).FirstOrDefault();
@@ -216,28 +149,8 @@
         )
         {
             return connection.Query<SelfAssessmentSupervisor>(
-                @"SELECT
-                        cas.ID,
-                        sd.ID AS SupervisorDelegateID,
-                        sd.SupervisorAdminID,
-                        sd.SupervisorEmail,
-                        sd.NotificationSent,
-                        COALESCE(au.Forename + ' ' + au.Surname, sd.SupervisorEmail) AS SupervisorName,
-                        COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
-                        sasr.SelfAssessmentReview,
-                        sasr.ResultsReview,
-                        sd.AddedByDelegate,
-                        sd.Confirmed
-                    FROM SupervisorDelegates AS sd
-                    INNER JOIN CandidateAssessmentSupervisors AS cas
-                        ON sd.ID = cas.SupervisorDelegateId
-                    INNER JOIN CandidateAssessments AS ca
-                        ON cas.CandidateAssessmentID = ca.ID
-                    LEFT OUTER JOIN AdminUsers AS au
-                        ON sd.SupervisorAdminID = au.AdminID
-                    LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                        ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                    WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
+                @$"{SelectSelfAssessmentSupervisorQuery}
+                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
                         AND (sd.SupervisorAdminID IS NOT NULL) AND (coalesce(sasr.SelfAssessmentReview, 1) = 1)
                         AND (cas.ID NOT IN (SELECT CandidateAssessmentSupervisorID FROM CandidateAssessmentSupervisorVerifications WHERE Verified IS NULL))",
                 new { selfAssessmentId, candidateId }
@@ -317,6 +230,7 @@
                         AdminID,
                         Forename,
                         Surname,
+                        Active,
                         Email,
                         ProfileImage,
                         IsFrameworkDeveloper
@@ -344,7 +258,7 @@
         public Administrator GetSupervisorByAdminId(int supervisorAdminId)
         {
             return connection.Query<Administrator>(
-                @"SELECT AdminID, Forename, Surname, Email, ProfileImage, IsFrameworkDeveloper
+                @"SELECT AdminID, Forename, Surname, Active, Email, ProfileImage, IsFrameworkDeveloper
                     FROM AdminUsers
                     WHERE (AdminID = @supervisorAdminId)",
                 new { supervisorAdminId }
@@ -360,7 +274,7 @@
                 @"SELECT
                         casv.ID,
                         casv.CandidateAssessmentSupervisorID,
-                        au.Forename + ' ' + au.Surname AS SupervisorName,
+                        au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END) AS SupervisorName,
                         au.Email AS SupervisorEmail,
                         COALESCE(sasr.Rolename, 'Supervisor') AS SupervisorRoleName,
                         casv.Requested,

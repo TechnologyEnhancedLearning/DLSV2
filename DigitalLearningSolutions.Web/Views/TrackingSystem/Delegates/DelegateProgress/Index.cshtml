@@ -6,7 +6,7 @@
   ViewData["Title"] = "Delegate progress";
   var routeParamsForBackLink = new Dictionary<string, string?>();
 
-  if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
     routeParamsForBackLink.Add("page", Model.Page.ToString());
   } else {
@@ -15,7 +15,7 @@
 }
 
 @section NavBreadcrumbs {
-  @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesBreadcrumbs.cshtml" model="Model.CustomisationId" />
   } else {
     <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateBreadcrumbs.cshtml" model="Model.DelegateId" />
@@ -26,8 +26,16 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateAndCourseNames.cshtml"
-             model="(Model.DelegateNameAndEmail, Model.CourseName)" />
+    <partial name="_DelegateDetails" model="Model" />
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
+        Course
+      </div>
+      <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold">
+        @Model.CourseName
+      </div>
+    </div>
 
     @if (!Model.IsCourseActive) {
       <partial name="~/Views/TrackingSystem/Shared/_InactiveCourseInset.cshtml" />
@@ -49,7 +57,7 @@
       View learning log
     </a>
 
-    @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
       <vc:back-link asp-controller="CourseDelegates" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
     } else {
       <vc:back-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />

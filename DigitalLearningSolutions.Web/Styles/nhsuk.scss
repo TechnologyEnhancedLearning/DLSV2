@@ -1,5 +1,4 @@
-﻿@import "~nhsuk-frontend/packages/nhsuk";
-
+﻿@use "nhsuk-frontend/packages/nhsuk" as *;
 
 .nhsuk-u-margin-right-auto {
     margin-right: auto;

@@ -1,10 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Common;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -15,9 +19,6 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
-    using System.Collections.Generic;
-    using System.Linq;
-    using DigitalLearningSolutions.Data.Models.User;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
@@ -29,6 +30,7 @@
         private const string AdminFilterCookieName = "AdminFilter";
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
 
@@ -36,50 +38,64 @@
             IUserDataService userDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
             ICentreContractAdminUsageService centreContractAdminUsageService,
-            IUserService userService
+            IUserService userService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.userDataService = userDataService;
             this.courseCategoriesDataService = courseCategoriesDataService;
             this.centreContractAdminUsageService = centreContractAdminUsageService;
             this.userService = userService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("{page=1:int}")]
         public IActionResult Index(
             string? searchString = null,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
+            bool clearFilters = false,
             int page = 1,
             int? itemsPerPage = null
         )
         {
-            filterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
                 Request,
                 AdminFilterCookieName
             );
 
             var centreId = User.GetCentreId();
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
-            var categories = GetCourseCategories(centreId);
+            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var loggedInUserId = User.GetAdminId();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
 
+            var availableFilters =
+                AdministratorsViewModelFilterOptions.GetAllAdministratorsFilterModels(categories);
+
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(GenericSortingHelper.DefaultSortOption, GenericSortingHelper.Ascending),
+                new FilterOptions(existingFilterString, availableFilters),
+                new PaginationOptions(page, itemsPerPage)
+            );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                adminUsersAtCentre,
+                searchSortPaginationOptions
+            );
 
             var model = new CentreAdministratorsViewModel(
                 centreId,
-                adminUsersAtCentre,
-                categories,
-                searchString,
-                filterBy,
-                page,
-                loggedInAdminUser!,
-                itemsPerPage
+                result,
+                availableFilters,
+                loggedInAdminUser!
             );
 
-            Response.UpdateOrDeleteFilterCookie(AdminFilterCookieName, filterBy);
+            Response.UpdateFilterCookie(AdminFilterCookieName, result.FilterString);
 
             return View(model);
         }
@@ -91,9 +107,8 @@
             var loggedInUserId = User.GetAdminId();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
 
-
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
-            var categories = GetCourseCategories(centreId);
+            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var model = new AllAdminsViewModel(
                 adminUsersAtCentre,
                 categories,
@@ -153,7 +168,7 @@
             {
                 return NotFound();
             }
-            
+
             var model = new DeactivateAdminViewModel(adminUser!, returnPage);
             return View(model);
         }
@@ -178,14 +193,6 @@
             userService.DeactivateOrDeleteAdmin(adminId);
 
             return View("DeactivateOrDeleteAdminConfirmation");
-        }
-
-        private IEnumerable<string> GetCourseCategories(int centreId)
-        {
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
-                .Select(c => c.CategoryName);
-            categories = categories.Prepend("All");
-            return categories;
         }
 
         private bool CurrentUserCanDeactivateAdmin(AdminUser adminToDeactivate)

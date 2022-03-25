@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -10,19 +12,21 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Http;
     using FluentAssertions.Execution;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     public class GroupCoursesControllerTests
     {
+        private const string CookieName = "GroupAddCourseFilter";
         private ICourseService courseService = null!;
         private GroupCoursesController groupCoursesController = null!;
         private IGroupsService groupsService = null!;
-        private IUserService userService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -30,20 +34,21 @@
             groupsService = A.Fake<IGroupsService>();
             userService = A.Fake<IUserService>();
             courseService = A.Fake<ICourseService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             A.CallTo(() => groupsService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
-            const string cookieName = "GroupAddCourseFilter";
             const string cookieValue = "CategoryName|CategoryName|Category";
 
             groupCoursesController = new GroupCoursesController(
                     userService,
                     courseService,
-                    groupsService
+                    groupsService,
+                    searchSortFilterPaginateService
                 )
-                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
+                .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();
@@ -70,86 +75,35 @@
         }
 
         [Test]
-        public void AddCourseToGroupSelectCourse_with_no_query_parameters_uses_cookie_value_for_filterBy()
+        public void AddCourseToGroupSelectCourse_calls_expected_methods_and_returns_view()
         {
             // When
             var result = groupCoursesController.AddCourseToGroupSelectCourse(1);
 
             // Then
-            result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
-                .Be("CategoryName|CategoryName|Category");
-        }
-
-        [Test]
-        public void AddCourseToGroupSelectCourse_with_query_parameters_uses_query_parameter_value_for_filterBy()
-        {
-            // Given
-            const string filterBy = "CategoryName|CategoryName|Category";
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
-
-            // When
-            var result = groupCoursesController.AddCourseToGroupSelectCourse(1, filterBy: filterBy);
-
-            // Then
-            result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
-                .Be(filterBy);
-        }
-
-        [Test]
-        public void AddCourseToGroupSelectCourse_with_CLEAR_filterBy_query_parameter_removes_cookie()
-        {
-            // Given
-            const string? filterBy = "CLEAR";
-
-            // When
-            var result = groupCoursesController.AddCourseToGroupSelectCourse(1, filterBy: filterBy);
-
-            // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => httpResponse.Cookies.Delete("GroupAddCourseFilter")).MustHaveHappened();
-                result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
-                    .BeNull();
-            }
-        }
-
-        [Test]
-        public void AddCourseToGroupSelectCourse_with_null_filterBy_and_new_filter_query_parameter_add_new_cookie_value()
-        {
-            // Given
-            const string? filterBy = null;
-            const string? newFilterValue = "CategoryName|CategoryName|Category";
-
-            // When
-            var result = groupCoursesController.AddCourseToGroupSelectCourse(1, filterBy: filterBy, filterValue: newFilterValue);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => httpResponse.Cookies.Append("GroupAddCourseFilter", newFilterValue, A<CookieOptions>._))
+                A.CallTo(() => courseService.GetEligibleCoursesToAddToGroup(A<int>._, A<int?>._, A<int>._))
                     .MustHaveHappened();
-                result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
-                    .Be(newFilterValue);
-            }
-        }
-
-        [Test]
-        public void AddCourseToGroupSelectCourse_with_CLEAR_filterBy_and_new_filter_value_query_parameter_sets_cookie()
-        {
-            // Given
-            const string? filterBy = "CLEAR";
-            const string? newFilterValue = "CategoryName|CategoryName|Category";
-
-            // When
-            var result = groupCoursesController.AddCourseToGroupSelectCourse(1, filterBy: filterBy, filterValue: newFilterValue);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => httpResponse.Cookies.Append("GroupAddCourseFilter", newFilterValue, A<CookieOptions>._))
+                A.CallTo(() => courseService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
                     .MustHaveHappened();
-                result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
-                    .Be(newFilterValue);
+                A.CallTo(() => courseService.GetTopicsForCentreAndCentrallyManagedCourses(A<int>._)).MustHaveHappened();
+                A.CallTo(() => groupsService.GetGroupName(A<int>._, A<int>._)).MustHaveHappened();
+                A.CallTo(
+                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                        A<IEnumerable<CourseAssessmentDetails>>._,
+                        A<SearchSortFilterAndPaginateOptions>._
+                    )
+                ).MustHaveHappened();
+                A.CallTo(
+                        () => httpResponse.Cookies.Append(
+                            CookieName,
+                            A<string>._,
+                            A<CookieOptions>._
+                        )
+                    )
+                    .MustHaveHappened();
+                result.Should().BeViewResult().WithDefaultViewName();
             }
         }
 

@@ -30,8 +30,9 @@
                 returnedModel.Id.Should().Be(delegateUser.Id);
                 returnedModel.CandidateNumber.Should().Be(delegateUser.CandidateNumber);
                 returnedModel.TitleName.Should().Be(
-                    $"{delegateUser.FirstName} {delegateUser.LastName} ({delegateUser.EmailAddress})"
+                    $"{delegateUser.FirstName} {delegateUser.LastName}"
                 );
+                returnedModel.Email.Should().Be(delegateUser.EmailAddress);
                 returnedModel.DateRegistered.Should().Be(delegateUser.DateRegistered);
                 returnedModel.JobGroup.Should().Be(delegateUser.JobGroupName);
                 returnedModel.DelegateRegistrationPrompts.Should().NotBeNullOrEmpty();

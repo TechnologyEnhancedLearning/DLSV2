@@ -1,26 +1,27 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class CategoryTopicFilterViewModel : FilterViewModel
+    public class CategoryTopicFilterViewModel : FilterModel
     {
         public CategoryTopicFilterViewModel(
             string filterProperty,
             string filterName,
-            IEnumerable<FilterOptionViewModel> filterOptions,
+            IEnumerable<FilterOptionModel> filterOptions,
             string actionParameterName,
-            string? categoryFilterBy,
-            string? topicFilterBy
+            string? categoryFilterString,
+            string? topicFilterString
         ) : base(filterProperty, filterName, filterOptions)
         {
             ActionParameterName = actionParameterName;
-            CategoryFilterBy = categoryFilterBy;
-            TopicFilterBy = topicFilterBy;
+            CategoryFilterString = categoryFilterString;
+            TopicFilterString = topicFilterString;
         }
 
         public string ActionParameterName { get; }
-        public string? CategoryFilterBy { get; }
-        public string? TopicFilterBy { get; }
+        public string? CategoryFilterString { get; }
+        public string? TopicFilterString { get; }
     }
 }

@@ -16,17 +16,19 @@
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
         public string? AliasId { get; set; }
+
         /// <summary>
-        /// This signifies that the user has either seen the PRN fields themselves
-        /// or an admin has seen the PRN fields when editing the delegate.
-        /// This is used to distinguish whether a null ProfessionalRegistrationNumber
-        /// means they have responded No or haven't answered it yet.
+        ///     This signifies that the user has either seen the PRN fields themselves
+        ///     or an admin has seen the PRN fields when editing the delegate.
+        ///     This is used to distinguish whether a null ProfessionalRegistrationNumber
+        ///     means they have responded No or haven't answered it yet.
         /// </summary>
         public bool HasBeenPromptedForPrn { get; set; }
+
         public string? ProfessionalRegistrationNumber { get; set; }
         public bool HasDismissedLhLoginWarning { get; set; }
 
-        public override string[] SearchableContent => new []{ SearchableName, CandidateNumber };
+        public override string?[] SearchableContent => new[] { SearchableName, CandidateNumber, EmailAddress };
 
         public override UserReference ToUserReference()
         {

@@ -49,7 +49,7 @@
             DiagnosticCompletionStatus = GetDiagnosticCompletionStatus(sectionContent);
             ConsolidationExercisePath = sectionContent.ConsolidationPath == null
                 ? null
-                : config.GetConsolidationPathUrl(sectionContent.ConsolidationPath);
+                : OldSystemEndpointHelper.GetConsolidationPathUrl(config, sectionContent.ConsolidationPath);
             ShowConsolidation = ConsolidationExercisePath != null;
             ConsolidationExerciseLabel = sectionContent.CourseSettings.ConsolidationExercise ?? "Consolidation Exercise";
 

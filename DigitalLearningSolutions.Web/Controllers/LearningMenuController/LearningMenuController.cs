@@ -17,12 +17,11 @@
     {
         private readonly ILogger<LearningMenuController> logger;
         private readonly IConfiguration config;
-        private readonly IConfigService configService;
+        private readonly IConfigDataService configDataService;
         private readonly ICourseContentService courseContentService;
         private readonly ISessionService sessionService;
         private readonly ISectionContentDataService sectionContentDataService;
         private readonly ITutorialContentDataService tutorialContentDataService;
-        private readonly IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
         private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
         private readonly IPostLearningAssessmentService postLearningAssessmentService;
         private readonly ICourseCompletionService courseCompletionService;
@@ -30,11 +29,10 @@
         public LearningMenuController(
             ILogger<LearningMenuController> logger,
             IConfiguration config,
-            IConfigService configService,
+            IConfigDataService configDataService,
             ICourseContentService courseContentService,
             ISectionContentDataService sectionContentDataService,
             ITutorialContentDataService tutorialContentDataService,
-            IDiagnosticAssessmentDataService diagnosticAssessmentDataService,
             IDiagnosticAssessmentService diagnosticAssessmentService,
             IPostLearningAssessmentService postLearningAssessmentService,
             ISessionService sessionService,
@@ -43,12 +41,11 @@
         {
             this.logger = logger;
             this.config = config;
-            this.configService = configService;
+            this.configDataService = configDataService;
             this.courseContentService = courseContentService;
             this.tutorialContentDataService = tutorialContentDataService;
             this.sessionService = sessionService;
             this.sectionContentDataService = sectionContentDataService;
-            this.diagnosticAssessmentDataService = diagnosticAssessmentDataService;
             this.diagnosticAssessmentService = diagnosticAssessmentService;
             this.postLearningAssessmentService = postLearningAssessmentService;
             this.courseCompletionService = courseCompletionService;
@@ -60,7 +57,7 @@
             var centreId = User.GetCentreId();
             if (config.GetValue<string>("LegacyLearningMenu") != "")
             {
-                if ((config.GetValue<bool>("LegacyLearningMenu") && !configService.GetCentreBetaTesting(centreId))|(!config.GetValue<bool>("LegacyLearningMenu") && configService.GetCentreBetaTesting(centreId)))
+                if ((config.GetValue<bool>("LegacyLearningMenu") && !configDataService.GetCentreBetaTesting(centreId))|(!config.GetValue<bool>("LegacyLearningMenu") && configDataService.GetCentreBetaTesting(centreId)))
                 {
                     string baseUrl = config.GetValue<string>("CurrentSystemBaseUrl");
                     string url = $"{baseUrl}/tracking/learn?customisationid={customisationId}&lp=1";

@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
-@model BaseSearchablePageViewModel
+@model IBaseSearchablePageViewModel
 
 <form method="get" role="search">
   <input type="hidden" name="searchString" value="@Model.SearchString" />
@@ -7,7 +7,7 @@
   <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
   @if (Model.FilterEnabled)
   {
-    <input type="hidden" name="filterBy" value="@Model.FilterBy" />
+    <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
   }
   @foreach (var (key, value) in Model.RouteData)
   {
@@ -25,7 +25,7 @@
               asp-items="Model.ItemsPerPageSelectListItems"
               aria-label="Items per page">
       </select>
-      <button class="non-js-only nhsuk-search__submit items-per-page-submit" type="submit" asp-route-page="1">
+      <button class="nhsuk-search__submit items-per-page-submit" type="submit" asp-route-page="1">
         Update
       </button>
     </div>

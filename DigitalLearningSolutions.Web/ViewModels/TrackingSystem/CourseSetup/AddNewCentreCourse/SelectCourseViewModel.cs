@@ -3,54 +3,33 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class SelectCourseViewModel : BaseSearchablePageViewModel
+    public class SelectCourseViewModel : BaseSearchablePageViewModel<ApplicationDetails>
     {
         public SelectCourseViewModel(
-            IEnumerable<ApplicationDetails> applications,
-            IEnumerable<string> categories,
-            IEnumerable<string> topics,
-            int? adminCategoryFilter,
-            string? categoryFilterBy,
-            string? topicFilterBy
+            SearchSortFilterPaginationResult<ApplicationDetails> result,
+            IEnumerable<FilterModel> availableFilters,
+            string? categoryFilterString,
+            string? topicFilterString
         ) : base(
-            null,
-            1,
+            result,
             true,
-            nameof(ApplicationDetails.ApplicationName),
-            GenericSortingHelper.Ascending,
-            FilteringHelper.GetCategoryAndTopicFilterBy(categoryFilterBy, topicFilterBy)
+            availableFilters
         )
         {
-            var applicationsList = applications.ToList();
-            var applicationsToShow = FilterItems(applicationsList);
+            ApplicationOptions = result.ItemsToDisplay.Select(a => new FilterableApplicationSelectListItemViewModel(a));
 
-            ApplicationOptions = applicationsToShow.Select(a => new FilterableApplicationSelectListItemViewModel(a));
-
-            CategoryFilterBy = categoryFilterBy;
-            TopicFilterBy = topicFilterBy;
-
-            Filters = adminCategoryFilter == null
-                ? SelectCourseViewModelFilterOptions.GetAllCategoriesFilters(
-                    categories,
-                    topics,
-                    categoryFilterBy,
-                    topicFilterBy
-                )
-                : SelectCourseViewModelFilterOptions.GetSingleCategoryFilters(
-                    applicationsList,
-                    categoryFilterBy,
-                    topicFilterBy
-                );
+            CategoryFilterString = categoryFilterString;
+            TopicFilterString = topicFilterString;
         }
 
         public int? ApplicationId { get; set; }
         public IEnumerable<FilterableApplicationSelectListItemViewModel> ApplicationOptions { get; set; }
-        public string? CategoryFilterBy { get; set; }
-        public string? TopicFilterBy { get; set; }
+        public string? CategoryFilterString { get; set; }
+        public string? TopicFilterString { get; set; }
         public override IEnumerable<(string, string)> SortOptions { get; } = Array.Empty<(string, string)>();
         public override bool NoDataFound => !ApplicationOptions.Any() && NoSearchOrFilter;
     }

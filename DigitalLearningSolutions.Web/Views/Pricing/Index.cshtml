@@ -1,7 +1,9 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Data.Extensions
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration configuration
 @{
   ViewData["Title"] = "Pricing";
-  var url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/pricing?nonav=true";
+  var url = $"{configuration.GetCurrentSystemBaseUrl()}/pricing?nonav=true";
 }
 
 <div class="nhsuk-grid-row">

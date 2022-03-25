@@ -1,26 +1,31 @@
-﻿namespace DigitalLearningSolutions.Data.Helpers
+﻿namespace DigitalLearningSolutions.Data.Extensions
 {
     using Microsoft.Extensions.Configuration;
 
-    public static class ConfigHelper
+    public static class ConfigurationExtensions
     {
-        public const string AppRootPathName = "AppRootPath";
-        public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
+        public const string UseSignposting = "FeatureManagement:UseSignposting";
+
+        private const string AppRootPathName = "AppRootPath";
+        private const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
         private const string LearningHubOpenApiKey = "LearningHubOpenAPIKey";
         private const string LearningHubOpenApiBaseUrl = "LearningHubOpenAPIBaseUrl";
-        public const string UseSignposting = "FeatureManagement:UseSignposting";
         private const string PricingPageEnabled = "FeatureManagement:PricingPage";
 
-        public const string LearningHubAuthBaseUrl = "BaseUrl";
-        public const string LearningHubAuthLoginEndpoint = "LoginEndpoint";
-        public const string LearningHubAuthLinkingEndpoint = "LinkingEndpoint";
-        public const string LearningHubAuthClientCode = "ClientCode";
+        private const string LearningHubAuthBaseUrl = "BaseUrl";
+        private const string LearningHubAuthLoginEndpoint = "LoginEndpoint";
+        private const string LearningHubAuthLinkingEndpoint = "LinkingEndpoint";
+        private const string LearningHubAuthClientCode = "ClientCode";
 
-        public const string LearningHubSsoSectionKey = "LearningHubSSO";
+        private const string MapsApiKey = "MapsAPIKey";
+        private const string LearningHubSsoSectionKey = "LearningHubSSO";
         private const string LearningHubSsoToleranceKey = "ToleranceInSeconds";
         private const string LearningHubSsoIterationsKey = "HashIterations";
         private const string LearningHubSsoByteLengthKey = "ByteLength";
         private const string LearningHubSsoSecretKey = "SecretKey";
+
+        private const string JavascriptSearchSortFilterPaginateItemLimitKey =
+            "JavascriptSearchSortFilterPaginateItemLimit";
 
         public static string GetAppRootPath(this IConfiguration config)
         {
@@ -90,6 +95,16 @@
         public static string GetLearningHubSsoSecretKey(this IConfiguration config)
         {
             return config[$"{LearningHubSsoSectionKey}:{LearningHubSsoSecretKey}"];
+        }
+
+        public static string GetMapsApiKey(this IConfiguration config)
+        {
+            return config[MapsApiKey];
+        }
+
+        public static int GetJavascriptSearchSortFilterPaginateItemLimit(this IConfiguration config)
+        {
+            return int.Parse(config[JavascriptSearchSortFilterPaginateItemLimitKey]);
         }
     }
 }

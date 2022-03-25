@@ -15,21 +15,8 @@
         {
             DelegateGroups = groups.Select(g => new SearchableDelegateGroupViewModel(g, null));
 
-            var admins = groups.Select(g => (g.AddedByAdminId, g.AddedByName)).Distinct();
-
-            Filters = new[]
-            {
-                new FilterViewModel(
-                    nameof(Group.AddedByAdminId),
-                    "Added by",
-                    DelegateGroupsViewModelFilterOptions.GetAddedByOptions(admins)
-                ),
-                new FilterViewModel(
-                    nameof(Group.LinkedToField),
-                    "Linked field",
-                    DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(registrationPrompts)
-                )
-            }.SelectAppliedFilterViewModels();
+            Filters = DelegateGroupsViewModelFilterOptions.GetDelegateGroupFilterModels(groups, registrationPrompts)
+                .SelectAppliedFilterViewModels();
         }
     }
 }

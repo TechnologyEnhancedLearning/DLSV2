@@ -1,7 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -23,17 +26,20 @@
         private const string GroupAddCourseFilterCookieName = "GroupAddCourseFilter";
         private readonly ICourseService courseService;
         private readonly IGroupsService groupsService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IUserService userService;
 
         public GroupCoursesController(
             IUserService userService,
             ICourseService courseService,
-            IGroupsService groupsService
+            IGroupsService groupsService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.userService = userService;
             this.courseService = courseService;
             this.groupsService = groupsService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("{page:int=1}")]
@@ -46,7 +52,18 @@
 
             var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, categoryIdFilter);
 
-            var model = new GroupCoursesViewModel(groupId, groupName!, groupCourses, page);
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                null,
+                null,
+                null,
+                new PaginationOptions(page)
+            );
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                groupCourses,
+                searchSortPaginationOptions
+            );
+
+            var model = new GroupCoursesViewModel(groupId, groupName!, result);
 
             return View(model);
         }
@@ -90,14 +107,16 @@
         public IActionResult AddCourseToGroupSelectCourse(
             int groupId,
             string? searchString = null,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
+            bool clearFilters = false,
             int page = 1
         )
         {
-            filterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
                 Request,
                 GroupAddCourseFilterCookieName
             );
@@ -106,25 +125,36 @@
 
             var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
 
-            var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId);
+            var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId).ToList();
             var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var topics = courseService.GetTopicsForCentreAndCentrallyManagedCourses(centreId);
 
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
-            var model = new AddCourseToGroupCoursesViewModel(
+            var availableFilters = (adminCategoryFilter == null
+                ? AddCourseToGroupViewModelFilterOptions.GetAllCategoriesFilters(categories, topics)
+                : AddCourseToGroupViewModelFilterOptions.GetSingleCategoryFilters(courses)).ToList();
+
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(nameof(CourseAssessmentDetails.CourseName), GenericSortingHelper.Ascending),
+                new FilterOptions(existingFilterString, availableFilters),
+                new PaginationOptions(page)
+            );
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 courses,
-                categories,
-                topics,
-                adminCategoryFilter,
-                groupId,
-                groupName!,
-                searchString,
-                filterBy,
-                page
+                searchSortPaginationOptions
             );
 
-            Response.UpdateOrDeleteFilterCookie(GroupAddCourseFilterCookieName, filterBy);
+            var model = new AddCourseToGroupCoursesViewModel(
+                result,
+                availableFilters,
+                adminCategoryFilter,
+                groupId,
+                groupName!
+            );
+
+            Response.UpdateFilterCookie(GroupAddCourseFilterCookieName, result.FilterString);
 
             return View(model);
         }

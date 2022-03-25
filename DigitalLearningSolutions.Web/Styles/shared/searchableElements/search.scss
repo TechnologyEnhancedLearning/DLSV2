@@ -1,5 +1,5 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "common";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "common" as *;
 
 .search-box-container {
   display: flex;
@@ -23,5 +23,13 @@
 
   &:hover {
     background-color: $button-hover-colour;
+  }
+}
+
+.search-submit {
+  #js-styling-hidden-area-while-loading & {
+    .js-enabled & {
+      display: none;
+    }
   }
 }

@@ -1,11 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 {
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
+    using AvailableCourseHelper = DigitalLearningSolutions.Web.Tests.TestHelpers.AvailableCourseHelper;
 
     public partial class LearningPortalControllerTests
     {
@@ -16,21 +19,27 @@
             var availableCourses = new[]
             {
                 AvailableCourseHelper.CreateDefaultAvailableCourse(),
-                AvailableCourseHelper.CreateDefaultAvailableCourse()
+                AvailableCourseHelper.CreateDefaultAvailableCourse(),
             };
             A.CallTo(() => courseDataService.GetAvailableCourses(CandidateId, CentreId)).Returns(availableCourses);
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<AvailableCourse>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = controller.Available();
 
             // Then
             var expectedModel = new AvailablePageViewModel(
-                availableCourses,
-                null,
-                "Name",
-                "Ascending",
-                "",
-                1
+                new SearchSortFilterPaginationResult<AvailableCourse>(
+                    new PaginationResult<AvailableCourse>(availableCourses, 1, 1, 10, 2, true),
+                    null,
+                    "Name",
+                    "Ascending",
+                    null
+                ),
+                ""
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);

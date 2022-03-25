@@ -1,10 +1,10 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
+﻿namespace DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate
 {
-    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Data.Enums;
 
-    public class FilterOptionViewModel
+    public class FilterOptionModel
     {
-        public FilterOptionViewModel(string displayText, string filterValue, FilterStatus tagStatus)
+        public FilterOptionModel(string displayText, string filterValue, FilterStatus tagStatus)
         {
             DisplayText = displayText;
             FilterValue = filterValue;

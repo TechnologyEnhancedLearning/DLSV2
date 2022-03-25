@@ -1,4 +1,5 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+
 html {
   height: 100%;
   overflow-y: auto !important;
@@ -117,7 +118,7 @@ nav, .nhsuk-header__navigation, #header-navigation {
   }
 }
 
-#area-to-hide-while-loading {
+#js-styling-hidden-area-while-loading {
   .js-enabled & {
     display: none;
   }

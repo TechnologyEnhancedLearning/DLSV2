@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class CourseDelegate : BaseSearchableItem
     {
@@ -10,6 +11,7 @@
         public string? FirstName { get; set; }
         public string LastName { get; set; }
         public string? EmailAddress { get; set; }
+        public bool HasBeenPromptedForPrn { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
         public bool Active { get; set; }
         public int ProgressId { get; set; }

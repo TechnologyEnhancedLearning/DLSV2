@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
 @model CourseDelegatesViewModel
 
 @section scripts {
@@ -12,34 +11,31 @@
   ViewData["Title"] = "Course delegates";
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-one-quarter">
-    <nav class="side-nav-menu" aria-label="Side navigation bar">
-      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.CourseDelegates" />
-    </nav>
-  </div>
+@section NavBreadcrumbs {
+  <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCoursesBreadcrumbs.cshtml" model="@Model.CustomisationId" />
+}
 
-  <div class="nhsuk-grid-column-three-quarters">
-    <vc:loading-spinner page-has-side-nav-menu="true" />
-    <div id="area-to-hide-while-loading">
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (Model.CourseDetails.JavascriptSearchSortFilterPaginateEnabled) {
+      <vc:loading-spinner page-has-side-nav-menu="true" />
+    }
+    <div id="@(Model.CourseDetails.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
       <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-one-third">
+        <div class="nhsuk-grid-column-three-quarters">
           <h1 id="page-heading" class="nhsuk-heading-xl">Course delegates</h1>
         </div>
-        <div class="nhsuk-grid-column-two-thirds heading-button-group">
-          <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
-            Export all
-          </a>
+        <div class="nhsuk-grid-column-one-quarter heading-button-group">
           <a class="nhsuk-button nhsuk-button--secondary heading-button"
-             id="export-current"
+             id="export"
              asp-controller="CourseDelegates"
              asp-action="DownloadCurrent"
              asp-route-customisationId="@Model.CustomisationId"
              asp-route-sortBy="@Model.CourseDetails?.SortBy"
              asp-route-sortDirection="@Model.CourseDetails?.SortDirection"
-             asp-route-filterBy="@Model.CourseDetails?.FilterBy"
+             asp-route-existingFilterString="@Model.CourseDetails?.ExistingFilterString"
              role="button">
-            Export current
+            Export
           </a>
         </div>
       </div>
@@ -47,7 +43,7 @@
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
           <p>
-            Choose a course to see delegates enrolled on it. If you'd like to export delegates on all courses, click "Export all" above.
+            Choose a course to see delegates enrolled on it.
           </p>
         </div>
       </div>
@@ -106,9 +102,5 @@
         </div>
       }
     </div>
-
-    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
-      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.CourseDelegates" />
-    </nav>
   </div>
 </div>

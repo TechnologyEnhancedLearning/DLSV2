@@ -16,7 +16,7 @@
         string? GetBrandNameById(int brandId);
         string? GetCategoryNameById(int categoryId);
         string? GetTopicNameById(int topicId);
-        IEnumerable<Administrator> GetOtherAdministratorsForCentre(int centreId, int adminId);
+
         //INSERT DATA
         int InsertBrandAndReturnId(string brandName, int centreId);
         int InsertCategoryAndReturnId(string categoryName, int centreId);
@@ -170,18 +170,7 @@
                 return newTopicId;
             }
         }
-        public IEnumerable<Administrator> GetOtherAdministratorsForCentre(int centreId, int adminId)
-        {
-            {
-                return connection.Query<Administrator>(
-                    @"SELECT        AdminID, CentreID, Email, Forename, Surname, IsFrameworkDeveloper
-                    FROM            AdminUsers
-                    WHERE           (Active = 1) AND (CentreID = @centreId) AND (Approved = 1) AND (AdminID <> @adminID)
-                    ORDER BY Surname, Forename",
-                   new { centreId, adminId }
-               );
-            }
-        }
+
         public string? GetBrandNameById(int brandId)
         {
             return (string?)connection.ExecuteScalar(

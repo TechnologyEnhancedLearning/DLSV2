@@ -52,6 +52,18 @@
             return name + (string.IsNullOrWhiteSpace(email) ? "" : $" ({email})");
         }
 
+        public static string? GetPotentiallyInactiveAdminName(string? firstName, string? lastName, bool? active)
+        {
+            return !string.IsNullOrEmpty(lastName)
+                ? GetNonSortableFullNameForDisplayOnly(firstName, lastName) + (active == true ? "" : " (inactive)")
+                : null;
+        }
+
+        public static string GetEmailDisplayString(string? email)
+        {
+            return !string.IsNullOrEmpty(email) ? $" ({email})" : "";
+        }
+
         public static string GetPluralitySuffix(int number)
         {
             return number == 1 ? string.Empty : "s";
@@ -65,6 +77,13 @@
             }
 
             return Regex.Replace(input, "[^ a-zA-Z0-9]", replacement);
+        }
+
+        public static string GetPrnDisplayString(bool hasBeenPromptedForPrn, string? professionalRegistrationNumber)
+        {
+            return hasBeenPromptedForPrn
+                ? professionalRegistrationNumber ?? "Not professionally registered"
+                : "Not yet provided";
         }
     }
 }

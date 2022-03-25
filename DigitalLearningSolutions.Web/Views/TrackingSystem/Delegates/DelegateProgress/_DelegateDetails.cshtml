@@ -1,0 +1,29 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+@model DelegateProgressViewModel
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content basic-card-content">
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Name
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.DelegateName
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Email
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.DelegateEmail" />
+      </div>
+      <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Professional Registration Number
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+      </div>
+    </dl>
+  </div>
+</div>

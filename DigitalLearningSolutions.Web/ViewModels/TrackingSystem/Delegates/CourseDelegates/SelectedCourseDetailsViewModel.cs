@@ -5,25 +5,23 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class SelectedCourseDetailsViewModel : BaseSearchablePageViewModel
+    public class SelectedCourseDetailsViewModel : BaseSearchablePageViewModel<CourseDelegate>
     {
         public SelectedCourseDetailsViewModel(
+            SearchSortFilterPaginationResult<CourseDelegate> result,
+            IEnumerable<FilterModel> availableFilters,
             CourseDelegatesData courseDelegatesData,
-            string sortBy,
-            string sortDirection,
-            string? filterBy,
-            int page,
             Dictionary<string, string> routeData
-        ) : base(null, page, true, sortBy, sortDirection, filterBy, routeData: routeData)
+        ) : base(result, true, availableFilters, routeData: routeData)
         {
             Active = courseDelegatesData.Courses.Single(c => c.CustomisationId == courseDelegatesData.CustomisationId)
                 .Active;
-            var courseDelegatesToShow = SortFilterAndPaginate(courseDelegatesData.Delegates);
             var adminFieldsWithOptions = courseDelegatesData.CourseAdminFields.Where(field => field.Options.Count > 0);
-            Delegates = courseDelegatesToShow.Select(
+            Delegates = result.ItemsToDisplay.Select(
                 d =>
                 {
                     var adminFields = AdminFieldsHelper.GetCourseAdminFieldViewModels(

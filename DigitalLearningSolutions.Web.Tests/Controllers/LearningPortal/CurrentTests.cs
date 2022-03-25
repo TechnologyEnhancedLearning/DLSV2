@@ -5,11 +5,13 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FakeItEasy;
     using FizzWare.NBuilder;
@@ -17,6 +19,8 @@
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
+    using CurrentCourseHelper = DigitalLearningSolutions.Web.Tests.TestHelpers.CurrentCourseHelper;
+    using SelfAssessmentHelper = DigitalLearningSolutions.Web.Tests.TestHelpers.SelfAssessmentHelper;
 
     public partial class LearningPortalControllerTests
     {
@@ -45,22 +49,29 @@
             A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
                 .Returns((actionPlanResources, apiIsAccessible));
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
+            var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
+            allItems.AddRange(selfAssessments);
+            allItems.AddRange(actionPlanResources);
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CurrentLearningItem>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = await controller.Current();
 
             // Then
             var expectedModel = new CurrentPageViewModel(
-                currentCourses,
-                null,
-                "LastAccessed",
-                "Descending",
-                selfAssessments,
-                actionPlanResources,
+                new SearchSortFilterPaginationResult<CurrentLearningItem>(
+                    new PaginationResult<CurrentLearningItem>(allItems, 1, 1, 10, 6, true),
+                    null,
+                    "LastAccessed",
+                    "Descending",
+                    null
+                ),
                 apiIsAccessible,
-                bannerText,
-                1
+                bannerText
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
@@ -71,7 +82,7 @@
         {
             // Given
             GivenCurrentActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("false");
 
             // When
             await controller.Current();
@@ -85,7 +96,7 @@
         {
             // Given
             GivenCurrentActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
 
             // When
             await controller.Current();
@@ -100,7 +111,7 @@
         {
             // Given
             GivenCurrentActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("false");
 
             // When
             await controller.AllCurrentItems();
@@ -114,7 +125,7 @@
         {
             // Given
             GivenCurrentActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
 
             // When
             await controller.AllCurrentItems();
@@ -362,7 +373,7 @@
             // Given
             const string bannerText = "Banner text";
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
 
             // When
             var currentViewModel = await CurrentCourseHelper.CurrentPageViewModelFromController(controller);

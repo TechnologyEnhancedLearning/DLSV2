@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -58,13 +58,13 @@
             },
         };
 
-        private PromptsService promptsService = null!;
-
         private GroupDelegatesController groupDelegatesController = null!;
         private IGroupsService groupsService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IJobGroupsService jobGroupsService = null!;
+        private PromptsService promptsService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IUserService userService = null!;
 
         [SetUp]
@@ -74,26 +74,18 @@
             groupsService = A.Fake<IGroupsService>();
             jobGroupsService = A.Fake<IJobGroupsService>();
             userService = A.Fake<IUserService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
             const string cookieValue = "ActiveStatus|Active|false";
 
-            A.CallTo(() => jobGroupsService.GetJobGroupsAlphabetical()).Returns(
-                JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
-            );
-
-            A.CallTo(() => userService.GetDelegatesNotRegisteredForGroupByGroupId(A<int>._, A<int>._))
-                .Returns(delegateUserCards);
-
-            A.CallTo(() => groupsService.GetGroupName(A<int>._, A<int>._))
-                .Returns("Group name");
-
             groupDelegatesController = new GroupDelegatesController(
                     jobGroupsService,
                     userService,
                     promptsService,
-                    groupsService
+                    groupsService,
+                    searchSortFilterPaginateService
                 )
                 .WithMockHttpContext(httpRequest, AddGroupDelegateFilterCookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -122,113 +114,35 @@
         }
 
         [Test]
-        public void SelectDelegate_with_no_query_parameters_uses_cookie_value_for_filterBy()
+        public void SelectDelegate_calls_expected_methods_and_returns_view()
         {
             // When
             var result = groupDelegatesController.SelectDelegate(1);
 
             // Then
-            result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
-                .Be("ActiveStatus|Active|false");
-        }
-
-        [Test]
-        public void SelectDelegate_with_query_parameters_uses_query_parameter_value_for_filterBy()
-        {
-            // Given
-            const string filterBy = "PasswordStatus|IsPasswordSet|true";
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
-
-            // When
-            var result = groupDelegatesController.SelectDelegate(1, filterBy: filterBy);
-
-            // Then
-            result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
-                .Be(filterBy);
-        }
-
-        [Test]
-        public void SelectDelegate_with_CLEAR_filterBy_query_parameter_removes_cookie()
-        {
-            // Given
-            const string filterBy = "CLEAR";
-
-            // When
-            var result = groupDelegatesController.SelectDelegate(1, filterBy: filterBy);
-
-            // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => httpResponse.Cookies.Delete(AddGroupDelegateFilterCookieName)).MustHaveHappened();
-                result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
-                    .BeNull();
-            }
-        }
-
-        [Test]
-        public void SelectDelegate_with_null_filterBy_and_new_filter_query_parameter_adds_new_cookie_value()
-        {
-            // Given
-            const string? filterBy = null;
-            const string newFilterValue = "PasswordStatus|IsPasswordSet|true";
-
-            // When
-            var result = groupDelegatesController.SelectDelegate(1, filterBy: filterBy, filterValue: newFilterValue);
-
-            // Then
-            using (new AssertionScope())
-            {
+                A.CallTo(() => userService.GetDelegatesNotRegisteredForGroupByGroupId(A<int>._, A<int>._))
+                    .MustHaveHappened();
+                A.CallTo(() => jobGroupsService.GetJobGroupsAlphabetical())
+                    .MustHaveHappened();
+                A.CallTo(() => groupsService.GetGroupName(A<int>._, A<int>._)).MustHaveHappened();
+                A.CallTo(
+                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                        A<IEnumerable<DelegateUserCard>>._,
+                        A<SearchSortFilterAndPaginateOptions>._
+                    )
+                ).MustHaveHappened();
                 A.CallTo(
                         () => httpResponse.Cookies.Append(
                             AddGroupDelegateFilterCookieName,
-                            newFilterValue,
+                            A<string>._,
                             A<CookieOptions>._
                         )
                     )
                     .MustHaveHappened();
-                result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
-                    .Be(newFilterValue);
+                result.Should().BeViewResult().WithDefaultViewName();
             }
-        }
-
-        [Test]
-        public void SelectDelegate_with_CLEAR_filterBy_and_new_filter_query_parameter_sets_new_cookie_value()
-        {
-            // Given
-            const string filterBy = "CLEAR";
-            const string newFilterValue = "PasswordStatus|IsPasswordSet|true";
-
-            // When
-            var result = groupDelegatesController.SelectDelegate(1, filterBy: filterBy, filterValue: newFilterValue);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(
-                        () => httpResponse.Cookies.Append(
-                            AddGroupDelegateFilterCookieName,
-                            newFilterValue,
-                            A<CookieOptions>._
-                        )
-                    )
-                    .MustHaveHappened();
-                result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
-                    .Be(newFilterValue);
-            }
-        }
-
-        [Test]
-        public void SelectDelegate_with_no_filtering_should_not_have_a_filter_set()
-        {
-            // Given
-            A.CallTo(() => httpRequest.Cookies).Returns(A.Fake<IRequestCookieCollection>());
-
-            // When
-            var result = groupDelegatesController.SelectDelegate(1);
-
-            // Then
-            result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
-                .BeNull();
         }
 
         [Test]
@@ -258,7 +172,7 @@
             result.Should().BeRedirectToActionResult()
                 .WithActionName(nameof(GroupDelegatesController.ConfirmDelegateAdded));
         }
-        
+
         [Test]
         public void RemoveGroupDelegate_should_call_remove_progress_but_keep_started_enrolments_if_unchecked()
         {

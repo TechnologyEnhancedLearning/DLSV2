@@ -1,45 +1,47 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
-    using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class MyStaffListViewModel : BaseSearchablePageViewModel
+    public class MyStaffListViewModel : BaseSearchablePageViewModel<SupervisorDelegateDetailViewModel>
     {
+        private readonly AdminUser AdminUser;
+
         public MyStaffListViewModel(
             AdminUser adminUser,
-            IEnumerable<SupervisorDelegateDetailViewModel> supervisorDelegateDetailViewModels,
-            CentreRegistrationPrompts centreRegistrationPrompts,
-            string? searchString,
-            string sortBy,
-            string sortDirection,
-            int page
-        ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search administrators")
+            SearchSortFilterPaginationResult<SupervisorDelegateDetailViewModel> result,
+            CentreRegistrationPrompts centreRegistrationPrompts
+        ) : base(result, false, searchLabel: "Search administrators")
         {
             AdminUser = adminUser;
             CentreRegistrationPrompts = centreRegistrationPrompts;
-            var sortedItems = GenericSortingHelper.SortAllItems(
-                supervisorDelegateDetailViewModels.AsQueryable(),
-                sortBy,
-                sortDirection
-            );
-            var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString).ToList();
-            MatchingSearchResults = searchedItems.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(searchedItems);
-            SuperviseDelegateDetailViewModels = paginatedItems;
+            SuperviseDelegateDetailViewModels = result.ItemsToDisplay;
         }
 
-        public MyStaffListViewModel() : this(null, Enumerable.Empty<SupervisorDelegateDetailViewModel>(), new CentreRegistrationPrompts(), null, string.Empty, string.Empty, 1)
-        {
-
-        }
+        public MyStaffListViewModel() : this(
+            null,
+            new SearchSortFilterPaginationResult<SupervisorDelegateDetailViewModel>(
+                Enumerable.Empty<SupervisorDelegateDetailViewModel>(),
+                1,
+                1,
+                1,
+                0,
+                true,
+                null,
+                string.Empty,
+                string.Empty,
+                null
+            ),
+            new CentreRegistrationPrompts()
+        ) { }
 
         public IEnumerable<SupervisorDelegateDetailViewModel> SuperviseDelegateDetailViewModels { get; set; }
 
@@ -65,7 +67,5 @@
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? DelegateEmail { get; set; }
-
-        private AdminUser AdminUser;
     }
 }

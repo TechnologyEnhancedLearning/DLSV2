@@ -4,7 +4,7 @@
 // Author: Darlan Rod https://github.com/darlanrod
 // Version 1.5.2
 // MIT License
-@import "~nhsuk-frontend/packages/core/settings/colours";
+@use "nhsuk-frontend/packages/core/settings/colours" as *;
 
 $track-color: $color_nhsuk-grey-3 !default;
 $thumb-color: $color_nhsuk-grey-2 !default;

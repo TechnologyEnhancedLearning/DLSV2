@@ -36,7 +36,7 @@
 
             ContentSource = ContentViewerHelper.IsScormPath(diagnosticContent.DiagnosticAssessmentPath)
                 ? ContentViewerHelper.GetScormAssessmentSource(
-                    config.GetScormPlayerUrl(),
+                    OldSystemEndpointHelper.GetScormPlayerUrl(config),
                     centreId,
                     customisationId,
                     candidateId,
@@ -53,7 +53,7 @@
                     diagnosticContent.Version,
                     progressId,
                     type,
-                    config.GetTrackingUrl(),
+                    OldSystemEndpointHelper.GetTrackingUrl(config),
                     tutorials,
                     diagnosticContent.PassThreshold);
         }

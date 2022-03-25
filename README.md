@@ -7,6 +7,10 @@
 - [SQL Server Management Studio 18](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15)
 - [Git](https://git-scm.com/)
 - [NPM](https://www.npmjs.com/get-npm)
+- [SASS](http://www.sass-lang.com/install) for the command line
+	- Specifically, follow the "Install Anywhere (Standalone)" guide. Simply download and extract the files somewhere, and point PATH at the dart-sass folder. This should allow you to use the "sass" command.
+	- You don't want to install it via NPM, as those are JavaScript versions that perform significantly worse.
+	- At time of writing (2022-03-14), we are using [version 1.49.9 of dart-sass](https://github.com/sass/dart-sass/releases/tag/1.49.9) 
 
 # Getting the code
 

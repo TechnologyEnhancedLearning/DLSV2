@@ -2,14 +2,38 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Web.Models.Enums;
 
     public class RemoveFromCourseViewModel : IValidatableObject
     {
+        public RemoveFromCourseViewModel() { }
+
+        public RemoveFromCourseViewModel(
+            int delegateId,
+            string name,
+            int customisationId,
+            string courseName,
+            bool confirm,
+            DelegateAccessRoute accessedVia,
+            int? returnPage
+        )
+        {
+            DelegateId = delegateId;
+            Name = name;
+            CustomisationId = customisationId;
+            CourseName = courseName;
+            Confirm = confirm;
+            AccessedVia = accessedVia;
+            ReturnPage = returnPage;
+        }
+
         public int DelegateId { get; set; }
         public string Name { get; set; }
         public int CustomisationId { get; set; }
         public string CourseName { get; set; }
         public bool Confirm { get; set; }
+        public DelegateAccessRoute AccessedVia { get; set; }
+        public int? ReturnPage { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -19,7 +43,7 @@
             {
                 validationResults.Add(
                     new ValidationResult(
-                        "Please confirm with the checkbox that you wish to remove this delegate from this course",
+                        "Confirm you wish to remove this delegate from this course",
                         new[]
                         {
                             nameof(Confirm)

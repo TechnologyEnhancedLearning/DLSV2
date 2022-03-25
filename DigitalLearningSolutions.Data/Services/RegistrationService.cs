@@ -121,7 +121,6 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (foundRecordForSupervisorDelegateId)
             {
-                supervisorDelegateService.ConfirmSupervisorDelegateRecord(supervisorDelegateId!.Value);
                 frameworkNotificationService.SendSupervisorDelegateAcceptance(
                     supervisorDelegateId!.Value,
                     delegateUser.Id

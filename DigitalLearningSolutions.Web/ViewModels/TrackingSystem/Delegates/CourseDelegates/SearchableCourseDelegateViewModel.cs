@@ -17,11 +17,12 @@
         {
             DelegateId = courseDelegate.DelegateId;
             CandidateNumber = courseDelegate.CandidateNumber;
-            ProfessionalRegistrationNumber = courseDelegate.ProfessionalRegistrationNumber;
-            TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(
-                courseDelegate.FullNameForSearchingSorting,
-                courseDelegate.EmailAddress
+            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+                courseDelegate.HasBeenPromptedForPrn,
+                courseDelegate.ProfessionalRegistrationNumber
             );
+            TitleName = courseDelegate.FullNameForSearchingSorting;
+            Email = courseDelegate.EmailAddress;
             Active = courseDelegate.Active;
             ProgressId = courseDelegate.ProgressId;
             Locked = courseDelegate.Locked;
@@ -41,6 +42,7 @@
         public int DelegateId { get; set; }
         public string CandidateNumber { get; set; }
         public string TitleName { get; set; }
+        public string? Email { get; set; }
         public bool Active { get; set; }
         public int ProgressId { get; set; }
         public bool Locked { get; set; }

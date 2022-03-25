@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -67,7 +69,8 @@
         {
             var centreId = User.GetCentreId();
 
-            var customPrompt = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId).CustomPrompts
+            var customPrompt = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId)
+                .CustomPrompts
                 .Single(cp => cp.RegistrationField.Id == promptNumber);
 
             var data = TempData.Get<EditRegistrationPromptData>();
@@ -160,6 +163,14 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
         public IActionResult AddRegistrationPromptSelectPrompt(AddRegistrationPromptSelectPromptViewModel model)
         {
+            if (model.CustomPromptIdIsInPromptIdList(GetPromptIdsAlreadyAtUserCentre()))
+            {
+                ModelState.AddModelError(
+                    nameof(AddRegistrationPromptSelectPromptViewModel.CustomPromptId),
+                    "That custom prompt already exists at this centre"
+                );
+            }
+
             if (!ModelState.IsValid)
             {
                 SetViewBagCustomPromptNameOptions();
@@ -258,12 +269,18 @@
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
 
+            if (data.SelectPromptViewModel.CustomPromptIdIsInPromptIdList(GetPromptIdsAlreadyAtUserCentre())
+                || data.ConfigureAnswersViewModel.OptionsStringContainsDuplicates())
+            {
+                return new StatusCodeResult(500);
+            }
+
             if (centreRegistrationPromptsService.AddCentreRegistrationPrompt(
-                User.GetCentreId(),
-                data.SelectPromptViewModel.CustomPromptId!.Value,
-                data.SelectPromptViewModel.Mandatory,
-                data.ConfigureAnswersViewModel.OptionsString
-            ))
+                    User.GetCentreId(),
+                    data.SelectPromptViewModel.CustomPromptId!.Value,
+                    data.SelectPromptViewModel.Mandatory,
+                    data.ConfigureAnswersViewModel.OptionsString
+                ))
             {
                 TempData.Clear();
                 return RedirectToAction("Index");
@@ -285,7 +302,10 @@
             }
 
             var promptName =
-                centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(User.GetCentreId(), promptNumber);
+                centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
+                    User.GetCentreId(),
+                    promptNumber
+                );
 
             var model = new RemoveRegistrationPromptViewModel(promptName, delegateWithAnswerCount);
 
@@ -308,9 +328,23 @@
             return RemoveRegistrationPromptAndRedirect(promptNumber);
         }
 
+        private IEnumerable<int> GetPromptIdsAlreadyAtUserCentre()
+        {
+            var existingPrompts =
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(User.GetCentreId());
+
+            return existingPrompts.CustomPrompts.Select(p => p.PromptId);
+        }
+
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
         {
             ModelState.ClearAllErrors();
+
+            if (model.OptionsStringContainsDuplicates())
+            {
+                ModelState.AddModelError("", "The list of answers contains duplicate options");
+                return View("EditRegistrationPrompt", model);
+            }
 
             centreRegistrationPromptsService.UpdateCentreRegistrationPrompt(
                 User.GetCentreId(),
@@ -375,6 +409,12 @@
         private IActionResult AddRegistrationPromptConfigureAnswersPostNext(RegistrationPromptAnswersViewModel model)
         {
             ModelState.ClearAllErrors();
+
+            if (model.OptionsStringContainsDuplicates())
+            {
+                ModelState.AddModelError("", "The list of answers contains duplicate options");
+                return View("AddRegistrationPromptConfigureAnswers", model);
+            }
 
             UpdateTempDataWithAnswersModelValues(model);
 

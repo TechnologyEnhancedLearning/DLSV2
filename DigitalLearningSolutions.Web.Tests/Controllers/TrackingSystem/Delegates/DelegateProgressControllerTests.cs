@@ -18,15 +18,16 @@
         private DelegateProgressController delegateProgressController = null!;
         private IProgressService progressService = null!;
         private IUserService userService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         private static IEnumerable<TestCaseData> EditEndpointRedirectTestData
         {
             get
             {
-                yield return new TestCaseData(DelegateProgressAccessRoute.CourseDelegates, null, "Index")
+                yield return new TestCaseData(DelegateAccessRoute.CourseDelegates, null, "Index")
                     .SetName("EditPost_redirects_to_course_delegates_progress");
                 yield return
-                    new TestCaseData(DelegateProgressAccessRoute.ViewDelegate, "ViewDelegate", "Index").SetName(
+                    new TestCaseData(DelegateAccessRoute.ViewDelegate, "ViewDelegate", "Index").SetName(
                         "EditPost_redirects_to_view_delegate"
                     );
             }
@@ -36,10 +37,10 @@
         {
             get
             {
-                yield return new TestCaseData(DelegateProgressAccessRoute.CourseDelegates, "CourseDelegates", "Index")
+                yield return new TestCaseData(DelegateAccessRoute.CourseDelegates, "CourseDelegates", "Index")
                     .SetName("UnlockCourseProgress_redirects_to_course_delegates_progress");
                 yield return
-                    new TestCaseData(DelegateProgressAccessRoute.ViewDelegate, "ViewDelegate", "Index").SetName(
+                    new TestCaseData(DelegateAccessRoute.ViewDelegate, "ViewDelegate", "Index").SetName(
                         "UnlockCourseProgress_redirects_to_view_delegate"
                     );
             }
@@ -51,12 +52,14 @@
             courseService = A.Fake<ICourseService>();
             userService = A.Fake<IUserService>();
             progressService = A.Fake<IProgressService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             var config = A.Fake<IConfiguration>();
             delegateProgressController = new DelegateProgressController(
                     courseService,
                     userService,
                     progressService,
-                    config
+                    config,
+                    searchSortFilterPaginateService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true);
@@ -68,7 +71,7 @@
             nameof(EditEndpointRedirectTestData)
         )]
         public void EditSupervisorPost_redirects_to_correct_action(
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             string expectedController,
             string expectedAction
         )
@@ -93,7 +96,7 @@
             nameof(EditEndpointRedirectTestData)
         )]
         public void EditCompleteByDatePost_redirects_to_correct_action(
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             string expectedController,
             string expectedAction
         )
@@ -117,7 +120,7 @@
             nameof(EditEndpointRedirectTestData)
         )]
         public void EditCompletionDatePost_redirects_to_correct_action(
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             string expectedController,
             string expectedAction
         )
@@ -141,7 +144,7 @@
             nameof(UnlockCourseProgressData)
         )]
         public void UnlockCourseProgress_redirects_to_correct_action_and_unlocks_progress_and_sends_notification(
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             string expectedController,
             string expectedAction
         )

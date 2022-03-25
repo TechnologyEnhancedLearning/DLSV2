@@ -2,27 +2,30 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class DelegateGroupsViewModelFilterOptions
     {
-        public static readonly IEnumerable<FilterOptionViewModel> BaseLinkedFieldOptions = new[]
+        public static readonly IEnumerable<FilterOptionModel> BaseLinkedFieldOptions = new[]
         {
             DelegateGroupLinkedFieldFilterOptions.None,
             DelegateGroupLinkedFieldFilterOptions.JobGroup,
         };
 
-        public static IEnumerable<FilterOptionViewModel> GetLinkedFieldOptions(
+        public static IEnumerable<FilterOptionModel> GetLinkedFieldOptions(
             IEnumerable<CentreRegistrationPrompt> registrationPrompts
         )
         {
             var promptOptions = registrationPrompts.Select(
-                prompt => new FilterOptionViewModel(
+                prompt => new FilterOptionModel(
                     prompt.PromptText,
                     nameof(Group.LinkedToField) + FilteringHelper.Separator + nameof(Group.LinkedToField) +
                     FilteringHelper.Separator + prompt.RegistrationField.LinkedToFieldId,
@@ -33,18 +36,42 @@
             return BaseLinkedFieldOptions.Concat(promptOptions);
         }
 
-        public static IEnumerable<FilterOptionViewModel> GetAddedByOptions(
+        public static IEnumerable<FilterOptionModel> GetAddedByOptions(
             IEnumerable<(int adminId, string adminName)> admins
         )
         {
             return admins.Select(
-                admin => new FilterOptionViewModel(
+                admin => new FilterOptionModel(
                     admin.adminName,
                     nameof(Group.AddedByAdminId) + FilteringHelper.Separator + nameof(Group.AddedByAdminId) +
                     FilteringHelper.Separator + admin.adminId,
                     FilterStatus.Default
                 )
             );
+        }
+
+        public static IEnumerable<FilterModel> GetDelegateGroupFilterModels(List<Group> groups, IEnumerable<CentreRegistrationPrompt> registrationPrompts)
+        {
+            var admins = groups.Select(
+                g => (g.AddedByAdminId, DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                    g.AddedByFirstName,
+                    g.AddedByLastName,
+                    g.AddedByAdminActive
+                ))
+            ).Distinct();
+            return new[]
+            {
+                new FilterModel(
+                    nameof(Group.AddedByAdminId),
+                    "Added by",
+                    GetAddedByOptions(admins)
+                ),
+                new FilterModel(
+                    nameof(Group.LinkedToField),
+                    "Linked field",
+                    GetLinkedFieldOptions(registrationPrompts)
+                ),
+            };
         }
     }
 }

@@ -4,57 +4,32 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class AllDelegatesViewModel : BaseSearchablePageViewModel
+    public class AllDelegatesViewModel : BaseSearchablePageViewModel<DelegateUserCard>
     {
         public AllDelegatesViewModel(
-            IEnumerable<DelegateUserCard> delegateUserCards,
-            IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts,
-            int page,
-            string? searchString,
-            string sortBy,
-            string sortDirection,
-            string? filterBy,
-            int? itemsPerPage
+            SearchSortFilterPaginationResult<DelegateUserCard> result,
+            IReadOnlyCollection<CentreRegistrationPrompt> centreRegistrationPrompts,
+            IEnumerable<FilterModel> availableFilters
         ) : base(
-            searchString,
-            page,
+            result,
             true,
-            sortBy,
-            sortDirection,
-            filterBy,
-            itemsPerPage ?? DefaultItemsPerPage,
+            availableFilters,
             "Search delegates"
         )
         {
-            var sortedItems = GenericSortingHelper.SortAllItems(
-                delegateUserCards.AsQueryable(),
-                sortBy,
-                sortDirection
-            );
-            var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
-            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterBy).ToList();
-            MatchingSearchResults = filteredItems.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
-
             var promptsWithOptions = centreRegistrationPrompts.Where(registrationPrompt => registrationPrompt.Options.Count > 0);
-            var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
-            Delegates = paginatedItems.Select(
+            var returnPage = string.IsNullOrWhiteSpace(SearchString) ? Page : 1;
+            Delegates = result.ItemsToDisplay.Select(
                 delegateUser =>
                 {
                     var delegateRegistrationPrompts = PromptsService.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
                     return new SearchableDelegateViewModel(delegateUser, delegateRegistrationPrompts, promptsWithOptions, returnPage);
                 }
-            );
-
-            Filters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(
-                jobGroups,
-                promptsWithOptions
             );
         }
 

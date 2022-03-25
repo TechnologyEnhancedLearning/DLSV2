@@ -2,20 +2,21 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
     using FakeItEasy;
     using FizzWare.NBuilder;
-    using FluentAssertions;
+    using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     public class DelegateCoursesControllerTests
     {
+        private const string CookieName = "DelegateCoursesFilter";
+
         private readonly IEnumerable<ApplicationDetails> applicationOptions =
             Builder<ApplicationDetails>.CreateListOfSize(1).Build();
 
@@ -40,16 +41,19 @@
             .And(x => x.Topics = new List<string> { "Topic 1", "Topic 2" })
             .Build();
 
-        private DelegateCoursesController controller = null!;
         private DelegateCoursesController controllerWithCookies = null!;
+        private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseService courseService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         [SetUp]
         public void Setup()
         {
             courseService = A.Fake<ICourseService>();
+            courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);
             A.CallTo(
@@ -59,116 +63,44 @@
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
 
-            controller = new DelegateCoursesController(courseService)
-                .WithDefaultContext()
-                .WithMockUser(true, 101)
-                .WithMockTempData();
-
-            const string cookieName = "DelegateCoursesFilter";
             const string cookieValue = "Status|Active|false";
 
-            controllerWithCookies = new DelegateCoursesController(courseService)
-                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
+            controllerWithCookies = new DelegateCoursesController(
+                    courseService,
+                    courseDelegatesDownloadFileService,
+                    searchSortFilterPaginateService
+                )
+                .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
                 .WithMockTempData();
         }
 
         [Test]
-        public void Index_with_no_query_parameters_uses_cookie_value_for_filterBy()
+        public void Index_calls_expected_methods_and_returns_view()
         {
             // When
             var result = controllerWithCookies.Index();
 
             // Then
-            result.As<ViewResult>().Model.As<DelegateCoursesViewModel>().FilterBy.Should()
-                .Be("Status|Active|false");
-        }
-
-        [Test]
-        public void Index_with_query_parameters_uses_query_parameter_value_for_filterBy()
-        {
-            // Given
-            const string filterBy = "Status|HideInLearnerPortal|true";
-
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
-
-            // When
-            var result = controllerWithCookies.Index(filterBy: filterBy);
-
-            // Then
-            result.As<ViewResult>().Model.As<DelegateCoursesViewModel>().FilterBy.Should()
-                .Be(filterBy);
-        }
-
-        [Test]
-        public void Index_with_CLEAR_filterBy_query_parameter_removes_cookie()
-        {
-            // Given
-            const string filterBy = "CLEAR";
-
-            // When
-            var result = controllerWithCookies.Index(filterBy: filterBy);
-
-            // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => httpResponse.Cookies.Delete("DelegateCoursesFilter")).MustHaveHappened();
-                result.As<ViewResult>().Model.As<DelegateCoursesViewModel>().FilterBy.Should()
-                    .BeNull();
-            }
-        }
-
-        [Test]
-        public void Index_with_null_filterBy_and_new_filter_query_parameter_adds_new_cookie_value()
-        {
-            // Given
-            const string? filterBy = null;
-            const string newFilterValue = "Status|HideInLearnerPortal|true";
-
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
-
-            // When
-            var result = controllerWithCookies.Index(filterBy: filterBy, filterValue: newFilterValue);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => httpResponse.Cookies.Append("DelegateCoursesFilter", newFilterValue, A<CookieOptions>._))
+                A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).MustHaveHappened();
+                A.CallTo(
+                    () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                        A<IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>>._,
+                        A<SearchSortFilterAndPaginateOptions>._
+                    )
+                ).MustHaveHappened();
+                A.CallTo(
+                        () => httpResponse.Cookies.Append(
+                            CookieName,
+                            A<string>._,
+                            A<CookieOptions>._
+                        )
+                    )
                     .MustHaveHappened();
-                result.As<ViewResult>().Model.As<DelegateCoursesViewModel>().FilterBy.Should()
-                    .Be(newFilterValue);
+                result.Should().BeViewResult().WithDefaultViewName();
             }
-        }
-
-        [Test]
-        public void Index_with_CLEAR_filterBy_and_new_filter_query_parameter_sets_new_cookie_value()
-        {
-            // Given
-            const string filterBy = "CLEAR";
-            const string newFilterValue = "Status|HideInLearnerPortal|true";
-
-            // When
-            var result = controllerWithCookies.Index(filterBy: filterBy, filterValue: newFilterValue);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => httpResponse.Cookies.Append("DelegateCoursesFilter", newFilterValue, A<CookieOptions>._))
-                    .MustHaveHappened();
-                result.As<ViewResult>().Model.As<DelegateCoursesViewModel>().FilterBy.Should()
-                    .Be(newFilterValue);
-            }
-        }
-
-        [Test]
-        public void Index_with_no_filtering_should_default_to_Active_courses()
-        {
-            // When
-            var result = controller.Index();
-
-            // Then
-            result.As<ViewResult>().Model.As<DelegateCoursesViewModel>().FilterBy.Should()
-                .Be("Status|Active|true");
         }
     }
 }

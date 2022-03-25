@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
@@ -25,6 +26,7 @@
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         [SetUp]
         public void SetUp()
@@ -32,11 +34,13 @@
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             courseDelegatesService = A.Fake<ICourseDelegatesService>();
             courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             controller = new CourseDelegatesController(
                     courseAdminFieldsService,
                     courseDelegatesService,
-                    courseDelegatesDownloadFileService
+                    courseDelegatesDownloadFileService,
+                    searchSortFilterPaginateService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, UserCentreId);
@@ -79,7 +83,7 @@
         }
 
         [Test]
-        public void Index_should_default_to_Active_filter_and_return_active_course_delegates()
+        public void Index_should_default_to_Active_filter()
         {
             // Given
             const int customisationId = 2;
@@ -115,13 +119,18 @@
             var courseDelegatesController = new CourseDelegatesController(
                     courseAdminFieldsService,
                     courseDelegatesService,
-                    courseDelegatesDownloadFileService
+                    courseDelegatesDownloadFileService,
+                    searchSortFilterPaginateService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, UserCentreId)
                 .WithMockTempData();
 
             A.CallTo(() => httpRequest.Cookies).Returns(A.Fake<IRequestCookieCollection>());
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CourseDelegate>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = courseDelegatesController.Index(customisationId);
@@ -129,10 +138,8 @@
             // Then
             using (new AssertionScope())
             {
-                result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.FilterBy.Should()
+                result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.ExistingFilterString.Should()
                     .Be("AccountStatus|Active|true");
-                result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.Delegates.Should()
-                    .HaveCount(1);
 
                 A.CallTo(
                         () => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(

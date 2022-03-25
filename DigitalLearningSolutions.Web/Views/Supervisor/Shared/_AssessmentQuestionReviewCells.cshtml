@@ -1,6 +1,12 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
 @model AssessmentQuestion
-
+@{
+  var actionLinkText = Model.Requested != null && Model.Verified == null ? "Confirm" : "View";
+  if (!String.IsNullOrEmpty(Model.SupportingComments) || !String.IsNullOrEmpty(Model.SupervisorComments))
+  {
+    actionLinkText += " (comments)";
+  }
+}
 
 <partial name="Shared/_AssessmentQuestionCells" model="Model" />
 @if ((bool)(ViewData["isSupervisorResultsReviewed"] ?? true))
@@ -14,6 +20,13 @@
   @if (Model.ResultId != null)
   {
     <span class="nhsuk-table-responsive__heading">Actions </span>
-    <a asp-action="ReviewCompetencySelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-viewMode="@(Model.Requested != null && Model.Verified == null ? "Review" : "View")" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]" asp-route-resultId="@Model.ResultId">@(Model.Requested != null && Model.Verified == null ? "Verify" : "View")<span class="nhsuk-u-visually-hidden"> capability</span></a>
+    <a asp-action="ReviewCompetencySelfAssessment"
+       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+       asp-route-viewMode="@(Model.Requested != null && Model.Verified == null ? "Review" : "View")"
+       asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]"
+       asp-route-resultId="@Model.ResultId">
+          <span class="status-tag">@actionLinkText</span>
+          <span class="nhsuk-u-visually-hidden"> capability</span>
+    </a>
   }
 </td>

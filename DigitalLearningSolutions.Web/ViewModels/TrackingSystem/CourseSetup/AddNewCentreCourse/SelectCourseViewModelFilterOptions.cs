@@ -2,18 +2,18 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class SelectCourseViewModelFilterOptions
     {
         public static CategoryTopicFilterViewModel[] GetAllCategoriesFilters(
             IEnumerable<string> categories,
             IEnumerable<string> topics,
-            string? categoryFilterBy = null,
-            string? topicFilterBy = null
+            string? categoryFilterString = null,
+            string? topicFilterString = null
         )
         {
             return new[]
@@ -22,25 +22,25 @@
                     nameof(ApplicationDetails.CategoryName),
                     "Category",
                     GetCategoryOptions(categories),
-                    "categoryFilterBy",
-                    categoryFilterBy,
-                    topicFilterBy
+                    "categoryFilterString",
+                    categoryFilterString,
+                    topicFilterString
                 ),
                 new CategoryTopicFilterViewModel(
                     nameof(ApplicationDetails.CourseTopic),
                     "Topic",
                     GetTopicOptions(topics),
-                    "topicFilterBy",
-                    categoryFilterBy,
-                    topicFilterBy
+                    "topicFilterString",
+                    categoryFilterString,
+                    topicFilterString
                 ),
             };
         }
 
         public static IEnumerable<CategoryTopicFilterViewModel> GetSingleCategoryFilters(
             List<ApplicationDetails> courseList,
-            string? categoryFilterBy,
-            string? topicFilterBy
+            string? categoryFilterString,
+            string? topicFilterString
         )
         {
             var topics = courseList.Select(c => c.CourseTopic);
@@ -50,17 +50,17 @@
                     nameof(ApplicationDetails.CourseTopic),
                     "Topic",
                     GetTopicOptions(topics),
-                    "topicFilterBy",
-                    categoryFilterBy,
-                    topicFilterBy
+                    "topicFilterString",
+                    categoryFilterString,
+                    topicFilterString
                 ),
             };
         }
 
-        private static IEnumerable<FilterOptionViewModel> GetCategoryOptions(IEnumerable<string> categories)
+        private static IEnumerable<FilterOptionModel> GetCategoryOptions(IEnumerable<string> categories)
         {
             return categories.Distinct().Select(
-                c => new FilterOptionViewModel(
+                c => new FilterOptionModel(
                     c,
                     nameof(ApplicationDetails.CategoryName) + FilteringHelper.Separator +
                     nameof(ApplicationDetails.CategoryName) +
@@ -70,10 +70,10 @@
             );
         }
 
-        private static IEnumerable<FilterOptionViewModel> GetTopicOptions(IEnumerable<string> topics)
+        private static IEnumerable<FilterOptionModel> GetTopicOptions(IEnumerable<string> topics)
         {
             return topics.Distinct().Select(
-                c => new FilterOptionViewModel(
+                c => new FilterOptionModel(
                     c,
                     nameof(ApplicationDetails.CourseTopic) + FilteringHelper.Separator +
                     nameof(ApplicationDetails.CourseTopic) +

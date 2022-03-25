@@ -127,6 +127,7 @@
             // Given
             var info = new DelegateCourseInfo
             {
+                SupervisorAdminId = null,
                 SupervisorSurname = null,
             };
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
@@ -146,6 +147,7 @@
             {
                 SupervisorForename = "",
                 SupervisorSurname = "surname",
+                SupervisorAdminActive = true,
             };
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
@@ -164,6 +166,7 @@
             {
                 SupervisorForename = "firstname",
                 SupervisorSurname = "surname",
+                SupervisorAdminActive = true,
             };
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 

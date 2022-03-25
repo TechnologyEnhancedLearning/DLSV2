@@ -4,34 +4,22 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class DelegateCoursesViewModel : BaseSearchablePageViewModel
+    public class DelegateCoursesViewModel : BaseSearchablePageViewModel<CourseStatisticsWithAdminFieldResponseCounts>
     {
         public DelegateCoursesViewModel(
-            CentreCourseDetails details,
-            string? searchString,
-            string sortBy,
-            string sortDirection,
-            string? filterBy,
-            int page,
-            int? itemsPerPage
+            SearchSortFilterPaginationResult<CourseStatisticsWithAdminFieldResponseCounts> result,
+            IEnumerable<FilterModel> availableFilters
         ) : base(
-            searchString,
-            page,
+            result,
             true,
-            sortBy,
-            sortDirection,
-            filterBy,
-            itemsPerPage ?? DefaultItemsPerPage,
+            availableFilters,
             "Search courses"
         )
         {
-            var searchedItems = GenericSearchHelper.SearchItems(details.Courses.AsQueryable(), SearchString).ToList();
-            var paginatedItems = SortFilterAndPaginate(searchedItems);
-
-            Courses = paginatedItems.Select(c => new SearchableDelegateCourseStatisticsViewModel(c));
-            Filters = DelegateCourseStatisticsViewModelFilterOptions.GetFilterOptions(details.Categories, details.Topics);
+            Courses = result.ItemsToDisplay.Select(c => new SearchableDelegateCourseStatisticsViewModel(c));
         }
 
         public IEnumerable<SearchableDelegateCourseStatisticsViewModel> Courses { get; set; }

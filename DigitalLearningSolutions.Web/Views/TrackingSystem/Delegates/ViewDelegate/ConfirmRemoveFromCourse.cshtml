@@ -1,12 +1,24 @@
-﻿@inject IConfiguration Configuration
+﻿@inject IConfiguration configuration
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
 @using Microsoft.Extensions.Configuration
 @model RemoveFromCourseViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? $"Error: Remove delegate enrolment from {Model.CourseName}" : $"Remove delegate enrolment from {Model.CourseName}";
-  var cancelLinkRouteData = new Dictionary<string, string> { { "delegateId", Model.DelegateId.ToString() } };
+  ViewData["Title"] = errorHasOccurred ? "Error: Remove enrolment" : "Remove enrolment";
+
+  var cancelLinkRouteData = new Dictionary<string, string>();
+  string cancelLinkController;
+
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+    cancelLinkRouteData.Add("customisationId", Model.CustomisationId.ToString());
+    cancelLinkRouteData.Add("page", Model.ReturnPage.ToString());
+    cancelLinkController = "CourseDelegates";
+  } else {
+    cancelLinkRouteData.Add("delegateId", Model.DelegateId.ToString());
+    cancelLinkController = "ViewDelegate";
+  }
 }
 
 <div class="nhsuk-grid-row">
@@ -14,24 +26,46 @@
     @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
     }
-    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3 word-break">Remove delegate enrolment from @Model.CourseName</h1>
-    <h2 class="nhsuk-heading-l word-break">Delegate: @Model.Name</h2>
-    <div class="nhsuk-form-group">
-      <form asp-action="ExecuteRemoveFromCourse" asp-route-delegateId="@Model.DelegateId" asp-route-customisationId="@Model.CustomisationId">
-        <fieldset class="nhsuk-fieldset" aria-describedby="example-hint">
-          <div class="nhsuk-checkboxes">
-            <div class="nhsuk-checkboxes__item">
-              <input type="hidden" name="name" value="@Model.Name" />
-              <input type="hidden" name="courseName" value="@Model.CourseName" />
-              <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
-                                  label="I am sure that I want to remove @Model.Name from the @Model.CourseName course."
-                                  hint-text="This action will remove the course from the delegate's Current courses list and archive their progress." />
-            </div>
-          </div>
-          <button class="nhsuk-button delete-button nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-6" role="button" type="submit">Remove delegate</button>
-        </fieldset>
-      </form>
-      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@cancelLinkRouteData" />
-    </div>
+    <h1 class="nhsuk-heading-xl">Remove enrolment</h1>
+  </div>
+</div>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l nhsuk-u-font-weight-bold">
+    Delegate:
+  </div>
+  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
+    @Model.Name
+  </div>
+</div>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l nhsuk-u-font-weight-bold">
+    Activity:
+  </div>
+  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
+    @Model.CourseName
+  </div>
+</div>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <form class="nhsuk-u-margin-bottom-3"
+          asp-action="ExecuteRemoveFromCourse"
+          asp-route-delegateId="@Model.DelegateId"
+          asp-route-customisationId="@Model.CustomisationId"
+          asp-route-accessedVia="@Model.AccessedVia">
+      <input type="hidden" name="name" value="@Model.Name" />
+      <input type="hidden" name="courseName" value="@Model.CourseName" />
+      <input type="hidden" name="returnPage" value="@Model.ReturnPage" />
+
+      <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
+                          label="I am sure that I wish to remove this enrolment"
+                          hint-text="This action will remove the activity from the delegate’s Current Activities list and archive their progress." />
+
+      <button class="nhsuk-button delete-button" role="button" type="submit">Remove enrolment</button>
+    </form>
+
+    <vc:cancel-link asp-controller=@cancelLinkController asp-action="Index" asp-all-route-data="@cancelLinkRouteData" />
   </div>
 </div>

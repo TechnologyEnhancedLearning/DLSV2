@@ -85,13 +85,11 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]
         [InlineData("/TrackingSystem/Delegates/3/SetPassword", "Set delegate user password")]
-        [InlineData(
-            "/TrackingSystem/Delegates/3/View/100/Remove",
-            "Remove delegate enrolment from Entry Level - Win XP, Office 2003/07 OLD - Standard"
-        )]
+        [InlineData("/TrackingSystem/Delegates/3/View/100/ViewDelegate/Remove", "Remove enrolment")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
+        [InlineData("/TrackingSystem/Delegates/Courses/1", "Delegate courses")]
         [InlineData("/TrackingSystem/Delegates/CourseDelegates", "Course delegates")]
         [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104", "Delegate progress")]
         [InlineData(

@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -27,14 +28,17 @@
         private const string DelegateGroupsFilterCookieName = "DelegateGroupsFilter";
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IGroupsService groupsService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public DelegateGroupsController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
-            IGroupsService groupsService
+            IGroupsService groupsService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.groupsService = groupsService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("{page=1:int}")]
@@ -42,33 +46,44 @@
             string? searchString = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
+            bool clearFilters = false,
             int page = 1
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
                 Request,
                 DelegateGroupsFilterCookieName
             );
 
             var centreId = User.GetCentreId();
             var groups = groupsService.GetGroupsForCentre(centreId).ToList();
+            var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
+            var availableFilters = DelegateGroupsViewModelFilterOptions.GetDelegateGroupFilterModels(groups, registrationPrompts);
 
-            var model = new DelegateGroupsViewModel(
-                groups,
-                GetRegistrationPromptsWithSetOptions(centreId),
-                searchString,
-                sortBy,
-                sortDirection,
-                filterBy,
-                page
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                new FilterOptions(existingFilterString, availableFilters),
+                new PaginationOptions(page)
             );
 
-            Response.UpdateOrDeleteFilterCookie(DelegateGroupsFilterCookieName, filterBy);
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                groups,
+                searchSortPaginationOptions
+            );
+
+            var model = new DelegateGroupsViewModel(
+                result,
+                availableFilters
+            );
+
+            Response.UpdateFilterCookie(DelegateGroupsFilterCookieName, result.FilterString);
 
             return View(model);
         }

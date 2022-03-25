@@ -1,9 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
-@model BaseSearchablePageViewModel
+@model IBaseSearchablePageViewModel
 
 <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Filter by</label>
 <div class="filter-container">
-  <input type="hidden" id="filter-by" name="filterBy" value="@Model.FilterBy" />
+  <input type="hidden" id="existing-filter-string" name="existingFilterString" value="@Model.ExistingFilterString" />
   <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown-selector"
           id="filter-selector"
           name="filterCategorySelector"
@@ -18,7 +18,7 @@
       <div class="filter-dropdown-container" id="filter-@filter.FilterProperty">
         <form class="filter-form" method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
           <input type="hidden" name="searchString" value="@Model.SearchString" />
-          <input type="hidden" name="filterBy" value="@Model.FilterBy" />
+          <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
           <input type="hidden" name="sortBy" value="@Model.SortBy" />
           <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
           <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
@@ -27,7 +27,7 @@
           }
           <div class="filter-value-container">
             <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown"
-                    name="filterValue"
+                    name="newFilterToAdd"
                     id="@filter.FilterProperty"
                     aria-label="@filter.FilterName filter">
               <option value="" disabled selected="selected">Select @filter.FilterName.ToLower()</option>

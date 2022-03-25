@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -10,11 +11,9 @@
     {
         public CourseDelegatesViewModel(
             CourseDelegatesData courseDelegatesData,
-            string customisationIdQueryParameterName,
-            string sortBy,
-            string sortDirection,
-            string? filterBy,
-            int page
+            SearchSortFilterPaginationResult<CourseDelegate> result,
+            IEnumerable<FilterModel> availableFilters,
+            string customisationIdQueryParameterName
         )
         {
             CustomisationId = courseDelegatesData.CustomisationId;
@@ -25,11 +24,9 @@
 
             CourseDetails = courseDelegatesData.CustomisationId.HasValue
                 ? new SelectedCourseDetailsViewModel(
+                    result,
+                    availableFilters,
                     courseDelegatesData,
-                    sortBy,
-                    sortDirection,
-                    filterBy,
-                    page,
                     new Dictionary<string, string>
                         { { customisationIdQueryParameterName, courseDelegatesData.CustomisationId.Value.ToString() } }
                 )

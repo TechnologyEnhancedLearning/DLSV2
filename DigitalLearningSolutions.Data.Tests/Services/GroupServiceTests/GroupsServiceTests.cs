@@ -5,7 +5,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
@@ -62,14 +61,15 @@
             configuration = A.Fake<IConfiguration>();
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             logger = A.Fake<ILogger<IGroupsService>>();
-
             jobGroupsDataService = A.Fake<IJobGroupsDataService>(x => x.Strict());
+
             A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
                 JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
             );
+            A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
 
-            A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("baseUrl");
             DatabaseModificationsDoNothing();
+
             groupsService = new GroupsService(
                 groupsDataService,
                 clockService,
@@ -475,7 +475,7 @@
                 true
             );
 
-            var centreRegistrationPrompt = new CentreRegistrationPrompt(1, groupNamePrefix, groupName, false);
+            var centreRegistrationPrompt = new CentreRegistrationPrompt(1, 1, groupNamePrefix, groupName, false);
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt> { centreRegistrationPrompt };
 
             SetUpGenerateGroupFakes(timeNow, centreRegistrationPrompts);
@@ -554,7 +554,7 @@
                 true
             );
 
-            var centreRegistrationPrompt = new CentreRegistrationPrompt(1, groupNamePrefix, groupName, false);
+            var centreRegistrationPrompt = new CentreRegistrationPrompt(1, 1, groupNamePrefix, groupName, false);
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt> { centreRegistrationPrompt };
 
             SetUpGenerateGroupFakes(timeNow, centreRegistrationPrompts);
@@ -596,6 +596,7 @@
             GivenCurrentTimeIs(timeNow);
 
             var centreRegistrationPrompt = new CentreRegistrationPrompt(
+                1,
                 1,
                 groupNamePrefix,
                 $"{duplicateGroupName}\r\n{nonDuplicateGroupName}",

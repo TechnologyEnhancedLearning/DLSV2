@@ -8,7 +8,10 @@
 
     public class DelegateInfoViewModel
     {
-        public DelegateInfoViewModel(DelegateUserCard delegateUser, IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts)
+        public DelegateInfoViewModel(
+            DelegateUserCard delegateUser,
+            IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts
+        )
         {
             Id = delegateUser.Id;
             TitleName = delegateUser.SearchableName;
@@ -26,7 +29,10 @@
             Email = delegateUser.EmailAddress;
             JobGroupId = delegateUser.JobGroupId;
             JobGroup = delegateUser.JobGroupName;
-            ProfessionalRegistrationNumber = delegateUser.ProfessionalRegistrationNumber;
+            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+                delegateUser.HasBeenPromptedForPrn,
+                delegateUser.ProfessionalRegistrationNumber
+            );
             if (delegateUser.DateRegistered.HasValue)
             {
                 RegistrationDate = delegateUser.DateRegistered.Value.ToString(DateHelper.StandardDateFormat);
@@ -52,7 +58,7 @@
         public string? JobGroup { get; set; }
         public string? RegistrationDate { get; set; }
         public string? AliasId { get; set; }
-        public string? ProfessionalRegistrationNumber { get; set; }
+        public string ProfessionalRegistrationNumber { get; set; }
 
         public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
     }

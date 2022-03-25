@@ -3,16 +3,19 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.LearningResources;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
+    using CompletedCourseHelper = DigitalLearningSolutions.Web.Tests.TestHelpers.CompletedCourseHelper;
 
     public partial class LearningPortalControllerTests
     {
@@ -23,7 +26,7 @@
         )
         {
             // Given
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
             var completedCourses = new[]
             {
                 CompletedCourseHelper.CreateDefaultCompletedCourse(),
@@ -37,21 +40,28 @@
             A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId))
                 .Returns((completedActionPlanResources, apiIsAccessible));
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
+            var allItems = completedCourses.Cast<CompletedLearningItem>().ToList();
+            allItems.AddRange(mappedActionPlanResources);
+            SearchSortFilterAndPaginateTestHelper
+                .GivenACallToSearchSortFilterPaginateServiceReturnsResult<CompletedLearningItem>(
+                    searchSortFilterPaginateService
+                );
 
             // When
             var result = await controller.Completed();
 
             // Then
             var expectedModel = new CompletedPageViewModel(
-                completedCourses,
-                mappedActionPlanResources,
+                new SearchSortFilterPaginationResult<CompletedLearningItem>(
+                    new PaginationResult<CompletedLearningItem>(allItems, 1, 1, 10, 4, true),
+                    null,
+                    "Completed",
+                    "Descending",
+                    null
+                ),
                 apiIsAccessible,
                 config,
-                null,
-                "Completed",
-                "Descending",
-                bannerText,
-                1
+                bannerText
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
@@ -61,7 +71,7 @@
         public async Task Completed_action_should_have_banner_text()
         {
             // Given
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
             const string bannerText = "Banner text";
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
@@ -77,7 +87,7 @@
         {
             // Given
             GivenCompletedActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("false");
 
             // When
             await controller.Completed();
@@ -91,7 +101,7 @@
         {
             // Given
             GivenCompletedActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
 
             // When
             await controller.Completed();
@@ -106,7 +116,7 @@
         {
             // Given
             GivenCompletedActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("false");
 
             // When
             await controller.AllCompletedItems();
@@ -120,7 +130,7 @@
         {
             // Given
             GivenCompletedActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => config[ConfigurationExtensions.UseSignposting]).Returns("true");
 
             // When
             await controller.AllCompletedItems();

@@ -4,7 +4,6 @@
     using System.Web;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Signposting;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
@@ -25,18 +24,10 @@
             userDataService = A.Fake<IUserDataService>();
             learningHubSsoSecurityService = A.Fake<ILearningHubSsoSecurityService>();
 
-            A.CallTo(() => config[$"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthBaseUrl}"])
-                .Returns("www.example.com");
-            A.CallTo(
-                () => config[$"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthClientCode}"]
-            ).Returns("test");
-            A.CallTo(
-                () => config[$"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthLoginEndpoint}"]
-            ).Returns("/insert-log");
-            A.CallTo(
-                () => config[
-                    $"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthLinkingEndpoint}"]
-            ).Returns("/to-the-past");
+            A.CallTo(() => config["LearningHubSSO:BaseUrl"]).Returns("www.example.com");
+            A.CallTo(() => config["LearningHubSSO:ClientCode"]).Returns("test");
+            A.CallTo(() => config["LearningHubSSO:LoginEndpoint"]).Returns("/insert-log");
+            A.CallTo(() => config["LearningHubSSO:LinkingEndpoint"]).Returns("/to-the-past");
 
             A.CallTo(() => learningHubSsoSecurityService.VerifyHash("56789", "invalid-hash")).Returns(false);
             A.CallTo(() => learningHubSsoSecurityService.VerifyHash("12345", "valid-hash")).Returns(true);

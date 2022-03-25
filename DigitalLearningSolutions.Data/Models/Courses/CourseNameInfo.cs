@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Courses
 {
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+
     public class CourseNameInfo : BaseSearchableItem
     {
         public string CustomisationName { get; set; } = null!;

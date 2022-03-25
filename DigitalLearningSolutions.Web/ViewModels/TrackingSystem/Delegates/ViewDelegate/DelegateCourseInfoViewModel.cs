@@ -14,8 +14,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
             CustomisationId = info.CustomisationId;
             ApplicationName = info.ApplicationName;
             CustomisationName = info.CustomisationName;
-            SupervisorForename = info.SupervisorForename;
-            SupervisorSurname = info.SupervisorSurname;
+            Supervisor = info.SupervisorSurname != null
+                ? DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                    info.SupervisorForename,
+                    info.SupervisorSurname,
+                    info.SupervisorAdminActive!.Value
+                )
+                : "None";
             Enrolled = info.Enrolled.ToString(DateHelper.StandardDateFormat);
             LastUpdated = info.LastUpdated.ToString(DateHelper.StandardDateFormat);
             CompleteBy = info.CompleteBy?.ToString(DateHelper.StandardDateFormat);
@@ -48,8 +53,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
         public int DelegateId { get; set; }
         public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
-        public string? SupervisorForename { get; set; }
-        public string? SupervisorSurname { get; set; }
         public string Enrolled { get; set; }
         public string LastUpdated { get; set; }
         public string? CompleteBy { get; set; }
@@ -67,10 +70,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
         public double PassRate { get; set; }
         public bool IsProgressLocked { get; set; }
 
-        // SupervisorSurname is not nullable in db; will only be null if no supervisor
-        public string Supervisor => SupervisorSurname == null
-            ? "None"
-            : DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(SupervisorForename, SupervisorSurname);
+        public string? Supervisor { get; set; }
 
         public string CourseName =>
             ApplicationName + (string.IsNullOrEmpty(CustomisationName) ? "" : $" - {CustomisationName}");

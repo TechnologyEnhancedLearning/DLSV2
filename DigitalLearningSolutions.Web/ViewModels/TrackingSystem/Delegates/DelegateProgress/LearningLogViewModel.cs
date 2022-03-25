@@ -4,18 +4,18 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class LearningLogViewModel : BaseSearchablePageViewModel
+    public class LearningLogViewModel : BaseSearchablePageViewModel<LearningLogEntry>
     {
         public LearningLogViewModel(
-            DelegateProgressAccessRoute accessedVia,
+            DelegateAccessRoute accessedVia,
             LearningLog learningLog,
-            string sortBy,
-            string sortDirection
-        ) : base(null, 1, false, sortBy, sortDirection)
+            SearchSortFilterPaginationResult<LearningLogEntry> result
+        ) : base(result, false)
         {
             AccessedVia = accessedVia;
             ProgressId = learningLog.DelegateCourseInfo.ProgressId;
@@ -26,12 +26,10 @@
             DelegateLastName = learningLog.DelegateCourseInfo.DelegateLastName;
             DelegateEmail = learningLog.DelegateCourseInfo.DelegateEmail;
 
-            var sortedItems = SortItems(learningLog.Entries);
-
-            Entries = sortedItems.Select(entry => new LearningLogEntryViewModel(entry));
+            Entries = result.ItemsToDisplay.Select(entry => new LearningLogEntryViewModel(entry));
         }
 
-        public DelegateProgressAccessRoute AccessedVia { get; set; }
+        public DelegateAccessRoute AccessedVia { get; set; }
         public int ProgressId { get; set; }
         public int CustomisationId { get; set; }
         public string CourseName { get; set; }

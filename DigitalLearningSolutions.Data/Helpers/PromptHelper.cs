@@ -6,12 +6,15 @@
     {
         public static CentreRegistrationPrompt? PopulateCentreRegistrationPrompt(
             int promptNumber,
+            int promptId,
             string? prompt,
             string? options,
             bool mandatory
         )
         {
-            return prompt != null ? new CentreRegistrationPrompt(promptNumber, prompt, options, mandatory) : null;
+            return prompt != null
+                ? new CentreRegistrationPrompt(promptNumber, promptId, prompt, options, mandatory)
+                : null;
         }
 
         public static CourseAdminField? PopulateCourseAdminField(
@@ -25,13 +28,16 @@
 
         public static CentreRegistrationPromptWithAnswer? PopulateCentreRegistrationPromptWithAnswer(
             int promptNumber,
+            int promptId,
             string? prompt,
             string? options,
             bool mandatory,
             string? answer
         )
         {
-            return prompt != null ? new CentreRegistrationPromptWithAnswer(promptNumber, prompt, options, mandatory, answer) : null;
+            return prompt != null
+                ? new CentreRegistrationPromptWithAnswer(promptNumber, promptId, prompt, options, mandatory, answer)
+                : null;
         }
 
         public static CourseAdminFieldWithAnswer? PopulateCourseAdminFieldWithAnswer(

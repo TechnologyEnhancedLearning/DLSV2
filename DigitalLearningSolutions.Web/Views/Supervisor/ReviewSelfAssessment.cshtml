@@ -57,7 +57,7 @@
       }
       @if (Model.DelegateSelfAssessment.ResultsVerificationRequests > 1)
       {
-        <a role="button" asp-action="VerifyMultipleResults" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Verify multiple results</a>
+        <a role="button" asp-action="VerifyMultipleResults" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Confirm multiple results</a>
       }
     </div>
   </div>
@@ -83,7 +83,7 @@
             @if (Model.IsSupervisorResultsReviewed)
             {
               <th role="columnheader" class="" scope="col">
-                Verification status
+                Confirmation status
               </th>
             }
             <th role="columnheader" class="" scope="col">
@@ -96,7 +96,34 @@
           {
             <tr role="row" class="nhsuk-table__row first-row">
               <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
+                <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
+                @if (competency.Description != null && !competency.AlwaysShowDescription)
+                {
+                  <details class="nhsuk-details">
+                    <summary class="nhsuk-details__summary">
+                      <h2 class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-0">
+                        <span class="nhsuk-details__summary-text">
+                          @competency.Name
+                        </span>
+                      </h2>
+                    </summary>
+                    <div class="nhsuk-details__text">
+                      @(Html.Raw(@competency.Description))
+                    </div>
+                  </details>
+                }
+                else
+                {
+                  <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
+                    @competency.Name
+                  </h2>
+                  @if (competency.Description != null)
+                  {
+                    <p class="nhsuk-body-l">
+                      @(Html.Raw(competency.Description))
+                    </p>
+                  }
+                }
               </td>
               <partial name="Shared/_AssessmentQuestionReviewCells"
                        model="competency.AssessmentQuestions.First()"

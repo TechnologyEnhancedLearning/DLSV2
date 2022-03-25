@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Frameworks
 {
+    using System.Security.Claims;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
@@ -10,22 +11,21 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
-    using System.Security.Claims;
 
     public partial class FrameworkControllerTests
     {
-        private FrameworksController controller;
-        private IFrameworkService frameworkService;
-        private ICommonService commonService;
-        private IConfigService configService;
-        private IConfiguration config;
-        private IFrameworkNotificationService frameworkNotificationService;
-        private IImportCompetenciesFromFileService importCompetenciesFromFileService;
-        private ICompetencyLearningResourcesDataService competencyLearningResourcesDataService;
-        private ILearningHubApiClient learningHubApiClient;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CentreId = 101;
         private const int AdminId = 1;
+        private ICommonService commonService = null!;
+        private ICompetencyLearningResourcesDataService competencyLearningResourcesDataService = null!;
+        private IConfiguration config = null!;
+        private FrameworksController controller = null!;
+        private IFrameworkNotificationService frameworkNotificationService = null!;
+        private IFrameworkService frameworkService = null!;
+        private IImportCompetenciesFromFileService importCompetenciesFromFileService = null!;
+        private ILearningHubApiClient learningHubApiClient = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         [SetUp]
         public void SetUp()
@@ -33,21 +33,26 @@
             frameworkService = A.Fake<IFrameworkService>();
             frameworkNotificationService = A.Fake<IFrameworkNotificationService>();
             commonService = A.Fake<ICommonService>();
-            configService = A.Fake<ConfigService>();
             var logger = A.Fake<ILogger<FrameworksController>>();
             config = A.Fake<IConfiguration>();
             importCompetenciesFromFileService = A.Fake<IImportCompetenciesFromFileService>();
             competencyLearningResourcesDataService = A.Fake<ICompetencyLearningResourcesDataService>();
             learningHubApiClient = A.Fake<ILearningHubApiClient>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim("UserAdminId", AdminId.ToString()),
-                new Claim("UserCentreID", CentreId.ToString()),
-                new Claim("IsFrameworkDeveloper", "True")
-            }, "mock"));
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new[]
+                    {
+                        new Claim("UserAdminId", AdminId.ToString()),
+                        new Claim("UserCentreID", CentreId.ToString()),
+                        new Claim("IsFrameworkDeveloper", "True"),
+                    },
+                    "mock"
+                )
+            );
             controller = new FrameworksController(
                 frameworkService,
                 commonService,
@@ -55,10 +60,11 @@
                 logger,
                 importCompetenciesFromFileService,
                 competencyLearningResourcesDataService,
-                learningHubApiClient
+                learningHubApiClient,
+                searchSortFilterPaginateService
             )
             {
-                ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
+                ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } },
             };
         }
     }

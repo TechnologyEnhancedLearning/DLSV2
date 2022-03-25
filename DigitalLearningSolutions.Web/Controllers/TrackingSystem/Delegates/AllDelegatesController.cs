@@ -1,9 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
@@ -24,16 +27,19 @@
         private readonly PromptsService promptsService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserDataService userDataService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public AllDelegatesController(
             IUserDataService userDataService,
             PromptsService promptsService,
-            IJobGroupsDataService jobGroupsDataService
+            IJobGroupsDataService jobGroupsDataService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.userDataService = userDataService;
             this.promptsService = promptsService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("{page=1:int}")]
@@ -42,15 +48,17 @@
             string? searchString = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
+            bool clearFilters = false,
             int? itemsPerPage = null
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
                 Request,
                 DelegateFilterCookieName,
                 DelegateActiveStatusFilterOptions.IsActive.FilterValue
@@ -58,22 +66,38 @@
 
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId);
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
 
-            var model = new AllDelegatesViewModel(
-                delegateUsers,
+            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(
                 jobGroups,
-                customPrompts,
-                page,
-                searchString,
-                sortBy,
-                sortDirection,
-                filterBy,
-                itemsPerPage
+                promptsWithOptions
             );
 
-            Response.UpdateOrDeleteFilterCookie(DelegateFilterCookieName, filterBy);
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(sortBy, sortDirection),
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters,
+                    DelegateActiveStatusFilterOptions.IsActive.FilterValue
+                ),
+                new PaginationOptions(page, itemsPerPage)
+            );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                delegateUsers,
+                searchSortPaginationOptions
+            );
+
+            var model = new AllDelegatesViewModel(
+                result,
+                customPrompts,
+                availableFilters
+            );
+
+            Response.UpdateFilterCookie(DelegateFilterCookieName, result.FilterString);
 
             return View(model);
         }

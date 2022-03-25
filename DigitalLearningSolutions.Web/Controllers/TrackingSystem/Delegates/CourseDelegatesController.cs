@@ -3,7 +3,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.CourseDelegates;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -26,16 +26,19 @@
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
         private readonly ICourseDelegatesService courseDelegatesService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public CourseDelegatesController(
             ICourseAdminFieldsService courseAdminFieldsService,
             ICourseDelegatesService courseDelegatesService,
-            ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService
+            ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.courseDelegatesService = courseDelegatesService;
             this.courseDelegatesDownloadFileService = courseDelegatesDownloadFileService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("{page:int=1}")]
@@ -43,15 +46,17 @@
             int? customisationId = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
+            bool clearFilters = false,
             int page = 1
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            var newFilterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            var newFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
                 Request,
                 CourseDelegatesFilterCookieName,
                 CourseDelegateAccountStatusFilterOptions.Active.FilterValue
@@ -59,33 +64,49 @@
 
             var centreId = User.GetCentreId();
             var adminCategoryId = User.GetAdminCourseCategoryFilter();
-            CourseDelegatesData courseDelegatesData;
 
             try
             {
-                courseDelegatesData =
-                    courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
-                        centreId,
-                        adminCategoryId,
-                        customisationId
-                    );
+                var courseDelegatesData = courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
+                    centreId,
+                    adminCategoryId,
+                    customisationId
+                );
+
+                var availableFilters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(
+                    courseDelegatesData.CourseAdminFields
+                );
+
+                var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                    null,
+                    new SortOptions(sortBy, sortDirection),
+                    new FilterOptions(
+                        newFilterString,
+                        availableFilters,
+                        CourseDelegateAccountStatusFilterOptions.Active.FilterValue
+                    ),
+                    new PaginationOptions(page)
+                );
+
+                var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                    courseDelegatesData.Delegates,
+                    searchSortPaginationOptions
+                );
+
+                var model = new CourseDelegatesViewModel(
+                    courseDelegatesData,
+                    result,
+                    availableFilters,
+                    "customisationId"
+                );
+
+                Response.UpdateFilterCookie(CourseDelegatesFilterCookieName, result.FilterString);
+                return View(model);
             }
             catch (CourseAccessDeniedException)
             {
                 return NotFound();
             }
-
-            var model = new CourseDelegatesViewModel(
-                courseDelegatesData,
-                "customisationId",
-                sortBy,
-                sortDirection,
-                newFilterBy,
-                page
-            );
-
-            Response.UpdateOrDeleteFilterCookie(CourseDelegatesFilterCookieName, newFilterBy);
-            return View(model);
         }
 
         [Route("AllCourseDelegates/{customisationId:int}")]
@@ -105,7 +126,7 @@
             int customisationId,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
-            string? filterBy = null
+            string? existingFilterString = null
         )
         {
             var centreId = User.GetCentreId();
@@ -113,7 +134,7 @@
                 customisationId,
                 centreId,
                 sortBy,
-                filterBy,
+                existingFilterString,
                 sortDirection
             );
 

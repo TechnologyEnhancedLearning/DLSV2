@@ -8,19 +8,22 @@
     using DigitalLearningSolutions.Web.ViewModels.ForgotPassword;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     internal class ForgotPasswordControllerTests
     {
-        private ForgotPasswordController controller;
-        private IPasswordResetService passwordResetService;
+        private ForgotPasswordController controller = null!;
+        private IPasswordResetService passwordResetService = null!;
+        private IConfiguration config = null!;
 
         [SetUp]
         public void SetUp()
         {
             passwordResetService = A.Fake<IPasswordResetService>();
+            config = A.Fake<IConfiguration>();
 
-            controller = new ForgotPasswordController(passwordResetService)
+            controller = new ForgotPasswordController(passwordResetService, config)
                 .WithDefaultContext()
                 .WithMockUser(false);
         }
@@ -39,7 +42,7 @@
         public void Index_should_redirect_if_user_is_authenticated()
         {
             // Given
-            var controllerWithAuthenticatedUser = new ForgotPasswordController(passwordResetService)
+            var controllerWithAuthenticatedUser = new ForgotPasswordController(passwordResetService, config)
                 .WithDefaultContext()
                 .WithMockUser(true);
 
