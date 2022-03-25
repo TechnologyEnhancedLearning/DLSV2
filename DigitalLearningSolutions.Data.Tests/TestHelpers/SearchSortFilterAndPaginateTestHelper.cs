@@ -9,7 +9,8 @@
     public static class SearchSortFilterAndPaginateTestHelper
     {
         public static void GivenACallToSearchSortFilterPaginateServiceReturnsResult<T>(
-            ISearchSortFilterPaginateService searchSortFilterPaginateService
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
+            int maxItemsBeforeJavascriptSearchDisabled = 250
         ) where T : BaseSearchableItem
         {
             A.CallTo(
@@ -31,7 +32,7 @@
                             1,
                             options.PaginationOptions?.ItemsPerPage ?? int.MaxValue,
                             items.Count,
-                            items.Count <= 250
+                            items.Count <= maxItemsBeforeJavascriptSearchDisabled
                         ),
                         options.SearchOptions?.SearchString,
                         options.SortOptions?.SortBy,

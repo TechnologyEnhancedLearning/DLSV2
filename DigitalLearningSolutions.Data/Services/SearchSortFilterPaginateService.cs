@@ -33,7 +33,7 @@
             var allItems = items.ToList();
             var itemsToReturn = allItems;
             string? appliedFilterString = null;
-            var javascriptShouldBeEnabled =
+            var javascriptSearchSortFilterPaginateShouldBeEnabled =
                 allItems.Count <= configuration.GetJavascriptSearchSortFilterPaginateItemLimit();
 
             if (searchSortFilterAndPaginateOptions.SearchOptions != null)
@@ -73,7 +73,7 @@
             var paginateResult = PaginateItems(
                 itemsToReturn,
                 searchSortFilterAndPaginateOptions.PaginationOptions,
-                javascriptShouldBeEnabled
+                javascriptSearchSortFilterPaginateShouldBeEnabled
             );
 
             return new SearchSortFilterPaginationResult<T>(
