@@ -19,6 +19,13 @@
                 .PrimaryColumn("CourseCategoryID");
             Alter.Table("AdminAccounts").AddColumn("EmailVerified").AsDateTime().Nullable();
 
+            Delete.ForeignKey("FK_AdminUsers_Centres").OnTable("AdminAccounts");
+            Create.ForeignKey("FK_AdminAccounts_Centres").FromTable("AdminAccounts").ForeignColumn("CentreID")
+                .ToTable("Centres").PrimaryColumn("CentreID");
+            Delete.Index("IX_AdminUsers_Email").OnTable("AdminAccounts");
+            Create.Index("IX_AdminAccounts_Email").OnTable("AdminAccounts").OnColumn("Email").Ascending()
+                .WithOptions().Unique().WithOptions().NonClustered();
+
             Rename.Column("UserAdmin").OnTable("AdminAccounts").To("IsSuperAdmin");
             Rename.Column("CentreAdmin").OnTable("AdminAccounts").To("IsCentreAdmin");
             Rename.Column("SummaryReports").OnTable("AdminAccounts").To("IsReportsViewer");
@@ -53,22 +60,40 @@
             Delete.Index("IX_Candidates_CentreID_LastName").OnTable("DelegateAccounts");
             Delete.Index("IX_Candidates_CentreID_FirstName_LastName").OnTable("DelegateAccounts");
             Delete.Index("IX_Candidates_Active_CentreID").OnTable("DelegateAccounts");
+            Delete.Index("IX_Candidates_Active_CentreID_LastName ").OnTable("DelegateAccounts");
+            Delete.Index("IX_Candidates_CentreID_DateRegistered").OnTable("DelegateAccounts");
             Delete.Index("IX_Candidates_CentreID_FirstName").OnTable("DelegateAccounts");
             Delete.Index("IX_Candidates_CentreID").OnTable("DelegateAccounts");
+            Delete.Index("IX_Candidates_CentreIDAliasID").OnTable("DelegateAccounts");
+            Delete.Index("IX_Candidates_CentreID_EmailAddress").OnTable("DelegateAccounts");
+
             Alter.Column("CandidateNumber").OnTable("DelegateAccounts").AsString(20).NotNullable();
+
             Create.Index("IX_DelegateAccounts_CandidateNumber").OnTable("DelegateAccounts").OnColumn("CandidateNumber")
                 .Ascending().WithOptions().Unique().WithOptions().NonClustered();
             Create.Index("IX_DelegateAccounts_Active_CentreID").OnTable("DelegateAccounts").OnColumn("Active")
                 .Ascending()
                 .OnColumn("CentreID").Ascending().WithOptions().NonClustered();
+            Create.Index("IX_DelegateAccounts_CentreID_DateRegistered").OnTable("DelegateAccounts").OnColumn("CentreID")
+                .Ascending().WithOptions().NonClustered();
             Create.Index("IX_DelegateAccounts_CentreID").OnTable("DelegateAccounts").OnColumn("CentreID").Ascending()
                 .WithOptions().NonClustered();
+            Create.Index("IX_DelegateAccounts_CentreID_EmailAddress").OnTable("DelegateAccounts").OnColumn("CentreID")
+                .Ascending()
+                .OnColumn("EmailAddress").Ascending().WithOptions().NonClustered();
 
             Rename.Column("EmailAddress").OnTable("DelegateAccounts").To("Email");
             Alter.Table("DelegateAccounts").AddColumn("EmailVerified").AsDateTime().Nullable();
             Alter.Column("Answer1").OnTable("DelegateAccounts").AsString(100).Nullable();
             Alter.Column("Answer2").OnTable("DelegateAccounts").AsString(100).Nullable();
             Alter.Column("Answer3").OnTable("DelegateAccounts").AsString(100).Nullable();
+
+            Delete.ForeignKey("FK_Candidates_Centres").OnTable("DelegateAccounts");
+            Create.ForeignKey("FK_DelegateAccounts_Centres").FromTable("DelegateAccounts").ForeignColumn("CentreID")
+                .ToTable("Centres").PrimaryColumn("CentreID");
+            Delete.ForeignKey("FK_Candidates_JobGroups").OnTable("DelegateAccounts");
+            Create.ForeignKey("FK_DelegateAccounts_JobGroups").FromTable("DelegateAccounts").ForeignColumn("JobGroupID")
+                .ToTable("JobGroups").PrimaryColumn("JobGroupID");
 
             Rename.Column("FirstName").OnTable("DelegateAccounts").To("FirstName_deprecated");
             Rename.Column("LastName").OnTable("DelegateAccounts").To("LastName_deprecated");
@@ -80,13 +105,14 @@
             Rename.Column("SkypeHandle").OnTable("DelegateAccounts").To("SkypeHandle_deprecated");
             Rename.Column("PublicSkypeLink").OnTable("DelegateAccounts").To("PublicSkypeLink_deprecated");
             Rename.Column("ProfileImage").OnTable("DelegateAccounts").To("ProfileImage_deprecated");
-            Rename.Column("ResetPasswordID").OnTable("DelegateAccounts").To("ResetPasswordID_deprecated");
             Rename.Column("HasBeenPromptedForPrn").OnTable("DelegateAccounts").To("HasBeenPromptedForPrn_deprecated");
             Rename.Column("ProfessionalRegistrationNumber").OnTable("DelegateAccounts")
                 .To("ProfessionalRegistrationNumber_deprecated");
             Rename.Column("LearningHubAuthID").OnTable("DelegateAccounts").To("LearningHubAuthID_deprecated");
             Rename.Column("HasDismissedLhLoginWarning").OnTable("DelegateAccounts")
                 .To("HasDismissedLhLoginWarning_deprecated");
+            Rename.Column("ResetPasswordID").OnTable("DelegateAccounts").To("ResetPasswordID_deprecated");
+            Delete.ForeignKey("FK_Candidates_ResetPasswordID_ResetPassword_ID").OnTable("DelegateAccounts");
 
             Execute.Sql(Resources.UAR_831_CreateViewsForAdminUsersAndCandidatesTables_UP);
         }
@@ -123,6 +149,13 @@
             Rename.Column("IsTrainer").OnTable("AdminAccounts").To("Trainer");
             Rename.Column("IsNominatedSupervisor").OnTable("AdminAccounts").To("NominatedSupervisor");
 
+            Delete.ForeignKey("FK_AdminAccounts_Centres").OnTable("AdminAccounts");
+            Create.ForeignKey("FK_AdminUsers_Centres").FromTable("AdminAccounts").ForeignColumn("CentreID")
+                .ToTable("Centres").PrimaryColumn("CentreID");
+            Delete.Index("IX_AdminAccounts_Email").OnTable("AdminAccounts");
+            Create.Index("IX_AdminUsers_Email").OnTable("AdminAccounts").OnColumn("Email").Ascending()
+                .WithOptions().Unique().WithOptions().NonClustered();
+
             Delete.Column("EmailVerified").FromTable("AdminAccounts");
             Delete.ForeignKey("FK_AdminAccounts_CategoryID_CourseCategories_CourseCategoryID").OnTable("AdminAccounts");
             Update.Table("AdminAccounts").Set(new { CategoryID = 0 })
@@ -142,18 +175,31 @@
             Rename.Column("SkypeHandle_deprecated").OnTable("DelegateAccounts").To("SkypeHandle");
             Rename.Column("PublicSkypeLink_deprecated").OnTable("DelegateAccounts").To("PublicSkypeLink");
             Rename.Column("ProfileImage_deprecated").OnTable("DelegateAccounts").To("ProfileImage");
-            Rename.Column("ResetPasswordID_deprecated").OnTable("DelegateAccounts").To("ResetPasswordID");
             Rename.Column("HasBeenPromptedForPrn_deprecated").OnTable("DelegateAccounts").To("HasBeenPromptedForPrn");
             Rename.Column("ProfessionalRegistrationNumber_deprecated").OnTable("DelegateAccounts")
                 .To("ProfessionalRegistrationNumber");
             Rename.Column("LearningHubAuthID_deprecated").OnTable("DelegateAccounts").To("LearningHubAuthID");
             Rename.Column("HasDismissedLhLoginWarning_deprecated").OnTable("DelegateAccounts")
                 .To("HasDismissedLhLoginWarning");
+            Rename.Column("ResetPasswordID_deprecated").OnTable("DelegateAccounts").To("ResetPasswordID");
+            Create.ForeignKey("FK_Candidates_ResetPasswordID_ResetPassword_ID").FromTable("DelegateAccounts")
+                .ForeignColumn("ResetPasswordID").ToTable("ResetPassword").PrimaryColumn("ID");
+
+            Delete.ForeignKey("FK_DelegateAccounts_Centres").OnTable("DelegateAccounts");
+            Create.ForeignKey("FK_Candidates_Centres").FromTable("DelegateAccounts").ForeignColumn("CentreID")
+                .ToTable("Centres").PrimaryColumn("CentreID");
+            Delete.ForeignKey("FK_DelegateAccounts_JobGroups").OnTable("DelegateAccounts");
+            Create.ForeignKey("FK_Candidates_JobGroups").FromTable("DelegateAccounts").ForeignColumn("JobGroupID")
+                .ToTable("JobGroups").PrimaryColumn("JobGroupID");
 
             Delete.Index("IX_DelegateAccounts_CandidateNumber").OnTable("DelegateAccounts");
             Delete.Index("IX_DelegateAccounts_Active_CentreID").OnTable("DelegateAccounts");
+            Delete.Index("IX_DelegateAccounts_CentreID_DateRegistered").OnTable("DelegateAccounts");
             Delete.Index("IX_DelegateAccounts_CentreID").OnTable("DelegateAccounts");
+            Delete.Index("IX_DelegateAccounts_CentreID_EmailAddress").OnTable("DelegateAccounts");
+
             Alter.Column("CandidateNumber").OnTable("DelegateAccounts").AsCustom("varchar(250)").NotNullable();
+
             Create.Index("IX_Candidates_CandidateNumber").OnTable("DelegateAccounts").OnColumn("CandidateNumber")
                 .Ascending().WithOptions().Unique().WithOptions().NonClustered();
             Create.Index("IX_Candidates_CentreID_FirstName_LastName").OnTable("DelegateAccounts").OnColumn("CentreID")
@@ -163,10 +209,23 @@
                 .OnColumn("LastName").Ascending().WithOptions().NonClustered();
             Create.Index("IX_Candidates_Active_CentreID").OnTable("DelegateAccounts").OnColumn("Active").Ascending()
                 .OnColumn("CentreID").Ascending().WithOptions().NonClustered();
+            Create.Index("IX_Candidates_Active_CentreID_LastName").OnTable("DelegateAccounts").OnColumn("Active")
+                .Ascending()
+                .OnColumn("CentreID").Ascending()
+                .OnColumn("LastName").Ascending().WithOptions().NonClustered();
+            Create.Index("IX_Candidates_CentreID_DateRegistered").OnTable("DelegateAccounts").OnColumn("CentreID")
+                .Ascending().WithOptions().NonClustered();
             Create.Index("IX_Candidates_CentreID_FirstName").OnTable("DelegateAccounts").OnColumn("CentreID")
                 .Ascending()
                 .OnColumn("FirstName").Ascending().WithOptions().NonClustered();
             Create.Index("IX_Candidates_CentreID").OnTable("DelegateAccounts").OnColumn("CentreID").Ascending()
+                .WithOptions().NonClustered();
+            Create.Index("IX_Candidates_CentreIDAliasID").OnTable("DelegateAccounts").OnColumn("CentreID").Ascending()
+                .OnColumn("AliasID").Ascending()
+                .WithOptions().NonClustered();
+            Create.Index("IX_Candidates_CentreID_EmailAddress").OnTable("DelegateAccounts").OnColumn("CentreID")
+                .Ascending()
+                .OnColumn("Email").Ascending()
                 .WithOptions().NonClustered();
 
             Rename.Column("Email").OnTable("DelegateAccounts").To("EmailAddress");

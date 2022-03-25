@@ -11,9 +11,9 @@ SELECT dbo.AdminAccounts.AdminID,
        dbo.Users.LastName                      AS Surname,
        dbo.Users.PrimaryEmail                  AS Email,
        dbo.AdminAccounts.IsCentreManager,
-       true                                    AS Approved,
+       1                                       AS Approved,
        0                                       AS PasswordReminder,
-       ""                                      AS EITSProfile,
+       ''                                      AS EITSProfile,
        null                                    AS PasswordReminderHash,
        null                                    AS PasswordReminderDate,
        dbo.AdminAccounts.Active,
@@ -26,7 +26,7 @@ SELECT dbo.AdminAccounts.AdminID,
        dbo.Users.ProfileImage,
        dbo.AdminAccounts.IsSupervisor          AS Supervisor,
        dbo.AdminAccounts.IsTrainer             AS Trainer,
-       ISNULL(dbo.AdminAccounts.CategoryID, 0),
+       ISNULL(dbo.AdminAccounts.CategoryID, 0) AS CategoryID,
        null                                    AS SkypeHandle,
        0                                       AS PublicSkypeLink,
        dbo.AdminAccounts.IsFrameworkDeveloper,
@@ -38,7 +38,7 @@ SELECT dbo.AdminAccounts.AdminID,
        dbo.AdminAccounts.IsNominatedSupervisor AS NominatedSupervisor
 FROM dbo.Users
          INNER JOIN dbo.AdminAccounts ON dbo.Users.ID = dbo.AdminAccounts.UserID
-    GO
+GO
 
 CREATE VIEW Candidates AS
 SELECT dbo.DelegateAccounts.CandidateID,
@@ -58,7 +58,7 @@ SELECT dbo.DelegateAccounts.CandidateID,
        dbo.DelegateAccounts.ExternalReg,
        dbo.DelegateAccounts.SelfReg,
        dbo.Users.PasswordHash        AS Password,
-       false                         AS SkipPW,
+       0                             AS SkipPW,
        null                          AS ResetHash,
        dbo.DelegateAccounts.Answer4,
        dbo.DelegateAccounts.Answer5,
@@ -73,5 +73,4 @@ SELECT dbo.DelegateAccounts.CandidateID,
        dbo.Users.HasDismissedLhLoginWarning
 FROM dbo.Users
          INNER JOIN dbo.DelegateAccounts ON dbo.Users.ID = dbo.DelegateAccounts.UserID
-WHERE dbo.DelegateAccounts.UserID <> NULL
-    GO
+GO
