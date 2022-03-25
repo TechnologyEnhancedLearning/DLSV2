@@ -136,7 +136,7 @@ export class SearchSortFilterAndPaginate {
     const paginatedElements = this.paginationEnabled
       ? paginateResults(sortedUniqueElements, this.page)
       : sortedUniqueElements;
-    this.displaySearchableElementsAndRunSuppliedFunction(paginatedElements);
+    this.displaySearchableElementsAndRunPostDisplayFunction(paginatedElements);
   }
 
   static getSearchableElements(route: string, searchableElementClassSuffixes: string[]):
@@ -196,8 +196,9 @@ export class SearchSortFilterAndPaginate {
     return element.getAttribute('data-filter-value')?.trim() ?? '';
   }
 
-  private displaySearchableElementsAndRunSuppliedFunction(searchableElements: ISearchableElement[])
-    : void {
+  private displaySearchableElementsAndRunPostDisplayFunction(
+    searchableElements: ISearchableElement[],
+  ) : void {
     SearchSortFilterAndPaginate.displaySearchableElements(searchableElements);
     this.functionToRunAfterDisplayingData();
   }
