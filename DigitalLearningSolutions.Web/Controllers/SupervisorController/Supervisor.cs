@@ -185,7 +185,7 @@
             var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, adminId);
             var model = new DelegateSelfAssessmentsViewModel()
             {
-                IsNominatedSupervisor = loggedInAdminUser?.IsNominatedSupervisor ?? false,
+                IsNominatedSupervisor = loggedInAdminUser?.IsSupervisor == true ? false : loggedInAdminUser?.IsNominatedSupervisor ?? false,
                 SupervisorDelegateDetail = superviseDelegate,
                 DelegateSelfAssessments = delegateSelfAssessments
             };

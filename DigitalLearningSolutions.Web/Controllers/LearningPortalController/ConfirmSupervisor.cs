@@ -12,8 +12,7 @@
             var candidateId = User.GetCandidateIdKnownNotNull();
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, candidateId);
-            if (supervisorDelegate.CandidateID != candidateId | supervisorDelegate.Confirmed != null |
-                supervisorDelegate.Removed != null)
+            if (supervisorDelegate.CandidateID != candidateId | supervisorDelegate.Removed != null)
             {
                 logger.LogWarning(
                     $"Attempt to display confirm supervisor screen for where candidate id ({candidateId}) did not match supervise delegate candidate id ({supervisorDelegate.CandidateID}). SuperviseDelegateID: {supervisorDelegateId}"

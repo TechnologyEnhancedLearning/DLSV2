@@ -3,8 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using Microsoft.Extensions.Configuration;
 
     public interface ISearchSortFilterPaginateService
     {
@@ -16,17 +18,27 @@
 
     public class SearchSortFilterPaginateService : ISearchSortFilterPaginateService
     {
+        private readonly IConfiguration configuration;
+
+        public SearchSortFilterPaginateService(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+
         public SearchSortFilterPaginationResult<T> SearchFilterSortAndPaginate<T>(
             IEnumerable<T> items,
             SearchSortFilterAndPaginateOptions searchSortFilterAndPaginateOptions
         ) where T : BaseSearchableItem
         {
-            var itemsToReturn = items;
+            var allItems = items.ToList();
+            var itemsToReturn = allItems;
             string? appliedFilterString = null;
+            var javascriptSearchSortFilterPaginateShouldBeEnabled =
+                allItems.Count <= configuration.GetJavascriptSearchSortFilterPaginateItemLimit();
 
             if (searchSortFilterAndPaginateOptions.SearchOptions != null)
             {
-                itemsToReturn = searchSortFilterAndPaginateOptions.SearchOptions.UseTokeniseScorer
+                itemsToReturn = (searchSortFilterAndPaginateOptions.SearchOptions.UseTokeniseScorer
                     ? GenericSearchHelper.SearchItemsUsingTokeniseScorer(
                         itemsToReturn,
                         searchSortFilterAndPaginateOptions.SearchOptions.SearchString,
@@ -36,15 +48,17 @@
                         itemsToReturn,
                         searchSortFilterAndPaginateOptions.SearchOptions.SearchString,
                         searchSortFilterAndPaginateOptions.SearchOptions.SearchMatchCutoff
-                    );
+                    )).ToList();
             }
 
             if (searchSortFilterAndPaginateOptions.FilterOptions != null)
             {
-                (itemsToReturn, appliedFilterString) = FilteringHelper.FilterOrResetFilterToDefault(
+                var filteringReturnTuple = FilteringHelper.FilterOrResetFilterToDefault(
                     itemsToReturn,
                     searchSortFilterAndPaginateOptions.FilterOptions
                 );
+                itemsToReturn = filteringReturnTuple.filteredItems.ToList();
+                appliedFilterString = filteringReturnTuple.appliedFilterString;
             }
 
             if (searchSortFilterAndPaginateOptions.SortOptions != null)
@@ -53,10 +67,14 @@
                     itemsToReturn.AsQueryable(),
                     searchSortFilterAndPaginateOptions.SortOptions.SortBy,
                     searchSortFilterAndPaginateOptions.SortOptions.SortDirection
-                );
+                ).ToList();
             }
 
-            var paginateResult = PaginateItems(itemsToReturn, searchSortFilterAndPaginateOptions.PaginationOptions);
+            var paginateResult = PaginateItems(
+                itemsToReturn,
+                searchSortFilterAndPaginateOptions.PaginationOptions,
+                javascriptSearchSortFilterPaginateShouldBeEnabled
+            );
 
             return new SearchSortFilterPaginationResult<T>(
                 paginateResult,
@@ -69,7 +87,8 @@
 
         private static PaginationResult<T> PaginateItems<T>(
             IEnumerable<T> items,
-            PaginationOptions? paginationOptions
+            PaginationOptions? paginationOptions,
+            bool javascriptShouldBeEnabled
         )
             where T : BaseSearchableItem
         {
@@ -91,7 +110,8 @@
                 page,
                 totalPages,
                 paginationOptionsToUse.ItemsPerPage,
-                matchingSearchResults
+                matchingSearchResults,
+                javascriptShouldBeEnabled
             );
         }
 
