@@ -6,7 +6,10 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -28,6 +31,7 @@
         private readonly IConfiguration configuration;
         private readonly IFilteredApiHelperService filteredApiHelperService;
         private readonly IRecommendedLearningService recommendedLearningService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly ISelfAssessmentService selfAssessmentService;
 
         public RecommendedLearningController(
@@ -35,7 +39,8 @@
             ISelfAssessmentService selfAssessmentService,
             IConfiguration configuration,
             IRecommendedLearningService recommendedLearningService,
-            IActionPlanService actionPlanService
+            IActionPlanService actionPlanService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.filteredApiHelperService = filteredApiHelperService;
@@ -43,6 +48,7 @@
             this.configuration = configuration;
             this.recommendedLearningService = recommendedLearningService;
             this.actionPlanService = actionPlanService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Results")]
@@ -301,12 +307,22 @@
             var (recommendedResources, apiIsAccessible) =
                 await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
 
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                new SortOptions(nameof(RecommendedResource.RecommendationScore), GenericSortingHelper.Descending),
+                null,
+                new PaginationOptions(page)
+            );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                recommendedResources,
+                searchSortPaginationOptions
+            );
+
             var model = new RecommendedLearningViewModel(
                 assessment,
-                recommendedResources,
-                apiIsAccessible,
-                searchString,
-                page
+                result,
+                apiIsAccessible
             );
             return View("RecommendedLearning", model);
         }

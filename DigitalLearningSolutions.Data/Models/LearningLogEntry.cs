@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models
 {
     using System;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class LearningLogEntry : BaseSearchableItem
     {

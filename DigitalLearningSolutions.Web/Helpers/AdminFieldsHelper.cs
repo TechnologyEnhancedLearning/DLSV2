@@ -29,16 +29,5 @@
                 )
             ).ToList();
         }
-
-        public static string GetAdminFieldAnswerName(int customPromptNumber)
-        {
-            return customPromptNumber switch
-            {
-                1 => nameof(CourseDelegate.Answer1),
-                2 => nameof(CourseDelegate.Answer2),
-                3 => nameof(CourseDelegate.Answer3),
-                _ => throw new ArgumentOutOfRangeException(),
-            };
-        }
     }
 }

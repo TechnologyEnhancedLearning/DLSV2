@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DelegateGroups
 {
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+
     public class Group : BaseSearchableItem
     {
         public int GroupId { get; set; }

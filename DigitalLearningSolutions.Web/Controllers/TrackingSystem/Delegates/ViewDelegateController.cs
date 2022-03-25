@@ -96,7 +96,8 @@
         public IActionResult ConfirmRemoveFromCourse(
             int delegateId,
             int customisationId,
-            DelegateAccessRoute accessedVia
+            DelegateAccessRoute accessedVia,
+            int? returnPage
         )
         {
             if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
@@ -110,13 +111,14 @@
             var model = new RemoveFromCourseViewModel(
                 delegateId,
                 DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
-                    delegateUser.FirstName,
+                    delegateUser!.FirstName,
                     delegateUser.LastName
                 ),
                 customisationId,
                 course!.CourseName,
                 false,
-                accessedVia
+                accessedVia,
+                returnPage
             );
 
             return View("ConfirmRemoveFromCourse", model);
@@ -148,7 +150,11 @@
             );
 
             return model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)
-                ? RedirectToAction("Index", "CourseDelegates", new { customisationId })
+                ? RedirectToAction(
+                    "Index",
+                    "CourseDelegates",
+                    new { customisationId, page = model.ReturnPage.ToString() }
+                )
                 : RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
 
@@ -158,6 +164,7 @@
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+
             if (delegateUser?.CentreId != centreId)
             {
                 return new NotFoundResult();

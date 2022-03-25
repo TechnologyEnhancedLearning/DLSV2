@@ -2,31 +2,33 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
 
     public static class EmailDelegatesViewModelFilterOptions
     {
-        public static List<FilterViewModel> GetEmailDelegatesFilterViewModels(
+        public static List<FilterModel> GetEmailDelegatesFilterModels(
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CentreRegistrationPrompt> promptsWithOptions
+            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts
         )
         {
-            var filters = new List<FilterViewModel>
+            var promptsWithOptions = centreRegistrationPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var filters = new List<FilterModel>
             {
-                new FilterViewModel(
+                new FilterModel(
                     "JobGroupId",
                     "Job Group",
                     DelegatesViewModelFilters.GetJobGroupOptions(jobGroups)
-                )
+                ),
             };
             filters.AddRange(
                 promptsWithOptions.Select(
-                    customPrompt => new FilterViewModel(
+                    customPrompt => new FilterModel(
                         $"CentreRegistrationPrompt{customPrompt.RegistrationField.Id}",
                         customPrompt.PromptText,
-                        DelegatesViewModelFilters.GetPromptOptions(customPrompt)
+                        FilteringHelper.GetPromptFilterOptions(customPrompt)
                     )
                 )
             );

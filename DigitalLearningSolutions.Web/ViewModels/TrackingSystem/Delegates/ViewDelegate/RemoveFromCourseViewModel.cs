@@ -6,7 +6,7 @@
 
     public class RemoveFromCourseViewModel : IValidatableObject
     {
-        public RemoveFromCourseViewModel() {}
+        public RemoveFromCourseViewModel() { }
 
         public RemoveFromCourseViewModel(
             int delegateId,
@@ -14,7 +14,8 @@
             int customisationId,
             string courseName,
             bool confirm,
-            DelegateAccessRoute accessedVia
+            DelegateAccessRoute accessedVia,
+            int? returnPage
         )
         {
             DelegateId = delegateId;
@@ -23,6 +24,7 @@
             CourseName = courseName;
             Confirm = confirm;
             AccessedVia = accessedVia;
+            ReturnPage = returnPage;
         }
 
         public int DelegateId { get; set; }
@@ -31,6 +33,7 @@
         public string CourseName { get; set; }
         public bool Confirm { get; set; }
         public DelegateAccessRoute AccessedVia { get; set; }
+        public int? ReturnPage { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

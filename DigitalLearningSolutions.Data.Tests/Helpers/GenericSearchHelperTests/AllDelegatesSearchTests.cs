@@ -20,37 +20,43 @@
                     10,
                     firstName: "Mark",
                     lastName: "Jones",
-                    candidateNumber: "MJ10"
+                    candidateNumber: "MJ10",
+                    emailAddress: "mark.jones@nhs.com"
                 ),
                 UserTestHelper.GetDefaultDelegateUser(
                     12,
                     firstName: "Ethan",
                     lastName: "Jones",
-                    candidateNumber: "EJ12"
+                    candidateNumber: "EJ12",
+                    emailAddress: "ethanjones_77@nhs.gov.uk"
                 ),
                 UserTestHelper.GetDefaultDelegateUser(
                     14,
                     firstName: "Emily",
                     lastName: "Harper",
-                    candidateNumber: "EH14"
+                    candidateNumber: "EH14",
+                    emailAddress: "hypatia@hotmail.com"
                 ),
                 UserTestHelper.GetDefaultDelegateUser(
                     144,
                     firstName: "Andrew",
                     lastName: "Harper",
-                    candidateNumber: "AH144"
+                    candidateNumber: "AH144",
+                    emailAddress: "ah_moorfields@eyecare.co.uk"
                 ),
                 UserTestHelper.GetDefaultDelegateUser(
                     200,
                     firstName: "Mark",
-                    lastName: "Lowe",
-                    candidateNumber: "ML200"
+                    lastName: "Alonso",
+                    candidateNumber: "ML200",
+                    emailAddress: null
                 ),
                 UserTestHelper.GetDefaultDelegateUser(
                     202,
                     firstName: "Sandra",
-                    lastName: "Halos",
-                    candidateNumber: "SH202"
+                    lastName: "Halondrus",
+                    candidateNumber: "SH202",
+                    emailAddress: "halondrussandra@gmail.com"
                 ),
             };
         }
@@ -59,7 +65,8 @@
         [TestCase("MJ1", new[] { 10 })]
         [TestCase("J1", new[] { 10, 12 })]
         [TestCase("Harper", new[] { 14, 144 })]
-        [TestCase("lo", new[] { 200, 202 })]
+        [TestCase("alon", new[] { 200, 202 })]
+        [TestCase("hypatia", new[] { 14 })]
         public void DelegateUsers_should_be_filtered_on_name_and_candidateNumber_correctly(
             string searchString,
             int[] expectedIds

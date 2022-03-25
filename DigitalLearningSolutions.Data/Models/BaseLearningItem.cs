@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models
 {
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+
     public abstract class BaseLearningItem : BaseSearchableItem
     {
         public string Name { get; set; }

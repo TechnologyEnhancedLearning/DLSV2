@@ -23,6 +23,7 @@
         private readonly IImportCompetenciesFromFileService importCompetenciesFromFileService;
         private readonly ICompetencyLearningResourcesDataService competencyLearningResourcesDataService;
         private readonly ILearningHubApiClient learningHubApiClient;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public FrameworksController(
             IFrameworkService frameworkService,
@@ -31,7 +32,8 @@
             ILogger<FrameworksController> logger,
             IImportCompetenciesFromFileService importCompetenciesFromFileService,
             ICompetencyLearningResourcesDataService competencyLearningResourcesDataService,
-            ILearningHubApiClient learningHubApiClient
+            ILearningHubApiClient learningHubApiClient,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.frameworkService = frameworkService;
@@ -41,6 +43,7 @@
             this.importCompetenciesFromFileService = importCompetenciesFromFileService;
             this.competencyLearningResourcesDataService = competencyLearningResourcesDataService;
             this.learningHubApiClient = learningHubApiClient;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         private int? GetCentreId()

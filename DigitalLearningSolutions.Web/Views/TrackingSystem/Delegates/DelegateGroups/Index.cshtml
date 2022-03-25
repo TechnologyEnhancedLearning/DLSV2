@@ -18,8 +18,10 @@
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    <vc:loading-spinner page-has-side-nav-menu="true" />
-    <div id="area-to-hide-while-loading">
+    @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+      <vc:loading-spinner page-has-side-nav-menu="true" />
+    }
+    <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-one-third">
           <h1 id="page-heading" class="nhsuk-heading-xl">Groups</h1>
@@ -60,6 +62,8 @@
   </div>
 </div>
 
-@section scripts {
-  <script src="@Url.Content("~/js/trackingSystem/delegateGroups.js")" asp-append-version="true"></script>
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+  @section scripts {
+    <script src="@Url.Content("~/js/trackingSystem/delegateGroups.js")" asp-append-version="true"></script>
+  }
 }

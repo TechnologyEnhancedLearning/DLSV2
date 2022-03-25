@@ -59,6 +59,11 @@
                 : null;
         }
 
+        public static string GetEmailDisplayString(string? email)
+        {
+            return !string.IsNullOrEmpty(email) ? $" ({email})" : "";
+        }
+
         public static string GetPluralitySuffix(int number)
         {
             return number == 1 ? string.Empty : "s";

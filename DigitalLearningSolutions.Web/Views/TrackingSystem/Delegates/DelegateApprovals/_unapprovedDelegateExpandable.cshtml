@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model UnapprovedDelegate
 
 <div class="card-with-buttons word-break nhsuk-panel" id="@Model.Id-card">
@@ -6,6 +7,7 @@
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text">
         @Model.TitleName
+        @DisplayStringHelper.GetEmailDisplayString(Model.Email)
       </span>
     </summary>
     <div class="nhsuk-details__text">

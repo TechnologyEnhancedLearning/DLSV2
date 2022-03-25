@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
-@model BaseSearchablePageViewModel
+@model IBaseSearchablePageViewModel
 
 <form method="get" role="search">
   <input type="hidden" name="searchString" value="@Model.SearchString" />
@@ -30,7 +30,7 @@
         <option value="Descending">Descending</option>
       </select>
 
-      <button class="non-js-only nhsuk-search__submit sort-submit" type="submit">
+      <button class="nhsuk-search__submit sort-submit" type="submit">
         Sort
       </button>
     </div>

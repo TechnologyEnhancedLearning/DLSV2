@@ -25,12 +25,14 @@
 
         private IConfiguration configuration = null!;
         private IFaqsService faqsService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
         [SetUp]
         public void Setup()
         {
             configuration = A.Fake<IConfiguration>();
             faqsService = A.Fake<IFaqsService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             A.CallTo(() => faqsService.GetPublishedFaqsForTargetGroup(0))
                 .Returns(faqs);
             A.CallTo(() => faqsService.GetPublishedFaqByIdForTargetGroup(2, 0))
@@ -43,7 +45,7 @@
         public void Faqs_list_page_should_return_expected_Faqs_view()
         {
             // Given
-            var controller = new FaqsController(configuration, faqsService);
+            var controller = new FaqsController(configuration, faqsService, searchSortFilterPaginateService);
 
             // When
             var result = controller.Index(DlsSubApplication.TrackingSystem);
@@ -56,7 +58,7 @@
         public void AllFaqs_list_page_should_return_expected_AllFaqItems_view()
         {
             // Given
-            var controller = new FaqsController(configuration, faqsService);
+            var controller = new FaqsController(configuration, faqsService, searchSortFilterPaginateService);
 
             // When
             var result = controller.AllFaqItems(DlsSubApplication.TrackingSystem);
@@ -69,7 +71,7 @@
         public void ViewFaq_page_should_return_expected_ViewFaq_view_with_correct_faq()
         {
             // Given
-            var controller = new FaqsController(configuration, faqsService);
+            var controller = new FaqsController(configuration, faqsService, searchSortFilterPaginateService);
 
             // When
             var result = controller.ViewFaq(DlsSubApplication.TrackingSystem, 2);
@@ -84,7 +86,7 @@
         public void ViewFaq_page_should_return_not_found_for_invalid_faq_item_view_request()
         {
             // Given
-            var controller = new FaqsController(configuration, faqsService);
+            var controller = new FaqsController(configuration, faqsService, searchSortFilterPaginateService);
 
             // When
             var result = controller.ViewFaq(DlsSubApplication.TrackingSystem, 5);
