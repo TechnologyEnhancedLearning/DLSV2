@@ -92,8 +92,6 @@
             Create.ForeignKey("FK_DelegateAccounts_Centres").FromTable("DelegateAccounts").ForeignColumn("CentreID")
                 .ToTable("Centres").PrimaryColumn("CentreID");
             Delete.ForeignKey("FK_Candidates_JobGroups").OnTable("DelegateAccounts");
-            Create.ForeignKey("FK_DelegateAccounts_JobGroups").FromTable("DelegateAccounts").ForeignColumn("JobGroupID")
-                .ToTable("JobGroups").PrimaryColumn("JobGroupID");
 
             Rename.Column("FirstName").OnTable("DelegateAccounts").To("FirstName_deprecated");
             Rename.Column("LastName").OnTable("DelegateAccounts").To("LastName_deprecated");
@@ -188,7 +186,6 @@
             Delete.ForeignKey("FK_DelegateAccounts_Centres").OnTable("DelegateAccounts");
             Create.ForeignKey("FK_Candidates_Centres").FromTable("DelegateAccounts").ForeignColumn("CentreID")
                 .ToTable("Centres").PrimaryColumn("CentreID");
-            Delete.ForeignKey("FK_DelegateAccounts_JobGroups").OnTable("DelegateAccounts");
             Create.ForeignKey("FK_Candidates_JobGroups").FromTable("DelegateAccounts").ForeignColumn("JobGroupID")
                 .ToTable("JobGroups").PrimaryColumn("JobGroupID");
 
