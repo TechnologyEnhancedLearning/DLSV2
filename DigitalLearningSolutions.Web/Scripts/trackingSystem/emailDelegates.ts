@@ -9,6 +9,7 @@ const checkboxSelector = '.delegate-checkbox';
 
 // eslint-disable-next-line no-new
 new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter');
+
 setUpSelectAndDeselectButtons();
 
 function alertResultCount(): void {
