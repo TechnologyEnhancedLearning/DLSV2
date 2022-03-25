@@ -81,14 +81,14 @@
 
         [Test]
         public void
-            GetAllCourseStatisticsWithAdminFieldResponseCounts_should_return_course_statistics_for_centre_and_all_centre_courses()
+            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts_should_return_course_statistics_for_centre_and_all_centre_courses()
         {
             // Given
             var expectedIdOrder = new List<int> { 1, 2, 4 };
 
             // When
             var resultIdOrder = courseService
-                .GetAllCourseStatisticsWithAdminFieldResponseCounts(CentreId, AdminCategoryId)
+                .GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(CentreId, AdminCategoryId, true)
                 .Select(r => r.CustomisationId).ToList();
 
             // Then

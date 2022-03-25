@@ -103,7 +103,11 @@
             config = A.Fake<IConfiguration>();
 
             A.CallTo(
-                () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)
+                () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
+                    A<int>._,
+                    A<int>._,
+                    false
+                )
             ).Returns(courses);
 
             A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);
@@ -193,7 +197,10 @@
             A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
 
             // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
+            var result = controllerWithCookies.Index(
+                existingFilterString: existingFilterString,
+                newFilterToAdd: newFilterToAdd
+            );
 
             // Then
             using (new AssertionScope())
@@ -213,7 +220,10 @@
             const string newFilterToAdd = "Status|HideInLearnerPortal|true";
 
             // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
+            var result = controllerWithCookies.Index(
+                existingFilterString: existingFilterString,
+                newFilterToAdd: newFilterToAdd
+            );
 
             // Then
             using (new AssertionScope())

@@ -55,7 +55,7 @@
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
 
-            var details = courseService.GetDelegateCourseDetails(centreId, categoryId);
+            var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId);
 
             var model = new DelegateCoursesViewModel(
                 details,
@@ -77,7 +77,7 @@
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
-            var details = courseService.GetDelegateCourseDetails(centreId, categoryId);
+            var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId);
 
             var model = new AllDelegateCourseStatisticsViewModel(details);
 
