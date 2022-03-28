@@ -430,7 +430,9 @@
                 first.TotalTime.Should().Be(5);
                 first.AverageTime.Should().Be(28);
 
-                first.PostLearningAssessPath.Should().Be("https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Post_1.dcr");
+                first.PostLearningAssessPath.Should().Be(
+                    "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Post_1.dcr"
+                );
                 first.IsAssessed.Should().BeTrue();
                 first.Attempts.Should().Be(0);
                 first.Outcome.Should().Be(0);
@@ -469,7 +471,8 @@
             connection.Execute(
                 @"UPDATE tutorials
                         SET OverrideTutorialMins = 1
-                        WHERE TutorialID = 53");
+                        WHERE TutorialID = 53"
+            );
 
             // When
             var result = progressDataService.GetTutorialProgressDataForSection(157704, 75).ToList();
@@ -492,7 +495,8 @@
             connection.Execute(
                 @"UPDATE aspProgress
                         SET DiagAttempts = 0
-                        WHERE aspProgressID = 3373869");
+                        WHERE aspProgressID = 3373869"
+            );
 
             // When
             var result = progressDataService.GetTutorialProgressDataForSection(157704, 75).ToList();
@@ -515,7 +519,8 @@
             connection.Execute(
                 @"UPDATE CustomisationTutorials
                         SET DiagStatus = 0
-                        WHERE CusTutID = 324886");
+                        WHERE CusTutID = 324886"
+            );
 
             // When
             var result = progressDataService.GetTutorialProgressDataForSection(157704, 75).ToList();
@@ -527,6 +532,28 @@
                 var first = result.First();
 
                 first.DiagnosticScore.Should().Be(null);
+            }
+        }
+
+        [Test]
+        public void UpdateCourseAdminFieldForDelegate_updates_admin_field_answer_on_progress_record()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const string answer = "Test answer";
+
+                // When
+                progressDataService.UpdateCourseAdminFieldForDelegate(100, 1, answer);
+                var progressAnswer1 = progressTestHelper.GetAdminFieldAnswersByProgressId(100);
+
+                // Then
+                progressAnswer1.Should().Be(answer);
+            }
+            finally
+            {
+                transaction.Dispose();
             }
         }
     }

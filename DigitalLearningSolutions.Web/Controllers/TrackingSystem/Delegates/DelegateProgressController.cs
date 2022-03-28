@@ -187,6 +187,58 @@
             return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPage);
         }
 
+        [HttpGet]
+        [Route("EditAdminField/{promptNumber:int}")]
+        public IActionResult EditDelegateCourseAdminField(
+            int progressId,
+            int promptNumber,
+            DelegateAccessRoute accessedVia,
+            int? returnPage
+        )
+        {
+            var delegateCourseProgress =
+                courseService.GetDelegateCourseProgress(progressId);
+
+            var model = new EditDelegateCourseAdminFieldViewModel(
+                progressId,
+                promptNumber,
+                delegateCourseProgress!,
+                accessedVia,
+                returnPage
+            );
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("EditAdminField/{promptNumber:int}")]
+        public IActionResult EditDelegateCourseAdminField(
+            EditDelegateCourseAdminFieldFormData formData,
+            int promptNumber,
+            int progressId,
+            DelegateAccessRoute accessedVia,
+            int? returnPage
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                var delegateCourseProgress =
+                    courseService.GetDelegateCourseProgress(progressId);
+
+                var model = new EditDelegateCourseAdminFieldViewModel(
+                    formData,
+                    delegateCourseProgress!,
+                    progressId,
+                    promptNumber,
+                    accessedVia,
+                    returnPage
+                );
+                return View(model);
+            }
+
+            progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, formData.Answer?.Trim());
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPage);
+        }
+
         private IActionResult RedirectToPreviousPage(
             int delegateId,
             int progressId,

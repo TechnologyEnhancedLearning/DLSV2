@@ -271,13 +271,36 @@
                 new DetailedSectionProgress
                     { SectionId = 3, SectionName = "Section3", Tutorials = testTutorialProgress2 },
             };
-            var expectedResult = new DetailedCourseProgress(testCourseProgress, testSectionProgressWithTutorials, testCourseInfo);
+            var expectedResult = new DetailedCourseProgress(
+                testCourseProgress,
+                testSectionProgressWithTutorials,
+                testCourseInfo
+            );
 
             // When
             var result = progressService.GetDetailedCourseProgress(1);
 
             // Then
             result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public void UpdateAdminFieldForCourse_calls_data_service_with_correct_values()
+        {
+            // Given
+            const int progressId = 101;
+            const int promptNumber = 1;
+            const string answer = "Test answer";
+
+            A.CallTo(() => progressDataService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
+                .DoesNothing();
+
+            // When
+            progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer);
+
+            // Then
+            A.CallTo(() => progressDataService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer))
+                .MustHaveHappenedOnceExactly();
         }
     }
 }

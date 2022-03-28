@@ -2,12 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using FakeItEasy;
+    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
@@ -17,8 +20,8 @@
         private ICourseService courseService = null!;
         private DelegateProgressController delegateProgressController = null!;
         private IProgressService progressService = null!;
-        private IUserService userService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IUserService userService = null!;
 
         private static IEnumerable<TestCaseData> EditEndpointRedirectTestData
         {
@@ -136,6 +139,80 @@
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
                 .WithActionName(expectedAction);
+        }
+
+        [Test]
+        [TestCaseSource(
+            typeof(DelegateProgressControllerTests),
+            nameof(EditEndpointRedirectTestData)
+        )]
+        public void EditDelegateCourseAdminField_post_calls_service_and_redirects_to_correct_action(
+            DelegateAccessRoute accessedVia,
+            string expectedController,
+            string expectedAction
+        )
+        {
+            // Given
+            const int progressId = 1;
+            const int promptNumber = 1;
+            const string answer = "Test Answer";
+            var formData = new EditDelegateCourseAdminFieldFormData { Answer = answer };
+
+            A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
+                .DoesNothing();
+
+            // When
+            var result = delegateProgressController.EditDelegateCourseAdminField(
+                formData,
+                promptNumber,
+                progressId,
+                accessedVia,
+                1
+            );
+
+            // Then
+            A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
+                .WithActionName(expectedAction);
+        }
+
+        [Test]
+        public void EditDelegateCourseAdminField_does_not_call_service_with_invalid_model()
+        {
+            // Given
+            const int progressId = 1;
+            const int promptNumber = 1;
+            const string answer = "Test Answer";
+
+            var delegateCourseInfo = new DelegateCourseInfo();
+            var courseAdminField = new CourseAdminFieldWithAnswer(1, "Prompt text", "Answer", null);
+            var courseAdminFields = new List<CourseAdminFieldWithAnswer> { courseAdminField };
+            var attemptStats = new AttemptStats(1, 1);
+            var delegateCourseDetails = new DelegateCourseDetails(delegateCourseInfo, courseAdminFields, attemptStats);
+
+            var formData = new EditDelegateCourseAdminFieldFormData { Answer = answer };
+
+            A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer))
+                .DoesNothing();
+            A.CallTo(() => courseService.GetDelegateCourseProgress(progressId))
+                .Returns(delegateCourseDetails);
+            delegateProgressController.ModelState.AddModelError("Answer", "Test error message");
+
+            // When
+            var result = delegateProgressController.EditDelegateCourseAdminField(
+                formData,
+                promptNumber,
+                progressId,
+                DelegateAccessRoute.CourseDelegates,
+                1
+            );
+
+            // Then
+            A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
+                .MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditDelegateCourseAdminFieldViewModel>();
+            delegateProgressController.ModelState.IsValid.Should().BeFalse();
         }
 
         [Test]

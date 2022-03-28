@@ -69,5 +69,15 @@
                 new { progressId }
             ).Single();
         }
+
+        public string GetAdminFieldAnswersByProgressId(int progressId)
+        {
+            return connection.Query<string>(
+                @"SELECT Answer1
+                    FROM Progress
+                    WHERE ProgressId = @ProgressId",
+                new { progressId }
+            ).Single();
+        }
     }
 }
