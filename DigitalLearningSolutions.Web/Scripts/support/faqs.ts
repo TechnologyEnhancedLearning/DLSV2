@@ -1,7 +1,7 @@
 import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
 
 (function initiateFaqsSearchAndPagination(): void {
-  const subApplication = getDlsSubApplicationFromFaqUrl();
+  const subApplication = (<HTMLSpanElement>document.getElementById('dls-sub-application')).innerText.trim();
 
   // eslint-disable-next-line no-new
   new SearchSortFilterAndPaginate(`${subApplication}/Support/FAQs/AllItems`,
@@ -11,8 +11,3 @@ import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/sear
     undefined,
     ['title', 'content']);
 }());
-
-function getDlsSubApplicationFromFaqUrl(): string {
-  const pathMatchResults = window.location.pathname.match(/^\/(?<SubApplication>\w+)\/Support\/FAQs#?/);
-  return pathMatchResults?.groups?.SubApplication ?? '';
-}
