@@ -14,7 +14,8 @@
         public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
             GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
                 int centreId,
-                int? categoryId
+                int? categoryId,
+                bool includeAllCentreCourses = false
             );
 
         public bool DelegateHasCurrentProgress(int delegateId, int customisationId);
@@ -62,6 +63,8 @@
         );
 
         public CentreCourseDetails GetCentreCourseDetails(int centreId, int? categoryId);
+
+        public CentreCourseDetails GetCentreCourseDetailsWithAllCentreCourses(int centreId, int? categoryId);
 
         public bool DoesCourseNameExistAtCentre(
             string customisationName,
@@ -134,11 +137,12 @@
         public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
             GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
                 int centreId,
-                int? categoryId
+                int? categoryId,
+                bool includeAllCentreCourses = false
             )
         {
             var allCourses = courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId);
-            return allCourses.Where(c => c.CentreId == centreId).Select(
+            return allCourses.Where(c => c.CentreId == centreId || c.AllCentres && includeAllCentreCourses).Select(
                 c => new CourseStatisticsWithAdminFieldResponseCounts(
                     c,
                     courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(c.CustomisationId, centreId)
@@ -334,6 +338,17 @@
         {
             var (courses, categories, topics) = (
                 GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId),
+                courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+                    .Select(c => c.CategoryName),
+                courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic));
+
+            return new CentreCourseDetails(courses, categories, topics);
+        }
+
+        public CentreCourseDetails GetCentreCourseDetailsWithAllCentreCourses(int centreId, int? categoryId)
+        {
+            var (courses, categories, topics) = (
+                GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId, true),
                 courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                     .Select(c => c.CategoryName),
                 courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic));
