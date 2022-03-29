@@ -82,6 +82,7 @@
                 .Ascending()
                 .OnColumn("EmailAddress").Ascending().WithOptions().NonClustered();
 
+            Rename.Column("Password").OnTable("DelegateAccounts").To("OldPassword");
             Rename.Column("EmailAddress").OnTable("DelegateAccounts").To("Email");
             Alter.Table("DelegateAccounts").AddColumn("EmailVerified").AsDateTime().Nullable();
             Alter.Column("Answer1").OnTable("DelegateAccounts").AsString(100).Nullable();
@@ -97,7 +98,6 @@
             Rename.Column("LastName").OnTable("DelegateAccounts").To("LastName_deprecated");
             Rename.Column("JobGroupID").OnTable("DelegateAccounts").To("JobGroupID_deprecated");
             Rename.Column("AliasID").OnTable("DelegateAccounts").To("AliasID_deprecated");
-            Rename.Column("Password").OnTable("DelegateAccounts").To("Password_deprecated");
             Rename.Column("SkipPW").OnTable("DelegateAccounts").To("SkipPW_deprecated");
             Rename.Column("ResetHash").OnTable("DelegateAccounts").To("ResetHash_deprecated");
             Rename.Column("SkypeHandle").OnTable("DelegateAccounts").To("SkypeHandle_deprecated");
@@ -167,7 +167,6 @@
             Rename.Column("LastName_deprecated").OnTable("DelegateAccounts").To("LastName");
             Rename.Column("JobGroupID_deprecated").OnTable("DelegateAccounts").To("JobGroupID");
             Rename.Column("AliasID_deprecated").OnTable("DelegateAccounts").To("AliasID");
-            Rename.Column("Password_deprecated").OnTable("DelegateAccounts").To("Password");
             Rename.Column("SkipPW_deprecated").OnTable("DelegateAccounts").To("SkipPW");
             Rename.Column("ResetHash_deprecated").OnTable("DelegateAccounts").To("ResetHash");
             Rename.Column("SkypeHandle_deprecated").OnTable("DelegateAccounts").To("SkypeHandle");
@@ -225,6 +224,7 @@
                 .OnColumn("Email").Ascending()
                 .WithOptions().NonClustered();
 
+            Rename.Column("OldPassword").OnTable("DelegateAccounts").To("Password");
             Rename.Column("Email").OnTable("DelegateAccounts").To("EmailAddress");
             Delete.Column("EmailVerified").FromTable("DelegateAccounts");
             Alter.Column("Answer1").OnTable("DelegateAccounts").AsCustom("varchar(100)").Nullable();
