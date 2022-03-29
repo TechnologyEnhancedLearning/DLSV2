@@ -55,6 +55,7 @@
 
             Rename.Table("Candidates").To("DelegateAccounts");
             Alter.Table("DelegateAccounts").AddColumn("UserID").AsInt32().Nullable().ForeignKey("Users", "ID");
+            Alter.Table("DelegateAccounts").AddColumn("DetailsLastChecked").AsDateTime().Nullable();
 
             Delete.Index("IX_Candidates_CandidateNumber").OnTable("DelegateAccounts");
             Delete.Index("IX_Candidates_CentreID_LastName").OnTable("DelegateAccounts");
@@ -231,6 +232,7 @@
             Alter.Column("Answer2").OnTable("DelegateAccounts").AsCustom("varchar(100)").Nullable();
             Alter.Column("Answer3").OnTable("DelegateAccounts").AsCustom("varchar(100)").Nullable();
 
+            Delete.Column("DetailsLastChecked").FromTable("DelegateAccounts");
             Delete.ForeignKey("FK_DelegateAccounts_UserID_Users_ID").OnTable("DelegateAccounts");
             Delete.Column("UserID").FromTable("DelegateAccounts");
             Rename.Table("DelegateAccounts").To("Candidates");
