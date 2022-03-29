@@ -71,7 +71,7 @@
           <nhs-form-group nhs-validation-for="Competency.AssessmentQuestions[1].Result">
             <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
           </nhs-form-group>
-          <div class="nhsuk-u-margin-bottom-3" style="overflow:auto;">
+          <div name="clearButton" class="nhsuk-u-margin-bottom-3" style="overflow:auto; display:none;">
             <a class="nhsuk-button select-all-button deselect-all status-tag nhsuk-button--danger" style="display:block;"
                data-group="group@(question.value.Id)"
                name="selectAll" value="true">
