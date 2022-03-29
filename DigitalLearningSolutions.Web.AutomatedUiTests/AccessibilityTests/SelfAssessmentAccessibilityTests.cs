@@ -11,7 +11,7 @@
     {
         public SelfAssessmentAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
-        [Fact(Skip = "Broken by unmerged migration in DLSV2-520.")] // TODO DLSV2-520: Re-enable this test.
+        [Fact]
         public void SelfAssessment_journey_has_no_accessibility_errors()
         {
             // Given
