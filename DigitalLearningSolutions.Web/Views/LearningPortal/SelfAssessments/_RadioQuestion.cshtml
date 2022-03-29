@@ -12,7 +12,11 @@
   @foreach (var levelDescriptor in Model.LevelDescriptors)
   {
     <div class="nhsuk-radios__item">
-      <input class="nhsuk-radios__input" name="[@ViewData["index"]].Result" id="radio-@Model.Id-@levelDescriptor.LevelValue" checked="@(Model.Result == @levelDescriptor.LevelValue)" type="radio" value="@levelDescriptor.LevelValue" aria-describedby="radio-@Model.Id-@levelDescriptor.LevelValue-item-hint">
+      <input class="nhsuk-radios__input select-all-checkbox"
+             name="[@ViewData["index"]].Result" id="radio-@Model.Id-@levelDescriptor.LevelValue"
+             data-group="group@(Model.Id)"
+             checked="@(Model.Result == @levelDescriptor.LevelValue)" type="radio" value="@levelDescriptor.LevelValue"
+             aria-describedby="radio-@Model.Id-@levelDescriptor.LevelValue-item-hint">
       <label class="nhsuk-label nhsuk-radios__label" for="radio-@Model.Id-@levelDescriptor.LevelValue">
         @levelDescriptor.LevelLabel
       </label>
