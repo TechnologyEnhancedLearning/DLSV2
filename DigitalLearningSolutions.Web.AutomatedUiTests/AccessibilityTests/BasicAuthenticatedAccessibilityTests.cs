@@ -105,8 +105,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "Edit completed date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/285035/EditAdminField/1",
-            "Edit System Access Granted field for Digital Literacy for the Workplace - CC Test"
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/22657/EditAdminField/1",
+            "Edit System Access Granted field for Entry Level - Win XP, Office 2003/07 OLD - Standard"
         )]
         [InlineData(
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/LearningLog",

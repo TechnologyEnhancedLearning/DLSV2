@@ -70,7 +70,7 @@
                 option => new RadiosItemViewModel(option, option, option == info.GetAnswer(promptNumber), null)
             ).ToList();
             var noOptionIsSelected = answerOptions.All(ao => !ao.Selected);
-            answerOptions.Add(new RadiosItemViewModel("", "Leave blank", noOptionIsSelected, null));
+            answerOptions.Add(new RadiosItemViewModel(string.Empty, "Leave blank", noOptionIsSelected, null));
             return answerOptions;
         }
     }
