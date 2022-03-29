@@ -546,7 +546,7 @@
 
                 // When
                 progressDataService.UpdateCourseAdminFieldForDelegate(100, 1, answer);
-                var progressAnswer1 = progressTestHelper.GetAdminFieldAnswersByProgressId(100);
+                var progressAnswer1 = progressTestHelper.GetAdminFieldAnswer1ByProgressId(100);
 
                 // Then
                 progressAnswer1.Should().Be(answer);

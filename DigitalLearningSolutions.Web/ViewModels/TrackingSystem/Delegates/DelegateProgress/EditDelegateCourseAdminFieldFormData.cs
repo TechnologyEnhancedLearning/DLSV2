@@ -11,26 +11,20 @@
         {
             DelegateId = details.DelegateCourseInfo.DelegateId;
             CustomisationId = details.DelegateCourseInfo.CustomisationId;
-            DelegateName = details.DelegateCourseInfo.DelegateFirstName == null
-                ? details.DelegateCourseInfo.DelegateLastName
-                : $"{details.DelegateCourseInfo.DelegateFirstName} {details.DelegateCourseInfo.DelegateLastName}";
             ReturnPage = returnPage;
         }
 
-        protected EditDelegateCourseAdminFieldFormData(EditDelegateCourseAdminFieldFormData formData)
+        protected EditDelegateCourseAdminFieldFormData(EditDelegateCourseAdminFieldFormData formData, int? returnPage)
         {
-            Answer = formData.Answer;
             DelegateId = formData.DelegateId;
             CustomisationId = formData.CustomisationId;
-            DelegateName = formData.DelegateName;
-            ReturnPage = formData.ReturnPage;
+            ReturnPage = returnPage;
         }
 
         [MaxLength(100, ErrorMessage = "Answer must be 100 characters or fewer")]
         public string? Answer { get; set; }
 
         public int DelegateId { get; set; }
-        public string? DelegateName { get; set; }
         public int CustomisationId { get; set; }
         public int? ReturnPage { get; set; }
     }

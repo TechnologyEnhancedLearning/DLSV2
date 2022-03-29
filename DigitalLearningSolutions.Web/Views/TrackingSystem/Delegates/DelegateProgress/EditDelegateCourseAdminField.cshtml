@@ -10,6 +10,7 @@
 
   string cancelLinkController;
 
+  // TODO: HEEDLS-862 Account for all possible access routes in back link
   if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
@@ -21,7 +22,7 @@
   }
 }
 
-@*TODO: HEEDLS-780 - finalise these breadcrumbs once we hear from HEE about Delegate Progress page*@
+@*TODO: HEEDLS-862 - Change these breadcrumbs to account for all access routes*@
 @section NavBreadcrumbs {
   @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesProgressBreadcrumbs.cshtml" model="(Model.CustomisationId, Model.ProgressId)" />
@@ -36,7 +37,7 @@
       <vc:error-summary order-of-property-names="@new []{ nameof(@Model.Answer)}" />
     }
 
-    <h1 class="nhsuk-heading-xl word-break">Edit @Model.PromptText field for course</h1>
+    <h1 class="nhsuk-heading-xl word-break">Edit @Model.PromptText field for @Model.CourseName</h1>
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
@@ -53,7 +54,6 @@
         <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
           <input type="hidden" asp-for="DelegateId" />
           <input type="hidden" asp-for="ProgressId" />
-          <input type="hidden" asp-for="DelegateName" />
           <input type="hidden" asp-for="ReturnPage" />
 
           @if (Model.Options.Count > 0) {

@@ -70,7 +70,7 @@
             ).Single();
         }
 
-        public string GetAdminFieldAnswersByProgressId(int progressId)
+        public string GetAdminFieldAnswer1ByProgressId(int progressId)
         {
             return connection.Query<string>(
                 @"SELECT Answer1
