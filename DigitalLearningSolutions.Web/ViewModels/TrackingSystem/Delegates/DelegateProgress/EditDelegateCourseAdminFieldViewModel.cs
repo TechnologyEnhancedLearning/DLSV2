@@ -37,11 +37,10 @@
             DelegateCourseDetails details,
             int progressId,
             int promptNumber,
-            DelegateAccessRoute accessedVia,
-            int? returnPage
-        ) : base(formData, returnPage)
+            DelegateAccessRoute accessedVia
+        ) : base(formData)
         {
-            var courseAdminField = details.CourseAdminFields.Find(c => c.PromptNumber == promptNumber);
+            var courseAdminField = details.CourseAdminFields.Single(c => c.PromptNumber == promptNumber);
 
             Options = courseAdminField!.Options;
             Radios = GetRadioItems(details.DelegateCourseInfo, promptNumber);

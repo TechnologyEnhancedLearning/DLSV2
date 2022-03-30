@@ -14,11 +14,12 @@
             ReturnPage = returnPage;
         }
 
-        protected EditDelegateCourseAdminFieldFormData(EditDelegateCourseAdminFieldFormData formData, int? returnPage)
+        protected EditDelegateCourseAdminFieldFormData(EditDelegateCourseAdminFieldFormData formData)
         {
+            Answer = formData.Answer;
             DelegateId = formData.DelegateId;
             CustomisationId = formData.CustomisationId;
-            ReturnPage = returnPage;
+            ReturnPage = formData.ReturnPage;
         }
 
         [MaxLength(100, ErrorMessage = "Answer must be 100 characters or fewer")]

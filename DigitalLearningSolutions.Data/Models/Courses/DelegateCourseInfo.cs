@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Courses
 {
     using System;
+    using DigitalLearningSolutions.Data.Exceptions;
 
     public class DelegateCourseInfo : CourseNameInfo
     {
@@ -134,7 +135,7 @@
                 1 => Answer1,
                 2 => Answer2,
                 3 => Answer3,
-                _ => throw new Exception("Invalid prompt number"),
+                _ => throw new InvalidPromptNumberException(),
             };
         }
     }

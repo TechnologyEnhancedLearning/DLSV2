@@ -4,7 +4,8 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? $"Error: Edit {Model.PromptText} field for course" : $"Edit {Model.PromptText} field for course";
+  var pageTitle = $"Edit {Model.PromptText} field for {Model.CourseName}";
+  ViewData["Title"] = errorHasOccurred ? $"Error: {pageTitle}" : pageTitle;
 
   const string blankRadioId = "leave-blank";
 
@@ -39,7 +40,7 @@
       <vc:error-summary order-of-property-names="@new []{ nameof(@Model.Answer)}" />
     }
 
-    <h1 class="nhsuk-heading-xl word-break">Edit @Model.PromptText field for @Model.CourseName</h1>
+    <h1 class="nhsuk-heading-xl word-break">@pageTitle</h1>
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
@@ -62,15 +63,16 @@
             <div class="nhsuk-radios nhsuk-u-margin-bottom-4">
               @foreach (var radio in Model.Radios) {
                 var isBlankOption = radio.Value == string.Empty;
+                var radioId = isBlankOption ? blankRadioId : radio.Value;
                 <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3 @(isBlankOption ? "nhsuk-u-margin-top-6" : "")">
                   <input class="nhsuk-radios__input"
-                         id="@(isBlankOption ? blankRadioId : radio.Value)"
+                         id="@radioId"
                          name="@nameof(Model.Answer)"
                          type="radio"
                          value="@radio.Value"
-                         aria-describedby="@(isBlankOption ? blankRadioId : radio.Value)-item-hint"
+                         aria-describedby="@radioId-item-hint"
                          @(radio.Selected ? "checked" : string.Empty) />
-                  <label class="nhsuk-label nhsuk-radios__label" for="@(isBlankOption ? blankRadioId : radio.Value)">
+                  <label class="nhsuk-label nhsuk-radios__label" for="@radioId">
                     @radio.Label
                   </label>
                 </div>

@@ -10,7 +10,6 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using FakeItEasy;
-    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
@@ -218,8 +217,7 @@
                 formData,
                 promptNumber,
                 progressId,
-                accessedVia,
-                1
+                accessedVia
             );
 
             // Then
@@ -257,15 +255,13 @@
                 formData,
                 promptNumber,
                 progressId,
-                DelegateAccessRoute.CourseDelegates,
-                1
+                DelegateAccessRoute.CourseDelegates
             );
 
             // Then
             A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
                 .MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditDelegateCourseAdminFieldViewModel>();
-            delegateProgressController.ModelState.IsValid.Should().BeFalse();
         }
 
         [Test]

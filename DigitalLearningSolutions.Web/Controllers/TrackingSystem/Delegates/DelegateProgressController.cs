@@ -227,8 +227,7 @@
             EditDelegateCourseAdminFieldFormData formData,
             int promptNumber,
             int progressId,
-            DelegateAccessRoute accessedVia,
-            int? returnPage
+            DelegateAccessRoute accessedVia
         )
         {
             if (!ModelState.IsValid)
@@ -241,8 +240,7 @@
                     delegateCourseProgress!,
                     progressId,
                     promptNumber,
-                    accessedVia,
-                    returnPage
+                    accessedVia
                 );
                 return View(model);
             }
