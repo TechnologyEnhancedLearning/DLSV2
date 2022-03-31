@@ -26,23 +26,18 @@
         {
             var promptsWithOptions =
                 centreRegistrationPrompts.Where(registrationPrompt => registrationPrompt.Options.Count > 0);
-            var returnPage = string.IsNullOrWhiteSpace(SearchString) ? Page : 1;
-            var itemsPerPage = string.IsNullOrWhiteSpace(SearchString) ? result.ItemsPerPage : (int?)null;
-            var sortBy = string.IsNullOrWhiteSpace(SearchString) ? result.SortBy : null;
-            var sortDirection = string.IsNullOrWhiteSpace(SearchString) ? result.SortDirection : null;
             Delegates = result.ItemsToDisplay.Select(
                 delegateUser =>
                 {
                     var delegateRegistrationPrompts =
                         PromptsService.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
+                    var cardId = $"{delegateUser.Id}-card";
                     return new SearchableDelegateViewModel(
                         delegateUser,
                         delegateRegistrationPrompts,
                         promptsWithOptions,
-                        returnPage,
-                        itemsPerPage,
-                        sortBy,
-                        sortDirection
+                        cardId,
+                        result.GetReturnPageQuery(cardId)
                     );
                 }
             );

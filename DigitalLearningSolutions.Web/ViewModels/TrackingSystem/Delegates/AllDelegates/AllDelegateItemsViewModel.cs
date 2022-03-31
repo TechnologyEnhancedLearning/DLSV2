@@ -24,13 +24,12 @@
                 {
                     var delegateRegistrationPrompts =
                         PromptsService.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
+                    var cardId = $"{delegateUser.Id}-card";
                     return new SearchableDelegateViewModel(
                         delegateUser,
                         delegateRegistrationPrompts,
                         promptsWithOptions,
-                        1,
-                        null,
-                        null,
+                        cardId,
                         null
                     );
                 }

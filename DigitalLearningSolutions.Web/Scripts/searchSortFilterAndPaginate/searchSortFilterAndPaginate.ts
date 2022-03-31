@@ -299,8 +299,15 @@ export class SearchSortFilterAndPaginate {
 
     const pageNumber = this.page ?? currentPageNumber;
     const queryParametersToRetain = this.getQueryParametersForUpdatedURL();
-    const newUrl = `${urlParts.join('/')}/${pageNumber}${queryParametersToRetain}`;
-    window.history.replaceState({}, '', newUrl);
+
+    const returnId = window.location.hash;
+    if (returnId) {
+      const newUrl = `${urlParts.join('/')}/${pageNumber}${queryParametersToRetain}${returnId}`;
+      window.history.replaceState({}, '', newUrl);
+    } else {
+      const newUrl = `${urlParts.join('/')}/${pageNumber}${queryParametersToRetain}`;
+      window.history.replaceState({}, '', newUrl);
+    }
   }
 
   private getQueryParametersForUpdatedURL(): string {
@@ -336,7 +343,7 @@ export class SearchSortFilterAndPaginate {
         const params = new URLSearchParams(anchor.search);
         if (setReturnPage) {
           const pageQueryPart = `pageNumber=${this.page.toString()}`;
-          const jsScrollItemPart = `javascriptItemIdToScrollToOnReturn=${searchableElement.element.id}`;
+          const jsScrollItemPart = `itemIdToScrollToOnReturn=${searchableElement.element.id}`;
           const returnPageQuery = `${pageQueryPart}&${SearchSortFilterAndPaginate.getBaseQueryParameters()}&${jsScrollItemPart}`;
           params.set('returnPageQuery', returnPageQuery);
         } else {
@@ -362,9 +369,8 @@ export class SearchSortFilterAndPaginate {
   }
 
   private static scrollToLastItemViewed(): void {
-    const idNameElement = <HTMLInputElement>document.getElementById('item-to-scroll-to');
-    const idToScrollTo = idNameElement.value;
-    document.getElementById(idToScrollTo)?.scrollIntoView();
+    const id = window.location.hash.split('#')[1];
+    document.getElementById(id)?.scrollIntoView();
   }
 }
 
