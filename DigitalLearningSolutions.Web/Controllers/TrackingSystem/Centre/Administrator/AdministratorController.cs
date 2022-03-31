@@ -120,7 +120,7 @@
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult EditAdminRoles(int adminId, int? returnPage)
+        public IActionResult EditAdminRoles(int adminId, int? returnPage, int? itemsPerPage = null)
         {
             var centreId = User.GetCentreId();
             var adminUser = userDataService.GetAdminUserById(adminId);
@@ -129,7 +129,7 @@
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
             var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
-            var model = new EditRolesViewModel(adminUser!, centreId, categories, numberOfAdmins, returnPage);
+            var model = new EditRolesViewModel(adminUser!, centreId, categories, numberOfAdmins, returnPage, itemsPerPage);
             return View(model);
         }
 

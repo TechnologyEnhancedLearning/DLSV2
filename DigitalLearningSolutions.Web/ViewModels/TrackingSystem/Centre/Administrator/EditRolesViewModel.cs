@@ -18,7 +18,8 @@
             int centreId,
             IEnumerable<Category> categories,
             CentreContractAdminUsage numberOfAdmins,
-            int? returnPage
+            int? returnPage,
+            int? itemsPerPage
         ) : base(user, centreId)
         {
             IsCentreAdmin = user.IsCentreAdmin;
@@ -27,6 +28,7 @@
             IsTrainer = user.IsTrainer;
             IsContentCreator = user.IsContentCreator;
             ReturnPage = returnPage;
+            ItemsPerPage = itemsPerPage;
 
             if (user.IsCmsAdministrator)
             {

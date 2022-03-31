@@ -31,7 +31,11 @@
         }
 
         [HttpGet]
-        public IActionResult Index(int delegateId, bool isFromViewDelegatePage, int? returnPage)
+        public IActionResult Index(
+            int delegateId,
+            bool isFromViewDelegatePage,
+            string? returnPageQuery = null
+        )
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
@@ -43,8 +47,8 @@
             var model = new SetDelegatePasswordViewModel(
                 DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName),
                 delegateId,
-                returnPage,
-                isFromViewDelegatePage
+                isFromViewDelegatePage,
+                returnPageQuery
             );
 
             return View(model);

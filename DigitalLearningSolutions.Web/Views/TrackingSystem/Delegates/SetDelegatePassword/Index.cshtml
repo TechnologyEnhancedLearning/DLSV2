@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword
 @using Microsoft.Extensions.Configuration
 @model SetDelegatePasswordViewModel
@@ -29,7 +30,7 @@
       <input type="hidden" asp-for="Name" />
       <input type="hidden" asp-for="DelegateId" />
       <input type="hidden" asp-for="IsFromViewDelegatePage" />
-      <input type="hidden" asp-for="ReturnPage" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
       <vc:text-input asp-for="@nameof(Model.Password)"
                      label="Password"
                      populate-with-current-value="false"
@@ -46,8 +47,7 @@
       var routeData = new Dictionary<string, string> { { "delegateId", Model.DelegateId.ToString() } };
       <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeData" />
     } else {
-      var routeData = new Dictionary<string, string> { { "page", Model.ReturnPage.ToString() } };
-      <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@routeData" />
+      <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@ReturnPageQueryHelper.GetRouteDataForBackLinkFromReturnPageQuery(Model.ReturnPageQuery)" />
     }
 
   </div>

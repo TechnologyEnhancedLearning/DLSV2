@@ -15,7 +15,10 @@
             DelegateUserCard delegateUser,
             IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts,
             IEnumerable<CentreRegistrationPrompt> promptsWithOptions,
-            int page
+            int page,
+            int? itemsPerPage,
+            string? sortBy,
+            string? sortDirection
         )
         {
             DelegateInfo = new DelegateInfoViewModel(delegateUser, delegateRegistrationPrompts);
@@ -25,6 +28,9 @@
                 promptsWithOptions
             );
             Page = page;
+            ItemsPerPage = itemsPerPage;
+            SortBy = sortBy;
+            SortDirection = sortDirection;
         }
 
         public DelegateInfoViewModel DelegateInfo { get; set; }
@@ -38,5 +44,11 @@
         public Dictionary<int, string> RegistrationPromptFilters { get; set; }
 
         public int Page { get; set; }
+
+        public int? ItemsPerPage { get; set; }
+
+        public string? SortBy { get; set; }
+
+        public string? SortDirection { get; set; }
     }
 }

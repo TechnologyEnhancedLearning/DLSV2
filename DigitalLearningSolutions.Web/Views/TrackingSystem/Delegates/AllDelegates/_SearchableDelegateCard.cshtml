@@ -2,7 +2,9 @@
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates
 @model SearchableDelegateViewModel
 
-<div class="searchable-element nhsuk-expander-group word-break" id="@Model.DelegateInfo.Id-card">
+@{ var elementId = @Model.DelegateInfo.Id + "-card"; }
+
+<div class="searchable-element nhsuk-expander-group word-break" id="@elementId">
 
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
@@ -79,7 +81,11 @@
          asp-action="Index"
          asp-route-delegateId="@Model.DelegateInfo.Id"
          asp-route-isFromViewDelegatePage="false"
-         asp-route-returnPage="@Model.Page">
+         asp-route-returnPage="@Model.Page"
+         asp-route-itemsPerPage="@Model.ItemsPerPage"
+         asp-route-sortBy="@Model.SortBy"
+         asp-route-sortDirection="@Model.SortDirection"
+         asp-route-javascriptItemIdToScrollToOnReturn="@elementId">
         Set password
       </a>
     </div>

@@ -14,21 +14,36 @@
         public AllDelegatesViewModel(
             SearchSortFilterPaginationResult<DelegateUserCard> result,
             IReadOnlyCollection<CentreRegistrationPrompt> centreRegistrationPrompts,
-            IEnumerable<FilterModel> availableFilters
+            IEnumerable<FilterModel> availableFilters,
+            string? javascriptItemIdToScrollTo
         ) : base(
             result,
             true,
             availableFilters,
-            "Search delegates"
+            "Search delegates",
+            javascriptItemIdToScrollTo: javascriptItemIdToScrollTo
         )
         {
-            var promptsWithOptions = centreRegistrationPrompts.Where(registrationPrompt => registrationPrompt.Options.Count > 0);
+            var promptsWithOptions =
+                centreRegistrationPrompts.Where(registrationPrompt => registrationPrompt.Options.Count > 0);
             var returnPage = string.IsNullOrWhiteSpace(SearchString) ? Page : 1;
+            var itemsPerPage = string.IsNullOrWhiteSpace(SearchString) ? result.ItemsPerPage : (int?)null;
+            var sortBy = string.IsNullOrWhiteSpace(SearchString) ? result.SortBy : null;
+            var sortDirection = string.IsNullOrWhiteSpace(SearchString) ? result.SortDirection : null;
             Delegates = result.ItemsToDisplay.Select(
                 delegateUser =>
                 {
-                    var delegateRegistrationPrompts = PromptsService.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
-                    return new SearchableDelegateViewModel(delegateUser, delegateRegistrationPrompts, promptsWithOptions, returnPage);
+                    var delegateRegistrationPrompts =
+                        PromptsService.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
+                    return new SearchableDelegateViewModel(
+                        delegateUser,
+                        delegateRegistrationPrompts,
+                        promptsWithOptions,
+                        returnPage,
+                        itemsPerPage,
+                        sortBy,
+                        sortDirection
+                    );
                 }
             );
         }

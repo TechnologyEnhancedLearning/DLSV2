@@ -23,6 +23,7 @@
         public ContentManagementRole ContentManagementRole { get; set; }
         public int LearningCategory { get; set; }
         public int? ReturnPage { get; set; }
+        public int? ItemsPerPage { get; set; }
 
         public AdminRoles GetAdminRoles()
         {

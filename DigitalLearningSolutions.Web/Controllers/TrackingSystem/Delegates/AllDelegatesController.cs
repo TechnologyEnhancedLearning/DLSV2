@@ -51,7 +51,8 @@
             string? existingFilterString = null,
             string? newFilterToAdd = null,
             bool clearFilters = false,
-            int? itemsPerPage = null
+            int? itemsPerPage = null,
+            string? javascriptItemIdToScrollTo = null
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
@@ -94,7 +95,8 @@
             var model = new AllDelegatesViewModel(
                 result,
                 customPrompts,
-                availableFilters
+                availableFilters,
+                javascriptItemIdToScrollTo
             );
 
             Response.UpdateFilterCookie(DelegateFilterCookieName, result.FilterString);

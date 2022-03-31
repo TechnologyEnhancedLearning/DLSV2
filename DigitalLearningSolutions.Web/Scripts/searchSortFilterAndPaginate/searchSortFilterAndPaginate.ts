@@ -4,8 +4,10 @@ import {
   setUpFilter, filterSearchableElements, IAppliedFilterTag,
 } from './filter';
 import { getQuery, search, setUpSearch } from './search';
-import { setUpSort, sortSearchableElements } from './sort';
-import { paginateResults, setUpPagination } from './paginate';
+import {
+  setUpSort, sortSearchableElements, getSortBy, getSortDirection,
+} from './sort';
+import { paginateResults, setUpPagination, getItemsPerPageValue } from './paginate';
 import getPathForEndpoint from '../common';
 
 export interface ISearchableElement {
@@ -74,7 +76,7 @@ export class SearchSortFilterAndPaginate {
           setUpSearch(() => this.onSearchUpdated(searchableData));
         }
 
-        setUpSort(() => this.searchSortAndPaginate(searchableData));
+        setUpSort(() => this.onSortUpdated(searchableData));
 
         if (paginationEnabled) {
           setUpPagination(
@@ -86,6 +88,7 @@ export class SearchSortFilterAndPaginate {
         }
         this.searchSortAndPaginate(searchableData, false);
         this.stopLoadingSpinner();
+        SearchSortFilterAndPaginate.scrollToLastItemViewed();
       });
   }
 
@@ -93,6 +96,11 @@ export class SearchSortFilterAndPaginate {
     this.updatePageNumberIfPaginated(1, searchableData);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
+  }
+
+  private onSortUpdated(searchableData: ISearchableData): void {
+    this.updatePageNumberIfPaginated(1, searchableData);
+    this.searchSortAndPaginate(searchableData);
   }
 
   private onSearchUpdated(searchableData: ISearchableData): void {
@@ -118,6 +126,7 @@ export class SearchSortFilterAndPaginate {
   }
 
   private searchSortAndPaginate(searchableData: ISearchableData, updateResultCount = true): void {
+    this.updateSearchableElementLinks(searchableData);
     const searchedElements = this.searchEnabled
       ? search(searchableData.searchableElements)
       : searchableData.searchableElements;
@@ -296,10 +305,6 @@ export class SearchSortFilterAndPaginate {
 
   private getQueryParametersForUpdatedURL(): string {
     const currentQueryParameters = window.location.search.replace('?', '');
-    if (currentQueryParameters.length === 0 || this.queryParameterToRetain === '') {
-      return '';
-    }
-
     const separatedParameters = currentQueryParameters.split('&');
     const keptQueryParameters: string[] = [];
     separatedParameters.forEach((param) => {
@@ -309,7 +314,16 @@ export class SearchSortFilterAndPaginate {
       }
     });
 
-    return keptQueryParameters.length > 0 ? `?${keptQueryParameters.join('&')}` : '';
+    const baseQuery = `?${SearchSortFilterAndPaginate.getBaseQueryParameters()}`;
+    return keptQueryParameters.length > 0 ? `${baseQuery}&${keptQueryParameters.join('&')}` : baseQuery;
+  }
+
+  private static getBaseQueryParameters(): string {
+    const searchString = getQuery();
+    const sortBy = getSortBy();
+    const sortDirection = getSortDirection();
+    const itemsPerPage = getItemsPerPageValue().toString();
+    return `searchString=${searchString}&sortBy=${sortBy}&sortDirection=${sortDirection}&itemsPerPage=${itemsPerPage}`;
   }
 
   private updateSearchableElementLinks(searchableData: ISearchableData): void {
@@ -321,9 +335,12 @@ export class SearchSortFilterAndPaginate {
       _.forEach(searchableElement.element.getElementsByTagName('a'), (anchor: HTMLAnchorElement) => {
         const params = new URLSearchParams(anchor.search);
         if (setReturnPage) {
-          params.set('returnPage', this.page.toString());
+          const pageQueryPart = `pageNumber=${this.page.toString()}`;
+          const jsScrollItemPart = `javascriptItemIdToScrollToOnReturn=${searchableElement.element.id}`;
+          const returnPageQuery = `${pageQueryPart}&${SearchSortFilterAndPaginate.getBaseQueryParameters()}&${jsScrollItemPart}`;
+          params.set('returnPageQuery', returnPageQuery);
         } else {
-          params.delete('returnPage');
+          params.delete('returnPageQuery');
         }
         // eslint-disable-next-line no-param-reassign
         anchor.search = params.toString();
@@ -342,6 +359,12 @@ export class SearchSortFilterAndPaginate {
     if (this.areaToHide !== null) {
       this.areaToHide.style.display = 'inline';
     }
+  }
+
+  private static scrollToLastItemViewed(): void {
+    const idNameElement = <HTMLInputElement>document.getElementById('item-to-scroll-to');
+    const idToScrollTo = idNameElement.value;
+    document.getElementById(idToScrollTo)?.scrollIntoView();
   }
 }
 

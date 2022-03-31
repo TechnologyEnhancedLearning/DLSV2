@@ -10,6 +10,10 @@ export function setUpPagination(
   const previousButton = getPreviousButton();
   const nextButton = getNextButton();
   const itemsPerPageSelect = getItemsPerPageSelect();
+  if (itemsPerPageSelect !== null) {
+    itemsPerPageSelect.addEventListener('change', onItemsPerPageUpdated);
+  }
+
   if (previousButton === null || nextButton === null) {
     return;
   }
@@ -24,9 +28,6 @@ export function setUpPagination(
       event.preventDefault();
       onNextPressed();
     });
-  if (itemsPerPageSelect !== null) {
-    itemsPerPageSelect.addEventListener('change', onItemsPerPageUpdated);
-  }
 }
 
 export function paginateResults(
@@ -68,7 +69,7 @@ function updatePageButtonVisibility(page: number, totalPages: number) {
   paginationContainer.hidden = totalPages === 1;
 }
 
-function getItemsPerPageValue() {
+export function getItemsPerPageValue() : number {
   const itemsPerPageSelect = getItemsPerPageSelect();
   return itemsPerPageSelect !== null
     ? parseInt((itemsPerPageSelect as HTMLSelectElement).value, 10)

@@ -5,7 +5,10 @@
 
 @{
   ViewData["Title"] = "Edit Administrator Roles";
-  var cancelLinkData = new Dictionary<string, string> { { "page", Model.ReturnPage.ToString() } };
+  var cancelLinkData = new Dictionary<string, string> {
+    { "page", Model.ReturnPage.ToString() },
+    { "itemsPerPage", Model.ItemsPerPage.ToString() },
+  };
 }
 
 <div class="nhsuk-grid-row">

@@ -10,14 +10,14 @@
         public SetDelegatePasswordViewModel(
             string name,
             int delegateId,
-            int? returnPage,
-            bool isFromViewDelegatePage = false
+            bool isFromViewDelegatePage = false,
+            string? returnPageQuery = null
         )
         {
             Name = name;
             DelegateId = delegateId;
             IsFromViewDelegatePage = isFromViewDelegatePage;
-            ReturnPage = returnPage;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public string Name { get; set; }
@@ -36,6 +36,6 @@
         [DataType(DataType.Password)]
         public string? Password { get; set; }
 
-        public int? ReturnPage { get; set; }
+        public string? ReturnPageQuery { get; set; }
     }
 }
