@@ -15,6 +15,7 @@
             CustomisationId = courseStatistics.CustomisationId;
             DelegateCount = courseStatistics.DelegateCount;
             InProgressCount = courseStatistics.InProgressCount;
+            CompletedCount = courseStatistics.CompletedCount;
             CourseName = courseStatistics.CourseName;
             CategoryName = courseStatistics.CategoryName;
             CourseTopic = courseStatistics.CourseTopic;
@@ -27,6 +28,7 @@
         public int CustomisationId { get; set; }
         public int DelegateCount { get; set; }
         public int InProgressCount { get; set; }
+        public int CompletedCount { get; set; }
         public string CourseName { get; set; }
         public string CategoryName { get; set; }
         public string CourseTopic { get; set; }
