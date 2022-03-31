@@ -20,6 +20,12 @@
         void UnlockProgress(int progressId);
 
         DetailedCourseProgress? GetDetailedCourseProgress(int progressId);
+
+        void UpdateCourseAdminFieldForDelegate(
+            int progressId,
+            int promptNumber,
+            string? answer
+        );
     }
 
     public class ProgressService : IProgressService
@@ -115,6 +121,15 @@
             }
 
             return new DetailedCourseProgress(progress, sections, courseInfo);
+        }
+
+        public void UpdateCourseAdminFieldForDelegate(
+            int progressId,
+            int promptNumber,
+            string? answer
+        )
+        {
+            progressDataService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer);
         }
     }
 }
