@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
+    using DigitalLearningSolutions.Data.Exceptions;
+
     public class CentreAnswersData
     {
         public CentreAnswersData(
@@ -10,7 +12,8 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6)
+            string? answer6
+        )
         {
             CentreId = centreId;
             JobGroupId = jobGroupId;
@@ -30,5 +33,19 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
+
+        public string? GetAnswerForRegistrationPromptNumber(int promptNumber)
+        {
+            return promptNumber switch
+            {
+                1 => Answer1,
+                2 => Answer2,
+                3 => Answer3,
+                4 => Answer4,
+                5 => Answer5,
+                6 => Answer6,
+                _ => throw new InvalidPromptNumberException(),
+            };
+        }
     }
 }
