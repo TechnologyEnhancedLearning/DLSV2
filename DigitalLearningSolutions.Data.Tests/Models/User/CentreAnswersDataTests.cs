@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Models.User
 {
+    using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using FluentAssertions;
     using NUnit.Framework;
@@ -17,17 +19,22 @@
             "answer 6"
         );
 
+        private static IEnumerable<object[]> GetTestCases()
+        {
+            yield return new object[] { RegistrationField.CentreRegistrationField1, "answer 1" };
+            yield return new object[] { RegistrationField.CentreRegistrationField2, "answer 2" };
+            yield return new object[] { RegistrationField.CentreRegistrationField3, "answer 3" };
+            yield return new object[] { RegistrationField.CentreRegistrationField4, "answer 4" };
+            yield return new object[] { RegistrationField.CentreRegistrationField5, "answer 5" };
+            yield return new object[] { RegistrationField.CentreRegistrationField6, "answer 6" };
+        }
+
         [Test]
-        [TestCase(1, "answer 1")]
-        [TestCase(2, "answer 2")]
-        [TestCase(3, "answer 3")]
-        [TestCase(4, "answer 4")]
-        [TestCase(5, "answer 5")]
-        [TestCase(6, "answer 6")]
-        public void GettingAnswersByPromptNumber_returns_correct_answer(int promptNumber, string expectedAnswer)
+        [TestCaseSource(nameof(GetTestCases))]
+        public void GettingAnswersByPromptNumber_returns_correct_answer(RegistrationField field, string expectedAnswer)
         {
             // When
-            var answer = testAnswers.GetAnswerForRegistrationPromptNumber(promptNumber);
+            var answer = testAnswers.GetAnswerForRegistrationPromptNumber(field);
 
             // Then
             answer.Should().BeEquivalentTo(expectedAnswer);

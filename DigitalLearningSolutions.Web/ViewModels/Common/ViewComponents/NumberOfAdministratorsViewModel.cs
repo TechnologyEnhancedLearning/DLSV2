@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.Helpers;
 
     public class NumberOfAdministratorsViewModel
     {

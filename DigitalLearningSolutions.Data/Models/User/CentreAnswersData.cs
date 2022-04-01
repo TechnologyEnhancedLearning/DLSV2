@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
 
     public class CentreAnswersData
@@ -34,9 +35,9 @@
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
 
-        public string? GetAnswerForRegistrationPromptNumber(int promptNumber)
+        public string? GetAnswerForRegistrationPromptNumber(RegistrationField field)
         {
-            return promptNumber switch
+            return field.Id switch
             {
                 1 => Answer1,
                 2 => Answer2,

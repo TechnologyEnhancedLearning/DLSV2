@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Helpers
+﻿namespace DigitalLearningSolutions.Data.Helpers
 {
     using System;
     using System.Text.RegularExpressions;

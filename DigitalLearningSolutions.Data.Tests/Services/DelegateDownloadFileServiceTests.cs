@@ -41,6 +41,8 @@
                 Password = null,
                 DateRegistered = new DateTime(2022, 3, 31),
                 AdminId = null,
+                HasBeenPromptedForPrn = false,
+                ProfessionalRegistrationNumber = "should not appear"
             },
             new DelegateUserCard
             {
@@ -62,6 +64,8 @@
                 Password = "testpassword",
                 DateRegistered = new DateTime(2022, 2, 28),
                 AdminId = null,
+                HasBeenPromptedForPrn = true,
+                ProfessionalRegistrationNumber = null
             },
             new DelegateUserCard
             {
@@ -82,7 +86,9 @@
                 Approved = true,
                 Password = "testpassword",
                 DateRegistered = new DateTime(2000, 1, 1),
-                AdminId = 1
+                AdminId = 1,
+                HasBeenPromptedForPrn = true,
+                ProfessionalRegistrationNumber = "MammalHands"
             }
         };
 
@@ -101,13 +107,9 @@
         }
 
         [Test]
-        public void GetDelegateDownloadFileForCentre_returns_expected_excel_data()
+        public void GetDelegatesAndJobGroupDownloadFileForCentre_returns_expected_excel_data()
         {
             // Given
-            using var expectedWorkbook = new XLWorkbook(
-                TestContext.CurrentContext.TestDirectory + DelegateUploadFileServiceTests.TestDelegateUploadRelativeFilePath
-            );
-
             A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
                 JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
             );
@@ -115,11 +117,14 @@
             A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2)).Returns(delegateUserCards);
 
             // When
-            var resultBytes = delegateDownloadFileService.GetDelegateDownloadFileForCentre(2);
+            var resultBytes = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(2);
             using var resultsStream = new MemoryStream(resultBytes);
             using var resultWorkbook = new XLWorkbook(resultsStream);
 
             // Then
+            using var expectedWorkbook = new XLWorkbook(
+                TestContext.CurrentContext.TestDirectory + DelegateUploadFileServiceTests.TestDelegateUploadRelativeFilePath
+            );
             SpreadsheetTestHelper.AssertSpreadsheetsAreEquivalent(expectedWorkbook, resultWorkbook);
         }
 
@@ -129,10 +134,6 @@
             // TODO: HEEDLS-810 - run the formatter once review complete.
             // Given
             const int centreId = 2;
-
-            using var expectedWorkbook = new XLWorkbook(
-                TestContext.CurrentContext.TestDirectory + TestAllDelegatesExportRelativeFilePath
-            );
 
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt>
             {
@@ -153,6 +154,9 @@
             using var resultWorkbook = new XLWorkbook(resultsStream);
 
             // Then
+            using var expectedWorkbook = new XLWorkbook(
+                TestContext.CurrentContext.TestDirectory + TestAllDelegatesExportRelativeFilePath
+            );
             SpreadsheetTestHelper.AssertSpreadsheetsAreEquivalent(expectedWorkbook, resultWorkbook);
         }
     }

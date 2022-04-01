@@ -39,7 +39,7 @@
         [Route("DownloadDelegates")]
         public IActionResult DownloadDelegates()
         {
-            var content = delegateDownloadFileService.GetDelegateDownloadFileForCentre(User.GetCentreId());
+            var content = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(User.GetCentreId());
             var fileName = $"DLS Delegates for Bulk Update {DateTime.Today:yyyy-MM-dd}.xlsx";
             return File(
                 content,

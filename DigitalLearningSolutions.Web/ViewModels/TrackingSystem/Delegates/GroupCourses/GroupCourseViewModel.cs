@@ -1,7 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DateHelper = Helpers.DateHelper;
 
     public class GroupCourseViewModel
     {

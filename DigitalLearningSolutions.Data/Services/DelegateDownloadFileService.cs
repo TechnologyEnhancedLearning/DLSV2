@@ -13,7 +13,7 @@
 
     public interface IDelegateDownloadFileService
     {
-        public byte[] GetDelegateDownloadFileForCentre(int centreId);
+        public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId);
 
         public byte[] GetAllDelegatesFileForCentre(
             int centreId,
@@ -33,6 +33,7 @@
         private const string FirstName = "First name";
         private const string DelegateId = "ID";
         private const string Email = "Email";
+        private const string ProfessionalRegistrationNumber = "Professional Registration Number";
         private const string Alias = "Alias";
         private const string JobGroup = "Job group";
         private const string RegisteredDate = "Registered";
@@ -56,7 +57,7 @@
             this.userDataService = userDataService;
         }
 
-        public byte[] GetDelegateDownloadFileForCentre(int centreId)
+        public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId)
         {
             using var workbook = new XLWorkbook();
 
@@ -113,28 +114,7 @@
                     x.EmailAddress,
                 }
             );
-
-            if (!delegateRecords.Any())
-            {
-                var emptyDelegate = new
-                {
-                    LastName = string.Empty,
-                    FirstName = string.Empty,
-                    DelegateID = string.Empty,
-                    AliasID = string.Empty,
-                    JobGroupID = 1,
-                    Answer1 = string.Empty,
-                    Answer2 = string.Empty,
-                    Answer3 = string.Empty,
-                    Answer4 = string.Empty,
-                    Answer5 = string.Empty,
-                    Answer6 = string.Empty,
-                    Active = false,
-                    EmailAddress = string.Empty,
-                };
-                delegates = delegates.Append(emptyDelegate!);
-            }
-
+            
             ClosedXmlHelper.AddSheetToWorkbook(workbook, DelegatesSheetName, delegates, TableTheme);
         }
 
@@ -163,7 +143,6 @@
                 .ToList();
 
             var dataTable = new DataTable();
-            // TODO: HEEDLS-810 - display extra PRN details if necessary. 
             SetUpDataTableColumnsForAllDelegates(registrationPrompts, dataTable);
 
             foreach (var delegateRecord in delegatesToExport)
@@ -219,6 +198,7 @@
                     new DataColumn(FirstName),
                     new DataColumn(DelegateId),
                     new DataColumn(Email),
+                    new DataColumn(ProfessionalRegistrationNumber),
                     new DataColumn(Alias),
                     new DataColumn(JobGroup),
                     new DataColumn(RegisteredDate),
@@ -257,6 +237,10 @@
             row[FirstName] = delegateRecord.FirstName;
             row[DelegateId] = delegateRecord.CandidateNumber;
             row[Email] = delegateRecord.EmailAddress;
+            row[ProfessionalRegistrationNumber] = DisplayStringHelper.GetPrnDisplayString(
+                delegateRecord.HasBeenPromptedForPrn,
+                delegateRecord.ProfessionalRegistrationNumber
+            );
             row[Alias] = delegateRecord.AliasId;
             row[JobGroup] = delegateRecord.JobGroupName;
             row[RegisteredDate] = delegateRecord.DateRegistered?.Date;
@@ -268,12 +252,12 @@
                 if (dataTable.Columns.Contains($"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"))
                 {
                     row[$"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"] =
-                        delegateAnswers.GetAnswerForRegistrationPromptNumber(prompt.RegistrationField.Id);
+                        delegateAnswers.GetAnswerForRegistrationPromptNumber(prompt.RegistrationField);
                 }
                 else
                 {
                     row[prompt.PromptText] =
-                        delegateAnswers.GetAnswerForRegistrationPromptNumber(prompt.RegistrationField.Id);
+                        delegateAnswers.GetAnswerForRegistrationPromptNumber(prompt.RegistrationField);
                 }
             }
 
