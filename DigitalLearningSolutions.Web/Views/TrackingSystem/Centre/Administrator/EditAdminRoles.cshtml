@@ -5,10 +5,6 @@
 
 @{
   ViewData["Title"] = "Edit Administrator Roles";
-  var cancelLinkData = new Dictionary<string, string> {
-    { "page", Model.ReturnPage.ToString() },
-    { "itemsPerPage", Model.ItemsPerPage.ToString() },
-  };
 }
 
 <div class="nhsuk-grid-row">
@@ -29,7 +25,8 @@
 
     <h2 class="nhsuk-heading-l nhsuk-u-margin-top-4">User roles</h2>
 
-    @if (Model.NotAllRolesDisplayed) {
+    @if (Model.NotAllRolesDisplayed)
+    {
       <div class="nhsuk-warning-callout nhsuk-u-margin-bottom-4">
         <h3 class="nhsuk-warning-callout__label">
           <span role="text">
@@ -49,7 +46,7 @@
     </div>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditAdminRoles">
-      <input type="hidden" asp-for="ReturnPage" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
 
       <vc:checkboxes label="Please select all the roles this user has."
                      populate-with-current-values="true"
@@ -77,7 +74,7 @@
 
       <button class="nhsuk-button nhsuk-u-margin-top-6" type="submit" value="save">Save</button>
     </form>
-
-    <vc:cancel-link asp-controller="Administrator" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+    
+    <vc:cancel-link-with-return-page-query asp-controller="Administrators" asp-action="Index" return-page-query="@Model.ReturnPageQuery" />
   </div>
 </div>

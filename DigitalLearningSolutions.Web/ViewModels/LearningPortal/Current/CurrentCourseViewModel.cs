@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 {
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class CurrentCourseViewModel : CurrentLearningItemViewModel
     {
@@ -8,6 +9,7 @@
         public bool IsEnrolledWithGroup { get; }
         public bool IsLocked { get; }
         public bool SelfEnrolled { get; }
+        public ReturnPageQuery? ReturnPageQuery { get; set; }
 
         public CurrentCourseViewModel(CurrentCourse course) : base(course)
         {

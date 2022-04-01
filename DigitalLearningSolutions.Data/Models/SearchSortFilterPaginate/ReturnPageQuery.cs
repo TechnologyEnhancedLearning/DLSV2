@@ -36,6 +36,16 @@
             ItemIdToReturnTo = itemIdToReturnTo;
         }
 
+        public ReturnPageQuery(int pageNumber, string? itemIdToReturnTo)
+        {
+            PageNumber = pageNumber;
+            ItemIdToReturnTo = itemIdToReturnTo;
+            SearchString = null;
+            SortBy = null;
+            SortDirection = null;
+            ItemsPerPage = null;
+        }
+
         public int PageNumber { get; }
 
         public string? SearchString { get; }

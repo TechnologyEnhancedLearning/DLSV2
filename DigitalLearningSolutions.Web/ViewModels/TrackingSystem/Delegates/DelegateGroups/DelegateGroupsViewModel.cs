@@ -15,7 +15,12 @@
         ) : base(result, true, availableFilters)
         {
             var returnPage = string.IsNullOrWhiteSpace(SearchString) ? Page : 1;
-            DelegateGroups = result.ItemsToDisplay.Select(g => new SearchableDelegateGroupViewModel(g, returnPage));
+            DelegateGroups = result.ItemsToDisplay.Select(g =>
+                {
+                    var cardId = $"{g.GroupId}-card";
+                    return new SearchableDelegateGroupViewModel(g, result.GetReturnPageQuery(cardId));
+                }
+            );
         }
 
         public IEnumerable<SearchableDelegateGroupViewModel> DelegateGroups { get; set; }

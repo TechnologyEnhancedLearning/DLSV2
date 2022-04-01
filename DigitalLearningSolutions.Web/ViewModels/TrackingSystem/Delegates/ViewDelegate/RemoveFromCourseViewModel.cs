@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Models.Enums;
 
     public class RemoveFromCourseViewModel : IValidatableObject
@@ -15,7 +16,7 @@
             string courseName,
             bool confirm,
             DelegateAccessRoute accessedVia,
-            int? returnPage
+            string? returnPageQuery
         )
         {
             DelegateId = delegateId;
@@ -24,7 +25,7 @@
             CourseName = courseName;
             Confirm = confirm;
             AccessedVia = accessedVia;
-            ReturnPage = returnPage;
+            ReturnPageQuery = returnPageQuery != null ? new ReturnPageQuery(returnPageQuery) : (ReturnPageQuery?)null;
         }
 
         public int DelegateId { get; set; }
@@ -33,7 +34,7 @@
         public string CourseName { get; set; }
         public bool Confirm { get; set; }
         public DelegateAccessRoute AccessedVia { get; set; }
-        public int? ReturnPage { get; set; }
+        public ReturnPageQuery? ReturnPageQuery { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

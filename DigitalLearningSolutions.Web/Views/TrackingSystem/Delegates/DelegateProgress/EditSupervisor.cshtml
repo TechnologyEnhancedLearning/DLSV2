@@ -12,7 +12,6 @@
   if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
-    routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
   }
@@ -48,7 +47,7 @@
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="EditSupervisor">
       <input type="hidden" asp-for="DelegateId" />
       <input type="hidden" asp-for="ProgressId" />
-      <input type="hidden" asp-for="ReturnPage" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
       <vc:select-list asp-for="@nameof(Model.SupervisorId)"
                       label="Supervisor"
                       value="@Model.SupervisorId.ToString()"
@@ -62,11 +61,9 @@
     </form>
 
     @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-      <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back"
-                      asp-all-route-data="@routeParamsForBackLink" />
+      <vc:cancel-link-with-return-page-query asp-controller="DelegateProgress" asp-action="Index" route-data="@routeParamsForBackLink" return-page-query="@Model.ReturnPageQuery!.Value" />
     } else {
-      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back"
-                      asp-all-route-data="@routeParamsForBackLink" />
+      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
     }
   </div>
 </div>

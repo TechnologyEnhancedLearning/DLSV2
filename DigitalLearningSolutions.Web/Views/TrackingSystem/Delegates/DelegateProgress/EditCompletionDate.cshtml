@@ -8,16 +8,11 @@
 
   var routeParamsForBackLink = new Dictionary<string, string?>();
 
-  string cancelLinkController;
-
   if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
-    routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());
-    cancelLinkController = "DelegateProgress";
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
-    cancelLinkController = "ViewDelegate";
   }
   var exampleDate = DateTime.Today;
   var hintTextLines = new List<string> {
@@ -56,7 +51,7 @@
       <input type="hidden" asp-for="ProgressId" />
       <input type="hidden" asp-for="DelegateName" />
       <input type="hidden" asp-for="CourseName" />
-      <input type="hidden" asp-for="ReturnPage" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
       <vc:date-input id="completion-date"
                      label="Completed date"
                      day-id="Day"
@@ -68,6 +63,10 @@
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    <vc:cancel-link asp-controller="@cancelLinkController" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+      <vc:cancel-link-with-return-page-query asp-controller="DelegateProgress" asp-action="Index" route-data="@routeParamsForBackLink" return-page-query="@Model.ReturnPageQuery!.Value" />
+    } else {
+      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    }
   </div>
 </div>

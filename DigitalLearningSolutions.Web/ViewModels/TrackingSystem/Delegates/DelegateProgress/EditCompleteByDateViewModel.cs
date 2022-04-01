@@ -9,8 +9,8 @@
             int progressId,
             DelegateAccessRoute accessedVia,
             DelegateCourseInfo info,
-            int? returnPage
-        ) : base(info, returnPage)
+            string? returnPageQuery
+        ) : base(info, returnPageQuery)
         {
             ProgressId = progressId;
             AccessedVia = accessedVia;

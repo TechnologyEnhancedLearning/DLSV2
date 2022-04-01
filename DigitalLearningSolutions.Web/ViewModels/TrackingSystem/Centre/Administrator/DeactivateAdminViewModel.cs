@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 {
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -8,11 +9,11 @@
     {
         public DeactivateAdminViewModel() { }
 
-        public DeactivateAdminViewModel(AdminUser user, int? returnPage)
+        public DeactivateAdminViewModel(AdminUser user, ReturnPageQuery returnPageQuery)
         {
             FullName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(user.FirstName, user.LastName);
             EmailAddress = user.EmailAddress;
-            ReturnPage = returnPage;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public string FullName { get; set; }
@@ -20,7 +21,6 @@
 
         [BooleanMustBeTrue(ErrorMessage = "You must confirm before deactivating this account")]
         public bool Confirm { get; set; }
-
-        public int? ReturnPage { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

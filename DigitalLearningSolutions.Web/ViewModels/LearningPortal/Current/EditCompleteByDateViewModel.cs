@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class EditCompleteByDateViewModel : EditCompleteByDateFormData
     {
@@ -37,5 +38,7 @@
         }
 
         public int Id { get; set; }
+
+        public ReturnPageQuery? ReturnPageQuery { get; set; }
     }
 }

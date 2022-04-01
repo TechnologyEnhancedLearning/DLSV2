@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -15,8 +16,8 @@
             DelegateAccessRoute accessedVia,
             IEnumerable<AdminUser> supervisors,
             DelegateCourseInfo info,
-            int? returnPage
-        ) : base(info, returnPage)
+            string? returnPageQuery
+        ) : base(info, returnPageQuery)
         {
             ProgressId = progressId;
             AccessedVia = accessedVia;

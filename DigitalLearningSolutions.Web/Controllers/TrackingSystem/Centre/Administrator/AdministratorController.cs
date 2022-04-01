@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator
 {
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -120,7 +119,7 @@
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult EditAdminRoles(int adminId, int? returnPage, int? itemsPerPage = null)
+        public IActionResult EditAdminRoles(int adminId, string returnPageQuery)
         {
             var centreId = User.GetCentreId();
             var adminUser = userDataService.GetAdminUserById(adminId);
@@ -129,7 +128,7 @@
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
             var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
-            var model = new EditRolesViewModel(adminUser!, centreId, categories, numberOfAdmins, returnPage, itemsPerPage);
+            var model = new EditRolesViewModel(adminUser!, centreId, categories, numberOfAdmins, new ReturnPageQuery(returnPageQuery));
             return View(model);
         }
 
@@ -144,7 +143,7 @@
                 model.LearningCategory
             );
 
-            return RedirectToAction("Index", new { page = model.ReturnPage });
+            return RedirectToAction("Index", model.ReturnPageQuery.ToRouteDataDictionary());
         }
 
         [Route("{adminId:int}/UnlockAccount")]
@@ -160,7 +159,7 @@
         [Route("{adminId:int}/DeactivateAdmin")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult DeactivateOrDeleteAdmin(int adminId, int? returnPage)
+        public IActionResult DeactivateOrDeleteAdmin(int adminId, string returnPageQuery)
         {
             var adminUser = userDataService.GetAdminUserById(adminId);
 
@@ -169,7 +168,7 @@
                 return NotFound();
             }
 
-            var model = new DeactivateAdminViewModel(adminUser!, returnPage);
+            var model = new DeactivateAdminViewModel(adminUser!, new ReturnPageQuery(returnPageQuery));
             return View(model);
         }
 

@@ -6,13 +6,13 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = $"{(errorHasOccurred ? "Error" : "")} Edit description for {Model.GroupName} group (optional)";
-  var cancelLinkData = new Dictionary<string, string> { { "page", Model.ReturnPage.ToString() } };
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
 
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Description) })" />
     }
 
@@ -31,6 +31,6 @@
       <button class="nhsuk-button" type="submit" value="save">Save</button>
       <input type="hidden" asp-for="GroupName" />
     </form>
-    <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+    <vc:cancel-link-with-return-page-query asp-controller="DelegateGroups" asp-action="Index" return-page-query="@Model.ReturnPageQuery" />
   </div>
 </div>

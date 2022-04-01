@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -97,7 +99,7 @@
             int delegateId,
             int customisationId,
             DelegateAccessRoute accessedVia,
-            int? returnPage
+            string? returnPageQuery = null
         )
         {
             if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
@@ -118,7 +120,7 @@
                 course!.CourseName,
                 false,
                 accessedVia,
-                returnPage
+                returnPageQuery
             );
 
             return View("ConfirmRemoveFromCourse", model);
@@ -153,9 +155,16 @@
                 ? RedirectToAction(
                     "Index",
                     "CourseDelegates",
-                    new { customisationId, page = model.ReturnPage.ToString() }
+                    GetCourseDelegatesRouteValues(customisationId, model.ReturnPageQuery!.Value)
                 )
                 : RedirectToAction("Index", "ViewDelegate", new { delegateId });
+        }
+
+        private static Dictionary<string, string> GetCourseDelegatesRouteValues(int customisationId, ReturnPageQuery returnPageQuery)
+        {
+            var dict = returnPageQuery.ToRouteDataDictionary();
+            dict.Add("customisationId", customisationId.ToString());
+            return dict;
         }
 
         [HttpPost]

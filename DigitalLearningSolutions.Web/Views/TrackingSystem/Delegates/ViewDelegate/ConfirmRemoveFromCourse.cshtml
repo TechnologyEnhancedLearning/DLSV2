@@ -9,15 +9,11 @@
   ViewData["Title"] = errorHasOccurred ? "Error: Remove enrolment" : "Remove enrolment";
 
   var cancelLinkRouteData = new Dictionary<string, string>();
-  string cancelLinkController;
 
   if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     cancelLinkRouteData.Add("customisationId", Model.CustomisationId.ToString());
-    cancelLinkRouteData.Add("page", Model.ReturnPage.ToString());
-    cancelLinkController = "CourseDelegates";
   } else {
     cancelLinkRouteData.Add("delegateId", Model.DelegateId.ToString());
-    cancelLinkController = "ViewDelegate";
   }
 }
 
@@ -57,7 +53,7 @@
           asp-route-accessedVia="@Model.AccessedVia">
       <input type="hidden" name="name" value="@Model.Name" />
       <input type="hidden" name="courseName" value="@Model.CourseName" />
-      <input type="hidden" name="returnPage" value="@Model.ReturnPage" />
+      <input type="hidden" name="returnPage" value="@Model.ReturnPageQuery" />
 
       <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
                           label="I am sure that I wish to remove this enrolment"
@@ -65,7 +61,10 @@
 
       <button class="nhsuk-button delete-button" role="button" type="submit">Remove enrolment</button>
     </form>
-
-    <vc:cancel-link asp-controller=@cancelLinkController asp-action="Index" asp-all-route-data="@cancelLinkRouteData" />
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+      <vc:cancel-link-with-return-page-query asp-controller="CourseDelegates" asp-action="Index" route-data="@cancelLinkRouteData" return-page-query="@Model.ReturnPageQuery!.Value" />
+    } else {
+      <vc:cancel-link asp-controller=ViewDelegate asp-action="Index" asp-all-route-data="@cancelLinkRouteData" />
+    }
   </div>
 </div>

@@ -47,7 +47,7 @@
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        public IActionResult Index(int progressId, DelegateAccessRoute accessedVia, int? returnPage)
+        public IActionResult Index(int progressId, DelegateAccessRoute accessedVia, string? returnPageQuery = null)
         {
             var courseDelegatesData =
                 courseService.GetDelegateCourseProgress(progressId);
@@ -55,14 +55,14 @@
             var model = new DelegateProgressViewModel(
                 accessedVia,
                 courseDelegatesData!,
-                returnPage
+                returnPageQuery
             );
             return View(model);
         }
 
         [HttpGet]
         [Route("EditSupervisor")]
-        public IActionResult EditSupervisor(int progressId, DelegateAccessRoute accessedVia, int? returnPage)
+        public IActionResult EditSupervisor(int progressId, DelegateAccessRoute accessedVia, string? returnPageQuery = null)
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
@@ -77,7 +77,7 @@
                 accessedVia,
                 supervisors,
                 delegateCourseProgress!.DelegateCourseInfo,
-                returnPage
+                returnPageQuery
             );
             return View(model);
         }
@@ -99,7 +99,7 @@
 
             progressService.UpdateSupervisor(progressId, formData.SupervisorId);
 
-            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPage);
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPageQuery);
         }
 
         [HttpGet]
@@ -107,7 +107,7 @@
         public IActionResult EditCompleteByDate(
             int progressId,
             DelegateAccessRoute accessedVia,
-            int? returnPage
+            string? returnPageQuery = null
         )
         {
             var delegateCourseProgress =
@@ -117,7 +117,7 @@
                 progressId,
                 accessedVia,
                 delegateCourseProgress!.DelegateCourseInfo,
-                returnPage
+                returnPageQuery
             );
             return View(model);
         }
@@ -142,7 +142,7 @@
 
             progressService.UpdateCompleteByDate(progressId, completeByDate);
 
-            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPage);
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPageQuery);
         }
 
         [HttpGet]
@@ -150,7 +150,7 @@
         public IActionResult EditCompletionDate(
             int progressId,
             DelegateAccessRoute accessedVia,
-            int? returnPage
+            string? returnPageQuery
         )
         {
             var delegateCourseProgress =
@@ -160,7 +160,7 @@
                 progressId,
                 accessedVia,
                 delegateCourseProgress!.DelegateCourseInfo,
-                returnPage
+                returnPageQuery
             );
             return View(model);
         }
@@ -184,19 +184,19 @@
                 : (DateTime?)null;
 
             progressService.UpdateCompletionDate(progressId, completionDate);
-            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPage);
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPageQuery);
         }
 
         private IActionResult RedirectToPreviousPage(
             int delegateId,
             int progressId,
             DelegateAccessRoute accessedVia,
-            int? returnPage = 1
+            ReturnPageQuery? returnPageQuery = null
         )
         {
             if (accessedVia.Equals(DelegateAccessRoute.CourseDelegates))
             {
-                return RedirectToAction("Index", new { progressId, accessedVia, returnPage });
+                return RedirectToAction("Index", new { progressId, accessedVia, returnPageQuery = returnPageQuery.ToString() });
             }
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });

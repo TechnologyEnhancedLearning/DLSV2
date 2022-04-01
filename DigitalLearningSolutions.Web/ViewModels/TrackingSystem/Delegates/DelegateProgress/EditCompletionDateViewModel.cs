@@ -9,8 +9,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
             int progressId,
             DelegateAccessRoute accessedVia,
             DelegateCourseInfo info,
-            int? returnPage
-        ) : base(info, returnPage)
+            string? returnPageQuery
+        ) : base(info, returnPageQuery)
         {
             ProgressId = progressId;
             AccessedVia = accessedVia;

@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -13,7 +14,7 @@
         public DelegateProgressViewModel(
             DelegateAccessRoute accessedVia,
             DelegateCourseDetails details,
-            int? page
+            string? returnPageQuery
         ) : base(details)
         {
             AccessedVia = accessedVia;
@@ -51,7 +52,7 @@
                         )
                 )
                 .ToList();
-            Page = page;
+            ReturnPageQuery = returnPageQuery != null ? new ReturnPageQuery(returnPageQuery) : (ReturnPageQuery?)null;
         }
 
         public DelegateAccessRoute AccessedVia { get; set; }
@@ -77,7 +78,7 @@
                 };
             }
         }
-
-        public int? Page { get; set; }
+        
+        public ReturnPageQuery? ReturnPageQuery { get; set; }
     }
 }

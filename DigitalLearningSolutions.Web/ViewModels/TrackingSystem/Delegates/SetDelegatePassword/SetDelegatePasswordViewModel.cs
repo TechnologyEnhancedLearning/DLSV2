@@ -3,7 +3,6 @@
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Models;
 
     public class SetDelegatePasswordViewModel
     {
