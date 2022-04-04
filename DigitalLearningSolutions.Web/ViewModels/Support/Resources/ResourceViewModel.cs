@@ -1,9 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Support.Resources
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Support;
-    using DateHelper = Helpers.DateHelper;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class ResourceViewModel
     {

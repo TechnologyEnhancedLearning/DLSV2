@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Helpers
+﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System;
     using System.Text.RegularExpressions;
@@ -77,13 +77,6 @@
             }
 
             return Regex.Replace(input, "[^ a-zA-Z0-9]", replacement);
-        }
-
-        public static string GetPrnDisplayString(bool hasBeenPromptedForPrn, string? professionalRegistrationNumber)
-        {
-            return hasBeenPromptedForPrn
-                ? professionalRegistrationNumber ?? "Not professionally registered"
-                : "Not yet provided";
         }
     }
 }

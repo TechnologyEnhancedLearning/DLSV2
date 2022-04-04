@@ -1,10 +1,9 @@
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DateHelper = Helpers.DateHelper;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class DelegateCourseInfoViewModel
     {

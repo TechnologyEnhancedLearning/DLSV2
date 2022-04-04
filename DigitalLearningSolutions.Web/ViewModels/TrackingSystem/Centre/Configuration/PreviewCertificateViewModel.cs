@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
 {
     using System;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Certificates;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class PreviewCertificateViewModel
     {

@@ -19,7 +19,7 @@
         {
             DelegateId = courseDelegate.DelegateId;
             CandidateNumber = courseDelegate.CandidateNumber;
-            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
                 courseDelegate.HasBeenPromptedForPrn,
                 courseDelegate.ProfessionalRegistrationNumber
             );

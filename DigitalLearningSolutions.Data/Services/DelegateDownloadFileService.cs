@@ -237,7 +237,7 @@
             row[FirstName] = delegateRecord.FirstName;
             row[DelegateId] = delegateRecord.CandidateNumber;
             row[Email] = delegateRecord.EmailAddress;
-            row[ProfessionalRegistrationNumber] = DisplayStringHelper.GetPrnDisplayString(
+            row[ProfessionalRegistrationNumber] = PrnStringHelper.GetPrnDisplayString(
                 delegateRecord.HasBeenPromptedForPrn,
                 delegateRecord.ProfessionalRegistrationNumber
             );
