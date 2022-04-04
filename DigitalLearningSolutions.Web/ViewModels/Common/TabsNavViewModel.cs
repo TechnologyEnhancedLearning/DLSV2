@@ -7,16 +7,16 @@
 
     public class TabsNavViewModel
     {
-        public TabsNavViewModel(BaseTabEnumeration tabEnumeration, Dictionary<string, string>? routeData = null)
+        public TabsNavViewModel(BaseTabEnumeration currentTab, Dictionary<string, string>? routeData = null)
         {
-            var allTabs = tabEnumeration.GetAllTabs();
+            var allTabs = currentTab.GetAllTabs();
 
             TabLinks = allTabs.Select(
                 t => new SecondaryNavMenuLinkViewModel(
                     t.Controller,
                     t.Action,
                     t.LinkText,
-                    t.Equals(tabEnumeration),
+                    t.Equals(currentTab),
                     GenerateTabRouteData(t.StaticRouteData, routeData)
                 )
             );
