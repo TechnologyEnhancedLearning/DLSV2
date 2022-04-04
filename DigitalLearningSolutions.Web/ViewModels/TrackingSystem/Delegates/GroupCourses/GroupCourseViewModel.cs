@@ -2,7 +2,6 @@
 {
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Web.Helpers;
-    using DateHelper = Helpers.DateHelper;
 
     public class GroupCourseViewModel
     {
