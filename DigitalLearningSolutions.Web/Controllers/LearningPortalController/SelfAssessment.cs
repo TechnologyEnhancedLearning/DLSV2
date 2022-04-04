@@ -393,7 +393,7 @@
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
-        public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId)
+        public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, string returnPageQuery)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
@@ -412,7 +412,8 @@
                 selfAssessmentId,
                 assessment.Name,
                 LearningItemType.SelfAssessment,
-                assessment.CompleteByDate
+                assessment.CompleteByDate,
+                returnPageQuery
             );
 
             return View("Current/SetCompleteByDate", model);

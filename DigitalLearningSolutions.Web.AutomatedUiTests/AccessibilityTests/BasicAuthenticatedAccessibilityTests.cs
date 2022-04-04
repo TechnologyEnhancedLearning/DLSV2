@@ -15,9 +15,12 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/MyAccount/EditDetails", "Edit details")]
         [InlineData("/Signposting/LaunchLearningResource/3", "View resource \"Test image resource\"")]
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
-        [InlineData("/TrackingSystem/Centre/Administrators/1/EditAdminRoles", "Edit administrator roles")]
         [InlineData(
-            "/TrackingSystem/Centre/Administrators/188/DeactivateAdmin",
+            "/TrackingSystem/Centre/Administrators/1/EditAdminRoles?returnPageQuery=pageNumber%3D1%26searchString%3DTest%26sortBy%3DSearchableName%26sortDirection%3DAscending%26itemsPerPage%3D10%26itemIdToScrollToOnReturn%3Dcard",
+            "Edit administrator roles"
+        )]
+        [InlineData(
+            "/TrackingSystem/Centre/Administrators/188/DeactivateAdmin?returnPageQuery=pageNumber%3D1%26searchString%3DTest%26sortBy%3DSearchableName%26sortDirection%3DAscending%26itemsPerPage%3D10%26itemIdToScrollToOnReturn%3Dcard",
             "Are you sure you would like to deactivate this admin account?"
         )]
         [InlineData("/TrackingSystem/Centre/Dashboard", "Centre dashboard")]
@@ -55,10 +58,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
         [InlineData(
-            "/TrackingSystem/Delegates/Groups/5/EditDescription",
+            "/TrackingSystem/Delegates/Groups/5/EditDescription?returnPageQuery=pageNumber%3D1%26searchString%3DTest%26sortBy%3DSearchableName%26sortDirection%3DAscending%26itemsPerPage%3D10%26itemIdToScrollToOnReturn%3Dcard",
             "Edit description for Activities worker or coordinator group (optional)"
         )]
-        [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName", "Edit group name")]
+        [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName?returnPageQuery=pageNumber%3D1%26searchString%3DTest%26sortBy%3DSearchableName%26sortDirection%3DAscending%26itemsPerPage%3D10%26itemIdToScrollToOnReturn%3Dcard", "Edit group name")]
         [InlineData("/TrackingSystem/Delegates/Groups/Add", "Add new delegate group")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
         [InlineData(
@@ -91,17 +94,17 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
         [InlineData("/TrackingSystem/Delegates/Courses/1", "Delegate courses")]
         [InlineData("/TrackingSystem/Delegates/CourseDelegates", "Course delegates")]
-        [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104", "Delegate progress")]
+        [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104?returnPageQuery=pageNumber%3D1%26searchString%3DTest%26sortBy%3DSearchableName%26sortDirection%3DAscending%26itemsPerPage%3D10%26itemIdToScrollToOnReturn%3Dcard", "Delegate progress")]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditSupervisor",
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditSupervisor?returnPageQuery=pageNumber%3D1%26searchString%3DTest%26sortBy%3DSearchableName%26sortDirection%3DAscending%26itemsPerPage%3D10%26itemIdToScrollToOnReturn%3Dcard",
             "Edit supervisor for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompleteByDate",
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompleteByDate?returnPageQuery=pageNumber%3D1%26searchString%3DTest%26sortBy%3DSearchableName%26sortDirection%3DAscending%26itemsPerPage%3D10%26itemIdToScrollToOnReturn%3Dcard",
             "Edit complete by date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate?returnPageQuery=pageNumber%3D1%26searchString%3DTest%26sortBy%3DSearchableName%26sortDirection%3DAscending%26itemsPerPage%3D10%26itemIdToScrollToOnReturn%3Dcard",
             "Edit completed date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(

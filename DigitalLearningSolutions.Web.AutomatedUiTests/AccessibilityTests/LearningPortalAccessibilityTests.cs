@@ -19,7 +19,7 @@
                 const string startUrl = "/LearningPortal/Current";
                 const string completedUrl = "/LearningPortal/Completed";
                 const string availableUrl = "/LearningPortal/Available";
-                const string completeByUrl = "/LearningPortal/Current/CompleteBy/19262";
+                const string completeByUrl = "/LearningPortal/Current/CompleteBy/19262?returnPageQuery=pageNumber%3D1%26searchString%3DTest%26sortBy%3DSearchableName%26sortDirection%3DAscending%26itemsPerPage%3D10%26itemIdToScrollToOnReturn%3Dcard";
 
                 // When
                 Driver.Navigate().GoToUrl(BaseUrl + startUrl);

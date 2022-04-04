@@ -13,6 +13,7 @@
             string name,
             LearningItemType type,
             DateTime? completeByDate,
+            string returnPageQuery,
             int? progressId = null,
             bool? apiIsAccessible = null
         )
@@ -25,6 +26,7 @@
             Year = completeByDate?.Year;
             ProgressId = progressId;
             ApiIsAccessible = apiIsAccessible;
+            ReturnPageQuery = new ReturnPageQuery(returnPageQuery);
         }
 
         public EditCompleteByDateViewModel(
@@ -39,6 +41,6 @@
 
         public int Id { get; set; }
 
-        public ReturnPageQuery? ReturnPageQuery { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

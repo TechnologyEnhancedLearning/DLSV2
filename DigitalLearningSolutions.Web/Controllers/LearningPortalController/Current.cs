@@ -98,7 +98,7 @@
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
-        public IActionResult SetCurrentCourseCompleteByDate(int id)
+        public IActionResult SetCurrentCourseCompleteByDate(int id, string returnPageQuery)
         {
             var currentCourses = courseDataService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var course = currentCourses.FirstOrDefault(c => c.Id == id);
@@ -125,6 +125,7 @@
                 course.Name,
                 LearningItemType.Course,
                 courseModel.CompleteByDate,
+                returnPageQuery,
                 courseModel.ProgressId
             );
             return View("Current/SetCompleteByDate", editCompleteByDateViewModel);
@@ -228,7 +229,7 @@
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/CompleteBy")]
-        public async Task<IActionResult> SetCurrentActionPlanResourceCompleteByDate(int learningLogItemId)
+        public async Task<IActionResult> SetCurrentActionPlanResourceCompleteByDate(int learningLogItemId, string returnPageQuery)
         {
             var (actionPlanResource, apiIsAccessible) =
                 await actionPlanService.GetActionPlanResource(learningLogItemId);
@@ -243,6 +244,7 @@
                 actionPlanResource!.Name,
                 LearningItemType.Resource,
                 actionPlanResource.CompleteByDate,
+                returnPageQuery,
                 apiIsAccessible: apiIsAccessible
             );
 

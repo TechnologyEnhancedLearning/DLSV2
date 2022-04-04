@@ -19,8 +19,8 @@
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
-    using CurrentCourseHelper = DigitalLearningSolutions.Web.Tests.TestHelpers.CurrentCourseHelper;
-    using SelfAssessmentHelper = DigitalLearningSolutions.Web.Tests.TestHelpers.SelfAssessmentHelper;
+    using CurrentCourseHelper = TestHelpers.CurrentCourseHelper;
+    using SelfAssessmentHelper = TestHelpers.SelfAssessmentHelper;
 
     public partial class LearningPortalControllerTests
     {
@@ -150,7 +150,7 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.SetCurrentCourseCompleteByDate(currentCourse.Id);
+            var result = controller.SetCurrentCourseCompleteByDate(currentCourse.Id, "pageNumber=1");
 
             // Then
             result.Should()
@@ -171,7 +171,7 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.SetCurrentCourseCompleteByDate(3);
+            var result = controller.SetCurrentCourseCompleteByDate(3, "pageNumber=1");
 
             // Then
             result.Should()

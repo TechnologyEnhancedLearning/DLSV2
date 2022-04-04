@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
@@ -194,6 +195,7 @@
             {
                 Confirm = true,
                 AccessedVia = DelegateAccessRoute.CourseDelegates,
+                ReturnPageQuery = new ReturnPageQuery(1, "1-card"),
             };
 
             // When
@@ -208,7 +210,7 @@
                 .BeRedirectToActionResult()
                 .WithActionName("Index")
                 .WithControllerName("CourseDelegates")
-                .WithRouteValue("customisationId", customisationId);
+                .WithRouteValue("customisationId", customisationId.ToString());
         }
 
         [Test]
