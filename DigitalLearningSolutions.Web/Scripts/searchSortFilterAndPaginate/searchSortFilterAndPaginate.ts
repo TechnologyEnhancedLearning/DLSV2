@@ -36,6 +36,8 @@ export class SearchSortFilterAndPaginate {
 
   private areaToHide: HTMLElement;
 
+  private readonly functionToRunAfterDisplayingData: VoidFunction;
+
   // Route provided should be a relative path with no leading /
   constructor(
     route: string,
@@ -45,10 +47,13 @@ export class SearchSortFilterAndPaginate {
     filterCookieName = '',
     searchableElementClassSuffixes = ['title'],
     queryParameterToRetain = '',
+    functionToRunAfterDisplayingData: VoidFunction = defaultVoidFunction,
   ) {
     this.spinnerContainer = document.getElementById('loading-spinner-container') as HTMLElement;
     this.spinner = document.getElementById('dynamic-loading-spinner') as HTMLElement;
-    this.areaToHide = document.getElementById('area-to-hide-while-loading') as HTMLElement;
+    this.areaToHide = document.getElementById('js-styling-hidden-area-while-loading') as HTMLElement;
+    this.functionToRunAfterDisplayingData = functionToRunAfterDisplayingData;
+
     this.startLoadingSpinner();
     this.queryParameterToRetain = queryParameterToRetain;
     this.page = paginationEnabled ? this.getPageNumber() : 1;
@@ -131,7 +136,7 @@ export class SearchSortFilterAndPaginate {
     const paginatedElements = this.paginationEnabled
       ? paginateResults(sortedUniqueElements, this.page)
       : sortedUniqueElements;
-    SearchSortFilterAndPaginate.displaySearchableElements(paginatedElements);
+    this.displaySearchableElementsAndRunPostDisplayFunction(paginatedElements);
   }
 
   static getSearchableElements(route: string, searchableElementClassSuffixes: string[]):
@@ -189,6 +194,13 @@ export class SearchSortFilterAndPaginate {
 
   static filterValueFromElement(element: Element): string {
     return element.getAttribute('data-filter-value')?.trim() ?? '';
+  }
+
+  private displaySearchableElementsAndRunPostDisplayFunction(
+    searchableElements: ISearchableElement[],
+  ) : void {
+    SearchSortFilterAndPaginate.displaySearchableElements(searchableElements);
+    this.functionToRunAfterDisplayingData();
   }
 
   static displaySearchableElements(searchableElements: ISearchableElement[]): void {
@@ -331,4 +343,8 @@ export class SearchSortFilterAndPaginate {
       this.areaToHide.style.display = 'inline';
     }
   }
+}
+
+function defaultVoidFunction(): void {
+  return undefined;
 }

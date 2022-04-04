@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Castle.Core.Internal;
@@ -15,6 +16,7 @@
     using FluentAssertions;
     using FluentAssertions.Common;
     using FluentAssertions.Execution;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class UserServiceTests
@@ -25,6 +27,7 @@
         private IUserService userService = null!;
         private IUserVerificationService userVerificationService = null!;
         private ISessionDataService sessionDataService = null!;
+        private ILogger<IUserService> logger = null!;
 
         [SetUp]
         public void Setup()
@@ -34,12 +37,14 @@
             userVerificationService = A.Fake<IUserVerificationService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             sessionDataService = A.Fake<ISessionDataService>();
+            logger = A.Fake<Logger<IUserService>>();
             userService = new UserService(
                 userDataService,
                 groupsService,
                 userVerificationService,
                 centreContractAdminUsageService,
-                sessionDataService
+                sessionDataService,
+                logger
             );
         }
 
@@ -1256,6 +1261,25 @@
             {
                 A.CallTo(() => userDataService.DeleteAdminUser(adminId)).MustHaveHappenedOnceExactly();
                 A.CallTo(() => userDataService.DeactivateAdmin(adminId)).MustNotHaveHappened();
+            }
+        }
+
+        [Test]
+        public void DeactivateOrDeleteAdmin_calls_deactivate_if_delete_throws_exception()
+        {
+            // Given
+            const int adminId = 1;
+            A.CallTo(() => sessionDataService.HasAdminGotSessions(1)).Returns(false);
+            A.CallTo(() => userDataService.DeleteAdminUser(adminId)).Throws(new Exception());
+
+            // When
+            userService.DeactivateOrDeleteAdmin(adminId);
+
+            // Them
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userDataService.DeleteAdminUser(adminId)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => userDataService.DeactivateAdmin(adminId)).MustHaveHappenedOnceExactly();
             }
         }
 

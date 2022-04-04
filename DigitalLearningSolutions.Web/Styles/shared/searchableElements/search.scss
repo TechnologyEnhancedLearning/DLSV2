@@ -25,3 +25,11 @@
     background-color: $button-hover-colour;
   }
 }
+
+.search-submit {
+  #js-styling-hidden-area-while-loading & {
+    .js-enabled & {
+      display: none;
+    }
+  }
+}

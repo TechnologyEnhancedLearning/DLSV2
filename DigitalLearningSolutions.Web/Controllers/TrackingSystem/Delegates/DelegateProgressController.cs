@@ -27,6 +27,7 @@
     public class DelegateProgressController : Controller
     {
         private readonly IConfiguration configuration;
+        private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseService courseService;
         private readonly IProgressService progressService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
@@ -34,6 +35,7 @@
 
         public DelegateProgressController(
             ICourseService courseService,
+            ICourseAdminFieldsService courseAdminFieldsService,
             IUserService userService,
             IProgressService progressService,
             IConfiguration configuration,
@@ -41,6 +43,7 @@
         )
         {
             this.courseService = courseService;
+            this.courseAdminFieldsService = courseAdminFieldsService;
             this.userService = userService;
             this.progressService = progressService;
             this.configuration = configuration;
@@ -184,6 +187,66 @@
                 : (DateTime?)null;
 
             progressService.UpdateCompletionDate(progressId, completionDate);
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPage);
+        }
+
+        [HttpGet]
+        [Route("EditAdminField/{promptNumber:int}")]
+        public IActionResult EditDelegateCourseAdminField(
+            int progressId,
+            int promptNumber,
+            DelegateAccessRoute accessedVia,
+            int? returnPage
+        )
+        {
+            var delegateCourseProgress =
+                courseService.GetDelegateCourseProgress(progressId);
+
+            var courseAdminField = courseAdminFieldsService.GetCourseAdminFieldsForCourse(
+                delegateCourseProgress!.DelegateCourseInfo.CustomisationId
+            ).AdminFields.Find(caf => caf.PromptNumber == promptNumber);
+
+            if (courseAdminField == null)
+            {
+                return new NotFoundResult();
+            }
+
+            var model = new EditDelegateCourseAdminFieldViewModel(
+                progressId,
+                promptNumber,
+                delegateCourseProgress!,
+                accessedVia,
+                returnPage
+            );
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("EditAdminField/{promptNumber:int}")]
+        public IActionResult EditDelegateCourseAdminField(
+            EditDelegateCourseAdminFieldFormData formData,
+            int promptNumber,
+            int progressId,
+            DelegateAccessRoute accessedVia
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                var delegateCourseProgress =
+                    courseService.GetDelegateCourseProgress(progressId);
+
+                var model = new EditDelegateCourseAdminFieldViewModel(
+                    formData,
+                    delegateCourseProgress!,
+                    progressId,
+                    promptNumber,
+                    accessedVia
+                );
+                return View(model);
+            }
+
+            progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, formData.Answer?.Trim());
+            // TODO: HEEDLS-862 Account for all possible access routes in redirection
             return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPage);
         }
 
