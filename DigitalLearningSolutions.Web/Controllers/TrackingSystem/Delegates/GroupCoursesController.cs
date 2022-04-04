@@ -46,7 +46,6 @@
         public IActionResult Index(int groupId, int page = 1)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsService.GetGroupName(groupId, centreId);
 
             var categoryIdFilter = User.GetAdminCourseCategoryFilter();
 
@@ -63,7 +62,7 @@
                 searchSortPaginationOptions
             );
 
-            var model = new GroupCoursesViewModel(groupId, groupName!, result);
+            var model = new GroupCoursesViewModel(groupId, result);
 
             return View(model);
         }

@@ -132,39 +132,6 @@ button.nhsuk-pagination__link, a.nhsuk-pagination__link {
   }
 }
 
-.hee-fwservice--tabs {
-  ul {
-    display: table;
-    list-style-type: none;
-    border-bottom: 1px solid $color_nhsuk-grey-1;
-    table-layout: fixed;
-    width: 100%;
-    text-align: center;
-    font-weight: bold;
-
-    li {
-      display: table-cell;
-      margin-bottom: 0;
-
-      a {
-        display: block;
-        padding: 1rem;
-        text-decoration: none;
-      }
-
-      &.active {
-        border-bottom: 3px solid $color_nhsuk-blue;
-        font-weight: bold;
-        background-color: white;
-      }
-
-      &:hover {
-        background-color: aliceblue;
-      }
-    }
-  }
-}
-
 ol.hee-fwservice--framework-progress-bar {
   display: flex;
   list-style-type: none;

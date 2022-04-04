@@ -47,9 +47,6 @@
         [Route("{page:int=1}")]
         public IActionResult Index(int groupId, int page = 1)
         {
-            var centreId = User.GetCentreId();
-            var groupName = groupsService.GetGroupName(groupId, centreId);
-
             var groupDelegates = groupsService.GetGroupDelegates(groupId);
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
@@ -63,7 +60,7 @@
                 searchSortPaginationOptions
             );
 
-            var model = new GroupDelegatesViewModel(groupId, groupName!, result);
+            var model = new GroupDelegatesViewModel(groupId, result);
 
             return View(model);
         }

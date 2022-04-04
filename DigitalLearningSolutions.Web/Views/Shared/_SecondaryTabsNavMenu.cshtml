@@ -1,0 +1,23 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@model TabsNavViewModel
+
+@{
+  var tabWidthClass = Model.TabLinks.Count() switch{
+    2 => "nhsuk-grid-column-one-half",
+    3 => "nhsuk-grid-column-one-third",
+    4 => "nhsuk-grid-column-one-quarter",
+    _ => "nhsuk-grid-column-full",
+    };
+}
+
+<nav class="hee-secondary-nav--tabs" aria-label="Secondary navigation tabs">
+  <div class="nhsuk-grid-row">
+    <ul>
+      @foreach (var link in Model.TabLinks) {
+        <li class="@(link.IsCurrentPage ? "active" : null) @tabWidthClass nhsuk-u-padding-0">
+          <a asp-controller="@link.AspController" asp-action="@link.AspAction" asp-all-route-data="link.AspAllRouteData">@link.LinkText</a>
+        </li>
+      }
+    </ul>
+  </div>
+</nav>
