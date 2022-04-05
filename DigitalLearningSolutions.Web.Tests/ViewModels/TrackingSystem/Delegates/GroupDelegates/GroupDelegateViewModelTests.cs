@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.GroupDelegates
 {
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates;
     using FizzWare.NBuilder;
     using FluentAssertions;
@@ -22,7 +23,7 @@
                 .Build();
 
             // When
-            var result = new GroupDelegateViewModel(groupDelegate);
+            var result = new GroupDelegateViewModel(groupDelegate, new ReturnPageQuery("pageNumber=1"));
 
             // Then
             using (new AssertionScope())
@@ -47,7 +48,7 @@
                 .Build();
 
             // When
-            var result = new GroupDelegateViewModel(groupDelegate);
+            var result = new GroupDelegateViewModel(groupDelegate, new ReturnPageQuery("pageNumber=1"));
 
             // Then
             using (new AssertionScope())

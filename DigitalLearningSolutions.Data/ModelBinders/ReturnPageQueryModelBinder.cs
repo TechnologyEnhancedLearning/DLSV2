@@ -16,7 +16,11 @@
             }
 
             var enumerationName = bindingContext.ValueProvider.GetValue(bindingContext.FieldName);
-            if (string.IsNullOrEmpty(enumerationName.FirstValue))
+            if (enumerationName.FirstValue == null)
+            {
+                bindingContext.Result = ModelBindingResult.Success(null);
+            }
+            else if (string.IsNullOrEmpty(enumerationName.FirstValue))
             {
                 bindingContext.Result = ModelBindingResult.Success(new ReturnPageQuery(1, ""));
             }
@@ -48,6 +52,11 @@
             }
 
             if (context.Metadata.ModelType == typeof(ReturnPageQuery))
+            {
+                return new BinderTypeModelBinder(typeof(ReturnPageQueryModelBinder));
+            }
+
+            if (context.Metadata.ModelType == typeof(ReturnPageQuery?))
             {
                 return new BinderTypeModelBinder(typeof(ReturnPageQueryModelBinder));
             }

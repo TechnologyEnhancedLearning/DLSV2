@@ -127,13 +127,13 @@
                 .Returns(true);
 
             // When
-            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId, new ReturnPageQuery("pageNumber=1"));
+            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId, new ReturnPageQuery("pageNumber=3"));
 
             // Then
             A.CallTo(() => actionPlanService.AddResourceToActionPlan(resourceReferenceId, DelegateId, SelfAssessmentId))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("RecommendedLearning")
-                .WithRouteValue("selfAssessmentId", SelfAssessmentId).WithRouteValue("page", 3);
+                .WithRouteValue("selfAssessmentId", SelfAssessmentId.ToString()).WithRouteValue("page", "3");
         }
     }
 }

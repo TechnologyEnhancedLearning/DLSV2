@@ -18,7 +18,12 @@
         {
             GroupId = groupId;
             NavViewModel = new DelegateGroupsSideNavViewModel(groupId, groupName, DelegateGroupPage.Delegates);
-            GroupDelegates = result.ItemsToDisplay.Select(groupDelegate => new GroupDelegateViewModel(groupDelegate));
+            GroupDelegates = result.ItemsToDisplay.Select(
+                groupDelegate => new GroupDelegateViewModel(
+                    groupDelegate,
+                    result.GetReturnPageQuery($"{groupDelegate.GroupDelegateId}-card")
+                )
+            );
         }
 
         public int GroupId { get; set; }

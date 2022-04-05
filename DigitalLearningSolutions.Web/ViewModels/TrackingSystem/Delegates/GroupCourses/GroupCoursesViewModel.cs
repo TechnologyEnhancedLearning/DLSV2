@@ -18,7 +18,12 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Group
         {
             GroupId = groupId;
             NavViewModel = new DelegateGroupsSideNavViewModel(groupId, groupName, DelegateGroupPage.Courses);
-            GroupCourses = result.ItemsToDisplay.Select(groupCourse => new GroupCourseViewModel(groupCourse));
+            GroupCourses = result.ItemsToDisplay.Select(
+                groupCourse => new GroupCourseViewModel(
+                    groupCourse,
+                    result.GetReturnPageQuery($"{groupCourse.GroupCustomisationId}-card")
+                )
+            );
         }
 
         public int GroupId { get; set; }

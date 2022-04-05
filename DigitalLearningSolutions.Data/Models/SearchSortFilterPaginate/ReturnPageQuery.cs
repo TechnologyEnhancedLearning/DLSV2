@@ -49,6 +49,16 @@
             ItemsPerPage = null;
         }
 
+        public ReturnPageQuery(int pageNumber, int itemsPerPage, string? itemIdToReturnTo)
+        {
+            PageNumber = pageNumber;
+            ItemIdToReturnTo = itemIdToReturnTo;
+            ItemsPerPage = itemsPerPage;
+            SearchString = null;
+            SortBy = null;
+            SortDirection = null;
+        }
+
         public int PageNumber { get; }
 
         public string? SearchString { get; }

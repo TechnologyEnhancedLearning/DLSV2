@@ -52,7 +52,7 @@
 
         public string? FilterString { get; set; }
 
-        public ReturnPageQuery GetReturnPageQuery(string? itemIdToReturnTo = null)
+        public new ReturnPageQuery GetReturnPageQuery(string? itemIdToReturnTo = null)
         {
             return new ReturnPageQuery(Page, ItemsPerPage, SearchString, SortBy, SortDirection, itemIdToReturnTo);
         }
