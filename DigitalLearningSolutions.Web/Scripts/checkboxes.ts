@@ -19,22 +19,22 @@ class Checkboxes {
     });
   }
 
-  static selectAllInGroup(group: string): void {
+  static checkInputGroup(group: string, checked: boolean): void {
     const allCheckboxes = document.querySelectorAll('.select-all-checkbox') as NodeListOf<HTMLInputElement>;
-    allCheckboxes.forEach((checkbox) => {
-      if (checkbox.getAttribute('data-group') === group) {
-        if (!checkbox.checked) checkbox.click();
+    allCheckboxes.forEach((tag) => {
+      const input = tag;
+      if (input.getAttribute('data-group') === group) {
+        if (input.checked !== checked) input.checked = checked;
       }
     });
   }
 
+  static selectAllInGroup(group: string): void {
+    Checkboxes.checkInputGroup(group, true);
+  }
+
   static deselectAllinGroup(group: string): void {
-    const allCheckboxes = document.querySelectorAll('.select-all-checkbox') as NodeListOf<HTMLInputElement>;
-    allCheckboxes.forEach((checkbox) => {
-      if (checkbox.getAttribute('data-group') === group) {
-        if (checkbox.checked) checkbox.click();
-      }
-    });
+    Checkboxes.checkInputGroup(group, false);
   }
 
   static selectAll(selectorClass: string): void {
