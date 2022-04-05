@@ -39,6 +39,7 @@
          aria-describedby="@Model.Id-name-lhr"
          asp-action="MarkActionPlanResourceAsComplete"
          asp-route-learningLogItemId="@Model.Id"
+         asp-route-returnPageQuery="@Model.ReturnPageQuery"
          role="button">
         Mark as complete
       </a>
@@ -46,6 +47,7 @@
          aria-describedby="@Model.Id-name-lhr"
          asp-action="RemoveResourceFromActionPlan"
          asp-route-learningLogItemId="@Model.Id"
+         asp-route-returnPageQuery="@Model.ReturnPageQuery"
          role="button">
         Remove learning resource
       </a>

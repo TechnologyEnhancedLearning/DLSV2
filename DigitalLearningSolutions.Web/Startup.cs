@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
+    using DigitalLearningSolutions.Data.ModelBinders;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -136,6 +137,7 @@ namespace DigitalLearningSolutions.Web
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                         options.ModelBinderProviders.Insert(0, new EnumerationQueryStringModelBinderProvider());
                         options.ModelBinderProviders.Insert(0, new DlsSubApplicationModelBinderProvider());
+                        options.ModelBinderProviders.Insert(0, new ReturnPageQueryModelBinderProvider());
                     }
                 );
 

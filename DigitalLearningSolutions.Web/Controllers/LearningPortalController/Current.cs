@@ -110,7 +110,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var courseModel = new CurrentCourseViewModel(course);
+            var courseModel = new CurrentCourseViewModel(course, returnPageQuery);
             if (courseModel.CompleteByDate != null && !courseModel.SelfEnrolled)
             {
                 logger.LogWarning(
@@ -132,7 +132,7 @@
         }
 
         [Route("/LearningPortal/Current/Remove/{id:int}")]
-        public IActionResult RemoveCurrentCourseConfirmation(int id)
+        public IActionResult RemoveCurrentCourseConfirmation(int id, string returnPageQuery)
         {
             var currentCourses = courseDataService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var course = currentCourses.FirstOrDefault(c => c.Id == id);
@@ -144,7 +144,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var model = new CurrentCourseViewModel(course);
+            var model = new CurrentCourseViewModel(course, returnPageQuery);
             return View("Current/RemoveCurrentCourseConfirmation", model);
         }
 
@@ -183,7 +183,7 @@
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/MarkAsComplete")]
-        public async Task<IActionResult> MarkActionPlanResourceAsComplete(int learningLogItemId)
+        public async Task<IActionResult> MarkActionPlanResourceAsComplete(int learningLogItemId, string returnPageQuery)
         {
             var (actionPlanResource, apiIsAccessible) =
                 await actionPlanService.GetActionPlanResource(learningLogItemId);
@@ -197,7 +197,8 @@
                 learningLogItemId,
                 actionPlanResource.AbsentInLearningHub,
                 actionPlanResource!.Name,
-                apiIsAccessible
+                apiIsAccessible,
+                returnPageQuery
             );
             return View("Current/MarkActionPlanResourceAsComplete", model);
         }
@@ -280,7 +281,7 @@
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
-        public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId)
+        public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId, string returnPageQuery)
         {
             var (actionPlanResource, apiIsAccessible) =
                 await actionPlanService.GetActionPlanResource(learningLogItemId);
@@ -294,7 +295,8 @@
                 actionPlanResource!.Id,
                 actionPlanResource.Name,
                 actionPlanResource.AbsentInLearningHub,
-                apiIsAccessible
+                apiIsAccessible,
+                returnPageQuery
             );
             return View("Current/RemoveCurrentActionPlanResourceConfirmation", model);
         }

@@ -38,6 +38,7 @@
            aria-label="Edit complete by date"
            asp-action="SetCurrentCourseCompleteByDate"
            asp-route-id="@Model.Id"
+           asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
            role="button">
           Edit
         </a>
@@ -49,6 +50,7 @@
            aria-label="Edit complete by date"
            asp-route-selfAssessmentId="@Model.Id"
            asp-action="SetSelfAssessmentCompleteByDate"
+           asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
            role="button">
           Edit
         </a>
@@ -60,6 +62,7 @@
            aria-label="Edit complete by date"
            asp-action="SetCurrentActionPlanResourceCompleteByDate"
            asp-route-learningLogItemId="@Model.Id"
+           asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
            role="button">
           Edit
         </a>

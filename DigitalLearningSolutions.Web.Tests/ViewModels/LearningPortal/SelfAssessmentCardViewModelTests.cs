@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using System;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
@@ -16,7 +17,7 @@
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment(completeByDate: DateTime.Today - TimeSpan.FromDays(1));
 
             // When
-            var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(selfAssessment);
+            var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(selfAssessment, new ReturnPageQuery(1, "pageNumber=1"));
 
             // Then
             selfAssessmentCardViewModel.DateStyle().Should().Be("overdue");
@@ -30,7 +31,7 @@
 
 
             // When
-            var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(selfAssessment);
+            var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(selfAssessment, new ReturnPageQuery(1, "pageNumber=1"));
 
             // Then
             selfAssessmentCardViewModel.DateStyle().Should().Be("due-soon");
@@ -43,7 +44,7 @@
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment(completeByDate: DateTime.Today + TimeSpan.FromDays(100));
 
             // When
-            var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(selfAssessment);
+            var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(selfAssessment, new ReturnPageQuery(1, "pageNumber=1"));
 
             // Then
             selfAssessmentCardViewModel.DateStyle().Should().Be("");

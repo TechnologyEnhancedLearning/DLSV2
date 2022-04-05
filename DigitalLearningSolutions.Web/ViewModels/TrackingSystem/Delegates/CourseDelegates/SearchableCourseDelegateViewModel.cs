@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -12,7 +13,8 @@
         public SearchableCourseDelegateViewModel(
             CourseDelegate courseDelegate,
             IList<DelegateCourseAdminField> adminFields,
-            IEnumerable<CourseAdminField> adminFieldsWithOptions
+            IEnumerable<CourseAdminField> adminFieldsWithOptions,
+            ReturnPageQuery returnPageQuery
         )
         {
             DelegateId = courseDelegate.DelegateId;
@@ -37,6 +39,7 @@
             DelegateCourseAdminFields = adminFields;
             AdminFieldFilters =
                 CourseDelegateViewModelFilterOptions.GetAdminFieldFilters(adminFields, adminFieldsWithOptions);
+            ReturnPageQuery = returnPageQuery;
         }
 
         public int DelegateId { get; set; }
@@ -56,5 +59,6 @@
         public string? ProfessionalRegistrationNumber { get; set; }
         public IEnumerable<DelegateCourseAdminField> DelegateCourseAdminFields { get; set; }
         public Dictionary<int, string> AdminFieldFilters { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

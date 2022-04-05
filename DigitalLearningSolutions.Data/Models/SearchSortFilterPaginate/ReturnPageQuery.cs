@@ -2,7 +2,10 @@
 {
     using System.Collections.Generic;
     using System.Web;
+    using DigitalLearningSolutions.Data.ModelBinders;
+    using Microsoft.AspNetCore.Mvc;
 
+    [ModelBinder(BinderType = typeof(ReturnPageQueryModelBinder))]
     public readonly struct ReturnPageQuery
     {
         public ReturnPageQuery(string returnPageQuery)
@@ -13,7 +16,7 @@
             SearchString = nameValueCollection["searchString"];
             SortBy = nameValueCollection["sortBy"];
             SortDirection = nameValueCollection["sortDirection"];
-            ItemsPerPage = nameValueCollection["itemsPerPage"] != null
+            ItemsPerPage = !string.IsNullOrWhiteSpace(nameValueCollection["itemsPerPage"])
                 ? int.Parse(nameValueCollection["itemsPerPage"])
                 : (int?)null;
             ItemIdToReturnTo = nameValueCollection["itemIdToScrollToOnReturn"];
@@ -89,6 +92,20 @@
         {
             return
                 $"pageNumber={PageNumber}&searchString={SearchString}&sortBy={SortBy}&sortDirection={SortDirection}&itemsPerPage={ItemsPerPage}&itemIdToScrollToOnReturn={ItemIdToReturnTo}";
+        }
+
+        public static bool TryGetFromFormData(string formData, out ReturnPageQuery? returnPageQuery)
+        {
+            try
+            {
+                returnPageQuery = new ReturnPageQuery(formData);
+                return true;
+            }
+            catch
+            {
+                returnPageQuery = null;
+                return false;
+            }
         }
     }
 }

@@ -40,7 +40,5 @@
         }
 
         public int Id { get; set; }
-
-        public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

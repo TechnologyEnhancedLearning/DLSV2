@@ -2,9 +2,10 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
 
     public class AllCurrentItemsPageViewModel
@@ -17,15 +18,30 @@
             IEnumerable<ActionPlanResource> actionPlanResources
         )
         {
-            CurrentItems = currentCourses.Select(course => new CurrentCourseViewModel(course));
-            foreach (SelfAssessment selfAssessment in selfAssessments)
+            CurrentItems = currentCourses.Select(
+                course => new CurrentCourseViewModel(
+                    course,
+                    new ReturnPageQuery(1, $"{course.Id}-course-card").ToString()
+                )
+            );
+            foreach (var selfAssessment in selfAssessments)
             {
-                CurrentItems = CurrentItems.Append(new SelfAssessmentCardViewModel(selfAssessment));
+                CurrentItems = CurrentItems.Append(
+                    new SelfAssessmentCardViewModel(
+                        selfAssessment,
+                        new ReturnPageQuery(1, $"{selfAssessment.Id}-sa-card")
+                    )
+                );
             }
 
             foreach (var actionPlanResource in actionPlanResources)
             {
-                CurrentItems = CurrentItems.Append(new CurrentLearningResourceViewModel(actionPlanResource));
+                CurrentItems = CurrentItems.Append(
+                    new CurrentLearningResourceViewModel(
+                        actionPlanResource,
+                        new ReturnPageQuery(1, $"{actionPlanResource.Id}-lhr-card")
+                    )
+                );
             }
         }
     }

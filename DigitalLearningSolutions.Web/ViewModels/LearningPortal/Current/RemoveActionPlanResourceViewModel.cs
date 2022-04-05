@@ -8,13 +8,15 @@
             int learningLogItemId,
             string name,
             bool absentInLearningHub,
-            bool apiIsAccessible
+            bool apiIsAccessible,
+            string returnPageQuery
         )
         {
             LearningLogItemId = learningLogItemId;
             Name = name;
             AbsentInLearningHub = absentInLearningHub;
             ApiIsAccessible = apiIsAccessible;
+            ReturnPageQuery = new ReturnPageQuery(returnPageQuery);
         }
 
         public int LearningLogItemId { get; set; }
@@ -25,6 +27,6 @@
 
         public bool ApiIsAccessible { get; set; }
 
-        public ReturnPageQuery? ReturnPageQuery { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

@@ -40,6 +40,7 @@
           novalidate>
       <input type="hidden" asp-for="Name" />
       <input type="hidden" asp-for="Type" />
+      <input type="hidden" asp-for="ReturnPageQuery"/>
       @if (Equals(Model.Type, LearningItemType.Course))
       {
         <input type="hidden" asp-for="@Model.ProgressId" />

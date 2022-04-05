@@ -50,7 +50,7 @@
            asp-controller="Administrator"
            asp-action="EditAdminRoles"
            asp-route-adminId="@Model.Id"
-           asp-route-returnPage="@Model.Page">
+           asp-route-returnPageQuery="@Model.ReturnPageQuery">
           Manage roles
         </a>
       }
@@ -61,7 +61,7 @@
            asp-controller="Administrator"
            asp-action="DeactivateOrDeleteAdmin"
            asp-route-adminId="@Model.Id"
-           asp-route-returnPage="@Model.Page">
+           asp-route-returnPageQuery="@Model.ReturnPageQuery">
           Deactivate admin account
         </a>
       }
