@@ -19,7 +19,7 @@
 
           <dd class="nhsuk-summary-list__actions">
             @if (Model.LinkedToField == 0) {
-              <a asp-controller="DelegateGroups" asp-action="EditGroupName" asp-route-groupId="@Model.Id" asp-route-returnPageQuery="@Model.ReturnPageQuery">
+              <a asp-controller="DelegateGroups" asp-action="EditGroupName" asp-route-groupId="@Model.Id" asp-route-returnPageQuery="@Model.ReturnPageQuery" data-return-page-enabled="true">
                 Edit<span class="nhsuk-u-visually-hidden"> name</span>
               </a>
             }
@@ -32,7 +32,7 @@
           </dt>
           <partial name="_SummaryFieldValue" model="Model.Description" />
           <dd class="nhsuk-summary-list__actions">
-            <a asp-controller="DelegateGroups" asp-action="EditDescription" asp-route-groupId="@Model.Id" asp-route-returnPageQuery="@Model.ReturnPageQuery">
+            <a asp-controller="DelegateGroups" asp-action="EditDescription" asp-route-groupId="@Model.Id" asp-route-returnPageQuery="@Model.ReturnPageQuery" data-return-page-enabled="true">
               Edit<span class="nhsuk-u-visually-hidden"> description</span>
             </a>
           </dd>
@@ -120,6 +120,7 @@
       <a
         class="nhsuk-button delete-button expander-card__button"
         role="button"
+        data-return-page-enabled="true"
         asp-action="DeleteGroup"
         asp-route-groupId="@Model.Id"
         asp-route-returnPageQuery="@Model.ReturnPageQuery.ToString()">

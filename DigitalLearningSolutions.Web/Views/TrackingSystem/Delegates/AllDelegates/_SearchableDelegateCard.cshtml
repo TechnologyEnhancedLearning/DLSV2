@@ -75,6 +75,7 @@
       <a class="nhsuk-button" asp-controller="ViewDelegate" asp-action="Index" asp-route-delegateId="@Model.DelegateInfo.Id" role="button">Manage delegate</a>
       <a class="nhsuk-button nhsuk-button--secondary"
          role="button"
+         data-return-page-enabled="true"
          asp-controller="SetDelegatePassword"
          asp-action="Index"
          asp-route-delegateId="@Model.DelegateInfo.Id"

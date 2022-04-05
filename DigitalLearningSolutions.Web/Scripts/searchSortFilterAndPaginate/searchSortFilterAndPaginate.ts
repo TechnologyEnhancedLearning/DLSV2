@@ -336,13 +336,16 @@ export class SearchSortFilterAndPaginate {
   private updateSearchableElementLinks(searchableData: ISearchableData): void {
     _.forEach(searchableData.searchableElements, (searchableElement) => {
       _.forEach(searchableElement.element.getElementsByTagName('a'), (anchor: HTMLAnchorElement) => {
-        const params = new URLSearchParams(anchor.search);
-        const pageQueryPart = `pageNumber=${this.page.toString()}`;
-        const jsScrollItemPart = `itemIdToScrollToOnReturn=${searchableElement.element.id}`;
-        const returnPageQuery = `${pageQueryPart}&${SearchSortFilterAndPaginate.getBaseQueryParameters()}&${jsScrollItemPart}`;
-        params.set('returnPageQuery', returnPageQuery);
-        // eslint-disable-next-line no-param-reassign
-        anchor.search = params.toString();
+        const shouldUpdate = anchor.getAttribute('data-return-page-enabled');
+        if (shouldUpdate) {
+          const params = new URLSearchParams(anchor.search);
+          const pageQueryPart = `pageNumber=${this.page.toString()}`;
+          const jsScrollItemPart = `itemIdToScrollToOnReturn=${searchableElement.element.id}`;
+          const returnPageQuery = `${pageQueryPart}&${SearchSortFilterAndPaginate.getBaseQueryParameters()}&${jsScrollItemPart}`;
+          params.set('returnPageQuery', returnPageQuery);
+          // eslint-disable-next-line no-param-reassign
+          anchor.search = params.toString();
+        }
       });
     });
   }
