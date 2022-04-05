@@ -31,8 +31,6 @@
         IEnumerable<FilterModel> Filters { get; set; }
 
         Dictionary<string, string> RouteData { get; set; }
-
-        string? JavascriptItemIdToScrollTo { get; set; }
     }
 
     public abstract class BaseSearchablePageViewModel<T> : BasePaginatedViewModel<T>, IBaseSearchablePageViewModel
@@ -43,8 +41,7 @@
             bool filterEnabled,
             IEnumerable<FilterModel>? availableFilters = null,
             string? searchLabel = null,
-            Dictionary<string, string>? routeData = null,
-            string? javascriptItemIdToScrollTo = null
+            Dictionary<string, string>? routeData = null
         ) : base(searchSortFilterPaginationResult)
         {
             SortBy = searchSortFilterPaginationResult.SortBy;
@@ -58,7 +55,6 @@
 
             Filters = availableFilters ?? new List<FilterModel>();
             RouteData = routeData ?? new Dictionary<string, string>();
-            JavascriptItemIdToScrollTo = javascriptItemIdToScrollTo;
         }
 
         public string? ExistingFilterString { get; }
@@ -80,7 +76,5 @@
         public IEnumerable<FilterModel> Filters { get; set; }
 
         public Dictionary<string, string> RouteData { get; set; }
-
-        public string? JavascriptItemIdToScrollTo { get; set; }
     }
 }

@@ -204,9 +204,7 @@
 
             if (delegates.Any() || courses.Any())
             {
-                var routeData = returnPageQuery.ToRouteDataDictionary();
-                routeData.Add("groupId", groupId.ToString());
-                return RedirectToAction("ConfirmDeleteGroup", routeData);
+                return RedirectToAction("ConfirmDeleteGroup", new { groupId, returnPageQuery });
             }
 
             groupsService.DeleteDelegateGroup(groupId, false);

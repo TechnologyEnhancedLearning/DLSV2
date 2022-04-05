@@ -21,15 +21,13 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
+    @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
     }
 
     <h1 class="nhsuk-heading-xl word-break">Enter a complete by date for @Model.Name</h1>
 
-    @if (Model.Type is LearningItemType.Resource && Model.ApiIsAccessible == false)
-    {
+    @if (Model.Type is LearningItemType.Resource && Model.ApiIsAccessible == false) {
       <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4"
                                     text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
     }
@@ -40,13 +38,11 @@
           novalidate>
       <input type="hidden" asp-for="Name" />
       <input type="hidden" asp-for="Type" />
-      <input type="hidden" asp-for="ReturnPageQuery"/>
-      @if (Equals(Model.Type, LearningItemType.Course))
-      {
+      <input type="hidden" asp-for="ReturnPageQuery" />
+      @if (Equals(Model.Type, LearningItemType.Course)) {
         <input type="hidden" asp-for="@Model.ProgressId" />
       }
-      @if (Equals(Model.Type, LearningItemType.Resource))
-      {
+      @if (Equals(Model.Type, LearningItemType.Resource)) {
         <input type="hidden" asp-for="@Model.ApiIsAccessible" />
       }
 
@@ -60,7 +56,7 @@
 
       <button class="nhsuk-button" type="submit" role="button">Save changes</button>
     </form>
-    
+
     <vc:cancel-link-with-return-page-query asp-controller="LearningPortal" asp-action="Current" return-page-query="@Model.ReturnPageQuery" />
   </div>
 </div>

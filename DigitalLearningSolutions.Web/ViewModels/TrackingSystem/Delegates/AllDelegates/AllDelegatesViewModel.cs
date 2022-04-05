@@ -14,14 +14,12 @@
         public AllDelegatesViewModel(
             SearchSortFilterPaginationResult<DelegateUserCard> result,
             IReadOnlyCollection<CentreRegistrationPrompt> centreRegistrationPrompts,
-            IEnumerable<FilterModel> availableFilters,
-            string? javascriptItemIdToScrollTo
+            IEnumerable<FilterModel> availableFilters
         ) : base(
             result,
             true,
             availableFilters,
-            "Search delegates",
-            javascriptItemIdToScrollTo: javascriptItemIdToScrollTo
+            "Search delegates"
         )
         {
             var promptsWithOptions =

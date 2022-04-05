@@ -29,9 +29,18 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
                 {
                     return activity switch
                     {
-                        CurrentCourse currentCourse => new CurrentCourseViewModel(currentCourse, result.GetReturnPageQuery($"{currentCourse.Id}-course-card")),
-                        SelfAssessment selfAssessment => new SelfAssessmentCardViewModel(selfAssessment, result.GetReturnPageQuery($"{selfAssessment.Id}-sa-card")),
-                        _ => new CurrentLearningResourceViewModel((ActionPlanResource)activity, result.GetReturnPageQuery($"{activity.Id}-lhr-card")),
+                        CurrentCourse currentCourse => new CurrentCourseViewModel(
+                            currentCourse,
+                            result.GetReturnPageQuery($"{currentCourse.Id}-course-card")
+                        ),
+                        SelfAssessment selfAssessment => new SelfAssessmentCardViewModel(
+                            selfAssessment,
+                            result.GetReturnPageQuery($"{selfAssessment.Id}-sa-card")
+                        ),
+                        _ => new CurrentLearningResourceViewModel(
+                            (ActionPlanResource)activity,
+                            result.GetReturnPageQuery($"{activity.Id}-lhr-card")
+                        ),
                     };
                 }
             );

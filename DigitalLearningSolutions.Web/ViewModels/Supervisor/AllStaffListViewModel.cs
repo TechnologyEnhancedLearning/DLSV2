@@ -23,9 +23,6 @@
                         new ReturnPageQuery(
                             1,
                             PaginationOptions.DefaultItemsPerPage,
-                            null,
-                            null,
-                            null,
                             $"{supervisor.ID}-card"
                         )
                     )
