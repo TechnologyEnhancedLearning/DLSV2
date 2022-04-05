@@ -110,7 +110,7 @@
         public async Task<IActionResult> AddResourceToActionPlan(
             int selfAssessmentId,
             int resourceReferenceId,
-            int? returnPage
+            ReturnPageQuery returnPageQuery
         )
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
@@ -136,7 +136,9 @@
                 return View("ResourceRemovedErrorPage", model);
             }
 
-            return RedirectToAction("RecommendedLearning", new { selfAssessmentId, page = returnPage });
+            var routeData = returnPageQuery.ToRouteDataDictionary();
+            routeData.Add("selfAssessmentId", selfAssessmentId.ToString());
+            return RedirectToAction("RecommendedLearning", routeData);
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/Dashboard")]

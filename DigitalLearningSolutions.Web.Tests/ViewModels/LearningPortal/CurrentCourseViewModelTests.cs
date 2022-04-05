@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using System;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FluentAssertions;
@@ -15,7 +16,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today - TimeSpan.FromDays(1));
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse,"pageNumber=1");
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
 
             // Then
             currentCourseViewModel.DateStyle().Should().Be("overdue");
@@ -29,7 +30,7 @@
 
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, "pageNumber=1");
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
 
 
             // Then
@@ -43,7 +44,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today + TimeSpan.FromDays(100));
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, "pageNumber=1");
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
 
 
 
@@ -58,7 +59,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(hasDiagnostic: false);
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, "pageNumber=1");
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
 
 
             // Then
@@ -72,7 +73,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(diagnosticScore: null);
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, "pageNumber=1");
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
 
 
             // Then
@@ -86,7 +87,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse();
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, "pageNumber=1");
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
 
 
             // Then
@@ -100,7 +101,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(isAssessed: false);
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, "pageNumber=1");
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
 
             // Then
             currentCourseViewModel.HasPassedSections().Should().BeFalse();
@@ -113,7 +114,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse();
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, "pageNumber=1");
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
 
 
             // Then

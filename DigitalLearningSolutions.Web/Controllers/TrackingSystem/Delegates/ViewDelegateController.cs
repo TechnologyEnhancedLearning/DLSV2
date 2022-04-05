@@ -99,7 +99,7 @@
             int delegateId,
             int customisationId,
             DelegateAccessRoute accessedVia,
-            string? returnPageQuery = null
+            ReturnPageQuery? returnPageQuery = null
         )
         {
             if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))

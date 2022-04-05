@@ -16,7 +16,7 @@
             string courseName,
             bool confirm,
             DelegateAccessRoute accessedVia,
-            string? returnPageQuery
+            ReturnPageQuery? returnPageQuery
         )
         {
             DelegateId = delegateId;
@@ -25,7 +25,7 @@
             CourseName = courseName;
             Confirm = confirm;
             AccessedVia = accessedVia;
-            ReturnPageQuery = returnPageQuery != null ? new ReturnPageQuery(returnPageQuery) : (ReturnPageQuery?)null;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public int DelegateId { get; set; }

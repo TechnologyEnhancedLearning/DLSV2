@@ -98,7 +98,7 @@
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
-        public IActionResult SetCurrentCourseCompleteByDate(int id, string returnPageQuery)
+        public IActionResult SetCurrentCourseCompleteByDate(int id, ReturnPageQuery returnPageQuery)
         {
             var currentCourses = courseDataService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var course = currentCourses.FirstOrDefault(c => c.Id == id);
@@ -132,7 +132,7 @@
         }
 
         [Route("/LearningPortal/Current/Remove/{id:int}")]
-        public IActionResult RemoveCurrentCourseConfirmation(int id, string returnPageQuery)
+        public IActionResult RemoveCurrentCourseConfirmation(int id, ReturnPageQuery returnPageQuery)
         {
             var currentCourses = courseDataService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var course = currentCourses.FirstOrDefault(c => c.Id == id);
@@ -183,7 +183,7 @@
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/MarkAsComplete")]
-        public async Task<IActionResult> MarkActionPlanResourceAsComplete(int learningLogItemId, string returnPageQuery)
+        public async Task<IActionResult> MarkActionPlanResourceAsComplete(int learningLogItemId, ReturnPageQuery returnPageQuery)
         {
             var (actionPlanResource, apiIsAccessible) =
                 await actionPlanService.GetActionPlanResource(learningLogItemId);
@@ -230,7 +230,7 @@
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/CompleteBy")]
-        public async Task<IActionResult> SetCurrentActionPlanResourceCompleteByDate(int learningLogItemId, string returnPageQuery)
+        public async Task<IActionResult> SetCurrentActionPlanResourceCompleteByDate(int learningLogItemId, ReturnPageQuery returnPageQuery)
         {
             var (actionPlanResource, apiIsAccessible) =
                 await actionPlanService.GetActionPlanResource(learningLogItemId);
@@ -281,7 +281,7 @@
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
-        public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId, string returnPageQuery)
+        public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId, ReturnPageQuery returnPageQuery)
         {
             var (actionPlanResource, apiIsAccessible) =
                 await actionPlanService.GetActionPlanResource(learningLogItemId);

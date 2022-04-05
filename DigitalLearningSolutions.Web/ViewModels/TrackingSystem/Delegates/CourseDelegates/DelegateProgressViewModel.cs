@@ -14,7 +14,7 @@
         public DelegateProgressViewModel(
             DelegateAccessRoute accessedVia,
             DelegateCourseDetails details,
-            string? returnPageQuery
+            ReturnPageQuery? returnPageQuery
         ) : base(details)
         {
             AccessedVia = accessedVia;
@@ -52,7 +52,7 @@
                         )
                 )
                 .ToList();
-            ReturnPageQuery = returnPageQuery != null ? new ReturnPageQuery(returnPageQuery) : (ReturnPageQuery?)null;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public DelegateAccessRoute AccessedVia { get; set; }

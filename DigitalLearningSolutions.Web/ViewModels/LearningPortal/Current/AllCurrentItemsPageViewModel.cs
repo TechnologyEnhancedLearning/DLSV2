@@ -21,7 +21,7 @@
             CurrentItems = currentCourses.Select(
                 course => new CurrentCourseViewModel(
                     course,
-                    new ReturnPageQuery(1, $"{course.Id}-course-card").ToString()
+                    new ReturnPageQuery(1, $"{course.Id}-course-card")
                 )
             );
             foreach (var selfAssessment in selfAssessments)

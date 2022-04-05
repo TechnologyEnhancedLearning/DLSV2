@@ -47,7 +47,7 @@
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        public IActionResult Index(int progressId, DelegateAccessRoute accessedVia, string? returnPageQuery = null)
+        public IActionResult Index(int progressId, DelegateAccessRoute accessedVia, ReturnPageQuery? returnPageQuery = null)
         {
             var courseDelegatesData =
                 courseService.GetDelegateCourseProgress(progressId);
@@ -62,7 +62,7 @@
 
         [HttpGet]
         [Route("EditSupervisor")]
-        public IActionResult EditSupervisor(int progressId, DelegateAccessRoute accessedVia, string? returnPageQuery = null)
+        public IActionResult EditSupervisor(int progressId, DelegateAccessRoute accessedVia, ReturnPageQuery? returnPageQuery = null)
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
@@ -107,7 +107,7 @@
         public IActionResult EditCompleteByDate(
             int progressId,
             DelegateAccessRoute accessedVia,
-            string? returnPageQuery = null
+            ReturnPageQuery? returnPageQuery = null
         )
         {
             var delegateCourseProgress =
@@ -150,7 +150,7 @@
         public IActionResult EditCompletionDate(
             int progressId,
             DelegateAccessRoute accessedVia,
-            string? returnPageQuery
+            ReturnPageQuery? returnPageQuery
         )
         {
             var delegateCourseProgress =

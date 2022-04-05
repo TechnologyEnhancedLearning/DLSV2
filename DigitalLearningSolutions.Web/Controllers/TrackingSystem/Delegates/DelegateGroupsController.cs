@@ -125,12 +125,12 @@
 
         [HttpGet("{groupId:int}/EditDescription")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        public IActionResult EditDescription(int groupId, string returnPageQuery)
+        public IActionResult EditDescription(int groupId, ReturnPageQuery returnPageQuery)
         {
             var centreId = User.GetCentreId();
             var group = groupsService.GetGroupAtCentreById(groupId, centreId);
 
-            var model = new EditDelegateGroupDescriptionViewModel(group!, new ReturnPageQuery(returnPageQuery));
+            var model = new EditDelegateGroupDescriptionViewModel(group!, returnPageQuery);
             return View(model);
         }
 
@@ -155,7 +155,7 @@
 
         [HttpGet("{groupId:int}/EditGroupName")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        public IActionResult EditGroupName(int groupId, string returnPageQuery)
+        public IActionResult EditGroupName(int groupId, ReturnPageQuery returnPageQuery)
         {
             var centreId = User.GetCentreId();
             var group = groupsService.GetGroupAtCentreById(groupId, centreId);
@@ -165,7 +165,7 @@
                 return NotFound();
             }
 
-            var model = new EditGroupNameViewModel(group.GroupLabel!, new ReturnPageQuery(returnPageQuery));
+            var model = new EditGroupNameViewModel(group.GroupLabel!, returnPageQuery);
             return View(model);
         }
 
@@ -197,14 +197,16 @@
 
         [Route("{groupId:int}/Delete")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        public IActionResult DeleteGroup(int groupId, string returnPageQuery)
+        public IActionResult DeleteGroup(int groupId, ReturnPageQuery returnPageQuery)
         {
             var delegates = groupsService.GetGroupDelegates(groupId);
             var courses = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreId());
 
             if (delegates.Any() || courses.Any())
             {
-                return RedirectToAction("ConfirmDeleteGroup", new { groupId, returnPageQuery });
+                var routeData = returnPageQuery.ToRouteDataDictionary();
+                routeData.Add("groupId", groupId.ToString());
+                return RedirectToAction("ConfirmDeleteGroup", routeData);
             }
 
             groupsService.DeleteDelegateGroup(groupId, false);
@@ -213,7 +215,7 @@
 
         [HttpGet("{groupId:int}/Delete/Confirm")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        public IActionResult ConfirmDeleteGroup(int groupId, string returnPageQuery)
+        public IActionResult ConfirmDeleteGroup(int groupId, ReturnPageQuery returnPageQuery)
         {
             var groupLabel = groupsService.GetGroupName(groupId, User.GetCentreId())!;
             var delegateCount = groupsService.GetGroupDelegates(groupId).Count();
@@ -224,7 +226,7 @@
                 GroupLabel = groupLabel,
                 DelegateCount = delegateCount,
                 CourseCount = courseCount,
-                ReturnPageQuery = new ReturnPageQuery(returnPageQuery),
+                ReturnPageQuery = returnPageQuery,
             };
 
             return View(model);

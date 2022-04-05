@@ -113,7 +113,7 @@
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
 
             // When
-            var result = administratorController.DeactivateOrDeleteAdmin(adminUser.Id, "pageNumber=1");
+            var result = administratorController.DeactivateOrDeleteAdmin(adminUser.Id, new ReturnPageQuery("pageNumber=1"));
 
             // Then
             result.Should().BeNotFoundResult();

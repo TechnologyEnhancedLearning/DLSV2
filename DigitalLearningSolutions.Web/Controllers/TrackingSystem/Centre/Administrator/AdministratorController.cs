@@ -119,7 +119,7 @@
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult EditAdminRoles(int adminId, string returnPageQuery)
+        public IActionResult EditAdminRoles(int adminId, ReturnPageQuery returnPageQuery)
         {
             var centreId = User.GetCentreId();
             var adminUser = userDataService.GetAdminUserById(adminId);
@@ -128,7 +128,7 @@
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
             var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
-            var model = new EditRolesViewModel(adminUser!, centreId, categories, numberOfAdmins, new ReturnPageQuery(returnPageQuery));
+            var model = new EditRolesViewModel(adminUser!, centreId, categories, numberOfAdmins, returnPageQuery);
             return View(model);
         }
 
@@ -159,7 +159,7 @@
         [Route("{adminId:int}/DeactivateAdmin")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult DeactivateOrDeleteAdmin(int adminId, string returnPageQuery)
+        public IActionResult DeactivateOrDeleteAdmin(int adminId, ReturnPageQuery returnPageQuery)
         {
             var adminUser = userDataService.GetAdminUserById(adminId);
 
@@ -168,7 +168,7 @@
                 return NotFound();
             }
 
-            var model = new DeactivateAdminViewModel(adminUser!, new ReturnPageQuery(returnPageQuery));
+            var model = new DeactivateAdminViewModel(adminUser!, returnPageQuery);
             return View(model);
         }
 

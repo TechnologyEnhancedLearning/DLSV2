@@ -12,13 +12,13 @@
             string name,
             int delegateId,
             bool isFromViewDelegatePage = false,
-            string? returnPageQuery = null
+            ReturnPageQuery? returnPageQuery = null
         )
         {
             Name = name;
             DelegateId = delegateId;
             IsFromViewDelegatePage = isFromViewDelegatePage;
-            ReturnPageQuery = returnPageQuery != null ? new ReturnPageQuery(returnPageQuery) : (ReturnPageQuery?)null;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public string Name { get; set; }

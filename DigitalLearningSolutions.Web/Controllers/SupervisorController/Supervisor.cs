@@ -165,11 +165,11 @@
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
-        public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, string returnPageQuery)
+        public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
-            var model = new SupervisorDelegateViewModel(superviseDelegate, new ReturnPageQuery(returnPageQuery));
+            var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
             return View("RemoveConfirm", model);
         }
 

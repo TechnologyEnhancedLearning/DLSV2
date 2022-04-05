@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -34,7 +35,7 @@
         public IActionResult Index(
             int delegateId,
             bool isFromViewDelegatePage,
-            string? returnPageQuery = null
+            ReturnPageQuery? returnPageQuery = null
         )
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;

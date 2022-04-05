@@ -10,7 +10,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
     {
         public EditCompletionDateFormData() { }
 
-        protected EditCompletionDateFormData(DelegateCourseInfo info, string? returnPageQuery)
+        protected EditCompletionDateFormData(DelegateCourseInfo info, ReturnPageQuery? returnPageQuery)
         {
             DelegateId = info.DelegateId;
             Day = info.Completed?.Day;
@@ -21,7 +21,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
             DelegateName = info.DelegateFirstName == null
                 ? info.DelegateLastName
                 : $"{info.DelegateFirstName} {info.DelegateLastName}";
-            ReturnPageQuery = returnPageQuery != null ? new ReturnPageQuery(returnPageQuery) : (ReturnPageQuery?)null;
+            ReturnPageQuery = returnPageQuery;
         }
 
         protected EditCompletionDateFormData(EditCompletionDateFormData formData)

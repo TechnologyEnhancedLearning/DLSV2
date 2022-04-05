@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.RecommendedLearning;
     using FluentAssertions;
     using NUnit.Framework;
@@ -24,7 +25,7 @@
             var recommendedResource = new RecommendedResource { RecommendationScore = recommendationScore };
 
             // When
-            var result = new SearchableRecommendedResourceViewModel(recommendedResource, 1, 1);
+            var result = new SearchableRecommendedResourceViewModel(recommendedResource, 1, new ReturnPageQuery("pageNumber=1"));
 
             // Then
             result.Rating.Should().BeEquivalentTo(expectedRating);

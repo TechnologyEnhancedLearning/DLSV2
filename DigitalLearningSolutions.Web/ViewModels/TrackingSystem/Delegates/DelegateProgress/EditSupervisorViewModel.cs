@@ -16,7 +16,7 @@
             DelegateAccessRoute accessedVia,
             IEnumerable<AdminUser> supervisors,
             DelegateCourseInfo info,
-            string? returnPageQuery
+            ReturnPageQuery? returnPageQuery
         ) : base(info, returnPageQuery)
         {
             ProgressId = progressId;

@@ -9,14 +9,14 @@
             bool absentInLearningHub,
             string resourceName,
             bool apiIsAccessible,
-            string returnPageQuery
+            ReturnPageQuery returnPageQuery
         )
         {
             LearningLogItemId = learningLogItemId;
             AbsentInLearningHub = absentInLearningHub;
             ResourceName = resourceName;
             ApiIsAccessible = apiIsAccessible;
-            ReturnPageQuery = new ReturnPageQuery(returnPageQuery);
+            ReturnPageQuery = returnPageQuery;
         }
 
         public MarkActionPlanResourceAsCompleteViewModel(

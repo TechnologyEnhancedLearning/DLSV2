@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
@@ -108,7 +109,7 @@
                 .Returns(false);
 
             // When
-            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId, 1);
+            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId, new ReturnPageQuery("pageNumber=1"));
 
             // Then
             result.Should().BeNotFoundResult();
@@ -126,7 +127,7 @@
                 .Returns(true);
 
             // When
-            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId, 3);
+            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId, new ReturnPageQuery("pageNumber=1"));
 
             // Then
             A.CallTo(() => actionPlanService.AddResourceToActionPlan(resourceReferenceId, DelegateId, SelfAssessmentId))

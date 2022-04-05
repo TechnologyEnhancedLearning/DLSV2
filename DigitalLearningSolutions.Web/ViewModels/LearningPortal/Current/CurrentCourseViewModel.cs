@@ -5,9 +5,9 @@
 
     public class CurrentCourseViewModel : CurrentLearningItemViewModel
     {
-        public CurrentCourseViewModel(CurrentCourse course, string returnPageQuery) : base(
+        public CurrentCourseViewModel(CurrentCourse course, ReturnPageQuery returnPageQuery) : base(
             course,
-            new ReturnPageQuery(returnPageQuery)
+            returnPageQuery
         )
         {
             UserIsSupervisor = course.SupervisorAdminId != 0;

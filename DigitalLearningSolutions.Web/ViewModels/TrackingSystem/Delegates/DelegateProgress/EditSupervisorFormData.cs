@@ -7,7 +7,7 @@
     {
         public EditSupervisorFormData() { }
 
-        protected EditSupervisorFormData(DelegateCourseInfo info, string? returnPageQuery)
+        protected EditSupervisorFormData(DelegateCourseInfo info, ReturnPageQuery? returnPageQuery)
         {
             DelegateId = info.DelegateId;
             SupervisorId = info.SupervisorAdminId;
@@ -16,7 +16,7 @@
             DelegateName = info.DelegateFirstName == null
                 ? info.DelegateLastName
                 : $"{info.DelegateFirstName} {info.DelegateLastName}";
-            ReturnPageQuery = returnPageQuery != null ? new ReturnPageQuery(returnPageQuery) : (ReturnPageQuery?)null;
+            ReturnPageQuery = returnPageQuery;
         }
 
         protected EditSupervisorFormData(EditSupervisorFormData formData)

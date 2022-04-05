@@ -11,7 +11,7 @@
     {
         public EditCompleteByDateFormData() { }
 
-        protected EditCompleteByDateFormData(DelegateCourseInfo info, string? returnPageQuery)
+        protected EditCompleteByDateFormData(DelegateCourseInfo info, ReturnPageQuery? returnPageQuery)
         {
             DelegateId = info.DelegateId;
             Day = info.CompleteBy?.Day;
@@ -22,7 +22,7 @@
             DelegateName = info.DelegateFirstName == null
                 ? info.DelegateLastName
                 : $"{info.DelegateFirstName} {info.DelegateLastName}";
-            ReturnPageQuery = returnPageQuery != null ? new ReturnPageQuery(returnPageQuery) : (ReturnPageQuery?)null;
+            ReturnPageQuery = returnPageQuery;
         }
 
         protected EditCompleteByDateFormData(EditCompleteByDateFormData formData)
