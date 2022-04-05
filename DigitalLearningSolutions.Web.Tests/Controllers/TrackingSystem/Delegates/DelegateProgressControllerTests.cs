@@ -184,8 +184,7 @@
             var result = delegateProgressController.EditDelegateCourseAdminField(
                 invalidPromptNumber,
                 progressId,
-                DelegateAccessRoute.CourseDelegates,
-                1
+                DelegateAccessRoute.CourseDelegates
             );
 
             // Then

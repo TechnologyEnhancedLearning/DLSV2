@@ -7,11 +7,10 @@
     {
         public EditDelegateCourseAdminFieldFormData() { }
 
-        protected EditDelegateCourseAdminFieldFormData(DelegateCourseDetails details, int? returnPage)
+        protected EditDelegateCourseAdminFieldFormData(DelegateCourseDetails details)
         {
             DelegateId = details.DelegateCourseInfo.DelegateId;
             CustomisationId = details.DelegateCourseInfo.CustomisationId;
-            ReturnPage = returnPage;
         }
 
         protected EditDelegateCourseAdminFieldFormData(EditDelegateCourseAdminFieldFormData formData)
@@ -19,7 +18,6 @@
             Answer = formData.Answer;
             DelegateId = formData.DelegateId;
             CustomisationId = formData.CustomisationId;
-            ReturnPage = formData.ReturnPage;
         }
 
         [MaxLength(100, ErrorMessage = "Answer must be 100 characters or fewer")]
@@ -27,6 +25,5 @@
 
         public int DelegateId { get; set; }
         public int CustomisationId { get; set; }
-        public int? ReturnPage { get; set; }
     }
 }

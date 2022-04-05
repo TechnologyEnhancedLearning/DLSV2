@@ -13,9 +13,8 @@
             int progressId,
             int promptNumber,
             DelegateCourseDetails details,
-            DelegateAccessRoute accessedVia,
-            int? returnPage
-        ) : base(details, returnPage)
+            DelegateAccessRoute accessedVia
+        ) : base(details)
         {
             var courseAdminField = details.CourseAdminFields.Single(c => c.PromptNumber == promptNumber);
 

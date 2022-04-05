@@ -16,7 +16,6 @@
   if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
-    routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());
     cancelLinkController = "DelegateProgress";
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
@@ -57,7 +56,6 @@
         <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
           <input type="hidden" asp-for="DelegateId" />
           <input type="hidden" asp-for="ProgressId" />
-          <input type="hidden" asp-for="ReturnPage" />
 
           @if (Model.Options.Count > 0) {
             <div class="nhsuk-radios nhsuk-u-margin-bottom-4">
@@ -94,6 +92,6 @@
       </div>
     </div>
 
-    <vc:cancel-link asp-controller="@cancelLinkController" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    <vc:cancel-link asp-controller="@cancelLinkController" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
   </div>
 </div>

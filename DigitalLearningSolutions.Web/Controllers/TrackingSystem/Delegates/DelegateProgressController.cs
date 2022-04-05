@@ -189,8 +189,7 @@
         public IActionResult EditDelegateCourseAdminField(
             int progressId,
             int promptNumber,
-            DelegateAccessRoute accessedVia,
-            int? returnPage
+            DelegateAccessRoute accessedVia
         )
         {
             var delegateCourseProgress =
@@ -209,8 +208,7 @@
                 progressId,
                 promptNumber,
                 delegateCourseProgress!,
-                accessedVia,
-                returnPage
+                accessedVia
             );
             return View(model);
         }
@@ -241,7 +239,7 @@
 
             progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, formData.Answer?.Trim());
             // TODO: HEEDLS-862 Account for all possible access routes in redirection
-            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPage);
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
         }
 
         private IActionResult RedirectToPreviousPage(

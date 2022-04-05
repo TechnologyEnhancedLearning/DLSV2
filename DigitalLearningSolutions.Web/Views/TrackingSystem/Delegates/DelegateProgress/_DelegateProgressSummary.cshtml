@@ -64,8 +64,7 @@
       <a asp-controller="DelegateProgress"
          asp-action="EditCompletionDate"
          asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@Model.AccessedVia"
-         asp-route-returnPage="@Model.Page">
+         asp-route-accessedVia="@Model.AccessedVia">
         Edit<span class="nhsuk-u-visually-hidden"> completed date</span>
       </a>
     </dd>
@@ -170,8 +169,7 @@
            asp-action="EditDelegateCourseAdminField"
            asp-route-progressId="@Model.ProgressId"
            asp-route-promptNumber="@delegateCourseAdminField.PromptNumber"
-           asp-route-accessedVia="@Model.AccessedVia"
-           asp-route-returnPage="@Model.Page">
+           asp-route-accessedVia="@Model.AccessedVia">
           Edit<span class="nhsuk-u-visually-hidden"> @delegateCourseAdminField.Prompt</span>
         </a>
       </dd>
