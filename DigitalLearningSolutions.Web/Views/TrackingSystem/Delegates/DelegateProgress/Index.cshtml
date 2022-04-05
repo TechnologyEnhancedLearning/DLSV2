@@ -57,7 +57,7 @@
     </a>
 
     @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-      <vc:back-link-with-return-page-query asp-controller="CourseDelegates" asp-action="Index" link-text="Go back" route-data="@routeParamsForBackLink" return-page-query="@Model.ReturnPageQuery!.Value" />
+      <vc:back-link asp-controller="CourseDelegates" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
     } else {
       <vc:back-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
     }

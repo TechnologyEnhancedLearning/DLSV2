@@ -3,14 +3,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class EditCompletionDateFormData : IValidatableObject
     {
         public EditCompletionDateFormData() { }
 
-        protected EditCompletionDateFormData(DelegateCourseInfo info, ReturnPageQuery? returnPageQuery)
+        protected EditCompletionDateFormData(DelegateCourseInfo info)
         {
             DelegateId = info.DelegateId;
             Day = info.Completed?.Day;
@@ -21,7 +20,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
             DelegateName = info.DelegateFirstName == null
                 ? info.DelegateLastName
                 : $"{info.DelegateFirstName} {info.DelegateLastName}";
-            ReturnPageQuery = returnPageQuery;
         }
 
         protected EditCompletionDateFormData(EditCompletionDateFormData formData)
@@ -33,7 +31,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
             CourseName = formData.CourseName;
             CustomisationId = formData.CustomisationId;
             DelegateName = formData.DelegateName;
-            ReturnPageQuery = formData.ReturnPageQuery;
         }
 
         public int? Day { get; set; }
@@ -43,7 +40,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
         public string? DelegateName { get; set; }
         public int CustomisationId { get; set; }
         public string? CourseName { get; set; }
-        public ReturnPageQuery? ReturnPageQuery { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

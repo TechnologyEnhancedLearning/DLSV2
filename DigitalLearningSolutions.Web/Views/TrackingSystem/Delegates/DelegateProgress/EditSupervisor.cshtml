@@ -47,7 +47,6 @@
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="EditSupervisor">
       <input type="hidden" asp-for="DelegateId" />
       <input type="hidden" asp-for="ProgressId" />
-      <input type="hidden" asp-for="ReturnPageQuery" />
       <vc:select-list asp-for="@nameof(Model.SupervisorId)"
                       label="Supervisor"
                       value="@Model.SupervisorId.ToString()"
@@ -61,7 +60,7 @@
     </form>
 
     @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-      <vc:cancel-link-with-return-page-query asp-controller="DelegateProgress" asp-action="Index" route-data="@routeParamsForBackLink" return-page-query="@Model.ReturnPageQuery!.Value" />
+      <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
     } else {
       <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
     }

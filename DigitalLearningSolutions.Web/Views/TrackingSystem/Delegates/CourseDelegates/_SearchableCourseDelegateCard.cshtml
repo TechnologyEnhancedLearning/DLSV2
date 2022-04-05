@@ -112,8 +112,7 @@
          asp-controller="DelegateProgress"
          asp-action="Index"
          asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates"
-         asp-route-returnPageQuery="@Model.ReturnPageQuery.ToString()" >
+         asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates" >
         View progress
       </a>
       @if (Model.Locked) {
