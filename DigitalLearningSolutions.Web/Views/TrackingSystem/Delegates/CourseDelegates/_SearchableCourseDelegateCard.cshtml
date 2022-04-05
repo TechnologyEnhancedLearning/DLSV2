@@ -99,8 +99,12 @@
               <div hidden data-filter-value="@Model.AdminFieldFilters[delegateCourseAdminField.PromptNumber]"></div>
             }
             <dd class="nhsuk-summary-list__actions">
-              <a>
-                Edit<span class="nhsuk-u-visually-hidden"> @delegateCourseAdminField.PromptNumber</span>
+              <a asp-controller="DelegateProgress"
+                 asp-action="EditDelegateCourseAdminField"
+                 asp-route-progressId="@Model.ProgressId"
+                 asp-route-promptNumber="@delegateCourseAdminField.PromptNumber"
+                 asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates">
+                Edit<span class="nhsuk-u-visually-hidden"> @delegateCourseAdminField.Prompt</span>
               </a>
             </dd>
           </div>
