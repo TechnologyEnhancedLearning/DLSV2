@@ -94,7 +94,7 @@
             // Then
             result.Should().BeRedirectToActionResult()
                 .WithActionName("ConfirmDeleteGroup")
-                .WithRouteValue("groupId", groupId);
+                .WithRouteValue("groupId", groupId.ToString());
         }
 
         [Test]
@@ -113,7 +113,7 @@
             // Then
             result.Should().BeRedirectToActionResult()
                 .WithActionName("ConfirmDeleteGroup")
-                .WithRouteValue("groupId", groupId);
+                .WithRouteValue("groupId", groupId.ToString());
         }
 
         [Test]
