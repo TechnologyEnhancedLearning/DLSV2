@@ -939,7 +939,7 @@
                     ).ToList()
                 );
                 model.CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
-                ModelState.AddModelError(nameof(model.ResultIds), "Please choose at least one result to verify.");
+                ModelState.AddModelError(nameof(model.ResultIds), "Please choose at least one result to confirm.");
                 ViewBag.SupervisorSelfAssessmentReview = sessionRequestVerification.SupervisorSelfAssessmentReview;
                 return View("SelfAssessments/VerificationPickResults", model);
             }
