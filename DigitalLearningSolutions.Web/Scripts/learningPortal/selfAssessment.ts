@@ -16,9 +16,4 @@ inputs.forEach((e) => {
   e.addEventListener('change', () => onSliderUpdate(e));
 });
 
-const clearButtons = document.getElementsByName('clearButton');
-clearButtons.forEach((e) => {
-  e.style.display = 'block';
-});
-
 Checkboxes.default.setUpSelectAndDeselectInGroupButtons();

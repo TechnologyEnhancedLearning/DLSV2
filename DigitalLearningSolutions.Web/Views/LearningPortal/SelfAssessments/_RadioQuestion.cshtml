@@ -26,4 +26,11 @@
     </div>
   }
 </div>
+<div name="clearButton" class="js-only-inline nhsuk-u-margin-top-1 nhsuk-u-margin-bottom-3">
+  <a class="deselect-all" href="javascript:void(0);"
+     data-group="group@(Model.Id)"
+     name="selectAll" value="true">
+    Clear selection
+  </a>
+</div>
 <input hidden name="[@ViewData["index"]].Id" value="@Model.Id" />
