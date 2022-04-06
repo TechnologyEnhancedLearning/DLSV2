@@ -189,7 +189,8 @@
         public IActionResult EditDelegateCourseAdminField(
             int progressId,
             int promptNumber,
-            DelegateAccessRoute accessedVia
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery? returnPageQuery = null
         )
         {
             var delegateCourseProgress =
@@ -208,7 +209,8 @@
                 progressId,
                 promptNumber,
                 delegateCourseProgress!,
-                accessedVia
+                accessedVia,
+                returnPageQuery
             );
             return View(model);
         }
@@ -262,14 +264,17 @@
             int progressId,
             int customisationId,
             int delegateId,
-            DelegateAccessRoute accessedVia
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery? returnPageQuery = null
         )
         {
             progressService.UnlockProgress(progressId);
 
             if (accessedVia.Equals(DelegateAccessRoute.CourseDelegates))
             {
-                return RedirectToAction("Index", "CourseDelegates", new { customisationId });
+                var routeData = returnPageQuery!.Value.ToRouteDataDictionary();
+                routeData.Add("customisationId", customisationId.ToString());
+                return RedirectToAction("Index", "CourseDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
             }
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });

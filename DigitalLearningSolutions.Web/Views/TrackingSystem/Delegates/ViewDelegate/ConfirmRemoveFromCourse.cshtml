@@ -51,9 +51,9 @@
           asp-route-delegateId="@Model.DelegateId"
           asp-route-customisationId="@Model.CustomisationId"
           asp-route-accessedVia="@Model.AccessedVia">
-      <input type="hidden" name="name" value="@Model.Name" />
-      <input type="hidden" name="courseName" value="@Model.CourseName" />
-      <input type="hidden" name="returnPage" value="@Model.ReturnPageQuery" />
+      <input type="hidden" asp-for="@Model.Name" />
+      <input type="hidden" asp-for="@Model.CourseName" />
+      <input type="hidden" asp-for="@Model.ReturnPageQuery" />
 
       <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
                           label="I am sure that I wish to remove this enrolment"

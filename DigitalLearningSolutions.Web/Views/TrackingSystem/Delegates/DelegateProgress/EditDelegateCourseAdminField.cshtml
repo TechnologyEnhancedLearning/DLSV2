@@ -10,16 +10,15 @@
   const string blankRadioId = "leave-blank";
 
   var routeParamsForBackLink = new Dictionary<string, string?>();
-  string cancelLinkController;
 
   // TODO: HEEDLS-862 Account for all possible access routes in back link
-  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates) && Model.ReturnPageQuery == null) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
-    cancelLinkController = "DelegateProgress";
+  } else if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+    routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
-    cancelLinkController = "ViewDelegate";
   }
 }
 
@@ -56,6 +55,8 @@
         <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
           <input type="hidden" asp-for="DelegateId" />
           <input type="hidden" asp-for="ProgressId" />
+          <input type="hidden" asp-for="CustomisationId"/>
+          <input type="hidden" asp-for="ReturnPageQuery"/>
 
           @if (Model.Options.Count > 0) {
             <div class="nhsuk-radios nhsuk-u-margin-bottom-4">
@@ -92,6 +93,12 @@
       </div>
     </div>
 
-    <vc:cancel-link asp-controller="@cancelLinkController" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates) && Model.ReturnPageQuery == null) {
+      <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
+    } else if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+      <vc:cancel-link-with-return-page-query asp-controller="CourseDelegates" asp-action="Index" route-data="@routeParamsForBackLink" return-page-query="@Model.ReturnPageQuery.Value" />
+    } else {
+      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
+    }
   </div>
 </div>

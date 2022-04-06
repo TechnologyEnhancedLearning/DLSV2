@@ -2,15 +2,20 @@
 {
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class EditDelegateCourseAdminFieldFormData
     {
         public EditDelegateCourseAdminFieldFormData() { }
 
-        protected EditDelegateCourseAdminFieldFormData(DelegateCourseDetails details)
+        protected EditDelegateCourseAdminFieldFormData(
+            DelegateCourseDetails details,
+            ReturnPageQuery? returnPageQuery = null
+        )
         {
             DelegateId = details.DelegateCourseInfo.DelegateId;
             CustomisationId = details.DelegateCourseInfo.CustomisationId;
+            ReturnPageQuery = returnPageQuery;
         }
 
         protected EditDelegateCourseAdminFieldFormData(EditDelegateCourseAdminFieldFormData formData)
@@ -18,6 +23,7 @@
             Answer = formData.Answer;
             DelegateId = formData.DelegateId;
             CustomisationId = formData.CustomisationId;
+            ReturnPageQuery = formData.ReturnPageQuery;
         }
 
         [MaxLength(100, ErrorMessage = "Answer must be 100 characters or fewer")]
@@ -25,5 +31,6 @@
 
         public int DelegateId { get; set; }
         public int CustomisationId { get; set; }
+        public ReturnPageQuery? ReturnPageQuery { get; set; }
     }
 }

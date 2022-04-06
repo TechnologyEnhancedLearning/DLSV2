@@ -143,7 +143,12 @@
                 model.LearningCategory
             );
 
-            return RedirectToAction("Index", model.ReturnPageQuery.ToRouteDataDictionary());
+            return RedirectToAction(
+                "Index",
+                "Administrator",
+                model.ReturnPageQuery.ToRouteDataDictionary(),
+                model.ReturnPageQuery.ItemIdToReturnTo
+            );
         }
 
         [Route("{adminId:int}/UnlockAccount")]

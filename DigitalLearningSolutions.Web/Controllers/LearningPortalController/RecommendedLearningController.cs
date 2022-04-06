@@ -138,7 +138,7 @@
 
             var routeData = returnPageQuery.ToRouteDataDictionary();
             routeData.Add("selfAssessmentId", selfAssessmentId.ToString());
-            return RedirectToAction("RecommendedLearning", routeData);
+            return RedirectToAction("RecommendedLearning", "RecommendedLearning", routeData, returnPageQuery.ItemIdToReturnTo);
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/Dashboard")]

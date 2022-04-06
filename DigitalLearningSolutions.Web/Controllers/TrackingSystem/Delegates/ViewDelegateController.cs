@@ -151,20 +151,20 @@
                 RemovalMethod.RemovedByAdmin
             );
 
-            return model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)
-                ? RedirectToAction(
-                    "Index",
-                    "CourseDelegates",
-                    GetCourseDelegatesRouteValues(customisationId, model.ReturnPageQuery!.Value)
-                )
-                : RedirectToAction("Index", "ViewDelegate", new { delegateId });
-        }
+            if (!model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates))
+            {
+                return RedirectToAction("Index", "ViewDelegate", new { delegateId });
+            }
 
-        private static Dictionary<string, string> GetCourseDelegatesRouteValues(int customisationId, ReturnPageQuery returnPageQuery)
-        {
-            var dict = returnPageQuery.ToRouteDataDictionary();
-            dict.Add("customisationId", customisationId.ToString());
-            return dict;
+            var routeData = model.ReturnPageQuery!.Value.ToRouteDataDictionary();
+            routeData.Add("customisationId", customisationId.ToString());
+            return RedirectToAction(
+                "Index",
+                "CourseDelegates",
+                routeData,
+                model.ReturnPageQuery.Value.ItemIdToReturnTo
+            );
+
         }
 
         [HttpPost]

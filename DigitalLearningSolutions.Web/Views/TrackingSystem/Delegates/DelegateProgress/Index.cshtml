@@ -4,13 +4,6 @@
 
 @{
   ViewData["Title"] = "Delegate progress";
-  var routeParamsForBackLink = new Dictionary<string, string?>();
-
-  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-    routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
-  } else {
-    routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
-  }
 }
 
 @section NavBreadcrumbs {
@@ -55,11 +48,5 @@
        asp-route-progressId="@Model.ProgressId">
       View learning log
     </a>
-
-    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-      <vc:back-link asp-controller="CourseDelegates" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
-    } else {
-      <vc:back-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
-    }
   </div>
 </div>
