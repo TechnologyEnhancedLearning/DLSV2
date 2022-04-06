@@ -258,6 +258,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ITutorialContentDataService, TutorialContentDataService>();
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICandidateAssessmentDownloadFileService, CandidateAssessmentDownloadFileService>();
+            services.AddScoped<IBrandsDataService, BrandsDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)
