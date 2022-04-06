@@ -1,12 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.RoleProfilesController
 {
     using DigitalLearningSolutions.Data.Models.RoleProfiles;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.RoleProfiles;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.Extensions.Logging;
-    using System.Linq;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Data.Models.SessionData.RoleProfiles;
     using Microsoft.AspNetCore.Http;
@@ -14,6 +11,8 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Models.Enums;
+
     public partial class RoleProfilesController
     {
         private const string CookieName = "DLSFrameworkService";
@@ -83,12 +82,14 @@
                    );
             }
 
+            var currentTab = tabname == "All" ? RoleProfilesTab.AllRoleProfiles : RoleProfilesTab.MyRoleProfiles;
             RoleProfilesViewModel? model = new RoleProfilesViewModel(
                 isWorkforceManager,
                 isWorkforceContributor,
                 allRoleProfiles,
-                myRoleProfiles
-                );
+                myRoleProfiles,
+                currentTab
+            );
             return View("Index", model);
         }
         public IActionResult StartNewRoleProfileSession()
