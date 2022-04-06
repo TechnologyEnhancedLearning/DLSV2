@@ -22,7 +22,7 @@
             new Dictionary<string, string> { { "tabName", "All" } }
         );
 
-        public RoleProfilesTab(
+        private RoleProfilesTab(
             int id,
             string name,
             string controller,

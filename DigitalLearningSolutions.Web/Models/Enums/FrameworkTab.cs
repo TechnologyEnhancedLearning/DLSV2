@@ -31,7 +31,7 @@
             new Dictionary<string, string> { { "tabName", "Comments" } }
         );
 
-        public FrameworkTab(
+        private FrameworkTab(
             int id,
             string name,
             string controller,

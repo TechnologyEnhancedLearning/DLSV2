@@ -20,7 +20,7 @@
             "Courses"
         );
 
-        public DelegateGroupTab(int id, string name, string controller, string action, string linkText) : base(
+        private DelegateGroupTab(int id, string name, string controller, string action, string linkText) : base(
             id,
             name,
             controller,

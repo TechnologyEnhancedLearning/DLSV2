@@ -12,16 +12,20 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Group
     {
         public GroupCoursesViewModel(
             int groupId,
+            string groupName,
             PaginationResult<GroupCourse> result
         ) : base(result)
         {
             GroupId = groupId;
+            GroupName = groupName;
             var routeData = new Dictionary<string, string> { { "groupId", groupId.ToString() } };
             TabsNavLinks = new TabsNavViewModel(DelegateGroupTab.Courses, routeData);
             GroupCourses = result.ItemsToDisplay.Select(groupCourse => new GroupCourseViewModel(groupCourse));
         }
 
         public int GroupId { get; set; }
+
+        public string GroupName { get; set; }
 
         public TabsNavViewModel TabsNavLinks { get; set; }
 

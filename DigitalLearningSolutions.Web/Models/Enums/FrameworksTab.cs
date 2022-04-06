@@ -22,7 +22,7 @@
             new Dictionary<string, string> { { "tabName", "Mine" } }
         );
 
-        public FrameworksTab(
+        private FrameworksTab(
             int id,
             string name,
             string controller,

@@ -12,16 +12,20 @@
     {
         public GroupDelegatesViewModel(
             int groupId,
+            string groupName,
             PaginationResult<GroupDelegate> result
         ) : base(result)
         {
             GroupId = groupId;
+            GroupName = groupName;
             var routeData = new Dictionary<string, string> { { "groupId", groupId.ToString() } };
             TabsNavLinks = new TabsNavViewModel(DelegateGroupTab.Delegates, routeData);
             GroupDelegates = result.ItemsToDisplay.Select(groupDelegate => new GroupDelegateViewModel(groupDelegate));
         }
 
         public int GroupId { get; set; }
+
+        public string GroupName { get; set; }
 
         public TabsNavViewModel TabsNavLinks { get; set; }
 

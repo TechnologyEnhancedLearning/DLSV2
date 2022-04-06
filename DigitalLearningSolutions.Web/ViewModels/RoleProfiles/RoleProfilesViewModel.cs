@@ -5,7 +5,13 @@
 
     public class RoleProfilesViewModel
     {
-        public RoleProfilesViewModel(bool isWorkforceManager, bool isWorkforceContributor, AllRoleProfilesViewModel allRoleProfiles, MyRoleProfilesViewModel myRoleProfiles, RoleProfilesTab currentTab)
+        public RoleProfilesViewModel(
+            bool isWorkforceManager,
+            bool isWorkforceContributor,
+            AllRoleProfilesViewModel allRoleProfiles,
+            MyRoleProfilesViewModel myRoleProfiles,
+            RoleProfilesTab currentTab
+        )
         {
             IsWorkforceManager = isWorkforceManager;
             IsWorkforceContributor = isWorkforceContributor;

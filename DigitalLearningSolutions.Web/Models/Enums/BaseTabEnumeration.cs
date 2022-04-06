@@ -5,7 +5,7 @@
 
     public abstract class BaseTabEnumeration : Enumeration
     {
-        protected BaseTabEnumeration(
+        private protected BaseTabEnumeration(
             int id,
             string name,
             string controller,

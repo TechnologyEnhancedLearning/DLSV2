@@ -5,7 +5,13 @@
 
     public class FrameworksViewModel
     {
-        public FrameworksViewModel(bool isFrameworkDeveloper, bool isFrameworkContributor, MyFrameworksViewModel myFrameworksViewModel, AllFrameworksViewModel allFrameworksViewModel, FrameworksTab currentTab)
+        public FrameworksViewModel(
+            bool isFrameworkDeveloper,
+            bool isFrameworkContributor,
+            MyFrameworksViewModel myFrameworksViewModel,
+            AllFrameworksViewModel allFrameworksViewModel,
+            FrameworksTab currentTab
+        )
         {
             IsFrameworkDeveloper = isFrameworkDeveloper;
             IsFrameworkContributor = isFrameworkContributor;
