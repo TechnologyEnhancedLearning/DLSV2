@@ -26,6 +26,7 @@
             Create.Index("IX_AdminAccounts_Email").OnTable("AdminAccounts").OnColumn("Email").Ascending()
                 .WithOptions().Unique().WithOptions().NonClustered();
 
+            Rename.Column("AdminID").OnTable("AdminAccounts").To("ID");
             Rename.Column("UserAdmin").OnTable("AdminAccounts").To("IsSuperAdmin");
             Rename.Column("CentreAdmin").OnTable("AdminAccounts").To("IsCentreAdmin");
             Rename.Column("SummaryReports").OnTable("AdminAccounts").To("IsReportsViewer");
@@ -83,6 +84,7 @@
                 .Ascending()
                 .OnColumn("EmailAddress").Ascending().WithOptions().NonClustered();
 
+            Rename.Column("CandidateID").OnTable("DelegateAccounts").To("ID");
             Rename.Column("Password").OnTable("DelegateAccounts").To("OldPassword");
             Rename.Column("EmailAddress").OnTable("DelegateAccounts").To("Email");
             Alter.Table("DelegateAccounts").AddColumn("EmailVerified").AsDateTime().Nullable();
@@ -139,6 +141,7 @@
             Create.ForeignKey("FK_AdminUsers_ResetPasswordID_ResetPassword_ID").FromTable("AdminAccounts")
                 .ForeignColumn("ResetPasswordID").ToTable("ResetPassword").PrimaryColumn("ID");
 
+            Rename.Column("ID").OnTable("AdminAccounts").To("AdminID");
             Rename.Column("IsSuperAdmin").OnTable("AdminAccounts").To("UserAdmin");
             Rename.Column("IsCentreAdmin").OnTable("AdminAccounts").To("CentreAdmin");
             Rename.Column("IsReportsViewer").OnTable("AdminAccounts").To("SummaryReports");
@@ -225,6 +228,7 @@
                 .OnColumn("Email").Ascending()
                 .WithOptions().NonClustered();
 
+            Rename.Column("ID").OnTable("DelegateAccounts").To("CandidateID");
             Rename.Column("OldPassword").OnTable("DelegateAccounts").To("Password");
             Rename.Column("Email").OnTable("DelegateAccounts").To("EmailAddress");
             Delete.Column("EmailVerified").FromTable("DelegateAccounts");

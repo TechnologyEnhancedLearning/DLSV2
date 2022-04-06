@@ -1,5 +1,5 @@
 ﻿CREATE VIEW AdminUsers AS
-SELECT dbo.AdminAccounts.AdminID,
+SELECT dbo.AdminAccounts.ID                    AS AdminID,
        null                                    AS Login,
        dbo.Users.PasswordHash                  AS Password,
        dbo.AdminAccounts.CentreID,
@@ -38,10 +38,10 @@ SELECT dbo.AdminAccounts.AdminID,
        dbo.AdminAccounts.IsNominatedSupervisor AS NominatedSupervisor
 FROM dbo.Users
          INNER JOIN dbo.AdminAccounts ON dbo.Users.ID = dbo.AdminAccounts.UserID
-GO
+    GO
 
 CREATE VIEW Candidates AS
-SELECT dbo.DelegateAccounts.CandidateID,
+SELECT dbo.DelegateAccounts.ID       AS CandidateID,
        dbo.DelegateAccounts.Active,
        dbo.DelegateAccounts.CentreID,
        dbo.Users.FirstName,
@@ -73,4 +73,4 @@ SELECT dbo.DelegateAccounts.CandidateID,
        dbo.Users.HasDismissedLhLoginWarning
 FROM dbo.Users
          INNER JOIN dbo.DelegateAccounts ON dbo.Users.ID = dbo.DelegateAccounts.UserID
-GO
+    GO
