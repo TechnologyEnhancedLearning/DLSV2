@@ -10,14 +10,12 @@
     };
 }
 
-<nav class="hee-secondary-nav--tabs" aria-label="Secondary navigation tabs">
-  <div class="nhsuk-grid-row">
-    <ul>
+<nav class="hee-secondary-nav--tabs nhsuk-u-padding-0" aria-label="Secondary navigation tabs">
+    <ul class="nhsuk-grid-row nhsuk-u-margin-left-0">
       @foreach (var link in Model.TabLinks) {
         <li class="@(link.IsCurrentPage ? "active" : null) @tabWidthClass nhsuk-u-padding-0">
           <a asp-controller="@link.AspController" asp-action="@link.AspAction" asp-all-route-data="link.AspAllRouteData">@link.LinkText</a>
         </li>
       }
     </ul>
-  </div>
 </nav>
