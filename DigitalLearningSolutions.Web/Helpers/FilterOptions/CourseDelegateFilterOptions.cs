@@ -57,4 +57,22 @@
             FilterStatus.Default
         );
     }
+
+    public static class CourseDelegateCompletionFilterOptions
+    {
+        private const string Group = "Completion";
+
+        public static readonly FilterOptionModel Complete = new FilterOptionModel(
+            "Complete",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.Completed), "true"),//TODO HEEDLS-838 how does this work
+            FilterStatus.Default);//TODO HEEDLS-838 what is filterstatus
+        public static readonly FilterOptionModel Incomplete = new FilterOptionModel(
+            "Incomplete",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.Completed), "false"),
+            FilterStatus.Default);
+        public static readonly FilterOptionModel Removed = new FilterOptionModel(
+            "Removed",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.Completed), "removed"),//TODO HEEDLS-838 is this legal?
+            FilterStatus.Default);
+    }
 }

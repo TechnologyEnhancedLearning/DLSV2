@@ -28,6 +28,13 @@
             CourseDelegateProgressRemovedFilterOptions.NotRemoved,
         };
 
+        public static readonly IEnumerable<FilterOptionModel> CompletionStatusOptions = new[]
+        {
+            CourseDelegateCompletionFilterOptions.Complete,
+            CourseDelegateCompletionFilterOptions.Incomplete,
+            CourseDelegateCompletionFilterOptions.Removed,
+        };
+
         public static List<FilterModel> GetAllCourseDelegatesFilterViewModels(IEnumerable<CourseAdminField> adminFields)
         {
             var filters = new List<FilterModel>

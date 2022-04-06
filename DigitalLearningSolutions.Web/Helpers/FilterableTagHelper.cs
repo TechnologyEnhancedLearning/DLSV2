@@ -130,6 +130,20 @@
                 tags.Add(new SearchableTagViewModel(CourseDelegateProgressRemovedFilterOptions.NotRemoved, true));
             }
 
+            //TODO HEEDLS-838 check precedence for these
+            if (courseDelegate.Completed.HasValue)
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateCompletionFilterOptions.Complete));
+            }
+            else if (!courseDelegate.Completed.HasValue && !courseDelegate.Removed)
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateCompletionFilterOptions.Incomplete));
+            }
+            else if (!courseDelegate.Completed.HasValue && courseDelegate.Removed)
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateCompletionFilterOptions.Removed));
+            }
+
             return tags;
         }
 

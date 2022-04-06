@@ -21,7 +21,6 @@
         public DateTime? CompleteByDate { get; set; }
         public DateTime? RemovedDate { get; set; }
         public DateTime? Completed { get; set; }
-        public bool HasCompleted { get; set; }
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }
         public string? Answer3 { get; set; }
