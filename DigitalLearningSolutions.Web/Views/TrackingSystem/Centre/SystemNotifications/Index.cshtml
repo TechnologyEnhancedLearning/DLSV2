@@ -43,14 +43,12 @@
 
       <form asp-action="AcknowledgeNotification"
             asp-controller="SystemNotifications"
-            asp-all-route-data="@(new Dictionary<string, string> {{ "page", Model.Page.ToString() }})">
+            asp-all-route-data="@(new Dictionary<string, string> { { "page", Model.Page.ToString() } })">
         <input type="hidden" value="@Model.UnacknowledgedNotification.SystemNotificationId" name="systemNotificationId" />
         <button class="nhsuk-button" type="submit">Acknowledge</button>
       </form>
 
-
       <partial name="PaginatedPage/_Pagination" model="Model" />
-      
     }
 
   </div>

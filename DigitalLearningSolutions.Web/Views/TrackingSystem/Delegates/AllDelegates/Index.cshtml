@@ -59,7 +59,6 @@
       }
 
       <partial name="SearchablePage/_Pagination" model="Model" />
-      
     </div>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
@@ -69,7 +68,7 @@
 </div>
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-  @section scripts {
-    <script src="@Url.Content("~/js/trackingSystem/allDelegates.js")" asp-append-version="true"></script>
-  }
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/allDelegates.js")" asp-append-version="true"></script>
+}
 }

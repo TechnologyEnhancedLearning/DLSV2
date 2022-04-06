@@ -41,9 +41,9 @@
         }
       </div>
     }
-    
+
     <partial name="SearchablePage/_Pagination" model="Model" />
-    
+
     <div class="nhsuk-u-padding-top-4">
       <vc:cancel-link asp-controller="GroupDelegates" asp-action="Index" asp-all-route-data="@routeParamsForGroupDelegates" />
     </div>
@@ -52,7 +52,7 @@
 </div>
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-  @section scripts {
-    <script src="@Url.Content("~/js/trackingSystem/addGroupDelegate.js")" asp-append-version="true"></script>
-  }
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/addGroupDelegate.js")" asp-append-version="true"></script>
+}
 }

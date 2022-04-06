@@ -6,9 +6,9 @@
 <link rel="stylesheet" href="@Url.Content("~/css/support/faqs.css")" asp-append-version="true">
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-  @section scripts {
-    <script src="@Url.Content("~/js/support/faqs.js")" asp-append-version="true"></script>
-  }
+@section scripts {
+  <script src="@Url.Content("~/js/support/faqs.js")" asp-append-version="true"></script>
+}
 }
 
 @{
@@ -48,7 +48,7 @@
           }
         </div>
       }
-      
+
       <partial name="SearchablePage/_Pagination" model="Model" />
     </div>
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">

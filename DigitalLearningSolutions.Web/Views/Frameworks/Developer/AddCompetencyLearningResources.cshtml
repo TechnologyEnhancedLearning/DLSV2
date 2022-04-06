@@ -10,19 +10,29 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Signposting</a></li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Signposting</a>
+        </li>
         <li class="nhsuk-breadcrumb__item">Add Resource</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Back to Signposting</a></p>
+      <p class="nhsuk-breadcrumb__back">
+        <a class="nhsuk-breadcrumb__backlink" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Back to Signposting</a>
+      </p>
     </div>
   </nav>
 }
+
 <h1>Add Competency Learning Resource</h1>
 <div class="nhsuk-inset-text">
   <span class="nhsuk-u-visually-hidden">Information: </span>
@@ -37,31 +47,26 @@
       <div class="search-box-container" id="search">
         @Html.LabelFor(m => m.SearchText, "Search", new { @class = "nhsuk-u-visually-hidden", @for = "search-field" })
         @Html.TextBoxFor(m => m.SearchText, new { @class = "search-box", id = "search-field", name = "searchString", type = "search", placeholder = "Search", autocomplete = "off" })
-        <button class="nhsuk-search__submit sort-submit" type="submit" asp-route-page="1"  asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
+        <button class="nhsuk-search__submit sort-submit" type="submit" asp-route-page="1" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
           Search
         </button>
       </div>
     </div>
   </div>
 </form>
-@if (Model.LearningHubApiError)
-{
+@if (Model.LearningHubApiError) {
   <span class="nhsuk-u-margin-1 nhsuk-u-clear">This service is unavailable. Please try again later.</span>
-}
-else if (Model.SearchResult?.Results != null)
-{
+} else if (Model.SearchResult?.Results != null) {
   <span class="nhsuk-u-margin-1 nhsuk-u-clear">@Model.TotalNumResources matches for "@Model.SearchText"</span>
-  @foreach (var result in Model.SearchResult.Results)
-  {
+  @foreach (var result in Model.SearchResult.Results) {
     <partial name="Developer/_SignpostingResourceCard" model="new CompetencyResourceSummaryViewModel(result)" view-data="@(new ViewDataDictionary(ViewData) { { "parent", Model } })" />
   }
 }
 
-  <form method="get">
-    <partial name="PaginatedPage/_PaginationNav" model="Model" />
-    @Html.Hidden("SearchText", Model.SearchText)
-  </form>
-  
+<form method="get">
+  <partial name="PaginatedPage/_PaginationNav" model="Model" />
+  @Html.Hidden("SearchText", Model.SearchText)
+</form>
 <div class="nhsuk-back-link nhsuk-u-margin-left-1 nhsuk-u-margin-top-6">
   <a class="nhsuk-back-link__link" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
     <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
