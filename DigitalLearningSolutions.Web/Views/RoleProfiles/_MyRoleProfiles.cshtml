@@ -15,9 +15,9 @@
     <partial name="Shared/_SearchResultsCount" model="Model" />
     <partial name="Shared/_ProfilesGrid" model="Model.RoleProfiles" />
 
-    @if (Model.TotalPages > 1) {
-      <partial name="Shared/_Pagination" model="Model" />
-    }
+
+    <partial name="Shared/_Pagination" model="Model" />
+    
   </form>
 }
 @if (Model.IsWorkforceManager) {

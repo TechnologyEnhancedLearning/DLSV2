@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 @model IBasePaginatedViewModel
 
-<nav class="nhsuk-pagination" role="navigation" aria-label="Pagination">
+<nav class="nhsuk-pagination" role="navigation" aria-label="Pagination"  style="display:@(Model.TotalPages == 1 ? "none" : "")">
   <div class="nhsuk-pagination__list">
     <div class="pagination-button-container">
       <div class="nhsuk-pagination-item--previous" @(Model.Page == 1 ? "hidden" : "")>
