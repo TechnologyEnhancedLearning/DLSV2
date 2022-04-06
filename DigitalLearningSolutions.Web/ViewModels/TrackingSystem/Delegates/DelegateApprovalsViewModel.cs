@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
@@ -34,7 +35,7 @@
             Email = delegateUser.EmailAddress;
             DateRegistered = delegateUser.DateRegistered;
             JobGroup = delegateUser.JobGroupName;
-            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
                 delegateUser.HasBeenPromptedForPrn,
                 delegateUser.ProfessionalRegistrationNumber
             );

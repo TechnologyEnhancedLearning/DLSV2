@@ -7,15 +7,12 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates;
     using FakeItEasy;
-    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     public class GroupDelegatesControllerTests
@@ -104,13 +101,7 @@
             var result = groupDelegatesController.Index(1);
 
             // Then
-            using (new AssertionScope())
-            {
-                result.Should().BeViewResult().WithDefaultViewName();
-                result.As<ViewResult>().Model.As<GroupDelegatesViewModel>().NavViewModel.GroupName.Should().Be("Group");
-                result.As<ViewResult>().Model.As<GroupDelegatesViewModel>().NavViewModel.CurrentPage.Should()
-                    .Be(DelegateGroupPage.Delegates);
-            }
+            result.Should().BeViewResult().WithDefaultViewName();
         }
 
         [Test]
