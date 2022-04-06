@@ -13,14 +13,14 @@
   <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateGroupBreadcrumbs.cshtml" />
 }
 
-<partial name="~/Views/Shared/_SecondaryTabsNavMenu.cshtml" model="Model.TabsNavLinks" />
-
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">@Model.GroupName</h1>
+    <partial name="~/Views/Shared/_SecondaryTabsNavMenu.cshtml" model="Model.TabsNavLinks" />
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-two-thirds">
-        <h1 class="nhsuk-heading-xl">@Model.GroupName group delegates</h1>
+        <h2>Group delegates</h2>
       </div>
       <div class="nhsuk-grid-column-one-third heading-button-group">
         <a class="nhsuk-button heading-button"
