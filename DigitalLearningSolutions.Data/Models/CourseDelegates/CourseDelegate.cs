@@ -21,6 +21,7 @@
         public DateTime? CompleteByDate { get; set; }
         public DateTime? RemovedDate { get; set; }
         public DateTime? Completed { get; set; }
+        public bool HasCompleted { get; set; }
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }
         public string? Answer3 { get; set; }
@@ -39,6 +40,8 @@
             get => SearchableNameOverrideForFuzzySharp ?? FullNameForSearchingSorting;
             set => SearchableNameOverrideForFuzzySharp = value;
         }
+
+        public override string?[] SearchableContent => new[] { SearchableName, EmailAddress, CandidateNumber };
 
         public static string GetPropertyNameForAdminFieldAnswer(int coursePromptNumber)
         {
