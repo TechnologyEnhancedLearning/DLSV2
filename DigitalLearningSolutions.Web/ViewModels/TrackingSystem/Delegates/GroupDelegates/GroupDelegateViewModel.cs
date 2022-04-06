@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
@@ -15,7 +16,7 @@
             Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(groupDelegate.FirstName, groupDelegate.LastName);
             EmailAddress = groupDelegate.EmailAddress;
             CandidateNumber = groupDelegate.CandidateNumber;
-            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
                 groupDelegate.HasBeenPromptedForPrn,
                 groupDelegate.ProfessionalRegistrationNumber
             );

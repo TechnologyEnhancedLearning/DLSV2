@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -25,12 +24,12 @@
     [Route("TrackingSystem/Delegates/{delegateId:int}/View")]
     public class ViewDelegateController : Controller
     {
-        private readonly PromptsService promptsService;
+        private readonly IConfiguration config;
         private readonly ICourseDataService courseDataService;
         private readonly ICourseService courseService;
         private readonly IPasswordResetService passwordResetService;
+        private readonly PromptsService promptsService;
         private readonly IUserDataService userDataService;
-        private readonly IConfiguration config;
 
         public ViewDelegateController(
             IUserDataService userDataService,
@@ -164,7 +163,6 @@
                 routeData,
                 model.ReturnPageQuery.Value.ItemIdToReturnTo
             );
-
         }
 
         [HttpPost]
