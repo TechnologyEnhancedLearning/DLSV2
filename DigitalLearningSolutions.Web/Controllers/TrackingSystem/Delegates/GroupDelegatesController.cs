@@ -51,7 +51,7 @@
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
             var groupDelegates = groupsService.GetGroupDelegates(groupId);
-
+            
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 null,
                 null,

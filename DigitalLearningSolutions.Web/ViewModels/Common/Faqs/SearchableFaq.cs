@@ -1,7 +1,6 @@
 namespace DigitalLearningSolutions.Web.ViewModels.Common.Faqs
 {
     using System;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Web.Helpers;

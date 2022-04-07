@@ -2,9 +2,11 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DateHelper = Helpers.DateHelper;
 
     public class DetailedCourseProgressViewModel
     {
@@ -25,7 +27,7 @@
             );
             DelegateEmail = progress.DelegateEmail;
             DelegateNumber = progress.DelegateNumber;
-            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
                 progress.HasBeenPromptedForPrn,
                 progress.ProfessionalRegistrationNumber
             );

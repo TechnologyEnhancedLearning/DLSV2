@@ -1,6 +1,10 @@
 ﻿@use "nhsuk-frontend/packages/core/all" as *;
 @use "common" as *;
 
+.pagination-hidden {
+  display: none;
+}
+
 .nhsuk-pagination {
   padding: 0;
 }
