@@ -84,7 +84,6 @@
                 LearningContents = brandsService.GetPublicBrandsDetails()
                     .Select(b => new LearningContentSummary(b)),
             };
-
         }
     }
 }
