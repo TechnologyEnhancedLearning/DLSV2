@@ -26,7 +26,7 @@
         public void Setup()
         {
             actionPlanService = A.Fake<IActionPlanService>();
-            var homeController = new HomeController(A.Fake<IConfiguration>()).WithDefaultContext().WithMockTempData()
+            var homeController = new HomeController(A.Fake<IConfiguration>(), A.Fake<IBrandsService>()).WithDefaultContext().WithMockTempData()
                 .WithMockUser(true, 101, delegateId: DelegateId);
             context = new ActionExecutingContext(
                 new ActionContext(
