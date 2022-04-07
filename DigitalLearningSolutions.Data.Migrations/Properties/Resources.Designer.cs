@@ -516,7 +516,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///DROP TABLE dbo.FrameworkCompetencyGroupsHistory;
         ///GO
         ///
-        ///--  [rest of string was truncated]&quot;;.
+        ///-- Remove versioni [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_95_RemoveSystemVersioning {
             get {
@@ -671,9 +671,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to DROP VIEW AdminUsers
-        ///GO
+        ///    GO
         ///DROP VIEW Candidates
-        ///GO
+        ///    GO
         ///.
         /// </summary>
         internal static string UAR_831_CreateViewsForAdminUsersAndCandidatesTables_DOWN {
@@ -684,18 +684,35 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to CREATE VIEW AdminUsers AS
-        ///SELECT dbo.Users.ID                                      AS AdminID,
-        ///       dbo.AdminAccounts.Login_deprecated                AS Login,
-        ///       dbo.Users.PasswordHash                            AS Password,
+        ///SELECT dbo.AdminAccounts.ID                    AS AdminID,
+        ///       null                                    AS Login,
+        ///       dbo.Users.PasswordHash                  AS Password,
         ///       dbo.AdminAccounts.CentreID,
-        ///       dbo.AdminAccounts.IsCentreAdmin                   AS CentreAdmin,
-        ///       dbo.AdminAccounts.ConfigAdmin_deprecated          AS ConfigAdmin,
-        ///       dbo.AdminAccounts.IsReportsViewer                 AS SummaryReports,
-        ///       dbo.Admi [rest of string was truncated]&quot;;.
+        ///       dbo.AdminAccounts.IsCentreAdmin         AS CentreAdmin,
+        ///       0                                       AS ConfigAdmin,
+        ///       dbo.AdminAccounts.IsReportsViewer       AS SummaryReports,
+        ///       dbo.AdminAccounts.IsSuperAdmin          AS UserAdmin,
+        ///       dbo.Us [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string UAR_831_CreateViewsForAdminUsersAndCandidatesTables_UP {
             get {
                 return ResourceManager.GetString("UAR-831-CreateViewsForAdminUsersAndCandidatesTables-UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DECLARE @dbName NVARCHAR(128) = DB_NAME()
+        ///DECLARE @defaultPath NVARCHAR(500) = CONVERT(NVARCHAR(500), SERVERPROPERTY(&apos;InstanceDefaultDataPath&apos;))
+        ///DECLARE @snapshotTime NVARCHAR(12) = FORMAT(GETDATE(), &apos;yyyyMMddHHmm&apos;)
+        ///
+        ///DECLARE @snapSql NVARCHAR(4000) = &apos;CREATE DATABASE &apos; + @dbName + &apos;_&apos; + @snapshotTime + &apos; ON 
+        ///( NAME = mbdbx101, FILENAME = &apos;&apos;&apos; + @defaultPath + @dbName + &apos;_&apos; + @snapshotTime + &apos;&apos;&apos;),
+        ///( NAME = mbdbx101files, FILENAME = &apos;&apos;&apos; + @defaultPath + @dbName + &apos;_filestream1_&apos; + @snapshotTime + &apos;&apos;&apos;)
+        ///A [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string UAR_858_SnapshotData_UP {
+            get {
+                return ResourceManager.GetString("UAR_858_SnapshotData_UP", resourceCulture);
             }
         }
     }
