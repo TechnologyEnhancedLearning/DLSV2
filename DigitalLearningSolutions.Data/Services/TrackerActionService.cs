@@ -5,6 +5,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
@@ -16,6 +17,17 @@
         TrackerObjectiveArrayCc? GetObjectiveArrayCc(int? customisationId, int? sectionId, bool? isPostLearning);
 
         TrackerEndpointResponse StoreDiagnosticJson(int? progressId, string? diagnosticOutcome);
+
+        TrackerEndpointResponse StoreAspProgressV2(
+            int? progressId,
+            int version,
+            string lmGvSectionRow,
+            int tutorialId,
+            int? tutorialTime,
+            int? tutorialStatus,
+            int candidateId,
+            int? customisationId
+        );
     }
 
     public class TrackerActionService : ITrackerActionService
@@ -102,6 +114,59 @@
             {
                 logger.LogError(ex, "Updating diagnostic score failed");
                 return TrackerEndpointResponse.StoreDiagnosticScoreException;
+            }
+
+            return TrackerEndpointResponse.Success;
+        }
+
+        public TrackerEndpointResponse StoreAspProgressV2(
+            int? progressId,
+            int version,
+            string? lmGvSectionRow,
+            int tutorialId,
+            int? tutorialTime,
+            int? tutorialStatus,
+            int candidateId,
+            int? customisationId
+        )
+        {
+            if (progressId == null)
+            {
+                return TrackerEndpointResponse.StoreAspProgressV2Exception;
+            }
+
+            var progress = progressService.GetDetailedCourseProgress((int)progressId);
+            if (progress == null || progress.DelegateId != candidateId || progress.CustomisationId != customisationId)
+            {
+                return TrackerEndpointResponse.StoreAspProgressV2Exception;
+            }
+
+            if (tutorialStatus == null || tutorialTime == null)
+            {
+                return TrackerEndpointResponse.NullTutorialStatusOrTime;
+            }
+
+            try
+            {
+                progressService.StoreAspProgressV2(
+                    progress.ProgressId,
+                    version,
+                    lmGvSectionRow,
+                    tutorialId,
+                    (int)tutorialTime,
+                    (int)tutorialStatus
+                );
+            }
+            catch (Exception ex)
+            {
+                // TODO: 410 - log custom message or ex.Message?
+                logger.LogError(ex, ex.Message);
+                return TrackerEndpointResponse.StoreAspProgressV2Exception;
+            }
+
+            if (tutorialStatus == 2)
+            {
+                progressService.CheckProgressForCompletion(progress);
             }
 
             return TrackerEndpointResponse.Success;

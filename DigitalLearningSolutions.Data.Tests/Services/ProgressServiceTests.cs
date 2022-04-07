@@ -9,21 +9,44 @@
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.FeatureManagement;
     using NUnit.Framework;
 
     public class ProgressServiceTests
     {
+        private IConfiguration configuration = null!;
         private ICourseDataService courseDataService = null!;
+        private ICourseService courseService = null!;
+        private IEmailService emailService = null!;
+        private IFeatureManager featureManager = null!;
         private IProgressDataService progressDataService = null!;
         private IProgressService progressService = null!;
+        private ISessionService sessionService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
         {
             courseDataService = A.Fake<ICourseDataService>();
             progressDataService = A.Fake<IProgressDataService>();
+            configuration = A.Fake<IConfiguration>();
+            courseService = A.Fake<ICourseService>();
+            featureManager = A.Fake<IFeatureManager>();
+            userService = A.Fake<IUserService>();
+            emailService = A.Fake<IEmailService>();
+            sessionService = A.Fake<ISessionService>();
 
-            progressService = new ProgressService(courseDataService, progressDataService);
+            progressService = new ProgressService(
+                configuration,
+                courseDataService,
+                courseService,
+                emailService,
+                featureManager,
+                progressDataService,
+                sessionService,
+                userService
+            );
         }
 
         [Test]

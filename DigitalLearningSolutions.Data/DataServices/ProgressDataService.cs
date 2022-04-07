@@ -45,11 +45,40 @@
 
         IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection(int progressId, int sectionId);
 
-        public void UpdateCourseAdminFieldForDelegate(
+        void UpdateCourseAdminFieldForDelegate(
             int progressId,
             int promptNumber,
             string? answer
         );
+
+        // TODO: 410 Write data service tests
+        // TODO: 410 What to name this method
+        void UpdateProgressDetails(
+            int progressId,
+            int customisationVersion,
+            DateTime submittedTime,
+            string progressText
+        );
+
+        void UpdateAspProgressTutTime(
+            int tutorialId,
+            int progressId,
+            int tutTime
+        );
+
+        void UpdateAspProgressTutStat(
+            int tutorialId,
+            int progressId,
+            int tutStat
+        );
+
+        int GetCompletionStatusForProgress(int progressId);
+
+        void UpdateProgressCompletedDate(int progressId, DateTime? completedDate);
+
+        int MarkLearningLogItemsWithProgressIdComplete(int progressId);
+
+        IEnumerable<string> GetAdminsToEmailAboutProgressCompletion(int progressId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -376,6 +405,105 @@
                         SET Answer{promptNumber} = @answer
                         WHERE ProgressID = @progressId",
                 new { progressId, promptNumber, answer }
+            );
+        }
+
+        public void UpdateProgressDetails(
+            int progressId,
+            int customisationVersion,
+            DateTime submittedTime,
+            string progressText
+        )
+        {
+            connection.Execute(
+                @"UPDATE Progress
+                    SET CustomisationVersion = @customisationVersion,
+                        SubmittedTime = @submittedTime,
+                        ProgressText = @progressText,
+                        DiagnosticScore =
+                            (SELECT CASE WHEN SUM(t .DiagAssessOutOf) > 0
+                                THEN CAST((SUM(ap.DiagHigh) * 1.0) / (SUM(t .DiagAssessOutOf) * 1.0) * 100 AS Int)
+                                ELSE 0 END AS DiagPercent
+                            FROM aspProgress AS ap
+                            INNER JOIN Progress AS p ON ap.ProgressID = p.ProgressID
+                            INNER JOIN Customisations AS c ON p.CustomisationID = c.CustomisationID
+                            INNER JOIN CustomisationTutorials AS ct ON ap.TutorialID = ct.TutorialID AND c.CustomisationID = ct.CustomisationID
+                            INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
+                            WHERE (ap.ProgressID = @progressId) AND (ct.DiagStatus = 1))
+                    WHERE (ProgressID = @progressId)",
+                new { progressId, customisationVersion, submittedTime, progressText }
+            );
+        }
+
+        public void UpdateAspProgressTutTime(
+            int tutorialId,
+            int progressId,
+            int tutTime
+        )
+        {
+            connection.Execute(
+                @"UPDATE aspProgress
+                    SET TutTime = TutTime + @tutTime
+                    WHERE (TutorialID = @tutorialId) AND (ProgressID = @progressId)",
+                new { tutorialId, progressId, tutTime }
+            );
+        }
+
+        public void UpdateAspProgressTutStat(
+            int tutorialId,
+            int progressId,
+            int tutStat
+        )
+        {
+            connection.Execute(
+                @"UPDATE aspProgress
+                    SET TutStat = @tutStat
+                    WHERE (TutorialID = @tutorialId)
+                      AND (ProgressID = @progressId)
+                      AND (TutStat < @tutStat)",
+                new { tutorialId, progressId, tutStat }
+            );
+        }
+
+        public int GetCompletionStatusForProgress(int progressId)
+        {
+            return connection.QuerySingle<int>(
+                "GetAndReturnCompletionStatusByProgID",
+                new { progressId },
+                commandType: CommandType.StoredProcedure
+            );
+        }
+
+        public void UpdateProgressCompletedDate(int progressId, DateTime? completedDate)
+        {
+            connection.Execute(
+                @"UPDATE Progress SET
+                        Completed = @completedDate
+                    WHERE ProgressID = @progressId",
+                new { progressId, completedDate }
+            );
+        }
+
+        public int MarkLearningLogItemsWithProgressIdComplete(int progressId)
+        {
+            return connection.Execute(
+                "UpdateLearningLogItemsMarkCompleteForRelatedCourseCompletion",
+                new { progressId },
+                commandType: CommandType.StoredProcedure
+            );
+        }
+
+        public IEnumerable<string> GetAdminsToEmailAboutProgressCompletion(int progressId)
+        {
+            return connection.Query<string>(
+                @"SELECT COALESCE
+                        ((SELECT TOP (1) au.Email
+                            FROM AdminUsers AS au
+                            INNER JOIN Progress AS p ON au.AdminID = p.EnrolledByAdminID
+                            INNER JOIN NotificationUsers AS nu ON au.AdminID = nu.AdminUserID
+                        WHERE (nu.NotificationID = 6)
+                          AND (p.ProgressID = @progressId)), '') AS Email",
+                new { progressId }
             );
         }
     }

@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System.Collections.Generic;
     using System.Data;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models;
 
     public interface ISessionDataService
     {
@@ -14,6 +16,8 @@
         int StartAdminSession(int adminId);
 
         bool HasAdminGotSessions(int adminId);
+
+        IEnumerable<Session> GetSessionsForCandidateAndCustomisation(int candidateId, int customisationId);
     }
 
     public class SessionDataService : ISessionDataService
@@ -71,6 +75,17 @@
             return connection.ExecuteScalar<bool>(
                 "SELECT 1 WHERE EXISTS (SELECT AdminSessionId FROM AdminSessions WHERE AdminID = @adminId)",
                 new { adminId }
+            );
+        }
+
+        public IEnumerable<Session> GetSessionsForCandidateAndCustomisation(int candidateId, int customisationId)
+        {
+            return connection.Query<Session>(
+                @"SELECT SessionID, CandidateID, CustomisationID, LoginTime, Duration, Active
+                       FROM Sessions
+                       WHERE CandidateID = @candidateId
+                       AND CustomisationID = @customisationId",
+                new { candidateId, customisationId }
             );
         }
     }

@@ -65,6 +65,20 @@
                         );
                     }
 
+                    if (action == TrackerEndpointAction.StoreAspProgressV2)
+                    {
+                        return trackerActionService.StoreAspProgressV2(
+                            query.ProgressId,
+                            query.Version,
+                            query.LmGvSectionRow,
+                            query.TutorialId,
+                            query.TutorialTime,
+                            query.TutorialStatus,
+                            query.CandidateId,
+                            query.CustomisationId
+                        );
+                    }
+
                     throw new ArgumentOutOfRangeException();
                 }
 
