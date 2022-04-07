@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.LearningContent;
@@ -11,36 +12,24 @@
     [SetSelectedTab(nameof(NavMenuTab.Welcome))]
     public class LearningContentController : Controller
     {
-        private const string ItSkillsPathwayBrand = "ITSkillsPathway";
-        private const string ItSkillsPathwayTitle = "IT Skills Pathway";
-        private const string ReasonableAdjustmentFlagBrand = "ReasonableAdjustmentFlag";
-        private const string ReasonableAdjustmentFlagTitle = "Reasonable Adjustment Flag";
+        private readonly IBrandsService brandsService;
 
-        private const string TerminologyAndClassificationsDeliveryServiceBrand =
-            "TerminologyandClassificationsDeliveryService";
-
-        private const string TerminologyAndClassificationsDeliveryServiceTitle =
-            "Terminology and Classifications Delivery Service";
-
-        public IActionResult ItSkillsPathway()
+        public LearningContentController(IBrandsService brandsService)
         {
-            var model = new LearningContentViewModel(ItSkillsPathwayBrand, ItSkillsPathwayTitle);
-            return View("Index", model);
+            this.brandsService = brandsService;
         }
 
-        public IActionResult ReasonableAdjustmentFlag()
+        [Route("{brandId:int}")]
+        public IActionResult BrandPageDeliveryService(int brandId)
         {
-            var model = new LearningContentViewModel(ReasonableAdjustmentFlagBrand, ReasonableAdjustmentFlagTitle);
-            return View("Index", model);
-        }
+            var brand = brandsService.GetBrandById(brandId);
+            if (brand == null)
+            {
+                return NotFound();
+            }
 
-        public IActionResult TerminologyAndClassificationsDeliveryService()
-        {
-            var model = new LearningContentViewModel(
-                TerminologyAndClassificationsDeliveryServiceBrand,
-                TerminologyAndClassificationsDeliveryServiceTitle,
-                true
-            );
+            var model = new LearningContentViewModel(brand);
+
             return View("Index", model);
         }
     }
