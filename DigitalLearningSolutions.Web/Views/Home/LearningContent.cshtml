@@ -1,5 +1,5 @@
 @using DigitalLearningSolutions.Web.ViewModels.Home
-@model LandingPageViewModel
+@model LearningContentLandingPageViewModel
 
 @{
   ViewData["Title"] = "Welcome - Learning Content";
@@ -14,58 +14,10 @@
 
     <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />
 
-    <div class="learning-content-item">
-
-      <h2 class="learning-content-item__heading">
-        IT Skills Pathway
-      </h2>
-
-      <div class="learning-content-item__details-container">
-        <div class="learning-content-item__image-box">
-          <img class="learning-content-item__image" src="@Url.Content("~/images/itSkillsPathwayLogo.png")" alt="IT Skills Pathway logo"/>
-        </div>
-        <div class="learning-content-item__text-container">
-          <p class="learning-content-item__text">Quality-assured Digital Skills and Microsoft Office learning and assessment content. From basic digital literacy and skills through to advanced Microsoft Excel and Word training.</p>
-          <a class="learning-content-item__text see-more-link" asp-controller="LearningContent" asp-action="ItSkillsPathway">See more</a>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="learning-content-item">
-
-      <h2 class="learning-content-item__heading">
-        Reasonable Adjustment Flag
-      </h2>
-
-      <div class="learning-content-item__details-container">
-        <div class="learning-content-item__image-box">
-          <img class="learning-content-item__image" src="@Url.Content("~/images/reasonableAdjustmentFlagLogo.png")" alt="Reasonable Adjustment Flag logo" />
-        </div>
-        <div class="learning-content-item__text-container">
-          <p class="learning-content-item__text">The Reasonable Adjustment Flag enables health and care professionals to record, share and view patients’ reasonable adjustments across the NHS. This enables staff and services to carry out this anticipatory duty wherever the patient is treated.</p>
-          <a class="learning-content-item__text see-more-link" asp-controller="LearningContent" asp-action="ReasonableAdjustmentFlag">See more</a>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="learning-content-item">
-
-      <h2 class="learning-content-item__heading">
-        Terminology and Classifications Delivery Service
-      </h2>
-
-      <div class="learning-content-item__details-container">
-        <div class="learning-content-item__image-box">
-          <img class="learning-content-item__image" src="@Url.Content("~/images/nhsDigitalLogo.png")" alt="NHS Digital logo" />
-        </div>
-        <div class="learning-content-item__text-container">
-          <p class="learning-content-item__text">Learning resources relating to Clinical and Pharmacy Terminology and Clinical Classifications products, including ICD, OPCS, SNOMED CT and dm+d. These resources will help you to understand and make best use of these products.</p>
-          <a class="learning-content-item__text see-more-link" asp-controller="LearningContent" asp-action="TerminologyAndClassificationsDeliveryService">See more</a>
-        </div>
-      </div>
-
+    <div id="learning-content-elements">
+      @foreach (var content in Model.LearningContents) {
+        <partial name="_LearningContentCard" model="content" />
+      }
     </div>
 
     <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel" />

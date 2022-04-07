@@ -1,0 +1,20 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Home
+@model LearningContentSummary
+
+<div class="learning-content-item">
+
+  <h2 class="learning-content-item__heading">
+    MY @Model.Brand
+  </h2>
+
+  <div class="learning-content-item__details-container">
+    <div class="learning-content-item__image-box">
+      <img class="learning-content-item__image" src="@Url.Content("~/images/reasonableAdjustmentFlagLogo.png")" alt="@Model.Brand logo" />
+    </div>
+    <div class="learning-content-item__text-container">
+      <p class="learning-content-item__text">@Model.Description</p>
+      <a class="learning-content-item__text see-more-link" asp-controller="LearningContent" asp-action="@Model.Brand">See more</a>
+    </div>
+  </div>
+
+</div>

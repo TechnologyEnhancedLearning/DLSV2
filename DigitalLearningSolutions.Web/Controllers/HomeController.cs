@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.MiniHub;
@@ -18,6 +20,7 @@
         private const string LandingPageMiniHubName = "Digital Learning Solutions";
 
         private readonly IConfiguration configuration;
+        private readonly IBrandsService brandsService;
 
         private readonly List<MiniHubSection> sections = new List<MiniHubSection>(
             new[]
@@ -32,9 +35,10 @@
             }
         );
 
-        public HomeController(IConfiguration configuration)
+        public HomeController(IConfiguration configuration, IBrandsService brandsService)
         {
             this.configuration = configuration;
+            this.brandsService = brandsService;
         }
 
         public IActionResult Index()
@@ -57,7 +61,7 @@
         [HttpGet]
         public IActionResult LearningContent()
         {
-            return View(GetLandingPageViewModel(2));
+            return View(GetLearningContentLandingPageViewModel());
         }
 
         private LandingPageViewModel GetLandingPageViewModel(int sectionIndex)
@@ -68,6 +72,19 @@
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
                 CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
             };
+        }
+
+        private LearningContentLandingPageViewModel GetLearningContentLandingPageViewModel()
+        {
+            return new LearningContentLandingPageViewModel
+            {
+                MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, 2),
+                UserIsLoggedIn = User.Identity.IsAuthenticated,
+                CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
+                LearningContents = brandsService.GetPublicBrandsDetails()
+                    .Select(b => new LearningContentSummary(b)),
+            };
+
         }
     }
 }
