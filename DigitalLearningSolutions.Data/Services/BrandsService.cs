@@ -12,7 +12,7 @@
 
         IEnumerable<BrandDetail> GetAllBrands();
 
-        BrandDetail? GetBrandById(int brandId);
+        BrandDetail? GetPublicBrandById(int brandId);
     }
 
     public class BrandsService : IBrandsService
@@ -35,9 +35,9 @@
             return brandsDataService.GetAllBrands();
         }
 
-        public BrandDetail? GetBrandById(int brandId)
+        public BrandDetail? GetPublicBrandById(int brandId)
         {
-            return brandsDataService.GetBrandById(brandId);
+            return brandsDataService.GetPublicBrandById(brandId);
         }
     }
 }

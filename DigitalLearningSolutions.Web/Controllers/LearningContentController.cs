@@ -19,10 +19,10 @@
             this.brandsService = brandsService;
         }
 
-        [Route("{brandId:int}")]
+        [Route("LearningContent/{brandId:int}")]
         public IActionResult BrandPageDeliveryService(int brandId)
         {
-            var brand = brandsService.GetBrandById(brandId);
+            var brand = brandsService.GetPublicBrandById(brandId);
             if (brand == null)
             {
                 return NotFound();
