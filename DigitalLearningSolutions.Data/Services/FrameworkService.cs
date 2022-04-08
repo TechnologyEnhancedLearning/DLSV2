@@ -1830,14 +1830,14 @@ WHERE (FrameworkID = @frameworkId)",
                         fc.AdminID,
                         fc.CanModify,
                         fc.UserEmail,
-                        COALESCE(au.Active, 1) AS UserActive,
+                        au.Active AS UserActive,
                         CASE WHEN fc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole,
                         f.FrameworkName,
                         (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1 FROM AdminUsers AS au1 WHERE (AdminID = @invitedByAdminId)) AS InvitedByName,
                         (SELECT Email FROM AdminUsers AS au2 WHERE (AdminID = @invitedByAdminId)) AS InvitedByEmail
                     FROM FrameworkCollaborators AS fc
                     INNER JOIN Frameworks AS f ON fc.FrameworkID = f.ID
-                    LEFT OUTER JOIN AdminUsers AS au ON fc.AdminID = au.AdminID
+                    INNER JOIN AdminUsers AS au ON fc.AdminID = au.AdminID
                     WHERE (fc.ID = @id)",
                 new { invitedByAdminId, id }
             ).FirstOrDefault();
