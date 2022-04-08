@@ -75,5 +75,34 @@
             A.CallTo(() => brandsDataService.GetAllBrands())
                 .MustHaveHappenedOnceExactly();
         }
+
+        [Test]
+        public void GetAllPublicBrandsById_calls_data_service_method_and_returns_expected_result()
+        {
+            var expectedBrand = Builder<BrandDetail>.CreateNew().Build();
+            A.CallTo(() => brandsDataService.GetPublicBrandById(1))
+                .Returns(expectedBrand);
+
+            // When
+            var result = brandsService.GetPublicBrandById(1);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedBrand);
+        }
+
+        [Test]
+        public void GetAllPublicBrandsById_returns_empty_when_data_service_returns_null()
+        {
+            A.CallTo(() => brandsDataService.GetPublicBrandById(1))
+                .Returns(null);
+
+            // When
+            var result = brandsService.GetPublicBrandById(1);
+
+            // Then
+            result.Should().BeNull();
+            A.CallTo(() => brandsDataService.GetPublicBrandById(1))
+                .MustHaveHappenedOnceExactly();
+        }
     }
 }

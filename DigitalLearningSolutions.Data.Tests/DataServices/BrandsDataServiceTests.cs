@@ -51,5 +51,28 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             resultIds.Should().BeEquivalentTo(indexes);
             result6.Should().BeEquivalentTo(brand6);
         }
+
+        [Test]
+        public void GetAllPublicBrandById_should_return_expected_item()
+        {
+            // When
+            var result = brandsDataService.GetPublicBrandById(1);
+
+            // Then
+            result.Should().NotBeNull();
+            result?.BrandName.Should().BeEquivalentTo("IT Skills Pathway");
+        }
+
+        [Test]
+        public void GetAllPublicBrandById_should_not_return_private_item()
+        {
+            // When
+            var result = brandsDataService.GetPublicBrandById(4);
+
+            // Then
+            result.Should().BeNull();
+        }
     }
+
+
 }
