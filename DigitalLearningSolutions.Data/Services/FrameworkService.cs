@@ -1519,8 +1519,17 @@ WHERE (FrameworkID = @frameworkId)",
                       VALUES (@question, @assessmentQuestionInputTypeId, @maxValueDescription, @minValueDescription, @scoringInstructions, @minValue, @maxValue, @includeComments, @adminId, @commentsPrompt, @commentsHint)",
                 new
                 {
-                    question, assessmentQuestionInputTypeId, maxValueDescription, minValueDescription,
-                    scoringInstructions, minValue, maxValue, includeComments, adminId, commentsPrompt, commentsHint,
+                    question,
+                    assessmentQuestionInputTypeId,
+                    maxValueDescription,
+                    minValueDescription,
+                    scoringInstructions,
+                    minValue,
+                    maxValue,
+                    includeComments,
+                    adminId,
+                    commentsPrompt,
+                    commentsHint,
                 }
             );
             if (id < 1)
@@ -1607,8 +1616,18 @@ WHERE (FrameworkID = @frameworkId)",
                     WHERE ID = @id",
                 new
                 {
-                    id, question, assessmentQuestionInputTypeId, maxValueDescription, minValueDescription,
-                    scoringInstructions, minValue, maxValue, includeComments, adminId, commentsPrompt, commentsHint,
+                    id,
+                    question,
+                    assessmentQuestionInputTypeId,
+                    maxValueDescription,
+                    minValueDescription,
+                    scoringInstructions,
+                    minValue,
+                    maxValue,
+                    includeComments,
+                    adminId,
+                    commentsPrompt,
+                    commentsHint,
                 }
             );
             if (numberOfAffectedRows < 1)
@@ -1811,7 +1830,7 @@ WHERE (FrameworkID = @frameworkId)",
                         fc.AdminID,
                         fc.CanModify,
                         fc.UserEmail,
-                        fc.Active AS UserActive,
+                        au.Active AS UserActive,
                         CASE WHEN fc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole,
                         f.FrameworkName,
                         (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1 FROM AdminUsers AS au1 WHERE (AdminID = @invitedByAdminId)) AS InvitedByName,
