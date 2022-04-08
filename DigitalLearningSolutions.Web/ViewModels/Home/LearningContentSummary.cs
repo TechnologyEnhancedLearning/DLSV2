@@ -4,14 +4,14 @@
 
     public class LearningContentSummary
     {
-        public readonly int ID;
+        public readonly int Id;
         public readonly string Brand;
         public readonly string? Description;
         public readonly byte[]? Image;
 
         public LearningContentSummary(BrandDetail brand)
         {
-            this.ID = brand.BrandID;
+            this.Id = brand.BrandID;
             this.Brand = brand.BrandName;
             this.Description = brand.BrandDescription;
             this.Image = brand.BrandImage;
