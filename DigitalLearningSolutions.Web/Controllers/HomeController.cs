@@ -61,7 +61,9 @@
         [HttpGet]
         public IActionResult LearningContent()
         {
-            return View(GetLearningContentLandingPageViewModel());
+            var learningContents = brandsService.GetPublicBrandsDetails()
+                .Select(b => new LearningContentSummary(b));
+            return View(GetLearningContentLandingPageViewModel(learningContents));
         }
 
         private LandingPageViewModel GetLandingPageViewModel(int sectionIndex)
@@ -74,15 +76,16 @@
             };
         }
 
-        private LearningContentLandingPageViewModel GetLearningContentLandingPageViewModel()
+        private LearningContentLandingPageViewModel GetLearningContentLandingPageViewModel(
+            IEnumerable<LearningContentSummary> learningContents
+        )
         {
             return new LearningContentLandingPageViewModel
             {
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, 2),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
                 CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
-                LearningContents = brandsService.GetPublicBrandsDetails()
-                    .Select(b => new LearningContentSummary(b)),
+                LearningContents = learningContents,
             };
         }
     }

@@ -10,8 +10,6 @@
     {
         IEnumerable<BrandDetail> GetPublicBrandsDetails();
 
-        IEnumerable<BrandDetail> GetAllBrands();
-
         BrandDetail? GetPublicBrandById(int brandId);
     }
 
@@ -28,11 +26,6 @@
         {
             return brandsDataService.GetAllBrands()
                 .Where(b => b.IncludeOnLanding);
-        }
-
-        public IEnumerable<BrandDetail> GetAllBrands()
-        {
-            return brandsDataService.GetAllBrands();
         }
 
         public BrandDetail? GetPublicBrandById(int brandId)
