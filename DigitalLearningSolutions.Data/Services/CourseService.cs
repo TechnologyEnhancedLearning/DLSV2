@@ -97,6 +97,8 @@
 
         IEnumerable<string> GetTopicsForCentreAndCentrallyManagedCourses(int centreId);
 
+        IEnumerable<ApplicationDetails> GetApplicationsByBrandId(int brandId);
+
         int CreateNewCentreCourse(Customisation customisation);
 
         LearningLog? GetLearningLogDetails(int progressId);
@@ -403,6 +405,11 @@
             var activeApplications = courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId);
             var filteredApplications = activeApplications.Where(c => c.CourseTopicId == topicId || topicId == null);
             return filteredApplications.OrderBy(a => a.ApplicationName);
+        }
+
+        public IEnumerable<ApplicationDetails> GetApplicationsByBrandId(int brandId)
+        {
+            return courseDataService.GetApplicationsByBrandId(brandId);
         }
 
         public LearningLog? GetLearningLogDetails(int progressId)

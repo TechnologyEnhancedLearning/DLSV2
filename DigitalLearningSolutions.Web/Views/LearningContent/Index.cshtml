@@ -35,3 +35,14 @@
     <partial name="_TutorialCard" model="tutorial" />
   }
 }
+
+@if (Model.Applications.Any()) {
+  <div>
+    <h2 class="nhsuk-heading-xl heading-margin-2">Courses</h2>
+    <p class="nhsuk-lede-text nhsuk-u-margin-top-4">Hurrah we have courses!</p>
+  </div>
+}
+
+@*<div class="nhsuk-grid-row responsive-iframe-wrapper @(Model.TitleIsLong ? "responsive-iframe-wrapper-extra-padding" : "responsive-iframe-wrapper-padding")">
+  <iframe class="responsive-iframe" title="@Model.Title" src="@url"></iframe>
+</div>*@

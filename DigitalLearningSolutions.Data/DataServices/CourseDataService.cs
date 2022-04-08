@@ -41,6 +41,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<ApplicationDetails> GetApplicationsAvailableToCentreByCategory(int centreId, int? categoryId);
 
+        IEnumerable<ApplicationDetails> GetApplicationsByBrandId(int brandId);
+
         IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
 
         bool DoesCourseNameExistAtCentre(
@@ -499,6 +501,26 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND EXISTS (SELECT CentreApplicationID FROM CentreApplications
                                     WHERE (CentreID = @centreID AND ApplicationID = ap.ApplicationID))",
                 new { centreId, categoryId }
+            );
+        }
+
+        public IEnumerable<ApplicationDetails> GetApplicationsByBrandId(int brandId)
+        {
+            return connection.Query<ApplicationDetails>(
+                @"SELECT
+                        ap.ApplicationID,
+                        ap.ApplicationName,
+                        ap.PLAssess,
+                        ap.DiagAssess,
+                        ap.CourseTopicID,
+                        cc.CategoryName,
+                        ct.CourseTopic
+                    FROM Applications AS ap
+                    INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
+                    INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
+                    WHERE ap.ArchivedDate IS NULL
+                        AND (ap.BrandID = @brandId)",
+                new { brandId }
             );
         }
 

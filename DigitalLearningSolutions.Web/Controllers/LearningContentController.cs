@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System.Collections;
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -14,11 +16,13 @@
     {
         private readonly IBrandsService brandsService;
         private readonly ITutorialService tutorialService;
+        private readonly ICourseService courseService;
 
-        public LearningContentController(IBrandsService brandsService, ITutorialService tutorialService)
+        public LearningContentController(IBrandsService brandsService, ITutorialService tutorialService, ICourseService courseService)
         {
             this.brandsService = brandsService;
             this.tutorialService = tutorialService;
+            this.courseService = courseService;
         }
 
         [Route("Home/LearningContent/{brandId:int}")]
@@ -31,8 +35,8 @@
             }
 
             var tutorials = tutorialService.GetPublicTutorialSummariesForBrand(brandId);
-
-            var model = new LearningContentViewModel(brand, tutorials);
+            var applications = courseService.GetApplicationsByBrandId(brandId);
+            var model = new LearningContentViewModel(brand, tutorials, applications);
 
             return View(model);
         }
