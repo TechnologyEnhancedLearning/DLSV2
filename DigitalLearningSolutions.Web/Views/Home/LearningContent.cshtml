@@ -14,11 +14,9 @@
 
     <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />
 
-    <div id="learning-content-elements">
-      @foreach (var content in Model.LearningContents) {
-        <partial name="_LearningContentCard" model="content" />
-      }
-    </div>
+    @foreach (var content in Model.LearningContents) {
+      <partial name="_LearningContentCard" model="content" />
+    }
 
     <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel" />
   </div>

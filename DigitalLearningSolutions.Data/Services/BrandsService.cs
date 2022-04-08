@@ -9,8 +9,6 @@
     public interface IBrandsService
     {
         IEnumerable<BrandDetail> GetPublicBrandsDetails();
-
-        IEnumerable<BrandDetail> GetAllBrands();
     }
 
     public class BrandsService : IBrandsService
@@ -26,11 +24,6 @@
         {
             return brandsDataService.GetAllBrands()
                 .Where(f => f.IncludeOnLanding);
-        }
-
-        public IEnumerable<BrandDetail> GetAllBrands()
-        {
-            return brandsDataService.GetAllBrands();
         }
     }
 }
