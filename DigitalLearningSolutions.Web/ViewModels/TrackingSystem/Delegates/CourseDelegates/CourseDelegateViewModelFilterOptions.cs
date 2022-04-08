@@ -32,7 +32,6 @@
         {
             CourseDelegateCompletionFilterOptions.Complete,
             CourseDelegateCompletionFilterOptions.Incomplete,
-            CourseDelegateCompletionFilterOptions.Removed,
         };
 
         public static List<FilterModel> GetAllCourseDelegatesFilterViewModels(IEnumerable<CourseAdminField> adminFields)

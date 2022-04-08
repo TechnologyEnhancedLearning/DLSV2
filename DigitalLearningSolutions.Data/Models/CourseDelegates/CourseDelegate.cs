@@ -22,10 +22,7 @@
         public DateTime? CompleteByDate { get; set; }
         public DateTime? RemovedDate { get; set; }
         public DateTime? Completed { get; set; }
-
-        public CompletionStatus CompletionStatus => Completed.HasValue ? CompletionStatus.Complete :
-            RemovedDate.HasValue ? CompletionStatus.Removed : CompletionStatus.Incomplete;
-
+        public bool HasCompleted => Completed.HasValue;
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }
         public string? Answer3 { get; set; }

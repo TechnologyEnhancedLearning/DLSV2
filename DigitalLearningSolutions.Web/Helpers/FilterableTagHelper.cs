@@ -130,17 +130,13 @@
                 tags.Add(new SearchableTagViewModel(CourseDelegateProgressRemovedFilterOptions.NotRemoved, true));
             }
 
-            if (courseDelegate.Completed.HasValue)
+            if (courseDelegate.HasCompleted)
             {
                 tags.Add(new SearchableTagViewModel(CourseDelegateCompletionFilterOptions.Complete));
             }
-            else if (!courseDelegate.Completed.HasValue && !courseDelegate.Removed)
+            else
             {
                 tags.Add(new SearchableTagViewModel(CourseDelegateCompletionFilterOptions.Incomplete));
-            }
-            else if (!courseDelegate.Completed.HasValue && courseDelegate.Removed)
-            {
-                tags.Add(new SearchableTagViewModel(CourseDelegateCompletionFilterOptions.Removed));
             }
 
             return tags;
