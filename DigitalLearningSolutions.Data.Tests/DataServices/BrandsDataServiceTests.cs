@@ -1,7 +1,5 @@
 namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Common;
@@ -24,7 +22,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void GetAllBrands_should_return_expected_items()
         {
             // Given
-            var brand6 = new BrandDetail
+            var expectedBrand = new BrandDetail
             {
                 BrandID = 6,
                 BrandName = "Local content",
@@ -40,16 +38,14 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 PopularityHigh = 177,
             };
 
-            var indexes = new int[] { 1, 2, 3, 4, 6, 8, 9 };
+            var expectedIndexes = new int[] { 1, 2, 3, 4, 6, 8, 9 };
 
             // When
             var result = brandsDataService.GetAllBrands().ToList();
-            var resultIds = result.Select(b => b.BrandID);
-            var result6 = result.SingleOrDefault(b => b.BrandID == 6);
 
             // Then
-            resultIds.Should().BeEquivalentTo(indexes);
-            result6.Should().BeEquivalentTo(brand6);
+            result.Select(b => b.BrandID).Should().BeEquivalentTo(expectedIndexes);
+            result.SingleOrDefault(b => b.BrandID == 6).Should().BeEquivalentTo(expectedBrand);
         }
     }
 }

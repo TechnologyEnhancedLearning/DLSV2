@@ -4,11 +4,10 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.Support;
 
     public interface IBrandsService
     {
-        IEnumerable<BrandDetail> GetPublicBrandsDetails();
+        IEnumerable<BrandDetail> GetPublicBrands();
     }
 
     public class BrandsService : IBrandsService
@@ -20,7 +19,7 @@
             this.brandsDataService = brandsDataService;
         }
 
-        public IEnumerable<BrandDetail> GetPublicBrandsDetails()
+        public IEnumerable<BrandDetail> GetPublicBrands()
         {
             return brandsDataService.GetAllBrands()
                 .Where(f => f.IncludeOnLanding);
