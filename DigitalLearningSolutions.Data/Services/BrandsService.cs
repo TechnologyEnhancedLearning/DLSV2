@@ -4,11 +4,10 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.Support;
 
     public interface IBrandsService
     {
-        IEnumerable<BrandDetail> GetPublicBrandsDetails();
+        IEnumerable<BrandDetail> GetPublicBrands();
 
         BrandDetail? GetPublicBrandById(int brandId);
     }
@@ -22,7 +21,7 @@
             this.brandsDataService = brandsDataService;
         }
 
-        public IEnumerable<BrandDetail> GetPublicBrandsDetails()
+        public IEnumerable<BrandDetail> GetPublicBrands()
         {
             return brandsDataService.GetAllBrands()
                 .Where(b => b.IncludeOnLanding);
@@ -30,7 +29,8 @@
 
         public BrandDetail? GetPublicBrandById(int brandId)
         {
-            return brandsDataService.GetPublicBrandById(brandId);
+            var brand = brandsDataService.GetBrandById(brandId);
+            return brand is { IncludeOnLanding: true } ? brand : null;
         }
     }
 }

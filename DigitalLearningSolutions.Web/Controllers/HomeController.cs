@@ -61,9 +61,18 @@
         [HttpGet]
         public IActionResult LearningContent()
         {
-            var learningContents = brandsService.GetPublicBrandsDetails()
+            var publicBrands = brandsService.GetPublicBrands()
                 .Select(b => new LearningContentSummary(b));
-            return View(GetLearningContentLandingPageViewModel(learningContents));
+
+            var model = new LearningContentLandingPageViewModel
+            {
+                MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, 2),
+                UserIsLoggedIn = User.Identity.IsAuthenticated,
+                CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
+                LearningContentItems = publicBrands,
+            };
+
+            return View(model);
         }
 
         private LandingPageViewModel GetLandingPageViewModel(int sectionIndex)
@@ -73,19 +82,6 @@
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, sectionIndex),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
                 CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
-            };
-        }
-
-        private LearningContentLandingPageViewModel GetLearningContentLandingPageViewModel(
-            IEnumerable<LearningContentSummary> learningContents
-        )
-        {
-            return new LearningContentLandingPageViewModel
-            {
-                MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, 2),
-                UserIsLoggedIn = User.Identity.IsAuthenticated,
-                CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
-                LearningContents = learningContents,
             };
         }
     }

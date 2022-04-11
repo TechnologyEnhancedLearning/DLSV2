@@ -1,16 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
-    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class BrandsServiceTests
@@ -26,7 +22,7 @@
         }
 
         [Test]
-        public void GetAllPublicBrands_calls_data_service_method_and_returns_public_results()
+        public void GetPublicBrands_calls_data_service_method_and_returns_public_results()
         {
             // Given
             var expectedBrands = Builder<BrandDetail>.CreateListOfSize(5).All().With(b => b.IncludeOnLanding = true)
@@ -35,14 +31,14 @@
                 .Returns(expectedBrands);
 
             // When
-            var result = brandsService.GetPublicBrandsDetails();
+            var result = brandsService.GetPublicBrands();
 
             // Then
             result.Should().Equal(expectedBrands);
         }
 
         [Test]
-        public void GetAllPublicBrands_calls_data_service_method_and_does_not_returns_private_results()
+        public void GetPublicBrands_calls_data_service_method_and_does_not_return_private_results()
         {
             // Given
             var expectedBrands = Builder<BrandDetail>.CreateListOfSize(5).All().With(b => b.IncludeOnLanding = false)
@@ -52,14 +48,14 @@
             var emptyList = Enumerable.Empty<BrandDetail>();
 
             // When
-            var result = brandsService.GetPublicBrandsDetails();
+            var result = brandsService.GetPublicBrands();
 
             // Then
             result.Should().Equal(emptyList);
         }
 
         [Test]
-        public void GetAllPublicBrands_returns_empty_when_data_service_returns_null()
+        public void GetPublicBrands_returns_empty_when_data_service_returns_empty()
         {
             // Given
             var emptyList = Enumerable.Empty<BrandDetail>();
@@ -68,7 +64,7 @@
                 .Returns(emptyList);
 
             // When
-            var result = brandsService.GetPublicBrandsDetails();
+            var result = brandsService.GetPublicBrands();
 
             // Then
             result.Should().BeEmpty();
@@ -77,10 +73,23 @@
         }
 
         [Test]
-        public void GetAllPublicBrandsById_calls_data_service_method_and_returns_expected_result()
+        public void GetPublicBrandById_calls_data_service_method_and_returns_public_result()
         {
-            var expectedBrand = Builder<BrandDetail>.CreateNew().Build();
-            A.CallTo(() => brandsDataService.GetPublicBrandById(1))
+            var expectedBrand = Builder<BrandDetail>.CreateNew().With(b => b.IncludeOnLanding = true).Build();
+            A.CallTo(() => brandsDataService.GetBrandById(1))
+                .Returns(expectedBrand);
+
+            // When
+            var result = brandsService.GetPublicBrandById(1);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedBrand);
+        }
+
+        public void GetPublicBrandById_returns_null_when_data_service_returns_private_brand()
+        {
+            var expectedBrand = Builder<BrandDetail>.CreateNew().With(b => b.IncludeOnLanding = false).Build();
+            A.CallTo(() => brandsDataService.GetBrandById(1))
                 .Returns(expectedBrand);
 
             // When
@@ -91,9 +100,9 @@
         }
 
         [Test]
-        public void GetAllPublicBrandsById_returns_empty_when_data_service_returns_null()
+        public void GetPublicBrandById_returns_null_when_data_service_returns_null()
         {
-            A.CallTo(() => brandsDataService.GetPublicBrandById(1))
+            A.CallTo(() => brandsDataService.GetBrandById(1))
                 .Returns(null);
 
             // When
@@ -101,7 +110,7 @@
 
             // Then
             result.Should().BeNull();
-            A.CallTo(() => brandsDataService.GetPublicBrandById(1))
+            A.CallTo(() => brandsDataService.GetBrandById(1))
                 .MustHaveHappenedOnceExactly();
         }
     }

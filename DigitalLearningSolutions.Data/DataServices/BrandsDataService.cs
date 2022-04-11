@@ -10,12 +10,12 @@
     {
         IEnumerable<BrandDetail> GetAllBrands();
 
-        BrandDetail? GetPublicBrandById(int brandId);
+        BrandDetail? GetBrandById(int brandId);
     }
 
     public class BrandsDataService : IBrandsDataService
     {
-        private const string BrandsSql =
+        private const string SelectAllBrandsSql =
             @"SELECT
                     BrandID,
 	                BrandName,
@@ -40,13 +40,13 @@
 
         public IEnumerable<BrandDetail> GetAllBrands()
         {
-            return connection.Query<BrandDetail>($@"{BrandsSql}");
+            return connection.Query<BrandDetail>($@"{SelectAllBrandsSql}");
         }
 
-        public BrandDetail? GetPublicBrandById(int brandId)
+        public BrandDetail? GetBrandById(int brandId)
         {
             return connection.Query<BrandDetail>(
-                @$"{BrandsSql} WHERE BrandID = @brandId AND IncludeOnLanding = 1",
+                @$"{SelectAllBrandsSql} WHERE BrandID = @brandId",
                 new { brandId }
             ).SingleOrDefault();
         }

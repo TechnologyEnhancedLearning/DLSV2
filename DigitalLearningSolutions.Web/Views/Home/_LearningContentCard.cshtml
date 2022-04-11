@@ -15,7 +15,7 @@
     }
     <div class="learning-content-item__text-container">
       <p class="learning-content-item__text">@Model.Description</p>
-      <a class="learning-content-item__text see-more-link" asp-controller="LearningContent" asp-action="@Model.ID">See more</a>
+      <a class="learning-content-item__text see-more-link" asp-controller="LearningContent" asp-action="BrandPageDeliveryService" asp-route-brandId="@Model.Id">See more</a>
     </div>
   </div>
 
