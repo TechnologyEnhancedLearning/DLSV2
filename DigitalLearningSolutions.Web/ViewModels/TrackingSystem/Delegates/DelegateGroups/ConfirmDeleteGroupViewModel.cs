@@ -13,7 +13,6 @@
         public bool Confirm { get; set; }
 
         public bool DeleteEnrolments { get; set; }
-        public int? ReturnPage { get; set; }
         public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

@@ -150,7 +150,7 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.SetCurrentCourseCompleteByDate(currentCourse.Id, new ReturnPageQuery("pageNumber=1"));
+            var result = controller.SetCurrentCourseCompleteByDate(currentCourse.Id, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             result.Should()
@@ -171,7 +171,7 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.SetCurrentCourseCompleteByDate(3, new ReturnPageQuery("pageNumber=1"));
+            var result = controller.SetCurrentCourseCompleteByDate(3, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             result.Should()
@@ -277,10 +277,10 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.RemoveCurrentCourseConfirmation(customisationId, new ReturnPageQuery("pageNumber=1"));
+            var result = controller.RemoveCurrentCourseConfirmation(customisationId, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
-            var expectedModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
+            var expectedModel = new CurrentCourseViewModel(currentCourse, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
@@ -296,7 +296,7 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.RemoveCurrentCourseConfirmation(3, new ReturnPageQuery("pageNumber=1"));
+            var result = controller.RemoveCurrentCourseConfirmation(3, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             result.Should()

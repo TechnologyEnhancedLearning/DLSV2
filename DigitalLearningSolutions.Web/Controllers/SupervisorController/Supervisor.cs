@@ -56,11 +56,11 @@
                         supervisor,
                         new ReturnPageQuery(
                             page,
+                            $"{supervisor.ID}-card",
                             PaginationOptions.DefaultItemsPerPage,
                             searchString,
                             sortBy,
-                            sortDirection,
-                            $"{supervisor.ID}-card"
+                            sortDirection
                         )
                     );
                 }

@@ -23,8 +23,6 @@
             ApiIsAccessible = apiIsAccessible;
             SelfAssessment = selfAssessment;
 
-            var returnPage = string.IsNullOrWhiteSpace(SearchString) ? Page : 1;
-
             RecommendedResources =
                 result.ItemsToDisplay.Select(
                     r => new SearchableRecommendedResourceViewModel(

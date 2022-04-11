@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -25,8 +26,8 @@
         private RecommendedLearningController controller = null!;
         private IFilteredApiHelperService filteredApiHelperService = null!;
         private IRecommendedLearningService recommendedLearningService = null!;
-        private ISelfAssessmentService selfAssessmentService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private ISelfAssessmentService selfAssessmentService = null!;
 
         [SetUp]
         public void Setup()
@@ -109,7 +110,11 @@
                 .Returns(false);
 
             // When
-            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId, new ReturnPageQuery("pageNumber=1"));
+            var result = await controller.AddResourceToActionPlan(
+                SelfAssessmentId,
+                resourceReferenceId,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             result.Should().BeNotFoundResult();
@@ -127,7 +132,11 @@
                 .Returns(true);
 
             // When
-            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId, new ReturnPageQuery("pageNumber=3"));
+            var result = await controller.AddResourceToActionPlan(
+                SelfAssessmentId,
+                resourceReferenceId,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery(3)
+            );
 
             // Then
             A.CallTo(() => actionPlanService.AddResourceToActionPlan(resourceReferenceId, DelegateId, SelfAssessmentId))

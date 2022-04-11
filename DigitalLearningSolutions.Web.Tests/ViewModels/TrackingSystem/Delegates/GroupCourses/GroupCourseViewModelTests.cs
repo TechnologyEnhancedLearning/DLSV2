@@ -18,7 +18,7 @@
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(addedToGroup: expectedDateTime, supervisorActive: true);
 
             // When
-            var result = new GroupCourseViewModel(groupCourse, new ReturnPageQuery("pageNumber=1"));
+            var result = new GroupCourseViewModel(groupCourse, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             using (new AssertionScope())
@@ -45,7 +45,7 @@
             );
 
             // When
-            var result = new GroupCourseViewModel(groupCourse, new ReturnPageQuery("pageNumber=1"));
+            var result = new GroupCourseViewModel(groupCourse, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             result.Supervisor.Should().Be("Test Name");
@@ -58,7 +58,7 @@
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(isMandatory: true, isAssessed: true);
 
             // When
-            var result = new GroupCourseViewModel(groupCourse, new ReturnPageQuery("pageNumber=1"));
+            var result = new GroupCourseViewModel(groupCourse, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             using (new AssertionScope())
@@ -77,7 +77,7 @@
             );
 
             // When
-            var result = new GroupCourseViewModel(groupCourse, new ReturnPageQuery("pageNumber=1"));
+            var result = new GroupCourseViewModel(groupCourse, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             result.CompleteWithin.Should().Be("1 month");

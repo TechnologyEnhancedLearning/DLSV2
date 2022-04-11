@@ -54,7 +54,7 @@
 
         public new ReturnPageQuery GetReturnPageQuery(string? itemIdToReturnTo = null)
         {
-            return new ReturnPageQuery(Page, ItemsPerPage, SearchString, SortBy, SortDirection, itemIdToReturnTo);
+            return new ReturnPageQuery(Page, itemIdToReturnTo, ItemsPerPage, SearchString, SortBy, SortDirection);
         }
     }
 }

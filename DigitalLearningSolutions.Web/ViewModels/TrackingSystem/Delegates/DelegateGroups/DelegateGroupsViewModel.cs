@@ -14,7 +14,6 @@
             IEnumerable<FilterModel> availableFilters
         ) : base(result, true, availableFilters)
         {
-            var returnPage = string.IsNullOrWhiteSpace(SearchString) ? Page : 1;
             DelegateGroups = result.ItemsToDisplay.Select(g =>
                 {
                     var cardId = $"{g.GroupId}-card";

@@ -125,8 +125,10 @@ export class SearchSortFilterAndPaginate {
     SearchSortFilterAndPaginate.scrollToTop();
   }
 
-  private searchSortAndPaginate(searchableData: ISearchableData, updateResultCount = true): void {
-    this.updateSearchableElementLinks(searchableData);
+  private searchSortAndPaginate(
+    searchableData: ISearchableData,
+    updateResultCount = true,
+  ): void {
     const searchedElements = this.searchEnabled
       ? search(searchableData.searchableElements)
       : searchableData.searchableElements;
@@ -270,12 +272,12 @@ export class SearchSortFilterAndPaginate {
     }
 
     this.page = pageNumber;
-    this.ensurePageNumberSetInUrl();
+    this.ensurePageNumberSetInUrl(false);
     this.updateSearchableElementLinks(searchableData);
   }
 
   private getPageNumber(): number {
-    this.ensurePageNumberSetInUrl();
+    this.ensurePageNumberSetInUrl(true);
     const currentPath = window.location.pathname;
     const urlParts = currentPath.split('/');
     return parseInt(urlParts[urlParts.length - 1], 10);
@@ -283,7 +285,7 @@ export class SearchSortFilterAndPaginate {
 
   /* Guarantees the last element of the path is a number
    * with any query parameters necessary and no trailing slashes */
-  private ensurePageNumberSetInUrl(): void {
+  private ensurePageNumberSetInUrl(preserveUrlFragment: boolean): void {
     const currentPath = window.location.pathname;
     const urlParts = currentPath.split('/');
     if (urlParts[urlParts.length - 1] === '') {
@@ -300,14 +302,9 @@ export class SearchSortFilterAndPaginate {
     const pageNumber = this.page ?? currentPageNumber;
     const queryParametersToRetain = this.getQueryParametersForUpdatedURL();
 
-    const returnId = window.location.hash;
-    if (returnId) {
-      const newUrl = `${urlParts.join('/')}/${pageNumber}${queryParametersToRetain}${returnId}`;
-      window.history.replaceState({}, '', newUrl);
-    } else {
-      const newUrl = `${urlParts.join('/')}/${pageNumber}${queryParametersToRetain}`;
-      window.history.replaceState({}, '', newUrl);
-    }
+    const returnId = preserveUrlFragment ? window.location.hash : '';
+    const newUrl = `${urlParts.join('/')}/${pageNumber}${queryParametersToRetain}${returnId}`;
+    window.history.replaceState({}, '', newUrl);
   }
 
   private getQueryParametersForUpdatedURL(): string {
@@ -316,7 +313,7 @@ export class SearchSortFilterAndPaginate {
     const keptQueryParameters: string[] = [];
     separatedParameters.forEach((param) => {
       const paramName = param.split('=')[0];
-      if (paramName.toUpperCase() === this.queryParameterToRetain.toUpperCase()) {
+      if (paramName.toUpperCase() === this.queryParameterToRetain.toUpperCase() && paramName !== '') {
         keptQueryParameters.push(param);
       }
     });
@@ -337,7 +334,7 @@ export class SearchSortFilterAndPaginate {
     _.forEach(searchableData.searchableElements, (searchableElement) => {
       _.forEach(searchableElement.element.getElementsByTagName('a'), (anchor: HTMLAnchorElement) => {
         const shouldUpdate = anchor.getAttribute('data-return-page-enabled');
-        if (shouldUpdate) {
+        if (shouldUpdate?.toLowerCase() === 'true') {
           const params = new URLSearchParams(anchor.search);
           const pageQueryPart = `pageNumber=${this.page.toString()}`;
           const jsScrollItemPart = `itemIdToScrollToOnReturn=${searchableElement.element.id}`;

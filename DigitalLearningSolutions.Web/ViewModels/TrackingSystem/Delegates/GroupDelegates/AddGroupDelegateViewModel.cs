@@ -30,12 +30,10 @@
                 delegateUser =>
                 {
                     var customFields = PromptsService.GetDelegateRegistrationPrompts(delegateUser, customPrompts);
-                    var cardId = $"{delegateUser.Id}-card";
                     return new SearchableDelegateViewModel(
                         delegateUser,
                         customFields,
                         promptsWithOptions,
-                        cardId,
                         null
                     );
                 }

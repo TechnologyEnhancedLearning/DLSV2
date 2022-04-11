@@ -16,7 +16,6 @@
             DelegateUserCard delegateUser,
             IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts,
             IEnumerable<CentreRegistrationPrompt> promptsWithOptions,
-            string cardId,
             ReturnPageQuery? returnPageQuery
         )
         {
@@ -26,7 +25,6 @@
                 DelegateInfo.DelegateRegistrationPrompts,
                 promptsWithOptions
             );
-            CardId = cardId;
             ReturnPageQuery = returnPageQuery;
         }
 
@@ -39,8 +37,6 @@
         );
 
         public Dictionary<int, string> RegistrationPromptFilters { get; set; }
-
-        public string CardId { get; set; }
 
         public ReturnPageQuery? ReturnPageQuery { get; set; }
     }

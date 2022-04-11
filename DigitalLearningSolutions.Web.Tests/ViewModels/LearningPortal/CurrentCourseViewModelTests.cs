@@ -1,11 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using System;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FluentAssertions;
     using NUnit.Framework;
+    using CurrentCourseHelper = DigitalLearningSolutions.Web.Tests.TestHelpers.CurrentCourseHelper;
 
     public class CurrentCourseViewModelTests
     {
@@ -13,10 +13,14 @@
         public void Current_course_should_be_overdue_when_complete_by_date_is_in_the_past()
         {
             // Given
-            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today - TimeSpan.FromDays(1));
+            var currentCourse =
+                CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today - TimeSpan.FromDays(1));
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
+            var currentCourseViewModel = new CurrentCourseViewModel(
+                currentCourse,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             currentCourseViewModel.DateStyle().Should().Be("overdue");
@@ -26,12 +30,14 @@
         public void Current_course_should__be_due_soon_when_complete_by_date_is_in_the_future()
         {
             // Given
-            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today + TimeSpan.FromDays(1));
-
+            var currentCourse =
+                CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today + TimeSpan.FromDays(1));
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
-
+            var currentCourseViewModel = new CurrentCourseViewModel(
+                currentCourse,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             currentCourseViewModel.DateStyle().Should().Be("due-soon");
@@ -41,12 +47,14 @@
         public void Current_course_should_have_no_date_style_when_due_far_in_the_future()
         {
             // Given
-            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today + TimeSpan.FromDays(100));
+            var currentCourse =
+                CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today + TimeSpan.FromDays(100));
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
-
-
+            var currentCourseViewModel = new CurrentCourseViewModel(
+                currentCourse,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             currentCourseViewModel.DateStyle().Should().Be("");
@@ -59,8 +67,10 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(hasDiagnostic: false);
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
-
+            var currentCourseViewModel = new CurrentCourseViewModel(
+                currentCourse,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             currentCourseViewModel.HasDiagnosticScore().Should().BeFalse();
@@ -73,8 +83,10 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(diagnosticScore: null);
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
-
+            var currentCourseViewModel = new CurrentCourseViewModel(
+                currentCourse,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             currentCourseViewModel.HasDiagnosticScore().Should().BeFalse();
@@ -87,8 +99,10 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse();
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
-
+            var currentCourseViewModel = new CurrentCourseViewModel(
+                currentCourse,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             currentCourseViewModel.HasDiagnosticScore().Should().BeTrue();
@@ -101,7 +115,10 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(isAssessed: false);
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
+            var currentCourseViewModel = new CurrentCourseViewModel(
+                currentCourse,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             currentCourseViewModel.HasPassedSections().Should().BeFalse();
@@ -114,8 +131,10 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse();
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, new ReturnPageQuery("pageNumber=1"));
-
+            var currentCourseViewModel = new CurrentCourseViewModel(
+                currentCourse,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             currentCourseViewModel.HasPassedSections().Should().BeTrue();

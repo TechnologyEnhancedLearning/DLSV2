@@ -15,16 +15,16 @@
                 throw new ArgumentNullException(nameof(bindingContext));
             }
 
-            var enumerationName = bindingContext.ValueProvider.GetValue(bindingContext.FieldName);
-            if (enumerationName.FirstValue == null)
+            var fieldName = bindingContext.ValueProvider.GetValue(bindingContext.FieldName);
+            if (fieldName.FirstValue == null)
             {
                 bindingContext.Result = ModelBindingResult.Success(null);
             }
-            else if (string.IsNullOrEmpty(enumerationName.FirstValue))
+            else if (string.IsNullOrEmpty(fieldName.FirstValue))
             {
                 bindingContext.Result = ModelBindingResult.Success(new ReturnPageQuery(1, ""));
             }
-            else if (ReturnPageQuery.TryGetFromFormData(enumerationName.FirstValue, out var result))
+            else if (ReturnPageQuery.TryGetFromFormData(fieldName.FirstValue, out var result))
             {
                 bindingContext.Result = ModelBindingResult.Success(result);
             }
@@ -34,7 +34,7 @@
 
                 bindingContext.ModelState.AddModelError(
                     bindingContext.FieldName,
-                    $"{enumerationName.FirstValue} is not supported."
+                    $"{fieldName.FirstValue} is not supported."
                 );
             }
 
@@ -44,7 +44,7 @@
 
     public class ReturnPageQueryModelBinderProvider : IModelBinderProvider
     {
-        public IModelBinder GetBinder(ModelBinderProviderContext context)
+        public IModelBinder? GetBinder(ModelBinderProviderContext context)
         {
             if (context == null)
             {

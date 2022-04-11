@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -89,7 +90,10 @@
             const int groupId = 1;
 
             // When
-            var result = delegateGroupsController.DeleteGroup(groupId, new ReturnPageQuery("pageNumber=1"));
+            var result = delegateGroupsController.DeleteGroup(
+                groupId,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             result.Should().BeRedirectToActionResult()
@@ -108,7 +112,10 @@
             const int groupId = 1;
 
             // When
-            var result = delegateGroupsController.DeleteGroup(groupId, new ReturnPageQuery("pageNumber=1"));
+            var result = delegateGroupsController.DeleteGroup(
+                groupId,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             result.Should().BeRedirectToActionResult()
@@ -125,7 +132,10 @@
             const int groupId = 1;
 
             // When
-            var result = delegateGroupsController.DeleteGroup(groupId, new ReturnPageQuery("pageNumber=1"));
+            var result = delegateGroupsController.DeleteGroup(
+                groupId,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             A.CallTo(() => groupsService.DeleteDelegateGroup(groupId, false)).MustHaveHappenedOnceExactly();
@@ -254,7 +264,7 @@
                 .Returns(new Group { LinkedToField = 1 });
 
             // When
-            var result = delegateGroupsController.EditGroupName(1, new ReturnPageQuery("pageNumber=1"));
+            var result = delegateGroupsController.EditGroupName(1, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             A.CallTo(() => groupsService.GetGroupAtCentreById(1, 2)).MustHaveHappened();

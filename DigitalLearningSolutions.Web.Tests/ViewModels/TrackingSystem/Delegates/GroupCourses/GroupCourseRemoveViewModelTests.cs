@@ -2,7 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses;
     using FluentAssertions;
     using NUnit.Framework;
@@ -18,7 +18,12 @@
             var groupName = "Test Group";
 
             // When
-            var result = new RemoveGroupCourseViewModel(courseId, courseName, groupName, new ReturnPageQuery("pageNumber=1"));
+            var result = new RemoveGroupCourseViewModel(
+                courseId,
+                courseName,
+                groupName,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             result.GroupCourseId.Should().Be(1);

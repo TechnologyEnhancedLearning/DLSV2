@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -30,7 +30,10 @@
             };
 
             // When
-            var result = new SearchableDelegateGroupViewModel(group, new ReturnPageQuery(3, "1-card"));
+            var result = new SearchableDelegateGroupViewModel(
+                group,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery(3, itemIdToReturnTo: "1-card")
+            );
 
             // Then
             using (new AssertionScope())
@@ -59,7 +62,10 @@
             };
 
             // When
-            var result = new SearchableDelegateGroupViewModel(group, new ReturnPageQuery(3, "1-card"));
+            var result = new SearchableDelegateGroupViewModel(
+                group,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery(3, itemIdToReturnTo: "1-card")
+            );
 
             // Then
             using (new AssertionScope())

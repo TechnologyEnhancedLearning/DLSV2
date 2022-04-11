@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -195,7 +196,7 @@
             {
                 Confirm = true,
                 AccessedVia = DelegateAccessRoute.CourseDelegates,
-                ReturnPageQuery = new ReturnPageQuery(1, "1-card"),
+                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(),
             };
 
             // When

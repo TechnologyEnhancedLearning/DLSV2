@@ -24,11 +24,11 @@
 
         public ReturnPageQuery(
             int page,
-            int itemsPerPage,
-            string? searchString,
-            string? sortBy,
-            string? sortDirection,
-            string? itemIdToReturnTo
+            string? itemIdToReturnTo,
+            int? itemsPerPage = null,
+            string? searchString = null,
+            string? sortBy = null,
+            string? sortDirection = null
         )
         {
             PageNumber = page;
@@ -37,26 +37,6 @@
             SortDirection = sortDirection;
             ItemsPerPage = itemsPerPage;
             ItemIdToReturnTo = itemIdToReturnTo;
-        }
-
-        public ReturnPageQuery(int pageNumber, string? itemIdToReturnTo)
-        {
-            PageNumber = pageNumber;
-            ItemIdToReturnTo = itemIdToReturnTo;
-            SearchString = null;
-            SortBy = null;
-            SortDirection = null;
-            ItemsPerPage = null;
-        }
-
-        public ReturnPageQuery(int pageNumber, int itemsPerPage, string? itemIdToReturnTo)
-        {
-            PageNumber = pageNumber;
-            ItemIdToReturnTo = itemIdToReturnTo;
-            ItemsPerPage = itemsPerPage;
-            SearchString = null;
-            SortBy = null;
-            SortDirection = null;
         }
 
         public int PageNumber { get; }

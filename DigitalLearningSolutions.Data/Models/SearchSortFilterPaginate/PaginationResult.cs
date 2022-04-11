@@ -47,7 +47,7 @@
 
         public ReturnPageQuery GetReturnPageQuery(string? itemIdToReturnTo = null)
         {
-            return new ReturnPageQuery(Page, ItemsPerPage, itemIdToReturnTo);
+            return new ReturnPageQuery(Page, itemIdToReturnTo, ItemsPerPage);
         }
     }
 }

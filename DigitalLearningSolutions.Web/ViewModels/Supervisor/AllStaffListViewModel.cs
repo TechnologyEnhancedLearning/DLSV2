@@ -22,8 +22,8 @@
                         supervisor,
                         new ReturnPageQuery(
                             1,
-                            PaginationOptions.DefaultItemsPerPage,
-                            $"{supervisor.ID}-card"
+                            $"{supervisor.ID}-card",
+                            PaginationOptions.DefaultItemsPerPage
                         )
                     )
                 );
