@@ -1,5 +1,6 @@
-﻿@inject IConfiguration Configuration
+﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard
 @using Microsoft.Extensions.Configuration
 @model CentreDashboardViewModel
@@ -12,7 +13,11 @@
         <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
           @Model.NumberOfDelegates <span class="nhsuk-u-visually-hidden">Delegates</span>
         </p>
-        <a asp-controller="AllDelegates" asp-action="Index" class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state">Delegates</a>
+        <a class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state"
+           asp-controller="AllDelegates"
+           asp-action="Index">
+          Delegates
+        </a>
       </div>
     </div>
   </li>
@@ -23,7 +28,11 @@
         <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
           @Model.NumberOfCourses <span class="nhsuk-u-visually-hidden">Courses</span>
         </p>
-        <a asp-controller="CourseSetup" asp-action="Index" class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state">Courses</a>
+        <a class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state"
+           asp-controller="CourseSetup"
+           asp-action="Index">
+          Courses
+        </a>
       </div>
     </div>
   </li>
@@ -35,7 +44,11 @@
           @Model.NumberOfAdmins <span class="nhsuk-u-visually-hidden">Admins</span>
         </p>
         @if (User.HasCentreManagerPermissions()) {
-          <a asp-controller="Administrator" asp-action="Index" class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state">Admins</a>
+          <a class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state"
+             asp-controller="Administrator"
+             asp-action="Index">
+            Admins
+          </a>
         } else {
           <p>Admins</p>
         }
@@ -49,7 +62,12 @@
         <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
           @Model.NumberOfSupportTickets <span class="nhsuk-u-visually-hidden">Support tickets</span>
         </p>
-        <a href="@Configuration["CurrentSystemBaseUrl"]/tracking/tickets" class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state">Support tickets</a>
+        <a class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state"
+           asp-controller="SupportTickets"
+           asp-action="Index"
+           asp-route-dlsSubApplication="@DlsSubApplication.TrackingSystem.UrlSegment">
+          Support tickets
+        </a>
       </div>
     </div>
   </li>

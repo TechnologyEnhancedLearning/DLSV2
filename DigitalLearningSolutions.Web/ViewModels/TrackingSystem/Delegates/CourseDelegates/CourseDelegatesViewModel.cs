@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class CourseDelegatesViewModel
@@ -13,9 +14,11 @@
             CourseDelegatesData courseDelegatesData,
             SearchSortFilterPaginationResult<CourseDelegate> result,
             IEnumerable<FilterModel> availableFilters,
-            string customisationIdQueryParameterName
+            string customisationIdQueryParameterName,
+            DelegateAccessRoute accessedVia
         )
         {
+            AccessedVia = accessedVia;
             CustomisationId = courseDelegatesData.CustomisationId;
 
             var courseOptions = courseDelegatesData.Courses
@@ -33,10 +36,9 @@
                 : null;
         }
 
+        public DelegateAccessRoute AccessedVia { get; set; }
         public int? CustomisationId { get; set; }
-
         public IEnumerable<SelectListItem> Courses { get; set; }
-
         public SelectedCourseDetailsViewModel? CourseDetails { get; set; }
     }
 }

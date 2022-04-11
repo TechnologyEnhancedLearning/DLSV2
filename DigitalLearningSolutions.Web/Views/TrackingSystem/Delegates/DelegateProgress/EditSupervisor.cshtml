@@ -7,15 +7,11 @@
 @{
   var errorHasOccured = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccured ? "Error: Edit supervisor" : "Edit supervisor";
-  var routeParamsForBackLink = new Dictionary<string, string?>();
-
-  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-    routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
-    routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
-    routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());
-  } else {
-    routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
-  }
+  var routeParamsForBackLink = new Dictionary<string, string?> {
+    { "accessedVia", Model.AccessedVia.ToString() },
+    { "progressId", Model.ProgressId.ToString() },
+    { "returnPage", Model.ReturnPage.ToString() },
+  };
 }
 
 @section NavBreadcrumbs {
@@ -52,6 +48,7 @@
       <vc:select-list asp-for="@nameof(Model.SupervisorId)"
                       label="Supervisor"
                       value="@Model.SupervisorId.ToString()"
+
                       hint-text=""
                       deselectable="true"
                       css-class="nhsuk-u-width-one-half"
@@ -61,12 +58,6 @@
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-      <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back"
-                      asp-all-route-data="@routeParamsForBackLink" />
-    } else {
-      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back"
-                      asp-all-route-data="@routeParamsForBackLink" />
-    }
+    <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
   </div>
 </div>

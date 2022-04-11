@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
 @model CourseDelegatesViewModel
 
 @section scripts {
@@ -12,7 +13,11 @@
 }
 
 @section NavBreadcrumbs {
-  <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCoursesBreadcrumbs.cshtml" model="@Model.CustomisationId" />
+  @if (Model.AccessedVia.Equals(DelegateAccessRoute.TopCourses)) {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesTopCoursesBreadcrumbs.cshtml" model="@Model.CustomisationId" />
+  } else {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCoursesBreadcrumbs.cshtml" model="@Model.CustomisationId" />
+  }
 }
 
 <div class="nhsuk-grid-row">

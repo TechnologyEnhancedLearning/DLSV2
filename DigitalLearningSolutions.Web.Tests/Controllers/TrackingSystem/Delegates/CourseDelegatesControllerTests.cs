@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using FakeItEasy;
@@ -62,7 +63,7 @@
                 );
 
             // When
-            var result = controller.Index();
+            var result = controller.Index(DelegateAccessRoute.CourseDelegates);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
@@ -76,7 +77,7 @@
                 .Throws<CourseAccessDeniedException>();
 
             // When
-            var result = controller.Index(2);
+            var result = controller.Index(DelegateAccessRoute.CourseDelegates, 2);
 
             // Then
             result.Should().BeNotFoundResult();
@@ -133,12 +134,13 @@
                 );
 
             // When
-            var result = courseDelegatesController.Index(customisationId);
+            var result = courseDelegatesController.Index(DelegateAccessRoute.CourseDelegates, customisationId);
 
             // Then
             using (new AssertionScope())
             {
-                result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.ExistingFilterString.Should()
+                result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.ExistingFilterString
+                    .Should()
                     .Be("AccountStatus|Active|true");
 
                 A.CallTo(

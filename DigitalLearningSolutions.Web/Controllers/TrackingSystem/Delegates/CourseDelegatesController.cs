@@ -43,6 +43,7 @@
 
         [Route("{page:int=1}")]
         public IActionResult Index(
+            DelegateAccessRoute accessedVia,
             int? customisationId = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
@@ -97,7 +98,8 @@
                     courseDelegatesData,
                     result,
                     availableFilters,
-                    "customisationId"
+                    "customisationId",
+                    accessedVia
                 );
 
                 Response.UpdateFilterCookie(CourseDelegatesFilterCookieName, result.FilterString);
