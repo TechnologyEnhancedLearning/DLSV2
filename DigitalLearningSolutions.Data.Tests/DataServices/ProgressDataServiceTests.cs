@@ -556,5 +556,131 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void UpdateProgressDetails_updates_correct_fields_on_progress_record()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int customisationVersion = 1;
+                var submittedTime = new DateTime(2022, 1, 1, 1, 1, 1);
+                const string progressText = "Test progress text";
+                var expectedProgressDetails = new ProgressDetails(customisationVersion, submittedTime, progressText);
+
+                // When
+                progressDataService.UpdateProgressDetails(100, customisationVersion, submittedTime, progressText);
+                var progressDetails = progressTestHelper.GetProgressDetailsByProgressId(100);
+
+                // Then
+                progressDetails.Should().BeEquivalentTo(expectedProgressDetails);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateAspProgressTutTime_adds_new_tut_time_value_to_existing()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int inputTutTime = 1;
+                const int expectedTutTime = 3;
+
+                // When
+                progressDataService.UpdateAspProgressTutTime(91, 15885, inputTutTime);
+                var progressTutTime = progressTestHelper.GetAspProgressTutTimeById(53);
+
+                // Then
+                progressTutTime.Should().Be(expectedTutTime);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateAspProgressTutStat_updates_tut_stat_with_new_value_if_greater_than_existing()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int expectedTutStat = 3;
+
+                // When
+                progressDataService.UpdateAspProgressTutStat(91, 15885, expectedTutStat);
+                var progressTutTime = progressTestHelper.GetAspProgressTutStatById(53);
+
+                // Then
+                progressTutTime.Should().Be(expectedTutStat);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateAspProgressTutStat_does_not_update_tut_stat_with_new_value_if_less_than_existing()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int inputTutStat = 1;
+                const int expectedTutStat = 2;
+
+                // When
+                progressDataService.UpdateAspProgressTutStat(91, 15885, inputTutStat);
+                var progressTutTime = progressTestHelper.GetAspProgressTutStatById(53);
+
+                // Then
+                progressTutTime.Should().Be(expectedTutStat);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateProgressCompletedDate_updates_progress_record_correctly()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int progressId = 100;
+                var expectedCompletedDate = new DateTime(2022, 1, 1, 1, 1, 1);
+
+                // When
+                progressDataService.UpdateProgressCompletedDate(progressId, expectedCompletedDate);
+                var progressCompletedDate = progressTestHelper.GetProgressCompletedDateById(progressId);
+
+                // Then
+                progressCompletedDate.Should().Be(expectedCompletedDate);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void GetAdminEmailToCcAboutProgressCompletion_returns_admin_email_correctly()
+        {
+            // When
+            var adminEmail = progressDataService.GetAdminEmailToCcAboutProgressCompletion(276626);
+
+            // Then
+            adminEmail.Should().BeEquivalentTo("hcoayru@lmgein.");
+        }
     }
 }

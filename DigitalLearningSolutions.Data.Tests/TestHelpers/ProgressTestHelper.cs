@@ -79,5 +79,47 @@
                 new { progressId }
             ).Single();
         }
+
+        public ProgressDetails GetProgressDetailsByProgressId(int progressId)
+        {
+            return connection.Query<ProgressDetails>(
+                @"SELECT CustomisationVersion,
+                    SubmittedTime,
+                    ProgressText
+                    FROM Progress
+                    WHERE ProgressId = @progressId",
+                new { progressId }
+            ).Single();
+        }
+
+        public int GetAspProgressTutTimeById(int aspProgressId)
+        {
+            return connection.Query<int>(
+                @"SELECT TutTime
+                    FROM aspProgress
+                    WHERE aspProgressId = @aspProgressId",
+                new { aspProgressId }
+            ).Single();
+        }
+
+        public int GetAspProgressTutStatById(int aspProgressId)
+        {
+            return connection.Query<int>(
+                @"SELECT TutStat
+                    FROM aspProgress
+                    WHERE aspProgressId = @aspProgressId",
+                new { aspProgressId }
+            ).Single();
+        }
+
+        public DateTime GetProgressCompletedDateById(int progressId)
+        {
+            return connection.Query<DateTime>(
+                @"SELECT Completed
+                    FROM Progress
+                    WHERE ProgressId = @progressId",
+                new { progressId }
+            ).Single();
+        }
     }
 }

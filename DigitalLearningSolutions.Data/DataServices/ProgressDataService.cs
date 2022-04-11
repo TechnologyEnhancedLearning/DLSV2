@@ -51,8 +51,6 @@
             string? answer
         );
 
-        // TODO: 410 Write data service tests
-        // TODO: 410 What to name this method
         void UpdateProgressDetails(
             int progressId,
             int customisationVersion,
@@ -76,9 +74,9 @@
 
         void UpdateProgressCompletedDate(int progressId, DateTime? completedDate);
 
-        int MarkLearningLogItemsWithProgressIdComplete(int progressId);
+        int MarkLearningLogItemsCompleteByProgressId(int progressId);
 
-        IEnumerable<string> GetAdminsToEmailAboutProgressCompletion(int progressId);
+        IEnumerable<string> GetAdminEmailToCcAboutProgressCompletion(int progressId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -477,14 +475,15 @@
         public void UpdateProgressCompletedDate(int progressId, DateTime? completedDate)
         {
             connection.Execute(
-                @"UPDATE Progress SET
-                        Completed = @completedDate
+                @"UPDATE Progress
+                    SET Completed = @completedDate
                     WHERE ProgressID = @progressId",
                 new { progressId, completedDate }
             );
         }
 
-        public int MarkLearningLogItemsWithProgressIdComplete(int progressId)
+        // TODO: 410 - Do I need tests for stored procedures?
+        public int MarkLearningLogItemsCompleteByProgressId(int progressId)
         {
             return connection.Execute(
                 "UpdateLearningLogItemsMarkCompleteForRelatedCourseCompletion",
@@ -493,7 +492,7 @@
             );
         }
 
-        public IEnumerable<string> GetAdminsToEmailAboutProgressCompletion(int progressId)
+        public IEnumerable<string> GetAdminEmailToCcAboutProgressCompletion(int progressId)
         {
             return connection.Query<string>(
                 @"SELECT COALESCE

@@ -201,7 +201,7 @@
             {
                 progressDataService.UpdateProgressCompletedDate(progress.ProgressId, DateTime.UtcNow);
                 var numLearningLogItemsAffected =
-                    progressDataService.MarkLearningLogItemsWithProgressIdComplete(progress.ProgressId);
+                    progressDataService.MarkLearningLogItemsCompleteByProgressId(progress.ProgressId);
                 EmailDelegatesAboutProgressCompletion(progress, completionStatus, numLearningLogItemsAffected);
             }
         }
@@ -212,7 +212,8 @@
             int numLearningLogItemsAffected
         )
         {
-            var adminsToCc = progressDataService.GetAdminsToEmailAboutProgressCompletion(progress.ProgressId).ToArray();
+            var adminsToCc = progressDataService.GetAdminEmailToCcAboutProgressCompletion(progress.ProgressId)
+                .ToArray();
             var delegateUser = userService.GetDelegateUserById(progress.DelegateId);
             if (delegateUser?.EmailAddress == null)
             {
