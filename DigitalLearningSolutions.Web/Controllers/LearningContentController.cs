@@ -13,10 +13,12 @@
     public class LearningContentController : Controller
     {
         private readonly IBrandsService brandsService;
+        private readonly ITutorialService tutorialService;
 
-        public LearningContentController(IBrandsService brandsService)
+        public LearningContentController(IBrandsService brandsService, ITutorialService tutorialService)
         {
             this.brandsService = brandsService;
+            this.tutorialService = tutorialService;
         }
 
         [Route("LearningContent/{brandId:int}")]
@@ -28,7 +30,9 @@
                 return NotFound();
             }
 
-            var model = new LearningContentViewModel(brand);
+            var tutorials = tutorialService.GetPublicTutorialSummariesForBrand(brandId);
+
+            var model = new LearningContentViewModel(brand, tutorials);
 
             return View("Index", model);
         }

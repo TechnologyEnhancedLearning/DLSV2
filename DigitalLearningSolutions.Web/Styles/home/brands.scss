@@ -1,0 +1,15 @@
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+
+.brands__name {
+  @extend .nhsuk-heading-xl;
+}
+
+.brands__description {
+  @extend .nhsuk-lede-text;
+  @extend .nhsuk-u-margin-top-4;
+}
+
+.brands__body-text {
+  margin-top: -1em;
+  @extend .nhsuk-body-m;
+}

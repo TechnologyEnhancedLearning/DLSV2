@@ -1,11 +1,12 @@
-﻿@using DigitalLearningSolutions.Data.Extensions
-@using DigitalLearningSolutions.Web.ViewModels.LearningContent
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningContent
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration configuration
 @model LearningContentViewModel
 @{
   ViewData["Title"] = "Learning Content";
 }
+
+<link rel="stylesheet" href="@Url.Content("~/css/home/brands.css")" />
 
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -24,7 +25,18 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl heading-margin-2" id="page-heading">@Model.Name</h1>
-    <p class="nhsuk-lede-text nhsuk-u-margin-top-4">@Model.Description</p>
+    <h1 class="brands__name">@Model.Name</h1>
+    <p class="brands__description">@Model.Description</p>
   </div>
 </div>
+
+@if (Model.Tutorials.Any()) {
+  <p class="brands__description">Course Tutorials</p>
+  <p class="brands__body-text">Access to this content does not require login and progress is not tracked.</p>
+  foreach (var tutorial in Model.Tutorials) {
+    <h1>@tutorial.TutorialName</h1>
+    <p>@tutorial.Objectives</p>
+    <p>@tutorial.TutorialPath</p>
+    <p>@tutorial.SupportingMatsPath</p>
+  }
+}
