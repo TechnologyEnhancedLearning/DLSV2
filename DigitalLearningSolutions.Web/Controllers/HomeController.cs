@@ -69,7 +69,7 @@
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, 2),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
                 CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
-                LearningContents = learningContents,
+                LearningContentItems = learningContents,
             };
 
             return View(model);
