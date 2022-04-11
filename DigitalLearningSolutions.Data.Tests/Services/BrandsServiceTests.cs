@@ -38,7 +38,7 @@
         }
 
         [Test]
-        public void GetPublicBrands_calls_data_service_method_and_does_not_returns_private_results()
+        public void GetPublicBrands_calls_data_service_method_and_does_not_return_private_results()
         {
             // Given
             var expectedBrands = Builder<BrandDetail>.CreateListOfSize(5).All().With(b => b.IncludeOnLanding = false)
@@ -55,7 +55,7 @@
         }
 
         [Test]
-        public void GetPublicBrands_returns_empty_when_data_service_returns_null()
+        public void GetPublicBrands_returns_empty_when_data_service_returns_empty()
         {
             // Given
             var emptyList = Enumerable.Empty<BrandDetail>();

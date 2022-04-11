@@ -61,7 +61,7 @@
         [HttpGet]
         public IActionResult LearningContent()
         {
-            var learningContents = brandsService.GetPublicBrands()
+            var publicBrands = brandsService.GetPublicBrands()
                 .Select(b => new LearningContentSummary(b));
 
             var model = new LearningContentLandingPageViewModel
@@ -69,7 +69,7 @@
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, 2),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
                 CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
-                LearningContentItems = learningContents,
+                LearningContentItems = publicBrands,
             };
 
             return View(model);

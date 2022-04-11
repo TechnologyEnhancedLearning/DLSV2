@@ -38,7 +38,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 PopularityHigh = 177,
             };
 
-            var expectedIndexes = new[] { 1, 2, 3, 4, 6, 8, 9 };
+            var expectedIndexes = new [] { 1, 2, 3, 4, 6, 8, 9 };
 
             // When
             var result = brandsDataService.GetAllBrands().ToList();
