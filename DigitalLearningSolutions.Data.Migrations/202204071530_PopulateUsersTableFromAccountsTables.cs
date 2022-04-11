@@ -72,7 +72,6 @@ namespace DigitalLearningSolutions.Data.Migrations
 
             // 4. DelegateAccount
 
-            // Start with just delegate accounts with emails for simplicity
             var delegateAccounts =
                 connection.Query<DelegateAccount>("SELECT * FROM DelegateAccounts");
 
@@ -84,10 +83,13 @@ namespace DigitalLearningSolutions.Data.Migrations
             {
                 if (!string.IsNullOrWhiteSpace(emailGroup.Key))
                 {
+                    // If we have an email, we can check for existing users.
                     var delegateAccountsGroupedByCentre = emailGroup.GroupBy(da => da.CentreId);
 
                     foreach (var centreGroup in delegateAccountsGroupedByCentre)
                     {
+                        // If there are more than one delegate accounts with the same email at a centre
+                        // we only want to keep the email on the first. The rest get reset to having a User with no email
                         var firstAtCentre = centreGroup.First();
 
                         var existingUserWithEmail = connection.QuerySingleOrDefault<User>(
@@ -97,6 +99,7 @@ namespace DigitalLearningSolutions.Data.Migrations
 
                         if (existingUserWithEmail != null)
                         {
+                            // If we find a user, we update any default data on that user
                             UpdateExistingUserWithDelegateDetails(
                                 connection,
                                 existingUserWithEmail,
@@ -106,6 +109,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                         }
                         else
                         {
+                            // Otherwise we create a new user
                             InsertNewUserForDelegateAccount(connection, firstAtCentre);
                         }
 
@@ -116,13 +120,15 @@ namespace DigitalLearningSolutions.Data.Migrations
                 }
                 else
                 {
+                    // If we don't have a valid email we create a new user
                     foreach (var delegateAccount in emailGroup)
                     {
                         InsertNewUserForDelegateAccount(connection, delegateAccount);
                     }
                 }
             }
-            
+
+            // All duplicate emails at a centre need new User accounts
             foreach (var delegateAccount in duplicateDelegateAccountsAtCentre)
             {
                 InsertNewUserForDelegateAccount(connection, delegateAccount, true);
