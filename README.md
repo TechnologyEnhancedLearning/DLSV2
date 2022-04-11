@@ -1,6 +1,6 @@
 # Installs
 
-- [Visual Studio Professional 2019](https://visualstudio.microsoft.com/downloads/)
+- [Visual Studio Professional 2022](https://visualstudio.microsoft.com/downloads/)
     - Make sure you have the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension
     - [JetBrains Rider](https://www.jetbrains.com/rider/) can work as an alternative to Visual Studio. Follow the setup steps laid out below. In addition, you'll have to run `npm run dev` manually to build the JS and SASS.
 - SQL Server 2019
