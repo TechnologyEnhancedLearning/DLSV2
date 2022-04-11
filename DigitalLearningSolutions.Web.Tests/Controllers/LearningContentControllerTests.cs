@@ -25,7 +25,7 @@
             A.CallTo(() => brandsService.GetPublicBrandById(1)).Returns(null);
 
             // When
-            var result = controller.BrandPageDeliveryService(1);
+            var result = controller.Index(1);
 
             // Then
             result.Should().BeNotFoundResult();

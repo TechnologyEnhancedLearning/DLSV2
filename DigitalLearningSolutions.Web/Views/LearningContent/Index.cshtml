@@ -1,10 +1,9 @@
-﻿@using DigitalLearningSolutions.Data.Extensions
-@using DigitalLearningSolutions.Web.ViewModels.LearningContent
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningContent
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration configuration
 @model LearningContentViewModel
 @{
-  ViewData["Title"] = "Learning Content";
+  ViewData["Title"] = Model.Name;
 }
 
 @section NavBreadcrumbs {

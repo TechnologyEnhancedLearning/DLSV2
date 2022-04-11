@@ -20,7 +20,7 @@
         }
 
         [Route("LearningContent/{brandId:int}")]
-        public IActionResult BrandPageDeliveryService(int brandId)
+        public IActionResult Index(int brandId)
         {
             var brand = brandsService.GetPublicBrandById(brandId);
             if (brand == null)
@@ -30,7 +30,7 @@
 
             var model = new LearningContentViewModel(brand);
 
-            return View("Index", model);
+            return View(model);
         }
     }
 }
