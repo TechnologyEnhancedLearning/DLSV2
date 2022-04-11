@@ -63,7 +63,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         )]
         [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName?returnPageQuery=pageNumber%3D1", "Edit group name")]
         [InlineData("/TrackingSystem/Delegates/Groups/Add", "Add new delegate group")]
-        [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
+        [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Activities worker or coordinator")]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Delegates/Add/SelectDelegate",
             "Add delegate to Activities worker or coordinator group"
@@ -72,7 +72,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Delegates/Groups/5/Delegates/245969/Remove?returnPageQuery=pageNumber%3D1",
             "Are you sure you would like to remove xxxxx xxxx from this group?"
         )]
-        [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Group courses")]
+        [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Activities worker or coordinator")]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Courses/Add/SelectCourse",
             "Add course to Activities worker or coordinator group"

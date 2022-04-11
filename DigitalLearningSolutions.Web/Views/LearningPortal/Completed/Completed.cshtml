@@ -43,15 +43,13 @@
         }
       </div>
     }
-    @if (Model.TotalPages > 1) {
-      <partial name="SearchablePage/_Pagination" model="Model" />
-    }
 
+    <partial name="SearchablePage/_Pagination" model="Model" />
   </div>
 </div>
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-  @section scripts {
-    <script src="@Url.Content("~/js/learningPortal/completed.js")" asp-append-version="true"></script>
-  }
+@section scripts {
+  <script src="@Url.Content("~/js/learningPortal/completed.js")" asp-append-version="true"></script>
+}
 }

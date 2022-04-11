@@ -6,7 +6,6 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses;
     using FakeItEasy;
@@ -14,7 +13,6 @@
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     public class GroupCoursesControllerTests
@@ -65,13 +63,7 @@
             var result = groupCoursesController.Index(1);
 
             // Then
-            using (new AssertionScope())
-            {
-                result.Should().BeViewResult().WithDefaultViewName();
-                result.As<ViewResult>().Model.As<GroupCoursesViewModel>().NavViewModel.GroupName.Should().Be("Group");
-                result.As<ViewResult>().Model.As<GroupCoursesViewModel>().NavViewModel.CurrentPage.Should()
-                    .Be(DelegateGroupPage.Courses);
-            }
+            result.Should().BeViewResult().WithDefaultViewName();
         }
 
         [Test]

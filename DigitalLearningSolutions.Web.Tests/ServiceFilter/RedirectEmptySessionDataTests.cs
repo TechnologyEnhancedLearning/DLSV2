@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -30,7 +31,7 @@
                 ),
                 new List<IFilterMetadata>(),
                 new Dictionary<string, object>(),
-                new HomeController(A.Fake<IConfiguration>()).WithDefaultContext().WithMockTempData()
+                new HomeController(A.Fake<IConfiguration>(), A.Fake<IBrandsService>()).WithDefaultContext().WithMockTempData()
             );
 
             // When
@@ -44,7 +45,7 @@
         public void Does_not_set_action_result_if_there_is_temp_data_matching_model()
         {
             // Given
-            var homeController = new HomeController(A.Fake<IConfiguration>()).WithDefaultContext().WithMockTempData();
+            var homeController = new HomeController(A.Fake<IConfiguration>(), A.Fake<IBrandsService>()).WithDefaultContext().WithMockTempData();
             var context = new ActionExecutingContext(
                 new ActionContext(
                     new DefaultHttpContext(),
