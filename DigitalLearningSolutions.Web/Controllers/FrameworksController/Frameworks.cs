@@ -485,7 +485,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/Summary", sessionNewFramework.DetailFramework);
         }
         [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
-        public IActionResult AddCollaborators(string actionname, int frameworkId)
+        public IActionResult AddCollaborators(string actionname, int frameworkId, bool error = false)
         {
             var adminId = GetAdminId();
             var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
@@ -497,6 +497,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 BaseFramework = framework,
                 Collaborators = collaborators,
+                Error = error,
             };
             return View("Developer/Collaborators", model);
         }
@@ -507,8 +508,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, userEmail, canModify);
             if (collaboratorId > 0)
+            {
                 frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminId());
-            return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
+                return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
+            }
+            else
+            {
+                return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname, error = true });
+            }
+
         }
 
         public IActionResult RemoveCollaborator(int frameworkId, string actionname, int id)

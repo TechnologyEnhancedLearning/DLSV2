@@ -115,15 +115,22 @@ else
   <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
     <h2>Add a user to the working group</h2>
   </label>
-  <div class="nhsuk-form-group">
+  <div class="@(Model.Error? "nhsuk-form-group nhsuk-form-group--error" : "nhsuk-form-group")">
     <div class=" sort-select-container">
       <label class="nhsuk-label" for="example">
         User email address
       </label>
-      <div class="nhsuk-hint" id="add-user-hint">
-        Provide a user email address to add as a Contributor (to help create your framework) or Reviewer (to sign off your framework). Working group members can be added and removed later.
+     
+            <div class="nhsuk-hint" id="add-user-hint">
+        Provide the email address of a user with a registered DLS admin account to add as a Contributor (to help create your framework) or Reviewer (to sign off your framework). Working group members can be added and removed later.
       </div>
-      <input class="nhsuk-input" id="userEmail" aria-describedby="add-user-hint" type="email" name="userEmail" />
+      @if(Model.Error)
+            {
+                <span class="nhsuk-error-message" id="no-admin-error">
+    <span class="nhsuk-u-visually-hidden">Error:</span> The email address must match a registered DLS admin account.
+  </span>
+            }
+      <input class="@(Model.Error? "nhsuk-input nhsuk-input--error" : "nhsuk-input")" id="userEmail" aria-describedby="add-user-hint" type="email" name="userEmail" />
     </div>
   </div>
   <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="True" asp-route-frameworkId="@Model.BaseFramework.ID">
