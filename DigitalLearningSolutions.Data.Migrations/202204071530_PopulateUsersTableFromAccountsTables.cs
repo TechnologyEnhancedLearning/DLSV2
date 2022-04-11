@@ -74,55 +74,55 @@ namespace DigitalLearningSolutions.Data.Migrations
 
             // Start with just delegate accounts with emails for simplicity
             var delegateAccounts =
-                connection.Query<DelegateAccount>("SELECT * FROM DelegateAccounts")
-                    .ToList();
-
-            var delegateAccountsWithEmails = delegateAccounts.Where(da => !string.IsNullOrWhiteSpace(da.Email));
+                connection.Query<DelegateAccount>("SELECT * FROM DelegateAccounts");
 
             var duplicateDelegateAccountsAtCentre = new List<DelegateAccount>();
 
-            var delegateAccountsGroupedByEmail = delegateAccountsWithEmails.GroupBy(da => da.Email);
+            var delegateAccountsGroupedByEmail = delegateAccounts.GroupBy(da => da.Email);
 
             foreach (var emailGroup in delegateAccountsGroupedByEmail)
             {
-                var delegateAccountsGroupedByCentre = emailGroup.GroupBy(da => da.CentreId);
-
-                foreach (var centreGroup in delegateAccountsGroupedByCentre)
+                if (!string.IsNullOrWhiteSpace(emailGroup.Key))
                 {
-                    var firstAtCentre = centreGroup.First();
+                    var delegateAccountsGroupedByCentre = emailGroup.GroupBy(da => da.CentreId);
 
-                    var existingUserWithEmail = connection.QuerySingleOrDefault<User>(
+                    foreach (var centreGroup in delegateAccountsGroupedByCentre)
+                    {
+                        var firstAtCentre = centreGroup.First();
+
+                        var existingUserWithEmail = connection.QuerySingleOrDefault<User>(
                             "SELECT * FROM Users WHERE PrimaryEmail = @email",
                             new { email = firstAtCentre.Email }
                         );
 
-                    if (existingUserWithEmail != null)
-                    {
-                        UpdateExistingUserWithDelegateDetails(
-                            connection,
-                            existingUserWithEmail,
-                            firstAtCentre,
-                            emailGroup
-                        );
-                    }
-                    else
-                    {
-                        InsertNewUserForDelegateAccount(connection, firstAtCentre);
-                    }
+                        if (existingUserWithEmail != null)
+                        {
+                            UpdateExistingUserWithDelegateDetails(
+                                connection,
+                                existingUserWithEmail,
+                                firstAtCentre,
+                                emailGroup
+                            );
+                        }
+                        else
+                        {
+                            InsertNewUserForDelegateAccount(connection, firstAtCentre);
+                        }
 
-                    var othersAtCentre = centreGroup.Skip(1);
+                        var othersAtCentre = centreGroup.Skip(1);
 
-                    duplicateDelegateAccountsAtCentre.AddRange(othersAtCentre);
+                        duplicateDelegateAccountsAtCentre.AddRange(othersAtCentre);
+                    }
+                }
+                else
+                {
+                    foreach (var delegateAccount in emailGroup)
+                    {
+                        InsertNewUserForDelegateAccount(connection, delegateAccount);
+                    }
                 }
             }
-
-            var delegateAccountsWithoutEmails = delegateAccounts.Where(da => string.IsNullOrWhiteSpace(da.Email));
-
-            foreach (var delegateAccount in delegateAccountsWithoutEmails)
-            {
-                InsertNewUserForDelegateAccount(connection, delegateAccount);
-            }
-
+            
             foreach (var delegateAccount in duplicateDelegateAccountsAtCentre)
             {
                 InsertNewUserForDelegateAccount(connection, delegateAccount, true);
@@ -155,7 +155,9 @@ namespace DigitalLearningSolutions.Data.Migrations
 
         public override void Down()
         {
-            // empty for now, will restore snapshot
+            Execute.Sql("UPDATE DelegateAccounts SET UserId = NULL, DetailsLastChecked = NULL");
+            Execute.Sql("UPDATE AdminAccounts SET UserId = NULL");
+            Execute.Sql("DELETE Users");
         }
 
         private static void UpdateExistingUserWithDelegateDetails(
