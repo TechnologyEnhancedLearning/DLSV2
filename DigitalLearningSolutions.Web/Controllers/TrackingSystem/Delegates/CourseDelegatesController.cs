@@ -41,7 +41,7 @@
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        [Route("{page:int=1}")]
+        [Route("{accessedVia}/{page:int=1}")]
         public IActionResult Index(
             DelegateAccessRoute accessedVia,
             int? customisationId = null,

@@ -90,7 +90,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
         [InlineData("/TrackingSystem/Delegates/Courses/1", "Delegate courses")]
-        [InlineData("/TrackingSystem/Delegates/CourseDelegates", "Course delegates")]
+        [InlineData("/TrackingSystem/Delegates/CourseDelegates/TopCourses/1", "Course delegates")]
         [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104", "Delegate progress")]
         [InlineData(
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditSupervisor",
