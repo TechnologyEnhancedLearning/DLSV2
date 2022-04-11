@@ -29,7 +29,8 @@
 
         public BrandDetail? GetPublicBrandById(int brandId)
         {
-            return brandsDataService.GetPublicBrandById(brandId);
+            var brand = brandsDataService.GetBrandById(brandId);
+            return brand is { IncludeOnLanding: true } ? brand : null;
         }
     }
 }

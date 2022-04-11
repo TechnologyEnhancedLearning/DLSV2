@@ -73,10 +73,23 @@
         }
 
         [Test]
-        public void GetAllPublicBrandsById_calls_data_service_method_and_returns_expected_result()
+        public void GetPublicBrandById_calls_data_service_method_and_returns_public_result()
         {
-            var expectedBrand = Builder<BrandDetail>.CreateNew().Build();
-            A.CallTo(() => brandsDataService.GetPublicBrandById(1))
+            var expectedBrand = Builder<BrandDetail>.CreateNew().With(b => b.IncludeOnLanding = true).Build();
+            A.CallTo(() => brandsDataService.GetBrandById(1))
+                .Returns(expectedBrand);
+
+            // When
+            var result = brandsService.GetPublicBrandById(1);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedBrand);
+        }
+
+        public void GetPublicBrandById_returns_null_when_data_service_returns_private_brand()
+        {
+            var expectedBrand = Builder<BrandDetail>.CreateNew().With(b => b.IncludeOnLanding = false).Build();
+            A.CallTo(() => brandsDataService.GetBrandById(1))
                 .Returns(expectedBrand);
 
             // When
@@ -87,9 +100,9 @@
         }
 
         [Test]
-        public void GetAllPublicBrandsById_returns_empty_when_data_service_returns_null()
+        public void GetPublicBrandById_returns_null_when_data_service_returns_null()
         {
-            A.CallTo(() => brandsDataService.GetPublicBrandById(1))
+            A.CallTo(() => brandsDataService.GetBrandById(1))
                 .Returns(null);
 
             // When
@@ -97,7 +110,7 @@
 
             // Then
             result.Should().BeNull();
-            A.CallTo(() => brandsDataService.GetPublicBrandById(1))
+            A.CallTo(() => brandsDataService.GetBrandById(1))
                 .MustHaveHappenedOnceExactly();
         }
     }

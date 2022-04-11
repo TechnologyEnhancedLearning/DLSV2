@@ -31,14 +31,14 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 ImageFileType = null,
                 IncludeOnLanding = false,
                 ContactEmail = null,
-                OwnerOrganisationID = 0,
+                OwnerOrganisationId = 0,
                 Active = true,
                 OrderByNumber = 6,
                 BrandLogo = null,
                 PopularityHigh = 177,
             };
 
-            var expectedIndexes = new [] { 1, 2, 3, 4, 6, 8, 9 };
+            var expectedIndexes = new[] { 1, 2, 3, 4, 6, 8, 9 };
 
             // When
             var result = brandsDataService.GetAllBrands().ToList();
@@ -49,26 +49,24 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetAllPublicBrandById_should_return_expected_item()
+        public void GetPublicBrandById_should_return_expected_item()
         {
             // When
-            var result = brandsDataService.GetPublicBrandById(1);
+            var result = brandsDataService.GetBrandById(1);
 
             // Then
             result.Should().NotBeNull();
-            result?.BrandName.Should().BeEquivalentTo("IT Skills Pathway");
+            result!.BrandName.Should().BeEquivalentTo("IT Skills Pathway");
         }
 
         [Test]
-        public void GetAllPublicBrandById_should_not_return_private_item()
+        public void GetPublicBrandById_should_return_null_if_id_not_exist()
         {
             // When
-            var result = brandsDataService.GetPublicBrandById(4);
+            var result = brandsDataService.GetBrandById(5);
 
             // Then
             result.Should().BeNull();
         }
     }
-
-
 }
