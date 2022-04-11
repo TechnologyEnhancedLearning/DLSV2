@@ -10,12 +10,14 @@
     {
         private LearningContentController controller = null!;
         private IBrandsService brandsService = null!;
+        private ITutorialService tutorialService = null!;
 
         [SetUp]
         public void SetUp()
         {
             brandsService = A.Fake<IBrandsService>();
-            controller = new LearningContentController(brandsService);
+            tutorialService = A.Fake<ITutorialService>();
+            controller = new LearningContentController(brandsService, tutorialService);
         }
 
         [Test]

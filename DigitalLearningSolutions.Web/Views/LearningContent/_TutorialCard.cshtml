@@ -1,0 +1,38 @@
+﻿@using DigitalLearningSolutions.Data.Models.TutorialContent
+
+@model TutorialSummary
+
+<div class="searchable-element nhsuk-panel card-with-buttons word-break" id="@Model.TutorialId-card">
+  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.TutorialId-name" name="course-name">
+        @Model.TutorialName
+      </span>
+    </summary>
+
+    <div class="nhsuk-details__text">
+
+      @Html.Raw(Model.Objectives)
+      <p class="brands__top-horizontal-dash"></p>
+      <p>Access to this content does not require login and progress is not tracked.</p>
+
+    </div>
+  </details>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full nhsuk-u-margin-left-4">
+      <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
+         role="button"
+         href="@Model.TutorialPath">
+        Launch tutorial
+      </a>
+      @if (!string.IsNullOrEmpty(Model.SupportingMatsPath)) {
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+           role="button"
+           href="@Model.SupportingMatsPath">
+          Supporting info
+        </a>
+      }
+    </div>
+  </div>
+</div>

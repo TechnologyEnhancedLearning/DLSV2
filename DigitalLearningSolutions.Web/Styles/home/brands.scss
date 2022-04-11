@@ -1,4 +1,5 @@
 ﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "../shared/cardWithButtons";
 
 .brands__name {
   @extend .nhsuk-heading-xl;
@@ -12,4 +13,11 @@
 .brands__body-text {
   margin-top: -1em;
   @extend .nhsuk-body-m;
+}
+
+.brands__top-horizontal-dash {
+  @include mq($until: tablet) {
+    border-top: 1px solid $nhsuk-border-color;
+    margin-top: nhsuk-spacing(3);
+  }
 }

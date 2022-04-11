@@ -3,7 +3,7 @@
 @inject IConfiguration configuration
 @model LearningContentViewModel
 @{
-  ViewData["Title"] = "Learning Content";
+  ViewData["Title"] = Model.Name;
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/home/brands.css")" />
@@ -34,9 +34,6 @@
   <p class="brands__description">Course Tutorials</p>
   <p class="brands__body-text">Access to this content does not require login and progress is not tracked.</p>
   foreach (var tutorial in Model.Tutorials) {
-    <h1>@tutorial.TutorialName</h1>
-    <p>@tutorial.Objectives</p>
-    <p>@tutorial.TutorialPath</p>
-    <p>@tutorial.SupportingMatsPath</p>
+    <partial name="_TutorialCard" model="tutorial" />
   }
 }
