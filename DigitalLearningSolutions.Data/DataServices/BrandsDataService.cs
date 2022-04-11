@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Data;
-    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Common;
 
@@ -13,7 +12,7 @@
 
     public class BrandsDataService : IBrandsDataService
     {
-        private const string BrandsSql =
+        private const string SelectAllBrandsSql =
             @"SELECT
                     BrandID,
 	                BrandName,
@@ -38,7 +37,7 @@
 
         public IEnumerable<BrandDetail> GetAllBrands()
         {
-            return connection.Query<BrandDetail>($@"{BrandsSql}");
+            return connection.Query<BrandDetail>($@"{SelectAllBrandsSql}");
         }
     }
 }
