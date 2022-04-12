@@ -41,6 +41,8 @@
 
         Progress? GetProgressByProgressId(int progressId);
 
+        int GetNumRecentRecordsForCustomisation(int customisationId);
+
         IEnumerable<DetailedSectionProgress> GetSectionProgressDataForProgressEntry(int progressId);
 
         IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection(int progressId, int sectionId);
@@ -377,6 +379,18 @@
                         WHERE ProgressID = @progressId",
                 new { progressId, promptNumber, answer }
             );
+        }
+
+        public int GetNumRecentRecordsForCustomisation(int customisationId)
+        {
+            var threeMonthsAgo = DateTime.Now.AddMonths(-3);
+            return connection.Query(
+                @"SELECT *
+                      FROM Progress
+                      WHERE CustomisationID = @customisationId
+                        AND SubmittedTime > @threeMonthsAgo ",
+                new { customisationId, threeMonthsAgo }
+            ).Count();
         }
     }
 }

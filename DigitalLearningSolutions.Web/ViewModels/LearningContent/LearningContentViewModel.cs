@@ -11,9 +11,9 @@
         public readonly string Name;
         public readonly string? Description;
         public readonly IEnumerable<TutorialSummary> Tutorials;
-        public readonly IEnumerable<ApplicationDetails> Applications;
+        public readonly IEnumerable<ApplicationWithSections> Applications;
 
-        public LearningContentViewModel(BrandDetail brand, IEnumerable<TutorialSummary> tutorials, IEnumerable<ApplicationDetails> applications)
+        public LearningContentViewModel(BrandDetail brand, IEnumerable<TutorialSummary> tutorials, IEnumerable<ApplicationWithSections> applications)
         {
             Name = brand.BrandName;
             Description = brand.BrandDescription;

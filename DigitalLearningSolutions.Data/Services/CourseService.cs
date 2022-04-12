@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -97,9 +98,11 @@
 
         IEnumerable<string> GetTopicsForCentreAndCentrallyManagedCourses(int centreId);
 
-        IEnumerable<ApplicationDetails> GetApplicationsByBrandId(int brandId);
+        IEnumerable<ApplicationWithSections> GetApplicationsByBrandId(int brandId);
 
         int CreateNewCentreCourse(Customisation customisation);
+
+        int GetNumRecentProgressRecordsForApplication(int applicationId);
 
         LearningLog? GetLearningLogDetails(int progressId);
     }
@@ -112,6 +115,7 @@
         private readonly ICourseTopicsDataService courseTopicsDataService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IProgressDataService progressDataService;
+        private readonly ISectionService sectionService;
 
         public CourseService(
             ICourseDataService courseDataService,
@@ -119,7 +123,8 @@
             IProgressDataService progressDataService,
             IGroupsDataService groupsDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
-            ICourseTopicsDataService courseTopicsDataService
+            ICourseTopicsDataService courseTopicsDataService,
+            ISectionService sectionService
         )
         {
             this.courseDataService = courseDataService;
@@ -128,6 +133,7 @@
             this.groupsDataService = groupsDataService;
             this.courseCategoriesDataService = courseCategoriesDataService;
             this.courseTopicsDataService = courseTopicsDataService;
+            this.sectionService = sectionService;
         }
 
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId)
@@ -407,9 +413,26 @@
             return filteredApplications.OrderBy(a => a.ApplicationName);
         }
 
-        public IEnumerable<ApplicationDetails> GetApplicationsByBrandId(int brandId)
+        public IEnumerable<ApplicationWithSections> GetApplicationsByBrandId(int brandId)
         {
-            return courseDataService.GetApplicationsByBrandId(brandId);
+            var numRecordsByApplicationId = courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId);
+            var applications = courseDataService.GetApplicationsByBrandId(brandId);
+            double maxPopularity = numRecordsByApplicationId.First().Value;
+            var applicationsWithSections = applications.Select(
+                application => new ApplicationWithSections(
+                    application,
+                    sectionService.GetSectionsThatHaveTutorialsForApplication(application.ApplicationId),
+                    maxPopularity == 0 ? 0 : numRecordsByApplicationId[application.ApplicationId] / maxPopularity
+                )
+            );
+            return applicationsWithSections;
+        }
+
+        public int GetNumRecentProgressRecordsForApplication(int applicationId)
+        {
+            var customisationIds = courseDataService.GetCustomisationIdsForApplication(applicationId);
+            return customisationIds.Sum(customisationId => progressDataService.
+                GetNumRecentRecordsForCustomisation(customisationId));
         }
 
         public LearningLog? GetLearningLogDetails(int progressId)

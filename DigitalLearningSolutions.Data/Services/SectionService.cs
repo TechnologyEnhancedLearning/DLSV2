@@ -59,8 +59,13 @@
         public List<Section> GetSectionsThatHaveTutorialsForApplication(int applicationId)
         {
             var sections = sectionContentDataService.GetSectionsForApplication(applicationId).ToList();
-            return sections.Where(section => tutorialContentDataService.GetTutorialsForSection(section.SectionId).Any())
-                .ToList();
+            var sectionsWithTutorials = sections.Where(section => tutorialContentDataService
+                .GetTutorialsForSection(section.SectionId).Any()).ToList();
+            foreach (var section in sectionsWithTutorials)
+            {
+                section.Tutorials = tutorialContentDataService.GetTutorialsForSection(section.SectionId);
+            }
+            return sectionsWithTutorials;
         }
     }
 }

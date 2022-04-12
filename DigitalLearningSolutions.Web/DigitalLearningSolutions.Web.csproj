@@ -128,6 +128,10 @@
     <TypeScriptCompile Include="Scripts\trackingSystem\learningLog.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\reports.ts" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ViewModels\LearningContent\SortableApplicationViewModel.cs" />
+  </ItemGroup>
     
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->

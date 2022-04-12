@@ -371,7 +371,9 @@
                             tm.TutorialId,
                             tm.TutorialName,
                             tm.LearningEnabled,
-                            tm.DiagnosticEnabled
+                            tm.DiagnosticEnabled,
+                            null,
+                            null
                         )
                     );
                 tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);

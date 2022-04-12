@@ -1,0 +1,19 @@
+﻿@using DigitalLearningSolutions.Data.Models.Courses
+@using DigitalLearningSolutions.Web.ViewModels.LearningContent
+@model ApplicationWithSections
+
+<div class="searchable-element nhsuk-panel card-with-buttons word-break nhsuk-u-margin-bottom-4" id="@Model.ApplicationId-card">
+  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.ApplicationId-name" name="course-name">
+        @Model.ApplicationName
+      </span>
+    </summary>
+
+    <div class="nhsuk-details__text">
+      @*<partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />*@
+
+      <partial name="_BrandCourseCardDetails" model="@Model" />
+    </div>
+  </details>
+</div>
