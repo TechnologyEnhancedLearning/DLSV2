@@ -14,11 +14,11 @@
             var expectedIndexes = new [] { 551, 3549, 3564, 4674 };
 
             // When
-            var tutorial = tutorialContentDataService.GetPublicTutorialSummariesByBrandId(brandId)
+            var result = tutorialContentDataService.GetPublicTutorialSummariesByBrandId(brandId)
                 .Select(t => t.TutorialId);
 
             // Then
-            tutorial.Should().BeEquivalentTo(expectedIndexes);
+            result.Should().BeEquivalentTo(expectedIndexes);
         }
     }
 }

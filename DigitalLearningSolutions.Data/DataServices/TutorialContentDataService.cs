@@ -432,12 +432,14 @@ namespace DigitalLearningSolutions.Data.DataServices
                         TutorialPath,
                         SupportingMatsPath
                     FROM Tutorials
-                    WHERE SectionID IN (SELECT SectionID
-                                        FROM Sections
-                                        WHERE ApplicationID IN (SELECT ApplicationID
-                                            FROM Applications
-                                            WHERE BrandID = @brandId)
-                                        )
+                    WHERE SectionID IN (
+                        SELECT SectionID
+                        FROM Sections
+                        WHERE ApplicationID IN (
+                            SELECT ApplicationID
+                            FROM Applications
+                            WHERE BrandID = @brandId)
+                            )
                     AND AllowPreview = 1",
                 new { brandId }
             );

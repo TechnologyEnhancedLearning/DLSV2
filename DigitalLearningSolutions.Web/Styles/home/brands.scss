@@ -1,18 +1,12 @@
 ﻿@use "nhsuk-frontend/packages/core/all" as *;
 @use "../shared/cardWithButtons";
 
-.brands__name {
-  @extend .nhsuk-heading-xl;
-}
-
-.brands__description {
-  @extend .nhsuk-lede-text;
-  @extend .nhsuk-u-margin-top-4;
-}
-
 .brands__body-text {
-  margin-top: -1em;
-  @extend .nhsuk-body-m;
+  margin-top: -1em;;
+}
+
+.brands__access {
+  margin-top: 1em;;
 }
 
 .brands__top-horizontal-dash {

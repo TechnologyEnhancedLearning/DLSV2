@@ -109,14 +109,11 @@
             var result = tutorialService.GetPublicTutorialSummariesForBrand(1);
 
             // Then
-            using (new AssertionScope())
-            {
-                result.Should().BeEquivalentTo(expectedTutorials);
-            }
+            result.Should().BeEquivalentTo(expectedTutorials);
         }
 
         [Test]
-        public void GetPublicTutorialSummariesForBrand_returns_empty_when_data_service_returns_null()
+        public void GetPublicTutorialSummariesForBrand_returns_empty_when_data_service_returns_empty_result()
         {
             // Given
             var expectedTutorials = Enumerable.Empty<TutorialSummary>();
