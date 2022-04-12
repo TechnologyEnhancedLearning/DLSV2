@@ -686,6 +686,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public Dictionary<int, int> GetNumsOfRecentProgressRecordsForBrand(int brandId)
         {
+            var threeMonthsAgo = DateTime.Now.AddMonths(-3);
             var query = connection.Query(
                 @"SELECT Applications.ApplicationID, COUNT(Progress.ProgressID) AS Num_Recent_Progress_Records
                     FROM Applications
@@ -694,11 +695,11 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE Applications.BrandID = @brandId
                       AND Applications.Debug = 0
                       AND Applications.ArchivedDate IS NULL
-                      AND Progress.SubmittedTime > '2013-11-15 02:39:23'
+                      AND Progress.SubmittedTime > @threeMonthsAgo
                     GROUP BY Applications.ApplicationID
                     ORDER BY Num_Recent_Progress_Records DESC",
                 new
-                    { brandId }
+                    { brandId, threeMonthsAgo }
             );
             return query.ToDictionary<dynamic?, int, int>(entry => entry.ApplicationID,
                 entry => entry.Num_Recent_Progress_Records);

@@ -415,12 +415,13 @@
         {
             var numRecordsByApplicationId = courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId);
             var applications = courseDataService.GetApplicationsByBrandId(brandId);
-            double maxPopularity = numRecordsByApplicationId.First().Value;
+            double maxPopularity = numRecordsByApplicationId.Any() ? numRecordsByApplicationId.First().Value : 0;
             var applicationsWithSections = applications.Select(
                 application => new ApplicationWithSections(
                     application,
                     sectionService.GetSectionsThatHaveTutorialsForApplication(application.ApplicationId),
-                    maxPopularity == 0 ? 0 : numRecordsByApplicationId[application.ApplicationId] / maxPopularity
+                    maxPopularity == 0 ? 0 :
+                        (numRecordsByApplicationId.ContainsKey(application.ApplicationId) ? numRecordsByApplicationId[application.ApplicationId] / maxPopularity : 0)
                 )
             );
             return applicationsWithSections;
