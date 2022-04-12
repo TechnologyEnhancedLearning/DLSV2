@@ -21,13 +21,13 @@
         }
 
         [Test]
-        public void BrandPageDeliveryService_returns_not_found_with_null_brand()
+        public void Index_returns_not_found_with_null_brand()
         {
             // Given
             A.CallTo(() => brandsService.GetPublicBrandById(1)).Returns(null);
 
             // When
-            var result = controller.BrandPageDeliveryService(1);
+            var result = controller.Index(1);
 
             // Then
             result.Should().BeNotFoundResult();

@@ -49,18 +49,17 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetPublicBrandById_should_return_expected_item()
+        public void GetBrandById_should_return_expected_item()
         {
             // When
             var result = brandsDataService.GetBrandById(1);
 
             // Then
-            result.Should().NotBeNull();
             result!.BrandName.Should().BeEquivalentTo("IT Skills Pathway");
         }
 
         [Test]
-        public void GetPublicBrandById_should_return_null_if_id_not_exist()
+        public void GetBrandById_should_return_null_if_id_does_not_exist()
         {
             // When
             var result = brandsDataService.GetBrandById(5);

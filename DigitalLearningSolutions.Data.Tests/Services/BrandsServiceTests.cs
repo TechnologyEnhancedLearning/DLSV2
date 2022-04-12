@@ -86,17 +86,20 @@
             result.Should().BeEquivalentTo(expectedBrand);
         }
 
+        [Test]
         public void GetPublicBrandById_returns_null_when_data_service_returns_private_brand()
         {
-            var expectedBrand = Builder<BrandDetail>.CreateNew().With(b => b.IncludeOnLanding = false).Build();
+            var brand = Builder<BrandDetail>.CreateNew().With(b => b.IncludeOnLanding = false).Build();
             A.CallTo(() => brandsDataService.GetBrandById(1))
-                .Returns(expectedBrand);
+                .Returns(brand);
 
             // When
             var result = brandsService.GetPublicBrandById(1);
 
             // Then
-            result.Should().BeEquivalentTo(expectedBrand);
+            result.Should().BeNull();
+            A.CallTo(() => brandsDataService.GetBrandById(1))
+                .MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -110,8 +113,6 @@
 
             // Then
             result.Should().BeNull();
-            A.CallTo(() => brandsDataService.GetBrandById(1))
-                .MustHaveHappenedOnceExactly();
         }
     }
 }
