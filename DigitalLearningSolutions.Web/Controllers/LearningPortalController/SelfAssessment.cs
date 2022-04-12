@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SessionData.SelfAssessments;
     using DigitalLearningSolutions.Web.Attributes;
@@ -393,7 +394,7 @@
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
-        public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId)
+        public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, ReturnPageQuery returnPageQuery)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
@@ -412,7 +413,8 @@
                 selfAssessmentId,
                 assessment.Name,
                 LearningItemType.SelfAssessment,
-                assessment.CompleteByDate
+                assessment.CompleteByDate,
+                returnPageQuery
             );
 
             return View("Current/SetCompleteByDate", model);

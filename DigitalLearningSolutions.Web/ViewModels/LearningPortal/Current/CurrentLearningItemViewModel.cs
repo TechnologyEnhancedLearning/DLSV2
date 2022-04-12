@@ -2,19 +2,23 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class CurrentLearningItemViewModel : StartedLearningItemViewModel
     {
         public CurrentLearningItemViewModel(
-            CurrentLearningItem course
+            CurrentLearningItem course,
+            ReturnPageQuery returnPageQuery
         ) : base(course)
         {
             CompleteByDate = course.CompleteByDate;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public DateTime? CompleteByDate { get; }
         public OldDateValidator.ValidationResult? CompleteByValidationResult { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; }
 
         public string DateStyle()
         {

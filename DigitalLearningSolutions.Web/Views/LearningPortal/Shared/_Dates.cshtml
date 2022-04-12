@@ -36,8 +36,10 @@
         <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
            aria-describedby="@Model.Id-name"
            aria-label="Edit complete by date"
+           data-return-page-enabled="true"
            asp-action="SetCurrentCourseCompleteByDate"
            asp-route-id="@Model.Id"
+           asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
            role="button">
           Edit
         </a>
@@ -47,8 +49,10 @@
         <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
            aria-describedby="@Model.Id-name"
            aria-label="Edit complete by date"
+           data-return-page-enabled="true"
            asp-route-selfAssessmentId="@Model.Id"
            asp-action="SetSelfAssessmentCompleteByDate"
+           asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
            role="button">
           Edit
         </a>
@@ -58,8 +62,10 @@
         <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
            aria-describedby="@Model.Id-name"
            aria-label="Edit complete by date"
+           data-return-page-enabled="true"
            asp-action="SetCurrentActionPlanResourceCompleteByDate"
            asp-route-learningLogItemId="@Model.Id"
+           asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
            role="button">
           Edit
         </a>

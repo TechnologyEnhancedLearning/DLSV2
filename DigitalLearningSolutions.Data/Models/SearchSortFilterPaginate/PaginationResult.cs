@@ -44,5 +44,10 @@
         public int MatchingSearchResults { get; set; }
 
         public bool JavascriptSearchSortFilterPaginateEnabled { get; set; }
+
+        public ReturnPageQuery GetReturnPageQuery(string? itemIdToReturnTo = null)
+        {
+            return new ReturnPageQuery(Page, itemIdToReturnTo, ItemsPerPage);
+        }
     }
 }

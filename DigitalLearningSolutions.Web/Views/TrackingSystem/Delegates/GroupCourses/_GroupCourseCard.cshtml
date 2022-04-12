@@ -51,7 +51,8 @@
          asp-controller="GroupCourses"
          asp-action="RemoveGroupCourse"
          asp-route-groupId="@(ViewContext.RouteData.Values["groupId"].ToString()!)"
-         asp-route-groupCustomisationId="@Model.GroupCustomisationId">
+         asp-route-groupCustomisationId="@Model.GroupCustomisationId"
+         asp-route-returnPageQuery="@Model.ReturnPageQuery">
         Remove from group
       </a>
     </div>

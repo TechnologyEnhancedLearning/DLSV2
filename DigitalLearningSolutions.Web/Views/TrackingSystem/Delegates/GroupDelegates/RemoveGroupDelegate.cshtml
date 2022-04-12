@@ -80,6 +80,7 @@
       <input type="hidden" asp-for="GroupName" />
       <input type="hidden" asp-for="DelegateName" />
       <input type="hidden" asp-for="RemoveStartedEnrolmentsEnabled" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
       <button class="nhsuk-button delete-button nhsuk-button--secondary" type="submit">Remove delegate</button>
     </form>
 
@@ -88,6 +89,6 @@
         { "groupId", Model.GroupId.ToString() }
       };
     }
-    <vc:cancel-link asp-controller="GroupDelegates" asp-action="Index" asp-all-route-data="@routeData" />
+    <vc:cancel-link-with-return-page-query asp-controller="GroupDelegates" asp-action="Index" route-data="@routeData" return-page-query="@Model.ReturnPageQuery"/>
   </div>
 </div>

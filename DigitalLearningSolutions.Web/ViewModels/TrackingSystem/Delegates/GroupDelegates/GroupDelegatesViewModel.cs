@@ -20,7 +20,12 @@
             GroupName = groupName;
             var routeData = new Dictionary<string, string> { { "groupId", groupId.ToString() } };
             TabsNavLinks = new TabsNavViewModel(DelegateGroupTab.Delegates, routeData);
-            GroupDelegates = result.ItemsToDisplay.Select(groupDelegate => new GroupDelegateViewModel(groupDelegate));
+            GroupDelegates = result.ItemsToDisplay.Select(
+                groupDelegate => new GroupDelegateViewModel(
+                    groupDelegate,
+                    result.GetReturnPageQuery($"{groupDelegate.DelegateId}-card")
+                )
+            );
         }
 
         public int GroupId { get; set; }

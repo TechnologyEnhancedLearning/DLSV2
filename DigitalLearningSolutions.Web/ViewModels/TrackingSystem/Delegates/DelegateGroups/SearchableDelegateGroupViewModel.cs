@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class SearchableDelegateGroupViewModel
@@ -9,7 +10,7 @@
         private const string Yes = "Yes";
         private const string No = "No";
 
-        public SearchableDelegateGroupViewModel(Group group, int? page)
+        public SearchableDelegateGroupViewModel(Group group, ReturnPageQuery returnPageQuery)
         {
             Id = group.GroupId;
             Name = group.GroupLabel;
@@ -27,7 +28,7 @@
             ShouldAddNewRegistrantsToGroup = group.ShouldAddNewRegistrantsToGroup ? Yes : No;
             ChangesToRegistrationDetailsShouldChangeGroupMembership =
                 group.ChangesToRegistrationDetailsShouldChangeGroupMembership ? Yes : No;
-            Page = page;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public int Id { get; set; }
@@ -60,6 +61,6 @@
 
         public string ChangesToRegistrationDetailsShouldChangeGroupMembership { get; set; }
 
-        public int? Page { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

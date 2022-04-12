@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class EditCompleteByDateFormData : IValidatableObject
@@ -18,6 +19,7 @@
             Type = formData.Type;
             ApiIsAccessible = formData.ApiIsAccessible;
             ProgressId = progressId;
+            ReturnPageQuery = formData.ReturnPageQuery;
         }
 
         public string Name { get; set; }
@@ -27,6 +29,7 @@
         public LearningItemType Type { get; set; }
         public int? ProgressId { get; set; }
         public bool? ApiIsAccessible { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
