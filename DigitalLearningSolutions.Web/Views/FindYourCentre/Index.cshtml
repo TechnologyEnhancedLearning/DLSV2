@@ -10,6 +10,43 @@
   </div>
 </div>
 
-<div class="nhsuk-grid-row responsive-iframe-wrapper responsive-iframe-wrapper-padding">
-  <iframe class="responsive-iframe" title="Find Your Centre" src="@Model.Url"></iframe>
-</div>
+@*<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+      <vc:loading-spinner page-has-side-nav-menu="false" />
+    }
+    <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-three-quarters">
+          <h1 class="nhsuk-heading-xl">Centre course setup</h1>
+        </div>
+        <div class="nhsuk-grid-column-one-quarter heading-button-group">
+          <a class="nhsuk-button heading-button nhsuk-u-margin-bottom-5" asp-controller="CourseSetup" asp-action="AddCourseNew" role="button">
+            Add
+          </a>
+        </div>
+      </div>
+
+      <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
+
+      @if (Model.NoDataFound) {
+        <p>The centre has no courses set up yet.</p>
+      } else {
+        <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
+
+        <div id="searchable-elements">
+          @foreach (var centre in Model.CentreSummaries) {
+            <partial name="_CentreSummaryCard" model="centre" />
+          }
+        </div>
+      }
+      @if (Model.TotalPages > 1) {
+        <partial name="SearchablePage/_Pagination" model="Model" />
+      }
+    </div>
+  </div>
+</div>*@
+
+@foreach (var centre in Model.CentreSummaries) {
+  <partial name="_CentreSummaryCard" model="centre" />
+}
