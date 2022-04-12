@@ -59,7 +59,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetBrandById_should_return_null_if_id_not_exist()
+        public void GetBrandById_should_return_null_if_id_does_not_exist()
         {
             // When
             var result = brandsDataService.GetBrandById(5);

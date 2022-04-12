@@ -98,6 +98,8 @@
 
             // Then
             result.Should().BeNull();
+            A.CallTo(() => brandsDataService.GetBrandById(1))
+                .MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -111,8 +113,6 @@
 
             // Then
             result.Should().BeNull();
-            A.CallTo(() => brandsDataService.GetBrandById(1))
-                .MustHaveHappenedOnceExactly();
         }
     }
 }
