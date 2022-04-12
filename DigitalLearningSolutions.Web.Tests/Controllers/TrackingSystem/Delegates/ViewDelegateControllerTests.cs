@@ -3,7 +3,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -19,11 +18,11 @@
 
     internal class ViewDelegateControllerTests
     {
+        private IConfiguration config = null!;
         private ICourseDataService courseDataService = null!;
         private ICourseService courseService = null!;
         private IUserDataService userDataService = null!;
         private ViewDelegateController viewDelegateController = null!;
-        private IConfiguration config = null!;
 
         [SetUp]
         public void SetUp()
@@ -249,7 +248,7 @@
         {
             //Given
             A.CallTo(() => userDataService.GetDelegateUserCardById(10))
-                .Returns(new DelegateUserCard() { CentreId = 1 });
+                .Returns(new DelegateUserCard { CentreId = 1 });
 
             // When
             var result = viewDelegateController.ReactivateDelegate(2);
