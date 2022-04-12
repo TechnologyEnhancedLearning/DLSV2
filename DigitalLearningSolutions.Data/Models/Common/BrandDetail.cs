@@ -12,7 +12,7 @@
         [RegularExpression(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*")]
         [StringLength(255)]
         public string? ContactEmail {get; set; }
-        public int OwnerOrganisationID { get; set; }
+        public int OwnerOrganisationId { get; set; }
         public bool Active { get; set; }
         public int OrderByNumber { get; set; }
         public byte[]? BrandLogo { get; set; }

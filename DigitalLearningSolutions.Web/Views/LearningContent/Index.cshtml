@@ -1,9 +1,7 @@
-﻿@using DigitalLearningSolutions.Data.Extensions
-@using Microsoft.Extensions.Configuration
-@inject IConfiguration configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningContent
+@model LearningContentViewModel
 @{
-  ViewData["Title"] = "Learning Content";
-  var url = $"{configuration.GetCurrentSystemBaseUrl()}/Learning?brand={Model.Brand}&nonav=true";
+  ViewData["Title"] = Model.Name;
 }
 
 @section NavBreadcrumbs {
@@ -23,10 +21,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl heading-margin-2" id="page-heading">@Model.Title</h1>
+    <h1 class="nhsuk-heading-xl heading-margin-2" id="page-heading">@Model.Name</h1>
+    <p class="nhsuk-lede-text nhsuk-u-margin-top-4">@Model.Description</p>
   </div>
-</div>
-
-<div class="nhsuk-grid-row responsive-iframe-wrapper @(Model.TitleIsLong ? "responsive-iframe-wrapper-extra-padding" : "responsive-iframe-wrapper-padding")">
-  <iframe class="responsive-iframe" title="@Model.Title" src="@url"></iframe>
 </div>
