@@ -87,5 +87,35 @@
                 .Should()
                 .HaveCount(10);
         }
+
+        [Test]
+        public void GetAllCentreSummariesForFindCentre_calls_dataService_and_returns_all_summary_details()
+        {
+            // Given
+            var expectedCentres = Builder<CentreSummaryForFindCentre>.CreateListOfSize(10).Build();
+            A.CallTo(() => centresDataService.GetAllCentreSummariesForFindCentre()).Returns(expectedCentres);
+
+            // When
+            var result = centresService.GetAllCentreSummariesForFindCentre();
+
+            // Then
+            result.Should().HaveCount(10);
+        }
+
+        [Test]
+        public void GetAllCentreSummariesForFindCentre_returns_empty_when_dataService_returns_empty()
+        {
+            //Given
+            var emptyList = Enumerable.Empty<CentreSummaryForFindCentre>();
+            A.CallTo(() => centresDataService.GetAllCentreSummariesForFindCentre()).Returns(emptyList);
+
+            //When
+            var result = centresDataService.GetAllCentreSummariesForFindCentre();
+
+            //Then
+            result.Should().BeEmpty();
+            A.CallTo(() => centresDataService.GetAllCentreSummariesForFindCentre())
+                .MustHaveHappenedOnceExactly();
+        }
     }
 }

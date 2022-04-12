@@ -320,5 +320,19 @@
                 inActiveCentre.CentreType.Should().Be("NHS Organisation");
                 inActiveCentre.RegionName.Should().Be("East Of England");
         }
+
+        [Test]
+        public void GetAllCentreSummariesForFindCentre_returns_expected_summary()
+        {
+            //When
+            var summaries = centresDataService.GetAllCentreSummariesForFindCentre().ToList();
+
+            //Then
+            summaries.Should().HaveCount(610);
+            summaries.SingleOrDefault(s => s.CentreId == 26)!.CentreName.Should().Be("NHS Croydon");
+            summaries.SingleOrDefault(s => s.CentreId == 2)!.RegionName.Should().Be("North West");
+            summaries.SingleOrDefault(s => s.CentreId == 34)!.pwTelephone.Should().BeNull();
+            summaries.SingleOrDefault(s => s.CentreId == 35)!.pwTelephone.Should().Be("01202 277335");
+        }
     }
 }

@@ -11,10 +11,16 @@
     public interface ICentresDataService
     {
         string? GetBannerText(int centreId);
+
         string? GetCentreName(int centreId);
+
         IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical();
+
         Centre? GetCentreDetailsById(int centreId);
+
         IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
+
+        IEnumerable<CentreSummaryForFindCentre> GetAllCentreSummariesForFindCentre();
 
         void UpdateCentreManagerDetails(
             int centreId,
@@ -47,9 +53,13 @@
         );
 
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
+
         string[] GetCentreIpPrefixes(int centreId);
+
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
+
         void SetCentreAutoRegistered(int centreId);
+
         IEnumerable<CentreRanking> GetCentreRanks(DateTime dateSince, int? regionId, int resultsCount, int centreId);
     }
 
@@ -179,6 +189,26 @@
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId"
+            );
+        }
+
+        public IEnumerable<CentreSummaryForFindCentre> GetAllCentreSummariesForFindCentre()
+        {
+            return connection.Query<CentreSummaryForFindCentre>(
+                @"SELECT c.CentreID,
+                            c.CentreName,
+                            c.RegionID,
+                            r.RegionName,
+                            c.pwTelephone,
+                            c.pwEmail,
+                            c.pwWebURL,
+                            c.pwHours,
+                            c.pwTrainingLocations,
+                            c.pwTrustsCovered,
+                            c.pwGeneralInfo,
+                            c.kbSelfRegister
+                        FROM Centres AS c
+                        INNER JOIN Regions AS r ON r.RegionID = c.RegionID"
             );
         }
 
@@ -318,18 +348,18 @@
 	                    SELECT
 		                    Count(c.CentreID) AS DelegateSessionCount,
 		                    c.CentreID
-	                    FROM [Sessions] s 
-	                    INNER JOIN Candidates c ON s.CandidateID = c.CandidateID 
+	                    FROM [Sessions] s
+	                    INNER JOIN Candidates c ON s.CandidateID = c.CandidateID
 	                    INNER JOIN Centres ct ON c.CentreID = ct.CentreID
-	                    WHERE 
-		                    s.LoginTime > @dateSince 
-		                    AND c.CentreID <> 101 AND c.CentreID <> 374 
+	                    WHERE
+		                    s.LoginTime > @dateSince
+		                    AND c.CentreID <> 101 AND c.CentreID <> 374
 		                    AND (ct.RegionID = @RegionID OR @RegionID IS NULL)
 	                    GROUP BY c.CentreID
-                    ), 
+                    ),
                     Rankings AS
                     (
-	                    SELECT 
+	                    SELECT
 		                    RANK() OVER (ORDER BY sc.DelegateSessionCount DESC) AS Ranking,
 		                    c.CentreID,
 		                    c.CentreName,
