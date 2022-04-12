@@ -25,8 +25,6 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId);
 
-        int GetMaxNumRecentProgressRecordsForBrand(int brandId);
-
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId);
 
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
@@ -48,8 +46,6 @@ namespace DigitalLearningSolutions.Data.DataServices
         Dictionary<int, int> GetNumsOfRecentProgressRecordsForBrand(int brandId);
 
         IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
-
-        IEnumerable<int> GetCustomisationIdsForApplication(int applicationId);
 
         bool DoesCourseNameExistAtCentre(
             string customisationName,
@@ -686,36 +682,6 @@ namespace DigitalLearningSolutions.Data.DataServices
                     customisationId,
                 }
             );
-        }
-
-        public IEnumerable<int> GetCustomisationIdsForApplication(int applicationId)
-        {
-            return connection.Query<int>(
-                @"SELECT
-                    CustomisationID
-                  FROM Customisations
-                  WHERE ApplicationID = @applicationId",
-                new
-                { applicationId }
-            );
-        }
-
-        public int GetMaxNumRecentProgressRecordsForBrand(int brandId)
-        {
-            return connection.Query<int>(
-                @"SELECT COUNT(Progress.ProgressID) AS Num_Recent_Progress_Records
-                    FROM Applications
-                        INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
-                        INNER JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID
-                    WHERE Applications.BrandID = @brandId
-                      AND Applications.Debug = 0
-                      AND Applications.ArchivedDate IS NULL
-                      AND Progress.SubmittedTime > '2013-11-15 02:39:23'
-                    GROUP BY Applications.ApplicationID
-                    ORDER BY Num_Recent_Progress_Records DESC",
-                new
-                    { brandId }
-            ).FirstOrDefault();
         }
 
         public Dictionary<int, int> GetNumsOfRecentProgressRecordsForBrand(int brandId)

@@ -102,8 +102,6 @@
 
         int CreateNewCentreCourse(Customisation customisation);
 
-        int GetNumRecentProgressRecordsForApplication(int applicationId);
-
         LearningLog? GetLearningLogDetails(int progressId);
     }
 
@@ -426,13 +424,6 @@
                 )
             );
             return applicationsWithSections;
-        }
-
-        public int GetNumRecentProgressRecordsForApplication(int applicationId)
-        {
-            var customisationIds = courseDataService.GetCustomisationIdsForApplication(applicationId);
-            return customisationIds.Sum(customisationId => progressDataService.
-                GetNumRecentRecordsForCustomisation(customisationId));
         }
 
         public LearningLog? GetLearningLogDetails(int progressId)
