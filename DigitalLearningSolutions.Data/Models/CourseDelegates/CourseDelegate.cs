@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CourseDelegates
 {
     using System;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
