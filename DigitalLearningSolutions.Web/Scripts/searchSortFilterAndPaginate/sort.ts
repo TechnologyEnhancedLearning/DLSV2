@@ -1,6 +1,6 @@
 import moment from 'moment';
 import * as _ from 'lodash';
-import {ISearchableElement} from './searchSortFilterAndPaginate';
+import { ISearchableElement } from './searchSortFilterAndPaginate';
 
 export function setUpSort(onSortUpdated: VoidFunction): void {
   document.getElementById('select-sort-by')?.addEventListener('change', onSortUpdated);
