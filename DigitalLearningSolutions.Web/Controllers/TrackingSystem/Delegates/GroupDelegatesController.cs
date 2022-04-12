@@ -23,9 +23,9 @@
     public class GroupDelegatesController : Controller
     {
         private const string AddGroupDelegateCookieName = "AddGroupDelegateFilter";
-        private readonly PromptsService promptsService;
         private readonly IGroupsService groupsService;
         private readonly IJobGroupsService jobGroupsService;
+        private readonly PromptsService promptsService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IUserService userService;
 
@@ -172,7 +172,7 @@
 
         [HttpGet("{delegateId:int}/Remove")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
-        public IActionResult RemoveGroupDelegate(int groupId, int delegateId)
+        public IActionResult RemoveGroupDelegate(int groupId, int delegateId, ReturnPageQuery returnPageQuery)
         {
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
@@ -181,7 +181,13 @@
 
             var progressId = groupsService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId);
 
-            var model = new RemoveGroupDelegateViewModel(delegateUser!, groupName!, groupId, progressId);
+            var model = new RemoveGroupDelegateViewModel(
+                delegateUser!,
+                groupName!,
+                groupId,
+                progressId,
+                returnPageQuery
+            );
 
             return View(model);
         }
@@ -197,7 +203,7 @@
 
             groupsService.RemoveDelegateFromGroup(groupId, delegateId, model.RemoveStartedEnrolments);
 
-            return RedirectToAction("Index", new { groupId });
+            return RedirectToAction("Index", new { groupId, page = model.ReturnPageQuery.PageNumber });
         }
     }
 }

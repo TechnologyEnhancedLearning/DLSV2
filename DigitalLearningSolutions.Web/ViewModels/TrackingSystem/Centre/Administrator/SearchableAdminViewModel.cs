@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 {
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -9,7 +10,11 @@
     {
         public readonly bool CanShowDeactivateAdminButton;
 
-        public SearchableAdminViewModel(AdminUser adminUser, AdminUser loggedInAdminUser, int? page)
+        public SearchableAdminViewModel(
+            AdminUser adminUser,
+            AdminUser loggedInAdminUser,
+            ReturnPageQuery returnPageQuery
+        )
         {
             Id = adminUser.Id;
             Name = adminUser.SearchableName;
@@ -17,10 +22,11 @@
             EmailAddress = adminUser.EmailAddress;
             IsLocked = adminUser.IsLocked;
 
-            CanShowDeactivateAdminButton = UserPermissionsHelper.LoggedInAdminCanDeactivateUser(adminUser, loggedInAdminUser);
+            CanShowDeactivateAdminButton =
+                UserPermissionsHelper.LoggedInAdminCanDeactivateUser(adminUser, loggedInAdminUser);
 
             Tags = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser);
-            Page = page;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public int Id { get; set; }
@@ -37,6 +43,6 @@
 
         public bool IsLocked { get; set; }
 
-        public int? Page { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

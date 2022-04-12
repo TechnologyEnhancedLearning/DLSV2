@@ -70,7 +70,7 @@
 
         [Route("{groupCustomisationId:int}/Remove")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
-        public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId)
+        public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId, ReturnPageQuery returnPageQuery)
         {
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
@@ -79,7 +79,8 @@
             var model = new RemoveGroupCourseViewModel(
                 groupCourse!.GroupCustomisationId,
                 groupCourse.CourseName,
-                groupName!
+                groupName!,
+                returnPageQuery
             );
 
             return View(model);
@@ -100,7 +101,7 @@
                 model.DeleteStartedEnrolments
             );
 
-            return RedirectToAction(nameof(Index), new { groupId });
+            return RedirectToAction(nameof(Index), new { groupId, page = model.ReturnPageQuery.PageNumber });
         }
 
         [HttpGet("Add/SelectCourse/{page:int=1}")]

@@ -6,7 +6,7 @@
     {
         public EditSupervisorFormData() { }
 
-        protected EditSupervisorFormData(DelegateCourseInfo info, int? returnPage)
+        protected EditSupervisorFormData(DelegateCourseInfo info)
         {
             DelegateId = info.DelegateId;
             SupervisorId = info.SupervisorAdminId;
@@ -15,7 +15,6 @@
             DelegateName = info.DelegateFirstName == null
                 ? info.DelegateLastName
                 : $"{info.DelegateFirstName} {info.DelegateLastName}";
-            ReturnPage = returnPage;
         }
 
         protected EditSupervisorFormData(EditSupervisorFormData formData)
@@ -25,7 +24,6 @@
             CourseName = formData.CourseName;
             CustomisationId = formData.CustomisationId;
             DelegateName = formData.DelegateName;
-            ReturnPage = formData.ReturnPage;
         }
 
         public int? SupervisorId { get; set; }
@@ -33,6 +31,5 @@
         public string? DelegateName { get; set; }
         public int CustomisationId { get; set; }
         public string? CourseName { get; set; }
-        public int? ReturnPage { get; set; }
     }
 }

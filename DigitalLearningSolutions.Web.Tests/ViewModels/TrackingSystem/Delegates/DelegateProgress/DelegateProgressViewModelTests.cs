@@ -36,8 +36,7 @@
                     missingNamesDelegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
-                ),
-                null
+                )
             );
             var fullNamesDelegateInfo = new DelegateCourseInfo
             {
@@ -60,8 +59,7 @@
                     fullNamesDelegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
-                ),
-                null
+                )
             );
 
             // Then
@@ -93,8 +91,7 @@
                     delegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
-                ),
-                null
+                )
             );
 
             // Then
@@ -124,8 +121,7 @@
                     delegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
-                ),
-                null
+                )
             );
 
             // Then

@@ -2,11 +2,12 @@
 {
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class GroupDelegateViewModel
     {
-        public GroupDelegateViewModel(GroupDelegate groupDelegate)
+        public GroupDelegateViewModel(GroupDelegate groupDelegate, ReturnPageQuery returnPageQuery)
         {
             GroupDelegateId = groupDelegate.GroupDelegateId;
             GroupId = groupDelegate.GroupId;
@@ -19,6 +20,7 @@
                 groupDelegate.HasBeenPromptedForPrn,
                 groupDelegate.ProfessionalRegistrationNumber
             );
+            ReturnPageQuery = returnPageQuery;
         }
 
         public int GroupDelegateId { get; set; }
@@ -36,5 +38,7 @@
         public string CandidateNumber { get; set; }
 
         public string? ProfessionalRegistrationNumber { get; set; }
+
+        public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

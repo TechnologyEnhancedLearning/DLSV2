@@ -105,7 +105,7 @@ function parseNonNegativeIntOrNotApplicable(value: string): number {
 
 export function getSortBy(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-by');
-  return element?.value ?? 'Name';
+  return element?.value ?? 'SearchableName';
 }
 
 export function getSortDirection(): string {

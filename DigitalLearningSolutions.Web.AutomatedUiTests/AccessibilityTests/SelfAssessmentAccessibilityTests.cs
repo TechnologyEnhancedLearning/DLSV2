@@ -19,7 +19,7 @@
             const string startUrl = "/LearningPortal/SelfAssessment/1";
             const string firstCapabilityUrl = startUrl + "/1";
             const string capabilitiesUrl = startUrl + "/Capabilities";
-            const string completeByUrl = startUrl + "/CompleteBy";
+            const string completeByUrl = startUrl + "/CompleteBy?returnPageQuery=pageNumber%3D1";
 
             // When
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);
