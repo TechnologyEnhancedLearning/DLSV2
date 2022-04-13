@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
@@ -298,6 +299,22 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
+        public void GetNumsOfRecentProgressRecordsForBrand_returns_expected_dict()
+        {
+            // Given
+            var expectedDict = new Dictionary<int, int> { { 308, 1 } };
+
+            // When
+            var dict = courseDataService.GetNumsOfRecentProgressRecordsForBrand(
+                1,
+                new DateTime(2022, 1, 5, 11, 30, 30)
+            );
+
+            // Then
+            dict.Should().BeEquivalentTo(expectedDict);
+        }
+
+        [Test]
         public void GetCourseStatisticsAtCentreFilteredByCategory_should_return_course_statistics_correctly()
         {
             // Given
@@ -508,6 +525,34 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             using (new AssertionScope())
             {
                 result.Should().HaveCount(65);
+                result.First().Should().BeEquivalentTo(expectedFirstApplication);
+            }
+        }
+
+        [Test]
+        public void GetApplicationsByBrandId_returns_expected_values()
+        {
+            // Given
+            const int brandId = 1;
+
+            var expectedFirstApplication = new ApplicationDetails()
+            {
+                ApplicationId = 1,
+                ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
+                PLAssess = false,
+                DiagAssess = false,
+                CourseTopicId = 3,
+                CategoryName = "Office 2007",
+                CourseTopic = "Microsoft Office",
+            };
+
+            // When
+            var result = courseDataService.GetApplicationsByBrandId(brandId).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(50);
                 result.First().Should().BeEquivalentTo(expectedFirstApplication);
             }
         }

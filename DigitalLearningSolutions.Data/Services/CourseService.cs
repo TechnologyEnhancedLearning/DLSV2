@@ -107,6 +107,7 @@
 
     public class CourseService : ICourseService
     {
+        private readonly IClockService clockService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseDataService courseDataService;
@@ -116,6 +117,7 @@
         private readonly ISectionService sectionService;
 
         public CourseService(
+            IClockService clockService,
             ICourseDataService courseDataService,
             ICourseAdminFieldsService courseAdminFieldsService,
             IProgressDataService progressDataService,
@@ -125,6 +127,7 @@
             ISectionService sectionService
         )
         {
+            this.clockService = clockService;
             this.courseDataService = courseDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.progressDataService = progressDataService;
@@ -413,15 +416,19 @@
 
         public IEnumerable<ApplicationWithSections> GetApplicationsByBrandId(int brandId)
         {
-            var numRecordsByApplicationId = courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId);
+            var numRecordsByApplicationId =
+                courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId, clockService.UtcNow.AddMonths(-3));
             var applications = courseDataService.GetApplicationsByBrandId(brandId);
             double maxPopularity = numRecordsByApplicationId.Any() ? numRecordsByApplicationId.First().Value : 0;
             var applicationsWithSections = applications.Select(
                 application => new ApplicationWithSections(
                     application,
-                    sectionService.GetSectionsThatHaveTutorialsForApplication(application.ApplicationId),
-                    maxPopularity == 0 ? 0 :
-                        (numRecordsByApplicationId.ContainsKey(application.ApplicationId) ? numRecordsByApplicationId[application.ApplicationId] / maxPopularity : 0)
+                    sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(application.ApplicationId),
+                    maxPopularity == 0
+                        ? 0
+                        : (numRecordsByApplicationId.ContainsKey(application.ApplicationId)
+                            ? numRecordsByApplicationId[application.ApplicationId] / maxPopularity
+                            : 0)
                 )
             );
             return applicationsWithSections;

@@ -43,7 +43,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<ApplicationDetails> GetApplicationsByBrandId(int brandId);
 
-        Dictionary<int, int> GetNumsOfRecentProgressRecordsForBrand(int brandId);
+        Dictionary<int, int> GetNumsOfRecentProgressRecordsForBrand(int brandId, DateTime threeMonthsAgo);
 
         IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
 
@@ -684,9 +684,8 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public Dictionary<int, int> GetNumsOfRecentProgressRecordsForBrand(int brandId)
+        public Dictionary<int, int> GetNumsOfRecentProgressRecordsForBrand(int brandId, DateTime threeMonthsAgo)
         {
-            var threeMonthsAgo = DateTime.Now.AddMonths(-3);
             var query = connection.Query(
                 @"SELECT Applications.ApplicationID, COUNT(Progress.ProgressID) AS Num_Recent_Progress_Records
                     FROM Applications
@@ -701,8 +700,10 @@ namespace DigitalLearningSolutions.Data.DataServices
                 new
                     { brandId, threeMonthsAgo }
             );
-            return query.ToDictionary<dynamic?, int, int>(entry => entry.ApplicationID,
-                entry => entry.Num_Recent_Progress_Records);
+            return query.ToDictionary<dynamic?, int, int>(
+                entry => entry.ApplicationID,
+                entry => entry.Num_Recent_Progress_Records
+            );
         }
 
         public CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId)

@@ -12,6 +12,8 @@
         Section? GetSectionAndTutorialsBySectionIdForCustomisation(int customisationId, int sectionId);
 
         List<Section> GetSectionsThatHaveTutorialsForApplication(int applicationId);
+
+        public List<Section> GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(int applicationId);
     }
 
     public class SectionService : ISectionService
@@ -59,12 +61,18 @@
         public List<Section> GetSectionsThatHaveTutorialsForApplication(int applicationId)
         {
             var sections = sectionContentDataService.GetSectionsForApplication(applicationId).ToList();
-            var sectionsWithTutorials = sections.Where(section => tutorialContentDataService
-                .GetTutorialsForSection(section.SectionId).Any()).ToList();
-            foreach (var section in sectionsWithTutorials)
-            {
-                section.Tutorials = tutorialContentDataService.GetTutorialsForSection(section.SectionId);
-            }
+            return sections.Where(section => tutorialContentDataService.GetTutorialsForSection(section.SectionId).Any())
+                .ToList();
+        }
+
+        public List<Section> GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(int applicationId)
+        {
+            var sections = sectionContentDataService.GetSectionsForApplication(applicationId).ToList();
+            var sectionsWithTutorials = sections.Select(section => new Section(
+                    section.SectionId,
+                    section.SectionName,
+                    tutorialContentDataService.GetTutorialsForSection(section.SectionId))
+                ).Where(section => section.Tutorials.Any()).ToList();
             return sectionsWithTutorials;
         }
     }

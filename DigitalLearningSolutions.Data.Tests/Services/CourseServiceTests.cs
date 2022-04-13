@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Castle.Components.DictionaryAdapter;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
@@ -10,9 +11,11 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Controllers;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
+    using FluentAssertions.Common;
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
@@ -20,6 +23,7 @@
     {
         private const int CentreId = 2;
         private const int AdminCategoryId = 0;
+        private IClockService clockService = null!;
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseCategoriesDataService courseCategoriesDataService = null!;
         private ICourseDataService courseDataService = null!;
@@ -32,6 +36,7 @@
         [SetUp]
         public void Setup()
         {
+            clockService = A.Fake<IClockService>();
             courseDataService = A.Fake<ICourseDataService>();
             A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(CentreId, AdminCategoryId))
                 .Returns(GetSampleCourses());
@@ -42,6 +47,7 @@
             courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             sectionService = A.Fake<ISectionService>();
             courseService = new CourseService(
+                clockService,
                 courseDataService,
                 courseAdminFieldsService,
                 progressDataService,
@@ -886,6 +892,84 @@
 
             // Then
             result.Single().Should().Be(topicName);
+        }
+
+        [Test]
+        public void GetApplicationsByBrandId_returns_expected_applications()
+        {
+            // Given
+            const int brandId = 1;
+            const int applicationId = 1;
+            var validationTime = new DateTime(22, 4, 5, 11, 30, 30);
+            var emptyDict = new Dictionary<int, int>();
+            IEnumerable<ApplicationDetails> applications = new List<ApplicationDetails>
+            {
+                new ApplicationDetails
+                {
+                    ApplicationId = 1,
+                    ApplicationName = "Application Name",
+                    CategoryName = "Category Name",
+                    CourseTopic = "Course Topic",
+                    DiagAssess = false,
+                    CourseTopicId = 1,
+                    PLAssess = false,
+                    SearchableName = "Searchable Name",
+                },
+            };
+            var sections = new List<Section>
+            {
+                new Section
+                {
+                    SectionId = 1,
+                    SectionName = "Section Name",
+                    Tutorials = new List<Tutorial>
+                    {
+                        new Tutorial
+                        {
+                            AverageTutMins = 1,
+                            OverrideTutorialMins = 0,
+                            DiagStatus = true,
+                            Status = true,
+                            TutorialName = "Tutorial Name",
+                            TutorialId = 1,
+                        },
+                    },
+                },
+            };
+            IEnumerable<ApplicationWithSections> expectedResult = new List<ApplicationWithSections>
+            {
+                new ApplicationWithSections(applications.First(), sections, 0),
+            };
+            A.CallTo(() => clockService.UtcNow).Returns(validationTime);
+            A.CallTo(
+                () => courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId, validationTime.AddMonths(-3))
+            ).Returns(emptyDict);
+            A.CallTo(() => courseDataService.GetApplicationsByBrandId(brandId)).Returns(applications);
+            A.CallTo(() => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(applicationId)).Returns(sections);
+
+            // When
+            var result = courseService.GetApplicationsByBrandId(brandId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeEquivalentTo(expectedResult);
+                A.CallTo(
+                    () => clockService.UtcNow
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => courseDataService.GetNumsOfRecentProgressRecordsForBrand(
+                        brandId,
+                        validationTime.AddMonths(-3)
+                    )
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => courseDataService.GetApplicationsByBrandId(brandId)
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(applicationId)
+                ).MustHaveHappenedOnceExactly();
+            }
         }
 
         [Test]
