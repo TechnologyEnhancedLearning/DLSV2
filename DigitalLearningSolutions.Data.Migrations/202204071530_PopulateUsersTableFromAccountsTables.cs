@@ -8,6 +8,7 @@ namespace DigitalLearningSolutions.Data.Migrations
     using System.Linq;
     using System.Transactions;
     using Dapper;
+    using DigitalLearningSolutions.Data.Migrations.Properties;
     using FluentMigrator;
     using Microsoft.Data.SqlClient;
 
@@ -44,7 +45,8 @@ namespace DigitalLearningSolutions.Data.Migrations
                     HasBeenPromptedForPrn,
                     LearningHubAuthId,
                     HasDismissedLhLoginWarning,
-                    EmailVerified
+                    EmailVerified,
+                    DetailsLastChecked
                 )
                 SELECT Email,
                     Password_deprecated,
@@ -60,6 +62,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                     0,
                     NULL,
                     0,
+                    GETUTCDATE(),
                     GETUTCDATE()
                     FROM AdminAccounts"
             );
@@ -67,15 +70,69 @@ namespace DigitalLearningSolutions.Data.Migrations
             // 3. Update AdminAccounts to reference Users.ID
             connection.Execute(
                 @"UPDATE AdminAccounts
-                SET UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail)"
+                    SET
+                        UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
+                        Email = NULL"
             );
 
             // 4. DelegateAccount
 
-            var delegateAccounts =
-                connection.Query<DelegateAccount>("SELECT * FROM DelegateAccounts");
+            // Transfer all delegates with unique emails not already in the Users table
+            connection.Execute(
+                @"INSERT INTO dbo.Users (
+                    PrimaryEmail,
+                    PasswordHash,
+                    FirstName,
+                    LastName,
+                    JobGroupID,
+                    ProfessionalRegistrationNumber,
+                    ProfileImage,
+                    Active,
+                    ResetPasswordID,
+                    TermsAgreed,
+                    FailedLoginCount,
+                    HasBeenPromptedForPrn,
+                    LearningHubAuthId,
+                    HasDismissedLhLoginWarning,
+                    EmailVerified,
+                    DetailsLastChecked
+                )
+                SELECT Email,
+                    COALESCE(OldPassword, ''),
+                    COALESCE(FirstName_deprecated, ''),
+                    COALESCE(LastName_deprecated, ''),
+                    JobGroupID_deprecated,
+                    ProfessionalRegistrationNumber_deprecated,
+                    ProfileImage_deprecated,
+                    Active,
+                    ResetPasswordID_deprecated,
+                    NULL,
+                    0,
+                    HasBeenPromptedForPrn_deprecated,
+                    LearningHubAuthID_deprecated,
+                    HasDismissedLhLoginWarning_deprecated,
+                    GETUTCDATE(),
+                    GETUTCDATE()
+                    FROM DelegateAccounts
+                    WHERE Email IN (
+                        SELECT Email FROM DelegateAccounts
+                        WHERE Email IS NOT NULL AND TRIM(Email) IS NOT NULL AND TRIM(Email) <> ''
+                        GROUP BY Email
+                        HAVING COUNT(*) = 1
+                        EXCEPT
+                        SELECT PrimaryEmail FROM Users)"
+            );
+            connection.Execute(
+                @"UPDATE DelegateAccounts
+                    SET
+                        UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
+                        Email = NULL,
+                        CentreSpecificDetailsLastChecked = GETUTCDATE()"
+            );
 
-            var duplicateDelegateAccountsAtCentre = new List<DelegateAccount>();
+            // Get the rest of the delegate accounts we've not resolved yet
+            var delegateAccounts =
+                connection.Query<DelegateAccount>("SELECT * FROM DelegateAccounts WHERE UserId IS NULL");
 
             var delegateAccountsGroupedByEmail = delegateAccounts.GroupBy(da => da.Email);
 
@@ -83,18 +140,33 @@ namespace DigitalLearningSolutions.Data.Migrations
             {
                 if (!string.IsNullOrWhiteSpace(emailGroup.Key))
                 {
-                    // If we have an email, we can check for existing users.
+                    var delegatesToAttemptToLink = new List<DelegateAccount>();
                     var delegateAccountsGroupedByCentre = emailGroup.GroupBy(da => da.CentreId);
 
                     foreach (var centreGroup in delegateAccountsGroupedByCentre)
                     {
-                        // If there are more than one delegate accounts with the same email at a centre
-                        // we only want to keep the email on the first. The rest get reset to having a User with no email
-                        var firstAtCentre = centreGroup.First();
+                        delegatesToAttemptToLink.Add(centreGroup.First());
 
+                        // All duplicate emails at a centre need new User accounts.
+                        // If there are more than one delegate accounts with the same email at a centre
+                        // we only want to keep the email on the first. The rest get reset to having a User with a guid email
+                        var othersAtCentre = centreGroup.Skip(1);
+
+                        foreach (var delegateAccount in othersAtCentre)
+                        {
+                            // Insert a new User with Guid email
+                            InsertNewUserForDelegateAccount(connection, delegateAccount, true);
+                        }
+                    }
+
+                    var allJobGroupsMatch =
+                        delegatesToAttemptToLink.Select(da => da.JobGroupId_deprecated).Distinct().Count() < 2;
+                    foreach (var delegateAccount in delegatesToAttemptToLink)
+                    {
+                        // Check for existing user with email
                         var existingUserWithEmail = connection.QuerySingleOrDefault<User>(
                             "SELECT * FROM Users WHERE PrimaryEmail = @email",
-                            new { email = firstAtCentre.Email }
+                            new { email = emailGroup.Key }
                         );
 
                         if (existingUserWithEmail != null)
@@ -103,74 +175,40 @@ namespace DigitalLearningSolutions.Data.Migrations
                             UpdateExistingUserWithDelegateDetails(
                                 connection,
                                 existingUserWithEmail,
-                                firstAtCentre,
-                                emailGroup
+                                delegateAccount,
+                                allJobGroupsMatch
                             );
                         }
                         else
                         {
-                            // Otherwise we create a new user
-                            InsertNewUserForDelegateAccount(connection, firstAtCentre);
+                            // Otherwise we create a new user with the email address
+                            InsertNewUserForDelegateAccount(connection, delegateAccount, false);
                         }
-
-                        var othersAtCentre = centreGroup.Skip(1);
-
-                        duplicateDelegateAccountsAtCentre.AddRange(othersAtCentre);
                     }
                 }
                 else
                 {
-                    // If we don't have a valid email we create a new user
+                    // If we don't have a valid email we create new users for each with a guid email
                     foreach (var delegateAccount in emailGroup)
                     {
-                        InsertNewUserForDelegateAccount(connection, delegateAccount);
+                        InsertNewUserForDelegateAccount(connection, delegateAccount, true);
                     }
                 }
-            }
-
-            // All duplicate emails at a centre need new User accounts
-            foreach (var delegateAccount in duplicateDelegateAccountsAtCentre)
-            {
-                InsertNewUserForDelegateAccount(connection, delegateAccount, true);
             }
 
             transactionScope.Complete();
         }
 
-        private static void UpdateDelegateAccountUserIdAndDetailsLastChecked(
-            IDbConnection connection,
-            int userId,
-            int delegateAccountId,
-            DateTime? detailsLastChecked
-        )
-        {
-            connection.Execute(
-                @"UPDATE DelegateAccounts
-                            SET
-                                UserID = @userId,
-                                DetailsLastChecked = @detailsLastChecked
-                            WHERE ID = @delegateAccountId",
-                new
-                {
-                    userId,
-                    delegateAccountId,
-                    detailsLastChecked,
-                }
-            );
-        }
-
         public override void Down()
         {
-            Execute.Sql("UPDATE DelegateAccounts SET UserId = NULL, DetailsLastChecked = NULL");
-            Execute.Sql("UPDATE AdminAccounts SET UserId = NULL");
-            Execute.Sql("DELETE Users");
+            Execute.Sql(Resources.UAR_859_PopulateUsersTableFromAccountsTables_DOWN);
         }
 
         private static void UpdateExistingUserWithDelegateDetails(
             IDbConnection connection,
             User existingUserWithEmail,
             DelegateAccount delegateAccount,
-            IEnumerable<DelegateAccount> delegateAccountsWithMatchingEmail
+            bool allJobGroupsMatch
         )
         {
             connection.Execute(
@@ -187,7 +225,8 @@ namespace DigitalLearningSolutions.Data.Migrations
                                 HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
                                 LearningHubAuthId = @learningHubAuthId,
                                 HasDismissedLhLoginWarning = @hasDismissedLhLoginWarning,
-                                EmailVerified = @emailVerified
+                                EmailVerified = GETUTCDATE(),
+                                DetailsLastChecked = CASE WHEN @detailsMatched = 0 OR DetailsLastChecked IS NULL THEN NULL ELSE GETUTCDATE()
                             WHERE ID = @userId",
                 new
                 {
@@ -209,35 +248,52 @@ namespace DigitalLearningSolutions.Data.Migrations
                             ? delegateAccount.ProfessionalRegistrationNumber_deprecated
                             : existingUserWithEmail.ProfessionalRegistrationNumber,
                     profileImage = existingUserWithEmail.ProfileImage ?? delegateAccount.ProfileImage_deprecated,
-                    active = !existingUserWithEmail.Active ? delegateAccount.Active : existingUserWithEmail.Active,
+                    active = existingUserWithEmail.Active || delegateAccount.Active,
                     resetPasswordId = existingUserWithEmail.ResetPasswordId ??
                                       delegateAccount.ResetPasswordId_deprecated,
-                    hasBeenPromptedForPrn = !existingUserWithEmail.HasBeenPromptedForPrn
-                        ? delegateAccount.HasBeenPromptedForPrn_deprecated
-                        : existingUserWithEmail.HasBeenPromptedForPrn,
+                    hasBeenPromptedForPrn = existingUserWithEmail.HasBeenPromptedForPrn ||
+                                            delegateAccount.HasBeenPromptedForPrn_deprecated,
                     learningHubAuthId = existingUserWithEmail.LearningHubAuthId ??
                                         delegateAccount.LearningHubAuthId_deprecated,
-                    hasDismissedLhLoginWarning = !existingUserWithEmail.HasDismissedLhLoginWarning
-                        ? delegateAccount.HasDismissedLhLoginWarning_deprecated
-                        : existingUserWithEmail.HasDismissedLhLoginWarning,
-                    emailVerified = DateTime.UtcNow,
+                    hasDismissedLhLoginWarning = existingUserWithEmail.HasDismissedLhLoginWarning ||
+                                                 delegateAccount.HasDismissedLhLoginWarning_deprecated,
+                    detailsMatch = DoesDelegateAccountMatchExistingUser(delegateAccount, existingUserWithEmail, allJobGroupsMatch)
                 }
             );
 
-            UpdateDelegateAccountUserIdAndDetailsLastChecked(
+            UpdateDelegateAccountUserIdEmailAndDetailsLastChecked(
                 connection,
                 existingUserWithEmail.Id,
-                delegateAccount.Id,
-                GetDetailsLastCheckedValue(
-                    connection,
-                    existingUserWithEmail.Id,
-                    delegateAccount,
-                    delegateAccountsWithMatchingEmail
-                )
+                delegateAccount.Id
             );
         }
 
-        private static void InsertNewUserForDelegateAccount(IDbConnection connection, DelegateAccount delegateAccount, bool isDuplicateAtCentre = false)
+        private static bool DoesDelegateAccountMatchExistingUser(DelegateAccount delegateAccount, User existingUser, bool allJobGroupsMatch)
+        {
+            var firstNamesMatch = delegateAccount.FirstName_deprecated == existingUser.FirstName ||
+                                  string.IsNullOrWhiteSpace(existingUser.FirstName) ||
+                                  string.IsNullOrWhiteSpace(delegateAccount.FirstName_deprecated);
+
+            var lastNamesMatch = delegateAccount.LastName_deprecated == existingUser.LastName ||
+                                 string.IsNullOrWhiteSpace(existingUser.LastName) ||
+                                 string.IsNullOrWhiteSpace(delegateAccount.LastName_deprecated);
+
+            var prnMatch = delegateAccount.ProfessionalRegistrationNumber_deprecated == existingUser.ProfessionalRegistrationNumber ||
+                           string.IsNullOrWhiteSpace(existingUser.ProfessionalRegistrationNumber) ||
+                           string.IsNullOrWhiteSpace(delegateAccount.ProfessionalRegistrationNumber_deprecated);
+
+            var profileImageMatch = delegateAccount.ProfileImage_deprecated == existingUser.ProfileImage ||
+                                    existingUser.ProfileImage == null ||
+                                    delegateAccount.ProfileImage_deprecated == null;
+
+            return allJobGroupsMatch && firstNamesMatch && lastNamesMatch && profileImageMatch && prnMatch;
+        }
+
+        private static void InsertNewUserForDelegateAccount(
+            IDbConnection connection,
+            DelegateAccount delegateAccount,
+            bool setEmailToGuid
+        )
         {
             var userId = connection.QuerySingle<int>(
                 @"INSERT INTO Users
@@ -256,7 +312,8 @@ namespace DigitalLearningSolutions.Data.Migrations
                                 HasBeenPromptedForPrn,
                                 LearningHubAuthId,
                                 HasDismissedLhLoginWarning,
-                                EmailVerified
+                                EmailVerified,
+                                DetailsLastChecked
                             )
                             OUTPUT Inserted.ID
                             VALUES
@@ -275,11 +332,12 @@ namespace DigitalLearningSolutions.Data.Migrations
                                 @hasBeenPromptedForPrn,
                                 @learningHubAuthId,
                                 @hasDismissedLhLoginWarning,
-                                @emailVerified
+                                GETUTCDATE(),
+                                GETUTCDATE()
                             )",
                 new
                 {
-                    primaryEmail = string.IsNullOrWhiteSpace(delegateAccount.Email) || isDuplicateAtCentre
+                    primaryEmail = setEmailToGuid
                         ? Guid.NewGuid().ToString()
                         : delegateAccount.Email,
                     passwordHash = delegateAccount.OldPassword ?? "",
@@ -293,34 +351,31 @@ namespace DigitalLearningSolutions.Data.Migrations
                     hasBeenPromptedForPrn = delegateAccount.HasBeenPromptedForPrn_deprecated,
                     learningHubAuthId = delegateAccount.LearningHubAuthId_deprecated,
                     hasDismissedLhLoginWarning = delegateAccount.HasDismissedLhLoginWarning_deprecated,
-                    emailVerified = DateTime.UtcNow,
                 }
             );
 
-            UpdateDelegateAccountUserIdAndDetailsLastChecked(connection, userId, delegateAccount.Id, DateTime.UtcNow);
+            UpdateDelegateAccountUserIdEmailAndDetailsLastChecked(connection, userId, delegateAccount.Id);
         }
 
-        private static DateTime? GetDetailsLastCheckedValue(
+        private static void UpdateDelegateAccountUserIdEmailAndDetailsLastChecked(
             IDbConnection connection,
-            int existingUserId,
-            DelegateAccount currentDelegateAccount,
-            IEnumerable<DelegateAccount> delegateAccountsWithMatchingEmail
+            int userId,
+            int delegateAccountId
         )
         {
-            var existingUser = connection.QuerySingleOrDefault<User>(
-                "SELECT * FROM Users WHERE ID = @existingUserId",
-                new { existingUserId }
+            connection.Execute(
+                @"UPDATE DelegateAccounts
+                            SET
+                                UserID = @userId,
+                                Email = NULL,
+                                CentreSpecificDetailsLastChecked = GETUTCDATE()
+                            WHERE ID = @delegateAccountId",
+                new
+                {
+                    userId,
+                    delegateAccountId
+                }
             );
-
-            if (currentDelegateAccount.FirstName_deprecated == existingUser.FirstName &&
-                currentDelegateAccount.LastName_deprecated == existingUser.LastName &&
-                currentDelegateAccount.ProfileImage_deprecated == existingUser.ProfileImage &&
-                delegateAccountsWithMatchingEmail.Select(da => da.JobGroupId_deprecated).Distinct().Count() < 2)
-            {
-                return DateTime.UtcNow;
-            }
-
-            return null;
         }
 
         private class DelegateAccount
@@ -329,7 +384,7 @@ namespace DigitalLearningSolutions.Data.Migrations
             public bool Active { get; set; }
             public int CentreId { get; set; }
             public string? FirstName_deprecated { get; set; }
-            public string LastName_deprecated { get; set; }
+            public string LastName_deprecated { get; set; } = null!;
             public int JobGroupId_deprecated { get; set; }
             public string? Email { get; set; }
             public string? OldPassword { get; set; }
@@ -344,9 +399,9 @@ namespace DigitalLearningSolutions.Data.Migrations
         private class User
         {
             public int Id { get; set; }
-            public string PasswordHash { get; set; }
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
+            public string PasswordHash { get; set; } = null!;
+            public string FirstName { get; set; } = null!;
+            public string LastName { get; set; } = null!;
             public int JobGroupId { get; set; }
             public string? ProfessionalRegistrationNumber { get; set; }
             public byte[]? ProfileImage { get; set; }
