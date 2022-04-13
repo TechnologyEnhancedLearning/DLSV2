@@ -43,7 +43,7 @@
     <h2 class="nhsuk-heading-xl heading-margin-2">Courses</h2>
     @foreach (var application in Model.Applications) {
       if (application.Sections.Any()) {
-        <partial name="_BrandCourseCard" model="@application"/>
+        <partial name="_BrandCourseCard" model="@application" />
       }
     }
   </div>

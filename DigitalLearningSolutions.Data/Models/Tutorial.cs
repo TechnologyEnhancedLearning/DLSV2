@@ -4,7 +4,14 @@
     {
         public Tutorial() { }
 
-        public Tutorial(int tutorialId, string tutorialName, bool? status, bool? diagStatus, int? overrideTutorialMins, int? averageTutMins)
+        public Tutorial(
+            int tutorialId,
+            string tutorialName,
+            bool? status,
+            bool? diagStatus,
+            int? overrideTutorialMins,
+            int? averageTutMins
+        )
         {
             TutorialId = tutorialId;
             TutorialName = tutorialName;
@@ -20,6 +27,5 @@
         public bool? DiagStatus { get; set; }
         public int? OverrideTutorialMins { get; set; }
         public int? AverageTutMins { get; set; }
-
     }
 }

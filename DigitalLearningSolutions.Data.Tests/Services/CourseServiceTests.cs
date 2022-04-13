@@ -945,7 +945,8 @@
                 () => courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId, validationTime.AddMonths(-3))
             ).Returns(emptyDict);
             A.CallTo(() => courseDataService.GetApplicationsByBrandId(brandId)).Returns(applications);
-            A.CallTo(() => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(applicationId)).Returns(sections);
+            A.CallTo(() => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(applicationId))
+                .Returns(sections);
 
             // When
             var result = courseService.GetApplicationsByBrandId(brandId);

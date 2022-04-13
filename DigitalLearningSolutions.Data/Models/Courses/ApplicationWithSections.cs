@@ -9,7 +9,8 @@
         public ApplicationWithSections(
             ApplicationDetails applicationDetails,
             IEnumerable<Section> sections,
-            double popularityRating)
+            double popularityRating
+        )
         {
             ApplicationId = applicationDetails.ApplicationId;
             ApplicationName = applicationDetails.ApplicationName;
@@ -37,6 +38,7 @@
 
             PopularityRating = popularityRating;
         }
+
         public int TotalMins { get; set; }
         public double PopularityRating { get; set; }
         public IEnumerable<Section> Sections { get; set; }

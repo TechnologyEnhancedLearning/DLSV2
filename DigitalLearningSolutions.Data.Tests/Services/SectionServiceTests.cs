@@ -171,7 +171,8 @@
         }
 
         [Test]
-        public void GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication_calls_data_services_and_returns_expected_sections()
+        public void
+            GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication_calls_data_services_and_returns_expected_sections()
         {
             // Given
             var tutorialsOne = new List<Tutorial>
@@ -220,7 +221,8 @@
         }
 
         [Test]
-        public void GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication_returns_only_sections_with_tutorials()
+        public void
+            GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication_returns_only_sections_with_tutorials()
         {
             // Given
             var sectionOne = new Section(1, "Section");

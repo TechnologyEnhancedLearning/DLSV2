@@ -423,7 +423,9 @@
             var applicationsWithSections = applications.Select(
                 application => new ApplicationWithSections(
                     application,
-                    sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(application.ApplicationId),
+                    sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(
+                        application.ApplicationId
+                    ),
                     maxPopularity == 0
                         ? 0
                         : (numRecordsByApplicationId.ContainsKey(application.ApplicationId)
