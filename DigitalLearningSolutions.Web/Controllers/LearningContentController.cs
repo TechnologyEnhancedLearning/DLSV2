@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    using System.Collections;
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;

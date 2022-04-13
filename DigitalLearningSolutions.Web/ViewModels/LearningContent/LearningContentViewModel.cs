@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningContent
 {
-    using System.Collections;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.TutorialContent;

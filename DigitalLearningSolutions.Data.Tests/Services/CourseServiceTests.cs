@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Castle.Components.DictionaryAdapter;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
@@ -11,11 +10,9 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.Controllers;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
-    using FluentAssertions.Common;
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
