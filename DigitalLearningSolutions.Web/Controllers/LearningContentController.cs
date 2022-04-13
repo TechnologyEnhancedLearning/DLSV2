@@ -21,7 +21,7 @@
             this.tutorialService = tutorialService;
         }
 
-        [Route("LearningContent/{brandId:int}")]
+        [Route("Home/LearningContent/{brandId:int}")]
         public IActionResult Index(int brandId)
         {
             var brand = brandsService.GetPublicBrandById(brandId);
