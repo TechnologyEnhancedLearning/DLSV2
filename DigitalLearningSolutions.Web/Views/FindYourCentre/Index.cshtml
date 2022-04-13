@@ -28,16 +28,14 @@
         <div class="nhsuk-u-margin-right-auto nhsuk-u-margin-bottom-3">
           <partial name="SearchablePage/_SearchResultsCount" model="Model" />
         </div>
-
+        <partial name="SearchablePage/_Pagination" model="Model" />
         <div id="searchable-elements">
           @foreach (var centre in Model.CentreSummaries) {
             <partial name="_CentreSummaryCard" model="centre" />
           }
         </div>
       }
-      @if (Model.TotalPages > 1) {
-        <partial name="SearchablePage/_Pagination" model="Model" />
-      }
+      <partial name="SearchablePage/_Pagination" model="Model" />
     </div>
   </div>
 </div>

@@ -1,15 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.FindYourCentre;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
 
@@ -23,42 +21,34 @@
 
         private readonly ICentresService centresService;
 
+        private readonly IRegionDataService regionDataService;
+
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
-        public FindYourCentreController(IConfiguration configuration, ICentresService centresService, ISearchSortFilterPaginateService searchSortFilterPaginateService)
+        public FindYourCentreController(
+            IConfiguration configuration,
+            ICentresService centresService,
+            IRegionDataService regionDataService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
+        )
         {
             this.configuration = configuration;
             this.centresService = centresService;
+            this.regionDataService = regionDataService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        /*[RedirectDelegateOnlyToLearningPortal]
-        public IActionResult Index()
-        {
-            var centreSummaries = centresService.GetAllCentreSummariesForFindCentre();
-            /*var model = centreId == null
-                ? new FindYourCentreViewModel(configuration, centreSummaries)
-                : new FindYourCentreViewModel(centreId, configuration);#1#
-            var model = new FindYourCentreViewModel(configuration, centreSummaries);
-
-            return View(model);
-        }*/
-
-        [Route("{page=1:int}")]
+        [RedirectDelegateOnlyToLearningPortal]
+        [Route("FindYourCentre/{page=1:int}")]
         public IActionResult Index(
             int page = 1,
             string? searchString = null,
-            /*string? sortBy = null,
-            string sortDirection = GenericSortingHelper.Ascending,*/
             string? existingFilterString = null,
             string? newFilterToAdd = null,
             bool clearFilters = false,
             int? itemsPerPage = null
         )
         {
-            /*
-            sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            */
             /*existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
@@ -68,19 +58,16 @@
                 FindCentreActiveStatusFilterOptions.IsActive.FilterValue
             );*/
 
-
             var centreSummaries = centresService.GetAllCentreSummariesForFindCentre();
+            var regions = regionDataService.GetRegionsAlphabetical();
 
             /*
-            var availableFilters = FindCentreViewModelFilterOptions.GetAllDelegatesFilterViewModels(
-                jobGroups,
-                promptsWithOptions
-            );
+            var availableFilters = FindCentreViewModelFilterOptions.FindCentreFilterViewModels(regions);
             */
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
-                null,
+                new SortOptions(DefaultSortByOptions.Name.PropertyName, GenericSortingHelper.Ascending),
                 /*new FilterOptions(
                     existingFilterString,
                     availableFilters,
