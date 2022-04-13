@@ -1,26 +1,28 @@
 namespace DigitalLearningSolutions.Web.ViewModels.FindYourCentre
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Centres;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using Microsoft.Extensions.Configuration;
 
-    public class FindYourCentreViewModel
+    public class FindYourCentreViewModel : BaseSearchablePageViewModel<CentreSummaryForFindCentre>
     {
-        public string Url { get; set; }
         public IEnumerable<CentreSummaryForFindCentre> CentreSummaries { get; set; }
 
-        public FindYourCentreViewModel(IConfiguration config, IEnumerable<CentreSummaryForFindCentre> centreSummaries)
+        public FindYourCentreViewModel(SearchSortFilterPaginationResult<CentreSummaryForFindCentre> centreSummaries) :
+            base(centreSummaries, false, null, "Search Centres")
         {
-            Url = $"{config.GetCurrentSystemBaseUrl()}/findyourcentre?nonav=true";
-            CentreSummaries = centreSummaries;
+            CentreSummaries = centreSummaries.ItemsToDisplay;
         }
 
-        /*public FindYourCentreViewModel(string centreId, IConfiguration config)
+        public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            Url = $"{config.GetCurrentSystemBaseUrl()}/findyourcentre?nonav=true&centreid={centreId}";
-        }*/
-
+            DefaultSortByOptions.Name,
+        };
+        public override bool NoDataFound => !CentreSummaries.Any() && NoSearchOrFilter;
     }
 }

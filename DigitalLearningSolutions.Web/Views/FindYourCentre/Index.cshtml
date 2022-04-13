@@ -13,29 +13,21 @@
   </div>
 </div>
 
-@*<div class="nhsuk-grid-row">
+<div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
       <vc:loading-spinner page-has-side-nav-menu="false" />
     }
     <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-three-quarters">
-          <h1 class="nhsuk-heading-xl">Centre course setup</h1>
-        </div>
-        <div class="nhsuk-grid-column-one-quarter heading-button-group">
-          <a class="nhsuk-button heading-button nhsuk-u-margin-bottom-5" asp-controller="CourseSetup" asp-action="AddCourseNew" role="button">
-            Add
-          </a>
-        </div>
-      </div>
 
-      <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
+      <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchAndFilter" model="Model" />
 
       @if (Model.NoDataFound) {
         <p>The centre has no courses set up yet.</p>
       } else {
-        <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
+        <div class="nhsuk-u-margin-right-auto nhsuk-u-margin-bottom-3">
+          <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+        </div>
 
         <div id="searchable-elements">
           @foreach (var centre in Model.CentreSummaries) {
@@ -48,8 +40,4 @@
       }
     </div>
   </div>
-</div>*@
-
-@foreach (var centre in Model.CentreSummaries) {
-  <partial name="_CentreSummaryCard" model="centre" />
-}
+</div>
