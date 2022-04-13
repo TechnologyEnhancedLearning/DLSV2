@@ -8,9 +8,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
         public EditCompletionDateViewModel(
             int progressId,
             DelegateAccessRoute accessedVia,
-            DelegateCourseInfo info,
-            int? returnPage
-        ) : base(info, returnPage)
+            DelegateCourseInfo info
+        ) : base(info)
         {
             ProgressId = progressId;
             AccessedVia = accessedVia;

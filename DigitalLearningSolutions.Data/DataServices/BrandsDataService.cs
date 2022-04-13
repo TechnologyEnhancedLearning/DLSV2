@@ -2,12 +2,15 @@
 {
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Common;
 
     public interface IBrandsDataService
     {
         IEnumerable<BrandDetail> GetAllBrands();
+
+        BrandDetail? GetBrandById(int brandId);
     }
 
     public class BrandsDataService : IBrandsDataService
@@ -38,6 +41,14 @@
         public IEnumerable<BrandDetail> GetAllBrands()
         {
             return connection.Query<BrandDetail>($@"{SelectAllBrandsSql}");
+        }
+
+        public BrandDetail? GetBrandById(int brandId)
+        {
+            return connection.Query<BrandDetail>(
+                @$"{SelectAllBrandsSql} WHERE BrandID = @brandId",
+                new { brandId }
+            ).SingleOrDefault();
         }
     }
 }

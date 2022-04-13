@@ -68,9 +68,9 @@
         }
         else
         {
-            <nhs-form-group nhs-validation-for="Competency.AssessmentQuestions[1].Result">
-              <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
-            </nhs-form-group>
+          <nhs-form-group nhs-validation-for="Competency.AssessmentQuestions[1].Result">
+            <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
+          </nhs-form-group>
         }
         @if (question.value.SignedOff != null && question.value.SignedOff == true)
         {

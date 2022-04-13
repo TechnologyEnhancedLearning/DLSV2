@@ -8,6 +8,8 @@
     public interface IBrandsService
     {
         IEnumerable<BrandDetail> GetPublicBrands();
+
+        BrandDetail? GetPublicBrandById(int brandId);
     }
 
     public class BrandsService : IBrandsService
@@ -22,7 +24,13 @@
         public IEnumerable<BrandDetail> GetPublicBrands()
         {
             return brandsDataService.GetAllBrands()
-                .Where(f => f.IncludeOnLanding);
+                .Where(b => b.IncludeOnLanding);
+        }
+
+        public BrandDetail? GetPublicBrandById(int brandId)
+        {
+            var brand = brandsDataService.GetBrandById(brandId);
+            return brand is { IncludeOnLanding: true } ? brand : null;
         }
     }
 }

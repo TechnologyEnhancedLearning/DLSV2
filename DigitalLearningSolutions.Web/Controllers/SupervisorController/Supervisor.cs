@@ -42,18 +42,30 @@
             int page = 1
         )
         {
+            sortBy ??= DefaultSortByOptions.Name.PropertyName;
             var adminId = GetAdminID();
             var loggedInUserId = User.GetAdminId();
             var centreId = GetCentreId();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
-            var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select( supervisor =>
-            {
-                return new SupervisorDelegateDetailViewModel(supervisor, page);
-            });
-            sortBy ??= DefaultSortByOptions.Name.PropertyName;
-
+            var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
+                supervisor =>
+                {
+                    return new SupervisorDelegateDetailViewModel(
+                        supervisor,
+                        new ReturnPageQuery(
+                            page,
+                            $"{supervisor.ID}-card",
+                            PaginationOptions.DefaultItemsPerPage,
+                            searchString,
+                            sortBy,
+                            sortDirection
+                        )
+                    );
+                }
+            );
+            
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
                 new SortOptions(sortBy, sortDirection),
@@ -153,11 +165,11 @@
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
-        public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, int? returnPage)
+        public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
-            var model = new SupervisorDelegateViewModel(superviseDelegate, returnPage);
+            var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
             return View("RemoveConfirm", model);
         }
 

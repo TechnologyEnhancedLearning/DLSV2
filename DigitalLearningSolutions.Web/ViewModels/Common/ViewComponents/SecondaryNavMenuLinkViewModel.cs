@@ -2,11 +2,11 @@
 {
     using System.Collections.Generic;
 
-    public class SideMenuLinkViewModel : LinkViewModel
+    public class SecondaryNavMenuLinkViewModel : LinkViewModel
     {
         public readonly bool IsCurrentPage;
 
-        public SideMenuLinkViewModel(
+        public SecondaryNavMenuLinkViewModel(
             string aspController,
             string aspAction,
             string linkText,

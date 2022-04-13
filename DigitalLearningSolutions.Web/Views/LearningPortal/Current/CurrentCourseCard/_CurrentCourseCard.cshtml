@@ -27,8 +27,10 @@
       @if (Model.SelfEnrolled) {
         <a class="nhsuk-button delete-button small-edit-button"
            aria-describedby="@Model.Id-name-course"
+           data-return-page-enabled="true"
            asp-action="RemoveCurrentCourseConfirmation"
            asp-route-id="@Model.Id"
+           asp-route-returnPageQuery="@Model.ReturnPageQuery"
            role="button">
           Remove course
         </a>

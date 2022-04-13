@@ -1,18 +1,22 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 {
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+
     public class MarkActionPlanResourceAsCompleteViewModel : MarkActionPlanResourceAsCompleteFormData
     {
         public MarkActionPlanResourceAsCompleteViewModel(
             int learningLogItemId,
             bool absentInLearningHub,
             string resourceName,
-            bool apiIsAccessible
+            bool apiIsAccessible,
+            ReturnPageQuery returnPageQuery
         )
         {
             LearningLogItemId = learningLogItemId;
             AbsentInLearningHub = absentInLearningHub;
             ResourceName = resourceName;
             ApiIsAccessible = apiIsAccessible;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public MarkActionPlanResourceAsCompleteViewModel(

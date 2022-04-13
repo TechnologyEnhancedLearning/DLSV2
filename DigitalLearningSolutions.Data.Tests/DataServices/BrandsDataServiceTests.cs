@@ -31,7 +31,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 ImageFileType = null,
                 IncludeOnLanding = false,
                 ContactEmail = null,
-                OwnerOrganisationID = 0,
+                OwnerOrganisationId = 0,
                 Active = true,
                 OrderByNumber = 6,
                 BrandLogo = null,
@@ -46,6 +46,26 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Then
             result.Select(b => b.BrandID).Should().BeEquivalentTo(expectedIndexes);
             result.SingleOrDefault(b => b.BrandID == 6).Should().BeEquivalentTo(expectedBrand);
+        }
+
+        [Test]
+        public void GetBrandById_should_return_expected_item()
+        {
+            // When
+            var result = brandsDataService.GetBrandById(1);
+
+            // Then
+            result!.BrandName.Should().BeEquivalentTo("IT Skills Pathway");
+        }
+
+        [Test]
+        public void GetBrandById_should_return_null_if_id_does_not_exist()
+        {
+            // When
+            var result = brandsDataService.GetBrandById(5);
+
+            // Then
+            result.Should().BeNull();
         }
     }
 }

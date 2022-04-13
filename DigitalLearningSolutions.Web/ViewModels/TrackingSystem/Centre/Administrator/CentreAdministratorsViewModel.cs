@@ -22,9 +22,12 @@
         )
         {
             CentreId = centreId;
-            var returnPage = string.IsNullOrWhiteSpace(SearchString) ? Page : 1;
             Admins = result.ItemsToDisplay.Select(
-                adminUser => new SearchableAdminViewModel(adminUser, loggedInAdminUser, returnPage)
+                adminUser => new SearchableAdminViewModel(
+                    adminUser,
+                    loggedInAdminUser,
+                    result.GetReturnPageQuery($"{adminUser.Id}-card")
+                )
             );
         }
 

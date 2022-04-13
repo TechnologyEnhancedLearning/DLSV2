@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
@@ -27,7 +27,7 @@
             JobGroup = delegateUser?.JobGroupName;
             ProfessionalRegistrationNumber = delegateUser == null
                 ? null
-                : DisplayStringHelper.GetPrnDisplayString(
+                : PrnStringHelper.GetPrnDisplayString(
                     delegateUser.HasBeenPromptedForPrn,
                     delegateUser.ProfessionalRegistrationNumber
                 );

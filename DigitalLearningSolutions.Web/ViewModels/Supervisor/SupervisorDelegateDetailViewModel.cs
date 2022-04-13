@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
 {
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.Supervisor;
 
@@ -8,14 +7,14 @@
     {
         public SupervisorDelegateDetailViewModel() { }
 
-        public SupervisorDelegateDetailViewModel(SupervisorDelegateDetail supervisorDelegateDetail, int? page)
+        public SupervisorDelegateDetailViewModel(SupervisorDelegateDetail supervisorDelegateDetail, ReturnPageQuery returnPageQuery)
         {
             SupervisorDelegateDetail = supervisorDelegateDetail;
-            Page = page;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public SupervisorDelegateDetail SupervisorDelegateDetail { get; set; }
-        public int? Page { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; set; }
 
         public override string SearchableName
         {

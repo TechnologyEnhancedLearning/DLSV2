@@ -15,9 +15,12 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/MyAccount/EditDetails", "Edit details")]
         [InlineData("/Signposting/LaunchLearningResource/3", "View resource \"Test image resource\"")]
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
-        [InlineData("/TrackingSystem/Centre/Administrators/1/EditAdminRoles", "Edit administrator roles")]
         [InlineData(
-            "/TrackingSystem/Centre/Administrators/188/DeactivateAdmin",
+            "/TrackingSystem/Centre/Administrators/1/EditAdminRoles?returnPageQuery=pageNumber%3D1",
+            "Edit administrator roles"
+        )]
+        [InlineData(
+            "/TrackingSystem/Centre/Administrators/188/DeactivateAdmin?returnPageQuery=pageNumber%3D1",
             "Are you sure you would like to deactivate this admin account?"
         )]
         [InlineData("/TrackingSystem/Centre/Dashboard", "Centre dashboard")]
@@ -55,21 +58,21 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
         [InlineData(
-            "/TrackingSystem/Delegates/Groups/5/EditDescription",
+            "/TrackingSystem/Delegates/Groups/5/EditDescription?returnPageQuery=pageNumber%3D1",
             "Edit description for Activities worker or coordinator group (optional)"
         )]
-        [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName", "Edit group name")]
+        [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName?returnPageQuery=pageNumber%3D1", "Edit group name")]
         [InlineData("/TrackingSystem/Delegates/Groups/Add", "Add new delegate group")]
-        [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
+        [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Activities worker or coordinator")]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Delegates/Add/SelectDelegate",
             "Add delegate to Activities worker or coordinator group"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/Groups/5/Delegates/245969/Remove",
+            "/TrackingSystem/Delegates/Groups/5/Delegates/245969/Remove?returnPageQuery=pageNumber%3D1",
             "Are you sure you would like to remove xxxxx xxxx from this group?"
         )]
-        [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Group courses")]
+        [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Activities worker or coordinator")]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Courses/Add/SelectCourse",
             "Add course to Activities worker or coordinator group"
@@ -79,12 +82,12 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "Set enrolment options for Level 1 - Microsoft Excel 2010 - Inductions course in Activities worker or coordinator group"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/Groups/103/Courses/25/Remove",
+            "/TrackingSystem/Delegates/Groups/103/Courses/25/Remove?returnPageQuery=pageNumber%3D1",
             "Are you sure you would like to remove the course Practice Nurse Clinical Supervision - Demo from this group?"
         )]
         [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]
-        [InlineData("/TrackingSystem/Delegates/3/SetPassword", "Set delegate user password")]
+        [InlineData("/TrackingSystem/Delegates/3/SetPassword?returnPageQuery=pageNumber%3D1", "Set delegate user password")]
         [InlineData("/TrackingSystem/Delegates/3/View/100/ViewDelegate/Remove", "Remove enrolment")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]

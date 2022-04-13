@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
@@ -14,8 +15,8 @@
             int promptNumber,
             DelegateCourseDetails details,
             DelegateAccessRoute accessedVia,
-            int? returnPage
-        ) : base(details, returnPage)
+            ReturnPageQuery? returnPageQuery = null
+        ) : base(details, returnPageQuery)
         {
             var courseAdminField = details.CourseAdminFields.Single(c => c.PromptNumber == promptNumber);
 

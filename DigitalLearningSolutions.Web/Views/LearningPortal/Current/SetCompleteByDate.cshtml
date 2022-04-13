@@ -38,6 +38,7 @@
           novalidate>
       <input type="hidden" asp-for="Name" />
       <input type="hidden" asp-for="Type" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
       @if (Equals(Model.Type, LearningItemType.Course)) {
         <input type="hidden" asp-for="@Model.ProgressId" />
       }
@@ -56,6 +57,6 @@
       <button class="nhsuk-button" type="submit" role="button">Save changes</button>
     </form>
 
-    <vc:cancel-link asp-controller="LearningPortal" asp-action="Current" />
+    <vc:cancel-link-with-return-page-query asp-controller="LearningPortal" asp-action="Current" return-page-query="@Model.ReturnPageQuery" />
   </div>
 </div>
