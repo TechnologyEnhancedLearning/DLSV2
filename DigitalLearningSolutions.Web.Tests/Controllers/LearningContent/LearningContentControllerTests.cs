@@ -92,17 +92,30 @@
         }
 
         [Test]
-        public void BrandPageDeliveryService_calls_expected_methods_and_returns_view()
+        public void Index_returns_not_found_with_null_brand()
+        {
+            // Given
+            A.CallTo(() => brandsService.GetPublicBrandById(1)).Returns(null);
+
+            // When
+            var result = controller.Index(1);
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void Index_calls_expected_methods_and_returns_view()
         {
             // When
-            var result = controller.BrandPageDeliveryService(1);
+            var result = controller.Index(1);
 
             // Then
             using (new AssertionScope())
             {
                 A.CallTo(() => brandsService.GetPublicBrandById(1)).MustHaveHappened();
                 A.CallTo(() => courseService.GetApplicationsByBrandId(1)).MustHaveHappened();
-                result.Should().BeViewResult().WithViewName("Index");
+                result.Should().BeViewResult().WithDefaultViewName();
             }
         }
     }
