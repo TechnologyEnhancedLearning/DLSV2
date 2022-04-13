@@ -32,6 +32,7 @@
       </p>
     } else {
       <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+      <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
 
       <div id="searchable-elements">
         @foreach (var delegateModel in Model.Delegates) {

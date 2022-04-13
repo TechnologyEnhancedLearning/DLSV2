@@ -47,6 +47,8 @@
           <div class="nhsuk-grid-row">
             <div class="nhsuk-grid-column-full">
               <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+              <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
+
               <input type="hidden" id="select-sort-by" value="SearchableName" />
               <input type="hidden" id="select-sort-direction" value="Ascending" />
               @if (@Model.SuperviseDelegateDetailViewModels.Any()) {
