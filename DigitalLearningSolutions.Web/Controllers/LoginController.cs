@@ -175,16 +175,7 @@
                 IsPersistent = rememberMe,
                 IssuedUtc = DateTime.UtcNow
             };
-
-
-            /* Course progress doesn't get updated if the auth token expires by the end of the tutorials. 
-               Some tutorials are longer than the default auth token lifetime, so we set the auth expiry to 8 hours.
-               See HEEDLS-637 for more details */
-            if (!rememberMe)
-            {
-                authProperties.ExpiresUtc = DateTime.UtcNow.AddHours(8);
-            }
-
+            
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
 
             return RedirectToReturnUrl(returnUrl) ?? RedirectToAction("Index", "Home");

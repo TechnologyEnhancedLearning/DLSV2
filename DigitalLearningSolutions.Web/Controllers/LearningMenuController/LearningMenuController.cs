@@ -3,10 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -377,7 +379,7 @@
         }
 
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}")]
-        public IActionResult Tutorial(int customisationId, int sectionId, int tutorialId)
+        public async Task<IActionResult> Tutorial(int customisationId, int sectionId, int tutorialId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
@@ -390,25 +392,43 @@
                 logger.LogError(
                     "Redirecting to 404 as customisation/section/tutorial id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
+                    $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}"
+                );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
+
             if (!String.IsNullOrEmpty(tutorialInformation.Password) && !tutorialInformation.PasswordSubmitted)
             {
                 return RedirectToAction("CoursePassword", "LearningMenu", new { customisationId });
             }
+
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as no progress id was returned. " +
-                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}"
+                );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
+
+            /* Course progress doesn't get updated if the auth token expires by the end of the tutorials. 
+              Some tutorials are longer than the default auth token lifetime, so we set the auth expiry to 8 hours.
+              See HEEDLS-637 and HEEDLS-674 for more details */
+            if (tutorialInformation.AverageTutorialDuration >= 45)
+            {
+                var authProperties = new AuthenticationProperties
+                {
+                    AllowRefresh = true,
+                    IssuedUtc = DateTime.UtcNow,
+                    ExpiresUtc = DateTime.UtcNow.AddHours(8)
+                };
+                await HttpContext.SignInAsync("Identity.Application", User, authProperties);
+            }
 
             var viewModel = new TutorialViewModel(config, tutorialInformation, customisationId, sectionId);
             return View("Tutorial/Tutorial", viewModel);
