@@ -13,7 +13,6 @@
         public SearchableDelegateCourseStatisticsViewModel(CourseStatisticsWithAdminFieldResponseCounts courseStatistics)
         {
             CustomisationId = courseStatistics.CustomisationId;
-            DelegateCount = courseStatistics.DelegateCount;
             InProgressCount = courseStatistics.InProgressCount;
             CompletedCount = courseStatistics.CompletedCount;
             CourseName = courseStatistics.CourseName;
@@ -26,7 +25,6 @@
         }
 
         public int CustomisationId { get; set; }
-        public int DelegateCount { get; set; }
         public int InProgressCount { get; set; }
         public int CompletedCount { get; set; }
         public string CourseName { get; set; }
