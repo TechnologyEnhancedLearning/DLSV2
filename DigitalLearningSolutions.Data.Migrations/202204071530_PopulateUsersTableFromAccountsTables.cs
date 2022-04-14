@@ -152,6 +152,8 @@ namespace DigitalLearningSolutions.Data.Migrations
                         }
                     }
 
+                    // Since the job group is only on delegate accounts before this migration, we just compare them all here
+                    // before we attempt to match up any accounts
                     var allJobGroupsMatch =
                         delegatesToAttemptToLink.Select(da => da.JobGroupId_deprecated).Distinct().Count() < 2;
                     foreach (var delegateAccount in delegatesToAttemptToLink)
@@ -260,12 +262,12 @@ namespace DigitalLearningSolutions.Data.Migrations
                                         delegateAccount.LearningHubAuthId_deprecated,
                     hasDismissedLhLoginWarning = existingUserWithEmail.HasDismissedLhLoginWarning ||
                                                  delegateAccount.HasDismissedLhLoginWarning_deprecated,
-                    detailsMatch = DoesDelegateAccountMatchExistingUser(delegateAccount, existingUserWithEmail, allJobGroupsMatch)
+                    detailsMatch = DoesDelegateAccountMatchExistingUser(delegateAccount, existingUserWithEmail) && allJobGroupsMatch
                 }
             );
         }
 
-        private static bool DoesDelegateAccountMatchExistingUser(DelegateAccount delegateAccount, User existingUser, bool allJobGroupsMatch)
+        private static bool DoesDelegateAccountMatchExistingUser(DelegateAccount delegateAccount, User existingUser)
         {
             var firstNamesMatch = delegateAccount.FirstName_deprecated == existingUser.FirstName ||
                                   string.IsNullOrWhiteSpace(existingUser.FirstName) ||
@@ -283,7 +285,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                                     existingUser.ProfileImage == null ||
                                     delegateAccount.ProfileImage_deprecated == null;
 
-            return allJobGroupsMatch && firstNamesMatch && lastNamesMatch && profileImageMatch && prnMatch;
+            return firstNamesMatch && lastNamesMatch && profileImageMatch && prnMatch;
         }
 
         private static void InsertNewUserForDelegateAccount(
