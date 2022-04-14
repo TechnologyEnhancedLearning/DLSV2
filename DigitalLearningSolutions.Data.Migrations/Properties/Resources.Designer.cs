@@ -715,5 +715,24 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
                 return ResourceManager.GetString("UAR_858_SnapshotData_UP", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DECLARE @dbName NVARCHAR(128) = DB_NAME()
+        ///DECLARE @snapshotName NVARCHAR(128) = CONVERT(NVARCHAR(128), (SELECT TOP 1 name FROM sys.databases WHERE NAME LIKE @dbName + &apos;_2%&apos; ORDER BY create_date DESC))
+        ///
+        ///DECLARE @adminSql NVARCHAR(4000) = &apos;UPDATE AdminAccounts
+        ///SET 
+        ///    Login_deprecated = snapAA.Login_deprecated,
+        ///    Password_deprecated = snapAA.Password_deprecated,
+        ///    CentreID = snapAA.CentreID,
+        ///    IsCentreAdmin = snapAA.IsCentreAdmin,
+        ///    ConfigAdmin_deprecated = snapAA.ConfigAdmin_deprecated,
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string UAR_859_PopulateUsersTableFromAccountsTables_DOWN {
+            get {
+                return ResourceManager.GetString("UAR_859_PopulateUsersTableFromAccountsTables_DOWN", resourceCulture);
+            }
+        }
     }
 }
