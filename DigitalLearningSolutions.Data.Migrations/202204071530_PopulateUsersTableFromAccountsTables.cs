@@ -330,7 +330,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                                 @learningHubAuthId,
                                 @hasDismissedLhLoginWarning,
                                 GETUTCDATE(),
-                                GETUTCDATE()
+                                DetailsLastChecked = CASE WHEN @setEmailToGuid = 1 THEN NULL ELSE GETUTCDATE() END
                             )",
                 new
                 {
@@ -348,6 +348,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                     hasBeenPromptedForPrn = delegateAccount.HasBeenPromptedForPrn_deprecated,
                     learningHubAuthId = delegateAccount.LearningHubAuthId_deprecated,
                     hasDismissedLhLoginWarning = delegateAccount.HasDismissedLhLoginWarning_deprecated,
+                    setEmailToGuid
                 }
             );
 
