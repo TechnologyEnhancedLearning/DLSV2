@@ -1,33 +1,37 @@
 ﻿@using DigitalLearningSolutions.Data.Models.Courses
 @model ApplicationWithSections
 
+<link rel="stylesheet" href="@Url.Content("~/css/home/brand.css")" asp-append-version="true">
+
 <dl class="nhsuk-summary-list">
 
   @if (Model.Sections.Any()) {
     <p class="nhsuk-u-margin-bottom-3">Length: @(Model.TotalMins) minutes Popularity Rating: @(Model.PopularityRating)</p>
     <table role="table" class="nhsuk-table-responsive">
       <thead role="rowgroup" class="nhsuk-table__head">
-      <tr role="row">
-        <th role="columnheader" class="" scope="col">
-          Section
-        </th>
-        <th role="columnheader" class="" scope="col">
-          Tutorials
-        </th>
-      </tr>
+        <tr role="row">
+          <th role="columnheader" class="" scope="col">
+            Section
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Tutorials
+          </th>
+        </tr>
       </thead>
       <tbody class="nhsuk-table__body">
       @foreach (var section in Model.Sections) {
         <tr role="row" class="nhsuk-table__row">
           <td role="cell" class="nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">Section </span>@(section.SectionName)
+            <span class="nhsuk-table-responsive__heading no-wrap">Section </span>@(section.SectionName)
           </td>
-          <td role="cell" class="nhsuk-table__cell">
+          <td role="cell" class="nhsuk-table__cell" >
             @if (section.Tutorials.Any()) {
-              foreach (var tutorial in section.Tutorials) {
-                <span class="nhsuk-table-responsive__heading">Tutorials </span>
+              <span class="nhsuk-table-responsive__heading no-wrap">Tutorials </span>
+              <div class="learning-content-tutorial-column">
+              @foreach (var tutorial in section.Tutorials) {
                 <p class="nhsuk-u-margin-bottom-3">@(tutorial.TutorialName)</p>
               }
+              </div>
             } else {
               <span class="nhsuk-table-responsive__heading">Tutorials </span>
               <p>No Tutorials</p>

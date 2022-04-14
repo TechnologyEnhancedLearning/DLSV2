@@ -1,0 +1,9 @@
+@use "nhsuk-frontend/packages/core/all" as *;
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+.learning-content-tutorial-column {
+  flex-direction:column;
+}
