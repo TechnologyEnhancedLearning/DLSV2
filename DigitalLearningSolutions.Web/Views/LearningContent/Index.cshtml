@@ -29,7 +29,7 @@
 </div>
 
 @if (Model.Tutorials.Any()) {
-  <p class="nhsuk-u-margin-top-4">Course Tutorials</p>
+  <h2 class="nhsuk-heading-l">Course Tutorials</h2>
   <p class="nhsuk-body-m">Access to this content does not require login and progress is not tracked.</p>
   foreach (var tutorial in Model.Tutorials) {
     <partial name="_TutorialCard" model="tutorial" />
