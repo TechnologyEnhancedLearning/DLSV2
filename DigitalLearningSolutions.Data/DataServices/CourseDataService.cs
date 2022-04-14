@@ -695,8 +695,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                       AND Applications.Debug = 0
                       AND Applications.ArchivedDate IS NULL
                       AND Progress.SubmittedTime > @threeMonthsAgo
-                    GROUP BY Applications.ApplicationID
-                    ORDER BY Num_Recent_Progress_Records DESC",
+                    GROUP BY Applications.ApplicationID",
                 new
                     { brandId, threeMonthsAgo }
             );

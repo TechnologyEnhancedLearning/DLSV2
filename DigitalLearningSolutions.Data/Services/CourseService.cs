@@ -418,7 +418,7 @@
             var numRecordsByApplicationId =
                 courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId, clockService.UtcNow.AddMonths(-3));
             var applications = courseDataService.GetApplicationsByBrandId(brandId);
-            double maxPopularity = numRecordsByApplicationId.Any() ? numRecordsByApplicationId.First().Value : 0;
+            double maxPopularity = numRecordsByApplicationId.Any() ? numRecordsByApplicationId.Values.Max() : 0;
             var applicationsWithSections = applications.Select(
                 application => new ApplicationWithSections(
                     application,
@@ -427,9 +427,7 @@
                     ),
                     maxPopularity == 0
                         ? 0
-                        : (numRecordsByApplicationId.ContainsKey(application.ApplicationId)
-                            ? numRecordsByApplicationId[application.ApplicationId] / maxPopularity
-                            : 0)
+                        : numRecordsByApplicationId.GetValueOrDefault(application.ApplicationId, 0) / maxPopularity
                 )
             );
             return applicationsWithSections;

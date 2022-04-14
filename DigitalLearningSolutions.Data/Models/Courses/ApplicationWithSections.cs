@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Courses
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     public class ApplicationWithSections : ApplicationDetails
     {
@@ -18,22 +19,13 @@
             PLAssess = applicationDetails.PLAssess;
             DiagAssess = applicationDetails.DiagAssess;
             Sections = sections;
-            TotalMins = 0;
-            foreach (var section in Sections)
-            {
-                foreach (var tutorial in section.Tutorials)
-                {
-                    if (tutorial.OverrideTutorialMins > 0)
-                    {
-                        TotalMins += tutorial.OverrideTutorialMins ?? 0;
-                    }
-                    else
-                    {
-                        TotalMins += tutorial.AverageTutMins ?? 0;
-                    }
-                }
-            }
-
+            TotalMins = Sections.Sum(
+                section => section.Tutorials.Sum(
+                    tutorial => tutorial.OverrideTutorialMins > 0
+                        ? tutorial.OverrideTutorialMins ?? 0
+                        : tutorial.AverageTutMins ?? 0
+                )
+            );
             PopularityRating = popularityRating;
         }
 
