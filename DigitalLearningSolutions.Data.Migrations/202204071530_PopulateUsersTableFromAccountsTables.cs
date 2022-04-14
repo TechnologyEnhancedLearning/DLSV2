@@ -26,7 +26,7 @@ namespace DigitalLearningSolutions.Data.Migrations
             using var transactionScope = new TransactionScope(TransactionScopeOption.Required, options);
 
             // 1. Delete from Users (this should be empty)
-            connection.Execute("Delete Users");
+            connection.Execute("DELETE Users");
 
             // 2. Copy AdminAccounts to Users table
             connection.Execute(
@@ -122,14 +122,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                         EXCEPT
                         SELECT PrimaryEmail FROM Users)"
             );
-            connection.Execute(
-                @"UPDATE DelegateAccounts
-                    SET
-                        UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
-                        Email = NULL,
-                        CentreSpecificDetailsLastChecked = GETUTCDATE()"
-            );
-
+            
             // Get the rest of the delegate accounts we've not resolved yet
             var delegateAccounts =
                 connection.Query<DelegateAccount>("SELECT * FROM DelegateAccounts WHERE UserId IS NULL");
@@ -172,7 +165,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                         if (existingUserWithEmail != null)
                         {
                             // If we find a user, we update any default data on that user
-                            UpdateExistingUserWithDelegateDetails(
+                            UpdateExistingUserDefaultValuesWithDelegateDetails(
                                 connection,
                                 existingUserWithEmail,
                                 delegateAccount,
@@ -196,6 +189,17 @@ namespace DigitalLearningSolutions.Data.Migrations
                 }
             }
 
+            // At the end we link all the unlinked accounts with emails to the matching User record.
+            // All ones with invalid emails were linked when we created new User records for them.
+            connection.Execute(
+                @"UPDATE DelegateAccounts
+                    SET
+                        UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
+                        Email = NULL,
+                        CentreSpecificDetailsLastChecked = GETUTCDATE()
+                    WHERE UserID IS NULL"
+            );
+
             transactionScope.Complete();
         }
 
@@ -204,7 +208,7 @@ namespace DigitalLearningSolutions.Data.Migrations
             Execute.Sql(Resources.UAR_859_PopulateUsersTableFromAccountsTables_DOWN);
         }
 
-        private static void UpdateExistingUserWithDelegateDetails(
+        private static void UpdateExistingUserDefaultValuesWithDelegateDetails(
             IDbConnection connection,
             User existingUserWithEmail,
             DelegateAccount delegateAccount,
@@ -225,8 +229,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                                 HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
                                 LearningHubAuthId = @learningHubAuthId,
                                 HasDismissedLhLoginWarning = @hasDismissedLhLoginWarning,
-                                EmailVerified = GETUTCDATE(),
-                                DetailsLastChecked = CASE WHEN @detailsMatched = 0 OR DetailsLastChecked IS NULL THEN NULL ELSE GETUTCDATE()
+                                DetailsLastChecked = CASE WHEN @detailsMatched = 0 OR DetailsLastChecked IS NULL THEN NULL ELSE GETUTCDATE() END
                             WHERE ID = @userId",
                 new
                 {
@@ -259,12 +262,6 @@ namespace DigitalLearningSolutions.Data.Migrations
                                                  delegateAccount.HasDismissedLhLoginWarning_deprecated,
                     detailsMatch = DoesDelegateAccountMatchExistingUser(delegateAccount, existingUserWithEmail, allJobGroupsMatch)
                 }
-            );
-
-            UpdateDelegateAccountUserIdEmailAndDetailsLastChecked(
-                connection,
-                existingUserWithEmail.Id,
-                delegateAccount.Id
             );
         }
 
