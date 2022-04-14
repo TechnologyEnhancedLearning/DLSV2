@@ -17,6 +17,7 @@
     [Authorize(Policy = CustomPolicies.UserOnly)]
     public class LearningMenuController : Controller
     {
+        private const int MinimumTutorialAverageTimeToIncreaseAuthExpiry = 45;
         private readonly ILogger<LearningMenuController> logger;
         private readonly IConfiguration config;
         private readonly IConfigDataService configDataService;
@@ -27,6 +28,7 @@
         private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
         private readonly IPostLearningAssessmentService postLearningAssessmentService;
         private readonly ICourseCompletionService courseCompletionService;
+        private readonly IClockService clockService;
 
         public LearningMenuController(
             ILogger<LearningMenuController> logger,
@@ -38,7 +40,8 @@
             IDiagnosticAssessmentService diagnosticAssessmentService,
             IPostLearningAssessmentService postLearningAssessmentService,
             ISessionService sessionService,
-            ICourseCompletionService courseCompletionService
+            ICourseCompletionService courseCompletionService,
+            IClockService clockService
         )
         {
             this.logger = logger;
@@ -51,6 +54,7 @@
             this.diagnosticAssessmentService = diagnosticAssessmentService;
             this.postLearningAssessmentService = postLearningAssessmentService;
             this.courseCompletionService = courseCompletionService;
+            this.clockService = clockService;
         }
 
         [Route("/LearningMenu/{customisationId:int}")]
@@ -417,17 +421,11 @@
             courseContentService.UpdateProgress(progressId.Value);
 
             /* Course progress doesn't get updated if the auth token expires by the end of the tutorials. 
-              Some tutorials are longer than the default auth token lifetime, so we set the auth expiry to 8 hours.
+              Some tutorials are longer than the default auth token lifetime of 1 hour, so we set the auth expiry to 8 hours.
               See HEEDLS-637 and HEEDLS-674 for more details */
-            if (tutorialInformation.AverageTutorialDuration >= 45)
+            if (tutorialInformation.AverageTutorialDuration >= MinimumTutorialAverageTimeToIncreaseAuthExpiry)
             {
-                var authProperties = new AuthenticationProperties
-                {
-                    AllowRefresh = true,
-                    IssuedUtc = DateTime.UtcNow,
-                    ExpiresUtc = DateTime.UtcNow.AddHours(8)
-                };
-                await HttpContext.SignInAsync("Identity.Application", User, authProperties);
+                await IncreaseAuthenticatedUserExpiry();
             }
 
             var viewModel = new TutorialViewModel(config, tutorialInformation, customisationId, sectionId);
@@ -549,6 +547,17 @@
 
             var model = new CourseCompletionViewModel(config, courseCompletion, progressId.Value);
             return View("Completion/Completion", model);
+        }
+
+        private async Task IncreaseAuthenticatedUserExpiry()
+        {
+            var authProperties = new AuthenticationProperties
+            {
+                AllowRefresh = true,
+                IssuedUtc = clockService.UtcNow,
+                ExpiresUtc = clockService.UtcNow.AddHours(8)
+            };
+            await HttpContext.SignInAsync("Identity.Application", User, authProperties);
         }
     }
 }

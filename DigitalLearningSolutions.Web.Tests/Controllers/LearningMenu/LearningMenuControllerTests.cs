@@ -36,6 +36,7 @@
         private ISectionContentDataService sectionContentDataService = null!;
         private ISessionService sessionService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
+        private IClockService clockService = null!;
 
         [SetUp]
         public void SetUp()
@@ -50,6 +51,7 @@
             diagnosticAssessmentService = A.Fake<IDiagnosticAssessmentService>();
             postLearningAssessmentService = A.Fake<IPostLearningAssessmentService>();
             courseCompletionService = A.Fake<ICourseCompletionService>();
+            clockService = A.Fake<IClockService>();
 
             var user = new ClaimsPrincipal(
                 new ClaimsIdentity(
@@ -94,7 +96,8 @@
                 diagnosticAssessmentService,
                 postLearningAssessmentService,
                 sessionService,
-                courseCompletionService
+                courseCompletionService,
+                clockService
             )
             {
                 ControllerContext = new ControllerContext

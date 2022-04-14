@@ -40,21 +40,24 @@
         public async Task Tutorial_should_sign_in_with_longer_expiry_if_valid_tutorial_with_average_duration_of_45_minutes_or_over(int averageTutorialDuration)
         {
             // Given
+            var utcNow = new DateTime(2022, 1, 1, 10, 0, 0);
             var defaultTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(TutorialId, averageTutorialDuration: averageTutorialDuration);
             A.CallTo(() => tutorialContentDataService.GetTutorialInformation(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(defaultTutorialInformation);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
+            A.CallTo(() => clockService.UtcNow).Returns(utcNow);
 
             // When
             await controller.Tutorial(CustomisationId, SectionId, TutorialId);
 
             // Then
+            var expectedExpiryTime = new DateTime(2022, 1, 1, 18, 0, 0);
             A.CallTo(
                 () => authenticationService.SignInAsync(
                     A<HttpContext>._,
                     A<string>._,
                     A<ClaimsPrincipal>._,
-                    A<AuthenticationProperties>.That.Matches(ap => ap.ExpiresUtc!.Value > DateTimeOffset.UtcNow.AddHours(7))
+                    A<AuthenticationProperties>.That.Matches(ap => ap.ExpiresUtc!.Value == expectedExpiryTime)
                 )
             ).MustHaveHappenedOnceExactly();
         }
