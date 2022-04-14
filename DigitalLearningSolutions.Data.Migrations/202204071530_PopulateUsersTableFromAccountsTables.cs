@@ -262,7 +262,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                                         delegateAccount.LearningHubAuthId_deprecated,
                     hasDismissedLhLoginWarning = existingUserWithEmail.HasDismissedLhLoginWarning ||
                                                  delegateAccount.HasDismissedLhLoginWarning_deprecated,
-                    detailsMatch = DoesDelegateAccountMatchExistingUser(delegateAccount, existingUserWithEmail) && allJobGroupsMatch
+                    detailsMatched = DoesDelegateAccountMatchExistingUser(delegateAccount, existingUserWithEmail) && allJobGroupsMatch
                 }
             );
         }
@@ -332,7 +332,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                                 @learningHubAuthId,
                                 @hasDismissedLhLoginWarning,
                                 GETUTCDATE(),
-                                DetailsLastChecked = CASE WHEN @setEmailToGuid = 1 THEN NULL ELSE GETUTCDATE() END
+                                CASE WHEN @setEmailToGuid = 1 THEN NULL ELSE GETUTCDATE() END
                             )",
                 new
                 {
