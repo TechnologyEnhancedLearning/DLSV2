@@ -6,17 +6,27 @@
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit Completed Date" : "Edit Completed Date";
 
-  var routeParamsForBackLink = new Dictionary<string, string?> {
-    { "accessedVia", Model.AccessedVia.ToString() },
-    { "progressId", Model.ProgressId.ToString() },
-    { "returnPage", Model.ReturnPage.ToString() },
-  };
+  var routeParamsForBackLink = new Dictionary<string, string?>();
+
+  string cancelLinkController;
+
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+    routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
+    routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
+    routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());
+    cancelLinkController = "DelegateProgress";
+  } else {
+    routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
+    cancelLinkController = "ViewDelegate";
+  }
 
   var exampleDate = DateTime.Today;
   var hintTextLines = new List<string> {
     $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the completed date",
   };
 }
+
+@* TODO: These breadcrumbs will need to be corrected once 862 has been completed. Info can be found in the ticket. *@
 
 @section NavBreadcrumbs {
   @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
@@ -60,6 +70,6 @@
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    <vc:cancel-link asp-controller="@cancelLinkController" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
   </div>
 </div>

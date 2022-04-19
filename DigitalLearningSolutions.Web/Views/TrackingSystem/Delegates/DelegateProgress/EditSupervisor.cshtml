@@ -1,18 +1,22 @@
-﻿@inject IConfiguration configuration
-@using DigitalLearningSolutions.Web.Models.Enums
+﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
-@using Microsoft.Extensions.Configuration
 @model EditSupervisorViewModel
 
 @{
   var errorHasOccured = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccured ? "Error: Edit supervisor" : "Edit supervisor";
-  var routeParamsForBackLink = new Dictionary<string, string?> {
-    { "accessedVia", Model.AccessedVia.ToString() },
-    { "progressId", Model.ProgressId.ToString() },
-    { "returnPage", Model.ReturnPage.ToString() },
-  };
+  var routeParamsForBackLink = new Dictionary<string, string?>();
+
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+    routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
+    routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
+    routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());
+  } else {
+    routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
+  }
 }
+
+@* TODO: These breadcrumbs will need to be corrected once 862 has been completed. Info can be found in the ticket. *@
 
 @section NavBreadcrumbs {
   @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
@@ -58,6 +62,12 @@
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+      <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back"
+                      asp-all-route-data="@routeParamsForBackLink" />
+    } else {
+      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back"
+                      asp-all-route-data="@routeParamsForBackLink" />
+    }
   </div>
 </div>

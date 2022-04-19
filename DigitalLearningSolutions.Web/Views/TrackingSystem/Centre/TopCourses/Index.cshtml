@@ -1,8 +1,5 @@
-﻿@inject IConfiguration configuration
-@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.TopCourses
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.TopCourses
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Microsoft.Extensions.Configuration
 @model TopCoursesViewModel
 
 @{
@@ -62,7 +59,6 @@
             <span class="nhsuk-table-responsive__heading">Action </span>
             <a asp-controller="CourseDelegates"
                asp-action="Index"
-               asp-route-accessedVia="@DelegateAccessRoute.TopCourses"
                asp-route-customisationId="@course.CustomisationId">
               View course
             </a>

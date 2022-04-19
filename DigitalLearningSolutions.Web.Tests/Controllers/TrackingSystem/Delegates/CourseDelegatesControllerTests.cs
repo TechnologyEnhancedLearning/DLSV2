@@ -8,7 +8,6 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using FakeItEasy;
@@ -63,7 +62,7 @@
                 );
 
             // When
-            var result = controller.Index(DelegateAccessRoute.CourseDelegates);
+            var result = controller.Index();
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
@@ -77,7 +76,7 @@
                 .Throws<CourseAccessDeniedException>();
 
             // When
-            var result = controller.Index(DelegateAccessRoute.CourseDelegates, 2);
+            var result = controller.Index(2);
 
             // Then
             result.Should().BeNotFoundResult();
@@ -134,7 +133,7 @@
                 );
 
             // When
-            var result = courseDelegatesController.Index(DelegateAccessRoute.CourseDelegates, customisationId);
+            var result = courseDelegatesController.Index(customisationId);
 
             // Then
             using (new AssertionScope())

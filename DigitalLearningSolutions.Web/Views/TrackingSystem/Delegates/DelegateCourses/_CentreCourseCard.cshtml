@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
 @model SearchableDelegateCourseStatisticsViewModel
 
 <div class="searchable-element nhsuk-panel card-with-buttons word-break" id="@Model.CustomisationId-card">
@@ -29,8 +28,7 @@
          id="launch-course-@Model.CustomisationId"
          asp-controller="CourseDelegates"
          asp-action="Index"
-         asp-route-customisationId="@Model.CustomisationId"
-         asp-route-accessedVia="@DelegateAccessRoute.DelegateCourses">
+         asp-route-customisationId="@Model.CustomisationId">
         View course delegates
       </a>
     </div>
