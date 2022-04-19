@@ -138,8 +138,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.ExistingFilterString
-                    .Should()
+                result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.ExistingFilterString.Should()
                     .Be("AccountStatus|Active|true");
 
                 A.CallTo(

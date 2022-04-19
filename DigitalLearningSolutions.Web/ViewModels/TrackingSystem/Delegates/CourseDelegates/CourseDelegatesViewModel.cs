@@ -34,7 +34,9 @@
         }
 
         public int? CustomisationId { get; set; }
+
         public IEnumerable<SelectListItem> Courses { get; set; }
+
         public SelectedCourseDetailsViewModel? CourseDetails { get; set; }
     }
 }
