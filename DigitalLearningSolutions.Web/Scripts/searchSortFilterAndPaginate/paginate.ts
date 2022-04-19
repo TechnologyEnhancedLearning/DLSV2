@@ -7,27 +7,29 @@ export function setUpPagination(
   onPreviousPressed: VoidFunction,
   onItemsPerPageUpdated: VoidFunction,
 ): void {
-  const previousButton = getPreviousButton();
-  const nextButton = getNextButton();
+  const previousButtons = getPreviousButtons();
+  const nextButtons = getNextButtons();
   const itemsPerPageSelect = getItemsPerPageSelect();
+
+  previousButtons.forEach((button) => {
+    button.addEventListener('click',
+      (event) => {
+        event.preventDefault();
+        onPreviousPressed();
+      });
+  });
+
+  nextButtons.forEach((button) => {
+    button.addEventListener('click',
+      (event) => {
+        event.preventDefault();
+        onNextPressed();
+      });
+  });
+
   if (itemsPerPageSelect !== null) {
     itemsPerPageSelect.addEventListener('change', onItemsPerPageUpdated);
   }
-
-  if (previousButton === null || nextButton === null) {
-    return;
-  }
-
-  previousButton.addEventListener('click',
-    (event) => {
-      event.preventDefault();
-      onPreviousPressed();
-    });
-  nextButton.addEventListener('click',
-    (event) => {
-      event.preventDefault();
-      onNextPressed();
-    });
 }
 
 export function paginateResults(
@@ -42,31 +44,37 @@ export function paginateResults(
 }
 
 function updatePageNumber(page: number, totalPages: number) {
-  const pageIndicator = document.getElementById('page-indicator');
-  if (pageIndicator === null) {
-    return;
-  }
+  const pageIndicators = <HTMLSpanElement[]>Array.from(document.getElementsByClassName('page-indicator'));
+  pageIndicators.forEach((pageIndicator) => {
+    const element = pageIndicator;
 
-  if (totalPages > 1) {
-    pageIndicator.hidden = false;
-    pageIndicator.textContent = `${page} of ${totalPages}`;
-  } else {
-    pageIndicator.hidden = true;
-  }
+    if (totalPages > 1) {
+      element.hidden = false;
+      element.textContent = `${page} of ${totalPages}`;
+    } else {
+      element.hidden = true;
+    }
+  });
 }
 
 function updatePageButtonVisibility(page: number, totalPages: number) {
-  const previousButton = getPreviousButtonDisplayContainer();
-  const nextButton = getNextButtonDisplayContainer();
-  const paginationContainer = getPaginationDisplayContainer();
-  if (previousButton === null || nextButton === null || paginationContainer === null) {
-    return;
-  }
+  const previousButtons = getPreviousButtonDisplayContainers();
+  const nextButtons = getNextButtonDisplayContainers();
+  const paginationContainers = getPaginationDisplayContainers();
 
-  nextButton.hidden = page >= totalPages;
-  previousButton.hidden = page === 1;
-  paginationContainer.style.display = (totalPages === 1 ? 'none' : 'block');
-  paginationContainer.hidden = totalPages === 1;
+  nextButtons.forEach((button) => {
+    const element = button;
+    element.hidden = page >= totalPages;
+  });
+  previousButtons.forEach((button) => {
+    const element = button;
+    element.hidden = page === 1;
+  });
+  paginationContainers.forEach((container) => {
+    const element = container;
+    element.style.display = (totalPages === 1 ? 'none' : 'block');
+    element.hidden = totalPages === 1;
+  });
 }
 
 export function getItemsPerPageValue() : number {
@@ -76,26 +84,26 @@ export function getItemsPerPageValue() : number {
     : ITEMS_PER_PAGE_DEFAULT;
 }
 
-function getPreviousButton() {
-  return document.getElementsByClassName('nhsuk-pagination__link--prev').item(0);
+function getPreviousButtons() {
+  return Array.from(document.getElementsByClassName('nhsuk-pagination__link--prev'));
 }
 
-function getNextButton() {
-  return document.getElementsByClassName('nhsuk-pagination__link--next').item(0);
+function getNextButtons() {
+  return Array.from(document.getElementsByClassName('nhsuk-pagination__link--next'));
 }
 
 function getItemsPerPageSelect() {
   return document.getElementById('items-per-page-select');
 }
 
-function getPreviousButtonDisplayContainer() {
-  return document.getElementsByClassName('nhsuk-pagination-item--previous').item(0) as HTMLLIElement;
+function getPreviousButtonDisplayContainers() {
+  return <HTMLLIElement[]>Array.from(document.getElementsByClassName('nhsuk-pagination-item--previous'));
 }
 
-function getNextButtonDisplayContainer() {
-  return document.getElementsByClassName('nhsuk-pagination-item--next').item(0) as HTMLLIElement;
+function getNextButtonDisplayContainers() {
+  return <HTMLLIElement[]>Array.from(document.getElementsByClassName('nhsuk-pagination-item--next'));
 }
 
-function getPaginationDisplayContainer() {
-  return document.getElementsByClassName('nhsuk-pagination').item(0) as HTMLLIElement;
+function getPaginationDisplayContainers() {
+  return <HTMLLIElement[]>Array.from(document.getElementsByClassName('nhsuk-pagination'));
 }

@@ -141,7 +141,7 @@ function createFilterableElements(existingFilterString: string) {
         <div id="applied-filters" hidden>
             <div class="applied-filter-container" id="applied-filter-container"></div>
         </div>
-        <span id="page-indicator"></span>
+        <span class="page-indicator"></span>
         <div id="searchable-elements">
           <div class="searchable-element" id="course-a">
             <span name="name" class="searchable-element-title">a: Course</span>

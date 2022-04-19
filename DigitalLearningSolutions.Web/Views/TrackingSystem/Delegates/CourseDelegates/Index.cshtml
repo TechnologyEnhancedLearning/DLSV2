@@ -81,6 +81,7 @@
               </p>
             } else {
               <partial name="SearchablePage/_SearchResultsCount" model="Model.CourseDetails" />
+              <partial name="SearchablePage/_PaginationWithoutAlert" model="Model.CourseDetails" />
 
               <div id="searchable-elements">
                 @foreach (var delegateUser in Model.CourseDetails.Delegates) {
