@@ -292,7 +292,7 @@
                 DelegateId = delegateId,
                 SelfAssessmentId = SelfAssessmentId,
                 CompletedDate = null,
-                RemovedDate = null,
+                RemovedDate = new DateTime(2021, 12, 14)
             };
 
             // When
