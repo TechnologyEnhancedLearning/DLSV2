@@ -1,7 +1,5 @@
-﻿@inject IConfiguration configuration
-@using DigitalLearningSolutions.Web.Models.Enums
+﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
-@using Microsoft.Extensions.Configuration
 @model EditSupervisorViewModel
 
 @{
@@ -16,6 +14,8 @@
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
   }
 }
+
+@* TODO: These breadcrumbs will need to be corrected once 862 has been completed. Info can be found in the ticket. *@
 
 @section NavBreadcrumbs {
   @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
@@ -50,6 +50,7 @@
       <vc:select-list asp-for="@nameof(Model.SupervisorId)"
                       label="Supervisor"
                       value="@Model.SupervisorId.ToString()"
+
                       hint-text=""
                       deselectable="true"
                       css-class="nhsuk-u-width-one-half"

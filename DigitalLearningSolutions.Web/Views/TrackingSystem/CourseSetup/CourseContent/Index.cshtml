@@ -1,12 +1,13 @@
-﻿@inject IConfiguration Configuration
+﻿@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
-@using Microsoft.Extensions.Configuration
 @model CourseContentViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseContent.css")" asp-append-version="true">
 
 @{
   ViewData["Title"] = "Course content";
+  var backLinkData = Html.GetRouteValues();
 }
 
 @section NavBreadcrumbs {
@@ -35,5 +36,6 @@
       <p>No course content enabled.</p>
     }
 
+    <vc:back-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@backLinkData" link-text="Go back" />
   </div>
 </div>
