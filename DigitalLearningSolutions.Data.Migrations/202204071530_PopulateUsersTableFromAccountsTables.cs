@@ -215,7 +215,8 @@ namespace DigitalLearningSolutions.Data.Migrations
                         UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
                         Email = NULL,
                         CentreSpecificDetailsLastChecked = GETUTCDATE()
-                    WHERE UserID IS NULL"
+                    WHERE UserID IS NULL AND
+                        Email IS NOT NULL AND TRIM(Email) IS NOT NULL AND TRIM(Email) <> ''"
             );
         }
 
