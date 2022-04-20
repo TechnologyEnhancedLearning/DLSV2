@@ -48,7 +48,8 @@ namespace DigitalLearningSolutions.Data.Migrations
                     EmailVerified,
                     DetailsLastChecked
                 )
-                SELECT Email,
+                SELECT
+                    CASE WHEN TRIM(Email) IS NOT NULL AND TRIM(Email) <> '' THEN Email ELSE CONVERT(NVARCHAR(36), NEWID()) END,
                     Password_deprecated,
                     Forename_deprecated,
                     Surname_deprecated,
@@ -63,7 +64,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                     NULL,
                     0,
                     GETUTCDATE(),
-                    GETUTCDATE()
+                    CASE WHEN TRIM(Email) IS NOT NULL AND TRIM(Email) <> '' THEN GETUTCDATE() ELSE NULL END
                     FROM AdminAccounts"
             );
 
@@ -122,7 +123,10 @@ namespace DigitalLearningSolutions.Data.Migrations
                         EXCEPT
                         SELECT PrimaryEmail FROM Users)"
             );
-            
+
+            // Link all these User records we just created to the DelegateAccounts.
+            LinkDelegateAccountsToTheirUserRecords(connection);
+
             // Get the rest of the delegate accounts we've not resolved yet
             var delegateAccounts =
                 connection.Query<DelegateAccount>("SELECT * FROM DelegateAccounts WHERE UserId IS NULL");
@@ -193,6 +197,18 @@ namespace DigitalLearningSolutions.Data.Migrations
 
             // At the end we link all the unlinked accounts with emails to the matching User record.
             // All ones with invalid emails were linked when we created new User records for them.
+            LinkDelegateAccountsToTheirUserRecords(connection);
+
+            transactionScope.Complete();
+        }
+
+        public override void Down()
+        {
+            Execute.Sql(Resources.UAR_859_PopulateUsersTableFromAccountsTables_DOWN);
+        }
+
+        private static void LinkDelegateAccountsToTheirUserRecords(IDbConnection connection)
+        {
             connection.Execute(
                 @"UPDATE DelegateAccounts
                     SET
@@ -201,13 +217,6 @@ namespace DigitalLearningSolutions.Data.Migrations
                         CentreSpecificDetailsLastChecked = GETUTCDATE()
                     WHERE UserID IS NULL"
             );
-
-            transactionScope.Complete();
-        }
-
-        public override void Down()
-        {
-            Execute.Sql(Resources.UAR_859_PopulateUsersTableFromAccountsTables_DOWN);
         }
 
         private static void UpdateExistingUserDefaultValuesWithDelegateDetails(
@@ -281,9 +290,9 @@ namespace DigitalLearningSolutions.Data.Migrations
                            string.IsNullOrWhiteSpace(existingUser.ProfessionalRegistrationNumber) ||
                            string.IsNullOrWhiteSpace(delegateAccount.ProfessionalRegistrationNumber_deprecated);
 
-            var profileImageMatch = delegateAccount.ProfileImage_deprecated == existingUser.ProfileImage ||
-                                    existingUser.ProfileImage == null ||
-                                    delegateAccount.ProfileImage_deprecated == null;
+            var profileImageMatch = existingUser.ProfileImage == null ||
+                                    delegateAccount.ProfileImage_deprecated == null ||
+                                    delegateAccount.ProfileImage_deprecated.SequenceEqual(existingUser.ProfileImage);
 
             return firstNamesMatch && lastNamesMatch && profileImageMatch && prnMatch;
         }
