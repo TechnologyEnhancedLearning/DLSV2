@@ -49,7 +49,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                     DetailsLastChecked
                 )
                 SELECT
-                    CASE WHEN TRIM(Email) IS NOT NULL AND TRIM(Email) <> '' THEN Email ELSE CONVERT(NVARCHAR(36), NEWID()) END,
+                    Email,
                     Password_deprecated,
                     Forename_deprecated,
                     Surname_deprecated,
