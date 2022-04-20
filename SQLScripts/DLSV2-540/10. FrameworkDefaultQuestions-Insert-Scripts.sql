@@ -18,9 +18,11 @@ BEGIN TRANSACTION
 
 		INSERT [dbo].[FrameworkDefaultQuestions] ([FrameworkId], [AssessmentQuestionId]) VALUES (2072, 147)
 
-	END TRY
 		
 	COMMIT TRANSACTION
+
+    
+	END TRY
 		
 	BEGIN CATCH   
  

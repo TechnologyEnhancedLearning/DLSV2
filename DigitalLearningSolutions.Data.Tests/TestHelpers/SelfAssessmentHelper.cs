@@ -8,8 +8,8 @@
     public static class SelfAssessmentHelper
     {
         public static CurrentSelfAssessment CreateDefaultSelfAssessment(
-            int id = 4,
-            string name = "IV Therapy Passport",
+            int id = 1,
+            string name = "name",
             string description = "description",
             int numberOfCompetencies = 0,
             DateTime? startedDate = null,
@@ -20,7 +20,7 @@
             bool unprocessedUpdates = false,
             bool linearNavigation = true,
             bool useDescriptionExpanders = true,
-            string vocabulary = "Proficiency",
+            string vocabulary = "Capability",
             string verificationRoleName = "Supervisor",
             string signOffRoleName = "Supervisor"
         )
@@ -58,7 +58,7 @@
             int competencyGroupId = 1,
             string competencyGroup = "competencyGroup",
             string? vocabulary = "Capability",
-            List<AssessmentQuestion> assessmentQuestions = null
+            List<AssessmentQuestion>? assessmentQuestions = null
         )
         {
             return new Competency
