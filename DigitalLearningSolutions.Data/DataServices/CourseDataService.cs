@@ -514,6 +514,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         ap.ApplicationName,
                         ap.PLAssess,
                         ap.DiagAssess,
+                        ap.CreatedDate,
                         ap.CourseTopicID,
                         cc.CategoryName,
                         ct.CourseTopic
@@ -521,8 +522,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
                     INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
                     WHERE ap.ArchivedDate IS NULL
-                        AND (ap.Debug = 0)
-                        AND (ap.BrandID = @brandId)",
+                        AND ap.Debug = 0
+                        AND ap.BrandID = @brandId",
                 new { brandId }
             );
         }

@@ -1,12 +1,13 @@
 ﻿@use "nhsuk-frontend/packages/core/all" as *;
 @use "../shared/cardWithButtons";
+@use "../shared/searchableElements/searchableElements";
 
 .brands__body-text {
-  margin-top: -1em;;
+  margin-top: -1em;
 }
 
 .brands__access {
-  margin-top: 1em;;
+  margin-top: 1em;
 }
 
 .brands__top-horizontal-dash {
@@ -14,4 +15,8 @@
     border-top: 1px solid $nhsuk-border-color;
     margin-top: nhsuk-spacing(3);
   }
+}
+
+.section-tutorial-value {
+  max-width: 50%;
 }

@@ -892,7 +892,7 @@
         }
 
         [Test]
-        public void GetApplicationsByBrandId_returns_expected_applications()
+        public void GetApplicationsThatHaveSectionsByBrandId_returns_expected_applications()
         {
             // Given
             const int brandId = 1;
@@ -946,7 +946,7 @@
                 .Returns(sections);
 
             // When
-            var result = courseService.GetApplicationsByBrandId(brandId);
+            var result = courseService.GetApplicationsThatHaveSectionsByBrandId(brandId);
 
             // Then
             using (new AssertionScope())

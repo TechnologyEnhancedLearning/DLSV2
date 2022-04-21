@@ -4,31 +4,16 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
     using FakeItEasy;
-    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
-    using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
 
     public class LearningContentControllerTests
     {
-        private readonly BrandDetail brand = new BrandDetail
-        {
-            Active = true,
-            BrandDescription = null,
-            BrandID = 1,
-            BrandImage = null,
-            BrandLogo = null,
-            BrandName = "Brand Name",
-            ContactEmail = null,
-            ImageFileType = null,
-            IncludeOnLanding = true,
-            OrderByNumber = 1,
-        };
+        private const double PopularityRating = 1;
 
         private static readonly ApplicationDetails ApplicationDetail = new ApplicationDetails
         {
@@ -52,7 +37,7 @@
             AverageTutMins = 1,
         };
 
-        private static readonly IEnumerable<Tutorial> Tutorials = new List<Tutorial>() { Tutorial };
+        private static readonly IEnumerable<Tutorial> Tutorials = new List<Tutorial> { Tutorial };
 
         private static readonly Section Section = new Section
         {
@@ -61,34 +46,55 @@
             Tutorials = Tutorials,
         };
 
-        private static readonly IEnumerable<Section> Sections = new List<Section>() { Section };
+        private static readonly IEnumerable<Section> Sections = new List<Section> { Section };
 
-        private const double PopularityRating = 1;
-
-        private readonly IEnumerable<ApplicationWithSections> applications = new List<ApplicationWithSections>()
+        private readonly IEnumerable<ApplicationWithSections> applications = new List<ApplicationWithSections>
         {
             new ApplicationWithSections(ApplicationDetail, Sections, PopularityRating),
         };
 
-        private LearningContentController controller = null!;
+        private readonly BrandDetail brand = new BrandDetail
+        {
+            Active = true,
+            BrandDescription = null,
+            BrandID = 1,
+            BrandImage = null,
+            BrandLogo = null,
+            BrandName = "Brand Name",
+            ContactEmail = null,
+            ImageFileType = null,
+            IncludeOnLanding = true,
+            OrderByNumber = 1,
+        };
+
         private IBrandsService brandsService = null!;
+
+        private LearningContentController controller = null!;
         private ICourseService courseService = null!;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private ITutorialService tutorialService = null!;
 
         [SetUp]
         public void Setup()
         {
             brandsService = A.Fake<IBrandsService>();
             courseService = A.Fake<ICourseService>();
+            tutorialService = A.Fake<ITutorialService>();
 
             A.CallTo(
                 () => brandsService.GetPublicBrandById(A<int>._)
             ).Returns(brand);
 
             A.CallTo(
-                () => courseService.GetApplicationsByBrandId(A<int>._)
+                () => courseService.GetApplicationsThatHaveSectionsByBrandId(A<int>._)
             ).Returns(applications);
 
-            controller = new LearningContentController(brandsService, courseService);
+            controller = new LearningContentController(
+                brandsService,
+                tutorialService,
+                courseService,
+                searchSortFilterPaginateService
+            );
         }
 
         [Test]
@@ -114,7 +120,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(() => brandsService.GetPublicBrandById(1)).MustHaveHappened();
-                A.CallTo(() => courseService.GetApplicationsByBrandId(1)).MustHaveHappened();
+                A.CallTo(() => courseService.GetApplicationsThatHaveSectionsByBrandId(1)).MustHaveHappened();
                 result.Should().BeViewResult().WithDefaultViewName();
             }
         }

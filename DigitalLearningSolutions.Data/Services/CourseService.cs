@@ -97,7 +97,7 @@
 
         IEnumerable<string> GetTopicsForCentreAndCentrallyManagedCourses(int centreId);
 
-        IEnumerable<ApplicationWithSections> GetApplicationsByBrandId(int brandId);
+        IEnumerable<ApplicationWithSections> GetApplicationsThatHaveSectionsByBrandId(int brandId);
 
         int CreateNewCentreCourse(Customisation customisation);
 
@@ -413,12 +413,15 @@
             return filteredApplications.OrderBy(a => a.ApplicationName);
         }
 
-        public IEnumerable<ApplicationWithSections> GetApplicationsByBrandId(int brandId)
+        public IEnumerable<ApplicationWithSections> GetApplicationsThatHaveSectionsByBrandId(int brandId)
         {
             var numRecordsByApplicationId =
                 courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId, clockService.UtcNow.AddMonths(-3));
+
             var applications = courseDataService.GetApplicationsByBrandId(brandId);
+
             double maxPopularity = numRecordsByApplicationId.Any() ? numRecordsByApplicationId.Values.Max() : 0;
+
             var applicationsWithSections = applications.Select(
                 application => new ApplicationWithSections(
                     application,
@@ -430,7 +433,10 @@
                         : numRecordsByApplicationId.GetValueOrDefault(application.ApplicationId, 0) / maxPopularity
                 )
             );
-            return applicationsWithSections;
+
+            var applicationsWithPopulatedSections = applicationsWithSections.Where(a => a.Sections.Any());
+
+            return applicationsWithPopulatedSections;
         }
 
         public LearningLog? GetLearningLogDetails(int progressId)

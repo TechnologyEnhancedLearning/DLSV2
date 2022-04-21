@@ -28,21 +28,29 @@
   </div>
 </div>
 
-@if (Model.Tutorials.Any()) {
-  <p class="nhsuk-u-margin-top-4">Course Tutorials</p>
+@if (Model.Tutorials.Any())
+{
+  <h2 class="nhsuk-heading-l">Course Tutorials</h2>
   <p class="nhsuk-body-m">Access to this content does not require login and progress is not tracked.</p>
-  foreach (var tutorial in Model.Tutorials) {
+  foreach (var tutorial in Model.Tutorials)
+  {
     <partial name="_TutorialCard" model="tutorial" />
   }
 }
 
-@if (Model.Applications.Any()) {
-  <div>
-    <h2 class="nhsuk-heading-l heading-margin-2">Courses</h2>
+@if (Model.Applications.Any())
+{
+  <h2 class="nhsuk-heading-l nhsuk-u-padding-top-7">Courses</h2>
+  <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSortAndFilter" model="Model" />
+
+  <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+  <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
+  
+  <div id="searchable-elements">
     @foreach (var application in Model.Applications) {
-      if (application.Sections.Any()) {
-        <partial name="_BrandCourseCard" model="@application" />
-      }
+    <partial name="_BrandCourseCard" model="@application" />
     }
   </div>
+
+  <partial name="SearchablePage/_Pagination" model="Model" />
 }

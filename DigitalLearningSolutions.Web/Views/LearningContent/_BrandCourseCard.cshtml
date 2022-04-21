@@ -1,5 +1,5 @@
-﻿@using DigitalLearningSolutions.Data.Models.Courses
-@model ApplicationWithSections
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningContent
+@model BrandCourseViewModel
 
 <div class="searchable-element nhsuk-panel card-with-buttons word-break nhsuk-u-margin-bottom-4" id="@Model.ApplicationId-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
@@ -10,9 +10,54 @@
     </summary>
 
     <div class="nhsuk-details__text">
-      @*<partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />*@
+      <div class="tags">
+        <div class="card-filter-tag">
+          <strong class="nhsuk-tag nhsuk-tag--grey">@Model.DisplayTime</strong>
+          <span hidden name="learning-time">@Model.Time</span>
+        </div>
 
-      <partial name="_BrandCourseCardDetails" model="@Model" />
+        <div class="card-filter-tag" @(Model.PopularityRating > 0.5 ? "hidden" : string.Empty)>
+          <strong class="nhsuk-tag nhsuk-tag--green">Popular</strong>
+          <span hidden name="popularity-score">@Model.PopularityRating</span>
+        </div>
+      </div>
+
+      <table role="table" class="nhsuk-table-responsive">
+        <thead role="rowgroup" class="nhsuk-table__head">
+        <tr role="row">
+          <th role="columnheader" class="" scope="col">
+            Section
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Tutorials
+          </th>
+        </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+        @foreach (var section in Model.Sections) {
+          <tr role="row" class="nhsuk-table__row">
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Section</span>
+              <div class="section-tutorial-value">
+                @(section.SectionName)
+              </div>
+            </td>
+            <td role="cell" class="nhsuk-table__cell ">
+              <span class="nhsuk-table-responsive__heading">Tutorials</span>
+              @if (section.Tutorials.Any()) {
+                <div class="section-tutorial-value">
+                  @foreach (var tutorial in section.Tutorials) {
+                    <p class="nhsuk-u-margin-bottom-3">@tutorial.TutorialName</p>
+                  }
+                </div>
+              } else {
+                <p>No Tutorials</p>
+              }
+            </td>
+          </tr>
+        }
+        </tbody>
+      </table>
     </div>
   </details>
 </div>

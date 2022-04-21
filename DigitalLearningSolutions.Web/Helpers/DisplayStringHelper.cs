@@ -78,5 +78,10 @@
 
             return Regex.Replace(input, "[^ a-zA-Z0-9]", replacement);
         }
+
+        public static string GetTimeStringFromMinutes(int minutes)
+        {
+            return minutes < 60 ? $"{minutes}m" : $"{minutes / 60}h {minutes % 60}m";
+        }
     }
 }

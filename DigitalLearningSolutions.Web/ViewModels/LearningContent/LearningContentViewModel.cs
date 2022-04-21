@@ -1,23 +1,42 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningContent
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.TutorialContent;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Models.TutorialContent;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class LearningContentViewModel
+    public class LearningContentViewModel : BaseSearchablePageViewModel<ApplicationWithSections>
     {
-        public readonly string Name;
+        public readonly IEnumerable<BrandCourseViewModel> Applications;
         public readonly string? Description;
+        public readonly string Name;
         public readonly IEnumerable<TutorialSummary> Tutorials;
-        public readonly IEnumerable<ApplicationWithSections> Applications;
 
-        public LearningContentViewModel(BrandDetail brand, IEnumerable<TutorialSummary> tutorials, IEnumerable<ApplicationWithSections> applications)
+        public LearningContentViewModel(
+            SearchSortFilterPaginationResult<ApplicationWithSections> result,
+            IEnumerable<FilterModel> availableFilters,
+            BrandDetail brand,
+            IEnumerable<TutorialSummary> tutorials
+        ) : base(result, true, availableFilters)
         {
             Name = brand.BrandName;
             Description = brand.BrandDescription;
             Tutorials = tutorials;
-            Applications = applications;
+            Applications = result.ItemsToDisplay.Select(app => new BrandCourseViewModel(app));
         }
+
+        public override IEnumerable<(string, string)> SortOptions { get; } = new[]
+        {
+            BrandCoursesSortByOption.Title,
+            BrandCoursesSortByOption.Popularity,
+            BrandCoursesSortByOption.Length,
+            BrandCoursesSortByOption.CreatedDate,
+        };
+
+        public override bool NoDataFound => !Applications.Any() && NoSearchOrFilter;
     }
 }

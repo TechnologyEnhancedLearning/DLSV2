@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Courses
 {
+    using System;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class ApplicationDetails : BaseSearchableItem
@@ -17,5 +18,6 @@
         public string CourseTopic { get; set; }
         public bool PLAssess { get; set; }
         public bool DiagAssess { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 import moment from 'moment';
 import * as _ from 'lodash';
 import { ISearchableElement } from './searchSortFilterAndPaginate';
+import { search } from './search';
 
 export function setUpSort(onSortUpdated: VoidFunction): void {
   document.getElementById('select-sort-by')?.addEventListener('change', onSortUpdated);
@@ -83,6 +84,8 @@ export function getSortValue(
       return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'learning-time'));
     case 'AssessmentScore':
       return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'assessment-score'));
+    case 'Popularity':
+      return parseFloat(getElementText(searchableElement, 'popularity-score'));
     default:
       return '';
   }
