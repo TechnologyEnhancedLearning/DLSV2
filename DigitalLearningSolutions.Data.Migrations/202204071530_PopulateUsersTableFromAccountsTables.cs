@@ -25,10 +25,10 @@ namespace DigitalLearningSolutions.Data.Migrations
             };
             using var transactionScope = new TransactionScope(TransactionScopeOption.Required, options);
 
-            // 1. Delete from Users (this should be empty)
+            // Delete from Users (this should be empty)
             connection.Execute("DELETE Users");
 
-            // 2. Copy AdminAccounts to Users table
+            // Copy AdminAccounts to Users table
             connection.Execute(
                 @"INSERT INTO dbo.Users (
                     PrimaryEmail,
@@ -67,16 +67,6 @@ namespace DigitalLearningSolutions.Data.Migrations
                     CASE WHEN TRIM(Email) IS NOT NULL AND TRIM(Email) <> '' THEN GETUTCDATE() ELSE NULL END
                     FROM AdminAccounts"
             );
-
-            // 3. Update AdminAccounts to reference Users.ID
-            connection.Execute(
-                @"UPDATE AdminAccounts
-                    SET
-                        UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
-                        Email = NULL"
-            );
-
-            // 4. DelegateAccount
 
             // Transfer all delegates with unique emails not already in the Users table
             connection.Execute(
@@ -121,11 +111,32 @@ namespace DigitalLearningSolutions.Data.Migrations
                         GROUP BY Email
                         HAVING COUNT(*) = 1
                         EXCEPT
-                        SELECT PrimaryEmail FROM Users)"
+                        SELECT Email FROM AdminAccounts)"
             );
 
             // Link all these User records we just created to the DelegateAccounts.
-            LinkDelegateAccountsToTheirUserRecords(connection);
+            connection.Execute(
+                @"UPDATE DelegateAccounts
+                    SET
+                        UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
+                        Email = NULL,
+                        CentreSpecificDetailsLastChecked = GETUTCDATE()
+                    WHERE Email IN (
+                        SELECT Email FROM DelegateAccounts
+                        WHERE Email IS NOT NULL AND TRIM(Email) IS NOT NULL AND TRIM(Email) <> ''
+                        GROUP BY Email
+                        HAVING COUNT(*) = 1
+                        EXCEPT
+                        SELECT Email FROM AdminAccounts)"
+            );
+
+            // Update AdminAccounts to reference Users.ID
+            connection.Execute(
+                @"UPDATE AdminAccounts
+                    SET
+                        UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
+                        Email = NULL"
+            );
 
             // Get the rest of the delegate accounts we've not resolved yet
             var delegateAccounts =
@@ -197,7 +208,14 @@ namespace DigitalLearningSolutions.Data.Migrations
 
             // At the end we link all the unlinked accounts with emails to the matching User record.
             // All ones with invalid emails were linked when we created new User records for them.
-            LinkDelegateAccountsToTheirUserRecords(connection);
+            connection.Execute(
+                @"UPDATE DelegateAccounts
+                    SET
+                        UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
+                        Email = NULL,
+                        CentreSpecificDetailsLastChecked = GETUTCDATE()
+                    WHERE UserID IS NULL"
+            );
 
             transactionScope.Complete();
         }
@@ -205,19 +223,6 @@ namespace DigitalLearningSolutions.Data.Migrations
         public override void Down()
         {
             Execute.Sql(Resources.UAR_859_PopulateUsersTableFromAccountsTables_DOWN);
-        }
-
-        private static void LinkDelegateAccountsToTheirUserRecords(IDbConnection connection)
-        {
-            connection.Execute(
-                @"UPDATE DelegateAccounts
-                    SET
-                        UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
-                        Email = NULL,
-                        CentreSpecificDetailsLastChecked = GETUTCDATE()
-                    WHERE UserID IS NULL AND
-                        Email IS NOT NULL AND TRIM(Email) IS NOT NULL AND TRIM(Email) <> ''"
-            );
         }
 
         private static void UpdateExistingUserDefaultValuesWithDelegateDetails(
