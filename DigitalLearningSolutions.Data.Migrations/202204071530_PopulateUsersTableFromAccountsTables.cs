@@ -28,6 +28,9 @@ namespace DigitalLearningSolutions.Data.Migrations
             // Delete from Users (this should be empty)
             connection.Execute("DELETE Users");
 
+            // Add index to AdminAccounts Email to fix slow queries
+            connection.Execute("CREATE INDEX IX_AdminAccounts_Email ON AdminAccounts (Email)");
+
             // Copy AdminAccounts to Users table
             connection.Execute(
                 @"INSERT INTO dbo.Users (
@@ -216,6 +219,9 @@ namespace DigitalLearningSolutions.Data.Migrations
                         CentreSpecificDetailsLastChecked = GETUTCDATE()
                     WHERE UserID IS NULL"
             );
+
+            // Remove AdminAccounts Email Index we created at the start
+            connection.Execute("DROP INDEX AdminAccounts.IX_AdminAccounts_Email");
 
             transactionScope.Complete();
         }
