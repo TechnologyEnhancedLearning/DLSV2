@@ -20,7 +20,7 @@ export function search(searchableElements: ISearchableElement[]): ISearchableEle
     return searchableElements;
   }
 
-  const searchEngine = new JsSearch.Search(['element', 'id']);
+  const searchEngine = new JsSearch.Search('parentIndex');
   searchEngine.searchIndex = new JsSearch.UnorderedSearchIndex();
   searchEngine.indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
   searchEngine.addIndex('searchableContent');

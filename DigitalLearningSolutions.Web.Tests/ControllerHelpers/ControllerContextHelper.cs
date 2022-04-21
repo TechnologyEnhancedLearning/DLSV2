@@ -5,6 +5,7 @@
     using System.Security.Claims;
     using System.Text;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using Microsoft.AspNetCore.Authentication;
@@ -169,6 +170,13 @@
             {
                 HttpContext = httpContext,
             };
+
+            return controller;
+        }
+
+        public static T WithMockHttpContextSession<T>(this T controller) where T : Controller
+        {
+            controller.HttpContext.Session = new MockHttpContextSession();
 
             return controller;
         }

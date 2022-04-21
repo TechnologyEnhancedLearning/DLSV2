@@ -37,6 +37,10 @@ namespace DigitalLearningSolutions.Data.Services
         {
             var workbook = new XLWorkbook(file.OpenReadStream());
             var worksheet = workbook.Worksheet(1);
+            if (worksheet.Tables.Count() == 0)
+            {
+                throw new InvalidHeadersException();
+            }
             var table = worksheet.Tables.Table(0);
             if (!ValidateHeaders(table))
             {

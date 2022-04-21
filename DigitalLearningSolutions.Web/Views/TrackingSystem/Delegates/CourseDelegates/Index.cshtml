@@ -17,8 +17,10 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <vc:loading-spinner page-has-side-nav-menu="false" />
-    <div id="area-to-hide-while-loading">
+    @if (Model.CourseDetails.JavascriptSearchSortFilterPaginateEnabled) {
+      <vc:loading-spinner page-has-side-nav-menu="true" />
+    }
+    <div id="@(Model.CourseDetails.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-three-quarters">
           <h1 id="page-heading" class="nhsuk-heading-xl">Course delegates</h1>
@@ -69,7 +71,7 @@
           </form>
         </div>
 
-        <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSortAndFilter" model="Model.CourseDetails" />
+        <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model.CourseDetails" />
 
         <div class="nhsuk-grid-row">
           <div class="nhsuk-grid-column-full">
@@ -79,6 +81,7 @@
               </p>
             } else {
               <partial name="SearchablePage/_SearchResultsCount" model="Model.CourseDetails" />
+              <partial name="SearchablePage/_PaginationWithoutAlert" model="Model.CourseDetails" />
 
               <div id="searchable-elements">
                 @foreach (var delegateUser in Model.CourseDetails.Delegates) {

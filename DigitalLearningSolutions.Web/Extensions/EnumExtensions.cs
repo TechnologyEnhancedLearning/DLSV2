@@ -24,7 +24,7 @@ namespace DigitalLearningSolutions.Web.Extensions
                 case SelfAssessmentCompetencyFilter.SelfAssessed:
                     return "Self-assessed";
                 case SelfAssessmentCompetencyFilter.Verified:
-                    return "Verified";
+                    return "Confirmed";
                 case SelfAssessmentCompetencyFilter.MeetingRequirements:
                     return "Meeting requirements";
                 case SelfAssessmentCompetencyFilter.PartiallyMeetingRequirements:

@@ -5,8 +5,10 @@
 
 <link rel="stylesheet" href="@Url.Content("~/css/support/faqs.css")" asp-append-version="true">
 
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
 @section scripts {
   <script src="@Url.Content("~/js/support/faqs.js")" asp-append-version="true"></script>
+}
 }
 
 @{
@@ -20,9 +22,13 @@
     </nav>
   </div>
 
+  <span id="dls-sub-application" class="display-none">@Model.DlsSubApplication</span>
+
   <div class="nhsuk-grid-column-three-quarters">
-    <vc:loading-spinner page-has-side-nav-menu="true" />
-    <div id="area-to-hide-while-loading">
+    @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+      <vc:loading-spinner page-has-side-nav-menu="true" />
+    }
+    <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
       <h1 class="nhsuk-heading-xl">FAQs</h1>
 
       <partial name="SearchablePage/_Search" model="Model" />
@@ -35,6 +41,7 @@
         </p>
       } else {
         <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+        <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
 
         <div id="searchable-elements">
           @foreach (var faq in Model.Faqs) {
@@ -42,9 +49,8 @@
           }
         </div>
       }
-      @if (Model.TotalPages > 1) {
-        <partial name="SearchablePage/_Pagination" model="Model" />
-      }
+
+      <partial name="SearchablePage/_Pagination" model="Model" />
     </div>
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/Support/Shared/_SupportSideNavMenu.cshtml" model="@Model" />

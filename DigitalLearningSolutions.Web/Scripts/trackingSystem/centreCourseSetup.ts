@@ -1,7 +1,10 @@
 import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
 
-// eslint-disable-next-line no-new
-new SearchSortFilterAndPaginate('TrackingSystem/CourseSetup/AllCourseStatistics', true, true, true, 'CourseFilter');
+const noJsStyling = document.getElementById('no-js-styling');
+if (noJsStyling === null) {
+  // eslint-disable-next-line no-new
+  new SearchSortFilterAndPaginate('TrackingSystem/CourseSetup/AllCourseStatistics', true, true, true, 'CourseFilter', undefined, undefined, setUpCourseLinkClipboardCopiers);
+}
 
 const copyCourseLinkClass = 'copy-course-button';
 const copyLinkIdPrefix = 'copy-course-';

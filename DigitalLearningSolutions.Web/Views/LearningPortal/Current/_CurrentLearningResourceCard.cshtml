@@ -37,15 +37,19 @@
       </div>
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-bottom-4"
          aria-describedby="@Model.Id-name-lhr"
+         data-return-page-enabled="true"
          asp-action="MarkActionPlanResourceAsComplete"
          asp-route-learningLogItemId="@Model.Id"
+         asp-route-returnPageQuery="@Model.ReturnPageQuery"
          role="button">
         Mark as complete
       </a>
       <a class="nhsuk-button delete-button small-edit-button"
          aria-describedby="@Model.Id-name-lhr"
+         data-return-page-enabled="true"
          asp-action="RemoveResourceFromActionPlan"
          asp-route-learningLogItemId="@Model.Id"
+         asp-route-returnPageQuery="@Model.ReturnPageQuery"
          role="button">
         Remove learning resource
       </a>

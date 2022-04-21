@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class EditCompleteByDateViewModel : EditCompleteByDateFormData
     {
@@ -12,6 +13,7 @@
             string name,
             LearningItemType type,
             DateTime? completeByDate,
+            ReturnPageQuery returnPageQuery,
             int? progressId = null,
             bool? apiIsAccessible = null
         )
@@ -24,6 +26,7 @@
             Year = completeByDate?.Year;
             ProgressId = progressId;
             ApiIsAccessible = apiIsAccessible;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public EditCompleteByDateViewModel(

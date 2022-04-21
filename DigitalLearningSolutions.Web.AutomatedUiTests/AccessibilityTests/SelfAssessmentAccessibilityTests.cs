@@ -11,7 +11,7 @@
     {
         public SelfAssessmentAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
-        [Fact(Skip = "Broken by unmerged migration in DLSV2-520.")] // TODO DLSV2-520: Re-enable this test.
+        [Fact]
         public void SelfAssessment_journey_has_no_accessibility_errors()
         {
             // Given
@@ -19,7 +19,7 @@
             const string startUrl = "/LearningPortal/SelfAssessment/1";
             const string firstCapabilityUrl = startUrl + "/1";
             const string capabilitiesUrl = startUrl + "/Capabilities";
-            const string completeByUrl = startUrl + "/CompleteBy";
+            const string completeByUrl = startUrl + "/CompleteBy?returnPageQuery=pageNumber%3D1";
 
             // When
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);

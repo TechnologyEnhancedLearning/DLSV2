@@ -2,9 +2,11 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DateHelper = Helpers.DateHelper;
 
     public class DelegateInfoViewModel
     {
@@ -29,7 +31,7 @@
             Email = delegateUser.EmailAddress;
             JobGroupId = delegateUser.JobGroupId;
             JobGroup = delegateUser.JobGroupName;
-            ProfessionalRegistrationNumber = DisplayStringHelper.GetPrnDisplayString(
+            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
                 delegateUser.HasBeenPromptedForPrn,
                 delegateUser.ProfessionalRegistrationNumber
             );

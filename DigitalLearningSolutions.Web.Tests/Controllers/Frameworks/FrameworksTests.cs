@@ -1,10 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Frameworks
 {
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.TestHelpers.Frameworks;
     using DigitalLearningSolutions.Web.ViewModels.Frameworks;
     using FakeItEasy;
@@ -35,7 +35,7 @@
             // Then
             var allFrameworksViewModel = new AllFrameworksViewModel(
                 new SearchSortFilterPaginationResult<BrandedFramework>(
-                    new PaginationResult<BrandedFramework>(new List<BrandedFramework>(), 1, 1, 12, 0),
+                    new PaginationResult<BrandedFramework>(new List<BrandedFramework>(), 1, 1, 12, 0, true),
                     null,
                     "CreatedDate",
                     "Descending",
@@ -44,7 +44,7 @@
             );
             var myFrameworksViewModel = new MyFrameworksViewModel(
                 new SearchSortFilterPaginationResult<BrandedFramework>(
-                    new PaginationResult<BrandedFramework>(dashboardFrameworks, 1, 1, 12, 2),
+                    new PaginationResult<BrandedFramework>(dashboardFrameworks, 1, 1, 12, 2, true),
                     null,
                     "CreatedDate",
                     "Descending",
@@ -56,7 +56,8 @@
                 true,
                 false,
                 myFrameworksViewModel,
-                allFrameworksViewModel
+                allFrameworksViewModel,
+                FrameworksTab.MyFrameworks
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
@@ -84,7 +85,7 @@
             // Then
             var allFrameworksViewModel = new AllFrameworksViewModel(
                 new SearchSortFilterPaginationResult<BrandedFramework>(
-                    new PaginationResult<BrandedFramework>(dashboardFrameworks, 1, 1, 12, 3),
+                    new PaginationResult<BrandedFramework>(dashboardFrameworks, 1, 1, 12, 3, true),
                     null,
                     "FrameworkName",
                     "Ascending",
@@ -93,7 +94,7 @@
             );
             var myFrameworksViewModel = new MyFrameworksViewModel(
                 new SearchSortFilterPaginationResult<BrandedFramework>(
-                    new PaginationResult<BrandedFramework>(new List<BrandedFramework>(), 1, 1, 12, 0),
+                    new PaginationResult<BrandedFramework>(new List<BrandedFramework>(), 1, 1, 12, 0, true),
                     null,
                     "FrameworkName",
                     "Ascending",
@@ -105,7 +106,8 @@
                 true,
                 false,
                 myFrameworksViewModel,
-                allFrameworksViewModel
+                allFrameworksViewModel,
+                FrameworksTab.AllFrameworks
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);

@@ -107,7 +107,11 @@
             config = A.Fake<IConfiguration>();
 
             A.CallTo(
-                () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)
+                () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
+                    A<int>._,
+                    A<int>._,
+                    false
+                )
             ).Returns(courses);
 
             A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);

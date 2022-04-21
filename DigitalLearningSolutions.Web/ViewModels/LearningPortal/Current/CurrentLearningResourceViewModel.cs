@@ -1,10 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 {
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class CurrentLearningResourceViewModel : CurrentLearningItemViewModel, ILearningResourceCardViewModel
     {
-        public CurrentLearningResourceViewModel(ActionPlanResource resource) : base(resource)
+        public CurrentLearningResourceViewModel(ActionPlanResource resource, ReturnPageQuery returnPageQuery) : base(resource, returnPageQuery)
         {
             LaunchResourceLink = resource.ResourceLink;
             ResourceDescription = resource.ResourceDescription;
