@@ -176,14 +176,64 @@
 
         public int RegisterAdmin(AdminRegistrationModel registrationModel)
         {
-            var values = new
+            using var transaction = new TransactionScope();
+
+            // TODO HEEDLS-856
+            // Forename Users
+            // Surname Users
+            // Email Users
+            // Password Users
+            // CentreId Admin
+            // CategoryId Admin
+            // CentreAdmin Admin
+            // IsCentreManager Admin
+            // Approved appears in candidates only - remove
+            // Active Both???
+            // ContentCreator Admin
+            // ContentManager Admin
+            // ImportOnly Admin
+            // Trainer Admin
+            // Supervisor Admin
+            // NominatedSupervisor Admin
+
+            // TODO HEEDLS-856 isn't this just going to work for wholly new accounts?
+            // TODO HEEDLS-856 jobgroupID is nullable in written schema, non-null in DB
+            // TODO HEEDLS-856 what about PRN?
+            var userValues = new
             {
                 forename = registrationModel.FirstName,
                 surname = registrationModel.LastName,
                 email = registrationModel.PrimaryEmail,
                 password = registrationModel.PasswordHash,
+                active = registrationModel.Active,
+            };
+
+            var userID = connection.QuerySingle<int>(
+                @"INSERT INTO Users
+                    (
+                        FirstName,
+                        LastName,
+                        PrimaryEmail,
+                        PasswordHash,
+                        Active
+                    )
+                    OUTPUT Inserted.ID
+                    VALUES
+                    (
+                        @firstName,
+                        @lastName,
+                        @primaryEmail,
+                        @passwordHash,
+                        @active
+                    )",
+                userValues
+            );
+
+            var adminValues = new
+            {
+                userID,
                 centreID = registrationModel.Centre,
-                categoryId = registrationModel.CategoryId,
+                categoryID = registrationModel.CategoryId,
                 centreAdmin = registrationModel.IsCentreAdmin,
                 isCentreManager = registrationModel.IsCentreManager,
                 approved = registrationModel.Approved,
@@ -196,15 +246,9 @@
                 nominatedSupervisor = registrationModel.IsNominatedSupervisor
             };
 
-            using var transaction = new TransactionScope();
-
             var adminUserId = connection.QuerySingle<int>(
                 @"INSERT INTO AdminUsers
                     (
-                        Forename,
-                        Surname,
-                        Email,
-                        Password,
                         CentreId,
                         CategoryId,
                         CentreAdmin,
@@ -238,8 +282,10 @@
                         @supervisor,
                         @nominatedSupervisor
                     )",
-                values
+                adminValues
             );
+
+            // TODO HEEDLS-856 then check this thing
 
             connection.Execute(
                 @"INSERT INTO NotificationUsers (NotificationId, AdminUserId)
