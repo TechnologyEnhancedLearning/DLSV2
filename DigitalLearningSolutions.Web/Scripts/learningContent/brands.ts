@@ -1,4 +1,4 @@
-﻿import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
+import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
 
 const brandIdHidden = <HTMLInputElement>document.getElementById('brand-id');
 const brandId = brandIdHidden?.value.trim();
