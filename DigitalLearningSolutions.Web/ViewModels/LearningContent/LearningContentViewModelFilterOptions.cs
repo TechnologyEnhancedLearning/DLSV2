@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningContent
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -17,12 +17,12 @@
             return new[]
             {
                 new FilterModel(
-                    nameof(CourseStatistics.CategoryName),
+                    nameof(ApplicationWithSections.CategoryName),
                     "Category",
                     GetCategoryOptions(categories)
                 ),
                 new FilterModel(
-                    nameof(CourseStatistics.CourseTopic),
+                    nameof(ApplicationWithSections.CourseTopic),
                     "Topic",
                     GetTopicOptions(topics)
                 ),
@@ -34,8 +34,8 @@
             return categories.Select(
                 category => new FilterOptionModel(
                     category,
-                    nameof(CourseStatistics.CategoryName) + FilteringHelper.Separator +
-                    nameof(CourseStatistics.CategoryName) +
+                    nameof(ApplicationWithSections.CategoryName) + FilteringHelper.Separator +
+                    nameof(ApplicationWithSections.CategoryName) +
                     FilteringHelper.Separator + category,
                     FilterStatus.Default
                 )
@@ -47,8 +47,8 @@
             return topics.Select(
                 topic => new FilterOptionModel(
                     topic,
-                    nameof(CourseStatistics.CourseTopic) + FilteringHelper.Separator +
-                    nameof(CourseStatistics.CourseTopic) +
+                    nameof(ApplicationWithSections.CourseTopic) + FilteringHelper.Separator +
+                    nameof(ApplicationWithSections.CourseTopic) +
                     FilteringHelper.Separator + topic,
                     FilterStatus.Default
                 )

@@ -6,9 +6,11 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
+    using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
 
     public class LearningContentControllerTests
@@ -67,12 +69,14 @@
             OrderByNumber = 1,
         };
 
+        private const string CookieName = "BrandCoursesFilter";
         private IBrandsService brandsService = null!;
-
         private LearningContentController controller = null!;
         private ICourseService courseService = null!;
-        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ITutorialService tutorialService = null!;
+        private HttpRequest httpRequest = null!;
+        private HttpResponse httpResponse = null!;
 
         [SetUp]
         public void Setup()
@@ -80,6 +84,7 @@
             brandsService = A.Fake<IBrandsService>();
             courseService = A.Fake<ICourseService>();
             tutorialService = A.Fake<ITutorialService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
             A.CallTo(
                 () => brandsService.GetPublicBrandById(A<int>._)
@@ -89,12 +94,20 @@
                 () => courseService.GetApplicationsThatHaveSectionsByBrandId(A<int>._)
             ).Returns(applications);
 
+            httpRequest = A.Fake<HttpRequest>();
+            httpResponse = A.Fake<HttpResponse>();
+
+            const string cookieValue = "ActiveStatus|Active|false";
+
             controller = new LearningContentController(
                 brandsService,
                 tutorialService,
                 courseService,
                 searchSortFilterPaginateService
-            );
+            ).WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
+                .WithMockUser(true)
+                .WithMockServices()
+                .WithMockTempData(); ;
         }
 
         [Test]

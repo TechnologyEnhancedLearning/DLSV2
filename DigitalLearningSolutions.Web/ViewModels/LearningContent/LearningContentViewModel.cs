@@ -12,6 +12,7 @@
     public class LearningContentViewModel : BaseSearchablePageViewModel<ApplicationWithSections>
     {
         public readonly IEnumerable<BrandCourseViewModel> Applications;
+        public readonly int BrandId;
         public readonly string? Description;
         public readonly string Name;
         public readonly IEnumerable<TutorialSummary> Tutorials;
@@ -23,6 +24,7 @@
             IEnumerable<TutorialSummary> tutorials
         ) : base(result, true, availableFilters)
         {
+            BrandId = brand.BrandID;
             Name = brand.BrandName;
             Description = brand.BrandDescription;
             Tutorials = tutorials;

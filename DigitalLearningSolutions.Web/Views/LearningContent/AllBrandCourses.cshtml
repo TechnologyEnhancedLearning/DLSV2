@@ -1,0 +1,24 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningContent
+@model AllBrandCoursesViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  @foreach (var course in Model.Courses)
+  {
+    <partial name="_BrandCourseCard" model="course" />
+  }
+  @foreach (var filter in Model.Filters)
+  {
+    <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
+  }
+</body>
+</html>

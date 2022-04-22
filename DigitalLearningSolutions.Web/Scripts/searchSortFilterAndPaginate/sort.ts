@@ -50,6 +50,8 @@ export function getSortValue(
       return parseDateAndTime(getElementText(searchableElement, 'complete-by-date'));
     case 'Completed':
       return parseDateAndTime(getElementText(searchableElement, 'completed-date'));
+    case 'CreatedDate':
+      return parseDateAndTime(getElementText(searchableElement, 'created-date'));
     case 'HasDiagnostic,DiagnosticScore':
       return parseInt(getElementText(searchableElement, 'diagnostic-score').split('/')[0] || '-1', 10);
     case 'IsAssessed,Passes':
@@ -71,6 +73,7 @@ export function getSortValue(
     case 'PassRate':
       return parseFloat(getElementText(searchableElement, 'pass-rate'));
     case 'CourseName':
+    case 'ApplicationName':
       return getElementText(searchableElement, 'course-name').toLocaleLowerCase();
     case 'Weighting':
       return parseInt(getElementText(searchableElement, 'faq-weighting'), 10);
@@ -84,7 +87,7 @@ export function getSortValue(
       return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'learning-time'));
     case 'AssessmentScore':
       return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'assessment-score'));
-    case 'Popularity':
+    case 'PopularityRating':
       return parseFloat(getElementText(searchableElement, 'popularity-score'));
     default:
       return '';

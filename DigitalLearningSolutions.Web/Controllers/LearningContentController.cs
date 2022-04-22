@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    using System.Collections.Immutable;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
@@ -9,7 +8,6 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.LearningContent;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using Microsoft.AspNetCore.Mvc;
 
     [RedirectDelegateOnlyToLearningPortal]
@@ -36,7 +34,7 @@
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        [Route("Home/LearningContent/{brandId:int}")]
+        [Route("Home/LearningContent/{brandId:int}/{page=1:int}")]
         public IActionResult Index(
             int brandId,
             int page = 1,
@@ -86,6 +84,17 @@
             );
 
             var model = new LearningContentViewModel(result, availableFilters, brand, tutorials);
+
+            return View(model);
+        }
+
+        [NoCaching]
+        [Route("Home/LearningContent/{brandId:int}/AllBrandCourses")]
+        public IActionResult AllBrandCourses(int brandId)
+        {
+            var applications = courseService.GetApplicationsThatHaveSectionsByBrandId(brandId).ToList();
+
+            var model = new AllBrandCoursesViewModel(applications);
 
             return View(model);
         }

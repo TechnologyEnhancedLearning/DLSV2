@@ -5,6 +5,20 @@
 
     public class ApplicationDetails : BaseSearchableItem
     {
+        public ApplicationDetails(){}
+
+        public ApplicationDetails(ApplicationDetails applicationDetails)
+        {
+            ApplicationId = applicationDetails.ApplicationId;
+            ApplicationName = applicationDetails.ApplicationName;
+            CategoryName = applicationDetails.CategoryName;
+            CourseTopicId = applicationDetails.CourseTopicId;
+            CourseTopic = applicationDetails.CourseTopic;
+            PLAssess = applicationDetails.PLAssess;
+            DiagAssess = applicationDetails.DiagAssess;
+            CreatedDate = applicationDetails.CreatedDate;
+        }
+
         public override string SearchableName
         {
             get => SearchableNameOverrideForFuzzySharp ?? ApplicationName;

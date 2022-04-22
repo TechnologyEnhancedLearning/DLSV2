@@ -11,7 +11,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/Home/Welcome", "Welcome - Digital Learning Solutions")]
         [InlineData("/Home/Products", "Products - Digital Learning Solutions")]
         [InlineData("/Home/LearningContent", "Learning Content - Digital Learning Solutions")]
-        [InlineData("/LearningContent/1", "IT Skills Pathway")]
+        [InlineData("/Home/LearningContent/1/1", "IT Skills Pathway")]
         [InlineData("/Login", "Log in")]
         [InlineData("/ForgotPassword", "Reset your password")]
         [InlineData("/ResetPassword/Error", "Something went wrong...")]

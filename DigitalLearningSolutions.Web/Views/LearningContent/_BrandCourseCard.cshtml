@@ -16,46 +16,59 @@
           <span hidden name="learning-time">@Model.Time</span>
         </div>
 
-        <div class="card-filter-tag" @(Model.PopularityRating > 0.5 ? "hidden" : string.Empty)>
+        <div class="card-filter-tag" @(Model.PopularityRating <= 0.5 ? "hidden" : string.Empty)>
           <strong class="nhsuk-tag nhsuk-tag--green">Popular</strong>
           <span hidden name="popularity-score">@Model.PopularityRating</span>
         </div>
       </div>
-
+      <span hidden data-filter-value="@Model.CategoryFilter">
+        @Model.CategoryName
+      </span>
+      <span hidden data-filter-value="@Model.TopicFilter">
+        @Model.CourseTopic
+      </span>
+      <span hidden name="created-date">
+        @Model.CreatedDate
+      </span>
       <table role="table" class="nhsuk-table-responsive">
         <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
-          <th role="columnheader" class="" scope="col">
-            Section
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Tutorials
-          </th>
-        </tr>
+          <tr role="row">
+            <th role="columnheader" class="" scope="col">
+              Section
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Tutorials
+            </th>
+          </tr>
         </thead>
         <tbody class="nhsuk-table__body">
-        @foreach (var section in Model.Sections) {
-          <tr role="row" class="nhsuk-table__row">
-            <td role="cell" class="nhsuk-table__cell">
-              <span class="nhsuk-table-responsive__heading">Section</span>
-              <div class="section-tutorial-value">
-                @(section.SectionName)
-              </div>
-            </td>
-            <td role="cell" class="nhsuk-table__cell ">
-              <span class="nhsuk-table-responsive__heading">Tutorials</span>
-              @if (section.Tutorials.Any()) {
+          @foreach (var section in Model.Sections)
+          {
+            <tr role="row" class="nhsuk-table__row">
+              <td role="cell" class="nhsuk-table__cell">
+                <span class="nhsuk-table-responsive__heading">Section</span>
                 <div class="section-tutorial-value">
-                  @foreach (var tutorial in section.Tutorials) {
-                    <p class="nhsuk-u-margin-bottom-3">@tutorial.TutorialName</p>
-                  }
+                  @(section.SectionName)
                 </div>
-              } else {
-                <p>No Tutorials</p>
-              }
-            </td>
-          </tr>
-        }
+              </td>
+              <td role="cell" class="nhsuk-table__cell ">
+                <span class="nhsuk-table-responsive__heading">Tutorials</span>
+                @if (section.Tutorials.Any())
+                {
+                  <div class="section-tutorial-value">
+                    @foreach (var tutorial in section.Tutorials)
+                    {
+                      <p class="nhsuk-u-margin-bottom-3">@tutorial.TutorialName</p>
+                    }
+                  </div>
+                }
+                else
+                {
+                  <p>No Tutorials</p>
+                }
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>

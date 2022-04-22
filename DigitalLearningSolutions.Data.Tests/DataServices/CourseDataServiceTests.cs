@@ -544,6 +544,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CourseTopicId = 3,
                 CategoryName = "Office 2007",
                 CourseTopic = "Microsoft Office",
+                CreatedDate = new DateTime(2015, 9, 7, 12, 18, 11, 810),
             };
 
             // When

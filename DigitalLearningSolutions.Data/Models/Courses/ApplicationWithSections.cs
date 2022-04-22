@@ -9,15 +9,8 @@
             ApplicationDetails applicationDetails,
             IEnumerable<Section> sections,
             double popularityRating
-        )
+        ) : base(applicationDetails)
         {
-            ApplicationId = applicationDetails.ApplicationId;
-            ApplicationName = applicationDetails.ApplicationName;
-            CategoryName = applicationDetails.CategoryName;
-            CourseTopicId = applicationDetails.CourseTopicId;
-            CourseTopic = applicationDetails.CourseTopic;
-            PLAssess = applicationDetails.PLAssess;
-            DiagAssess = applicationDetails.DiagAssess;
             Sections = sections;
             TotalMins = Sections.Sum(
                 section => section.Tutorials.Sum(
