@@ -7,45 +7,29 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.FeatureManagement;
     using NUnit.Framework;
 
     public class ProgressServiceTests
     {
-        private IConfiguration configuration = null!;
         private ICourseDataService courseDataService = null!;
-        private ICourseService courseService = null!;
-        private IEmailService emailService = null!;
-        private IFeatureManager featureManager = null!;
+        private INotificationService notificationService = null!;
         private IProgressDataService progressDataService = null!;
         private IProgressService progressService = null!;
-        private ISessionService sessionService = null!;
-        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
         {
             courseDataService = A.Fake<ICourseDataService>();
             progressDataService = A.Fake<IProgressDataService>();
-            configuration = A.Fake<IConfiguration>();
-            courseService = A.Fake<ICourseService>();
-            featureManager = A.Fake<IFeatureManager>();
-            userService = A.Fake<IUserService>();
-            emailService = A.Fake<IEmailService>();
-            sessionService = A.Fake<ISessionService>();
+            notificationService = A.Fake<INotificationService>();
 
             progressService = new ProgressService(
-                configuration,
                 courseDataService,
-                courseService,
-                emailService,
-                featureManager,
                 progressDataService,
-                sessionService,
-                userService
+                notificationService
             );
         }
 
@@ -324,6 +308,146 @@
             // Then
             A.CallTo(() => progressDataService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer))
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void StoreAspProgressV2_calls_data_service_with_correct_values()
+        {
+            // Given
+            const int progressId = 101;
+            const int version = 1;
+            const string? lmGvSectionRow = "Test";
+            const int tutorialId = 123;
+            const int tutorialTime = 2;
+            const int tutorialStatus = 3;
+
+            A.CallTo(() => progressDataService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
+                .DoesNothing();
+
+            // When
+            progressService.StoreAspProgressV2(
+                progressId,
+                version,
+                lmGvSectionRow,
+                tutorialId,
+                tutorialTime,
+                tutorialStatus
+            );
+
+            // Then
+            A.CallTo(
+                    () => progressDataService.UpdateProgressDetails(
+                        progressId,
+                        version,
+                        A<DateTime>._,
+                        lmGvSectionRow
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => progressDataService.UpdateAspProgressTutTime(tutorialId, progressId, tutorialTime))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => progressDataService.UpdateAspProgressTutStat(tutorialId, progressId, tutorialStatus))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void CheckProgressForCompletion_does_nothing_if_progress_is_already_completed()
+        {
+            // Given
+            var completedDate = new DateTime(2022, 1, 1, 1, 1, 1);
+            var detailedCourseProgress = ProgressTestHelper.GetDefaultDetailedCourseProgress(completed: completedDate);
+
+            // When
+            progressService.CheckProgressForCompletionAndSendEmailIfCompleted(detailedCourseProgress);
+
+            // Then
+            A.CallTo(
+                () => progressDataService.GetCompletionStatusForProgress(A<int>._)
+            ).MustNotHaveHappened();
+        }
+
+        [TestCase(0)]
+        [TestCase(-1)]
+        public void CheckProgressForCompletion_does_not_call_data_services_if_completionStatus_is_zero_or_less(
+            int completionStatus
+        )
+        {
+            // Given
+            var detailedCourseProgress = ProgressTestHelper.GetDefaultDetailedCourseProgress();
+
+            A.CallTo(() => progressDataService.GetCompletionStatusForProgress(detailedCourseProgress.ProgressId))
+                .Returns(completionStatus);
+
+            // When
+            progressService.CheckProgressForCompletionAndSendEmailIfCompleted(detailedCourseProgress);
+
+            // Then
+            A.CallTo(
+                () => progressDataService.UpdateProgressCompletedDate(
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
+            A.CallTo(
+                () => progressDataService.MarkLearningLogItemsCompleteByProgressId(
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            A.CallTo(
+                () => notificationService.SendProgressCompletionNotificationEmail(
+                    A<DetailedCourseProgress>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void
+            CheckProgressForCompletion_calls_data_services_with_correct_values_if_completionStatus_is_greater_than_zero()
+        {
+            // Given
+            var detailedCourseProgress = ProgressTestHelper.GetDefaultDetailedCourseProgress();
+            var numLearningLogItemsAffected = 3;
+
+            A.CallTo(() => progressDataService.GetCompletionStatusForProgress(detailedCourseProgress.ProgressId))
+                .Returns(1);
+            A.CallTo(
+                () => progressDataService.UpdateProgressCompletedDate(
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).DoesNothing();
+            A.CallTo(
+                () => progressDataService.MarkLearningLogItemsCompleteByProgressId(
+                    A<int>._
+                )
+            ).Returns(numLearningLogItemsAffected);
+            A.CallTo(
+                () => notificationService.SendProgressCompletionNotificationEmail(
+                    A<DetailedCourseProgress>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).DoesNothing();
+
+            // When
+            progressService.CheckProgressForCompletionAndSendEmailIfCompleted(detailedCourseProgress);
+
+            // Then
+            A.CallTo(() => progressDataService.GetCompletionStatusForProgress(detailedCourseProgress.ProgressId))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => progressDataService.UpdateProgressCompletedDate(A<int>._, A<DateTime>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => progressDataService.MarkLearningLogItemsCompleteByProgressId(A<int>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => notificationService.SendProgressCompletionNotificationEmail(
+                    A<DetailedCourseProgress>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustHaveHappenedOnceExactly();
         }
     }
 }

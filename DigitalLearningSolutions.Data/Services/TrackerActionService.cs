@@ -5,7 +5,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
@@ -21,7 +20,7 @@
         TrackerEndpointResponse StoreAspProgressV2(
             int? progressId,
             int version,
-            string lmGvSectionRow,
+            string? lmGvSectionRow,
             int tutorialId,
             int? tutorialTime,
             int? tutorialStatus,
@@ -159,14 +158,13 @@
             }
             catch (Exception ex)
             {
-                // TODO: 410 - log custom message or ex.Message?
                 logger.LogError(ex, ex.Message);
                 return TrackerEndpointResponse.StoreAspProgressV2Exception;
             }
 
             if (tutorialStatus == 2)
             {
-                progressService.CheckProgressForCompletion(progress);
+                progressService.CheckProgressForCompletionAndSendEmailIfCompleted(progress);
             }
 
             return TrackerEndpointResponse.Success;

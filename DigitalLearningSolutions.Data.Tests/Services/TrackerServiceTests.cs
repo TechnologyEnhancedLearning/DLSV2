@@ -134,5 +134,56 @@
             A.CallTo(() => actionService.GetObjectiveArrayCc(1, 2, expectedBool))
                 .MustHaveHappenedOnceExactly();
         }
+
+        [Test]
+        public void ProcessQuery_with_StoreAspProgressV2_action_passes_query_params()
+        {
+            // Given
+            var query = new TrackerEndpointQueryParams
+            {
+                Action = "StoreAspProgressV2",
+                ProgressId = 101,
+                Version = 1,
+                LmGvSectionRow = "Test",
+                TutorialId = 123,
+                TutorialTime = 2,
+                TutorialStatus = 3,
+                CandidateId = 456,
+                CustomisationId = 1,
+            };
+            var expectedResponse = TrackerEndpointResponse.Success;
+
+            A.CallTo(
+                () => actionService.StoreAspProgressV2(
+                    A<int>._,
+                    A<int>._,
+                    A<string>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).Returns(expectedResponse);
+
+            // When
+            var result = trackerService.ProcessQuery(query);
+
+            // Then
+            result.Should().Be(expectedResponse);
+            A.CallTo(
+                    () => actionService.StoreAspProgressV2(
+                        query.ProgressId,
+                        query.Version,
+                        query.LmGvSectionRow,
+                        query.TutorialId,
+                        query.TutorialTime,
+                        query.TutorialStatus,
+                        query.CandidateId,
+                        query.CustomisationId
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+        }
     }
 }

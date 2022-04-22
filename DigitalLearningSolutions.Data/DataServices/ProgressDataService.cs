@@ -75,8 +75,6 @@
         void UpdateProgressCompletedDate(int progressId, DateTime? completedDate);
 
         int MarkLearningLogItemsCompleteByProgressId(int progressId);
-
-        IEnumerable<string> GetAdminEmailToCcAboutProgressCompletion(int progressId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -482,27 +480,12 @@
             );
         }
 
-        // TODO: 410 - Do I need tests for stored procedures?
         public int MarkLearningLogItemsCompleteByProgressId(int progressId)
         {
             return connection.Execute(
                 "UpdateLearningLogItemsMarkCompleteForRelatedCourseCompletion",
                 new { progressId },
                 commandType: CommandType.StoredProcedure
-            );
-        }
-
-        public IEnumerable<string> GetAdminEmailToCcAboutProgressCompletion(int progressId)
-        {
-            return connection.Query<string>(
-                @"SELECT COALESCE
-                        ((SELECT TOP (1) au.Email
-                            FROM AdminUsers AS au
-                            INNER JOIN Progress AS p ON au.AdminID = p.EnrolledByAdminID
-                            INNER JOIN NotificationUsers AS nu ON au.AdminID = nu.AdminUserID
-                        WHERE (nu.NotificationID = 6)
-                          AND (p.ProgressID = @progressId)), '') AS Email",
-                new { progressId }
             );
         }
     }

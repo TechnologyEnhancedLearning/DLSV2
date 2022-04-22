@@ -672,15 +672,5 @@
                 transaction.Dispose();
             }
         }
-
-        [Test]
-        public void GetAdminEmailToCcAboutProgressCompletion_returns_admin_email_correctly()
-        {
-            // When
-            var adminEmail = progressDataService.GetAdminEmailToCcAboutProgressCompletion(276626);
-
-            // Then
-            adminEmail.Should().BeEquivalentTo("hcoayru@lmgein.");
-        }
     }
 }

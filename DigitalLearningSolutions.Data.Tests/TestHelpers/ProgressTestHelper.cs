@@ -4,6 +4,7 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using Microsoft.Data.SqlClient;
 
     public class ProgressTestHelper
@@ -120,6 +121,25 @@
                     WHERE ProgressId = @progressId",
                 new { progressId }
             ).Single();
+        }
+
+        public static DetailedCourseProgress GetDefaultDetailedCourseProgress(
+            int progressId = 1,
+            int delegateId = 1,
+            int customisationId = 1,
+            DateTime? completed = null,
+            string? delegateEmail = "delegate@email.com"
+        )
+        {
+            var progress = GetDefaultProgress(progressId, delegateId, customisationId, completed);
+            var sections = new[] { new DetailedSectionProgress() };
+            var delegateCourseInfo = new DelegateCourseInfo
+            {
+                DelegateEmail = delegateEmail,
+                Completed = completed,
+            };
+
+            return new DetailedCourseProgress(progress, sections, delegateCourseInfo);
         }
     }
 }

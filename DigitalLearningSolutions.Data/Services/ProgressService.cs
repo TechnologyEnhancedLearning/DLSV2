@@ -5,12 +5,7 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.Email;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.FeatureManagement;
-    using MimeKit;
 
     public interface IProgressService
     {
@@ -41,39 +36,24 @@
             int tutorialStatus
         );
 
-        void CheckProgressForCompletion(DetailedCourseProgress progress);
+        void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress);
     }
 
     public class ProgressService : IProgressService
     {
-        private readonly IConfiguration configuration;
         private readonly ICourseDataService courseDataService;
-        private readonly ICourseService courseService;
-        private readonly IEmailService emailService;
-        private readonly IFeatureManager featureManager;
+        private readonly INotificationService notificationService;
         private readonly IProgressDataService progressDataService;
-        private readonly ISessionService sessionService;
-        private readonly IUserService userService;
 
         public ProgressService(
-            IConfiguration configuration,
             ICourseDataService courseDataService,
-            ICourseService courseService,
-            IEmailService emailService,
-            IFeatureManager featureManager,
             IProgressDataService progressDataService,
-            ISessionService sessionService,
-            IUserService userService
+            INotificationService notificationService
         )
         {
-            this.configuration = configuration;
             this.courseDataService = courseDataService;
-            this.courseService = courseService;
-            this.emailService = emailService;
-            this.featureManager = featureManager;
             this.progressDataService = progressDataService;
-            this.sessionService = sessionService;
-            this.userService = userService;
+            this.notificationService = notificationService;
         }
 
         public void UpdateSupervisor(int progressId, int? newSupervisorId)
@@ -169,7 +149,6 @@
             progressDataService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer);
         }
 
-        // TODO: 410 - Write progress service tests
         public void StoreAspProgressV2(
             int progressId,
             int version,
@@ -189,7 +168,7 @@
             progressDataService.UpdateAspProgressTutStat(tutorialId, progressId, tutorialStatus);
         }
 
-        public void CheckProgressForCompletion(DetailedCourseProgress progress)
+        public void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress)
         {
             if (!(progress is { Completed: null }))
             {
@@ -202,84 +181,33 @@
                 progressDataService.UpdateProgressCompletedDate(progress.ProgressId, DateTime.UtcNow);
                 var numLearningLogItemsAffected =
                     progressDataService.MarkLearningLogItemsCompleteByProgressId(progress.ProgressId);
-                EmailDelegatesAboutProgressCompletion(progress, completionStatus, numLearningLogItemsAffected);
+                notificationService.SendProgressCompletionNotificationEmail(
+                    progress,
+                    completionStatus,
+                    numLearningLogItemsAffected
+                );
             }
         }
 
-        private async void EmailDelegatesAboutProgressCompletion(
-            DetailedCourseProgress progress,
-            int completionStatus,
-            int numLearningLogItemsAffected
-        )
+        public void FindProgressToEmailAbout(DetailedCourseProgress progress)
         {
-            var adminsToCc = progressDataService.GetAdminEmailToCcAboutProgressCompletion(progress.ProgressId)
-                .ToArray();
-            var delegateUser = userService.GetDelegateUserById(progress.DelegateId);
-            if (delegateUser?.EmailAddress == null)
+            if (!(progress is { Completed: null }))
             {
                 return;
             }
 
-            var customisationName = courseService.GetCourseNameAndApplication(progress.CustomisationId);
-
-            // TODO: 410 Put this in a helper?
-            // TODO: 410 Do I need the url to be dynamic?
-            var refactoredTrackingSystemEnabled = await featureManager.IsEnabledAsync("RefactoredTrackingSystem");
-
-            var baseUrlConfigOption = refactoredTrackingSystemEnabled
-                ? configuration.GetAppRootPath()
-                : configuration.GetCurrentSystemBaseUrl();
-            if (string.IsNullOrEmpty(baseUrlConfigOption))
+            var completionStatus = progressDataService.GetCompletionStatusForProgress(progress.ProgressId);
+            if (completionStatus > 0)
             {
-                var missingConfigValue = refactoredTrackingSystemEnabled ? "AppRootPath" : "CurrentSystemBaseUrl";
-                throw new ConfigValueMissingException(
-                    $"Encountered an error while trying to send an email: The value of {missingConfigValue} is null"
+                progressDataService.UpdateProgressCompletedDate(progress.ProgressId, DateTime.UtcNow);
+                var numLearningLogItemsAffected =
+                    progressDataService.MarkLearningLogItemsCompleteByProgressId(progress.ProgressId);
+                notificationService.SendProgressCompletionNotificationEmail(
+                    progress,
+                    completionStatus,
+                    numLearningLogItemsAffected
                 );
             }
-
-            var baseUrl = refactoredTrackingSystemEnabled
-                ? $"{baseUrlConfigOption}/TrackingSystem/Delegates/CourseDelegates"
-                : $"{baseUrlConfigOption}/Tracking/CourseDelegates";
-
-            var sessionId = sessionService.GetHighestSessionIdForCandidateAndCustomisation(
-                delegateUser.Id,
-                progress.CustomisationId
-            );
-            var finaliseUrl = new UriBuilder(baseUrl)
-            {
-                Query = $"SessionID={sessionId}&ProgressID={progress.ProgressId}&UserCentreID={delegateUser.CentreId}",
-            };
-
-            var htmlActivityCompletionInfo = completionStatus == 2
-                ? $@"<p>To evaluate the activity and access your certificate of completion, click <a href='{finaliseUrl}'>here</a>.</p>"
-                : $@"<p>If you haven't already done so, please evaluate the activity to help us to improve provision for future delegates by clicking
-                    <a href='{finaliseUrl}'>here</a>. Only one evaluation can be submitted per completion.</p>";
-
-            if (numLearningLogItemsAffected > 0)
-            {
-                htmlActivityCompletionInfo +=
-                    $@"<p>This activity is related to <b>{numLearningLogItemsAffected}</b> planned development log actions in other activities in your Learning Portal. These have automatically been marked as complete.</p>";
-            }
-
-            if (adminsToCc.Any())
-            {
-                htmlActivityCompletionInfo +=
-                    "<p><b>Note:</b> This message has been copied to the administrator(s) managing this activity, for their information.</p>";
-            }
-
-            const string emailSubjectLine = "Digital Learning Solutions Progress Unlock Request";
-            var builder = new BodyBuilder
-            {
-                HtmlBody = $@"<body style=""font-family: Calibri; font-size: small;"">
-                                <p>Dear {delegateUser.FirstName ?? "Digital learning Solutions delegate"},</p>
-                                <p>You have completed the Digital Learning Solutions learning activity - {customisationName}</p>
-                                {htmlActivityCompletionInfo}
-                            </body>",
-            };
-
-            emailService.SendEmail(
-                new Email(emailSubjectLine, builder, new[] { delegateUser.EmailAddress }, adminsToCc)
-            );
         }
     }
 }

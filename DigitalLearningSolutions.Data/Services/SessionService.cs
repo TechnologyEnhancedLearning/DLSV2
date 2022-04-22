@@ -1,15 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using Microsoft.AspNetCore.Http;
 
     public interface ISessionService
     {
         void StartOrUpdateDelegateSession(int candidateId, int customisationId, ISession httpContextSession);
+
         void StopDelegateSession(int candidateId, ISession httpContextSession);
+
         void StartAdminSession(int? adminId);
-        int GetHighestSessionIdForCandidateAndCustomisation(int candidateId, int customisationId);
     }
 
     public class SessionService : ISessionService
@@ -51,12 +51,6 @@
             {
                 sessionDataService.StartAdminSession((int)adminId);
             }
-        }
-
-        public int GetHighestSessionIdForCandidateAndCustomisation(int candidateId, int customisationId)
-        {
-            var sessions = sessionDataService.GetSessionsForCandidateAndCustomisation(candidateId, customisationId);
-            return sessions.Select(s => s.SessionId).Max();
         }
     }
 }
