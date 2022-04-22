@@ -32,43 +32,38 @@
       </span>
       <table role="table" class="nhsuk-table-responsive">
         <thead role="rowgroup" class="nhsuk-table__head">
-          <tr role="row">
-            <th role="columnheader" class="" scope="col">
-              Section
-            </th>
-            <th role="columnheader" class="" scope="col">
-              Tutorials
-            </th>
-          </tr>
+        <tr role="row">
+          <th role="columnheader" class="" scope="col">
+            Section
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Tutorials
+          </th>
+        </tr>
         </thead>
         <tbody class="nhsuk-table__body">
-          @foreach (var section in Model.Sections)
-          {
-            <tr role="row" class="nhsuk-table__row">
-              <td role="cell" class="nhsuk-table__cell">
-                <span class="nhsuk-table-responsive__heading">Section</span>
+        @foreach (var section in Model.Sections) {
+          <tr role="row" class="nhsuk-table__row">
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Section</span>
+              <div class="section-tutorial-value">
+                @(section.SectionName)
+              </div>
+            </td>
+            <td role="cell" class="nhsuk-table__cell ">
+              <span class="nhsuk-table-responsive__heading">Tutorials</span>
+              @if (section.Tutorials.Any()) {
                 <div class="section-tutorial-value">
-                  @(section.SectionName)
+                  @foreach (var tutorial in section.Tutorials) {
+                    <p class="nhsuk-u-margin-bottom-3">@tutorial.TutorialName</p>
+                  }
                 </div>
-              </td>
-              <td role="cell" class="nhsuk-table__cell ">
-                <span class="nhsuk-table-responsive__heading">Tutorials</span>
-                @if (section.Tutorials.Any())
-                {
-                  <div class="section-tutorial-value">
-                    @foreach (var tutorial in section.Tutorials)
-                    {
-                      <p class="nhsuk-u-margin-bottom-3">@tutorial.TutorialName</p>
-                    }
-                  </div>
-                }
-                else
-                {
-                  <p>No Tutorials</p>
-                }
-              </td>
-            </tr>
-          }
+              } else {
+                <p>No Tutorials</p>
+              }
+            </td>
+          </tr>
+        }
         </tbody>
       </table>
     </div>

@@ -295,5 +295,20 @@
             // Then
             result.Should().Be(expectedResult);
         }
+
+        [Test]
+        [TestCase(0, "0m")]
+        [TestCase(59, "59m")]
+        [TestCase(60, "1h 0m")]
+        [TestCase(89, "1h 29m")]
+        [TestCase(2332, "38h 52m")]
+        public void GetTimeStringFromMinutes_returns_expected_result(int minutes, string expectedResult)
+        {
+            // When
+            var result = DisplayStringHelper.GetTimeStringFromMinutes(minutes);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
     }
 }

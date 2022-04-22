@@ -5,6 +5,8 @@
 
     public class ApplicationWithSections : ApplicationDetails
     {
+        public ApplicationWithSections() { }
+
         public ApplicationWithSections(
             ApplicationDetails applicationDetails,
             IEnumerable<Section> sections,
