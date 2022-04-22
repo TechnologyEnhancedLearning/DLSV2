@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FluentAssertions;
     using NUnit.Framework;
@@ -11,7 +12,9 @@
     public class DelegateCourseInfoViewModelTests
     {
         private readonly AttemptStats attemptStats = new AttemptStats(0, 0);
-        private readonly List<CourseAdminFieldWithAnswer> courseAdminFieldsWithAnswers = new List<CourseAdminFieldWithAnswer>();
+
+        private readonly List<CourseAdminFieldWithAnswer> courseAdminFieldsWithAnswers =
+            new List<CourseAdminFieldWithAnswer>();
 
         [Test]
         public void DelegateCourseInfoViewModel_sets_date_strings_correctly()
@@ -33,7 +36,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             model.Enrolled.Should().Be("01/05/2021");
@@ -57,7 +60,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             model.EnrolmentMethod.Should().Be(enrollmentMethod);
@@ -80,7 +83,7 @@
             );
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             model.PassRateDisplayString.Should().Be(passRate);
@@ -97,7 +100,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             model.CourseName.Should().Be("my application");
@@ -115,7 +118,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             model.CourseName.Should().Be("my application - my customisation");
@@ -133,7 +136,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             model.Supervisor.Should().Be("None");
@@ -152,7 +155,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             model.Supervisor.Should().Be("surname");
@@ -171,7 +174,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             model.Supervisor.Should().Be("firstname surname");

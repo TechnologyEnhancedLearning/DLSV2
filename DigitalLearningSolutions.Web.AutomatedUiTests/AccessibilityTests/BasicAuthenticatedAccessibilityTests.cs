@@ -88,7 +88,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]
         [InlineData("/TrackingSystem/Delegates/3/SetPassword?returnPageQuery=pageNumber%3D1", "Set delegate user password")]
-        [InlineData("/TrackingSystem/Delegates/3/View/100/ViewDelegate/Remove", "Remove enrolment")]
+        [InlineData("/TrackingSystem/Delegates/3/View/100/ViewDelegate/Remove?returnPageQuery=pageNumber%3D1", "Remove enrolment")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
@@ -96,15 +96,15 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/CourseDelegates", "Course delegates")]
         [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104", "Delegate progress")]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditSupervisor",
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditSupervisor?returnPageQuery=pageNumber%3D1",
             "Edit supervisor for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompleteByDate",
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompleteByDate?returnPageQuery=pageNumber%3D1",
             "Edit complete by date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate?returnPageQuery=pageNumber%3D1",
             "Edit completed date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(

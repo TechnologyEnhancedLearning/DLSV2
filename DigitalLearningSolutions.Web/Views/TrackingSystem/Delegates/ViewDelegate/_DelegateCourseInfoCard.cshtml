@@ -29,7 +29,8 @@
             <a asp-controller="DelegateProgress"
                asp-action="EditSupervisor"
                asp-route-progressId="@Model.ProgressId"
-               asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate">
+               asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate"
+               asp-route-returnPageQuery="@Model.ReturnPageQuery">
               Edit<span class="nhsuk-u-visually-hidden"> supervisor</span>
             </a>
           </dd>
@@ -44,7 +45,8 @@
             <a asp-controller="DelegateProgress"
                asp-action="EditCompleteByDate"
                asp-route-progressId="@Model.ProgressId"
-               asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate">
+               asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate"
+               asp-route-returnPageQuery="@Model.ReturnPageQuery">
               Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
             </a>
           </dd>
@@ -67,7 +69,8 @@
             <a asp-controller="DelegateProgress"
                asp-action="EditCompletionDate"
                asp-route-progressId="@Model.ProgressId"
-               asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate">
+               asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate"
+               asp-route-returnPageQuery="@Model.ReturnPageQuery">
               Edit<span class="nhsuk-u-visually-hidden"> completed date</span>
             </a>
           </dd>
@@ -171,9 +174,11 @@
          asp-controller="DelegateProgress"
          asp-action="Index"
          asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate">
+         asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate"
+         asp-route-returnPageQuery="@Model.ReturnPageQuery">
         View progress
       </a>
+
       @if (string.IsNullOrEmpty(Model.Completed)) {
         <a
           class="nhsuk-button delete-button"
@@ -182,7 +187,8 @@
           asp-action="ConfirmRemoveFromCourse"
           asp-route-delegateId="@Model.DelegateId"
           asp-route-customisationId="@Model.CustomisationId"
-          asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate">
+          asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate"
+          asp-route-returnPageQuery="@Model.ReturnPageQuery">
           Remove
         </a>
       }
@@ -194,7 +200,8 @@
            asp-route-progressId="@Model.ProgressId"
            asp-route-delegateId="@Model.DelegateId"
            asp-action="UnlockProgress"
-           asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate">
+           asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate"
+           asp-route-returnPageQuery="@Model.ReturnPageQuery">
           Unlock progress
         </a>
       }

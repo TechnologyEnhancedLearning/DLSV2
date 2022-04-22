@@ -50,21 +50,30 @@
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        public IActionResult Index(int progressId, DelegateAccessRoute accessedVia)
+        public IActionResult Index(
+            int progressId,
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery? returnPageQuery = null
+        )
         {
             var courseDelegatesData =
                 courseService.GetDelegateCourseProgress(progressId);
 
             var model = new DelegateProgressViewModel(
                 accessedVia,
-                courseDelegatesData!
+                courseDelegatesData!,
+                returnPageQuery
             );
             return View(model);
         }
 
         [HttpGet]
         [Route("EditSupervisor")]
-        public IActionResult EditSupervisor(int progressId, DelegateAccessRoute accessedVia)
+        public IActionResult EditSupervisor(
+            int progressId,
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery returnPageQuery
+        )
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
@@ -78,7 +87,8 @@
                 progressId,
                 accessedVia,
                 supervisors,
-                delegateCourseProgress!.DelegateCourseInfo
+                delegateCourseProgress!.DelegateCourseInfo,
+                returnPageQuery
             );
             return View(model);
         }
@@ -107,7 +117,8 @@
         [Route("EditCompleteByDate")]
         public IActionResult EditCompleteByDate(
             int progressId,
-            DelegateAccessRoute accessedVia
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery returnPageQuery
         )
         {
             var delegateCourseProgress =
@@ -116,7 +127,8 @@
             var model = new EditCompleteByDateViewModel(
                 progressId,
                 accessedVia,
-                delegateCourseProgress!.DelegateCourseInfo
+                delegateCourseProgress!.DelegateCourseInfo,
+                returnPageQuery
             );
             return View(model);
         }
@@ -148,7 +160,8 @@
         [Route("EditCompletionDate")]
         public IActionResult EditCompletionDate(
             int progressId,
-            DelegateAccessRoute accessedVia
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery returnPageQuery
         )
         {
             var delegateCourseProgress =
@@ -157,7 +170,8 @@
             var model = new EditCompletionDateViewModel(
                 progressId,
                 accessedVia,
-                delegateCourseProgress!.DelegateCourseInfo
+                delegateCourseProgress!.DelegateCourseInfo,
+                returnPageQuery
             );
             return View(model);
         }

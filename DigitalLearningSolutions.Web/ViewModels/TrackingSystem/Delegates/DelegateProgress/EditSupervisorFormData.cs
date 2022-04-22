@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 {
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class EditSupervisorFormData
     {
@@ -31,5 +32,6 @@
         public string? DelegateName { get; set; }
         public int CustomisationId { get; set; }
         public string? CourseName { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

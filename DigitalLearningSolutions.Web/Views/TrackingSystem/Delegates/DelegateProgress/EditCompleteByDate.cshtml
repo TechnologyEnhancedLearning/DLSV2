@@ -53,6 +53,8 @@
       <input type="hidden" asp-for="ProgressId" />
       <input type="hidden" asp-for="DelegateName" />
       <input type="hidden" asp-for="CourseName" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
+
       <vc:date-input id="complete-by-date"
                      label="Complete by date:"
                      day-id="Day"
@@ -65,9 +67,18 @@
     </form>
 
     @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-      <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
+      <vc:cancel-link-with-return-page-query
+        asp-controller="DelegateProgress"
+        asp-action="Index"
+        route-data="@routeParamsForBackLink"
+        return-page-query="@Model.ReturnPageQuery" />
     } else {
-      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+      <vc:cancel-link-with-return-page-query
+        asp-controller="ViewDelegate"
+        asp-action="Index"
+        link-text="Go back"
+        route-data="@routeParamsForBackLink"
+        return-page-query="@Model.ReturnPageQuery" />
     }
   </div>
 </div>

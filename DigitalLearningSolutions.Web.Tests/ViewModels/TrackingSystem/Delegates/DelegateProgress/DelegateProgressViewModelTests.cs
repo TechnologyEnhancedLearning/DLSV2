@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using FluentAssertions;
@@ -36,7 +37,8 @@
                     missingNamesDelegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
-                )
+                ),
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
             var fullNamesDelegateInfo = new DelegateCourseInfo
             {
@@ -59,7 +61,8 @@
                     fullNamesDelegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
-                )
+                ),
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
             // Then
@@ -91,7 +94,8 @@
                     delegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
-                )
+                ),
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
             // Then
@@ -121,7 +125,8 @@
                     delegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
-                )
+                ),
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
             // Then
