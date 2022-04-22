@@ -551,7 +551,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    model.Email,
+                    model.PrimaryEmail,
                     NewCandidateNumber,
                     baseUrl,
                     model.NotifyDate.Value,
@@ -702,7 +702,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         a =>
                             a.FirstName == delegateUser.FirstName &&
                             a.LastName == delegateUser.LastName &&
-                            a.Email == delegateUser.EmailAddress &&
+                            a.PrimaryEmail == delegateUser.EmailAddress &&
                             a.Centre == delegateUser.CentreId &&
                             a.PasswordHash == delegateUser.Password &&
                             a.Active &&

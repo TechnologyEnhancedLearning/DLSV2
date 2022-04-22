@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using Dapper;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserDataService
@@ -130,6 +131,8 @@
         );
 
         void DeleteAdminUser(int adminId);
+
+        IEnumerable<string> GetAllExistingEmails();
     }
 
     public partial class UserDataService : IUserDataService
@@ -139,6 +142,19 @@
         public UserDataService(IDbConnection connection)
         {
             this.connection = connection;
+        }
+
+        public IEnumerable<string> GetAllExistingEmails()
+        {
+            // TODO HEEDLS-857 do we need any exclusions here?
+            // TODO HEEDLS-857 confirm names of new tables
+            return connection.Query<string>(
+                @"SELECT PrimaryEmail FROM Users
+                    UNION
+                    SELECT Email FROM Candidates
+                    UNION
+                    SELECT Email FROM AdminAccounts"
+            );
         }
     }
 }

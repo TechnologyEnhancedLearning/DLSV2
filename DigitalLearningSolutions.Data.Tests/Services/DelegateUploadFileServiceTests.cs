@@ -578,7 +578,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                                 model.Answer4 == row.Answer4 &&
                                 model.Answer5 == row.Answer5 &&
                                 model.Answer6 == row.Answer6 &&
-                                model.Email == row.EmailAddress &&
+                                model.PrimaryEmail == row.EmailAddress &&
                                 model.AliasId == aliasId &&
                                 model.NotifyDate == null
                         )
@@ -621,7 +621,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                                 model.Answer4 == row.Answer4 &&
                                 model.Answer5 == row.Answer5 &&
                                 model.Answer6 == row.Answer6 &&
-                                model.Email == row.EmailAddress &&
+                                model.PrimaryEmail == row.EmailAddress &&
                                 model.AliasId == aliasId &&
                                 model.NotifyDate == welcomeEmailDate
                         )

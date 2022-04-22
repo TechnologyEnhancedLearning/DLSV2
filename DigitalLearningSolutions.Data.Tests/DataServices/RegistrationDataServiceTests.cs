@@ -41,7 +41,7 @@
             // Then
             user.FirstName.Should().Be(delegateRegistrationModel.FirstName);
             user.LastName.Should().Be(delegateRegistrationModel.LastName);
-            user.EmailAddress.Should().Be(delegateRegistrationModel.Email);
+            user.EmailAddress.Should().Be(delegateRegistrationModel.PrimaryEmail);
             user.CentreId.Should().Be(delegateRegistrationModel.Centre);
             user.Answer1.Should().Be(delegateRegistrationModel.Answer1);
             user.Answer2.Should().Be(delegateRegistrationModel.Answer2);
@@ -63,7 +63,7 @@
             service.RegisterAdmin(registrationModel);
 
             // Then
-            var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;
+            var user = userDataService.GetAdminUserByEmailAddress(registrationModel.PrimaryEmail)!;
             user.FirstName.Should().Be(registrationModel.FirstName);
             user.LastName.Should().Be(registrationModel.LastName);
             user.CentreId.Should().Be(registrationModel.Centre);
@@ -84,7 +84,7 @@
             service.RegisterAdmin(registrationModel);
 
             // Then
-            var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;
+            var user = userDataService.GetAdminUserByEmailAddress(registrationModel.PrimaryEmail)!;
             var preferences = notificationPreferencesDataService.GetNotificationPreferencesForAdmin(user.Id).ToList();
             preferences.Count.Should().Be(7);
             preferences.Should().ContainSingle(n => n.NotificationId.Equals(1) && !n.Accepted);

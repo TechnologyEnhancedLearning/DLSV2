@@ -198,7 +198,7 @@
                                 d =>
                                     d.FirstName == data.FirstName &&
                                     d.LastName == data.LastName &&
-                                    d.Email == data.Email &&
+                                    d.PrimaryEmail == data.Email &&
                                     d.Centre == data.Centre &&
                                     d.JobGroup == data.JobGroup &&
                                     d.PasswordHash == data.PasswordHash &&

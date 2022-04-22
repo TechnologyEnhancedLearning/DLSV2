@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
@@ -145,7 +146,11 @@ namespace DigitalLearningSolutions.Data.Services
 
         public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
+            ValidateDelegateRegistrationDetails(delegateRegistrationModel);
+
             using var transaction = new TransactionScope();
+
+            // OLD CODE BELOW HERE
 
             var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
 
@@ -159,7 +164,7 @@ namespace DigitalLearningSolutions.Data.Services
             else if (delegateRegistrationModel.NotifyDate.HasValue)
             {
                 passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    delegateRegistrationModel.Email,
+                    delegateRegistrationModel.PrimaryEmail,
                     candidateNumber,
                     baseUrl,
                     delegateRegistrationModel.NotifyDate.Value,
@@ -188,6 +193,21 @@ namespace DigitalLearningSolutions.Data.Services
             transaction.Complete();
 
             return candidateNumber;
+        }
+
+        private void ValidateDelegateRegistrationDetails(DelegateRegistrationModel model)
+        {
+            // throw exception if a record exists in Users, AdminAccounts, or DelegateAccounts with the PE or SE
+            // this applies to both active and inactive accounts
+            // just get a compiled list of all unique emails and compare
+
+            var emails = userDataService.GetAllExistingEmails().ToList();
+
+            if (emails.Contains(model.PrimaryEmail)
+                || !string.IsNullOrWhiteSpace(model.SecondaryEmail) && emails.Contains(model.SecondaryEmail))
+            {
+                throw new ArgumentException(); // or whatever this exception should be
+            }
         }
 
         public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
@@ -272,7 +292,7 @@ namespace DigitalLearningSolutions.Data.Services
             return supervisorDelegateService
                 .GetPendingSupervisorDelegateRecordsByEmailAndCentre(
                     delegateRegistrationModel.Centre,
-                    delegateRegistrationModel.Email
+                    delegateRegistrationModel.PrimaryEmail
                 ).Select(record => record.ID);
         }
 
@@ -281,7 +301,7 @@ namespace DigitalLearningSolutions.Data.Services
             var delegateRegistrationModel = new DelegateRegistrationModel(
                 registrationModel.FirstName,
                 registrationModel.LastName,
-                registrationModel.Email,
+                registrationModel.PrimaryEmail,
                 registrationModel.Centre,
                 jobGroupId,
                 registrationModel.PasswordHash!,
@@ -294,7 +314,7 @@ namespace DigitalLearningSolutions.Data.Services
             if (failureIfAny != null)
             {
                 logger.LogError(
-                    $"Delegate account could not be created (error code: {candidateNumberOrErrorCode}) with email address: {registrationModel.Email}"
+                    $"Delegate account could not be created (error code: {candidateNumberOrErrorCode}) with email address: {registrationModel.PrimaryEmail}"
                 );
 
                 throw new DelegateCreationFailedException(failureIfAny);
