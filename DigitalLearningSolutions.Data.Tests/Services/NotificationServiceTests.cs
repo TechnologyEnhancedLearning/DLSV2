@@ -102,15 +102,14 @@
 
             // Then
             A.CallTo(
-                    () => emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e => e.Cc.SequenceEqual(new[] { adminEmail }) && e.Body.TextBody.Contains(
-                                "Note: This message has been copied to the administrator(s) managing this activity, for their information."
-                            )
+                () => emailService.SendEmail(
+                    A<Email>.That.Matches(
+                        e => e.Cc.SequenceEqual(new[] { adminEmail }) && e.Body.TextBody.Contains(
+                            "Note: This message has been copied to the administrator(s) managing this activity, for their information."
                         )
                     )
                 )
-                .MustHaveHappenedOnceExactly();
+            ).MustHaveHappenedOnceExactly();
         }
 
         [TestCase(
@@ -119,9 +118,8 @@
         )]
         [TestCase(
             1,
-            @"If you haven't already done so, please evaluate the activity to help us to improve provision for future " +
-            "delegates by clicking here. " +
-            "Only one evaluation can be submitted per completion."
+            "If you haven't already done so, please evaluate the activity to help us to improve provision " +
+            "for future delegates by clicking here. Only one evaluation can be submitted per completion."
         )]
         public void SendProgressCompletionNotification_shows_correct_text_for_completion_status(
             int completionStatus,
@@ -137,15 +135,14 @@
 
             // Then
             A.CallTo(
-                    () => emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e => e.Body.TextBody.Contains(
-                                lineOfText
-                            )
+                () => emailService.SendEmail(
+                    A<Email>.That.Matches(
+                        e => e.Body.TextBody.Contains(
+                            lineOfText
                         )
                     )
                 )
-                .MustHaveHappenedOnceExactly();
+            ).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -162,15 +159,14 @@
 
             // Then
             A.CallTo(
-                    () => emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e => e.Body.HtmlBody.Contains(
-                                finaliseUrl
-                            )
+                () => emailService.SendEmail(
+                    A<Email>.That.Matches(
+                        e => e.Body.HtmlBody.Contains(
+                            finaliseUrl
                         )
                     )
                 )
-                .MustHaveHappenedOnceExactly();
+            ).MustHaveHappenedOnceExactly();
         }
 
         [TestCase(
@@ -197,15 +193,14 @@
 
             // Then
             A.CallTo(
-                    () => emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e => e.Body.TextBody.Contains(
-                                lineOfText
-                            )
+                () => emailService.SendEmail(
+                    A<Email>.That.Matches(
+                        e => e.Body.TextBody.Contains(
+                            lineOfText
                         )
                     )
                 )
-                .MustHaveHappenedOnceExactly();
+            ).MustHaveHappenedOnceExactly();
         }
 
         private void SetUpSendProgressCompletionNotificationEmailFakes(

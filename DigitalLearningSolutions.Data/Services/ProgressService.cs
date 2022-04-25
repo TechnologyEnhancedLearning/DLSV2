@@ -30,7 +30,7 @@
         void StoreAspProgressV2(
             int progressId,
             int version,
-            string? lmGvSectionRow,
+            string? progressText,
             int tutorialId,
             int tutorialTime,
             int tutorialStatus
@@ -152,7 +152,7 @@
         public void StoreAspProgressV2(
             int progressId,
             int version,
-            string? lmGvSectionRow,
+            string? progressText,
             int tutorialId,
             int tutorialTime,
             int tutorialStatus
@@ -162,34 +162,13 @@
                 progressId,
                 version,
                 DateTime.UtcNow,
-                lmGvSectionRow ?? string.Empty
+                progressText ?? string.Empty
             );
             progressDataService.UpdateAspProgressTutTime(tutorialId, progressId, tutorialTime);
             progressDataService.UpdateAspProgressTutStat(tutorialId, progressId, tutorialStatus);
         }
 
         public void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress)
-        {
-            if (!(progress is { Completed: null }))
-            {
-                return;
-            }
-
-            var completionStatus = progressDataService.GetCompletionStatusForProgress(progress.ProgressId);
-            if (completionStatus > 0)
-            {
-                progressDataService.UpdateProgressCompletedDate(progress.ProgressId, DateTime.UtcNow);
-                var numLearningLogItemsAffected =
-                    progressDataService.MarkLearningLogItemsCompleteByProgressId(progress.ProgressId);
-                notificationService.SendProgressCompletionNotificationEmail(
-                    progress,
-                    completionStatus,
-                    numLearningLogItemsAffected
-                );
-            }
-        }
-
-        public void FindProgressToEmailAbout(DetailedCourseProgress progress)
         {
             if (!(progress is { Completed: null }))
             {

@@ -20,7 +20,7 @@
         TrackerEndpointResponse StoreAspProgressV2(
             int? progressId,
             int version,
-            string? lmGvSectionRow,
+            string? progressText,
             int tutorialId,
             int? tutorialTime,
             int? tutorialStatus,
@@ -121,7 +121,7 @@
         public TrackerEndpointResponse StoreAspProgressV2(
             int? progressId,
             int version,
-            string? lmGvSectionRow,
+            string? progressText,
             int tutorialId,
             int? tutorialTime,
             int? tutorialStatus,
@@ -150,7 +150,7 @@
                 progressService.StoreAspProgressV2(
                     progress.ProgressId,
                     version,
-                    lmGvSectionRow,
+                    progressText,
                     tutorialId,
                     (int)tutorialTime,
                     (int)tutorialStatus

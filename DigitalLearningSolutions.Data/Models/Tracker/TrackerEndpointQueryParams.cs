@@ -13,6 +13,5 @@
         public int CandidateId { get; set; }
         public int Version { get; set; }
         public int TutorialId { get; set; }
-        public string? LmGvSectionRow { get; set; }
     }
 }
