@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
-    using System;
     using System.Collections.Generic;
     using System.Data;
     using DigitalLearningSolutions.Data.Models.User;
@@ -10,15 +9,6 @@
         AdminUser? GetAdminUserById(int id);
 
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
-
-        /// <summary>
-        ///     Gets a single admin or null by Login or Email Address
-        /// </summary>
-        /// <exception cref="InvalidOperationException">
-        ///     Thrown in the case where 2 admins are found in the database.
-        ///     This should not occur as Login is not an editable column.
-        /// </exception>
-        AdminUser? GetAdminUserByUsername(string username);
 
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
 
@@ -50,47 +40,39 @@
 
         List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
 
-        void UpdateDelegateUsers(
+        void UpdateUser(
             string firstName,
             string surname,
             string email,
             byte[]? profileImage,
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
-            int[] ids
+            int jobGroupId,
+            int userId
         );
 
-        void UpdateDelegate(
+        void UpdateDelegateAccount(
             int delegateId,
-            string firstName,
-            string lastName,
-            int jobGroupId,
             bool active,
             string? answer1,
             string? answer2,
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6,
-            string? aliasId,
-            string emailAddress
+            string? answer6
         );
 
         void ApproveDelegateUsers(params int[] ids);
 
-        void RemoveDelegateUser(int delegateId);
+        void RemoveDelegateAccount(int delegateId);
 
         int GetNumberOfApprovedDelegatesAtCentre(int centreId);
-
-        DelegateUser? GetDelegateUserByAliasId(string aliasId, int centreId);
 
         DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId);
 
         void DeactivateDelegateUser(int delegateId);
 
-        IEnumerable<DelegateUser> GetDelegateUsersByAliasId(string aliasId);
-
-        void UpdateDelegateAccountDetails(string firstName, string surname, string email, int[] ids);
+        void UpdateUserDetails(string firstName, string surname, string email, int jobGroupId, int userId);
 
         DelegateUserCard? GetDelegateUserCardById(int id);
 
@@ -100,7 +82,6 @@
 
         void UpdateDelegateUserCentrePrompts(
             int id,
-            int jobGroupId,
             string? answer1,
             string? answer2,
             string? answer3,
@@ -129,7 +110,7 @@
             bool hasBeenPromptedForPrn
         );
 
-        void DeleteAdminUser(int adminId);
+        void DeleteAdminAccount(int adminId);
     }
 
     public partial class UserDataService : IUserDataService

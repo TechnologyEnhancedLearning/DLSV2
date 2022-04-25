@@ -7,43 +7,45 @@
 
     public partial class UserDataService
     {
-        private const string DelegateUserSelectQuery = @"SELECT cd.CandidateID AS Id,
-                                                        cd.CandidateNumber,
-                                                        ct.CentreName,
-                                                        cd.CentreID,
-                                                        cd.DateRegistered,
-                                                        ct.Active AS CentreActive,
-                                                        cd.EmailAddress,
-                                                        cd.FirstName,
-                                                        cd.LastName,
-                                                        cd.Password,
-                                                        cd.Approved,
-                                                        cd.Answer1,
-                                                        cd.Answer2,
-                                                        cd.Answer3,
-                                                        cd.Answer4,
-                                                        cd.Answer5,
-                                                        cd.Answer6,
-                                                        cd.JobGroupId,
-                                                        jg.JobGroupName,
-                                                        cd.SelfReg,
-                                                        cd.ExternalReg,
-                                                        cd.Active,
-                                                        cd.HasBeenPromptedForPrn,
-                                                        cd.ProfessionalRegistrationNumber,
-                                                        (SELECT AdminID
-                                                            FROM AdminUsers au
-                                                                WHERE (au.Email = cd.EmailAddress
-                                                                OR au.Email = cd.AliasID)
-                                                            AND au.Password = cd.Password
-                                                                AND au.CentreID = cd.CentreID
-                                                                AND au.Email != ''
-                                                                AND au.Active = 1
-                                                        ) AS AdminID,
-                                                        cd.AliasID
-                                                        FROM Candidates AS cd
-                                                          INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
-                                                          INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID";
+        private const string DelegateUserSelectQuery =
+            @"SELECT
+                cd.CandidateID AS Id,
+                cd.CandidateNumber,
+                ct.CentreName,
+                cd.CentreID,
+                cd.DateRegistered,
+                ct.Active AS CentreActive,
+                cd.EmailAddress,
+                cd.FirstName,
+                cd.LastName,
+                cd.Password,
+                cd.Approved,
+                cd.Answer1,
+                cd.Answer2,
+                cd.Answer3,
+                cd.Answer4,
+                cd.Answer5,
+                cd.Answer6,
+                cd.JobGroupId,
+                jg.JobGroupName,
+                cd.SelfReg,
+                cd.ExternalReg,
+                cd.Active,
+                cd.HasBeenPromptedForPrn,
+                cd.ProfessionalRegistrationNumber,
+                (SELECT AdminID
+                    FROM AdminUsers au
+                        WHERE (au.Email = cd.EmailAddress
+                        OR au.Email = cd.AliasID)
+                    AND au.Password = cd.Password
+                        AND au.CentreID = cd.CentreID
+                        AND au.Email != ''
+                        AND au.Active = 1
+                ) AS AdminID,
+                cd.AliasID
+            FROM Candidates AS cd
+            INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID";
 
         public DelegateUserCard? GetDelegateUserCardById(int id)
         {
