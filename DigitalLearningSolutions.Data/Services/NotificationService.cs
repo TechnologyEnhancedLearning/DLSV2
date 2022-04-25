@@ -75,7 +75,7 @@
                 Query = $"CustomisationID={unlockData.CustomisationId}",
             };
 
-            var emailSubjectLine = "Digital Learning Solutions Progress Unlock Request";
+            const string emailSubjectLine = "Digital Learning Solutions Progress Unlock Request";
             var builder = new BodyBuilder
             {
                 TextBody = $@"Dear {unlockData.ContactForename}
@@ -151,7 +151,7 @@
                     " Note: This message has been copied to the administrator(s) managing this activity, for their information.";
             }
 
-            const string emailSubjectLine = "Digital Learning Solutions Progress Unlock Request";
+            const string emailSubjectLine = "Digital Learning Solutions Activity Complete";
             var builder = new BodyBuilder
             {
                 TextBody = $@"Dear {progress.DelegateFirstName ?? "Digital learning Solutions delegate"},
