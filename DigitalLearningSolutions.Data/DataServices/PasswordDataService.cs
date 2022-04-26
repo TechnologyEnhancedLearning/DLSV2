@@ -50,7 +50,7 @@
                         SET PasswordHash = @passwordHash
                         FROM Users
                             LEFT JOIN DelegateAccounts AS d ON d.UserID = Users.ID
-	                        LEFT JOIN AdminAccounts AS a ON a.UserID = Users.ID
+                            LEFT JOIN AdminAccounts AS a ON a.UserID = Users.ID
                         WHERE Users.PrimaryEmail = @email
                     COMMIT TRANSACTION
                 END TRY
@@ -70,7 +70,7 @@
                         SET PasswordHash = @PasswordHash
                         FROM Users
                             LEFT JOIN DelegateAccounts AS d ON d.UserID = Users.ID
-	                        LEFT JOIN AdminAccounts AS a ON a.UserID = Users.ID
+                            LEFT JOIN AdminAccounts AS a ON a.UserID = Users.ID
                         WHERE a.ID IN @AdminIds OR d.ID IN @DelegateIds",
                 new
                 {

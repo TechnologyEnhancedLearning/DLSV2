@@ -243,11 +243,11 @@
                 @"INSERT INTO DelegateAccounts (
                         CentreID,
                         LastName_deprecated,
-						DateRegistered,
-						CandidateNumber,
+                        DateRegistered,
+                        CandidateNumber,
                         Approved,
-					    ExternalReg,
-					    SelfReg,
+                        ExternalReg,
+                        SelfReg,
                         UserID)
                   VALUES (@CentreId, @LastName, @DateRegistered, @CandidateNumber,
                           @Approved, @ExternalReg, @SelfReg, @UserId);",
