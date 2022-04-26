@@ -62,7 +62,7 @@
     @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
       <vc:cancel-link-with-return-page-query asp-controller="CourseDelegates" asp-action="Index" route-data="@cancelLinkRouteData" return-page-query="@Model.ReturnPageQuery!.Value" />
     } else {
-      <vc:cancel-link-with-return-page-query asp-controller=ViewDelegate asp-action="Index" route-data="@cancelLinkRouteData" return-page-query="@Model.ReturnPageQuery!.Value" />
+      <vc:cancel-link asp-controller=ViewDelegate asp-action="Index" asp-all-route-data="@cancelLinkRouteData" />
     }
   </div>
 </div>

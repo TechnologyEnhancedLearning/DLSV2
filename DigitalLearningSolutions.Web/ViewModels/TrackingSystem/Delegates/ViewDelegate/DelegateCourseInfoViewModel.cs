@@ -3,12 +3,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class DelegateCourseInfoViewModel
     {
-        public DelegateCourseInfoViewModel(DelegateCourseDetails details, ReturnPageQuery? returnPageQuery)
+        public DelegateCourseInfoViewModel(DelegateCourseDetails details)
         {
             var info = details.DelegateCourseInfo;
             ProgressId = info.ProgressId;
@@ -47,7 +46,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
             TotalAttempts = details.AttemptStats.TotalAttempts;
             AttemptsPassed = details.AttemptStats.AttemptsPassed;
             PassRate = details.AttemptStats.PassRate;
-            ReturnPageQuery = returnPageQuery;
         }
 
         public int ProgressId { get; set; }
@@ -71,7 +69,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
         public double PassRate { get; set; }
         public bool IsProgressLocked { get; set; }
         public string? Supervisor { get; set; }
-        public ReturnPageQuery? ReturnPageQuery { get; set; }
 
         public string CourseName =>
             ApplicationName + (string.IsNullOrEmpty(CustomisationName) ? "" : $" - {CustomisationName}");

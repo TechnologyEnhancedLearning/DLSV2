@@ -52,8 +52,7 @@
 
         public IActionResult Index(
             int progressId,
-            DelegateAccessRoute accessedVia,
-            ReturnPageQuery? returnPageQuery = null
+            DelegateAccessRoute accessedVia
         )
         {
             var courseDelegatesData =
@@ -61,8 +60,7 @@
 
             var model = new DelegateProgressViewModel(
                 accessedVia,
-                courseDelegatesData!,
-                returnPageQuery
+                courseDelegatesData!
             );
             return View(model);
         }
@@ -71,8 +69,7 @@
         [Route("EditSupervisor")]
         public IActionResult EditSupervisor(
             int progressId,
-            DelegateAccessRoute accessedVia,
-            ReturnPageQuery returnPageQuery
+            DelegateAccessRoute accessedVia
         )
         {
             var centreId = User.GetCentreId();
@@ -87,8 +84,7 @@
                 progressId,
                 accessedVia,
                 supervisors,
-                delegateCourseProgress!.DelegateCourseInfo,
-                returnPageQuery
+                delegateCourseProgress!.DelegateCourseInfo
             );
             return View(model);
         }
@@ -117,8 +113,7 @@
         [Route("EditCompleteByDate")]
         public IActionResult EditCompleteByDate(
             int progressId,
-            DelegateAccessRoute accessedVia,
-            ReturnPageQuery returnPageQuery
+            DelegateAccessRoute accessedVia
         )
         {
             var delegateCourseProgress =
@@ -127,8 +122,7 @@
             var model = new EditCompleteByDateViewModel(
                 progressId,
                 accessedVia,
-                delegateCourseProgress!.DelegateCourseInfo,
-                returnPageQuery
+                delegateCourseProgress!.DelegateCourseInfo
             );
             return View(model);
         }
@@ -160,8 +154,7 @@
         [Route("EditCompletionDate")]
         public IActionResult EditCompletionDate(
             int progressId,
-            DelegateAccessRoute accessedVia,
-            ReturnPageQuery returnPageQuery
+            DelegateAccessRoute accessedVia
         )
         {
             var delegateCourseProgress =
@@ -170,8 +163,7 @@
             var model = new EditCompletionDateViewModel(
                 progressId,
                 accessedVia,
-                delegateCourseProgress!.DelegateCourseInfo,
-                returnPageQuery
+                delegateCourseProgress!.DelegateCourseInfo
             );
             return View(model);
         }

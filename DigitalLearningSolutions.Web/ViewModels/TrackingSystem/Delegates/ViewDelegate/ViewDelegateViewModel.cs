@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -19,13 +18,7 @@
         )
         {
             DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
-            DelegateCourses = delegateCourses.Select(
-                    x => new DelegateCourseInfoViewModel(
-                        x,
-                        new ReturnPageQuery(1, $"{x.DelegateCourseInfo.CustomisationId}-card")
-                    )
-                )
-                .ToList();
+            DelegateCourses = delegateCourses.Select(x => new DelegateCourseInfoViewModel(x)).ToList();
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
         }
 

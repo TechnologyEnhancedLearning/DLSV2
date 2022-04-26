@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FluentAssertions;
     using NUnit.Framework;
@@ -36,7 +35,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.Enrolled.Should().Be("01/05/2021");
@@ -60,7 +59,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.EnrolmentMethod.Should().Be(enrollmentMethod);
@@ -83,7 +82,7 @@
             );
 
             // When
-            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.PassRateDisplayString.Should().Be(passRate);
@@ -100,7 +99,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.CourseName.Should().Be("my application");
@@ -118,7 +117,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.CourseName.Should().Be("my application - my customisation");
@@ -136,7 +135,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.Supervisor.Should().Be("None");
@@ -155,7 +154,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.Supervisor.Should().Be("surname");
@@ -174,7 +173,7 @@
             var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.Supervisor.Should().Be("firstname surname");
