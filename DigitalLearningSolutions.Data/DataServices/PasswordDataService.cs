@@ -11,7 +11,9 @@
     public interface IPasswordDataService
     {
         void SetPasswordByCandidateNumber(string candidateNumber, string passwordHash);
+
         Task SetPasswordByEmailAsync(string email, string passwordHash);
+
         Task SetPasswordForUsersAsync(IEnumerable<UserReference> users, string passwordHash);
     }
 
@@ -27,9 +29,11 @@
         public void SetPasswordByCandidateNumber(string candidateNumber, string passwordHash)
         {
             connection.Query(
-                @"UPDATE Candidates
-                        SET Password = @passwordHash
-                        WHERE CandidateNumber = @candidateNumber",
+                @"UPDATE Users
+                        SET PasswordHash = @passwordHash
+                        FROM Users
+                        INNER JOIN DelegateAccounts AS d ON d.UserID = Users.ID
+                        WHERE d.CandidateNumber = @candidateNumber",
                 new { passwordHash, candidateNumber }
             );
         }
@@ -42,14 +46,18 @@
             await connection.ExecuteAsync(
                 @"BEGIN TRY
                     BEGIN TRANSACTION
-                        UPDATE AdminUsers SET Password = @PasswordHash WHERE Email = @Email;
-                        UPDATE Candidates SET Password = @PasswordHash WHERE EmailAddress = @Email;
+                        UPDATE Users
+                        SET PasswordHash = @passwordHash
+                        FROM Users
+                            LEFT JOIN DelegateAccounts AS d ON d.UserID = Users.ID
+	                        LEFT JOIN AdminAccounts AS a ON a.UserID = Users.ID
+                        WHERE Users.PrimaryEmail = @email
                     COMMIT TRANSACTION
                 END TRY
                 BEGIN CATCH
                     ROLLBACK TRANSACTION
                 END CATCH",
-                new { Email = email, PasswordHash = passwordHash }
+                new { email, passwordHash }
             );
         }
 
@@ -58,13 +66,17 @@
             var userRefs = users.ToList();
 
             await connection.ExecuteAsync(
-                @"UPDATE AdminUsers SET Password = @PasswordHash WHERE AdminID IN @AdminIds;
-                  UPDATE Candidates SET Password = @PasswordHash WHERE CandidateID IN @CandidateIds;",
+                @"UPDATE Users
+                        SET PasswordHash = @PasswordHash
+                        FROM Users
+                            LEFT JOIN DelegateAccounts AS d ON d.UserID = Users.ID
+	                        LEFT JOIN AdminAccounts AS a ON a.UserID = Users.ID
+                        WHERE a.ID IN @AdminIds OR d.ID IN @DelegateIds",
                 new
                 {
                     PasswordHash = passwordHash,
                     AdminIds = userRefs.Where(ur => ur.UserType.Equals(UserType.AdminUser)).Select(ur => ur.Id),
-                    CandidateIds = userRefs.Where(ur => ur.UserType.Equals(UserType.DelegateUser)).Select(ur => ur.Id),
+                    DelegateIds = userRefs.Where(ur => ur.UserType.Equals(UserType.DelegateUser)).Select(ur => ur.Id),
                 }
             );
         }

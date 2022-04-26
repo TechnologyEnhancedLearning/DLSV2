@@ -14,9 +14,9 @@
     public class PasswordDataServiceTests
     {
         private const string PasswordHashNotYetInDb = "I haven't used this password before!";
+        private SqlConnection connection = null!;
         private PasswordDataService passwordDataService = null!;
         private UserDataService userDataService = null!;
-        private SqlConnection connection = null!;
 
         [SetUp]
         public void Setup()
@@ -107,8 +107,10 @@
             // Given
             var existingDelegate = UserTestHelper.GetDefaultDelegateUser();
             var newDelegate = Builder<DelegateUser>.CreateNew()
-                .With(d => d.EmailAddress = existingDelegate.EmailAddress)
+                .With(d => d.EmailAddress = "unique.email@test1234.com")
                 .With(d => d.CentreId = existingDelegate.CentreId)
+                .With(d => d.LastName = existingDelegate.LastName)
+                .With(d => d.JobGroupId = existingDelegate.JobGroupId)
                 .Build();
             UserTestHelper.GivenDelegateUserIsInDatabase(newDelegate, connection);
 
