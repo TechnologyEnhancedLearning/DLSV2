@@ -63,11 +63,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
         public string LearningTime { get; set; }
         public int? DiagnosticScore { get; set; }
         public bool IsAssessed { get; set; }
+
         public List<CourseAdminFieldWithAnswer> CourseAdminFieldsWithAnswers { get; set; }
         public int TotalAttempts { get; set; }
         public int AttemptsPassed { get; set; }
         public double PassRate { get; set; }
         public bool IsProgressLocked { get; set; }
+
         public string? Supervisor { get; set; }
 
         public string CourseName =>

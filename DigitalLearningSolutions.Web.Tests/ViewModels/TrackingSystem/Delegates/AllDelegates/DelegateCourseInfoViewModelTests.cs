@@ -11,9 +11,7 @@
     public class DelegateCourseInfoViewModelTests
     {
         private readonly AttemptStats attemptStats = new AttemptStats(0, 0);
-
-        private readonly List<CourseAdminFieldWithAnswer> courseAdminFieldsWithAnswers =
-            new List<CourseAdminFieldWithAnswer>();
+        private readonly List<CourseAdminFieldWithAnswer> courseAdminFieldsWithAnswers = new List<CourseAdminFieldWithAnswer>();
 
         [Test]
         public void DelegateCourseInfoViewModel_sets_date_strings_correctly()

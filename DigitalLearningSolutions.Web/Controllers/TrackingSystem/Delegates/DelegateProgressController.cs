@@ -50,10 +50,7 @@
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        public IActionResult Index(
-            int progressId,
-            DelegateAccessRoute accessedVia
-        )
+        public IActionResult Index(int progressId,DelegateAccessRoute accessedVia)
         {
             var courseDelegatesData =
                 courseService.GetDelegateCourseProgress(progressId);
@@ -67,10 +64,7 @@
 
         [HttpGet]
         [Route("EditSupervisor")]
-        public IActionResult EditSupervisor(
-            int progressId,
-            DelegateAccessRoute accessedVia
-        )
+        public IActionResult EditSupervisor(int progressId, DelegateAccessRoute accessedVia)
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
