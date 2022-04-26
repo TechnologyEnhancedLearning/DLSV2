@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.FindYourCentre;
@@ -9,16 +10,18 @@
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.FindYourCentre))]
+    [RedirectDelegateOnlyToLearningPortal]
     public class FindYourCentreController : Controller
     {
+        private readonly ICentresService centresService;
         private readonly IConfiguration configuration;
 
-        public FindYourCentreController(IConfiguration configuration)
+        public FindYourCentreController(IConfiguration configuration, ICentresService centresService)
         {
             this.configuration = configuration;
+            this.centresService = centresService;
         }
-
-        [RedirectDelegateOnlyToLearningPortal]
+        
         public IActionResult Index(string? centreId)
         {
             var model = centreId == null
@@ -26,6 +29,12 @@
                 : new FindYourCentreViewModel(centreId, configuration);
 
             return View(model);
+        }
+
+        public IActionResult CentreData()
+        {
+            var centres = centresService.GetAllCentreSummariesForMap();
+            return Json(centres);
         }
     }
 }

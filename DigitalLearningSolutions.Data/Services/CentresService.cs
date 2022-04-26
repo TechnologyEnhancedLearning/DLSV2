@@ -13,6 +13,8 @@
         int? GetCentreRankForCentre(int centreId);
 
         IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
+
+        IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
     }
 
     public class CentresService : ICentresService
@@ -46,6 +48,11 @@
         public IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin()
         {
             return centresDataService.GetAllCentreSummariesForSuperAdmin();
+        }
+
+        public IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap()
+        {
+            return centresDataService.GetAllCentreSummariesForMap();
         }
     }
 }
