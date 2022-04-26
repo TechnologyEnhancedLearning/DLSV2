@@ -50,7 +50,7 @@
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        public IActionResult Index(int progressId,DelegateAccessRoute accessedVia)
+        public IActionResult Index(int progressId, DelegateAccessRoute accessedVia)
         {
             var courseDelegatesData =
                 courseService.GetDelegateCourseProgress(progressId);
