@@ -10,6 +10,7 @@
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.FindYourCentre))]
+    [RedirectDelegateOnlyToLearningPortal]
     public class FindYourCentreController : Controller
     {
         private readonly ICentresService centresService;
@@ -20,8 +21,7 @@
             this.configuration = configuration;
             this.centresService = centresService;
         }
-
-        [RedirectDelegateOnlyToLearningPortal]
+        
         public IActionResult Index(string? centreId)
         {
             var model = centreId == null
@@ -31,7 +31,6 @@
             return View(model);
         }
 
-        [RedirectDelegateOnlyToLearningPortal]
         public IActionResult CentreData()
         {
             var centres = centresService.GetAllCentreSummariesForMap();

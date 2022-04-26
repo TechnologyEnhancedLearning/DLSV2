@@ -9,6 +9,7 @@
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class CentresServiceTests
@@ -83,9 +84,7 @@
             var result = centresService.GetAllCentreSummariesForSuperAdmin();
 
             // Then
-            result
-                .Should()
-                .HaveCount(10);
+            result.Should().HaveCount(10);
         }
 
         [Test]
@@ -99,9 +98,7 @@
             var result = centresService.GetAllCentreSummariesForMap();
 
             // Then
-            result
-                .Should()
-                .HaveCount(10);
+            result.Should().BeEquivalentTo(centres);
         }
     }
 }
