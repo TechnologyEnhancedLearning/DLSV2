@@ -5,7 +5,6 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
 
     public class AllBrandCoursesViewModel : BaseJavaScriptFilterableViewModel
     {
@@ -14,8 +13,8 @@
         public AllBrandCoursesViewModel(IReadOnlyCollection<ApplicationWithSections> applications)
         {
             Courses = applications.Select(app => new BrandCourseViewModel(app));
-            var categories = applications.Select(x => x.CategoryName).Distinct().OrderBy(x => x);
-            var topics = applications.Select(x => x.CourseTopic).Distinct().OrderBy(x => x);
+            var categories = applications.Select(x => x.CategoryName).Distinct().OrderBy(x => x).ToList();
+            var topics = applications.Select(x => x.CourseTopic).Distinct().OrderBy(x => x).ToList();
             Filters = LearningContentViewModelFilterOptions
                 .GetFilterOptions(categories, topics).SelectAppliedFilterViewModels();
         }

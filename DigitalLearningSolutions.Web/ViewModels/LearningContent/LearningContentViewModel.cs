@@ -15,7 +15,7 @@
         public readonly int BrandId;
         public readonly string? Description;
         public readonly string Name;
-        public readonly IEnumerable<TutorialSummary> Tutorials;
+        public readonly IEnumerable<BrandTutorialSummaryViewModel> Tutorials;
 
         public LearningContentViewModel(
             SearchSortFilterPaginationResult<ApplicationWithSections> result,
@@ -27,7 +27,7 @@
             BrandId = brand.BrandID;
             Name = brand.BrandName;
             Description = brand.BrandDescription;
-            Tutorials = tutorials;
+            Tutorials = tutorials.Select(t => new BrandTutorialSummaryViewModel(t));
             Applications = result.ItemsToDisplay.Select(app => new BrandCourseViewModel(app));
         }
 

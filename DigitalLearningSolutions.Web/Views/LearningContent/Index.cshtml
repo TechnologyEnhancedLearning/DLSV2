@@ -39,7 +39,7 @@
 @if (Model.Applications.Any()) {
   <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
     <h2 class="nhsuk-heading-l nhsuk-u-padding-top-7" id="courses-heading">Courses</h2>
-    <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSortAndFilter" model="Model" />
+    <partial name="SearchablePage/Configurations/_SortAndFilter" model="Model" />
 
     <partial name="SearchablePage/_SearchResultsCount" model="Model" />
     <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />

@@ -9,8 +9,8 @@
             string tutorialName,
             bool? status,
             bool? diagStatus,
-            int? overrideTutorialMins,
-            int? averageTutMins
+            int? overrideTutorialMins = null,
+            int? averageTutMins = null
         )
         {
             TutorialId = tutorialId;

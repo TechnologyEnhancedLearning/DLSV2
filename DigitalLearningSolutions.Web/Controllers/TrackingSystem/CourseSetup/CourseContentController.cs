@@ -117,7 +117,7 @@
         private IActionResult EditSave(EditCourseSectionFormData formData, int customisationId)
         {
             var tutorials = formData.Tutorials.Select(
-                t => new Tutorial(t.TutorialId, t.TutorialName, t.LearningEnabled, t.DiagnosticEnabled, null, null)
+                t => new Tutorial(t.TutorialId, t.TutorialName, t.LearningEnabled, t.DiagnosticEnabled)
             );
 
             tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);

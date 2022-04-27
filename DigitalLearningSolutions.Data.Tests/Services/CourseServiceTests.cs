@@ -906,7 +906,7 @@
                 () => courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId, validationTime.AddMonths(-3))
             ).Returns(new Dictionary<int, int>());
             A.CallTo(() => courseDataService.GetApplicationsByBrandId(brandId)).Returns(applications);
-            A.CallTo(() => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(A<int>._))
+            A.CallTo(() => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(applicationId))
                 .Returns(sections);
 
             // When
@@ -915,7 +915,8 @@
             // Then
             using (new AssertionScope())
             {
-                var expectedResult = applications.Select(a => new ApplicationWithSections(a, sections, 0));
+                var expectedResult = applications.Select(a => new ApplicationWithSections(a, sections, 0))
+                    .Where(a => a.ApplicationId == 1);
                 result.Should().BeEquivalentTo(expectedResult);
                 A.CallTo(
                     () => clockService.UtcNow
@@ -932,36 +933,6 @@
                 A.CallTo(
                     () => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(applicationId)
                 ).MustHaveHappenedOnceExactly();
-            }
-        }
-
-        [Test]
-        public void GetApplicationsThatHaveSectionsByBrandId_returns_only_applications_with_sections()
-        {
-            // Given
-            const int brandId = 1;
-            const int applicationId = 1;
-            var validationTime = new DateTime(22, 4, 5, 11, 30, 30);
-            var applications = Builder<ApplicationDetails>.CreateListOfSize(10).All().Build();
-            var sections = Builder<Section>.CreateListOfSize(5).Build().ToList();
-
-            A.CallTo(() => clockService.UtcNow).Returns(validationTime);
-            A.CallTo(
-                () => courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId, validationTime.AddMonths(-3))
-            ).Returns(new Dictionary<int, int>());
-            A.CallTo(() => courseDataService.GetApplicationsByBrandId(brandId)).Returns(applications);
-            A.CallTo(() => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(applicationId))
-                .Returns(sections);
-
-            // When
-            var result = courseService.GetApplicationsThatHaveSectionsByBrandId(brandId);
-
-            // Then
-            using (new AssertionScope())
-            {
-                var expectedResult = applications.Select(a => new ApplicationWithSections(a, sections, 0))
-                    .Where(a => a.ApplicationId == 1);
-                result.Should().BeEquivalentTo(expectedResult);
             }
         }
 

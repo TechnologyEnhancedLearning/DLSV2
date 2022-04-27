@@ -32,8 +32,8 @@
         public void GetSectionsAndTutorialsForCustomisation_returns_fully_populated_list()
         {
             // Given
-            var tutorialOne = new Tutorial(1, "Test", true, true, null, null);
-            var tutorialTwo = new Tutorial(2, "Case", false, false, null, null);
+            var tutorialOne = new Tutorial(1, "Test", true, true);
+            var tutorialTwo = new Tutorial(2, "Case", false, false);
             var tutorials = new List<Tutorial> { tutorialOne, tutorialTwo };
             var sectionOne = new Section(1, "Section");
             var sectionTwo = new Section(2, "Second Section");
@@ -61,8 +61,8 @@
         public void GetSectionAndTutorialsBySectionIdForCustomisation_returns_fully_populated_Section()
         {
             // Given
-            var tutorialOne = new Tutorial(1, "Test", true, true, null, null);
-            var tutorialTwo = new Tutorial(2, "Case", false, false, null, null);
+            var tutorialOne = new Tutorial(1, "Test", true, true);
+            var tutorialTwo = new Tutorial(2, "Case", false, false);
             var tutorials = new List<Tutorial> { tutorialOne, tutorialTwo };
             var section = new Section(1, "Section");
             A.CallTo(() => sectionContentDataService.GetSectionById(1))
@@ -111,7 +111,7 @@
             var sectionTwo = new Section(2, "Second Section");
             var sections = new List<Section> { sectionOne, sectionTwo };
 
-            var tutorial = new Tutorial(1, "Tutorial", true, true, null, null);
+            var tutorial = new Tutorial(1, "Tutorial", true, true);
             var tutorials = new List<Tutorial> { tutorial };
 
             A.CallTo(
@@ -148,7 +148,7 @@
             var sectionTwo = new Section(2, "Second Section");
             var sections = new List<Section> { sectionOne, sectionTwo };
 
-            var tutorial = new Tutorial(1, "Tutorial", true, true, null, null);
+            var tutorial = new Tutorial(1, "Tutorial", true, true);
             var tutorials = new List<Tutorial> { tutorial };
 
             A.CallTo(
@@ -177,11 +177,11 @@
             // Given
             var tutorialsOne = new List<Tutorial>
             {
-                new Tutorial(1, "Tutorial", null, null, null, null),
+                new Tutorial(1, "Tutorial", null, null),
             };
             var tutorialsTwo = new List<Tutorial>
             {
-                new Tutorial(2, "Second Tutorial", null, null, null, null),
+                new Tutorial(2, "Second Tutorial", null, null),
             };
             var sectionOne = new Section(1, "Section");
             var sectionTwo = new Section(2, "Second Section");
@@ -229,7 +229,7 @@
             var sectionTwo = new Section(2, "Second Section");
             var sections = new List<Section> { sectionOne, sectionTwo };
 
-            var tutorial = new Tutorial(1, "Tutorial", true, true, null, null);
+            var tutorial = new Tutorial(1, "Tutorial", true, true);
             var tutorials = new List<Tutorial> { tutorial };
 
             A.CallTo(
@@ -248,7 +248,11 @@
             var result = sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(1);
 
             // Then
-            result.Count().Should().Be(1);
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(1);
+                result.First().Tutorials.Should().NotBeEmpty();
+            }
         }
     }
 }

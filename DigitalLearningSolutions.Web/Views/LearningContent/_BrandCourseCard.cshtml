@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningContent
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.LearningContent
 @model BrandCourseViewModel
 
 <div class="searchable-element nhsuk-panel card-with-buttons word-break nhsuk-u-margin-bottom-4" id="@Model.ApplicationId-card">
@@ -27,45 +28,34 @@
       <span hidden data-filter-value="@Model.TopicFilter">
         @Model.CourseTopic
       </span>
-      <span hidden name="created-date">
-        @Model.CreatedDate
+      <span class="nhsuk-u-margin-bottom-4" data-name-for-sorting="created-date">
+        <span class="nhsuk-u-font-weight-bold">Created</span> @Model.CreatedDate.ToString(DateHelper.StandardDateFormat)
       </span>
-      <table role="table" class="nhsuk-table-responsive">
-        <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
-          <th role="columnheader" class="" scope="col">
-            Section
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Tutorials
-          </th>
-        </tr>
-        </thead>
-        <tbody class="nhsuk-table__body">
+
+      <div>
+        <div class="header-row nhsuk-u-font-weight-bold">
+          <div class="value header-row-content">Section</div>
+          <div class="value header-row-content">Tutorials</div>
+        </div>
         @foreach (var section in Model.Sections) {
-          <tr role="row" class="nhsuk-table__row">
-            <td role="cell" class="nhsuk-table__cell">
-              <span class="nhsuk-table-responsive__heading">Section</span>
-              <div class="section-tutorial-value">
-                @(section.SectionName)
-              </div>
-            </td>
-            <td role="cell" class="nhsuk-table__cell ">
-              <span class="nhsuk-table-responsive__heading">Tutorials</span>
+          <div class="value-row">
+            <div class="value">
+              <p class="responsive-header nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-3">Section</p>
+              <p class="nhsuk-u-margin-bottom-3">@(section.SectionName)</p>
+            </div>
+            <div class="value">
+              <p class="responsive-header nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-3">Tutorials</p>
               @if (section.Tutorials.Any()) {
-                <div class="section-tutorial-value">
-                  @foreach (var tutorial in section.Tutorials) {
-                    <p class="nhsuk-u-margin-bottom-3">@tutorial.TutorialName</p>
-                  }
-                </div>
+                @foreach (var tutorial in section.Tutorials) {
+                  <p class="nhsuk-u-margin-bottom-3">@tutorial.TutorialName</p>
+                }
               } else {
-                <p>No Tutorials</p>
+                <p class="nhsuk-u-margin-bottom-3">No Tutorials</p>
               }
-            </td>
-          </tr>
+            </div>
+          </div>
         }
-        </tbody>
-      </table>
+      </div>
     </div>
   </details>
 </div>

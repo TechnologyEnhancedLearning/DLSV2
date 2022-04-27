@@ -10,23 +10,35 @@
     public static class LearningContentViewModelFilterOptions
     {
         public static IEnumerable<FilterModel> GetFilterOptions(
-            IEnumerable<string> categories,
-            IEnumerable<string> topics
+            IReadOnlyCollection<string> categories,
+            IReadOnlyCollection<string> topics
         )
         {
-            return new[]
+            var filterModels = new List<FilterModel>();
+
+            if (categories.Count > 1)
             {
-                new FilterModel(
-                    nameof(ApplicationWithSections.CategoryName),
-                    "Category",
-                    GetCategoryOptions(categories)
-                ),
-                new FilterModel(
-                    nameof(ApplicationWithSections.CourseTopic),
-                    "Topic",
-                    GetTopicOptions(topics)
-                ),
-            };
+                filterModels.Add(
+                    new FilterModel(
+                        nameof(ApplicationWithSections.CategoryName),
+                        "Category",
+                        GetCategoryOptions(categories)
+                    )
+                );
+            }
+
+            if (topics.Count > 1)
+            {
+                filterModels.Add(
+                    new FilterModel(
+                        nameof(ApplicationWithSections.CourseTopic),
+                        "Topic",
+                        GetTopicOptions(topics)
+                    )
+                );
+            }
+
+            return filterModels;
         }
 
         private static IEnumerable<FilterOptionModel> GetCategoryOptions(IEnumerable<string> categories)
@@ -34,9 +46,11 @@
             return categories.Select(
                 category => new FilterOptionModel(
                     category,
-                    nameof(ApplicationWithSections.CategoryName) + FilteringHelper.Separator +
-                    nameof(ApplicationWithSections.CategoryName) +
-                    FilteringHelper.Separator + category,
+                    FilteringHelper.BuildFilterValueString(
+                        nameof(ApplicationWithSections.CategoryName),
+                        nameof(ApplicationWithSections.CategoryName),
+                        category
+                    ),
                     FilterStatus.Default
                 )
             );
@@ -47,9 +61,11 @@
             return topics.Select(
                 topic => new FilterOptionModel(
                     topic,
-                    nameof(ApplicationWithSections.CourseTopic) + FilteringHelper.Separator +
-                    nameof(ApplicationWithSections.CourseTopic) +
-                    FilteringHelper.Separator + topic,
+                    FilteringHelper.BuildFilterValueString(
+                        nameof(ApplicationWithSections.CourseTopic),
+                        nameof(ApplicationWithSections.CourseTopic),
+                        topic
+                    ),
                     FilterStatus.Default
                 )
             );

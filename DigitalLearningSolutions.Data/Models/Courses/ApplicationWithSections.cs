@@ -16,9 +16,7 @@
             Sections = sections;
             TotalMins = Sections.Sum(
                 section => section.Tutorials.Sum(
-                    tutorial => tutorial.OverrideTutorialMins > 0
-                        ? tutorial.OverrideTutorialMins ?? 0
-                        : tutorial.AverageTutMins ?? 0
+                    tutorial => (tutorial.OverrideTutorialMins > 0 ? tutorial.OverrideTutorialMins : tutorial.AverageTutMins) ?? 0
                 )
             );
             PopularityRating = popularityRating;

@@ -63,8 +63,8 @@
             var tutorials = tutorialService.GetPublicTutorialSummariesForBrand(brandId);
             var applications = courseService.GetApplicationsThatHaveSectionsByBrandId(brandId).ToList();
 
-            var categories = applications.Select(x => x.CategoryName).Distinct().OrderBy(x => x);
-            var topics = applications.Select(x => x.CourseTopic).Distinct().OrderBy(x => x);
+            var categories = applications.Select(x => x.CategoryName).Distinct().OrderBy(x => x).ToList();
+            var topics = applications.Select(x => x.CourseTopic).Distinct().OrderBy(x => x).ToList();
             var availableFilters = LearningContentViewModelFilterOptions
                 .GetFilterOptions(categories, topics).ToList();
 

@@ -32,13 +32,17 @@
         public string CategoryName { get; set; }
         public string CourseTopic { get; set; }
 
-        public string CategoryFilter => nameof(ApplicationWithSections.CategoryName) + FilteringHelper.Separator +
-                                        nameof(ApplicationWithSections.CategoryName) +
-                                        FilteringHelper.Separator + CategoryName;
+        public string CategoryFilter => FilteringHelper.BuildFilterValueString(
+            nameof(ApplicationWithSections.CategoryName),
+            nameof(ApplicationWithSections.CategoryName),
+            CategoryName
+        );
 
-        public string TopicFilter => nameof(ApplicationWithSections.CourseTopic) + FilteringHelper.Separator +
-                                     nameof(ApplicationWithSections.CourseTopic) +
-                                     FilteringHelper.Separator + CourseTopic;
+        public string TopicFilter => FilteringHelper.BuildFilterValueString(
+            nameof(ApplicationWithSections.CourseTopic),
+            nameof(ApplicationWithSections.CourseTopic),
+            CourseTopic
+        );
 
         public DateTime CreatedDate { get; set; }
     }

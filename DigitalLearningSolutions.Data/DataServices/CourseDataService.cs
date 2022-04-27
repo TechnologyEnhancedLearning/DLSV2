@@ -688,7 +688,9 @@ namespace DigitalLearningSolutions.Data.DataServices
         public Dictionary<int, int> GetNumsOfRecentProgressRecordsForBrand(int brandId, DateTime threeMonthsAgo)
         {
             var query = connection.Query(
-                @"SELECT Applications.ApplicationID, COUNT(Progress.ProgressID) AS Num_Recent_Progress_Records
+                @"SELECT
+                        Applications.ApplicationID,
+                        COUNT(Progress.ProgressID) AS NumRecentProgressRecords
                     FROM Applications
                         INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
                         INNER JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID
@@ -702,7 +704,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
             return query.ToDictionary<dynamic?, int, int>(
                 entry => entry.ApplicationID,
-                entry => entry.Num_Recent_Progress_Records
+                entry => entry.NumRecentProgressRecords
             );
         }
 
