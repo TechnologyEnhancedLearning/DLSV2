@@ -41,19 +41,25 @@
 
     public class ProgressService : IProgressService
     {
+        private readonly IClockService clockService;
         private readonly ICourseDataService courseDataService;
+        private readonly ILearningLogItemsDataService learningLogItemsDataService;
         private readonly INotificationService notificationService;
         private readonly IProgressDataService progressDataService;
 
         public ProgressService(
             ICourseDataService courseDataService,
             IProgressDataService progressDataService,
-            INotificationService notificationService
+            INotificationService notificationService,
+            ILearningLogItemsDataService learningLogItemsDataService,
+            IClockService clockService
         )
         {
             this.courseDataService = courseDataService;
             this.progressDataService = progressDataService;
             this.notificationService = notificationService;
+            this.learningLogItemsDataService = learningLogItemsDataService;
+            this.clockService = clockService;
         }
 
         public void UpdateSupervisor(int progressId, int? newSupervisorId)
@@ -158,10 +164,11 @@
             int tutorialStatus
         )
         {
-            progressDataService.UpdateProgressDetails(
+            var timeNow = clockService.UtcNow;
+            progressDataService.UpdateProgressDetailsForStoreAspProgressV2(
                 progressId,
                 version,
-                DateTime.UtcNow,
+                timeNow,
                 progressText ?? string.Empty
             );
             progressDataService.UpdateAspProgressTutTime(tutorialId, progressId, tutorialTime);
@@ -178,9 +185,9 @@
             var completionStatus = progressDataService.GetCompletionStatusForProgress(progress.ProgressId);
             if (completionStatus > 0)
             {
-                progressDataService.UpdateProgressCompletedDate(progress.ProgressId, DateTime.UtcNow);
+                progressDataService.SetCompletionDate(progress.ProgressId, DateTime.UtcNow);
                 var numLearningLogItemsAffected =
-                    progressDataService.MarkLearningLogItemsCompleteByProgressId(progress.ProgressId);
+                    learningLogItemsDataService.MarkLearningLogItemsCompleteByProgressId(progress.ProgressId);
                 notificationService.SendProgressCompletionNotificationEmail(
                     progress,
                     completionStatus,

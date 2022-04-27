@@ -18,14 +18,14 @@
         TrackerEndpointResponse StoreDiagnosticJson(int? progressId, string? diagnosticOutcome);
 
         TrackerEndpointResponse StoreAspProgressV2(
-            int? progressId,
+            int progressId,
             int version,
             string? progressText,
             int tutorialId,
-            int? tutorialTime,
-            int? tutorialStatus,
+            int tutorialTime,
+            int tutorialStatus,
             int candidateId,
-            int? customisationId
+            int customisationId
         );
     }
 
@@ -119,30 +119,20 @@
         }
 
         public TrackerEndpointResponse StoreAspProgressV2(
-            int? progressId,
+            int progressId,
             int version,
             string? progressText,
             int tutorialId,
-            int? tutorialTime,
-            int? tutorialStatus,
+            int tutorialTime,
+            int tutorialStatus,
             int candidateId,
-            int? customisationId
+            int customisationId
         )
         {
-            if (progressId == null)
-            {
-                return TrackerEndpointResponse.StoreAspProgressV2Exception;
-            }
-
-            var progress = progressService.GetDetailedCourseProgress((int)progressId);
+            var progress = progressService.GetDetailedCourseProgress(progressId);
             if (progress == null || progress.DelegateId != candidateId || progress.CustomisationId != customisationId)
             {
                 return TrackerEndpointResponse.StoreAspProgressV2Exception;
-            }
-
-            if (tutorialStatus == null || tutorialTime == null)
-            {
-                return TrackerEndpointResponse.NullTutorialStatusOrTime;
             }
 
             try
@@ -152,8 +142,8 @@
                     version,
                     progressText,
                     tutorialId,
-                    (int)tutorialTime,
-                    (int)tutorialStatus
+                    tutorialTime,
+                    tutorialStatus
                 );
             }
             catch (Exception ex)

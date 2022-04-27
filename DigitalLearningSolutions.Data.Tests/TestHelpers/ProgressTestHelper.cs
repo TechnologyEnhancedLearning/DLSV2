@@ -86,7 +86,8 @@
             return connection.Query<ProgressDetails>(
                 @"SELECT CustomisationVersion,
                     SubmittedTime,
-                    ProgressText
+                    ProgressText,
+                    DiagnosticScore
                     FROM Progress
                     WHERE ProgressId = @progressId",
                 new { progressId }

@@ -57,6 +57,7 @@
                             INNER JOIN NotificationUsers AS nu ON au.AdminID = nu.AdminUserID
                         WHERE (nu.NotificationID = 6)
                             AND (p.ProgressID = @progressId)) AS AdminEmail,
+                        customisations.NotificationEmails AS CourseNotificationEmail,
                         (SELECT MAX(SessionID)
                             FROM Sessions
                             WHERE CandidateID = @candidateId

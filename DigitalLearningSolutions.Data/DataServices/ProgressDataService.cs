@@ -51,7 +51,7 @@
             string? answer
         );
 
-        void UpdateProgressDetails(
+        void UpdateProgressDetailsForStoreAspProgressV2(
             int progressId,
             int customisationVersion,
             DateTime submittedTime,
@@ -71,10 +71,6 @@
         );
 
         int GetCompletionStatusForProgress(int progressId);
-
-        void UpdateProgressCompletedDate(int progressId, DateTime? completedDate);
-
-        int MarkLearningLogItemsCompleteByProgressId(int progressId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -404,7 +400,7 @@
             );
         }
 
-        public void UpdateProgressDetails(
+        public void UpdateProgressDetailsForStoreAspProgressV2(
             int progressId,
             int customisationVersion,
             DateTime submittedTime,
@@ -417,16 +413,15 @@
                         SubmittedTime = @submittedTime,
                         ProgressText = @progressText,
                         DiagnosticScore =
-                            (SELECT CASE WHEN SUM(t .DiagAssessOutOf) > 0
-                                THEN CAST((SUM(ap.DiagHigh) * 1.0) / (SUM(t .DiagAssessOutOf) * 1.0) * 100 AS Int)
+                            (SELECT CASE WHEN SUM(t.DiagAssessOutOf) > 0
+                                THEN CAST((SUM(ap.DiagHigh) * 1.0) / (SUM(t.DiagAssessOutOf) * 1.0) * 100 AS Int)
                                 ELSE 0 END AS DiagPercent
                             FROM aspProgress AS ap
                             INNER JOIN Progress AS p ON ap.ProgressID = p.ProgressID
                             INNER JOIN Customisations AS c ON p.CustomisationID = c.CustomisationID
                             INNER JOIN CustomisationTutorials AS ct ON ap.TutorialID = ct.TutorialID AND c.CustomisationID = ct.CustomisationID
                             INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
-                            WHERE (ap.ProgressID = @progressId) AND (ct.DiagStatus = 1))
-                    WHERE (ProgressID = @progressId)",
+                            WHERE (ap.ProgressID = @progressId) AND (ct.DiagStatus = 1))",
                 new { progressId, customisationVersion, submittedTime, progressText }
             );
         }
@@ -465,25 +460,6 @@
         {
             return connection.QuerySingle<int>(
                 "GetAndReturnCompletionStatusByProgID",
-                new { progressId },
-                commandType: CommandType.StoredProcedure
-            );
-        }
-
-        public void UpdateProgressCompletedDate(int progressId, DateTime? completedDate)
-        {
-            connection.Execute(
-                @"UPDATE Progress
-                    SET Completed = @completedDate
-                    WHERE ProgressID = @progressId",
-                new { progressId, completedDate }
-            );
-        }
-
-        public int MarkLearningLogItemsCompleteByProgressId(int progressId)
-        {
-            return connection.Execute(
-                "UpdateLearningLogItemsMarkCompleteForRelatedCourseCompletion",
                 new { progressId },
                 commandType: CommandType.StoredProcedure
             );

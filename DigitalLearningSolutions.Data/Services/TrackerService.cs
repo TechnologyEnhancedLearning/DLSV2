@@ -10,7 +10,10 @@
 
     public interface ITrackerService
     {
-        string ProcessQuery(TrackerEndpointQueryParams query, Dictionary<TrackerEndpointSessionVariable, string?> sessionVariables);
+        string ProcessQuery(
+            TrackerEndpointQueryParams query,
+            Dictionary<TrackerEndpointSessionVariable, string?> sessionVariables
+        );
     }
 
     public class TrackerService : ITrackerService
@@ -28,7 +31,10 @@
             this.trackerActionService = trackerActionService;
         }
 
-        public string ProcessQuery(TrackerEndpointQueryParams query, Dictionary<TrackerEndpointSessionVariable, string?> sessionVariables)
+        public string ProcessQuery(
+            TrackerEndpointQueryParams query,
+            Dictionary<TrackerEndpointSessionVariable, string?> sessionVariables
+        )
         {
             if (string.IsNullOrWhiteSpace(query.Action))
             {
@@ -68,15 +74,26 @@
 
                     if (action == TrackerEndpointAction.StoreAspProgressV2)
                     {
+                        if (query.ProgressId == null || query.Version == null || query.TutorialId == null ||
+                            query.CandidateId == null || query.CustomisationId == null)
+                        {
+                            return TrackerEndpointResponse.StoreAspProgressV2Exception;
+                        }
+
+                        if (query.TutorialTime == null || query.TutorialStatus == null)
+                        {
+                            return TrackerEndpointResponse.NullTutorialStatusOrTime;
+                        }
+
                         return trackerActionService.StoreAspProgressV2(
-                            query.ProgressId,
-                            query.Version,
+                            query.ProgressId.Value,
+                            query.Version.Value,
                             sessionVariables[TrackerEndpointSessionVariable.LmGvSectionRow],
-                            query.TutorialId,
-                            query.TutorialTime,
-                            query.TutorialStatus,
-                            query.CandidateId,
-                            query.CustomisationId
+                            query.TutorialId.Value,
+                            query.TutorialTime.Value,
+                            query.TutorialStatus.Value,
+                            query.CandidateId.Value,
+                            query.CustomisationId.Value
                         );
                     }
 

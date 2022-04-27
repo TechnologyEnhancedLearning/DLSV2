@@ -1,19 +1,23 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System.Transactions;
+    using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
+    using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
     public class NotificationDataServiceTests
     {
+        private SqlConnection connection = null!;
         private NotificationDataService notificationDataService = null!;
 
         [SetUp]
         public void Setup()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
+            connection = ServiceTestHelper.GetDatabaseConnection();
             notificationDataService = new NotificationDataService(connection);
         }
 
@@ -41,18 +45,30 @@
         public void GetProgressCompletionData_returns_data_correctly()
         {
             // Given
+            using var transaction = new TransactionScope();
+
+            const int customisationId = 236;
+            const string courseNotificationEmail = "test@email.com";
+            connection.Execute(
+                @"UPDATE Customisations
+                        SET NotificationEmails = @courseNotificationEmail
+                        WHERE CustomisationID = @customisationId",
+                new { customisationId, courseNotificationEmail }
+            );
+
             var progressCompletionData = new ProgressCompletionData
             {
                 CentreId = 237,
                 CourseName = "Entry Level - Win XP, Office 2003/07 OLD - Standard",
                 AdminEmail = null,
+                CourseNotificationEmail = courseNotificationEmail,
                 SessionId = 429,
             };
 
-            // when
-            var result = notificationDataService.GetProgressCompletionData(100, 103, 236);
+            // When
+            var result = notificationDataService.GetProgressCompletionData(100, 103, customisationId);
 
-            // then
+            // Then
             result.Should().BeEquivalentTo(progressCompletionData);
         }
 
@@ -65,13 +81,14 @@
                 CentreId = 374,
                 CourseName = "Level 3 - Microsoft Word 2010  - LH TEST NEW COURSE PUBLISHED",
                 AdminEmail = "hcoayru@lmgein.",
+                CourseNotificationEmail = null,
                 SessionId = 0,
             };
 
-            // when
+            // When
             var result = notificationDataService.GetProgressCompletionData(276626, 293518, 27312);
 
-            // then
+            // Then
             result.Should().BeEquivalentTo(progressCompletionData);
         }
     }

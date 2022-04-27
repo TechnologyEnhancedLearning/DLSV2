@@ -558,119 +558,130 @@
         }
 
         [Test]
-        public void UpdateProgressDetails_updates_correct_fields_on_progress_record()
+        public void UpdateProgressDetailsForStoreAspProgressV2_updates_correct_fields_on_progress_record()
         {
             using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                const int customisationVersion = 1;
-                var submittedTime = new DateTime(2022, 1, 1, 1, 1, 1);
-                const string progressText = "Test progress text";
-                var expectedProgressDetails = new ProgressDetails(customisationVersion, submittedTime, progressText);
 
-                // When
-                progressDataService.UpdateProgressDetails(100, customisationVersion, submittedTime, progressText);
-                var progressDetails = progressTestHelper.GetProgressDetailsByProgressId(100);
+            // Given
+            const int progressId = 261317;
+            const int customisationVersion = 1;
+            var submittedTime = new DateTime(2022, 1, 1, 1, 1, 1);
+            const string progressText = "Test progress text";
+            const int diagnosticScore = 100;
+            var expectedProgressDetails = new ProgressDetails(
+                customisationVersion,
+                submittedTime,
+                progressText,
+                diagnosticScore
+            );
 
-                // Then
-                progressDetails.Should().BeEquivalentTo(expectedProgressDetails);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // When
+            progressDataService.UpdateProgressDetailsForStoreAspProgressV2(
+                progressId,
+                customisationVersion,
+                submittedTime,
+                progressText
+            );
+
+            // Then
+            var progressDetails = progressTestHelper.GetProgressDetailsByProgressId(progressId);
+            progressDetails.Should().BeEquivalentTo(expectedProgressDetails);
+        }
+
+        [Test]
+        public void
+            UpdateProgressDetailsForStoreAspProgressV2_sets_diagnostic_score_to_zero_if_score_cannot_be_calculated()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int progressIdForRecordWithSumOfDiagAssessOutOfEqualingZero = 175824;
+            const int customisationVersion = 1;
+            var submittedTime = new DateTime(2022, 1, 1, 1, 1, 1);
+            const string progressText = "Test progress text";
+            const int expectedDiagnosticScore = 0;
+
+            // When
+            progressDataService.UpdateProgressDetailsForStoreAspProgressV2(
+                progressIdForRecordWithSumOfDiagAssessOutOfEqualingZero,
+                customisationVersion,
+                submittedTime,
+                progressText
+            );
+
+            // Then
+            var progressDetails =
+                progressTestHelper.GetProgressDetailsByProgressId(
+                    progressIdForRecordWithSumOfDiagAssessOutOfEqualingZero
+                );
+            progressDetails.DiagnosticScore.Should().Be(expectedDiagnosticScore);
         }
 
         [Test]
         public void UpdateAspProgressTutTime_adds_new_tut_time_value_to_existing()
         {
             using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                const int inputTutTime = 1;
-                const int expectedTutTime = 3;
 
-                // When
-                progressDataService.UpdateAspProgressTutTime(91, 15885, inputTutTime);
-                var progressTutTime = progressTestHelper.GetAspProgressTutTimeById(53);
+            // Given
+            const int inputTutTime = 1;
+            const int expectedTutTime = 3;
 
-                // Then
-                progressTutTime.Should().Be(expectedTutTime);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // When
+            progressDataService.UpdateAspProgressTutTime(91, 15885, inputTutTime);
+
+            // Then
+            var progressTutTime = progressTestHelper.GetAspProgressTutTimeById(53);
+            progressTutTime.Should().Be(expectedTutTime);
         }
 
         [Test]
         public void UpdateAspProgressTutStat_updates_tut_stat_with_new_value_if_greater_than_existing()
         {
             using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                const int expectedTutStat = 3;
 
-                // When
-                progressDataService.UpdateAspProgressTutStat(91, 15885, expectedTutStat);
-                var progressTutTime = progressTestHelper.GetAspProgressTutStatById(53);
+            // Given
+            const int expectedTutStat = 3;
 
-                // Then
-                progressTutTime.Should().Be(expectedTutStat);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // When
+            progressDataService.UpdateAspProgressTutStat(91, 15885, expectedTutStat);
+
+            // Then
+            var progressTutTime = progressTestHelper.GetAspProgressTutStatById(53);
+            progressTutTime.Should().Be(expectedTutStat);
         }
 
         [Test]
         public void UpdateAspProgressTutStat_does_not_update_tut_stat_with_new_value_if_less_than_existing()
         {
             using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                const int inputTutStat = 1;
-                const int expectedTutStat = 2;
 
-                // When
-                progressDataService.UpdateAspProgressTutStat(91, 15885, inputTutStat);
-                var progressTutTime = progressTestHelper.GetAspProgressTutStatById(53);
+            // Given
+            const int inputTutStat = 1;
+            const int expectedTutStat = 2;
 
-                // Then
-                progressTutTime.Should().Be(expectedTutStat);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // When
+            progressDataService.UpdateAspProgressTutStat(91, 15885, inputTutStat);
+
+            // Then
+            var progressTutTime = progressTestHelper.GetAspProgressTutStatById(53);
+            progressTutTime.Should().Be(expectedTutStat);
         }
 
         [Test]
         public void UpdateProgressCompletedDate_updates_progress_record_correctly()
         {
             using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                const int progressId = 100;
-                var expectedCompletedDate = new DateTime(2022, 1, 1, 1, 1, 1);
 
-                // When
-                progressDataService.UpdateProgressCompletedDate(progressId, expectedCompletedDate);
-                var progressCompletedDate = progressTestHelper.GetProgressCompletedDateById(progressId);
+            // Given
+            const int progressId = 100;
+            var expectedCompletedDate = new DateTime(2022, 1, 1, 1, 1, 1);
 
-                // Then
-                progressCompletedDate.Should().Be(expectedCompletedDate);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // When
+            progressDataService.SetCompletionDate(progressId, expectedCompletedDate);
+
+            // Then
+            var progressCompletedDate = progressTestHelper.GetProgressCompletedDateById(progressId);
+            progressCompletedDate.Should().Be(expectedCompletedDate);
         }
     }
 }

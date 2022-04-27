@@ -11,8 +11,17 @@
 
     public class TrackerServiceTests
     {
+        private const string DefaultProgressText = "Test progress text";
+
         private readonly Dictionary<TrackerEndpointSessionVariable, string?> emptySessionVariablesDictionary =
-            new Dictionary<TrackerEndpointSessionVariable, string?>();
+            new Dictionary<TrackerEndpointSessionVariable, string?>
+                { { TrackerEndpointSessionVariable.LmGvSectionRow, null } };
+
+        private readonly Dictionary<TrackerEndpointSessionVariable, string?> sessionVariablesForStoreAspProgressV2 =
+            new Dictionary<TrackerEndpointSessionVariable, string?>
+            {
+                { TrackerEndpointSessionVariable.LmGvSectionRow, DefaultProgressText },
+            };
 
         private ITrackerActionService actionService = null!;
         private ILogger<TrackerService> logger = null!;
@@ -153,11 +162,7 @@
                 CandidateId = 456,
                 CustomisationId = 1,
             };
-            const string progressText = "Test progress text";
-            var sessionVariables = new Dictionary<TrackerEndpointSessionVariable, string?>
-            {
-                { TrackerEndpointSessionVariable.LmGvSectionRow, progressText },
-            };
+
             var expectedResponse = TrackerEndpointResponse.Success;
 
             A.CallTo(
@@ -174,23 +179,111 @@
             ).Returns(expectedResponse);
 
             // When
-            var result = trackerService.ProcessQuery(query, sessionVariables);
+            var result = trackerService.ProcessQuery(query, sessionVariablesForStoreAspProgressV2);
 
             // Then
             result.Should().Be(expectedResponse);
             A.CallTo(
                     () => actionService.StoreAspProgressV2(
-                        query.ProgressId,
-                        query.Version,
-                        progressText,
-                        query.TutorialId,
-                        query.TutorialTime,
-                        query.TutorialStatus,
-                        query.CandidateId,
-                        query.CustomisationId
+                        query.ProgressId.Value,
+                        query.Version.Value,
+                        DefaultProgressText,
+                        query.TutorialId.Value,
+                        query.TutorialTime.Value,
+                        query.TutorialStatus.Value,
+                        query.CandidateId.Value,
+                        query.CustomisationId.Value
                     )
                 )
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [TestCase(null, 1, 123, 456, 789)]
+        [TestCase(101, null, 123, 456, 789)]
+        [TestCase(101, 1, null, 456, 789)]
+        [TestCase(101, 1, 123, null, 789)]
+        [TestCase(101, 1, 123, 456, null)]
+        public void
+            StoreAspProgressV2_returns_StoreAspProgressV2Exception_if_a_query_param_is_null(
+                int? progressId,
+                int? version,
+                int? tutorialId,
+                int? delegateId,
+                int? customisationId
+            )
+        {
+            // Given
+            var query = new TrackerEndpointQueryParams
+            {
+                Action = "StoreAspProgressV2",
+                ProgressId = progressId,
+                Version = version,
+                TutorialId = tutorialId,
+                TutorialTime = 1,
+                TutorialStatus = 1,
+                CandidateId = delegateId,
+                CustomisationId = customisationId,
+            };
+
+            // When
+            var result = trackerService.ProcessQuery(query, sessionVariablesForStoreAspProgressV2);
+
+            // Then
+            result.Should().Be(TrackerEndpointResponse.StoreAspProgressV2Exception);
+            A.CallTo(
+                    () => actionService.StoreAspProgressV2(
+                        A<int>._,
+                        A<int>._,
+                        A<string>._,
+                        A<int>._,
+                        A<int>._,
+                        A<int>._,
+                        A<int>._,
+                        A<int>._
+                    )
+                )
+                .MustNotHaveHappened();
+        }
+
+        [TestCase(null, 1)]
+        [TestCase(1, null)]
+        public void
+            StoreAspProgressV2_returns_NullTutorialStatusOrTime_if_tutorialTime_or_tutorialStatus_is_null(
+                int? tutorialTime,
+                int? tutorialStatus
+            )
+        {
+            // Given
+            var query = new TrackerEndpointQueryParams
+            {
+                Action = "StoreAspProgressV2",
+                ProgressId = 101,
+                Version = 1,
+                TutorialId = 123,
+                TutorialTime = tutorialTime,
+                TutorialStatus = tutorialStatus,
+                CandidateId = 456,
+                CustomisationId = 1,
+            };
+
+            // When
+            var result = trackerService.ProcessQuery(query, sessionVariablesForStoreAspProgressV2);
+
+            // Then
+            result.Should().Be(TrackerEndpointResponse.NullTutorialStatusOrTime);
+            A.CallTo(
+                    () => actionService.StoreAspProgressV2(
+                        A<int>._,
+                        A<int>._,
+                        A<string>._,
+                        A<int>._,
+                        A<int>._,
+                        A<int>._,
+                        A<int>._,
+                        A<int>._
+                    )
+                )
+                .MustNotHaveHappened();
         }
     }
 }

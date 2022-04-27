@@ -39,7 +39,7 @@
         }
 
         [Test]
-        public void SendProgressCompletionNotification_calls_data_service_and_sends_email()
+        public void SendProgressCompletionNotification_calls_data_service_and_sends_email_to_correct_delegate_email()
         {
             // Given
             var progress = ProgressTestHelper.GetDefaultDetailedCourseProgress();
@@ -52,8 +52,13 @@
             // Then
             A.CallTo(() => notificationDataService.GetProgressCompletionData(ProgressId, DelegateId, CustomisationId))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => emailService.SendEmail(A<Email>._))
-                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => emailService.SendEmail(
+                    A<Email>.That.Matches(
+                        e => e.To.SequenceEqual(new[] { progress.DelegateEmail })
+                    )
+                )
+            ).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -112,14 +117,36 @@
             ).MustHaveHappenedOnceExactly();
         }
 
+        [Test]
+        public void SendProgressCompletionNotification_does_not_add_line_of_text_about_admin_if_admin_email_is_null()
+        {
+            // Given
+            var progress = ProgressTestHelper.GetDefaultDetailedCourseProgress();
+            SetUpSendProgressCompletionNotificationEmailFakes(adminEmail: null);
+
+            // When
+            notificationService.SendProgressCompletionNotificationEmail(progress, 2, 3);
+
+            // Then
+            A.CallTo(
+                () => emailService.SendEmail(
+                    A<Email>.That.Matches(
+                        e => e.Body.TextBody.Contains(
+                            "Note: This message has been copied to the administrator(s) managing this activity, for their information."
+                        )
+                    )
+                )
+            ).MustNotHaveHappened();
+        }
+
         [TestCase(
             2,
-            "To evaluate the activity and access your certificate of completion, click here."
+            "To evaluate the activity and access your certificate of completion, visit this url:"
         )]
         [TestCase(
             1,
             "If you haven't already done so, please evaluate the activity to help us to improve provision " +
-            "for future delegates by clicking here. Only one evaluation can be submitted per completion."
+            "for future delegates by visiting this url:"
         )]
         public void SendProgressCompletionNotification_shows_correct_text_for_completion_status(
             int completionStatus,
@@ -201,6 +228,38 @@
                     )
                 )
             ).MustHaveHappenedOnceExactly();
+        }
+
+        [TestCase(
+            "This activity is related to 1 planned development log action in another activity " +
+            "in your Learning Portal. This has automatically been marked as complete."
+        )]
+        [TestCase(
+            "This activity is related to 2 planned development log actions in other activities " +
+            "in your Learning Portal. These have automatically been marked as complete."
+        )]
+        public void
+            SendProgressCompletionNotification_does_not_add_the_extra_learning_log_item_line_of_text_when_number_affected_is_zero(
+                string lineOfText
+            )
+        {
+            // Given
+            var progress = ProgressTestHelper.GetDefaultDetailedCourseProgress();
+            SetUpSendProgressCompletionNotificationEmailFakes();
+
+            // When
+            notificationService.SendProgressCompletionNotificationEmail(progress, 2, 0);
+
+            // Then
+            A.CallTo(
+                () => emailService.SendEmail(
+                    A<Email>.That.Matches(
+                        e => e.Body.TextBody.Contains(
+                            lineOfText
+                        )
+                    )
+                )
+            ).MustNotHaveHappened();
         }
 
         private void SetUpSendProgressCompletionNotificationEmailFakes(

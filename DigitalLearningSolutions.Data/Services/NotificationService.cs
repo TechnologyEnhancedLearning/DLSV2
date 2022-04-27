@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Extensions;
@@ -81,7 +83,7 @@
                 TextBody = $@"Dear {unlockData.ContactForename}
                     Digital Learning Solutions Delegate, {unlockData.DelegateName}, has requested that you unlock their progress for the course {unlockData.CourseName}.
                     They have reached the maximum number of assessment attempt allowed without passing.
-                    To review and unlock their progress, visit the this url: ${unlockUrl.Uri}.",
+                    To review and unlock their progress, visit this url: ${unlockUrl.Uri}.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                     <p>Dear {unlockData.ContactForename}</p>
                     <p>Digital Learning Solutions Delegate, {unlockData.DelegateName}, has requested that you unlock their progress for the course {unlockData.CourseName}</p>
@@ -120,9 +122,9 @@
                 : $@"<p>If you haven't already done so, please evaluate the activity to help us to improve provision for future delegates by clicking
                     <a href='{finaliseUrl}'>here</a>. Only one evaluation can be submitted per completion.</p>";
             var textActivityCompletionInfo = completionStatus == 2
-                ? "To evaluate the activity and access your certificate of completion, click here."
+                ? $@"To evaluate the activity and access your certificate of completion, visit this url: {finaliseUrl}."
                 : "If you haven't already done so, please evaluate the activity to help us to improve provision " +
-                  "for future delegates by clicking here. Only one evaluation can be submitted per completion.";
+                  $@"for future delegates by visiting this url: {finaliseUrl}. Only one evaluation can be submitted per completion.";
 
             if (numLearningLogItemsAffected == 1)
             {
@@ -143,7 +145,7 @@
                     "in other activities in your Learning Portal. These have automatically been marked as complete.";
             }
 
-            if (progressCompletionData.AdminEmail != null)
+            if (progressCompletionData.AdminEmail != null || progressCompletionData.CourseNotificationEmail != null)
             {
                 htmlActivityCompletionInfo +=
                     "<p><b>Note:</b> This message has been copied to the administrator(s) managing this activity, for their information.</p>";
@@ -152,14 +154,20 @@
             }
 
             const string emailSubjectLine = "Digital Learning Solutions Activity Complete";
+            var delegateNameOrGenericTitle = progress.DelegateFirstName ?? "Digital Learning Solutions Delegate";
+            var emailsToCc = GetEmailsToCc(
+                progressCompletionData.AdminEmail,
+                progressCompletionData.CourseNotificationEmail
+            );
+
             var builder = new BodyBuilder
             {
-                TextBody = $@"Dear {progress.DelegateFirstName ?? "Digital learning Solutions delegate"},
-                    You have completed the Digital Learning Solutions learning activity - {progressCompletionData.GetCourseNameWithoutAverageTimeInfo()}.
+                TextBody = $@"Dear {delegateNameOrGenericTitle},
+                    You have completed the Digital Learning Solutions learning activity - {progressCompletionData.CourseName}.
                     {textActivityCompletionInfo}",
                 HtmlBody = $@"<body style=""font-family: Calibri; font-size: small;"">
-                                <p>Dear {progress.DelegateFirstName ?? "Digital learning Solutions delegate"},</p>
-                                <p>You have completed the Digital Learning Solutions learning activity - {progressCompletionData.GetCourseNameWithoutAverageTimeInfo()}.</p>
+                                <p>Dear {delegateNameOrGenericTitle},</p>
+                                <p>You have completed the Digital Learning Solutions learning activity - {progressCompletionData.CourseName}.</p>
                                 {htmlActivityCompletionInfo}
                             </body>",
             };
@@ -168,9 +176,26 @@
                 emailSubjectLine,
                 builder,
                 new[] { progress.DelegateEmail },
-                progressCompletionData.AdminEmail == null ? null : new[] { progressCompletionData.AdminEmail }
+                emailsToCc
             );
             emailService.SendEmail(email);
+        }
+
+        private static string[]? GetEmailsToCc(string? adminEmail, string? courseNotificationEmail)
+        {
+            var emailsToCc = new List<string>();
+
+            if (adminEmail != null)
+            {
+                emailsToCc.Add(adminEmail);
+            }
+
+            if (courseNotificationEmail != null)
+            {
+                emailsToCc.Add(courseNotificationEmail);
+            }
+
+            return emailsToCc.Any() ? emailsToCc.ToArray() : null;
         }
     }
 }

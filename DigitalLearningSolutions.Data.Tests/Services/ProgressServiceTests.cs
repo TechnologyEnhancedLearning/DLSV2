@@ -14,7 +14,9 @@
 
     public class ProgressServiceTests
     {
+        private IClockService clockService = null!;
         private ICourseDataService courseDataService = null!;
+        private ILearningLogItemsDataService learningLogItemsDataService = null!;
         private INotificationService notificationService = null!;
         private IProgressDataService progressDataService = null!;
         private IProgressService progressService = null!;
@@ -25,11 +27,15 @@
             courseDataService = A.Fake<ICourseDataService>();
             progressDataService = A.Fake<IProgressDataService>();
             notificationService = A.Fake<INotificationService>();
+            learningLogItemsDataService = A.Fake<ILearningLogItemsDataService>();
+            clockService = A.Fake<IClockService>();
 
             progressService = new ProgressService(
                 courseDataService,
                 progressDataService,
-                notificationService
+                notificationService,
+                learningLogItemsDataService,
+                clockService
             );
         }
 
@@ -320,9 +326,12 @@
             const int tutorialId = 123;
             const int tutorialTime = 2;
             const int tutorialStatus = 3;
+            var timeNow = new DateTime(2022, 1, 1, 1, 1, 1, 1);
 
             A.CallTo(() => progressDataService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
                 .DoesNothing();
+            A.CallTo(() => clockService.UtcNow)
+                .Returns(timeNow);
 
             // When
             progressService.StoreAspProgressV2(
@@ -336,10 +345,10 @@
 
             // Then
             A.CallTo(
-                    () => progressDataService.UpdateProgressDetails(
+                    () => progressDataService.UpdateProgressDetailsForStoreAspProgressV2(
                         progressId,
                         version,
-                        A<DateTime>._,
+                        timeNow,
                         lmGvSectionRow
                     )
                 )
@@ -383,13 +392,13 @@
 
             // Then
             A.CallTo(
-                () => progressDataService.UpdateProgressCompletedDate(
+                () => progressDataService.SetCompletionDate(
                     A<int>._,
                     A<DateTime>._
                 )
             ).MustNotHaveHappened();
             A.CallTo(
-                () => progressDataService.MarkLearningLogItemsCompleteByProgressId(
+                () => learningLogItemsDataService.MarkLearningLogItemsCompleteByProgressId(
                     A<int>._
                 )
             ).MustNotHaveHappened();
@@ -413,13 +422,13 @@
             A.CallTo(() => progressDataService.GetCompletionStatusForProgress(detailedCourseProgress.ProgressId))
                 .Returns(1);
             A.CallTo(
-                () => progressDataService.UpdateProgressCompletedDate(
+                () => progressDataService.SetCompletionDate(
                     A<int>._,
                     A<DateTime>._
                 )
             ).DoesNothing();
             A.CallTo(
-                () => progressDataService.MarkLearningLogItemsCompleteByProgressId(
+                () => learningLogItemsDataService.MarkLearningLogItemsCompleteByProgressId(
                     A<int>._
                 )
             ).Returns(numLearningLogItemsAffected);
@@ -437,9 +446,9 @@
             // Then
             A.CallTo(() => progressDataService.GetCompletionStatusForProgress(detailedCourseProgress.ProgressId))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => progressDataService.UpdateProgressCompletedDate(A<int>._, A<DateTime>._))
+            A.CallTo(() => progressDataService.SetCompletionDate(A<int>._, A<DateTime>._))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => progressDataService.MarkLearningLogItemsCompleteByProgressId(A<int>._))
+            A.CallTo(() => learningLogItemsDataService.MarkLearningLogItemsCompleteByProgressId(A<int>._))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => notificationService.SendProgressCompletionNotificationEmail(

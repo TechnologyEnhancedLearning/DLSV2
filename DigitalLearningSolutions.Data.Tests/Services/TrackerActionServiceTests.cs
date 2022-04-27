@@ -220,13 +220,6 @@
         {
             // Given
             ProgressServiceReturnsDefaultDetailedCourseProgress();
-            A.CallTo(
-                () => progressService.UpdateDiagnosticScore(
-                    A<int>._,
-                    A<int>._,
-                    A<int>._
-                )
-            ).DoesNothing();
 
             // When
             var result = trackerActionService.StoreAspProgressV2(
@@ -269,13 +262,6 @@
             const int tutorialStatus = 2;
 
             ProgressServiceReturnsDefaultDetailedCourseProgress();
-            A.CallTo(
-                () => progressService.UpdateDiagnosticScore(
-                    A<int>._,
-                    A<int>._,
-                    A<int>._
-                )
-            ).DoesNothing();
 
             // When
             var result = trackerActionService.StoreAspProgressV2(
@@ -300,38 +286,6 @@
                     )
                 )
             ).MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public void StoreAspProgressV2_returns_StoreAspProgressV2Exception_if_progressId_is_null()
-        {
-            // Given
-            int? progressId = null;
-
-            // When
-            var result = trackerActionService.StoreAspProgressV2(
-                progressId,
-                DefaultCustomisationVersion,
-                DefaultLmGvSectionRow,
-                DefaultTutorialId,
-                DefaultTutorialTime,
-                DefaultTutorialStatus,
-                DefaultDelegateId,
-                DefaultCustomisationId
-            );
-
-            // Then
-            result.Should().Be(TrackerEndpointResponse.StoreAspProgressV2Exception);
-            A.CallTo(
-                () => progressService.StoreAspProgressV2(
-                    A<int>._,
-                    A<int>._,
-                    A<string>._,
-                    A<int>._,
-                    A<int>._,
-                    A<int>._
-                )
-            ).MustNotHaveHappened();
         }
 
         [Test]
@@ -370,11 +324,10 @@
 
         [TestCase(100, DefaultCustomisationId)]
         [TestCase(DefaultDelegateId, 100)]
-        [TestCase(DefaultDelegateId, null)]
         public void
             StoreAspProgressV2_returns_StoreAspProgressV2Exception_if_progress_is_null_or_a_param_does_not_match_progress_record(
-                int? delegateId,
-                int? customisationId
+                int delegateId,
+                int customisationId
             )
         {
             // Given
@@ -388,49 +341,12 @@
                 DefaultTutorialId,
                 DefaultTutorialTime,
                 DefaultTutorialStatus,
-                (int)delegateId!,
+                delegateId!,
                 customisationId
             );
 
             // Then
             result.Should().Be(TrackerEndpointResponse.StoreAspProgressV2Exception);
-            A.CallTo(
-                () => progressService.StoreAspProgressV2(
-                    A<int>._,
-                    A<int>._,
-                    A<string>._,
-                    A<int>._,
-                    A<int>._,
-                    A<int>._
-                )
-            ).MustNotHaveHappened();
-        }
-
-        [TestCase(null, DefaultTutorialStatus)]
-        [TestCase(DefaultTutorialTime, null)]
-        public void
-            StoreAspProgressV2_returns_NullTutorialStatusOrTime_if_tutorialTime_or_tutorialStatus_is_null(
-                int? tutorialTime,
-                int? tutorialStatus
-            )
-        {
-            // Given
-            ProgressServiceReturnsDefaultDetailedCourseProgress();
-
-            // When
-            var result = trackerActionService.StoreAspProgressV2(
-                DefaultProgressId,
-                DefaultCustomisationVersion,
-                DefaultLmGvSectionRow,
-                DefaultTutorialId,
-                tutorialTime,
-                tutorialStatus,
-                DefaultDelegateId,
-                DefaultCustomisationId
-            );
-
-            // Then
-            result.Should().Be(TrackerEndpointResponse.NullTutorialStatusOrTime);
             A.CallTo(
                 () => progressService.StoreAspProgressV2(
                     A<int>._,
