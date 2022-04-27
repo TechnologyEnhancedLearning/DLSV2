@@ -44,19 +44,10 @@
         )
         {
             await connection.ExecuteAsync(
-                @"BEGIN TRY
-                    BEGIN TRANSACTION
-                        UPDATE Users
+                @"UPDATE Users
                         SET PasswordHash = @passwordHash
                         FROM Users
-                            LEFT JOIN DelegateAccounts AS d ON d.UserID = Users.ID
-                            LEFT JOIN AdminAccounts AS a ON a.UserID = Users.ID
-                        WHERE Users.PrimaryEmail = @email
-                    COMMIT TRANSACTION
-                END TRY
-                BEGIN CATCH
-                    ROLLBACK TRANSACTION
-                END CATCH",
+                        WHERE Users.PrimaryEmail = @email",
                 new { email, passwordHash }
             );
         }

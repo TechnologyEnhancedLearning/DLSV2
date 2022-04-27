@@ -27,7 +27,7 @@
         }
 
         [Test]
-        public void Set_password_by_candidate_number_should_set_password_correctly()
+        public void SetPasswordByCandidateNumber_should_set_password_correctly()
         {
             using var transaction = new TransactionScope();
             try
@@ -48,7 +48,7 @@
         }
 
         [Test]
-        public async Task Setting_password_by_email_sets_password_for_matching_admins()
+        public async Task SetPasswordByEmailAsync_sets_password_for_matching_user()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -65,7 +65,7 @@
         }
 
         [Test]
-        public async Task Setting_password_by_email_does_not_set_password_for_all_admins()
+        public async Task SetPasswordByEmailAsync_does_not_set_password_for_all_users()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -83,24 +83,7 @@
         }
 
         [Test]
-        public async Task Setting_password_by_email_sets_password_for_matching_candidate()
-        {
-            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            // Given
-            var existingDelegate = UserTestHelper.GetDefaultDelegateUser();
-            var newPasswordHash = PasswordHashNotYetInDb;
-
-            // When
-            await passwordDataService.SetPasswordByEmailAsync(existingDelegate.EmailAddress!, newPasswordHash);
-
-            // Then
-            userDataService.GetDelegateUserById(existingDelegate.Id)?.Password.Should()
-                .Be(PasswordHashNotYetInDb);
-        }
-
-        [Test]
-        public async Task SetPasswordForUsers_can_set_password_for_multiple_delegates()
+        public async Task SetPasswordForUsersAsync_can_set_password_for_multiple_delegates()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -130,25 +113,7 @@
         }
 
         [Test]
-        public async Task Setting_password_by_email_does_not_set_password_for_all_delegates()
-        {
-            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            // Given
-            var existingDelegate = UserTestHelper.GetDefaultDelegateUser();
-            var existingDelegatePassword = existingDelegate.Password;
-            var newPasswordHash = PasswordHashNotYetInDb;
-
-            // When
-            await passwordDataService.SetPasswordByEmailAsync("random.email@address.com", newPasswordHash);
-
-            // Then
-            userDataService.GetDelegateUserById(existingDelegate.Id)?.Password.Should()
-                .Be(existingDelegatePassword);
-        }
-
-        [Test]
-        public async Task Setting_password_for_user_account_set_changes_password()
+        public async Task SetPasswordForUsersAsync_changes_password_for_given_users()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -170,7 +135,7 @@
         }
 
         [Test]
-        public async Task Can_set_password_for_delegate_only()
+        public async Task SetPasswordForUsersAsync_can_set_password_for_delegate_only()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
