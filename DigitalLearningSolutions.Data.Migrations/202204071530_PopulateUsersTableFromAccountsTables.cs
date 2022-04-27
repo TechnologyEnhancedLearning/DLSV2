@@ -25,10 +25,13 @@ namespace DigitalLearningSolutions.Data.Migrations
             };
             using var transactionScope = new TransactionScope(TransactionScopeOption.Required, options);
 
-            // 1. Delete from Users (this should be empty)
+            // Delete from Users (this should be empty)
             connection.Execute("DELETE Users");
 
-            // 2. Copy AdminAccounts to Users table
+            // Add index to AdminAccounts Email to fix slow queries
+            connection.Execute("CREATE INDEX IX_AdminAccounts_Email ON AdminAccounts (Email)");
+
+            // Copy AdminAccounts to Users table
             connection.Execute(
                 @"INSERT INTO dbo.Users (
                     PrimaryEmail,
@@ -48,7 +51,8 @@ namespace DigitalLearningSolutions.Data.Migrations
                     EmailVerified,
                     DetailsLastChecked
                 )
-                SELECT Email,
+                SELECT
+                    Email,
                     Password_deprecated,
                     Forename_deprecated,
                     Surname_deprecated,
@@ -63,19 +67,9 @@ namespace DigitalLearningSolutions.Data.Migrations
                     NULL,
                     0,
                     GETUTCDATE(),
-                    GETUTCDATE()
+                    CASE WHEN TRIM(Email) IS NOT NULL AND TRIM(Email) <> '' THEN GETUTCDATE() ELSE NULL END
                     FROM AdminAccounts"
             );
-
-            // 3. Update AdminAccounts to reference Users.ID
-            connection.Execute(
-                @"UPDATE AdminAccounts
-                    SET
-                        UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
-                        Email = NULL"
-            );
-
-            // 4. DelegateAccount
 
             // Transfer all delegates with unique emails not already in the Users table
             connection.Execute(
@@ -120,9 +114,33 @@ namespace DigitalLearningSolutions.Data.Migrations
                         GROUP BY Email
                         HAVING COUNT(*) = 1
                         EXCEPT
-                        SELECT PrimaryEmail FROM Users)"
+                        SELECT Email FROM AdminAccounts)"
             );
-            
+
+            // Link all these User records we just created to the DelegateAccounts.
+            connection.Execute(
+                @"UPDATE DelegateAccounts
+                    SET
+                        UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
+                        Email = NULL,
+                        CentreSpecificDetailsLastChecked = GETUTCDATE()
+                    WHERE Email IN (
+                        SELECT Email FROM DelegateAccounts
+                        WHERE Email IS NOT NULL AND TRIM(Email) IS NOT NULL AND TRIM(Email) <> ''
+                        GROUP BY Email
+                        HAVING COUNT(*) = 1
+                        EXCEPT
+                        SELECT Email FROM AdminAccounts)"
+            );
+
+            // Update AdminAccounts to reference Users.ID
+            connection.Execute(
+                @"UPDATE AdminAccounts
+                    SET
+                        UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
+                        Email = NULL"
+            );
+
             // Get the rest of the delegate accounts we've not resolved yet
             var delegateAccounts =
                 connection.Query<DelegateAccount>("SELECT * FROM DelegateAccounts WHERE UserId IS NULL");
@@ -201,6 +219,9 @@ namespace DigitalLearningSolutions.Data.Migrations
                         CentreSpecificDetailsLastChecked = GETUTCDATE()
                     WHERE UserID IS NULL"
             );
+
+            // Remove AdminAccounts Email Index we created at the start
+            connection.Execute("DROP INDEX AdminAccounts.IX_AdminAccounts_Email");
 
             transactionScope.Complete();
         }
@@ -281,9 +302,9 @@ namespace DigitalLearningSolutions.Data.Migrations
                            string.IsNullOrWhiteSpace(existingUser.ProfessionalRegistrationNumber) ||
                            string.IsNullOrWhiteSpace(delegateAccount.ProfessionalRegistrationNumber_deprecated);
 
-            var profileImageMatch = delegateAccount.ProfileImage_deprecated == existingUser.ProfileImage ||
-                                    existingUser.ProfileImage == null ||
-                                    delegateAccount.ProfileImage_deprecated == null;
+            var profileImageMatch = existingUser.ProfileImage == null ||
+                                    delegateAccount.ProfileImage_deprecated == null ||
+                                    delegateAccount.ProfileImage_deprecated.SequenceEqual(existingUser.ProfileImage);
 
             return firstNamesMatch && lastNamesMatch && profileImageMatch && prnMatch;
         }
