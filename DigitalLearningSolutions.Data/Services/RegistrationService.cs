@@ -79,6 +79,9 @@ namespace DigitalLearningSolutions.Data.Services
             int? supervisorDelegateId = null
         )
         {
+            ValidateDelegateRegistrationDetails(delegateRegistrationModel);
+
+            // OLD CODE BELOW HERE
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
@@ -146,11 +149,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
-            ValidateDelegateRegistrationDetails(delegateRegistrationModel);
-
             using var transaction = new TransactionScope();
-
-            // OLD CODE BELOW HERE
 
             var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
 

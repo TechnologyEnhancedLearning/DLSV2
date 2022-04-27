@@ -22,6 +22,21 @@
 
         public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel)
         {
+            var userValues = new
+                {
+                    delegateRegistrationModel.FirstName,
+                    delegateRegistrationModel.LastName,
+                    delegateRegistrationModel.PrimaryEmail,
+                    delegateRegistrationModel.JobGroup,
+                    delegateRegistrationModel.Active,
+                    PasswordHash = "temp",
+                    ProfessionalRegistrationNumber = (string?)null,
+                };
+
+            // insert
+
+            // OLD CODE BELOW HERE
+
             var values = new
             {
                 delegateRegistrationModel.FirstName,
