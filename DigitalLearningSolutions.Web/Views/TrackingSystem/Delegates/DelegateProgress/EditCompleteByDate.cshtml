@@ -1,7 +1,5 @@
-﻿@inject IConfiguration configuration
-@using DigitalLearningSolutions.Web.Models.Enums
+﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
-@using Microsoft.Extensions.Configuration
 @model EditCompleteByDateViewModel
 
 @{
@@ -15,12 +13,15 @@
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
   }
+
   var exampleDate = DateTime.Today;
   var hintTextLines = new List<string> {
     $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the complete by date.",
     "Activities with no complete by date will be removed after 6 months of inactivity.",
   };
 }
+
+@* TODO: These breadcrumbs will need to be corrected once 862 has been completed. Info can be found in the ticket. *@
 
 @section NavBreadcrumbs {
   @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {

@@ -30,13 +30,13 @@
             frameworkService = new FrameworkService(connection, logger);
         }
         [Test]
-        public void GetFrameworksForAdminId_should_return_one_framework()
+        public void GetFrameworksForAdminId_should_return_three_framework()
         {
             // When
             var result = frameworkService.GetFrameworksForAdminId(ValidAdminId);
 
             // Then
-            result.Should().HaveCount(1);
+            result.Should().HaveCount(3);
         }
         [Test]
         public void GetFrameworksForAdminId_should_return_no_frameworks_when_there_are_no_frameworks_for_AdminId()
@@ -280,12 +280,12 @@
             result.Should().HaveCount(0);
         }
         [Test]
-        public void GetAllFrameworks_should_have_count_of_1()
+        public void GetAllFrameworks_should_have_count_of_3()
         {
             // When
             var result = frameworkService.GetAllFrameworks(ValidAdminId);
             // Then
-            result.Should().HaveCount(1);
+            result.Should().HaveCount(3);
         }
         [Test]
         public void CreateFramework_should_return_empty_BrandedFramework_if_exists()
@@ -619,13 +619,13 @@
             result.ToList().Count.Should().BeGreaterThan(0);
         }
         [Test]
-        public void GetAssessmentQuestions_returns_list_of__3_when_framework_id_valid()
+        public void GetAssessmentQuestions_returns_list_of__10_when_framework_id_valid()
         {
             // When
             var result = frameworkService.GetAssessmentQuestions(InvalidFrameworkId, ValidAdminId);
 
             // Then
-            result.ToList().Count.Should().Be(3);
+            result.ToList().Count.Should().Be(10);
         }
     }
 }

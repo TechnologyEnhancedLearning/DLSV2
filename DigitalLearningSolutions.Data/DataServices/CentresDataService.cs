@@ -51,6 +51,7 @@
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
         void SetCentreAutoRegistered(int centreId);
         IEnumerable<CentreRanking> GetCentreRanks(DateTime dateSince, int? regionId, int resultsCount, int centreId);
+        IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
     }
 
     public class CentresDataService : ICentresDataService
@@ -315,27 +316,27 @@
             return connection.Query<CentreRanking>(
                 @"WITH SessionsCount AS
                     (
-	                    SELECT
-		                    Count(c.CentreID) AS DelegateSessionCount,
-		                    c.CentreID
-	                    FROM [Sessions] s 
-	                    INNER JOIN Candidates c ON s.CandidateID = c.CandidateID 
-	                    INNER JOIN Centres ct ON c.CentreID = ct.CentreID
-	                    WHERE 
-		                    s.LoginTime > @dateSince 
-		                    AND c.CentreID <> 101 AND c.CentreID <> 374 
-		                    AND (ct.RegionID = @RegionID OR @RegionID IS NULL)
-	                    GROUP BY c.CentreID
+                        SELECT
+                            Count(c.CentreID) AS DelegateSessionCount,
+                            c.CentreID
+                        FROM [Sessions] s 
+                        INNER JOIN Candidates c ON s.CandidateID = c.CandidateID 
+                        INNER JOIN Centres ct ON c.CentreID = ct.CentreID
+                        WHERE 
+                            s.LoginTime > @dateSince 
+                            AND c.CentreID <> 101 AND c.CentreID <> 374 
+                            AND (ct.RegionID = @RegionID OR @RegionID IS NULL)
+                        GROUP BY c.CentreID
                     ), 
                     Rankings AS
                     (
-	                    SELECT 
-		                    RANK() OVER (ORDER BY sc.DelegateSessionCount DESC) AS Ranking,
-		                    c.CentreID,
-		                    c.CentreName,
-		                    sc.DelegateSessionCount
-	                    FROM SessionsCount sc
-	                    INNER JOIN Centres c ON sc.CentreID = c.CentreID
+                        SELECT 
+                            RANK() OVER (ORDER BY sc.DelegateSessionCount DESC) AS Ranking,
+                            c.CentreID,
+                            c.CentreName,
+                            sc.DelegateSessionCount
+                        FROM SessionsCount sc
+                        INNER JOIN Centres c ON sc.CentreID = c.CentreID
                     )
                     SELECT *
                     FROM Rankings
@@ -343,6 +344,27 @@
                     ORDER BY Ranking",
                 new { dateSince, regionId, resultsCount, centreId }
             );
+        }
+
+        public IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap()
+        {
+            return connection.Query<CentreSummaryForMap>(
+                @"SELECT
+                        CentreID AS ID,
+                        CentreName,
+                        Lat AS Latitude,
+                        Long AS Longitude,
+                        pwTelephone AS Telephone,
+                        pwEmail AS Email,
+                        pwWebURL AS WebUrl,
+                        pwHours AS Hours,
+                        pwTrustsCovered AS TrustsCovered,
+                        pwTrainingLocations AS TrainingLocations,
+                        pwGeneralInfo AS GeneralInfo,
+                        kbSelfRegister AS SelfRegister
+                    FROM Centres
+                    WHERE Active = 1 AND Lat IS NOT NULL AND Long IS NOT NULL AND ShowOnMap = 1"
+                );
         }
 
         public void SetCentreAutoRegistered(int centreId)

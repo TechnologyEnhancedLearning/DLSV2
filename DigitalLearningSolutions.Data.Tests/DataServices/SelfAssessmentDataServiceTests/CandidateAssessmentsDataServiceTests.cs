@@ -16,10 +16,10 @@
         {
             // Given
             var description =
-                "When thinking about your current role, for each of the following statements rate your current confidence level " +
-                "(Where are you now) and where your confidence leve ought to be to undertake your role successfully (Where do you need to be). " +
-                "Once you have submitted your ratings they will be used to recommend useful learning resources. We will also collect data anonymously " +
-                "to build up a picture of digital capability across the workforce to help with service design and learning provision.";
+               "When thinking about your current role, for each of the following statements rate your current confidence level " +
+               "(Where are you now) and where your confidence leve ought to be to undertake your role successfully (Where do you need to be). " +
+               "Once you have submitted your ratings they will be used to recommend useful learning resources. We will also collect data anonymously " +
+               "to build up a picture of digital capability across the workforce to help with service design and learning provision.";
 
             // When
             var result = selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId);
@@ -77,8 +77,7 @@
             {
                 // When
                 selfAssessmentDataService.UpdateLastAccessed(invalidSelfAssessmentId, CandidateId);
-                var updatedSelfAssessment =
-                    selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                var updatedSelfAssessment =  selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.LastAccessed.Should().BeNull();
@@ -292,7 +291,7 @@
                 DelegateId = delegateId,
                 SelfAssessmentId = SelfAssessmentId,
                 CompletedDate = null,
-                RemovedDate = null,
+                RemovedDate = null
             };
 
             // When

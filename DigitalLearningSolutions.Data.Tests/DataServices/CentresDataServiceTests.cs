@@ -320,5 +320,32 @@
                 inActiveCentre.CentreType.Should().Be("NHS Organisation");
                 inActiveCentre.RegionName.Should().Be("East Of England");
         }
+
+        [Test]
+        public void GetAllCentreSummariesForMap_returns_only_active_show_on_map_centres_with_latitude_and_longitude()
+        {
+            // When
+            var summaries = centresDataService.GetAllCentreSummariesForMap().ToList();
+
+            // Then
+            var activeCentre = summaries.SingleOrDefault(c => c.Id == 2);
+            var inactiveCentre = summaries.SingleOrDefault(c => c.Id == 6);
+            var noLatitudeCentre = summaries.SingleOrDefault(c => c.Id == 239);
+            var noLongitudeCentre = summaries.SingleOrDefault(c => c.Id == 74);
+            var noShowOnMapCentre = summaries.SingleOrDefault(c => c.Id == 101);
+
+            using (new AssertionScope())
+            {
+                activeCentre.Should().NotBeNull();
+                activeCentre!.CentreName.Should().Be("North West Boroughs Healthcare NHS Foundation Trust");
+                activeCentre.Latitude.Should().Be(53.428349);
+                activeCentre.Longitude.Should().Be(-2.608441);
+
+                inactiveCentre.Should().BeNull();
+                noLatitudeCentre.Should().BeNull();
+                noLongitudeCentre.Should().BeNull();
+                noShowOnMapCentre.Should().BeNull();
+            }
+        }
     }
 }
