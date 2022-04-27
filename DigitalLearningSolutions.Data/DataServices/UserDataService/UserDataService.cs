@@ -148,6 +148,7 @@
         {
             // TODO HEEDLS-857 do we need any exclusions here?
             // TODO HEEDLS-857 confirm names of new tables
+            // TODO HEEDLS-857 does this need to go in a sub-service?
             return connection.Query<string>(
                 @"SELECT PrimaryEmail FROM Users
                     UNION
