@@ -14,7 +14,6 @@
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.FindYourCentre))]
-    [Route("FindYourCentre")]
     public class FindYourCentreController : Controller
     {
         private const string FindCentreFilterCookieName = "FindCentre";
@@ -34,7 +33,7 @@
         }
 
         [RedirectDelegateOnlyToLearningPortal]
-        [Route("{page=1:int}")]
+        [Route("FindYourCentre/{page=1:int}")]
         public IActionResult Index(
             int page = 1,
             string? searchString = null,
