@@ -333,7 +333,6 @@
             summaries.Single(s => s.CentreId == 2)!.RegionName.Should().Be("North West");
             summaries.Single(s => s.CentreId == 190)!.Email.Should().BeNull();
             summaries.Single(s => s.CentreId == 205)!.Telephone.Should().Be("01895 238282");
-
         }
 
         public void GetAllCentreSummariesForMap_returns_only_active_show_on_map_centres_with_latitude_and_longitude()

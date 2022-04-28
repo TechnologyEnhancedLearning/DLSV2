@@ -11,15 +11,10 @@
     public interface ICentresDataService
     {
         string? GetBannerText(int centreId);
-
         string? GetCentreName(int centreId);
-
         IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical();
-
         Centre? GetCentreDetailsById(int centreId);
-
         IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
-
         IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
 
         void UpdateCentreManagerDetails(
@@ -53,13 +48,9 @@
         );
 
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
-
         string[] GetCentreIpPrefixes(int centreId);
-
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
-
         void SetCentreAutoRegistered(int centreId);
-
         IEnumerable<CentreRanking> GetCentreRanks(DateTime dateSince, int? regionId, int resultsCount, int centreId);
         IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
     }
