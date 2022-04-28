@@ -20,7 +20,7 @@
 
         IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
 
-        IEnumerable<CentreSummaryForFindCentre> GetAllCentreSummariesForFindCentre();
+        IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
 
         void UpdateCentreManagerDetails(
             int centreId,
@@ -192,23 +192,24 @@
             );
         }
 
-        public IEnumerable<CentreSummaryForFindCentre> GetAllCentreSummariesForFindCentre()
+        public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()
         {
-            return connection.Query<CentreSummaryForFindCentre>(
+            return connection.Query<CentreSummaryForFindYourCentre>(
                 @"SELECT c.CentreID,
                             c.CentreName,
                             c.RegionID,
                             r.RegionName,
-                            c.pwTelephone,
-                            c.pwEmail,
-                            c.pwWebURL,
-                            c.pwHours,
-                            c.pwTrainingLocations,
-                            c.pwTrustsCovered,
-                            c.pwGeneralInfo,
-                            c.kbSelfRegister
+                            c.pwTelephone AS Telephone,
+                            c.pwEmail AS Email,
+                            c.pwWebURL AS WebUrl,
+                            c.pwHours AS Hours,
+                            c.pwTrainingLocations AS TrainingLocations,
+                            c.pwTrustsCovered AS TrustsCovered,
+                            c.pwGeneralInfo AS GeneralInfo,
+                            c.kbSelfRegister AS SelfRegister
                         FROM Centres AS c
-                        INNER JOIN Regions AS r ON r.RegionID = c.RegionID"
+                        INNER JOIN Regions AS r ON r.RegionID = c.RegionID
+                        WHERE (c.Active = 1) AND (NOT (c.Lat IS NULL) AND (NOT (c.Long IS NULL)) AND (c.ShowOnMap = 1))"
             );
         }
 

@@ -1,45 +1,40 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.FindYourCentre;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.FindYourCentre))]
+    [Route("FindYourCentre")]
     public class FindYourCentreController : Controller
     {
         private const string FindCentreFilterCookieName = "FindCentre";
-
-        private readonly IConfiguration configuration;
-
         private readonly ICentresService centresService;
-
         private readonly IRegionDataService regionDataService;
-
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public FindYourCentreController(
-            IConfiguration configuration,
             ICentresService centresService,
             IRegionDataService regionDataService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
-            this.configuration = configuration;
             this.centresService = centresService;
             this.regionDataService = regionDataService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [RedirectDelegateOnlyToLearningPortal]
-        [Route("FindYourCentre/{page=1:int}")]
+        [Route("{page=1:int}")]
         public IActionResult Index(
             int page = 1,
             string? searchString = null,
@@ -49,31 +44,27 @@
             int? itemsPerPage = null
         )
         {
-            /*existingFilterString = FilteringHelper.GetFilterString(
+            existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
                 clearFilters,
                 Request,
-                FindCentreFilterCookieName,
-                FindCentreActiveStatusFilterOptions.IsActive.FilterValue
-            );*/
+                FindCentreFilterCookieName
+            );
 
             var centreSummaries = centresService.GetAllCentreSummariesForFindCentre();
             var regions = regionDataService.GetRegionsAlphabetical();
 
-            /*
-            var availableFilters = FindCentreViewModelFilterOptions.FindCentreFilterViewModels(regions);
-            */
+            var availableFilters = FindYourCentreViewModelFilterOptions
+                .GetFindCentreFilterModels(regions).ToList();
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
-                new SortOptions(DefaultSortByOptions.Name.PropertyName, GenericSortingHelper.Ascending),
-                /*new FilterOptions(
-                    existingFilterString,
-                    availableFilters,
-                    FindCentreActiveStatusFilterOptions.IsActive.FilterValue
-                ),*/
                 null,
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters
+                ),
                 new PaginationOptions(page, itemsPerPage)
             );
 
@@ -83,13 +74,11 @@
             );
 
             var model = new FindYourCentreViewModel(
-                result
-                /*availableFilters*/
+                result,
+                availableFilters
             );
 
-            /*
-            Response.UpdateFilterCookie(DelegateFilterCookieName, result.FilterString);
-            */
+            Response.UpdateFilterCookie(FindCentreFilterCookieName, result.FilterString);
 
             return View(model);
         }

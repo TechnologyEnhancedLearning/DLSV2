@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Data.Models.Centres
-@model CentreSummaryForFindCentre
+@model CentreSummaryForFindYourCentre
 
 <div class="searchable-element nhsuk-panel card-with-buttons word-break" id="@Model.CentreId-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
@@ -13,11 +13,12 @@
 
       <partial name="_CentreCardDetails" model="@Model" />
 
-      @if (Model.kbSelfRegister) {
+      @if (Model.SelfRegister) {
         <a class="nhsuk-button nhsuk-u-margin-right-2"
-               role="button"
-               id="launch-course-@Model.CentreId"
-               @*href="REGISTER LINK HERE"*@>
+           role="button"
+           asp-controller="Register"
+           asp-action="Index"
+           asp-route-centreId="@Model.CentreId">
           Register
         </a>
       }

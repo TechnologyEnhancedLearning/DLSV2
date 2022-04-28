@@ -1,12 +1,12 @@
 ﻿@using DigitalLearningSolutions.Data.Models.Centres
-@model CentreSummaryForFindCentre
+@model CentreSummaryForFindYourCentre
 
 <dl class="nhsuk-summary-list">
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
       Region
     </dt>
-    <dd class="nhsuk-summary-list__value" @*data-filter-value="@Model.RegionsFilter"*@>
+    <dd class="nhsuk-summary-list__value" data-filter-value="@Model.RegionFilter">
       @Model.RegionName
     </dd>
   </div>
@@ -16,7 +16,7 @@
       Phone Number
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.pwTelephone
+      @Model.Telephone
     </dd>
   </div>
 
@@ -25,7 +25,7 @@
       Email
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.pwEmail
+      @Model.Email
     </dd>
   </div>
 
@@ -34,7 +34,7 @@
       Website
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.pwWebURL
+      @Model.WebUrl
     </dd>
   </div>
 
@@ -43,7 +43,7 @@
       Hours
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.pwHours
+      @Model.Hours
     </dd>
   </div>
 
@@ -52,7 +52,7 @@
       Training Venues
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.pwTrainingLocations
+      @Model.TrainingLocations
     </dd>
   </div>
 
@@ -61,16 +61,16 @@
       Organisations
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.pwGeneralInfo
+      @Model.GeneralInfo
     </dd>
   </div>
 
   <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        General Info
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.pwGeneralInfo
-      </dd>
-    </div>
+    <dt class="nhsuk-summary-list__key">
+      General Info
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.GeneralInfo
+    </dd>
+  </div>
 </dl>

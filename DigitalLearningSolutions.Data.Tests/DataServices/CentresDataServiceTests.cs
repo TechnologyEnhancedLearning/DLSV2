@@ -328,11 +328,11 @@
             var summaries = centresDataService.GetAllCentreSummariesForFindCentre().ToList();
 
             //Then
-            summaries.Should().HaveCount(610);
-            summaries.SingleOrDefault(s => s.CentreId == 26)!.CentreName.Should().Be("NHS Croydon");
-            summaries.SingleOrDefault(s => s.CentreId == 2)!.RegionName.Should().Be("North West");
-            summaries.SingleOrDefault(s => s.CentreId == 34)!.pwTelephone.Should().BeNull();
-            summaries.SingleOrDefault(s => s.CentreId == 35)!.pwTelephone.Should().Be("01202 277335");
+            summaries.Should().HaveCount(315);
+            summaries.Single(s => s.CentreId == 8)!.CentreName.Should().Be("Buckinghamshire Healthcare NHS Trust");
+            summaries.Single(s => s.CentreId == 2)!.RegionName.Should().Be("North West");
+            summaries.Single(s => s.CentreId == 190)!.Email.Should().BeNull();
+            summaries.Single(s => s.CentreId == 205)!.Telephone.Should().Be("01895 238282");
         }
     }
 }

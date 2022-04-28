@@ -92,7 +92,7 @@
         public void GetAllCentreSummariesForFindCentre_calls_dataService_and_returns_all_summary_details()
         {
             // Given
-            var expectedCentres = Builder<CentreSummaryForFindCentre>.CreateListOfSize(10).Build();
+            var expectedCentres = Builder<CentreSummaryForFindYourCentre>.CreateListOfSize(10).Build();
             A.CallTo(() => centresDataService.GetAllCentreSummariesForFindCentre()).Returns(expectedCentres);
 
             // When
@@ -106,7 +106,7 @@
         public void GetAllCentreSummariesForFindCentre_returns_empty_when_dataService_returns_empty()
         {
             //Given
-            var emptyList = Enumerable.Empty<CentreSummaryForFindCentre>();
+            var emptyList = Enumerable.Empty<CentreSummaryForFindYourCentre>();
             A.CallTo(() => centresDataService.GetAllCentreSummariesForFindCentre()).Returns(emptyList);
 
             //When
