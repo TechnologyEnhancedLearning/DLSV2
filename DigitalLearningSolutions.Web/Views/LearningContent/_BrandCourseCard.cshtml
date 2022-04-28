@@ -28,8 +28,9 @@
       <span hidden data-filter-value="@Model.TopicFilter">
         @Model.CourseTopic
       </span>
-      <span class="nhsuk-u-margin-bottom-4" data-name-for-sorting="created-date">
+      <span class="nhsuk-u-margin-bottom-4">
         <span class="nhsuk-u-font-weight-bold">Created</span> @Model.CreatedDate.ToString(DateHelper.StandardDateFormat)
+        <span hidden data-name-for-sorting="created-date">@Model.CreatedDate</span>
       </span>
 
       <div>
@@ -50,7 +51,7 @@
                   <p class="nhsuk-u-margin-bottom-3">@tutorial.TutorialName</p>
                 }
               } else {
-                <p class="nhsuk-u-margin-bottom-3">No Tutorials</p>
+                <p class="nhsuk-u-margin-bottom-3">No tutorials</p>
               }
             </div>
           </div>

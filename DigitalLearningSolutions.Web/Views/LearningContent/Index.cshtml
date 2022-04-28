@@ -52,10 +52,10 @@
 
     <partial name="SearchablePage/_Pagination" model="Model" />
   </div>
-}
 
-<input type="hidden" id="brand-id" asp-for="BrandId" />
-@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+  <input type="hidden" id="brand-id" asp-for="BrandId" />
+  @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
 @section scripts {
   <script src="@Url.Content("~/js/learningContent/brands.js")" asp-append-version="true"></script>
-}}
+}  }
+}

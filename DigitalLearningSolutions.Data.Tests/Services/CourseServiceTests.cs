@@ -896,7 +896,7 @@
         {
             // Given
             const int brandId = 1;
-            const int applicationId = 1;
+            const int idForApplicationWithSections = 1;
             var validationTime = new DateTime(22, 4, 5, 11, 30, 30);
             var applications = Builder<ApplicationDetails>.CreateListOfSize(10).All().Build();
             var sections = Builder<Section>.CreateListOfSize(5).Build().ToList();
@@ -906,7 +906,7 @@
                 () => courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId, validationTime.AddMonths(-3))
             ).Returns(new Dictionary<int, int>());
             A.CallTo(() => courseDataService.GetApplicationsByBrandId(brandId)).Returns(applications);
-            A.CallTo(() => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(applicationId))
+            A.CallTo(() => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(idForApplicationWithSections))
                 .Returns(sections);
 
             // When
@@ -916,7 +916,7 @@
             using (new AssertionScope())
             {
                 var expectedResult = applications.Select(a => new ApplicationWithSections(a, sections, 0))
-                    .Where(a => a.ApplicationId == 1);
+                    .Where(a => a.ApplicationId == idForApplicationWithSections);
                 result.Should().BeEquivalentTo(expectedResult);
                 A.CallTo(
                     () => clockService.UtcNow
@@ -931,7 +931,7 @@
                     () => courseDataService.GetApplicationsByBrandId(brandId)
                 ).MustHaveHappenedOnceExactly();
                 A.CallTo(
-                    () => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(applicationId)
+                    () => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(idForApplicationWithSections)
                 ).MustHaveHappenedOnceExactly();
             }
         }
