@@ -103,8 +103,7 @@
             };
 
             // insert candidate
-
-            var userId = connection.QuerySingle<int>(
+            connection.QuerySingle<int>(
                 @"INSERT INTO Candidates
                     (
                         UserID,
@@ -124,7 +123,6 @@
                         SelfReg,
                         DetailsLastChecked
                     )
-                    OUTPUT Inserted.ID
                     VALUES
                     (
                         @userId,
@@ -147,42 +145,10 @@
                     userValues
                 );
 
-            // groups in 874
+            // TODO HEEDLS-874
             // emails in bulk service
 
-            // OLD CODE BELOW HERE
-
-            var values = new
-            {
-                delegateRegistrationModel.FirstName,
-                delegateRegistrationModel.LastName,
-                Email = delegateRegistrationModel.PrimaryEmail,
-                CentreID = delegateRegistrationModel.Centre,
-                JobGroupID = delegateRegistrationModel.JobGroup,
-                delegateRegistrationModel.Active,
-                delegateRegistrationModel.Approved,
-                delegateRegistrationModel.Answer1,
-                delegateRegistrationModel.Answer2,
-                delegateRegistrationModel.Answer3,
-                delegateRegistrationModel.Answer4,
-                delegateRegistrationModel.Answer5,
-                delegateRegistrationModel.Answer6,
-                AliasID = delegateRegistrationModel.AliasId,
-                ExternalReg = delegateRegistrationModel.IsExternalRegistered,
-                SelfReg = delegateRegistrationModel.IsSelfRegistered,
-                delegateRegistrationModel.NotifyDate,
-                // The parameter @Bulk causes the stored procedure to send old welcome emails,
-                // which is something we do not want in the refactored system so we always set this to 0
-                Bulk = 0
-            };
-
-            var candidateNumberOrErrorCode = connection.QueryFirstOrDefault<string>(
-                "uspSaveNewCandidate_V10",
-                values,
-                commandType: CommandType.StoredProcedure
-            );
-
-            return candidateNumberOrErrorCode;
+            return candidateNumber;
         }
 
         public int RegisterAdmin(AdminRegistrationModel registrationModel)

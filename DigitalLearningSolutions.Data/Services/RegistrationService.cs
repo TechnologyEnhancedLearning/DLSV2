@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Data.Services
 
     public interface IRegistrationService
     {
-        (string candidateNumber, bool approved) RegisterDelegate(
+        (string candidateNumber, bool approved) CreateDelegateAccountForNewUser(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
@@ -71,7 +71,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.logger = logger;
         }
 
-        public (string candidateNumber, bool approved) RegisterDelegate(
+        public (string candidateNumber, bool approved) CreateDelegateAccountForNewUser(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
@@ -79,9 +79,8 @@ namespace DigitalLearningSolutions.Data.Services
             int? supervisorDelegateId = null
         )
         {
-            ValidateDelegateRegistrationDetails(delegateRegistrationModel);
+            ValidateRegistrationEmail(delegateRegistrationModel);
 
-            // OLD CODE BELOW HERE
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
@@ -194,18 +193,14 @@ namespace DigitalLearningSolutions.Data.Services
             return candidateNumber;
         }
 
-        private void ValidateDelegateRegistrationDetails(DelegateRegistrationModel model)
+        private void ValidateRegistrationEmail(DelegateRegistrationModel model)
         {
-            // throw exception if a record exists in Users, AdminAccounts, or DelegateAccounts with the PE or SE
-            // this applies to both active and inactive accounts
-            // just get a compiled list of all unique emails and compare
-
             var emails = userDataService.GetAllExistingEmails().ToList();
 
             if (emails.Contains(model.PrimaryEmail)
                 || !string.IsNullOrWhiteSpace(model.SecondaryEmail) && emails.Contains(model.SecondaryEmail))
             {
-                throw new ArgumentException(); // or whatever this exception should be
+                throw new ArgumentException(); // TODO HEEDLS-857 or whatever this exception should be
             }
         }
 
