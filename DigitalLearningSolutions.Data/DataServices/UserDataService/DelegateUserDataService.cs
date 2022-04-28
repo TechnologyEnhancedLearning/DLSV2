@@ -101,7 +101,7 @@
         public void UpdateUser(
             string firstName,
             string surname,
-            string email,
+            string primaryEmail,
             byte[]? profileImage,
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
@@ -114,7 +114,7 @@
                         SET
                             FirstName = @firstName,
                             LastName = @surname,
-                            PrimaryEmail = @email,
+                            PrimaryEmail = @primaryEmail,
                             ProfileImage = @profileImage,
                             ProfessionalRegistrationNumber = @professionalRegNumber,
                             HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
@@ -124,7 +124,7 @@
                 {
                     firstName,
                     surname,
-                    email,
+                    primaryEmail,
                     profileImage,
                     userId,
                     professionalRegNumber,
@@ -134,17 +134,17 @@
             );
         }
 
-        public void UpdateUserDetails(string firstName, string surname, string email, int jobGroupId, int userId)
+        public void UpdateUserDetails(string firstName, string surname, string primaryEmail, int jobGroupId, int userId)
         {
             connection.Execute(
                 @"UPDATE Users
                         SET
                             FirstName = @firstName,
                             LastName = @surname,
-                            PrimaryEmail = @email,
+                            PrimaryEmail = @primaryEmail,
                             JobGroupId = @jobGroupId
                         WHERE ID = @userId",
-                new { firstName, surname, email, jobGroupId, userId }
+                new { firstName, surname, primaryEmail, jobGroupId, userId }
             );
         }
 

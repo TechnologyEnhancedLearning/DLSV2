@@ -130,6 +130,7 @@ namespace DigitalLearningSolutions.Data.Services
                 : null;
         }
 
+        // TODO HEEDLS-887 Check the removal of checking for other delegates with matching AliasID is correct
         private void ProcessPotentialUpdate(int centreId, DelegateTableRow delegateRow, DelegateUser delegateUser)
         {
             if (delegateRow.Email != delegateUser.EmailAddress &&
@@ -148,6 +149,7 @@ namespace DigitalLearningSolutions.Data.Services
             UpdateDelegate(delegateRow, delegateUser);
         }
 
+        // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
         private void UpdateDelegate(DelegateTableRow delegateRow, DelegateUser delegateUser)
         {
             try
@@ -157,7 +159,7 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateRow.LastName!,
                     delegateRow.Email!,
                     delegateRow.JobGroupId!.Value,
-                    1 // TODO This needs correcting to the correct UserId for the delegate record.
+                    1 // TODO HEEDLS-887 This needs correcting to the correct UserId for the delegate record.
                 );
 
                 userDataService.UpdateDelegateAccount(

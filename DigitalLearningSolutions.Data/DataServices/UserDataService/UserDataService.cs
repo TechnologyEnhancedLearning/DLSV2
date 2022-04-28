@@ -43,7 +43,7 @@
         void UpdateUser(
             string firstName,
             string surname,
-            string email,
+            string primaryEmail,
             byte[]? profileImage,
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
@@ -72,7 +72,7 @@
 
         void DeactivateDelegateUser(int delegateId);
 
-        void UpdateUserDetails(string firstName, string surname, string email, int jobGroupId, int userId);
+        void UpdateUserDetails(string firstName, string surname, string primaryEmail, int jobGroupId, int userId);
 
         DelegateUserCard? GetDelegateUserCardById(int id);
 

@@ -90,7 +90,7 @@
                 {
                     // Given
                     var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser(resetPasswordId: 1);
-                    connection.Execute("UPDATE Users SET ResetPasswordID = 1 WHERE ID = 308944");
+                    connection.Execute("UPDATE Users SET ResetPasswordID = 1 WHERE ID = 61188");
 
                     // When
                     var returnedDelegateUsers = userDataService.GetDelegateUsersByEmailAddress("email@test.com");
@@ -139,7 +139,7 @@
                 const int jobGroupId = 1;
 
                 // When
-                userDataService.UpdateUser(firstName, lastName, email, null, professionalRegNumber, true, jobGroupId, 308944);
+                userDataService.UpdateUser(firstName, lastName, email, null, professionalRegNumber, true, jobGroupId, 61188);
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
 
                 // Then
@@ -319,7 +319,7 @@
                 const int jobGroupId = 1;
 
                 // When
-                userDataService.UpdateUserDetails(firstName, lastName, email, jobGroupId, 308944);
+                userDataService.UpdateUserDetails(firstName, lastName, email, jobGroupId, 61188);
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
 
                 // Then

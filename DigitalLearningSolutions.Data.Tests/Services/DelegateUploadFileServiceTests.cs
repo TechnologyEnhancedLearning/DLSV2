@@ -299,7 +299,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
                 .Returns(candidateNumberDelegate);
-            CallsToUserDataServiceUpdatesDoesNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -369,7 +369,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
                 .Returns(candidateNumberDelegate);
-            CallsToUserDataServiceUpdatesDoesNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -665,7 +665,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
                 .Returns(candidateNumberDelegate);
-            CallsToUserDataServiceUpdatesDoesNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -762,7 +762,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
                 .Returns("ANY");
-            CallsToUserDataServiceUpdatesDoesNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -875,7 +875,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             result.Errors.Should().HaveCount(1);
         }
 
-        private void CallsToUserDataServiceUpdatesDoesNothing()
+        private void CallsToUserDataServiceUpdatesDoNothing()
         {
             A.CallTo(
                 () => userDataService.UpdateUserDetails(

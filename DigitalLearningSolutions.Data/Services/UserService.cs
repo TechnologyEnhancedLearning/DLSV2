@@ -102,6 +102,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
         {
+            // TODO HEEDLS-887 Check this is the correct behaviour for getting users. This may end up getting cleared up by login fixes
             var adminUser = userDataService.GetAdminUserByEmailAddress(username);
             if (adminUser != null && (!adminUser.Active || !adminUser.Approved))
             {
@@ -182,6 +183,7 @@ namespace DigitalLearningSolutions.Data.Services
             return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
         }
 
+        // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
         public void UpdateUserAccountDetailsForAllVerifiedUsers(
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
@@ -215,7 +217,7 @@ namespace DigitalLearningSolutions.Data.Services
                     myAccountDetailsData.ProfessionalRegistrationNumber,
                     myAccountDetailsData.HasBeenPromptedForPrn,
                     centreAnswersData.JobGroupId,
-                    1 // TODO This needs correcting to the correct UserId for the delegate record.
+                    1 // TODO HEEDLS-887 This needs correcting to the correct UserId for the delegate record.
                 );
 
                 var oldDelegateDetails =
@@ -342,6 +344,7 @@ namespace DigitalLearningSolutions.Data.Services
             );
         }
 
+        // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
         public void UpdateUserAccountDetailsViaDelegateAccount(
             EditDelegateDetailsData editDelegateDetailsData,
             CentreAnswersData centreAnswersData
@@ -366,7 +369,7 @@ namespace DigitalLearningSolutions.Data.Services
                 editDelegateDetailsData.Surname,
                 editDelegateDetailsData.Email,
                 centreAnswersData.JobGroupId,
-                1 // TODO This needs correcting to the correct UserId for the delegate record.
+                1 // TODO HEEDLS-887 This needs correcting to the correct UserId for the delegate record.
             );
 
             userDataService.UpdateDelegateAccount(
