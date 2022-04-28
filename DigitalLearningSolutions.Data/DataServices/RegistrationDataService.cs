@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Data;
     using System.Transactions;
     using Dapper;
@@ -22,6 +23,8 @@
 
         public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel)
         {
+            // create user values
+
             var userValues = new
                 {
                     delegateRegistrationModel.FirstName,
@@ -33,7 +36,119 @@
                     ProfessionalRegistrationNumber = (string?)null,
                 };
 
-            // insert
+            // insert user record
+
+            var userId = connection.QuerySingle<int>(
+                @"INSERT INTO Users
+                    (
+                        PrimaryEmail,
+                        PasswordHash,
+                        FirstName,
+                        LastName,
+                        JobGroupID,
+                        ProfessionalRegistrationNumber,
+                        Active
+                    )
+                    OUTPUT Inserted.ID
+                    VALUES
+                    (
+                        @primaryEmail,
+                        @passwordHash,
+                        @firstName,
+                        @lastName,
+                        @jobGroup,
+                        @professionalRegistrationNumber,
+                        @active
+                    )",
+                    userValues
+                );
+
+            // get candidate number
+            var candidateNumber = connection.QueryFirst<string>(
+                @"declare @_MaxCandidateNumber as integer
+		            declare @_Initials as varchar(2)
+		            set @_Initials = UPPER(LEFT(@FirstName, 1) + LEFT(@LastName, 1))
+		            set @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
+									FROM       Candidates WITH (TABLOCK, HOLDLOCK)
+									WHERE     (LEFT(CandidateNumber, 2) = @_Initials)
+									ORDER BY nCandidateNumber DESC)
+		            if @_MaxCandidateNumber is Null
+			            begin
+			            set @_MaxCandidateNumber = 0
+			            end
+		            set @_NewCandidateNumber = @_Initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)
+                    select @_NewCandidateNumber",
+                new {delegateRegistrationModel.FirstName, delegateRegistrationModel.LastName}
+            );
+
+            // create candidate values
+
+            var candidateValues = new
+            {
+                userId,
+                delegateRegistrationModel.Centre,
+                DateRegistered = DateTime.UtcNow,
+                candidateNumber,
+                Email = delegateRegistrationModel.SecondaryEmail,
+                delegateRegistrationModel.Answer1,
+                delegateRegistrationModel.Answer2,
+                delegateRegistrationModel.Answer3,
+                delegateRegistrationModel.Answer4,
+                delegateRegistrationModel.Answer5,
+                delegateRegistrationModel.Answer6,
+                delegateRegistrationModel.Approved,
+                delegateRegistrationModel.IsExternalRegistered,
+                delegateRegistrationModel.IsSelfRegistered,
+                DetailsLastChecked = DateTime.UtcNow,
+            };
+
+            // insert candidate
+
+            var userId = connection.QuerySingle<int>(
+                @"INSERT INTO Candidates
+                    (
+                        UserID,
+                        CentreID,
+                        DateRegistered,
+                        CandidateNumber,
+                        Email,
+                        Answer1,
+                        Answer2,
+                        Answer3,
+                        Answer4,
+                        Answer5,
+                        Answer6,
+                        Approved,
+                        Active,
+                        ExternalReg,
+                        SelfReg,
+                        DetailsLastChecked
+                    )
+                    OUTPUT Inserted.ID
+                    VALUES
+                    (
+                        @userId,
+                        @centreId,
+                        @dateRegistered,
+                        @candidateNumber,
+                        @email,
+                        @answer1,
+                        @answer2,
+                        @answer3,
+                        @answer4,
+                        @answer5,
+                        @answer6,
+                        @approved,
+                        @active,
+                        @isExternalRegistered,
+                        @isSelfRegistered,
+                        @detailsLastChecked
+                    )",
+                    userValues
+                );
+
+            // groups in 874
+            // emails in bulk service
 
             // OLD CODE BELOW HERE
 
@@ -66,54 +181,6 @@
                 values,
                 commandType: CommandType.StoredProcedure
             );
-
-            /*
-             * stages of procedure:
-             * -validate values (done in data service?)
-             * -generate candidate #
-             * -add to candidates table
-             * -add to groups (find groups at centre that say add new regs, then some stuff about answers)
-             * -not sure what's going on with the @@TRANCOUNT bit
-             * -send email if needed
-             *
-             * new ver will need:
-             * -handle user and candidate entry creation separately
-             * -check for existing user entry. this method will be only for new users
-             * -return ID of user entry
-             * -same delegate number logic, use existing SQL
-             * -handle emails, groups, etc in service not repo.
-             * --groups are in ticket 874
-             * --emails also separate? or not
-             *
-             * 'not all the functionality needs to be replaced' - read ticket carefully
-             * there is also new functionality
-             */
-
-            // validation done in service
-            // create user
-
-            // get candidate number
-            var candidateNumber = connection.QueryFirst<string>(
-                @"declare @_MaxCandidateNumber as integer
-		            declare @_Initials as varchar(2)
-		            set @_Initials = UPPER(LEFT(@FirstName, 1) + LEFT(@LastName, 1))
-		            set @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
-									FROM       Candidates WITH (TABLOCK, HOLDLOCK)
-									WHERE     (LEFT(CandidateNumber, 2) = @_Initials)
-									ORDER BY nCandidateNumber DESC)
-		            if @_MaxCandidateNumber is Null
-			            begin
-			            set @_MaxCandidateNumber = 0
-			            end
-		            set @_NewCandidateNumber = @_Initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)
-                    select @_NewCandidateNumber",
-                new {delegateRegistrationModel.FirstName, delegateRegistrationModel.LastName}
-            );
-
-            // create candidate
-
-            // groups in 874
-            // emails?
 
             return candidateNumberOrErrorCode;
         }
