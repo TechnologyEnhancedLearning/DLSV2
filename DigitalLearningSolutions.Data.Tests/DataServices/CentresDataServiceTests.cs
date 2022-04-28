@@ -305,20 +305,20 @@
         [Test]
         public void GetAllCentreSummariesForSuperAdmin_returns_active_and_inactive_summary_details_and_reference_data()
         {
-                // When
-                var summaries = centresDataService.GetAllCentreSummariesForSuperAdmin().ToList();
+            // When
+            var summaries = centresDataService.GetAllCentreSummariesForSuperAdmin().ToList();
 
-                // Then
-                var activeCentre = summaries.Single(c => c.CentreId == 2);
-                var inActiveCentre = summaries.Single(c => c.CentreId == 6);
+            // Then
+            var activeCentre = summaries.Single(c => c.CentreId == 2);
+            var inActiveCentre = summaries.Single(c => c.CentreId == 6);
 
-                activeCentre.Active.Should().BeTrue();
-                activeCentre.CentreType.Should().Be("NHS Organisation");
-                activeCentre.RegionName.Should().Be("North West");
+            activeCentre.Active.Should().BeTrue();
+            activeCentre.CentreType.Should().Be("NHS Organisation");
+            activeCentre.RegionName.Should().Be("North West");
 
-                inActiveCentre.Active.Should().BeFalse();
-                inActiveCentre.CentreType.Should().Be("NHS Organisation");
-                inActiveCentre.RegionName.Should().Be("East Of England");
+            inActiveCentre.Active.Should().BeFalse();
+            inActiveCentre.CentreType.Should().Be("NHS Organisation");
+            inActiveCentre.RegionName.Should().Be("East Of England");
         }
 
         [Test]
@@ -333,6 +333,33 @@
             summaries.Single(s => s.CentreId == 2)!.RegionName.Should().Be("North West");
             summaries.Single(s => s.CentreId == 190)!.Email.Should().BeNull();
             summaries.Single(s => s.CentreId == 205)!.Telephone.Should().Be("01895 238282");
+
+        }
+
+        public void GetAllCentreSummariesForMap_returns_only_active_show_on_map_centres_with_latitude_and_longitude()
+        {
+            // When
+            var summaries = centresDataService.GetAllCentreSummariesForMap().ToList();
+
+            // Then
+            var activeCentre = summaries.SingleOrDefault(c => c.Id == 2);
+            var inactiveCentre = summaries.SingleOrDefault(c => c.Id == 6);
+            var noLatitudeCentre = summaries.SingleOrDefault(c => c.Id == 239);
+            var noLongitudeCentre = summaries.SingleOrDefault(c => c.Id == 74);
+            var noShowOnMapCentre = summaries.SingleOrDefault(c => c.Id == 101);
+
+            using (new AssertionScope())
+            {
+                activeCentre.Should().NotBeNull();
+                activeCentre!.CentreName.Should().Be("North West Boroughs Healthcare NHS Foundation Trust");
+                activeCentre.Latitude.Should().Be(53.428349);
+                activeCentre.Longitude.Should().Be(-2.608441);
+
+                inactiveCentre.Should().BeNull();
+                noLatitudeCentre.Should().BeNull();
+                noLongitudeCentre.Should().BeNull();
+                noShowOnMapCentre.Should().BeNull();
+            }
         }
     }
 }

@@ -14,12 +14,14 @@
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
   }
+
   var exampleDate = DateTime.Today;
   var hintTextLines = new List<string> {
     $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the completed date",
   };
-
 }
+
+@* TODO: These breadcrumbs will need to be corrected once 862 has been completed. Info can be found in the ticket. *@
 
 @section NavBreadcrumbs {
   @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {

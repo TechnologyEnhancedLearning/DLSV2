@@ -86,7 +86,7 @@ export class SearchSortFilterAndPaginate {
           );
           this.updateSearchableElementLinks(searchableData);
         }
-        this.searchSortAndPaginate(searchableData, false);
+        this.searchSortAndPaginate(searchableData);
         this.stopLoadingSpinner();
         SearchSortFilterAndPaginate.scrollToLastItemViewed();
       });
@@ -127,7 +127,6 @@ export class SearchSortFilterAndPaginate {
 
   private searchSortAndPaginate(
     searchableData: ISearchableData,
-    updateResultCount = true,
   ): void {
     const searchedElements = this.searchEnabled
       ? search(searchableData.searchableElements)
@@ -139,10 +138,8 @@ export class SearchSortFilterAndPaginate {
 
     const sortedUniqueElements = _.uniqBy(sortedElements, 'parentIndex');
 
-    if (updateResultCount) {
-      const resultCount = sortedUniqueElements.length;
-      SearchSortFilterAndPaginate.updateResultCount(resultCount);
-    }
+    const resultCount = sortedUniqueElements.length;
+    SearchSortFilterAndPaginate.updateResultCount(resultCount);
 
     const paginatedElements = this.paginationEnabled
       ? paginateResults(sortedUniqueElements, this.page)

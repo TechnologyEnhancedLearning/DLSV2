@@ -15,6 +15,7 @@
         IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
 
         IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
+        IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
     }
 
     public class CentresService : ICentresService
@@ -53,6 +54,11 @@
         public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()
         {
             return centresDataService.GetAllCentreSummariesForFindCentre();
+        }
+
+        public IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap()
+        {
+            return centresDataService.GetAllCentreSummariesForMap();
         }
     }
 }

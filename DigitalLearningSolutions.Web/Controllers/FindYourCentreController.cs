@@ -82,5 +82,11 @@
 
             return View(model);
         }
+
+        public IActionResult CentreData()
+        {
+            var centres = centresService.GetAllCentreSummariesForMap();
+            return Json(centres);
+        }
     }
 }

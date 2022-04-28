@@ -1,0 +1,17 @@
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "../shared/cardWithButtons";
+
+.brands__body-text {
+  margin-top: -1em;;
+}
+
+.brands__access {
+  margin-top: 1em;;
+}
+
+.brands__top-horizontal-dash {
+  @include mq($until: tablet) {
+    border-top: 1px solid $nhsuk-border-color;
+    margin-top: nhsuk-spacing(3);
+  }
+}

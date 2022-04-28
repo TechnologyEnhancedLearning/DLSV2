@@ -71,7 +71,7 @@
           </form>
         </div>
 
-        <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSortAndFilter" model="Model.CourseDetails" />
+        <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model.CourseDetails" />
 
         <div class="nhsuk-grid-row">
           <div class="nhsuk-grid-column-full">
@@ -81,6 +81,7 @@
               </p>
             } else {
               <partial name="SearchablePage/_SearchResultsCount" model="Model.CourseDetails" />
+              <partial name="SearchablePage/_PaginationWithoutAlert" model="Model.CourseDetails" />
 
               <div id="searchable-elements">
                 @foreach (var delegateUser in Model.CourseDetails.Delegates) {

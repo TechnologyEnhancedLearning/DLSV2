@@ -14,7 +14,7 @@
             string? applicationInfo = null,
             string status = "Complete",
             int timeSpent = 30,
-            int averageTutorialDuration = 60,
+            int averageTutorialDuration = 30,
             int currentScore = 9,
             int possibleScore = 24,
             bool canShowDiagnosticStatus = true,

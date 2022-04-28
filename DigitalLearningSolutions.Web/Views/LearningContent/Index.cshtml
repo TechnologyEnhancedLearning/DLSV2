@@ -4,6 +4,8 @@
   ViewData["Title"] = Model.Name;
 }
 
+<link rel="stylesheet" href="@Url.Content("~/css/home/brands.css")" asp-append-version="true" />
+
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
@@ -21,7 +23,15 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl heading-margin-2" id="page-heading">@Model.Name</h1>
+    <h1 class="nhsuk-heading-xl">@Model.Name</h1>
     <p class="nhsuk-lede-text nhsuk-u-margin-top-4">@Model.Description</p>
   </div>
 </div>
+
+@if (Model.Tutorials.Any()) {
+  <p class="nhsuk-u-margin-top-4">Course Tutorials</p>
+  <p class="nhsuk-body-m">Access to this content does not require login and progress is not tracked.</p>
+  foreach (var tutorial in Model.Tutorials) {
+    <partial name="_TutorialCard" model="tutorial" />
+  }
+}

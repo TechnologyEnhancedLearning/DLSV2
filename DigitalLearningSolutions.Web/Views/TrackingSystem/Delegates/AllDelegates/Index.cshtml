@@ -58,6 +58,7 @@
         </p>
       } else {
         <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
+        <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
 
         <div id="searchable-elements">
           @foreach (var delegateModel in Model.Delegates) {
@@ -78,5 +79,4 @@
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
 @section scripts {
   <script src="@Url.Content("~/js/trackingSystem/allDelegates.js")" asp-append-version="true"></script>
-}
-}
+}}
