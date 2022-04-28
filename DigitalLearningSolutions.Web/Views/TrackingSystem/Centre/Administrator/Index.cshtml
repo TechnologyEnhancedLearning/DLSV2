@@ -36,6 +36,7 @@
         </p>
       } else {
         <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
+        <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
 
         <div id="searchable-elements">
           @foreach (var admin in Model.Admins) {
@@ -43,9 +44,7 @@
           }
         </div>
       }
-      @if (Model.TotalPages > 1) {
-        <partial name="SearchablePage/_Pagination" model="Model" />
-      }
+      <partial name="SearchablePage/_Pagination" model="Model" />
     </div>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
@@ -55,7 +54,7 @@
 </div>
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-  @section scripts {
-    <script src="@Url.Content("~/js/trackingSystem/centreAdministrators.js")" asp-append-version="true"></script>
-  }
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/centreAdministrators.js")" asp-append-version="true"></script>
+}
 }

@@ -1,16 +1,20 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningContent
 {
+    using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.Common;
+    using DigitalLearningSolutions.Data.Models.TutorialContent;
+
     public class LearningContentViewModel
     {
-        public readonly string Brand;
-        public readonly bool TitleIsLong;
-        public readonly string Title;
+        public readonly string Name;
+        public readonly string? Description;
+        public readonly IEnumerable<TutorialSummary> Tutorials;
 
-        public LearningContentViewModel(string brand, string title, bool titleIsLong = false)
+        public LearningContentViewModel(BrandDetail brand, IEnumerable<TutorialSummary> tutorials)
         {
-            Brand = brand;
-            Title = title;
-            TitleIsLong = titleIsLong;
+            Name = brand.BrandName;
+            Description = brand.BrandDescription;
+            Tutorials = tutorials;
         }
     }
 }

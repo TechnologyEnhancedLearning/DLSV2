@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -25,7 +26,7 @@
         [SetUp]
         public void Setup()
         {
-            var homeController = new HomeController(A.Fake<IConfiguration>()).WithDefaultContext().WithMockTempData()
+            var homeController = new HomeController(A.Fake<IConfiguration>(), A.Fake<IBrandsService>()).WithDefaultContext().WithMockTempData()
                 .WithMockUser(true, 101);
             context = new ActionExecutingContext(
                 new ActionContext(

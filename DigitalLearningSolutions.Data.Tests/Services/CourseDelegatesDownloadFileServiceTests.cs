@@ -187,13 +187,15 @@
                 TestContext.CurrentContext.TestDirectory + CourseDelegateExportAllDataDownloadRelativeFilePath
             );
 
-            A.CallTo(() => courseService.GetCentreCourseDetails(centreId, categoryId)).Returns(
+            A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId)).Returns(
                 new CentreCourseDetails
                 {
                     Courses = new[]
                     {
-                        new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "Course One", CustomisationId = 1},
-                        new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "Course Two", CustomisationId = 2},
+                        new CourseStatisticsWithAdminFieldResponseCounts
+                            { ApplicationName = "Course One", CustomisationId = 1 },
+                        new CourseStatisticsWithAdminFieldResponseCounts
+                            { ApplicationName = "Course Two", CustomisationId = 2 },
                     },
                 }
             );

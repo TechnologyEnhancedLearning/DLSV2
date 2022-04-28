@@ -5,9 +5,11 @@
     using Microsoft.AspNetCore.Mvc;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public class FrameworkViewModel
     {
+        public TabsNavViewModel TabNavLinks { get; set; }
         public DetailFramework? DetailFramework { get; set; }
         public IEnumerable<CollaboratorDetail>? Collaborators { get; set; }
         public List<FrameworkCompetencyGroup>? FrameworkCompetencyGroups { get; set; }

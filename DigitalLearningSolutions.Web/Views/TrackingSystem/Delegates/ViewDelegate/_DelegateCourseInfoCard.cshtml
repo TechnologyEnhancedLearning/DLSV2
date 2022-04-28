@@ -154,7 +154,15 @@
               @courseCustomPrompt.PromptText
             </dt>
             <partial name="_SummaryFieldValue" model="@courseCustomPrompt.Answer" />
-            <dd class="nhsuk-summary-list__actions"></dd>
+            <dd class="nhsuk-summary-list__actions">
+              <a asp-controller="DelegateProgress"
+                 asp-action="EditDelegateCourseAdminField"
+                 asp-route-progressId="@Model.ProgressId"
+                 asp-route-promptNumber="@courseCustomPrompt.PromptNumber"
+                 asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate">
+                Edit<span class="nhsuk-u-visually-hidden"> @courseCustomPrompt.PromptText</span>
+              </a>
+            </dd>
           </div>
         }
       </dl>

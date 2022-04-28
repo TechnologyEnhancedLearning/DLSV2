@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
 {
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -22,7 +23,7 @@
         public bool IsContentCreator { get; set; }
         public ContentManagementRole ContentManagementRole { get; set; }
         public int LearningCategory { get; set; }
-        public int? ReturnPage { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; set; }
 
         public AdminRoles GetAdminRoles()
         {

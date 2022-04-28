@@ -1,0 +1,22 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Home
+@model LearningContentSummary
+
+<div class="learning-content-item">
+
+  <h2 class="learning-content-item__heading">
+    @Model.Brand
+  </h2>
+
+  <div class="learning-content-item__details-container">
+    @if (Model.Image != null) {
+      <div class="learning-content-item__image-box">
+        <img class="learning-content-item__image" src="data:image;base64,@Convert.ToBase64String(Model.Image)" alt="@Model.Brand logo" />
+      </div>
+    }
+    <div class="learning-content-item__text-container">
+      <p class="learning-content-item__text">@Model.Description</p>
+      <a class="learning-content-item__text see-more-link" asp-controller="LearningContent" asp-action="Index" asp-route-brandId="@Model.Id">See more</a>
+    </div>
+  </div>
+
+</div>

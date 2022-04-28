@@ -44,6 +44,12 @@
         IEnumerable<DetailedSectionProgress> GetSectionProgressDataForProgressEntry(int progressId);
 
         IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection(int progressId, int sectionId);
+
+        public void UpdateCourseAdminFieldForDelegate(
+            int progressId,
+            int promptNumber,
+            string? answer
+        );
     }
 
     public class ProgressDataService : IProgressDataService
@@ -356,6 +362,20 @@
                         AND (t.ArchivedDate IS NULL)
                     ORDER BY t.TutorialID",
                 new { progressId, sectionId }
+            );
+        }
+
+        public void UpdateCourseAdminFieldForDelegate(
+            int progressId,
+            int promptNumber,
+            string? answer
+        )
+        {
+            connection.Execute(
+                $@"UPDATE Progress
+                        SET Answer{promptNumber} = @answer
+                        WHERE ProgressID = @progressId",
+                new { progressId, promptNumber, answer }
             );
         }
     }

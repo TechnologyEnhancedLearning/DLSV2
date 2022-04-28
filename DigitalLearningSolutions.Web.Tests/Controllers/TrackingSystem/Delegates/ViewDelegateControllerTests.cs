@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -17,11 +18,11 @@
 
     internal class ViewDelegateControllerTests
     {
+        private IConfiguration config = null!;
         private ICourseDataService courseDataService = null!;
         private ICourseService courseService = null!;
         private IUserDataService userDataService = null!;
         private ViewDelegateController viewDelegateController = null!;
-        private IConfiguration config = null!;
 
         [SetUp]
         public void SetUp()
@@ -78,8 +79,7 @@
             var result = viewDelegateController.ConfirmRemoveFromCourse(
                 1,
                 1,
-                DelegateAccessRoute.ViewDelegate,
-                1
+                DelegateAccessRoute.ViewDelegate
             );
 
             // Then
@@ -103,8 +103,7 @@
             var result = viewDelegateController.ConfirmRemoveFromCourse(
                 1,
                 1,
-                DelegateAccessRoute.ViewDelegate,
-                1
+                DelegateAccessRoute.ViewDelegate
             );
 
             // Then
@@ -196,6 +195,7 @@
             {
                 Confirm = true,
                 AccessedVia = DelegateAccessRoute.CourseDelegates,
+                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(),
             };
 
             // When
@@ -210,7 +210,7 @@
                 .BeRedirectToActionResult()
                 .WithActionName("Index")
                 .WithControllerName("CourseDelegates")
-                .WithRouteValue("customisationId", customisationId);
+                .WithRouteValue("customisationId", customisationId.ToString());
         }
 
         [Test]
@@ -248,7 +248,7 @@
         {
             //Given
             A.CallTo(() => userDataService.GetDelegateUserCardById(10))
-                .Returns(new DelegateUserCard() { CentreId = 1 });
+                .Returns(new DelegateUserCard { CentreId = 1 });
 
             // When
             var result = viewDelegateController.ReactivateDelegate(2);

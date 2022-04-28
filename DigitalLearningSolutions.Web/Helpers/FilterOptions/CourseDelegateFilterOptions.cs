@@ -4,8 +4,6 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class CourseDelegateAccountStatusFilterOptions
     {
@@ -56,5 +54,19 @@
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.Removed), "false"),
             FilterStatus.Default
         );
+    }
+
+    public static class CourseDelegateCompletionFilterOptions
+    {
+        private const string Group = "CompletionStatus";
+
+        public static readonly FilterOptionModel Complete = new FilterOptionModel(
+            "Complete",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.HasCompleted), "true"),
+            FilterStatus.Success);
+        public static readonly FilterOptionModel Incomplete = new FilterOptionModel(
+            "Incomplete",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.HasCompleted), "false"),
+            FilterStatus.Default);
     }
 }

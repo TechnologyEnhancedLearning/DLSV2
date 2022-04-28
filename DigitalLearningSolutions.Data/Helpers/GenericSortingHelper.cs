@@ -121,6 +121,9 @@
 
         public static readonly (string DisplayText, string PropertyName) InProgress =
             ("In Progress", nameof(CourseStatistics.InProgressCount));
+
+        public static readonly (string DisplayText, string PropertyName) Completed =
+            ("Completed", nameof(CourseStatistics.CompletedCount));
     }
 
     public class CourseDelegatesSortByOption : Enumeration

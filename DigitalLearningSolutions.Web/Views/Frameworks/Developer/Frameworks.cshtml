@@ -20,17 +20,9 @@
 
   @if (Model.IsFrameworkContributor | Model.IsFrameworkDeveloper)
   {
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        <div class="hee-fwservice--tabs">
-          <ul role="tablist">
-            <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "Mine"? "active" : "")><a role="tab" asp-action="ViewFrameworks" asp-route-tabname="Mine">My Frameworks</a></li>
-            <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "All"? "active" : "")><a role="tab" asp-action="ViewFrameworks"  asp-route-tabname="All">All Frameworks</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    <partial name="_SecondaryTabsNavMenu" model="Model.TabsNavLinks"/>
   }
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if ((string)ViewContext.RouteData.Values["tabname"] == "Mine")

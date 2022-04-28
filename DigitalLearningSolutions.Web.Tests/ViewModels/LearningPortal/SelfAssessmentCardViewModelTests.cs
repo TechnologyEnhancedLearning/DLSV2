@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using System;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using FluentAssertions;
@@ -13,10 +12,14 @@
         public void Self_assessment_should_be_overdue_when_complete_by_date_is_in_the_past()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment(completeByDate: DateTime.Today - TimeSpan.FromDays(1));
+            var selfAssessment =
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(completeByDate: DateTime.Today - TimeSpan.FromDays(1));
 
             // When
-            var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(selfAssessment);
+            var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(
+                selfAssessment,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             selfAssessmentCardViewModel.DateStyle().Should().Be("overdue");
@@ -26,11 +29,14 @@
         public void Self_assessment_should__be_due_soon_when_complete_by_date_is_in_the_future()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment(completeByDate: DateTime.Today + TimeSpan.FromDays(1));
-
+            var selfAssessment =
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(completeByDate: DateTime.Today + TimeSpan.FromDays(1));
 
             // When
-            var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(selfAssessment);
+            var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(
+                selfAssessment,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             selfAssessmentCardViewModel.DateStyle().Should().Be("due-soon");
@@ -40,10 +46,16 @@
         public void Self_assessment_should_have_no_date_style_when_due_far_in_the_future()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment(completeByDate: DateTime.Today + TimeSpan.FromDays(100));
+            var selfAssessment =
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(
+                    completeByDate: DateTime.Today + TimeSpan.FromDays(100)
+                );
 
             // When
-            var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(selfAssessment);
+            var selfAssessmentCardViewModel = new SelfAssessmentCardViewModel(
+                selfAssessment,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             selfAssessmentCardViewModel.DateStyle().Should().Be("");

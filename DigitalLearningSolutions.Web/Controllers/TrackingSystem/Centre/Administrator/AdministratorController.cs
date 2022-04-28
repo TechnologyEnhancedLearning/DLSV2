@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator
 {
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -120,7 +119,7 @@
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult EditAdminRoles(int adminId, int? returnPage)
+        public IActionResult EditAdminRoles(int adminId, ReturnPageQuery returnPageQuery)
         {
             var centreId = User.GetCentreId();
             var adminUser = userDataService.GetAdminUserById(adminId);
@@ -129,7 +128,7 @@
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
             var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
-            var model = new EditRolesViewModel(adminUser!, centreId, categories, numberOfAdmins, returnPage);
+            var model = new EditRolesViewModel(adminUser!, centreId, categories, numberOfAdmins, returnPageQuery);
             return View(model);
         }
 
@@ -144,7 +143,12 @@
                 model.LearningCategory
             );
 
-            return RedirectToAction("Index", new { page = model.ReturnPage });
+            return RedirectToAction(
+                "Index",
+                "Administrator",
+                model.ReturnPageQuery.ToRouteDataDictionary(),
+                model.ReturnPageQuery.ItemIdToReturnTo
+            );
         }
 
         [Route("{adminId:int}/UnlockAccount")]
@@ -160,7 +164,7 @@
         [Route("{adminId:int}/DeactivateAdmin")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult DeactivateOrDeleteAdmin(int adminId, int? returnPage)
+        public IActionResult DeactivateOrDeleteAdmin(int adminId, ReturnPageQuery returnPageQuery)
         {
             var adminUser = userDataService.GetAdminUserById(adminId);
 
@@ -169,7 +173,7 @@
                 return NotFound();
             }
 
-            var model = new DeactivateAdminViewModel(adminUser!, returnPage);
+            var model = new DeactivateAdminViewModel(adminUser!, returnPageQuery);
             return View(model);
         }
 

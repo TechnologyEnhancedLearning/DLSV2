@@ -14,8 +14,7 @@
       <a asp-controller="DelegateProgress"
          asp-action="EditSupervisor"
          asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@Model.AccessedVia"
-         asp-route-returnPage="@Model.Page">
+         asp-route-accessedVia="@Model.AccessedVia">
         Edit<span class="nhsuk-u-visually-hidden"> supervisor</span>
       </a>
     </dd>
@@ -40,8 +39,7 @@
       <a asp-controller="DelegateProgress"
          asp-action="EditCompleteByDate"
          asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@Model.AccessedVia"
-         asp-route-returnPage="@Model.Page">
+         asp-route-accessedVia="@Model.AccessedVia">
         Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
       </a>
     </dd>
@@ -66,9 +64,8 @@
       <a asp-controller="DelegateProgress"
          asp-action="EditCompletionDate"
          asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@Model.AccessedVia"
-         asp-route-returnPage="@Model.Page">
-        Edit
+         asp-route-accessedVia="@Model.AccessedVia">
+        Edit<span class="nhsuk-u-visually-hidden"> completed date</span>
       </a>
     </dd>
   </div>
@@ -161,15 +158,19 @@
     </div>
   }
 
-  @foreach (var prompt in Model.AdminFields) {
+  @foreach (var delegateCourseAdminField in Model.AdminFields) {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
-        @prompt.Prompt
+        @delegateCourseAdminField.Prompt
       </dt>
-      <partial name="_SummaryFieldValue" model="prompt.Answer" />
+      <partial name="_SummaryFieldValue" model="delegateCourseAdminField.Answer" />
       <dd class="nhsuk-summary-list__actions">
-        <a href="#">
-          Edit<span class="nhsuk-u-visually-hidden"> @prompt.Prompt</span>
+        <a asp-controller="DelegateProgress"
+           asp-action="EditDelegateCourseAdminField"
+           asp-route-progressId="@Model.ProgressId"
+           asp-route-promptNumber="@delegateCourseAdminField.PromptNumber"
+           asp-route-accessedVia="@Model.AccessedVia">
+          Edit<span class="nhsuk-u-visually-hidden"> @delegateCourseAdminField.Prompt</span>
         </a>
       </dd>
     </div>

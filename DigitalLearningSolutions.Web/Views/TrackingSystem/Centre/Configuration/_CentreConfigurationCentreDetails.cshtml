@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Data.Extensions
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
 @using Microsoft.Extensions.Configuration
 @model CentreConfigurationViewModel
@@ -56,7 +57,7 @@
       Edit
     </a>
 
-    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="PreviewCertificate" asp-controller="Configuration" target="_blank">
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" href="@Configuration.GetCurrentSystemBaseUrl()/tracking/finalise?Preview=1" target="_blank">
       Preview certificate
       <span class="nhsuk-u-visually-hidden">(opens in a new window)</span>
     </a>

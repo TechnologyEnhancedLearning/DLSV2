@@ -1,10 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Frameworks
 {
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.TestHelpers.Frameworks;
     using DigitalLearningSolutions.Web.ViewModels.Frameworks;
     using FakeItEasy;
@@ -56,7 +56,8 @@
                 true,
                 false,
                 myFrameworksViewModel,
-                allFrameworksViewModel
+                allFrameworksViewModel,
+                FrameworksTab.MyFrameworks
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
@@ -105,7 +106,8 @@
                 true,
                 false,
                 myFrameworksViewModel,
-                allFrameworksViewModel
+                allFrameworksViewModel,
+                FrameworksTab.AllFrameworks
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);

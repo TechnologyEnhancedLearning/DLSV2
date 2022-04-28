@@ -64,7 +64,8 @@
             var centreId = User.GetCentreId();
             var groups = groupsService.GetGroupsForCentre(centreId).ToList();
             var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
-            var availableFilters = DelegateGroupsViewModelFilterOptions.GetDelegateGroupFilterModels(groups, registrationPrompts);
+            var availableFilters = DelegateGroupsViewModelFilterOptions
+                .GetDelegateGroupFilterModels(groups, registrationPrompts).ToList();
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
@@ -124,12 +125,12 @@
 
         [HttpGet("{groupId:int}/EditDescription")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        public IActionResult EditDescription(int groupId, int? returnPage)
+        public IActionResult EditDescription(int groupId, ReturnPageQuery returnPageQuery)
         {
             var centreId = User.GetCentreId();
             var group = groupsService.GetGroupAtCentreById(groupId, centreId);
 
-            var model = new EditDelegateGroupDescriptionViewModel(group, returnPage);
+            var model = new EditDelegateGroupDescriptionViewModel(group!, returnPageQuery);
             return View(model);
         }
 
@@ -154,7 +155,7 @@
 
         [HttpGet("{groupId:int}/EditGroupName")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        public IActionResult EditGroupName(int groupId, int? returnPage)
+        public IActionResult EditGroupName(int groupId, ReturnPageQuery returnPageQuery)
         {
             var centreId = User.GetCentreId();
             var group = groupsService.GetGroupAtCentreById(groupId, centreId);
@@ -164,7 +165,7 @@
                 return NotFound();
             }
 
-            var model = new EditGroupNameViewModel(group.GroupLabel!, returnPage);
+            var model = new EditGroupNameViewModel(group.GroupLabel!, returnPageQuery);
             return View(model);
         }
 
@@ -196,14 +197,14 @@
 
         [Route("{groupId:int}/Delete")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        public IActionResult DeleteGroup(int groupId, int? returnPage)
+        public IActionResult DeleteGroup(int groupId, ReturnPageQuery returnPageQuery)
         {
             var delegates = groupsService.GetGroupDelegates(groupId);
             var courses = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreId());
 
             if (delegates.Any() || courses.Any())
             {
-                return RedirectToAction("ConfirmDeleteGroup", new { groupId, returnPage });
+                return RedirectToAction("ConfirmDeleteGroup", new { groupId, returnPageQuery });
             }
 
             groupsService.DeleteDelegateGroup(groupId, false);
@@ -212,7 +213,7 @@
 
         [HttpGet("{groupId:int}/Delete/Confirm")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        public IActionResult ConfirmDeleteGroup(int groupId, int? returnPage)
+        public IActionResult ConfirmDeleteGroup(int groupId, ReturnPageQuery returnPageQuery)
         {
             var groupLabel = groupsService.GetGroupName(groupId, User.GetCentreId())!;
             var delegateCount = groupsService.GetGroupDelegates(groupId).Count();
@@ -223,7 +224,7 @@
                 GroupLabel = groupLabel,
                 DelegateCount = delegateCount,
                 CourseCount = courseCount,
-                ReturnPage = returnPage,
+                ReturnPageQuery = returnPageQuery,
             };
 
             return View(model);

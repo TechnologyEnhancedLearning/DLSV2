@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
 
     public class ConfirmDeleteGroupViewModel
@@ -12,6 +13,6 @@
         public bool Confirm { get; set; }
 
         public bool DeleteEnrolments { get; set; }
-        public int? ReturnPage { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }
