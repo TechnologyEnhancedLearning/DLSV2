@@ -169,5 +169,90 @@
             // Then
             result.Count().Should().Be(1);
         }
+
+        [Test]
+        public void
+            GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication_calls_data_services_and_returns_expected_sections()
+        {
+            // Given
+            var tutorialsOne = new List<Tutorial>
+            {
+                new Tutorial(1, "Tutorial", null, null),
+            };
+            var tutorialsTwo = new List<Tutorial>
+            {
+                new Tutorial(2, "Second Tutorial", null, null),
+            };
+            var sectionOne = new Section(1, "Section");
+            var sectionTwo = new Section(2, "Second Section");
+            var sections = new List<Section> { sectionOne, sectionTwo };
+            var sectionOneWithTutorials = new Section(1, "Section", tutorialsOne);
+            var sectionTwoWithTutorials = new Section(2, "Second Section", tutorialsTwo);
+            var sectionsWithTutorials = new List<Section> { sectionOneWithTutorials, sectionTwoWithTutorials };
+
+            A.CallTo(
+                () => sectionContentDataService.GetSectionsForApplication(1)
+            ).Returns(sections);
+
+            A.CallTo(
+                () => tutorialContentDataService.GetTutorialsForSection(1)
+            ).Returns(tutorialsOne);
+
+            A.CallTo(
+                () => tutorialContentDataService.GetTutorialsForSection(2)
+            ).Returns(tutorialsTwo);
+
+            // When
+            var result = sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(1);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => sectionContentDataService.GetSectionsForApplication(1))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => tutorialContentDataService.GetTutorialsForSection(1)
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => tutorialContentDataService.GetTutorialsForSection(2)
+                ).MustHaveHappenedOnceExactly();
+                result.Should().BeEquivalentTo(sectionsWithTutorials);
+            }
+        }
+
+        [Test]
+        public void
+            GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication_returns_only_sections_with_tutorials()
+        {
+            // Given
+            var sectionOne = new Section(1, "Section");
+            var sectionTwo = new Section(2, "Second Section");
+            var sections = new List<Section> { sectionOne, sectionTwo };
+
+            var tutorial = new Tutorial(1, "Tutorial", true, true);
+            var tutorials = new List<Tutorial> { tutorial };
+
+            A.CallTo(
+                () => sectionContentDataService.GetSectionsForApplication(1)
+            ).Returns(sections);
+
+            A.CallTo(
+                () => tutorialContentDataService.GetTutorialsForSection(1)
+            ).Returns(tutorials);
+
+            A.CallTo(
+                () => tutorialContentDataService.GetTutorialsForSection(2)
+            ).Returns(new List<Tutorial>());
+
+            // When
+            var result = sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(1);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(1);
+                result.First().Tutorials.Should().NotBeEmpty();
+            }
+        }
     }
 }

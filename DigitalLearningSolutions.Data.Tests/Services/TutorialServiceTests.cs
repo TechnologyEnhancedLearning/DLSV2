@@ -34,8 +34,8 @@
         public void UpdateTutorialsStatuses_calls_data_services_correct_number_of_times()
         {
             // Given
-            var tutorialOne = new Tutorial(1, "Test", true, true);
-            var tutorialTwo = new Tutorial(2, "Case", false, false);
+            var tutorialOne = new Tutorial(1, "Test", true, true, null, null);
+            var tutorialTwo = new Tutorial(2, "Case", false, false, null, null);
             var tutorials = new List<Tutorial> { tutorialOne, tutorialTwo };
             A.CallTo(
                     () => tutorialContentDataService.UpdateOrInsertCustomisationTutorialStatuses(
@@ -75,8 +75,8 @@
         public void GetTutorialsForSection_calls_data_service_and_returns_expected_tutorials()
         {
             // Given
-            var tutorialOne = new Tutorial(1, "Test", true, true);
-            var tutorialTwo = new Tutorial(2, "Case", false, false);
+            var tutorialOne = new Tutorial(1, "Test", true, true, null, null);
+            var tutorialTwo = new Tutorial(2, "Case", false, false, null, null);
             var tutorials = new List<Tutorial> { tutorialOne, tutorialTwo };
 
             A.CallTo(

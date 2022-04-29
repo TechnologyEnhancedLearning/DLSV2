@@ -40,6 +40,8 @@ export class SearchSortFilterAndPaginate {
 
   private readonly functionToRunAfterDisplayingData: VoidFunction;
 
+  private readonly idConsideredTopForScrolling: string;
+
   // Route provided should be a relative path with no leading /
   constructor(
     route: string,
@@ -50,6 +52,7 @@ export class SearchSortFilterAndPaginate {
     searchableElementClassSuffixes = ['title'],
     queryParameterToRetain = '',
     functionToRunAfterDisplayingData: VoidFunction = defaultVoidFunction,
+    idConsideredTopForScrolling = '',
   ) {
     this.spinnerContainer = document.getElementById('loading-spinner-container') as HTMLElement;
     this.spinner = document.getElementById('dynamic-loading-spinner') as HTMLElement;
@@ -62,6 +65,7 @@ export class SearchSortFilterAndPaginate {
     this.searchEnabled = searchEnabled;
     this.paginationEnabled = paginationEnabled;
     this.filterEnabled = filterEnabled;
+    this.idConsideredTopForScrolling = idConsideredTopForScrolling;
 
     SearchSortFilterAndPaginate.getSearchableElements(route, searchableElementClassSuffixes)
       .then((searchableData) => {
@@ -95,7 +99,7 @@ export class SearchSortFilterAndPaginate {
   private onFilterUpdated(searchableData: ISearchableData): void {
     this.updatePageNumberIfPaginated(1, searchableData);
     this.searchSortAndPaginate(searchableData);
-    SearchSortFilterAndPaginate.scrollToTop();
+    this.scrollToTop();
   }
 
   private onSortUpdated(searchableData: ISearchableData): void {
@@ -116,13 +120,13 @@ export class SearchSortFilterAndPaginate {
   private onNextPagePressed(searchableData: ISearchableData): void {
     this.updatePageNumberIfPaginated(this.page + 1, searchableData);
     this.searchSortAndPaginate(searchableData);
-    SearchSortFilterAndPaginate.scrollToTop();
+    this.scrollToTop();
   }
 
   private onPreviousPagePressed(searchableData: ISearchableData): void {
     this.updatePageNumberIfPaginated(this.page - 1, searchableData);
     this.searchSortAndPaginate(searchableData);
-    SearchSortFilterAndPaginate.scrollToTop();
+    this.scrollToTop();
   }
 
   private searchSortAndPaginate(
@@ -256,8 +260,12 @@ export class SearchSortFilterAndPaginate {
     return newResultCountMessage;
   }
 
-  private static scrollToTop(): void {
-    window.scrollTo(0, 0);
+  private scrollToTop(): void {
+    if (this.idConsideredTopForScrolling !== '') {
+      document.getElementById(this.idConsideredTopForScrolling)?.scrollIntoView();
+    } else {
+      window.scrollTo(0, 0);
+    }
   }
 
   private updatePageNumberIfPaginated(
