@@ -30,7 +30,11 @@ namespace DigitalLearningSolutions.Data.Services
             string? professionalRegistrationNumber
         );
 
-        void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
+        void RegisterCentreManager(
+            AdminRegistrationModel registrationModel,
+            int jobGroupId,
+            string? professionalRegistrationNumber
+        );
 
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId);
     }
@@ -147,11 +151,15 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
+        public void RegisterCentreManager(
+            AdminRegistrationModel registrationModel,
+            int jobGroupId,
+            string? professionalRegistrationNumber
+        )
         {
             using var transaction = new TransactionScope();
 
-            CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
+            CreateDelegateAccountForAdmin(registrationModel, jobGroupId, professionalRegistrationNumber);
 
             registrationDataService.RegisterAdmin(registrationModel);
 
@@ -289,7 +297,7 @@ namespace DigitalLearningSolutions.Data.Services
                 ).Select(record => record.ID);
         }
 
-        private void CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel, int jobGroupId)
+        private void CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel, int jobGroupId, string? professionalRegistrationNumber)
         {
             var delegateRegistrationModel = new DelegateRegistrationModel(
                 registrationModel.FirstName,
@@ -316,6 +324,19 @@ namespace DigitalLearningSolutions.Data.Services
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumberOrErrorCode,
                 delegateRegistrationModel.PasswordHash!
+            );
+
+            // We know this will give us a non-null user.
+            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
+            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
+                candidateNumberOrErrorCode,
+                delegateRegistrationModel.Centre
+            )!;
+
+            userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                delegateUser.Id,
+                professionalRegistrationNumber,
+                true
             );
         }
 

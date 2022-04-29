@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -315,6 +316,7 @@
             const int centreId = 7;
             const int jobGroupId = 1;
             const string email = "right@email";
+            const string professionalRegistrationNumber = "PRN1234";
             var model = new SummaryViewModel
             {
                 Terms = true,
@@ -327,11 +329,13 @@
                 JobGroup = jobGroupId,
                 PasswordHash = "hash",
                 Email = email,
+                ProfessionalRegistrationNumber = professionalRegistrationNumber,
+                HasProfessionalRegistrationNumber = true,
             };
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
-            A.CallTo(() => registrationService.RegisterCentreManager(A<AdminRegistrationModel>._, A<int>._))
+            A.CallTo(() => registrationService.RegisterCentreManager(A<AdminRegistrationModel>._, A<int>._, A<string?>._))
                 .DoesNothing();
 
             // When
@@ -357,7 +361,8 @@
                                 !a.IsTrainer &&
                                 !a.IsSupervisor
                         ),
-                        jobGroupId
+                        jobGroupId,
+                        professionalRegistrationNumber
                     )
                 )
                 .MustHaveHappened();
