@@ -39,7 +39,11 @@
         public void AddStringToNewlineSeparatedList_trims_answers_and_returns_expected_values()
         {
             // When
-            var resultString = NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(" " + Item1 + " \n", " " + Item2 + " \r");
+            var resultString =
+                NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(
+                    " " + Item1 + " \n",
+                    " " + Item2 + " \r"
+                );
 
             // Then
             resultString.Should().BeEquivalentTo(ItemList);
@@ -73,7 +77,8 @@
         public void SplitNewlineSeparatedList_trims_answers_and_returns_expected_values()
         {
             // When
-            var resultList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(ItemListWithWhitespaceInAnswers);
+            var resultList =
+                NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(ItemListWithWhitespaceInAnswers);
 
             // Then
             using (new AssertionScope())
