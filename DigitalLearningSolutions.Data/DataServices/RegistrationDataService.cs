@@ -103,10 +103,17 @@
                 delegateRegistrationModel.IsExternalRegistered,
                 delegateRegistrationModel.IsSelfRegistered,
                 DetailsLastChecked = DateTime.UtcNow,
+                // null-equivalent data for non-nullable deprecated values
+                LastName_deprecated = "",
+                JobGroupID_deprecated = 0,
+                SkipPW_deprecated = false,
+                PublicSkypeLink_deprecated = false,
+                HasBeenPromptedForPrn_deprecated = false,
+                HasDismissedLhLoginWarning_deprecated = false,
             };
 
             // insert candidate
-            connection.QuerySingle<int>(
+            connection.Execute(
                 @"INSERT INTO DelegateAccounts
                     (
                         UserID,
@@ -124,7 +131,13 @@
                         Active,
                         ExternalReg,
                         SelfReg,
-                        CentreSpecificDetailsLastChecked
+                        CentreSpecificDetailsLastChecked,
+                        LastName_deprecated,
+                        JobGroupID_deprecated,
+                        SkipPW_deprecated,
+                        PublicSkypeLink_deprecated,
+                        HasBeenPromptedForPrn_deprecated,
+                        HasDismissedLhLoginWarning_deprecated
                     )
                     VALUES
                     (
@@ -143,7 +156,13 @@
                         @active,
                         @isExternalRegistered,
                         @isSelfRegistered,
-                        @detailsLastChecked
+                        @detailsLastChecked,
+                        @lastName_deprecated,
+                        @jobGroupID_deprecated,
+                        @skipPW_deprecated,
+                        @publicSkypeLink_deprecated,
+                        @hasBeenPromptedForPrn_deprecated,
+                        @hasDismissedLhLoginWarning_deprecated
                     )",
                     candidateValues
                 );
