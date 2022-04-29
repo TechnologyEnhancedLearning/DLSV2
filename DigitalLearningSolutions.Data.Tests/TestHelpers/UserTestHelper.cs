@@ -216,24 +216,51 @@
 
         public static void GivenDelegateUserIsInDatabase(DelegateUser user, SqlConnection sqlConnection)
         {
-            sqlConnection.Execute(
-                @"INSERT INTO Candidates (Active, CentreId, LastName, DateRegistered, CandidateNumber, JobGroupID,
-                    Approved, ExternalReg, SelfReg, SkipPW, PublicSkypeLink)
-                  VALUES (@Active, @CentreId, @LastName, @DateRegistered, @CandidateNumber, @JobGroupID,
-                    @Approved, @ExternalReg, @SelfReg, @SkipPW, @PublicSkypeLink);",
+            var userId = sqlConnection.QuerySingle<int>(
+                @"INSERT INTO Users
+                    (
+                        FirstName,
+                        LastName,
+                        PrimaryEmail,
+                        PasswordHash,
+                        Active,
+                        JobGroupID
+                    )
+                    OUTPUT Inserted.ID
+                    VALUES (@FirstName, @LastName, @EmailAddress, @Password, @Active, @JobGroupId)",
                 new
                 {
+                    user.FirstName,
+                    user.LastName,
+                    user.EmailAddress,
+                    user.Password,
                     user.Active,
+                    user.JobGroupId,
+                }
+            );
+            // TODO: UAR-889 - Remove LastName_deprecated from this query once the not-null constraint is lifted
+            sqlConnection.Execute(
+                @"INSERT INTO DelegateAccounts (
+                        CentreID,
+                        LastName_deprecated,
+                        DateRegistered,
+                        CandidateNumber,
+                        Approved,
+                        ExternalReg,
+                        SelfReg,
+                        UserID)
+                  VALUES (@CentreId, @LastName, @DateRegistered, @CandidateNumber,
+                          @Approved, @ExternalReg, @SelfReg, @UserId);",
+                new
+                {
                     user.CentreId,
                     user.LastName,
                     user.DateRegistered,
                     user.CandidateNumber,
-                    user.JobGroupId,
                     user.Approved,
                     ExternalReg = false,
                     SelfReg = false,
-                    SkipPW = false,
-                    PublicSkypeLink = false,
+                    UserId = userId,
                 }
             );
         }
