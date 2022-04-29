@@ -114,16 +114,11 @@
         public void PostEditAdminField_add_configures_new_answer()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, "Test", "Options");
+            var model = new EditAdminFieldViewModel(1, "Test", "Options")
+            {
+                Answer = "new option"
+            };
             const string action = "addPrompt";
-
-            A.CallTo(
-                () => courseAdminFieldsService.UpdateAdminFieldForCourse(
-                    1,
-                    1,
-                    "Test"
-                )
-            ).DoesNothing();
 
             // When
             var result = controller.EditAdminField(1, model, action);
