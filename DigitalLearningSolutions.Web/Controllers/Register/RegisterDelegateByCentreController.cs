@@ -296,6 +296,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return;
             }
 
+            // TODO HEEDLS-887 Check this behaviour is correct
             var duplicateUsers = userDataService.GetAllDelegateUsersByUsername(model.Alias)
                 .Where(u => u.CentreId == model.Centre);
 
