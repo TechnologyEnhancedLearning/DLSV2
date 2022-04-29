@@ -67,6 +67,7 @@
             Driver.SelectDropdownItemValue("Answer1", "Principal Relationship Manager");
             Driver.FillTextInput("Answer2", "A Person");
             Driver.SelectDropdownItemValue("JobGroup", "1");
+            Driver.SelectRadioOptionById("HasProfessionalRegistrationNumber_No");
             Driver.SubmitForm();
 
             var welcomeEmailResult = new AxeBuilder(Driver).Analyze();
@@ -106,6 +107,7 @@
             Driver.SelectDropdownItemValue("Answer1", "Principal Relationship Manager");
             Driver.FillTextInput("Answer2", "A Person");
             Driver.SelectDropdownItemValue("JobGroup", "1");
+            Driver.SelectRadioOptionById("HasProfessionalRegistrationNumber_No");
             Driver.SubmitForm();
 
             var welcomeEmailResult = new AxeBuilder(Driver).Analyze();

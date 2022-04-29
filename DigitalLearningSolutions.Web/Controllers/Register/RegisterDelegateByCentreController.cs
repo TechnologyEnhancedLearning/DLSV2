@@ -134,6 +134,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 ModelState
             );
 
+            ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
+                ModelState,
+                model.HasProfessionalRegistrationNumber,
+                model.ProfessionalRegistrationNumber
+            );
+
             if (!ModelState.IsValid)
             {
                 PopulateLearnerInformationExtraFields(model, data);
@@ -226,7 +232,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 var candidateNumber = registrationService.RegisterDelegateByCentre(
                     RegistrationMappingHelper.MapCentreRegistrationToDelegateRegistrationModel(data),
-                    baseUrl
+                    baseUrl,
+                    data.ProfessionalRegistrationNumber
                 );
 
                 TempData.Clear();

@@ -24,7 +24,11 @@ namespace DigitalLearningSolutions.Data.Services
             int? inviteId = null
         );
 
-        string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
+        string RegisterDelegateByCentre(
+            DelegateRegistrationModel delegateRegistrationModel,
+            string baseUrl,
+            string? professionalRegistrationNumber
+        );
 
         void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
 
@@ -143,53 +147,6 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
-        {
-            using var transaction = new TransactionScope();
-
-            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
-
-            if (delegateRegistrationModel.PasswordHash != null)
-            {
-                passwordDataService.SetPasswordByCandidateNumber(
-                    candidateNumber,
-                    delegateRegistrationModel.PasswordHash
-                );
-            }
-            else if (delegateRegistrationModel.NotifyDate.HasValue)
-            {
-                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    delegateRegistrationModel.Email,
-                    candidateNumber,
-                    baseUrl,
-                    delegateRegistrationModel.NotifyDate.Value,
-                    "RegisterDelegateByCentre_Refactor"
-                );
-            }
-
-            var supervisorDelegateRecordIdsMatchingDelegate =
-                GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
-
-            // We know this will give us a non-null user.
-            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
-            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
-                candidateNumber,
-                delegateRegistrationModel.Centre
-            )!;
-
-            if (supervisorDelegateRecordIdsMatchingDelegate.Any())
-            {
-                supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
-                    supervisorDelegateRecordIdsMatchingDelegate,
-                    delegateUser.Id
-                );
-            }
-
-            transaction.Complete();
-
-            return candidateNumber;
-        }
-
         public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
         {
             using var transaction = new TransactionScope();
@@ -245,6 +202,62 @@ namespace DigitalLearningSolutions.Data.Services
             );
 
             registrationDataService.RegisterAdmin(adminRegistrationModel);
+        }
+
+        public string RegisterDelegateByCentre(
+            DelegateRegistrationModel delegateRegistrationModel,
+            string baseUrl,
+            string? professionalRegistrationNumber
+        )
+        {
+            using var transaction = new TransactionScope();
+
+            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
+
+            if (delegateRegistrationModel.PasswordHash != null)
+            {
+                passwordDataService.SetPasswordByCandidateNumber(
+                    candidateNumber,
+                    delegateRegistrationModel.PasswordHash
+                );
+            }
+            else if (delegateRegistrationModel.NotifyDate.HasValue)
+            {
+                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    delegateRegistrationModel.Email,
+                    candidateNumber,
+                    baseUrl,
+                    delegateRegistrationModel.NotifyDate.Value,
+                    "RegisterDelegateByCentre_Refactor"
+                );
+            }
+
+            // We know this will give us a non-null user.
+            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
+            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
+                candidateNumber,
+                delegateRegistrationModel.Centre
+            )!;
+
+            userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                delegateUser.Id,
+                professionalRegistrationNumber,
+                true
+            );
+
+            var supervisorDelegateRecordIdsMatchingDelegate =
+                GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
+            if (supervisorDelegateRecordIdsMatchingDelegate.Any())
+            {
+                supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                    supervisorDelegateRecordIdsMatchingDelegate,
+                    delegateUser.Id
+                );
+            }
+
+            transaction.Complete();
+
+            return candidateNumber;
         }
 
         private string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
@@ -319,7 +332,7 @@ namespace DigitalLearningSolutions.Data.Services
                 ? $"{config["AppRootPath"]}/TrackingSystem/Delegates/Approve"
                 : $"{config["CurrentSystemBaseUrl"]}/tracking/approvedelegates";
 
-            BodyBuilder body = new BodyBuilder
+            var body = new BodyBuilder
             {
                 TextBody = $@"Dear {firstName},
                             A learner, {learnerFirstName} {learnerLastName}, has registered against your Digital Learning Solutions centre and requires approval before they can access courses.
