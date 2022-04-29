@@ -94,7 +94,7 @@ namespace DigitalLearningSolutions.Data.Services
                                                  centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
                                                  userIp == "::1";
 
-            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
+            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
@@ -200,7 +200,7 @@ namespace DigitalLearningSolutions.Data.Services
             if (emails.Contains(model.PrimaryEmail)
                 || !string.IsNullOrWhiteSpace(model.SecondaryEmail) && emails.Contains(model.SecondaryEmail))
             {
-                throw new ArgumentException(); // TODO HEEDLS-857 or whatever this exception should be
+                throw new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse);
             }
         }
 

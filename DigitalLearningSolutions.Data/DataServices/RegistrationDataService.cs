@@ -23,6 +23,7 @@
 
         public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel)
         {
+            // TODO HEEDLS-857 the changes to this method break the RegisterDelegateByCentre method, but it's already broken due to the DB changes. is this an issue?
             // create user values
 
             var userValues = new
@@ -63,14 +64,19 @@
                     userValues
                 );
 
-            // get candidate number
+            var initials = delegateRegistrationModel.FirstName.Substring(1) +
+                           delegateRegistrationModel.LastName.Substring(1);
+
+            // this SQL is reproduced mostly verbatim from the uspSaveNewCandidate_V10 procedure in the legacy codebase.
+            // exceptions are the declaration of @_NewCandidateNumber in this block and the external calculation of initials.
             var candidateNumber = connection.QueryFirst<string>(
-                @"declare @_MaxCandidateNumber as integer
+                @"
+                    declare @_NewCandidateNumber varchar(100)
+                    declare @_MaxCandidateNumber as integer
 		            declare @_Initials as varchar(2)
-		            set @_Initials = UPPER(LEFT(@FirstName, 1) + LEFT(@LastName, 1))
 		            set @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
 									FROM       Candidates WITH (TABLOCK, HOLDLOCK)
-									WHERE     (LEFT(CandidateNumber, 2) = @_Initials)
+									WHERE     (LEFT(CandidateNumber, 2) = @initials)
 									ORDER BY nCandidateNumber DESC)
 		            if @_MaxCandidateNumber is Null
 			            begin
@@ -78,11 +84,10 @@
 			            end
 		            set @_NewCandidateNumber = @_Initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)
                     select @_NewCandidateNumber",
-                new {delegateRegistrationModel.FirstName, delegateRegistrationModel.LastName}
+                new { initials }
             );
 
             // create candidate values
-
             var candidateValues = new
             {
                 userId,
@@ -145,8 +150,8 @@
                     userValues
                 );
 
-            // TODO HEEDLS-874
-            // emails in bulk service
+            // TODO HEEDLS-874 deal with group assignment
+            // TODO HEEDLS 857? emails in bulk service
 
             return candidateNumber;
         }
