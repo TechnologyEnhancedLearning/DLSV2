@@ -71,19 +71,16 @@
             // exceptions are the declaration of @_NewCandidateNumber in this block and the external calculation of initials.
             var candidateNumber = connection.QueryFirst<string>(
                 @"
-                    declare @_NewCandidateNumber varchar(100)
                     declare @_MaxCandidateNumber as integer
-		            declare @_Initials as varchar(2)
 		            set @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
-									FROM       Candidates WITH (TABLOCK, HOLDLOCK)
+									FROM      DelegateAccounts WITH (TABLOCK, HOLDLOCK)
 									WHERE     (LEFT(CandidateNumber, 2) = @initials)
 									ORDER BY nCandidateNumber DESC)
 		            if @_MaxCandidateNumber is Null
 			            begin
 			            set @_MaxCandidateNumber = 0
 			            end
-		            set @_NewCandidateNumber = @_Initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)
-                    select @_NewCandidateNumber",
+		            select @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
                 new { initials }
             );
 
@@ -91,7 +88,7 @@
             var candidateValues = new
             {
                 userId,
-                delegateRegistrationModel.Centre,
+                CentreId = delegateRegistrationModel.Centre,
                 DateRegistered = DateTime.UtcNow,
                 candidateNumber,
                 Email = delegateRegistrationModel.SecondaryEmail,
@@ -102,6 +99,7 @@
                 delegateRegistrationModel.Answer5,
                 delegateRegistrationModel.Answer6,
                 delegateRegistrationModel.Approved,
+                delegateRegistrationModel.Active,
                 delegateRegistrationModel.IsExternalRegistered,
                 delegateRegistrationModel.IsSelfRegistered,
                 DetailsLastChecked = DateTime.UtcNow,
@@ -109,7 +107,7 @@
 
             // insert candidate
             connection.QuerySingle<int>(
-                @"INSERT INTO Candidates
+                @"INSERT INTO DelegateAccounts
                     (
                         UserID,
                         CentreID,
@@ -126,7 +124,7 @@
                         Active,
                         ExternalReg,
                         SelfReg,
-                        DetailsLastChecked
+                        CentreSpecificDetailsLastChecked
                     )
                     VALUES
                     (
@@ -147,11 +145,11 @@
                         @isSelfRegistered,
                         @detailsLastChecked
                     )",
-                    userValues
+                    candidateValues
                 );
 
             // TODO HEEDLS-874 deal with group assignment
-            // TODO HEEDLS 857? emails in bulk service
+            // TODO HEEDLS-857? emails in bulk service
 
             return candidateNumber;
         }
