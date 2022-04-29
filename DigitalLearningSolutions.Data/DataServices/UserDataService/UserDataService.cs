@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -147,15 +148,13 @@
         public IEnumerable<string> GetAllExistingEmails()
         {
             // TODO HEEDLS-857 do we need any exclusions here?
-            // TODO HEEDLS-857 confirm names of new tables
-            // TODO HEEDLS-857 does this need to go in a sub-service?
             return connection.Query<string>(
                 @"SELECT PrimaryEmail FROM Users
                     UNION
-                    SELECT Email FROM Candidates
+                    SELECT Email FROM DelegateAccounts
                     UNION
                     SELECT Email FROM AdminAccounts"
-            );
+            ).Where(email => !string.IsNullOrEmpty(email));
         }
     }
 }
