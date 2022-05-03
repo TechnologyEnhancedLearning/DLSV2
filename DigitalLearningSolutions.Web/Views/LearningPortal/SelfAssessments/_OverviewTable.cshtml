@@ -31,15 +31,13 @@
 <tbody class="nhsuk-table__body row-outer" id="comp-@competency.RowNo">
   <tr role="row" class="nhsuk-table__row first-row">
     <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
-      <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
       @if (competency.Description != null && !competency.AlwaysShowDescription)
       {
         <details class="nhsuk-details">
           <summary class="nhsuk-details__summary">
             <h2 class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-0">
-              <span class="nhsuk-details__summary-text">
-                @competency.Name
-              </span>
+              <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
+              <span class="nhsuk-details__summary-text">@competency.Name</span>
             </h2>
           </summary>
           <div class="nhsuk-details__text nhsuk-u-margin-left-6 nhsuk-u-margin-top-2">
@@ -50,7 +48,7 @@
       else
       {
         <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
-          @competency.Name
+          <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
         </h2>
         @if (competency.Description != null)
         {
