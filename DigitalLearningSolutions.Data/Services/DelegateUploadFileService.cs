@@ -195,7 +195,7 @@ namespace DigitalLearningSolutions.Data.Services
         private void RegisterDelegate(DelegateTableRow delegateRow, DateTime? welcomeEmailDate, int centreId)
         {
             var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
-            var errorCodeOrCandidateNumber = registrationDataService.RegisterDelegate(model);
+            var errorCodeOrCandidateNumber = registrationDataService.RegisterNewUserAndDelegateAccount(model);
             switch (errorCodeOrCandidateNumber)
             {
                 case "-1":

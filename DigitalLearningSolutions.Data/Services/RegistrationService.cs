@@ -94,7 +94,7 @@ namespace DigitalLearningSolutions.Data.Services
                                                  centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
                                                  userIp == "::1";
 
-            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            var candidateNumber = registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
@@ -263,7 +263,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         private string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
         {
-            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            var candidateNumberOrErrorCode = registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
 
             var failureIfAny = DelegateCreationError.FromStoredProcedureErrorCode(candidateNumberOrErrorCode);
 
@@ -303,7 +303,7 @@ namespace DigitalLearningSolutions.Data.Services
                 true
             );
 
-            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            var candidateNumberOrErrorCode = registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
             var failureIfAny = DelegateCreationError.FromStoredProcedureErrorCode(candidateNumberOrErrorCode);
             if (failureIfAny != null)
             {

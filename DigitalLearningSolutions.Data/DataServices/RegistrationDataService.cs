@@ -8,7 +8,7 @@
 
     public interface IRegistrationDataService
     {
-        string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
+        string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel);
         int RegisterAdmin(AdminRegistrationModel registrationModel);
     }
 
@@ -21,7 +21,7 @@
             this.connection = connection;
         }
 
-        public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel)
+        public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
         {
             // TODO HEEDLS-857 the changes to this method break the RegisterDelegateByCentre method, but it's already broken due to the DB changes. is this an issue?
             // create user values

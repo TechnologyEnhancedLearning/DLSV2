@@ -27,7 +27,7 @@
         }
 
         [Test]
-        public async Task Sets_all_fields_correctly_on_registration()
+        public async Task RegisterNewUserAndDelegateAccount_sets_all_fields_correctly_on_registration()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -35,7 +35,7 @@
             var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
 
             // When
-            var candidateNumber = service.RegisterDelegate(delegateRegistrationModel);
+            var candidateNumber = service.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
             var user = await connection.GetDelegateUserByCandidateNumberAsync(candidateNumber);
 
             // Then
