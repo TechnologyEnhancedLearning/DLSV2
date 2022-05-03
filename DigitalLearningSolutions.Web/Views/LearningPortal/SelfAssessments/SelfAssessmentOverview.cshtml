@@ -62,13 +62,13 @@
     questionsTotal += questions.Count();
     <div class="nhsuk-panel competency-group-panel nhsuk-u-padding-0">
       @{
-          var expanderOpen = Model.CompetencyGroups.Count() == 1
+          var detailsOpen = Model.CompetencyGroups.Count() == 1
           ? "open"
           : ViewContext.RouteData.Values.ContainsKey("competencyGroupId")
             ? ViewContext.RouteData.Values["competencyGroupId"].Equals(competencyGroup.First().CompetencyGroupID.ToString()) ? "open" : ""
             : "";
       }
-      <details class="nhsuk-details nhsuk-expander" @(expanderOpen)>
+      <details class="nhsuk-details nhsuk-details" @(detailsOpen)>
         <summary class="nhsuk-details__summary">
           <span class="competency-group-title nhsuk-details__summary-text">
             @competencyGroup.Key
