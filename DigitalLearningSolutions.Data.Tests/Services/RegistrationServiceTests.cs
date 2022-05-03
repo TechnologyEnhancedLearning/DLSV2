@@ -318,31 +318,21 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void Error_when_registering_delegate_returns_error_code()
+        public void Error_when_registering_delegate_with_duplicate_email()
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(model)).Returns("-1");
+            A.CallTo(() => userDataService.GetAllExistingEmails()).Returns(new []{"testuser@email.com"});
 
             // When
             Action act = () => registrationService.CreateDelegateAccountForNewUser(model, string.Empty, false, null);
 
             // Then
             act.Should().Throw<DelegateCreationFailedException>();
-        }
-
-        [Test]
-        public void Error_when_registering_delegate_fails_fast()
-        {
-            // Given
-            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(model)).Returns("-1");
-
-            // When
-            Action act = () => registrationService.CreateDelegateAccountForNewUser(model, string.Empty, false, null);
-
-            // Then
-            act.Should().Throw<DelegateCreationFailedException>();
+            A.CallTo(
+                () =>
+                    registrationDataService.RegisterNewUserAndDelegateAccount(A<DelegateRegistrationModel>._)
+            ).MustNotHaveHappened();
             A.CallTo(
                 () =>
                     emailService.SendEmail(A<Email>._)
