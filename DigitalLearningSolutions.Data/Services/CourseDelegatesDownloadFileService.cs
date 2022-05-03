@@ -183,6 +183,9 @@
         {
             var sheet = workbook.Worksheets.Add("Course Delegates");
 
+            // Set sheet to have outlining expand buttons at the top of the expanded section.
+            sheet.Outline.SummaryVLocation = XLOutlineSummaryVLocation.Top;
+
             var customRegistrationPrompts =
                 registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
