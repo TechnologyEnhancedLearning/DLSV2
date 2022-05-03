@@ -9,13 +9,13 @@
 
     public class VerifyAdminUserCanAccessProgress : IActionFilter
     {
-        private readonly ICourseService courseService;
+        private readonly IProgressService progressService;
 
         public VerifyAdminUserCanAccessProgress(
-            ICourseService courseService
+            IProgressService progressService
         )
         {
-            this.courseService = courseService;
+            this.progressService = progressService;
         }
 
         public void OnActionExecuted(ActionExecutedContext context) { }
@@ -29,7 +29,7 @@
 
             var progressId = int.Parse(context.RouteData.Values["progressId"].ToString()!);
             var courseDelegatesData =
-                courseService.GetDelegateCourseProgress(progressId);
+                progressService.GetDetailedCourseProgress(progressId);
 
             if (courseDelegatesData == null)
             {

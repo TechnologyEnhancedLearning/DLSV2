@@ -41,6 +41,13 @@
             DelegateCourseAdminFields = adminFields;
             AdminFieldFilters =
                 CourseDelegateViewModelFilterOptions.GetAdminFieldFilters(adminFields, adminFieldsWithOptions);
+            Supervisor = courseDelegate.SupervisorSurname != null
+                ? DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                    courseDelegate.SupervisorForename,
+                    courseDelegate.SupervisorSurname,
+                    courseDelegate.SupervisorAdminActive!.Value
+                )
+                : "None";
             ReturnPageQuery = returnPageQuery;
         }
 
@@ -62,5 +69,6 @@
         public IEnumerable<DelegateCourseAdminField> DelegateCourseAdminFields { get; set; }
         public Dictionary<int, string> AdminFieldFilters { get; set; }
         public ReturnPageQuery ReturnPageQuery { get; set; }
+        public string? Supervisor { get; set; }
     }
 }

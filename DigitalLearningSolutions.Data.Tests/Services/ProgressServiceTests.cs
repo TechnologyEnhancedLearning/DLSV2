@@ -2,17 +2,23 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using NUnit.Framework;
 
     public class ProgressServiceTests
     {
+        private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDataService courseDataService = null!;
         private IProgressDataService progressDataService = null!;
         private IProgressService progressService = null!;
@@ -22,8 +28,9 @@
         {
             courseDataService = A.Fake<ICourseDataService>();
             progressDataService = A.Fake<IProgressDataService>();
+            courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
 
-            progressService = new ProgressService(courseDataService, progressDataService);
+            progressService = new ProgressService(courseDataService, progressDataService, courseAdminFieldsService);
         }
 
         [Test]
@@ -256,13 +263,34 @@
                 Enrolled = DateTime.MinValue,
                 Completed = DateTime.Today,
                 CompleteBy = DateTime.Now,
+                CustomisationId = 10,
+                IsAssessed = true,
             };
+            var adminField = PromptsTestHelper.GetDefaultCourseAdminFieldWithAnswer(
+                2,
+                "Priority Access",
+                answer: "answer2"
+            );
+            var testCourseAdminFields = new List<CourseAdminFieldWithAnswer> { adminField };
+            var testAttemptStats = new AttemptStats(10, 5);
 
             A.CallTo(() => progressDataService.GetProgressByProgressId(1)).Returns(testCourseProgress);
             A.CallTo(() => progressDataService.GetSectionProgressDataForProgressEntry(1)).Returns(testSectionProgress);
             A.CallTo(() => progressDataService.GetTutorialProgressDataForSection(1, 2)).Returns(testTutorialProgress1);
             A.CallTo(() => progressDataService.GetTutorialProgressDataForSection(1, 3)).Returns(testTutorialProgress2);
             A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(1)).Returns(testCourseInfo);
+            A.CallTo(
+                () => courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
+                    testCourseInfo,
+                    testCourseInfo.CustomisationId
+                )
+            ).Returns(testCourseAdminFields);
+            A.CallTo(
+                () => courseDataService.GetDelegateCourseAttemptStats(
+                    testCourseInfo.DelegateId,
+                    testCourseInfo.CustomisationId
+                )
+            ).Returns(testAttemptStats);
 
             var testSectionProgressWithTutorials = new List<DetailedSectionProgress>
             {
@@ -274,7 +302,9 @@
             var expectedResult = new DetailedCourseProgress(
                 testCourseProgress,
                 testSectionProgressWithTutorials,
-                testCourseInfo
+                testCourseInfo,
+                testCourseAdminFields,
+                testAttemptStats
             );
 
             // When

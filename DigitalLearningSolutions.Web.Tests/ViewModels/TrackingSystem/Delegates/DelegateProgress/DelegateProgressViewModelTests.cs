@@ -1,10 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateProgress
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
@@ -32,11 +34,14 @@
             };
             var missingNamesViewModel = new DelegateProgressViewModel(
                 DelegateAccessRoute.ViewDelegate,
-                new DelegateCourseDetails(
+                new DetailedCourseProgress(
+                    new Progress(),
+                    new List<DetailedSectionProgress>(),
                     missingNamesDelegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
-                )
+                ),
+                "www.test.com"
             );
             var fullNamesDelegateInfo = new DelegateCourseInfo
             {
@@ -55,11 +60,14 @@
             };
             var fullNamesViewModel = new DelegateProgressViewModel(
                 DelegateAccessRoute.ViewDelegate,
-                new DelegateCourseDetails(
+                new DetailedCourseProgress(
+                    new Progress(),
+                    new List<DetailedSectionProgress>(),
                     fullNamesDelegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
-                )
+                ),
+                "www.test.com"
             );
 
             // Then
@@ -87,11 +95,14 @@
             };
             var viewModel = new DelegateProgressViewModel(
                 DelegateAccessRoute.ViewDelegate,
-                new DelegateCourseDetails(
+                new DetailedCourseProgress(
+                    new Progress(),
+                    new List<DetailedSectionProgress>(),
                     delegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
-                )
+                ),
+                "www.test.com"
             );
 
             // Then
@@ -117,11 +128,14 @@
             };
             var viewModel = new DelegateProgressViewModel(
                 DelegateAccessRoute.ViewDelegate,
-                new DelegateCourseDetails(
+                new DetailedCourseProgress(
+                    new Progress(),
+                    new List<DetailedSectionProgress>(),
                     delegateInfo,
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
-                )
+                ),
+                "www.test.com"
             );
 
             // Then

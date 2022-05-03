@@ -59,10 +59,15 @@
                         p.Answer2,
                         p.Answer3,
                         {AllAttemptsQuery},
-                        {AttemptsPassedQuery}
+                        {AttemptsPassedQuery},
+                        auSupervisor.AdminID AS SupervisorAdminId,
+                        auSupervisor.Forename AS SupervisorForename,
+                        auSupervisor.Surname AS SupervisorSurname,
+                        auSupervisor.Active AS SupervisorAdminActive
                     FROM Candidates AS c
                     INNER JOIN Progress AS p ON p.CandidateID = c.CandidateID
                     INNER JOIN Customisations cu ON cu.CustomisationID = p.CustomisationID
+                    LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = p.SupervisorAdminId
                     WHERE c.CentreID = @centreId
                         AND p.CustomisationID = @customisationId",
                 new { customisationId, centreId }

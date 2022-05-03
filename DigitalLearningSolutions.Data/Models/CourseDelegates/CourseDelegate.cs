@@ -28,6 +28,10 @@
         public int AllAttempts { get; set; }
         public int AttemptsPassed { get; set; }
         public int CustomisationId { get; set; }
+        public int? SupervisorAdminId { get; set; }
+        public string? SupervisorForename { get; set; }
+        public string? SupervisorSurname { get; set; }
+        public bool? SupervisorAdminActive { get; set; }
 
         public string FullNameForSearchingSorting => NameQueryHelper.GetSortableFullName(FirstName, LastName);
 

@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @model DelegateProgressViewModel
 
 <dl class="nhsuk-summary-list">
@@ -10,14 +11,6 @@
     <dd class="nhsuk-summary-list__value">
       @Model.Supervisor
     </dd>
-    <dd class="nhsuk-summary-list__actions">
-      <a asp-controller="DelegateProgress"
-         asp-action="EditSupervisor"
-         asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@Model.AccessedVia">
-        Edit<span class="nhsuk-u-visually-hidden"> supervisor</span>
-      </a>
-    </dd>
   </div>
 
   <div class="nhsuk-summary-list__row">
@@ -27,7 +20,6 @@
     <dd class="nhsuk-summary-list__value">
       @Model.Enrolled
     </dd>
-    <dd class="nhsuk-summary-list__actions" />
   </div>
 
   <div class="nhsuk-summary-list__row">
@@ -35,14 +27,6 @@
       Complete by
     </dt>
     <partial name="_SummaryFieldValue" model="Model.CompleteBy" />
-    <dd class="nhsuk-summary-list__actions">
-      <a asp-controller="DelegateProgress"
-         asp-action="EditCompleteByDate"
-         asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@Model.AccessedVia">
-        Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
-      </a>
-    </dd>
   </div>
 
   <div class="nhsuk-summary-list__row">
@@ -52,7 +36,6 @@
     <dd class="nhsuk-summary-list__value">
       @Model.LastUpdated
     </dd>
-    <dd class="nhsuk-summary-list__actions" />
   </div>
 
   <div class="nhsuk-summary-list__row">
@@ -60,14 +43,6 @@
       Completed
     </dt>
     <partial name="_SummaryFieldValue" model="Model.Completed" />
-    <dd class="nhsuk-summary-list__actions">
-      <a asp-controller="DelegateProgress"
-         asp-action="EditCompletionDate"
-         asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@Model.AccessedVia">
-        Edit<span class="nhsuk-u-visually-hidden"> completed date</span>
-      </a>
-    </dd>
   </div>
 
   <div class="nhsuk-summary-list__row">
@@ -75,7 +50,6 @@
       Evaluated
     </dt>
     <partial name="_SummaryFieldValue" model="Model.Evaluated" />
-    <dd class="nhsuk-summary-list__actions" />
   </div>
 
   <div class="nhsuk-summary-list__row">
@@ -83,7 +57,6 @@
       Removed
     </dt>
     <partial name="_SummaryFieldValue" model="Model.RemovedDate" />
-    <dd class="nhsuk-summary-list__actions" />
   </div>
 
   <div class="nhsuk-summary-list__row">
@@ -93,7 +66,6 @@
     <dd class="nhsuk-summary-list__value">
       @Model.EnrolmentMethod
     </dd>
-    <dd class="nhsuk-summary-list__actions" />
   </div>
 
   <div class="nhsuk-summary-list__row">
@@ -103,7 +75,6 @@
     <dd class="nhsuk-summary-list__value">
       @Model.LoginCount
     </dd>
-    <dd class="nhsuk-summary-list__actions" />
   </div>
 
   <div class="nhsuk-summary-list__row">
@@ -113,17 +84,6 @@
     <dd class="nhsuk-summary-list__value">
       @Model.LearningTime
     </dd>
-    <dd class="nhsuk-summary-list__actions" />
-  </div>
-
-  <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Diagnostic score
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @(Model.DiagnosticScore?.ToString() ?? "N/A")
-    </dd>
-    <dd class="nhsuk-summary-list__actions" />
   </div>
 
   @if (Model.IsAssessed) {
@@ -134,7 +94,6 @@
       <dd class="nhsuk-summary-list__value">
         @Model.AttemptsPassed
       </dd>
-      <dd class="nhsuk-summary-list__actions" />
     </div>
 
     <div class="nhsuk-summary-list__row">
@@ -144,7 +103,6 @@
       <dd class="nhsuk-summary-list__value">
         @Model.TotalAttempts
       </dd>
-      <dd class="nhsuk-summary-list__actions" />
     </div>
 
     <div class="nhsuk-summary-list__row">
@@ -154,7 +112,6 @@
       <dd class="nhsuk-summary-list__value">
         @Model.PassRate%
       </dd>
-      <dd class="nhsuk-summary-list__actions" />
     </div>
   }
 
@@ -164,15 +121,6 @@
         @delegateCourseAdminField.Prompt
       </dt>
       <partial name="_SummaryFieldValue" model="delegateCourseAdminField.Answer" />
-      <dd class="nhsuk-summary-list__actions">
-        <a asp-controller="DelegateProgress"
-           asp-action="EditDelegateCourseAdminField"
-           asp-route-progressId="@Model.ProgressId"
-           asp-route-promptNumber="@delegateCourseAdminField.PromptNumber"
-           asp-route-accessedVia="@Model.AccessedVia">
-          Edit<span class="nhsuk-u-visually-hidden"> @delegateCourseAdminField.Prompt</span>
-        </a>
-      </dd>
     </div>
   }
 

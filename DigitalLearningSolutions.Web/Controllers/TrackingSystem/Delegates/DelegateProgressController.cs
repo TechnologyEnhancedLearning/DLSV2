@@ -10,7 +10,6 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -53,11 +52,12 @@
         public IActionResult Index(int progressId, DelegateAccessRoute accessedVia)
         {
             var courseDelegatesData =
-                courseService.GetDelegateCourseProgress(progressId);
+                progressService.GetDetailedCourseProgress(progressId);
 
             var model = new DelegateProgressViewModel(
                 accessedVia,
-                courseDelegatesData!
+                courseDelegatesData!,
+                configuration.GetCurrentSystemBaseUrl()
             );
             return View(model);
         }
@@ -68,7 +68,7 @@
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
-                courseService.GetDelegateCourseProgress(progressId);
+                progressService.GetDetailedCourseProgress(progressId);
             var supervisors = userService.GetSupervisorsAtCentreForCategory(
                 centreId,
                 delegateCourseProgress!.DelegateCourseInfo.CourseCategoryId
@@ -111,7 +111,7 @@
         )
         {
             var delegateCourseProgress =
-                courseService.GetDelegateCourseProgress(progressId);
+                progressService.GetDetailedCourseProgress(progressId);
 
             var model = new EditCompleteByDateViewModel(
                 progressId,
@@ -152,7 +152,7 @@
         )
         {
             var delegateCourseProgress =
-                courseService.GetDelegateCourseProgress(progressId);
+                progressService.GetDetailedCourseProgress(progressId);
 
             var model = new EditCompletionDateViewModel(
                 progressId,
@@ -194,7 +194,7 @@
         )
         {
             var delegateCourseProgress =
-                courseService.GetDelegateCourseProgress(progressId);
+                progressService.GetDetailedCourseProgress(progressId);
 
             var courseAdminField = courseAdminFieldsService.GetCourseAdminFieldsForCourse(
                 delegateCourseProgress!.DelegateCourseInfo.CustomisationId
@@ -227,7 +227,7 @@
             if (!ModelState.IsValid)
             {
                 var delegateCourseProgress =
-                    courseService.GetDelegateCourseProgress(progressId);
+                    progressService.GetDetailedCourseProgress(progressId);
 
                 var model = new EditDelegateCourseAdminFieldViewModel(
                     formData,
@@ -326,23 +326,6 @@
             }
 
             var model = new AllLearningLogEntriesViewModel(learningLog.Entries);
-            return View(model);
-        }
-
-        [HttpGet("DetailedProgress")]
-        public IActionResult DetailedProgress(int progressId, DelegateAccessRoute accessedVia)
-        {
-            var progressData = progressService.GetDetailedCourseProgress(progressId);
-            if (progressData == null)
-            {
-                return NotFound();
-            }
-
-            var model = new DetailedCourseProgressViewModel(
-                progressData,
-                accessedVia,
-                configuration.GetCurrentSystemBaseUrl()
-            );
             return View(model);
         }
     }

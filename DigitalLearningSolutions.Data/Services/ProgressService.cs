@@ -1,11 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.Progress;
 
     public interface IProgressService
     {
@@ -31,12 +34,18 @@
     public class ProgressService : IProgressService
     {
         private readonly ICourseDataService courseDataService;
+        private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly IProgressDataService progressDataService;
 
-        public ProgressService(ICourseDataService courseDataService, IProgressDataService progressDataService)
+        public ProgressService(
+            ICourseDataService courseDataService,
+            IProgressDataService progressDataService,
+            ICourseAdminFieldsService courseAdminFieldsService
+        )
         {
             this.courseDataService = courseDataService;
             this.progressDataService = progressDataService;
+            this.courseAdminFieldsService = courseAdminFieldsService;
         }
 
         public void UpdateSupervisor(int progressId, int? newSupervisorId)
@@ -113,6 +122,15 @@
                 return null;
             }
 
+            var coursePrompts = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
+                courseInfo,
+                courseInfo.CustomisationId
+            );
+
+            var attemptStats = courseInfo.IsAssessed
+                ? courseDataService.GetDelegateCourseAttemptStats(courseInfo.DelegateId, courseInfo.CustomisationId)
+                : new AttemptStats(0, 0);
+
             var sections = progressDataService.GetSectionProgressDataForProgressEntry(progressId).ToList();
             foreach (var section in sections)
             {
@@ -120,7 +138,13 @@
                     progressDataService.GetTutorialProgressDataForSection(progressId, section.SectionId);
             }
 
-            return new DetailedCourseProgress(progress, sections, courseInfo);
+            return new DetailedCourseProgress(
+                progress,
+                sections,
+                courseInfo,
+                coursePrompts,
+                attemptStats
+            );
         }
 
         public void UpdateCourseAdminFieldForDelegate(

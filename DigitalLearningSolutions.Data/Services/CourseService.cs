@@ -32,8 +32,6 @@
             int? courseCategoryId
         );
 
-        DelegateCourseDetails? GetDelegateCourseProgress(int progressId);
-
         bool? VerifyAdminUserCanManageCourse(int customisationId, int centreId, int? categoryId);
 
         bool? VerifyAdminUserCanViewCourse(int customisationId, int centreId, int? categoryId);
@@ -102,6 +100,8 @@
         int CreateNewCentreCourse(Customisation customisation);
 
         LearningLog? GetLearningLogDetails(int progressId);
+
+        public DelegateCourseDetails GetDelegateAttemptsAndCourseAdminFields(DelegateCourseInfo info);
     }
 
     public class CourseService : ICourseService
@@ -169,13 +169,6 @@
                 .Where(info => courseCategoryId == null || info.CourseCategoryId == courseCategoryId)
                 .Select(GetDelegateAttemptsAndCourseAdminFields)
                 .Where(info => info.DelegateCourseInfo.RemovedDate == null);
-        }
-
-        public DelegateCourseDetails? GetDelegateCourseProgress(int progressId)
-        {
-            var info = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
-
-            return info == null ? null : GetDelegateAttemptsAndCourseAdminFields(info);
         }
 
         public bool? VerifyAdminUserCanManageCourse(int customisationId, int centreId, int? categoryId)

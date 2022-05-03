@@ -2,8 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -170,7 +172,9 @@
                 options
             );
             var attemptStats = new AttemptStats(1, 1);
-            var delegateCourseDetails = new DelegateCourseDetails(
+            var delegateCourseDetails = new DetailedCourseProgress(
+                new Progress(),
+                new List<DetailedSectionProgress>(),
                 delegateCourseInfo,
                 new List<CourseAdminFieldWithAnswer> { courseAdminFieldWithAnswer },
                 attemptStats
@@ -182,7 +186,7 @@
                 new List<CourseAdminField> { courseAdminField }
             );
 
-            A.CallTo(() => courseService.GetDelegateCourseProgress(progressId))
+            A.CallTo(() => progressService.GetDetailedCourseProgress(progressId))
                 .Returns(delegateCourseDetails);
             A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId))
                 .Returns(courseAdminFieldsForCourse);
@@ -244,7 +248,9 @@
             var delegateCourseInfo = new DelegateCourseInfo();
             var courseAdminField = new CourseAdminFieldWithAnswer(promptNumber, "Prompt text", "Answer", null);
             var attemptStats = new AttemptStats(1, 1);
-            var delegateCourseDetails = new DelegateCourseDetails(
+            var delegateCourseDetails = new DetailedCourseProgress(
+                new Progress(),
+                new List<DetailedSectionProgress>(),
                 delegateCourseInfo,
                 new List<CourseAdminFieldWithAnswer> { courseAdminField },
                 attemptStats
@@ -252,7 +258,7 @@
 
             var formData = new EditDelegateCourseAdminFieldFormData { Answer = answer };
 
-            A.CallTo(() => courseService.GetDelegateCourseProgress(progressId))
+            A.CallTo(() => progressService.GetDetailedCourseProgress(progressId))
                 .Returns(delegateCourseDetails);
             delegateProgressController.ModelState.AddModelError("Answer", "Test error message");
 
