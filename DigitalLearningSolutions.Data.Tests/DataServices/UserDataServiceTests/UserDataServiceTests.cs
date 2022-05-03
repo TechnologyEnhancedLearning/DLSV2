@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.UserDataServiceTests
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
     using Dapper;
@@ -30,7 +31,18 @@
         }
 
         [Test]
-        public void GetAllExistingEmails_gets_all_existing_emails()
+        [TestCase(new string[] { }, false)]
+        [TestCase(new[] { "fake" }, false)]
+        [TestCase(new[] { "test@gmail.com" }, true)]
+        [TestCase(new[] { "sample@admin.email" }, true)]
+        [TestCase(new[] { "sample@delegate.email" }, true)]
+        [TestCase(new[] { "", null }, true)]
+        [TestCase(new[] { "test@gmail.com", "sample@admin.email", "sample@delegate.email" }, true)]
+        [TestCase(new[] { "sample@admin.email", "", null }, true)]
+        public void AnyEmailsInSetAreAlreadyInUse_returns_true_if_and_only_if_emails_are_in_use(
+            IEnumerable<string?> emails,
+            bool expectedResult
+        )
         {
             using var transaction = new TransactionScope();
 
@@ -41,17 +53,10 @@
             );
 
             // When
-            var emails = userDataService.GetAllExistingEmails().ToList();
+            var result = userDataService.AnyEmailsInSetAreAlreadyInUse(emails);
 
             // Then
-            using (new AssertionScope())
-            {
-                emails.Count.Should().Be(281058);
-                emails.Should().Contain("l@rpahd.fcubionwgsk");
-                emails.Should().Contain("sample@admin.email");
-                emails.Should().Contain("sample@delegate.email");
-                emails.Distinct().Count().Should().Be(emails.Count);
-            };
+            result.Should().Be(expectedResult);
         }
     }
 }

@@ -322,7 +322,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            A.CallTo(() => userDataService.GetAllExistingEmails()).Returns(new []{"testuser@email.com"});
+            A.CallTo(() => userDataService.AnyEmailsInSetAreAlreadyInUse(A<IEnumerable<string?>>._)).Returns(true);
 
             // When
             Action act = () => registrationService.CreateDelegateAccountForNewUser(model, string.Empty, false, null);
