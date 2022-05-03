@@ -23,9 +23,6 @@
 
         public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
         {
-            // TODO HEEDLS-857 the changes to this method break the RegisterDelegateByCentre method, but it's already broken due to the DB changes. is this an issue?
-            // create user values
-
             var userValues = new
                 {
                     delegateRegistrationModel.FirstName,
@@ -36,8 +33,6 @@
                     PasswordHash = "temp",
                     ProfessionalRegistrationNumber = (string?)null,
                 };
-
-            // insert user record
 
             var userId = connection.QuerySingle<int>(
                 @"INSERT INTO Users
@@ -68,23 +63,20 @@
                            delegateRegistrationModel.LastName.Substring(1);
 
             // this SQL is reproduced mostly verbatim from the uspSaveNewCandidate_V10 procedure in the legacy codebase.
-            // exceptions are the declaration of @_NewCandidateNumber in this block and the external calculation of initials.
             var candidateNumber = connection.QueryFirst<string>(
-                @"
-                    declare @_MaxCandidateNumber as integer
-		            set @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
+                @"DECLARE @_MaxCandidateNumber AS integer
+		            SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
 									FROM      DelegateAccounts WITH (TABLOCK, HOLDLOCK)
 									WHERE     (LEFT(CandidateNumber, 2) = @initials)
 									ORDER BY nCandidateNumber DESC)
-		            if @_MaxCandidateNumber is Null
-			            begin
-			            set @_MaxCandidateNumber = 0
-			            end
-		            select @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
+		            IF @_MaxCandidateNumber IS Null
+			            BEGIN
+			            SET @_MaxCandidateNumber = 0
+			            END
+		            SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
                 new { initials }
             );
 
-            // create candidate values
             var candidateValues = new
             {
                 userId,
@@ -112,7 +104,6 @@
                 HasDismissedLhLoginWarning_deprecated = false,
             };
 
-            // insert candidate
             connection.Execute(
                 @"INSERT INTO DelegateAccounts
                     (
@@ -168,7 +159,6 @@
                 );
 
             // TODO HEEDLS-874 deal with group assignment
-            // TODO HEEDLS-857? emails in bulk service
 
             return candidateNumber;
         }

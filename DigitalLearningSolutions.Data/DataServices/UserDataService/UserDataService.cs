@@ -147,7 +147,6 @@
 
         public IEnumerable<string> GetAllExistingEmails()
         {
-            // TODO HEEDLS-857 do we need any exclusions here?
             return connection.Query<string>(
                 @"SELECT PrimaryEmail FROM Users
                     UNION
