@@ -449,7 +449,10 @@ namespace DigitalLearningSolutions.Data.Services
                 }
                 catch (Exception ex)
                 {
-                    logger.LogWarning(ex, $"Error attempting to delete admin {adminId} with no sessions, deactivating them instead.");
+                    logger.LogWarning(
+                        ex,
+                        $"Error attempting to delete admin {adminId} with no sessions, deactivating them instead."
+                    );
                     userDataService.DeactivateAdmin(adminId);
                 }
             }

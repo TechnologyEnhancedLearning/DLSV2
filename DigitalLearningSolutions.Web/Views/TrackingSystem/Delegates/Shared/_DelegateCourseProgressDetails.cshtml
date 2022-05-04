@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 @model DelegateCourseInfoViewModel
 
 <dl class="nhsuk-summary-list details-list-with-button">
@@ -9,7 +9,7 @@
         Delegate ID
       </dt>
       <dd class="nhsuk-summary-list__value searchable-element-candidate-number" data-name-for-sorting="delegate-id">
-        @Model.CandidateNumber
+        @Model.DelegateNumber
       </dd>
       <dd class="nhsuk-summary-list__actions" />
     </div>
@@ -18,6 +18,13 @@
         Professional Registration Number
       </dt>
       <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+      <dd class="nhsuk-summary-list__actions" />
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Registered
+      </dt>
+      <partial name="_SummaryFieldValue" model="@Model.Registered" />
       <dd class="nhsuk-summary-list__actions" />
     </div>
   }
@@ -73,7 +80,7 @@
       Last access
     </dt>
     <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-updated-date">
-      @Model.LastUpdated
+      @Model.LastAccessed
     </dd>
     <dd class="nhsuk-summary-list__actions"></dd>
   </div>

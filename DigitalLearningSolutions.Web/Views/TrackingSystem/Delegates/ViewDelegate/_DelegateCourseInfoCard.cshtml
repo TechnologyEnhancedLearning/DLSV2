@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 @model DelegateCourseInfoViewModel
 
 <div class="nhsuk-expander-group" id="@Model.CustomisationId-card">
@@ -10,9 +10,9 @@
     </summary>
 
     <div class="nhsuk-details__text">
-      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCourseProgressDetails.cshtml" model="@Model"/>
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCourseProgressDetails.cshtml" model="@Model" />
 
-      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCourseProgressButtons.cshtml" model="@Model"/>
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCourseProgressButtons.cshtml" model="@Model" />
     </div>
   </details>
 </div>

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
@@ -40,19 +41,24 @@
             const int centreId = 2;
             const int categoryId = 1;
             const int customisationId = 1;
+            var courseDelegate = new CourseDelegate();
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(
                     new List<CourseAssessmentDetails>
                         { new CourseAssessmentDetails { CustomisationId = customisationId } }
                 );
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
-                .Returns(new List<CourseDelegate> { new CourseDelegate() });
+                .Returns(new List<CourseDelegate> { courseDelegate });
             A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(A<int>._))
                 .Returns(
                     new CourseAdminFields(
                         customisationId,
                         new List<CourseAdminField> { new CourseAdminField(1, "prompt", null) }
                     )
+                );
+            A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourseDelegate(courseDelegate))
+                .Returns(
+                    new List<CourseAdminFieldWithAnswer> { new CourseAdminFieldWithAnswer(1, "prompt", null, "answer") }
                 );
 
             // When
@@ -67,6 +73,7 @@
             {
                 result.Courses.Should().HaveCount(1);
                 result.Delegates.Should().HaveCount(1);
+                result.Delegates.First().CourseAdminFields.Should().HaveCount(1);
                 result.CustomisationId.Should().Be(customisationId);
                 result.CourseAdminFields.Should().HaveCount(1);
             }

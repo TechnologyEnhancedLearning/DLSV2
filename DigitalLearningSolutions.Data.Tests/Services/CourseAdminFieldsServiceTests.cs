@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
@@ -60,7 +61,7 @@
                 1,
                 "System Access Granted",
                 "Test",
-                answer: answer1
+                answer1
             );
             var expected2 = PromptsTestHelper.GetDefaultCourseAdminFieldWithAnswer(
                 2,
@@ -74,6 +75,36 @@
 
             // When
             var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(delegateCourseInfo, 100);
+
+            // Then
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void
+            GetCourseAdminFieldsWithAnswersForCourseDelegate_Returns_Populated_List_of_CourseAdminFieldWithAnswer()
+        {
+            // Given
+            const string answer1 = "ans1";
+            const string answer2 = "ans2";
+            var expected1 = PromptsTestHelper.GetDefaultCourseAdminFieldWithAnswer(
+                1,
+                "System Access Granted",
+                "Test",
+                answer1
+            );
+            var expected2 = PromptsTestHelper.GetDefaultCourseAdminFieldWithAnswer(
+                2,
+                "Priority Access",
+                answer: answer2
+            );
+            var expected = new List<CourseAdminFieldWithAnswer> { expected1, expected2 };
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100))
+                .Returns(PromptsTestHelper.GetDefaultCourseAdminFieldsResult());
+            var courseDelegate = new CourseDelegate { Answer1 = answer1, Answer2 = answer2, CustomisationId = 100 };
+
+            // When
+            var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourseDelegate(courseDelegate);
 
             // Then
             result.Should().BeEquivalentTo(expected);
@@ -202,7 +233,8 @@
                 .Returns(new CourseAdminFieldsResult());
 
             // When
-            var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(customisationId, centreId);
+            var result =
+                courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(customisationId, centreId);
 
             // Then
             using (new AssertionScope())
@@ -243,7 +275,8 @@
                 .Returns(delegateAnswers);
 
             // When
-            var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(customisationId, centreId)
+            var result = courseAdminFieldsService
+                .GetCourseAdminFieldsWithAnswerCountsForCourse(customisationId, centreId)
                 .ToList();
 
             // Then
@@ -293,7 +326,8 @@
                 .Returns(delegateAnswers);
 
             // When
-            var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(customisationId, centreId)
+            var result = courseAdminFieldsService
+                .GetCourseAdminFieldsWithAnswerCountsForCourse(customisationId, centreId)
                 .ToList();
 
             // Then

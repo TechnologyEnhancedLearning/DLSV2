@@ -8,7 +8,7 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
 
     public class SelectedCourseDetailsViewModel : BaseSearchablePageViewModel<CourseDelegate>
     {
@@ -22,7 +22,6 @@
             var currentCourse =
                 courseDelegatesData.Courses.Single(c => c.CustomisationId == courseDelegatesData.CustomisationId);
             Active = currentCourse.Active;
-            var adminFieldsWithOptions = courseDelegatesData.CourseAdminFields.Where(field => field.Options.Count > 0);
             Delegates = result.ItemsToDisplay.Select(
                 d => new DelegateCourseInfoViewModel(
                     d,

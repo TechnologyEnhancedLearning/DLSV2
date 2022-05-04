@@ -1,13 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Progress;
 
     public interface IProgressService
@@ -33,8 +31,8 @@
 
     public class ProgressService : IProgressService
     {
-        private readonly ICourseDataService courseDataService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
+        private readonly ICourseDataService courseDataService;
         private readonly IProgressDataService progressDataService;
 
         public ProgressService(

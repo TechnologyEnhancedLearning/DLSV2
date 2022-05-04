@@ -7,7 +7,7 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
@@ -49,7 +49,7 @@
             using (new AssertionScope())
             {
                 model.Enrolled.Should().Be("01/05/2021 12:12");
-                model.LastUpdated.Should().Be("02/05/2021 13:13");
+                model.LastAccessed.Should().Be("02/05/2021 13:13");
                 model.CompleteBy.Should().Be("03/05/2021 14:14");
                 model.Completed.Should().Be("04/05/2021 15:15");
                 model.Evaluated.Should().Be("05/05/2021 16:16");

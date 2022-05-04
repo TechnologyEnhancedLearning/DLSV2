@@ -19,7 +19,8 @@
             int customisationId
         );
 
-        List<CourseAdminFieldWithAnswer> GetCourseAdminFieldsWithAnswersForCourse(CourseDelegate courseDelegate);
+        List<CourseAdminFieldWithAnswer>
+            GetCourseAdminFieldsWithAnswersForCourseDelegate(CourseDelegate courseDelegate);
 
         public void UpdateAdminFieldForCourse(int customisationId, int promptId, string? options);
 
@@ -76,7 +77,9 @@
             return PopulateCourseAdminFieldWithAnswerListFromResult(result, delegateCourseInfo);
         }
 
-        public List<CourseAdminFieldWithAnswer> GetCourseAdminFieldsWithAnswersForCourse(CourseDelegate courseDelegate)
+        public List<CourseAdminFieldWithAnswer> GetCourseAdminFieldsWithAnswersForCourseDelegate(
+            CourseDelegate courseDelegate
+        )
         {
             var result = GetCourseAdminFieldsResultForCourse(courseDelegate.CustomisationId);
 

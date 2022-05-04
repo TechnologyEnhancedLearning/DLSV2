@@ -85,7 +85,7 @@
 
         private CourseDelegate GetDelegatedCourseAdminFields(CourseDelegate courseDelegate)
         {
-            var coursePrompts = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
+            var coursePrompts = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourseDelegate(
                 courseDelegate
             );
 
