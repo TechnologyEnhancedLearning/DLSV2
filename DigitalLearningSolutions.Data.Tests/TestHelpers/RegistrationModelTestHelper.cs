@@ -12,20 +12,21 @@
             string firstName = "Test",
             string lastName = "User",
             string email = "testuser@email.com",
-            int centre= Centre,
-            string? passwordHash= PasswordHash,
-            bool active=true,
-            bool approved=true,
+            int centre = Centre,
+            string? passwordHash = PasswordHash,
+            bool active = true,
+            bool approved = true,
+            string? professionalRegistrationNumber = "PRN1234",
             int categoryId = 0,
-            bool isCentreAdmin=true,
-            bool isCentreManager=true,
-            bool isSupervisor= false,
-            bool isNominatedSupervisor= false,
-            bool isTrainer= false,
-            bool isContentCreator= false,
-            bool isCmsAdmin= false,
-            bool isCmsManager= false
-            )
+            bool isCentreAdmin = true,
+            bool isCentreManager = true,
+            bool isSupervisor = false,
+            bool isNominatedSupervisor = false,
+            bool isTrainer = false,
+            bool isContentCreator = false,
+            bool isCmsAdmin = false,
+            bool isCmsManager = false
+        )
         {
             return new AdminRegistrationModel(
                 firstName,
@@ -35,6 +36,7 @@
                 passwordHash,
                 active,
                 approved,
+                professionalRegistrationNumber,
                 categoryId,
                 isCentreAdmin,
                 isCentreManager,
@@ -55,6 +57,7 @@
             string? passwordHash = PasswordHash,
             bool active = true,
             bool approved = true,
+            string? professionalRegistrationNumber = "PRN1234",
             int categoryId = 0,
             bool isCentreAdmin = true,
             bool isCentreManager = true,
@@ -74,6 +77,7 @@
                 passwordHash,
                 active,
                 approved,
+                professionalRegistrationNumber,
                 categoryId,
                 isCentreAdmin,
                 isCentreManager,
@@ -103,7 +107,9 @@
             string? aliasId = null,
             DateTime? notifyDate = null,
             bool active = true,
-            bool approved = false)
+            bool approved = false,
+            string? professionalRegistrationNumber = "PRN1234"
+        )
         {
             return new DelegateRegistrationModel(
                 firstName,
@@ -120,6 +126,7 @@
                 answer6,
                 isSelfRegistered,
                 active,
+                professionalRegistrationNumber,
                 approved,
                 aliasId,
                 notifyDate
