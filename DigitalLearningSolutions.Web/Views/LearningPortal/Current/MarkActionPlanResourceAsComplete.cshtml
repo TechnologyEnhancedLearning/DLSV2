@@ -33,6 +33,7 @@
       <input type="hidden" asp-for="ResourceName" />
       <input type="hidden" asp-for="AbsentInLearningHub" />
       <input type="hidden" asp-for="ApiIsAccessible" />
+      <input type="hidden" asp-for="ReturnPageQuery"/>
 
       <vc:date-input id="completion-date"
                      label="Completion date"
@@ -45,6 +46,6 @@
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    <vc:cancel-link asp-controller="LearningPortal" asp-action="Current" />
+    <vc:cancel-link-with-return-page-query asp-controller="LearningPortal" asp-action="Current" return-page-query="@Model.ReturnPageQuery"/>
   </div>
 </div>

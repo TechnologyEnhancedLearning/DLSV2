@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -23,12 +24,12 @@
     [Route("TrackingSystem/Delegates/{delegateId:int}/View")]
     public class ViewDelegateController : Controller
     {
-        private readonly PromptsService promptsService;
+        private readonly IConfiguration config;
         private readonly ICourseDataService courseDataService;
         private readonly ICourseService courseService;
         private readonly IPasswordResetService passwordResetService;
+        private readonly PromptsService promptsService;
         private readonly IUserDataService userDataService;
-        private readonly IConfiguration config;
 
         public ViewDelegateController(
             IUserDataService userDataService,
@@ -97,7 +98,7 @@
             int delegateId,
             int customisationId,
             DelegateAccessRoute accessedVia,
-            int? returnPage
+            ReturnPageQuery? returnPageQuery = null
         )
         {
             if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
@@ -118,7 +119,7 @@
                 course!.CourseName,
                 false,
                 accessedVia,
-                returnPage
+                returnPageQuery
             );
 
             return View("ConfirmRemoveFromCourse", model);
@@ -149,13 +150,19 @@
                 RemovalMethod.RemovedByAdmin
             );
 
-            return model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)
-                ? RedirectToAction(
-                    "Index",
-                    "CourseDelegates",
-                    new { customisationId, page = model.ReturnPage.ToString() }
-                )
-                : RedirectToAction("Index", "ViewDelegate", new { delegateId });
+            if (!model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates))
+            {
+                return RedirectToAction("Index", "ViewDelegate", new { delegateId });
+            }
+
+            var routeData = model.ReturnPageQuery!.Value.ToRouteDataDictionary();
+            routeData.Add("customisationId", customisationId.ToString());
+            return RedirectToAction(
+                "Index",
+                "CourseDelegates",
+                routeData,
+                model.ReturnPageQuery.Value.ItemIdToReturnTo
+            );
         }
 
         [HttpPost]

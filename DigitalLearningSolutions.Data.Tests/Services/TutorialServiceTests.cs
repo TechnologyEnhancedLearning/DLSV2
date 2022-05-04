@@ -1,10 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.TutorialContent;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
@@ -31,8 +34,8 @@
         public void UpdateTutorialsStatuses_calls_data_services_correct_number_of_times()
         {
             // Given
-            var tutorialOne = new Tutorial(1, "Test", true, true);
-            var tutorialTwo = new Tutorial(2, "Case", false, false);
+            var tutorialOne = new Tutorial(1, "Test", true, true, null, null);
+            var tutorialTwo = new Tutorial(2, "Case", false, false, null, null);
             var tutorials = new List<Tutorial> { tutorialOne, tutorialTwo };
             A.CallTo(
                     () => tutorialContentDataService.UpdateOrInsertCustomisationTutorialStatuses(
@@ -72,8 +75,8 @@
         public void GetTutorialsForSection_calls_data_service_and_returns_expected_tutorials()
         {
             // Given
-            var tutorialOne = new Tutorial(1, "Test", true, true);
-            var tutorialTwo = new Tutorial(2, "Case", false, false);
+            var tutorialOne = new Tutorial(1, "Test", true, true, null, null);
+            var tutorialTwo = new Tutorial(2, "Case", false, false, null, null);
             var tutorials = new List<Tutorial> { tutorialOne, tutorialTwo };
 
             A.CallTo(
@@ -89,6 +92,45 @@
                 A.CallTo(() => tutorialContentDataService.GetTutorialsForSection(1))
                     .MustHaveHappenedOnceExactly();
                 result.Should().BeEquivalentTo(tutorials);
+            }
+        }
+
+        [Test]
+        public void GetPublicTutorialSummariesForBrand_calls_data_service_and_returns_expected_tutorials()
+        {
+            // Given
+            var expectedTutorials = Builder<TutorialSummary>.CreateListOfSize(5).All().Build();
+
+            A.CallTo(
+                () => tutorialContentDataService.GetPublicTutorialSummariesByBrandId(1)
+            ).Returns(expectedTutorials);
+
+            // When
+            var result = tutorialService.GetPublicTutorialSummariesForBrand(1);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedTutorials);
+        }
+
+        [Test]
+        public void GetPublicTutorialSummariesForBrand_returns_empty_when_data_service_returns_empty_result()
+        {
+            // Given
+            var expectedTutorials = Enumerable.Empty<TutorialSummary>();
+
+            A.CallTo(
+                () => tutorialContentDataService.GetPublicTutorialSummariesByBrandId(1)
+            ).Returns(expectedTutorials);
+
+            // When
+            var result = tutorialService.GetPublicTutorialSummariesForBrand(1);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => tutorialContentDataService.GetPublicTutorialSummariesByBrandId(1))
+                    .MustHaveHappenedOnceExactly();
+                result.Should().BeEmpty();
             }
         }
     }

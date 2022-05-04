@@ -4,7 +4,9 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -40,10 +42,15 @@
         {
             get
             {
-                yield return new TestCaseData(DelegateAccessRoute.CourseDelegates, "CourseDelegates", "Index")
+                yield return new TestCaseData(
+                        DelegateAccessRoute.CourseDelegates,
+                        "CourseDelegates",
+                        "Index",
+                        ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+                    )
                     .SetName("UnlockCourseProgress_redirects_to_course_delegates_progress");
                 yield return
-                    new TestCaseData(DelegateAccessRoute.ViewDelegate, "ViewDelegate", "Index").SetName(
+                    new TestCaseData(DelegateAccessRoute.ViewDelegate, "ViewDelegate", "Index", null).SetName(
                         "UnlockCourseProgress_redirects_to_view_delegate"
                     );
             }
@@ -184,8 +191,7 @@
             var result = delegateProgressController.EditDelegateCourseAdminField(
                 invalidPromptNumber,
                 progressId,
-                DelegateAccessRoute.CourseDelegates,
-                1
+                DelegateAccessRoute.CourseDelegates
             );
 
             // Then
@@ -272,7 +278,8 @@
         public void UnlockCourseProgress_redirects_to_correct_action_and_unlocks_progress_and_sends_notification(
             DelegateAccessRoute accessedVia,
             string expectedController,
-            string expectedAction
+            string expectedAction,
+            ReturnPageQuery? returnPageQuery
         )
         {
             // Given
@@ -287,7 +294,8 @@
                 progressId,
                 customisationId,
                 delegateId,
-                accessedVia
+                accessedVia,
+                returnPageQuery
             );
 
             // Then

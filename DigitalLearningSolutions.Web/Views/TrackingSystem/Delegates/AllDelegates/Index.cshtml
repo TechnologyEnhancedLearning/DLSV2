@@ -36,7 +36,15 @@
           <a class="nhsuk-button nhsuk-button--secondary heading-button" asp-controller="BulkUpload" asp-action="Index" role="button">
             Upload
           </a>
-          <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
+          <a class="nhsuk-button nhsuk-button--secondary heading-button"
+             id="export"
+             asp-controller="AllDelegates"
+             asp-action="Export"
+             asp-route-searchString="@Model.SearchString"
+             asp-route-sortBy="@Model.SortBy"
+             asp-route-sortDirection="@Model.SortDirection"
+             asp-route-existingFilterString="@Model.ExistingFilterString"
+             role="button">
             Export
           </a>
         </div>
@@ -50,6 +58,7 @@
         </p>
       } else {
         <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
+        <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
 
         <div id="searchable-elements">
           @foreach (var delegateModel in Model.Delegates) {
@@ -57,9 +66,8 @@
           }
         </div>
       }
-      @if (Model.TotalPages > 1) {
-        <partial name="SearchablePage/_Pagination" model="Model" />
-      }
+
+      <partial name="SearchablePage/_Pagination" model="Model" />
     </div>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
@@ -69,7 +77,6 @@
 </div>
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-  @section scripts {
-    <script src="@Url.Content("~/js/trackingSystem/allDelegates.js")" asp-append-version="true"></script>
-  }
-}
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/allDelegates.js")" asp-append-version="true"></script>
+}}

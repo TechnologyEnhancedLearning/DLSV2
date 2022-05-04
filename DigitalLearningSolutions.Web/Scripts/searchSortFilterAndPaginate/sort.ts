@@ -49,6 +49,8 @@ export function getSortValue(
       return parseDateAndTime(getElementText(searchableElement, 'complete-by-date'));
     case 'Completed':
       return parseDateAndTime(getElementText(searchableElement, 'completed-date'));
+    case 'CreatedDate':
+      return parseDateAndTime(getElementText(searchableElement, 'created-date'));
     case 'HasDiagnostic,DiagnosticScore':
       return parseInt(getElementText(searchableElement, 'diagnostic-score').split('/')[0] || '-1', 10);
     case 'IsAssessed,Passes':
@@ -65,9 +67,12 @@ export function getSortValue(
       return parseInt(getElementText(searchableElement, 'courses-count'), 10);
     case 'InProgressCount':
       return parseInt(getElementText(searchableElement, 'in-progress-count'), 10);
+    case 'CompletedCount':
+      return parseInt(getElementText(searchableElement, 'completed-count'), 10);
     case 'PassRate':
       return parseFloat(getElementText(searchableElement, 'pass-rate'));
     case 'CourseName':
+    case 'ApplicationName':
       return getElementText(searchableElement, 'course-name').toLocaleLowerCase();
     case 'Weighting':
       return parseInt(getElementText(searchableElement, 'faq-weighting'), 10);
@@ -81,6 +86,8 @@ export function getSortValue(
       return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'learning-time'));
     case 'AssessmentScore':
       return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'assessment-score'));
+    case 'PopularityRating':
+      return parseFloat(getElementText(searchableElement, 'popularity-score'));
     default:
       return '';
   }
@@ -103,7 +110,7 @@ function parseNonNegativeIntOrNotApplicable(value: string): number {
 
 export function getSortBy(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-by');
-  return element?.value ?? 'Name';
+  return element?.value ?? 'SearchableName';
 }
 
 export function getSortDirection(): string {

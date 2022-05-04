@@ -6,9 +6,9 @@
 <link rel="stylesheet" href="@Url.Content("~/css/support/faqs.css")" asp-append-version="true">
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-  @section scripts {
-    <script src="@Url.Content("~/js/support/faqs.js")" asp-append-version="true"></script>
-  }
+@section scripts {
+  <script src="@Url.Content("~/js/support/faqs.js")" asp-append-version="true"></script>
+}
 }
 
 @{
@@ -41,6 +41,7 @@
         </p>
       } else {
         <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+        <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
 
         <div id="searchable-elements">
           @foreach (var faq in Model.Faqs) {
@@ -48,9 +49,8 @@
           }
         </div>
       }
-      @if (Model.TotalPages > 1) {
-        <partial name="SearchablePage/_Pagination" model="Model" />
-      }
+
+      <partial name="SearchablePage/_Pagination" model="Model" />
     </div>
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/Support/Shared/_SupportSideNavMenu.cshtml" model="@Model" />

@@ -12,7 +12,11 @@
   @foreach (var levelDescriptor in Model.LevelDescriptors)
   {
     <div class="nhsuk-radios__item">
-      <input class="nhsuk-radios__input" name="[@ViewData["index"]].Result" id="radio-@Model.Id-@levelDescriptor.LevelValue" checked="@(Model.Result == @levelDescriptor.LevelValue)" type="radio" value="@levelDescriptor.LevelValue" aria-describedby="radio-@Model.Id-@levelDescriptor.LevelValue-item-hint">
+      <input class="nhsuk-radios__input select-all-checkbox"
+             name="[@ViewData["index"]].Result" id="radio-@Model.Id-@levelDescriptor.LevelValue"
+             data-group="group@(Model.Id)"
+             checked="@(Model.Result == @levelDescriptor.LevelValue)" type="radio" value="@levelDescriptor.LevelValue"
+             aria-describedby="radio-@Model.Id-@levelDescriptor.LevelValue-item-hint">
       <label class="nhsuk-label nhsuk-radios__label" for="radio-@Model.Id-@levelDescriptor.LevelValue">
         @levelDescriptor.LevelLabel
       </label>
@@ -21,5 +25,12 @@
       </div>
     </div>
   }
+</div>
+<div name="clearButton" class="js-only-inline nhsuk-u-margin-top-1 nhsuk-u-margin-bottom-3">
+  <a class="deselect-all" href="javascript:void(0);"
+     data-group="group@(Model.Id)"
+     name="selectAll" value="true">
+    Clear selection
+  </a>
 </div>
 <input hidden name="[@ViewData["index"]].Id" value="@Model.Id" />

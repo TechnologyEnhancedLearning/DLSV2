@@ -1,0 +1,15 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
+@model IBaseSearchablePageViewModel
+
+<input type="hidden" name="searchString" value="@Model.SearchString" />
+@if (Model.FilterEnabled)
+{
+  <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
+}
+@foreach (var (key, value) in Model.RouteData)
+{
+  <input type="hidden" name="@key" value="@value" />
+}
+<input type="hidden" name="sortBy" value="@Model.SortBy" />
+<input type="hidden" name="sortDirection" value="@Model.SortDirection" />
+<input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />

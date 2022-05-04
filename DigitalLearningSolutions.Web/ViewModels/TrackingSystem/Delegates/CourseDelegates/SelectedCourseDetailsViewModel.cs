@@ -28,7 +28,7 @@
                         d,
                         courseDelegatesData.CourseAdminFields
                     );
-                    return new SearchableCourseDelegateViewModel(d, adminFields, adminFieldsWithOptions);
+                    return new SearchableCourseDelegateViewModel(d, adminFields, adminFieldsWithOptions, result.GetReturnPageQuery($"{d.DelegateId}-card"));
                 }
             );
             Filters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(

@@ -7,7 +7,6 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Groups - Delete group";
-  var cancelLinkData = new Dictionary<string, string> { { "page", Model.ReturnPage.ToString() } };
 }
 
 <div class="nhsuk-grid-row">
@@ -35,7 +34,7 @@
       <input type="hidden" asp-for="GroupLabel" />
       <input type="hidden" asp-for="DelegateCount" />
       <input type="hidden" asp-for="CourseCount" />
-      <input type="hidden" asp-for="ReturnPage" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
 
       <p>
         This group has @Model.DelegateCount delegate@(DisplayStringHelper.GetPluralitySuffix(Model.DelegateCount))
@@ -54,6 +53,6 @@
       <button class="nhsuk-button delete-button" type="submit">Delete group</button>
     </form>
 
-    <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+    <vc:cancel-link-with-return-page-query asp-controller="DelegateGroups" asp-action="Index" return-page-query="@Model.ReturnPageQuery" />
   </div>
 </div>

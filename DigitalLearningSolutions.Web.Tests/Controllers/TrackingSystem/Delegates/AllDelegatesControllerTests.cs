@@ -20,6 +20,7 @@
         private const string CookieName = "DelegateFilter";
         private AllDelegatesController allDelegatesController = null!;
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
+        private IDelegateDownloadFileService delegateDownloadFileService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
@@ -31,6 +32,7 @@
         public void Setup()
         {
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
+            delegateDownloadFileService = A.Fake<IDelegateDownloadFileService>();
             promptsHelper = new PromptsService(centreRegistrationPromptsService);
             userDataService = A.Fake<IUserDataService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
@@ -42,6 +44,7 @@
             const string cookieValue = "ActiveStatus|Active|false";
 
             allDelegatesController = new AllDelegatesController(
+                    delegateDownloadFileService,
                     userDataService,
                     promptsHelper,
                     jobGroupsDataService,
@@ -83,6 +86,31 @@
                     .MustHaveHappened();
                 result.Should().BeViewResult().WithDefaultViewName();
             }
+        }
+
+        [Test]
+        public void Export_passes_in_used_parameters_to_file()
+        {
+            // Given
+            const string searchString = "Frame by Frame";
+            const string sortBy = "Discipline";
+            const string sortDirection = "The Sheltering Sky";
+            const string filters = "Indiscipline";
+            var centreId = allDelegatesController.User.GetCentreId();
+
+            // When
+            allDelegatesController.Export(searchString, sortBy, sortDirection, filters);
+
+            // Then
+            A.CallTo(
+                () => delegateDownloadFileService.GetAllDelegatesFileForCentre(
+                    centreId,
+                    searchString,
+                    sortBy,
+                    sortDirection,
+                    filters
+                )
+            ).MustHaveHappenedOnceExactly();
         }
     }
 }

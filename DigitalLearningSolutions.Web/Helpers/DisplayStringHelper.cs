@@ -79,11 +79,9 @@
             return Regex.Replace(input, "[^ a-zA-Z0-9]", replacement);
         }
 
-        public static string GetPrnDisplayString(bool hasBeenPromptedForPrn, string? professionalRegistrationNumber)
+        public static string GetTimeStringFromMinutes(int minutes)
         {
-            return hasBeenPromptedForPrn
-                ? professionalRegistrationNumber ?? "Not professionally registered"
-                : "Not yet provided";
+            return minutes < 60 ? $"{minutes}m" : $"{minutes / 60}h {minutes % 60}m";
         }
     }
 }

@@ -14,7 +14,7 @@
             Dictionary<string, string> aspAllRouteData
         )
         {
-            var model = new SideMenuLinkViewModel(aspController, aspAction, linkText, isCurrentPage, aspAllRouteData);
+            var model = new SecondaryNavMenuLinkViewModel(aspController, aspAction, linkText, isCurrentPage, aspAllRouteData);
 
             return View(model);
         }

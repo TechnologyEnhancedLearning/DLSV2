@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -15,7 +16,7 @@
             DelegateUserCard delegateUser,
             IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts,
             IEnumerable<CentreRegistrationPrompt> promptsWithOptions,
-            int page
+            ReturnPageQuery? returnPageQuery
         )
         {
             DelegateInfo = new DelegateInfoViewModel(delegateUser, delegateRegistrationPrompts);
@@ -24,7 +25,7 @@
                 DelegateInfo.DelegateRegistrationPrompts,
                 promptsWithOptions
             );
-            Page = page;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public DelegateInfoViewModel DelegateInfo { get; set; }
@@ -37,6 +38,6 @@
 
         public Dictionary<int, string> RegistrationPromptFilters { get; set; }
 
-        public int Page { get; set; }
+        public ReturnPageQuery? ReturnPageQuery { get; set; }
     }
 }

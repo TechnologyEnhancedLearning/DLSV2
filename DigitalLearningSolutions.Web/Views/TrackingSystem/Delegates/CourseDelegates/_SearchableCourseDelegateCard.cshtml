@@ -99,11 +99,13 @@
               <div hidden data-filter-value="@Model.AdminFieldFilters[delegateCourseAdminField.PromptNumber]"></div>
             }
             <dd class="nhsuk-summary-list__actions">
-              <a asp-controller="DelegateProgress"
+              <a data-return-page-enabled="true"
+                 asp-controller="DelegateProgress"
                  asp-action="EditDelegateCourseAdminField"
                  asp-route-progressId="@Model.ProgressId"
                  asp-route-promptNumber="@delegateCourseAdminField.PromptNumber"
-                 asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates">
+                 asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates"
+                 asp-route-returnPageQuery="@Model.ReturnPageQuery">
                 Edit<span class="nhsuk-u-visually-hidden"> @delegateCourseAdminField.Prompt</span>
               </a>
             </dd>
@@ -116,17 +118,19 @@
          asp-controller="DelegateProgress"
          asp-action="Index"
          asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates">
+         asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates" >
         View progress
       </a>
       @if (Model.Locked) {
         <a class="nhsuk-button nhsuk-button--secondary expander-card__button"
            role="button"
+           data-return-page-enabled="true"
            asp-controller="DelegateProgress"
            asp-action="UnlockProgress"
            asp-route-progressId="@Model.ProgressId"
            asp-route-customisationId="@Model.CustomisationId"
-           asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates">
+           asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates"
+           asp-route-returnPageQuery="@Model.ReturnPageQuery">
           Unlock progress
         </a>
       }
@@ -134,11 +138,13 @@
       @if (string.IsNullOrEmpty(Model.Completed) && Model.RemovedDate == null) {
         <a class="nhsuk-button delete-button expander-card__button"
            role="button"
+           data-return-page-enabled="true"
            asp-controller="ViewDelegate"
            asp-action="ConfirmRemoveFromCourse"
            asp-route-delegateId="@Model.DelegateId"
            asp-route-customisationId="@Model.CustomisationId"
-           asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates">
+           asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates"
+           asp-route-returnPageQuery="@Model.ReturnPageQuery">
           Remove from course
         </a>
       }

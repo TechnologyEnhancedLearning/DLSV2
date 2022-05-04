@@ -1,0 +1,63 @@
+﻿@use "nhsuk-frontend/packages/core/all" as *;
+@use "../shared/cardWithButtons";
+@use "../shared/searchableElements/searchableElements";
+
+.brands__body-text {
+  margin-top: -1em;
+}
+
+.brands__access {
+  margin-top: 1em;
+}
+
+.brands__top-horizontal-dash {
+  @include mq($until: tablet) {
+    border-top: 1px solid $nhsuk-border-color;
+    margin-top: nhsuk-spacing(3);
+  }
+}
+
+.responsive-header {
+  @include mq($from: desktop) {
+    display: none;
+  }
+}
+
+.header-row {
+  border-top: 1px solid $nhsuk-border-color;
+  border-bottom: 1px solid $nhsuk-border-color;
+  margin-top: nhsuk-spacing(3);
+  margin-bottom: nhsuk-spacing(3);
+  display: flex;
+
+  @include mq($until: desktop) {
+    border-bottom: 0;
+  }
+}
+
+.header-row-content {
+  margin-top: nhsuk-spacing(2);
+
+  @include mq($until: desktop) {
+    display: none;
+  }
+}
+
+.value-row {
+  border-bottom: 1px solid $nhsuk-border-color;
+  margin-bottom: nhsuk-spacing(3);
+  display: flex;
+
+  @include mq($until: desktop) {
+    flex-direction: column;
+  }
+}
+
+.value {
+  float: left;
+  width: 50%;
+
+  @include mq($until: desktop) {
+    width: 100%;
+  }
+}
