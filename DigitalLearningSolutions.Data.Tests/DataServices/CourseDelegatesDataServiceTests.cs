@@ -31,10 +31,11 @@
                 CompleteByDate = null,
                 DelegateId = 32926,
                 EmailAddress = "erpock.hs@5bntu",
-                Enrolled = new DateTime(2012, 07, 02, 13, 30, 37, 807),
+                Registered = new DateTime(2012, 7, 2, 13, 30, 37, 807),
+                Enrolled = new DateTime(2012, 7, 31, 10, 9, 34, 780),
                 FirstName = "xxxxx",
                 LastName = "xxxx",
-                LastUpdated = new DateTime(2012, 07, 31, 10, 18, 39, 993),
+                LastUpdated = new DateTime(2012, 7, 31, 10, 18, 39, 993),
                 Locked = false,
                 ProgressId = 18395,
                 RemovedDate = null,
@@ -46,6 +47,10 @@
                 Answer1 = string.Empty,
                 Answer2 = string.Empty,
                 Answer3 = string.Empty,
+                IsAssessed = true,
+                EnrolmentMethodId = 1,
+                LoginCount = 1,
+                DiagnosticScore = 0,
             };
 
             // When

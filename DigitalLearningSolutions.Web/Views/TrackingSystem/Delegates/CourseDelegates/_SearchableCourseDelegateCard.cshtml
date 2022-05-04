@@ -1,183 +1,22 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
-@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
-@model SearchableCourseDelegateViewModel
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
+@model DelegateCourseInfoViewModel
 
 <div class="searchable-element nhsuk-panel" id="@Model.DelegateId-card">
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text word-break" id="@Model.DelegateId-name" data-name-for-sorting="name">
-        <span class="searchable-element-title">@Model.TitleName</span>
+        <span class="searchable-element-title">@Model.CourseDelegatesTitleName</span>
         <span class="searchable-element-email">@DisplayStringHelper.GetEmailDisplayString(Model.Email)</span>
       </span>
     </summary>
-    <div class="nhsuk-details__text">
 
+    <div class="nhsuk-details__text">
       <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
 
-      <dl class="nhsuk-summary-list details-list-with-button">
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Delegate ID
-          </dt>
-          <dd class="nhsuk-summary-list__value searchable-element-candidate-number" data-name-for-sorting="delegate-id">
-            @Model.CandidateNumber
-          </dd>
-          <dd class="nhsuk-summary-list__actions" />
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Professional Registration Number
-          </dt>
-          <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
-          <dd class="nhsuk-summary-list__actions" />
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Supervisor
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.Supervisor
-          </dd>
-          <dd class="nhsuk-summary-list__actions">
-            <a asp-controller="DelegateProgress"
-               asp-action="EditSupervisor"
-               asp-route-progressId="@Model.ProgressId"
-               asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates">
-              Edit<span class="nhsuk-u-visually-hidden"> supervisor</span>
-            </a>
-          </dd>
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Last access
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-updated-date">
-            @Model.LastUpdated
-          </dd>
-          <dd class="nhsuk-summary-list__actions" />
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Enrolled
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-name-for-sorting="enrolled-date">
-            @Model.Enrolled
-          </dd>
-          <dd class="nhsuk-summary-list__actions" />
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Complete by
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
-            @(Model.CompleteBy ?? "-")
-          </dd>
-          <dd class="nhsuk-summary-list__actions">
-            <a asp-controller="DelegateProgress"
-               asp-action="EditCompleteByDate"
-               asp-route-progressId="@Model.ProgressId"
-               asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate">
-              Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
-            </a>
-          </dd>
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Completed
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-name-for-sorting="completed-date">
-            @(Model.Completed ?? "-")
-          </dd>
-          <dd class="nhsuk-summary-list__actions">
-            <a asp-controller="DelegateProgress"
-               asp-action="EditCompletionDate"
-               asp-route-progressId="@Model.ProgressId"
-               asp-route-accessedVia="@DelegateAccessRoute.ViewDelegate">
-              Edit<span class="nhsuk-u-visually-hidden"> completed date</span>
-            </a>
-          </dd>
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Removed
-          </dt>
-          <partial name="_SummaryFieldValue" model="@Model.RemovedDate" />
-          <dd class="nhsuk-summary-list__actions" />
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Pass rate
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-name-for-sorting="pass-rate">
-            @Model.PassRate%
-          </dd>
-          <dd class="nhsuk-summary-list__actions" />
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Progress locked
-          </dt>
-          <partial name="_SummaryBooleanField" model="Model.Locked" />
-          <dd class="nhsuk-summary-list__actions" />
-        </div>
-        @foreach (var delegateCourseAdminField in Model.DelegateCourseAdminFields) {
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">@delegateCourseAdminField.Prompt</dt>
-            <partial name="_SummaryFieldValue" model="@delegateCourseAdminField.Answer" />
-            @if (Model.AdminFieldFilters.ContainsKey(delegateCourseAdminField.PromptNumber)) {
-              <div hidden data-filter-value="@Model.AdminFieldFilters[delegateCourseAdminField.PromptNumber]"></div>
-            }
-            <dd class="nhsuk-summary-list__actions">
-              <a data-return-page-enabled="true"
-                 asp-controller="DelegateProgress"
-                 asp-action="EditDelegateCourseAdminField"
-                 asp-route-progressId="@Model.ProgressId"
-                 asp-route-promptNumber="@delegateCourseAdminField.PromptNumber"
-                 asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates"
-                 asp-route-returnPageQuery="@Model.ReturnPageQuery">
-                Edit<span class="nhsuk-u-visually-hidden"> @delegateCourseAdminField.Prompt</span>
-              </a>
-            </dd>
-          </div>
-        }
-      </dl>
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCourseProgressDetails.cshtml" model="@Model" />
 
-      <a class="nhsuk-button expander-card__button"
-         role="button"
-         asp-controller="DelegateProgress"
-         asp-action="Index"
-         asp-route-progressId="@Model.ProgressId"
-         asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates" >
-        View progress
-      </a>
-      @if (Model.Locked) {
-        <a class="nhsuk-button nhsuk-button--secondary expander-card__button"
-           role="button"
-           data-return-page-enabled="true"
-           asp-controller="DelegateProgress"
-           asp-action="UnlockProgress"
-           asp-route-progressId="@Model.ProgressId"
-           asp-route-customisationId="@Model.CustomisationId"
-           asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates"
-           asp-route-returnPageQuery="@Model.ReturnPageQuery">
-          Unlock progress
-        </a>
-      }
-
-      @if (string.IsNullOrEmpty(Model.Completed) && Model.RemovedDate == null) {
-        <a class="nhsuk-button delete-button expander-card__button"
-           role="button"
-           data-return-page-enabled="true"
-           asp-controller="ViewDelegate"
-           asp-action="ConfirmRemoveFromCourse"
-           asp-route-delegateId="@Model.DelegateId"
-           asp-route-customisationId="@Model.CustomisationId"
-           asp-route-accessedVia="@DelegateAccessRoute.CourseDelegates"
-           asp-route-returnPageQuery="@Model.ReturnPageQuery">
-          Remove from course
-        </a>
-      }
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateCourseProgressButtons.cshtml" model="@Model" />
     </div>
   </details>
 </div>

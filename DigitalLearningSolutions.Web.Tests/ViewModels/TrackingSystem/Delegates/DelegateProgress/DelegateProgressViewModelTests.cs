@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Progress;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using FluentAssertions;
@@ -26,7 +27,6 @@
                 SupervisorForename = null,
                 SupervisorSurname = null,
                 SupervisorAdminActive = true,
-                EnrolledByAdminId = null,
                 EnrolledByForename = null,
                 EnrolledBySurname = null,
                 EnrolledByAdminActive = true,
@@ -41,7 +41,8 @@
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
                 ),
-                "www.test.com"
+                "www.test.com",
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
             var fullNamesDelegateInfo = new DelegateCourseInfo
             {
@@ -52,7 +53,6 @@
                 SupervisorForename = "Tony",
                 SupervisorSurname = "Iommi",
                 SupervisorAdminActive = true,
-                EnrolledByAdminId = 1,
                 EnrolledByForename = "Geezer",
                 EnrolledBySurname = "Butler",
                 EnrolledByAdminActive = true,
@@ -67,7 +67,8 @@
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
                 ),
-                "www.test.com"
+                "www.test.com",
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
             // Then
@@ -75,10 +76,8 @@
             {
                 missingNamesViewModel.DelegateName.Should().Be("Osbourne");
                 missingNamesViewModel.Supervisor.Should().Be("None");
-                missingNamesViewModel.EnrolledByFullName.Should().BeNull();
                 fullNamesViewModel.DelegateName.Should().Be("Ozzy Osbourne");
                 fullNamesViewModel.Supervisor.Should().Be("Tony Iommi");
-                fullNamesViewModel.EnrolledByFullName.Should().Be("Geezer Butler");
             }
         }
 
@@ -102,7 +101,8 @@
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
                 ),
-                "www.test.com"
+                "www.test.com",
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
             // Then
@@ -110,7 +110,7 @@
         }
 
         [Test]
-        [TestCase(1, "Self")]
+        [TestCase(1, "Self enrolled")]
         [TestCase(2, "Enrolled by Ronnie Dio")]
         [TestCase(3, "Group")]
         [TestCase(4, "System")]
@@ -120,7 +120,6 @@
             var delegateInfo = new DelegateCourseInfo
             {
                 EnrolmentMethodId = enrolmentMethodId,
-                EnrolledByAdminId = 1,
                 EnrolledByForename = "Ronnie",
                 EnrolledBySurname = "Dio",
                 EnrolledByAdminActive = true,
@@ -135,7 +134,8 @@
                     new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
                 ),
-                "www.test.com"
+                "www.test.com",
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
             // Then

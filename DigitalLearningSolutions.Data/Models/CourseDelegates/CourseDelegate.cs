@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CourseDelegates
 {
     using System;
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class CourseDelegate : BaseSearchableItem
@@ -17,6 +19,7 @@
         public int ProgressId { get; set; }
         public bool Locked { get; set; }
         public DateTime LastUpdated { get; set; }
+        public DateTime Registered { get; set; }
         public DateTime Enrolled { get; set; }
         public DateTime? CompleteByDate { get; set; }
         public DateTime? RemovedDate { get; set; }
@@ -32,6 +35,15 @@
         public string? SupervisorForename { get; set; }
         public string? SupervisorSurname { get; set; }
         public bool? SupervisorAdminActive { get; set; }
+        public bool IsAssessed { get; set; }
+        public DateTime? Evaluated { get; set; }
+        public int EnrolmentMethodId { get; set; }
+        public string? EnrolledByForename { get; set; }
+        public string? EnrolledBySurname { get; set; }
+        public bool? EnrolledByAdminActive { get; set; }
+        public int LoginCount { get; set; }
+        public int LearningTime { get; set; }
+        public int? DiagnosticScore { get; set; }
 
         public string FullNameForSearchingSorting => NameQueryHelper.GetSortableFullName(FirstName, LastName);
 
@@ -46,6 +58,9 @@
         }
 
         public override string?[] SearchableContent => new[] { SearchableName, EmailAddress, CandidateNumber };
+
+        public List<CourseAdminFieldWithAnswer> CourseAdminFields { get; set; } =
+            new List<CourseAdminFieldWithAnswer>();
 
         public static string GetPropertyNameForAdminFieldAnswer(int coursePromptNumber)
         {

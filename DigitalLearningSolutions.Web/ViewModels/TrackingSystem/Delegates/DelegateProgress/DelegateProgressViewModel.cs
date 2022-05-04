@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Progress;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -15,10 +16,10 @@
         public DelegateProgressViewModel(
             DelegateAccessRoute accessedVia,
             DetailedCourseProgress details,
-            string currentSystemBaseUrl
-        ) : base(details)
+            string currentSystemBaseUrl,
+            ReturnPageQuery? returnPageQuery = null
+        ) : base(details, accessedVia, returnPageQuery)
         {
-            AccessedVia = accessedVia;
             DelegateName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
                 details.DelegateCourseInfo.DelegateFirstName,
                 details.DelegateCourseInfo.DelegateLastName
@@ -48,8 +49,6 @@
 
             Sections = details.Sections.Select(s => new SectionProgressViewModel(s));
         }
-
-        public DelegateAccessRoute AccessedVia { get; set; }
 
         public string DelegateName { get; set; }
         public string? DelegateEmail { get; set; }

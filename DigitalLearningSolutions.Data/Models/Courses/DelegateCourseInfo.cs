@@ -68,7 +68,6 @@
             Evaluated = evaluated;
             RemovedDate = removedDate;
             EnrolmentMethodId = enrolmentMethodId;
-            EnrolledByAdminId = enrolledByAdminId;
             EnrolledByForename = enrolledByForename;
             EnrolledBySurname = enrolledBySurname;
             EnrolledByAdminActive = enrolledByAdminActive;
@@ -107,7 +106,6 @@
         public DateTime? Evaluated { get; set; }
         public DateTime? RemovedDate { get; set; }
         public int EnrolmentMethodId { get; set; }
-        public int? EnrolledByAdminId { get; set; }
         public string? EnrolledByForename { get; set; }
         public string? EnrolledBySurname { get; set; }
         public bool? EnrolledByAdminActive { get; set; }

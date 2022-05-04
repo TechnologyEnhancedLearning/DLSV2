@@ -47,13 +47,23 @@
                         c.Active,
                         c.HasBeenPromptedForPrn,
                         c.ProfessionalRegistrationNumber,
+                        c.DateRegistered AS Registered,
+                        p.FirstSubmittedTime AS Enrolled,
                         p.ProgressID,
                         p.PLLocked AS Locked,
                         p.SubmittedTime AS LastUpdated,
-                        c.DateRegistered AS Enrolled,
                         p.CompleteByDate,
                         p.RemovedDate,
                         p.Completed,
+                        p.Evaluated AS Evaluated,
+                        p.LoginCount,
+                        p.Duration AS LearningTime,
+                        p.DiagnosticScore,
+                        p.EnrollmentMethodID AS EnrolmentMethodId,
+                        auEnrolledBy.AdminID AS EnrolledByAdminId,
+                        auEnrolledBy.Forename AS EnrolledByForename,
+                        auEnrolledBy.Surname AS EnrolledBySurname,
+                        auEnrolledBy.Active AS EnrolledByAdminActive,
                         p.CustomisationId,
                         p.Answer1,
                         p.Answer2,
@@ -63,11 +73,13 @@
                         auSupervisor.AdminID AS SupervisorAdminId,
                         auSupervisor.Forename AS SupervisorForename,
                         auSupervisor.Surname AS SupervisorSurname,
-                        auSupervisor.Active AS SupervisorAdminActive
+                        auSupervisor.Active AS SupervisorAdminActive,
+                        cu.IsAssessed
                     FROM Candidates AS c
                     INNER JOIN Progress AS p ON p.CandidateID = c.CandidateID
                     INNER JOIN Customisations cu ON cu.CustomisationID = p.CustomisationID
                     LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = p.SupervisorAdminId
+                    LEFT OUTER JOIN AdminUsers auEnrolledBy ON auEnrolledBy.AdminID = p.EnrolledByAdminID
                     WHERE c.CentreID = @centreId
                         AND p.CustomisationID = @customisationId",
                 new { customisationId, centreId }

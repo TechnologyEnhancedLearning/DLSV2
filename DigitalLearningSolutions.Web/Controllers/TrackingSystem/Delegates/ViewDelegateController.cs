@@ -122,7 +122,7 @@
                 returnPageQuery
             );
 
-            return View("ConfirmRemoveFromCourse", model);
+            return View(model);
         }
 
         [HttpPost]

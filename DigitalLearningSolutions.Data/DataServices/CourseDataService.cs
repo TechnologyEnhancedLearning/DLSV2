@@ -145,7 +145,6 @@ namespace DigitalLearningSolutions.Data.DataServices
                 pr.Evaluated AS Evaluated,
                 pr.RemovedDate,
                 pr.EnrollmentMethodID AS EnrolmentMethodId,
-                auEnrolledBy.AdminID AS EnrolledByAdminId,
                 auEnrolledBy.Forename AS EnrolledByForename,
                 auEnrolledBy.Surname AS EnrolledBySurname,
                 auEnrolledBy.Active AS EnrolledByAdminActive,

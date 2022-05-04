@@ -5,6 +5,7 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using Microsoft.Extensions.Logging;
@@ -17,6 +18,8 @@
             DelegateCourseInfo delegateCourseInfo,
             int customisationId
         );
+
+        List<CourseAdminFieldWithAnswer> GetCourseAdminFieldsWithAnswersForCourse(CourseDelegate courseDelegate);
 
         public void UpdateAdminFieldForCourse(int customisationId, int promptId, string? options);
 
@@ -71,6 +74,13 @@
             var result = GetCourseAdminFieldsResultForCourse(customisationId);
 
             return PopulateCourseAdminFieldWithAnswerListFromResult(result, delegateCourseInfo);
+        }
+
+        public List<CourseAdminFieldWithAnswer> GetCourseAdminFieldsWithAnswersForCourse(CourseDelegate courseDelegate)
+        {
+            var result = GetCourseAdminFieldsResultForCourse(courseDelegate.CustomisationId);
+
+            return PopulateCourseAdminFieldWithAnswerListFromResult(result, courseDelegate);
         }
 
         public void UpdateAdminFieldForCourse(int customisationId, int promptId, string? options)
@@ -304,6 +314,54 @@
                 result.CourseAdminField3Prompt,
                 result.CourseAdminField3Options,
                 delegateCourseInfo.Answer3
+            );
+            if (prompt3 != null)
+            {
+                list.Add(prompt3);
+            }
+
+            return list;
+        }
+
+        private List<CourseAdminFieldWithAnswer> PopulateCourseAdminFieldWithAnswerListFromResult(
+            CourseAdminFieldsResult? result,
+            CourseDelegate courseDelegate
+        )
+        {
+            var list = new List<CourseAdminFieldWithAnswer>();
+
+            if (result == null)
+            {
+                return list;
+            }
+
+            var prompt1 = PromptHelper.PopulateCourseAdminFieldWithAnswer(
+                1,
+                result.CourseAdminField1Prompt,
+                result.CourseAdminField1Options,
+                courseDelegate.Answer1
+            );
+            if (prompt1 != null)
+            {
+                list.Add(prompt1);
+            }
+
+            var prompt2 = PromptHelper.PopulateCourseAdminFieldWithAnswer(
+                2,
+                result.CourseAdminField2Prompt,
+                result.CourseAdminField2Options,
+                courseDelegate.Answer2
+            );
+            if (prompt2 != null)
+            {
+                list.Add(prompt2);
+            }
+
+            var prompt3 = PromptHelper.PopulateCourseAdminFieldWithAnswer(
+                3,
+                result.CourseAdminField3Prompt,
+                result.CourseAdminField3Options,
+                courseDelegate.Answer3
             );
             if (prompt3 != null)
             {

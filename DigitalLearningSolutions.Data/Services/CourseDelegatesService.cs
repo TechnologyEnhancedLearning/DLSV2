@@ -63,16 +63,35 @@
                 ? GetCourseDelegatesForCentre(currentCustomisationId.Value, centreId)
                 : new List<CourseDelegate>();
 
+            var courseDelegatesWithAdminFields = courseDelegates.Select(GetDelegatedCourseAdminFields);
+
             var courseAdminFields = currentCustomisationId.HasValue
                 ? courseAdminFieldsService.GetCourseAdminFieldsForCourse(currentCustomisationId.Value).AdminFields
                 : new List<CourseAdminField>();
 
-            return new CourseDelegatesData(currentCustomisationId, orderedCourses, courseDelegates, courseAdminFields);
+            return new CourseDelegatesData(
+                currentCustomisationId,
+                orderedCourses,
+                courseDelegatesWithAdminFields,
+                courseAdminFields
+            );
         }
 
         public IEnumerable<CourseDelegate> GetCourseDelegatesForCentre(int customisationId, int centreId)
         {
-            return courseDelegatesDataService.GetDelegatesOnCourse(customisationId, centreId);
+            return courseDelegatesDataService.GetDelegatesOnCourse(customisationId, centreId)
+                .Select(GetDelegatedCourseAdminFields);
+        }
+
+        private CourseDelegate GetDelegatedCourseAdminFields(CourseDelegate courseDelegate)
+        {
+            var coursePrompts = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
+                courseDelegate
+            );
+
+            courseDelegate.CourseAdminFields = coursePrompts;
+
+            return courseDelegate;
         }
     }
 }

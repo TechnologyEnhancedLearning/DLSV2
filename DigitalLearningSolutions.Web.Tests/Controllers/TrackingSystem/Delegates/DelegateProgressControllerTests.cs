@@ -31,7 +31,7 @@
         {
             get
             {
-                yield return new TestCaseData(DelegateAccessRoute.CourseDelegates, null, "Index")
+                yield return new TestCaseData(DelegateAccessRoute.CourseDelegates, "CourseDelegates", "Index")
                     .SetName("EditPost_redirects_to_course_delegates_progress");
                 yield return
                     new TestCaseData(DelegateAccessRoute.ViewDelegate, "ViewDelegate", "Index").SetName(
@@ -48,7 +48,7 @@
                         DelegateAccessRoute.CourseDelegates,
                         "CourseDelegates",
                         "Index",
-                        ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+                        ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: "1-card")
                     )
                     .SetName("UnlockCourseProgress_redirects_to_course_delegates_progress");
                 yield return
@@ -93,15 +93,21 @@
             // Given
             const int progressId = 1;
             const int supervisorId = 1;
-            var formData = new EditSupervisorFormData { SupervisorId = supervisorId };
+            const string cardId = "1-card";
+            var formData = new EditSupervisorFormData
+            {
+                SupervisorId = supervisorId,
+                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: cardId),
+            };
             A.CallTo(() => progressService.UpdateSupervisor(progressId, supervisorId)).DoesNothing();
 
             // When
             var result = delegateProgressController.EditSupervisor(formData, progressId, accessedVia);
 
             // Then
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? cardId : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
-                .WithActionName(expectedAction);
+                .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
 
         [Test]
@@ -117,15 +123,23 @@
         {
             // Given
             const int progressId = 1;
-            var formData = new EditCompleteByDateFormData { Day = 1, Month = 1, Year = 2021 };
+            const string cardId = "1-card";
+            var formData = new EditCompleteByDateFormData
+            {
+                Day = 1,
+                Month = 1,
+                Year = 2021,
+                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: cardId),
+            };
             A.CallTo(() => progressService.UpdateCompleteByDate(progressId, A<DateTime?>._)).DoesNothing();
 
             // When
             var result = delegateProgressController.EditCompleteByDate(formData, progressId, accessedVia);
 
             // Then
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? cardId : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
-                .WithActionName(expectedAction);
+                .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
 
         [Test]
@@ -141,15 +155,21 @@
         {
             // Given
             const int progressId = 1;
-            var formData = new EditCompletionDateFormData { Day = 1, Month = 1, Year = 2021 };
+            const string cardId = "1-card";
+            var formData = new EditCompletionDateFormData
+            {
+                Day = 1, Month = 1, Year = 2021,
+                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: cardId),
+            };
             A.CallTo(() => progressService.UpdateCompletionDate(progressId, A<DateTime?>._)).DoesNothing();
 
             // When
             var result = delegateProgressController.EditCompletionDate(formData, progressId, accessedVia);
 
             // Then
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? cardId : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
-                .WithActionName(expectedAction);
+                .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
 
         [Test]
@@ -217,7 +237,12 @@
             const int progressId = 1;
             const int promptNumber = 1;
             const string answer = "Test Answer";
-            var formData = new EditDelegateCourseAdminFieldFormData { Answer = answer };
+            const string cardId = "1-card";
+            var formData = new EditDelegateCourseAdminFieldFormData
+            {
+                Answer = answer,
+                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: cardId),
+            };
 
             A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
                 .DoesNothing();
@@ -233,8 +258,9 @@
             // Then
             A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer))
                 .MustHaveHappenedOnceExactly();
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? cardId : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
-                .WithActionName(expectedAction);
+                .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
 
         [Test]
@@ -306,8 +332,11 @@
 
             // Then
             A.CallTo(() => progressService.UnlockProgress(progressId)).MustHaveHappened();
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates)
+                ? returnPageQuery!.Value.ItemIdToReturnTo
+                : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
-                .WithActionName(expectedAction);
+                .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
     }
 }

@@ -6,8 +6,9 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
 
     public class SelectedCourseDetailsViewModel : BaseSearchablePageViewModel<CourseDelegate>
     {
@@ -18,18 +19,17 @@
             Dictionary<string, string> routeData
         ) : base(result, true, availableFilters, routeData: routeData)
         {
-            Active = courseDelegatesData.Courses.Single(c => c.CustomisationId == courseDelegatesData.CustomisationId)
-                .Active;
+            var currentCourse =
+                courseDelegatesData.Courses.Single(c => c.CustomisationId == courseDelegatesData.CustomisationId);
+            Active = currentCourse.Active;
             var adminFieldsWithOptions = courseDelegatesData.CourseAdminFields.Where(field => field.Options.Count > 0);
             Delegates = result.ItemsToDisplay.Select(
-                d =>
-                {
-                    var adminFields = AdminFieldsHelper.GetCourseAdminFieldViewModels(
-                        d,
-                        courseDelegatesData.CourseAdminFields
-                    );
-                    return new SearchableCourseDelegateViewModel(d, adminFields, adminFieldsWithOptions, result.GetReturnPageQuery($"{d.DelegateId}-card"));
-                }
+                d => new DelegateCourseInfoViewModel(
+                    d,
+                    DelegateAccessRoute.CourseDelegates,
+                    result.GetReturnPageQuery($"{d.DelegateId}-card"),
+                    currentCourse.CourseName
+                )
             );
             Filters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(
                 courseDelegatesData.CourseAdminFields
@@ -37,7 +37,7 @@
         }
 
         public bool Active { get; set; }
-        public IEnumerable<SearchableCourseDelegateViewModel> Delegates { get; set; }
+        public IEnumerable<DelegateCourseInfoViewModel> Delegates { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } =
             Enumeration.GetAll<CourseDelegatesSortByOption>().Select(o => (o.DisplayText, o.PropertyName));

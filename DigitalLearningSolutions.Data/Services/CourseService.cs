@@ -100,8 +100,6 @@
         int CreateNewCentreCourse(Customisation customisation);
 
         LearningLog? GetLearningLogDetails(int progressId);
-
-        public DelegateCourseDetails GetDelegateAttemptsAndCourseAdminFields(DelegateCourseInfo info);
     }
 
     public class CourseService : ICourseService

@@ -64,7 +64,11 @@
 
         [HttpGet]
         [Route("EditSupervisor")]
-        public IActionResult EditSupervisor(int progressId, DelegateAccessRoute accessedVia)
+        public IActionResult EditSupervisor(
+            int progressId,
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery? returnPageQuery
+        )
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
@@ -78,7 +82,8 @@
                 progressId,
                 accessedVia,
                 supervisors,
-                delegateCourseProgress!.DelegateCourseInfo
+                delegateCourseProgress!.DelegateCourseInfo,
+                returnPageQuery
             );
             return View(model);
         }
@@ -100,14 +105,15 @@
 
             progressService.UpdateSupervisor(progressId, formData.SupervisorId);
 
-            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
+            return RedirectToPreviousPage(formData.DelegateId, formData.CustomisationId, accessedVia, formData.ReturnPageQuery);
         }
 
         [HttpGet]
         [Route("EditCompleteByDate")]
         public IActionResult EditCompleteByDate(
             int progressId,
-            DelegateAccessRoute accessedVia
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery? returnPageQuery
         )
         {
             var delegateCourseProgress =
@@ -116,7 +122,8 @@
             var model = new EditCompleteByDateViewModel(
                 progressId,
                 accessedVia,
-                delegateCourseProgress!.DelegateCourseInfo
+                delegateCourseProgress!.DelegateCourseInfo,
+                returnPageQuery
             );
             return View(model);
         }
@@ -141,14 +148,15 @@
 
             progressService.UpdateCompleteByDate(progressId, completeByDate);
 
-            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
+            return RedirectToPreviousPage(formData.DelegateId, formData.CustomisationId, accessedVia, formData.ReturnPageQuery);
         }
 
         [HttpGet]
         [Route("EditCompletionDate")]
         public IActionResult EditCompletionDate(
             int progressId,
-            DelegateAccessRoute accessedVia
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery? returnPageQuery
         )
         {
             var delegateCourseProgress =
@@ -157,7 +165,8 @@
             var model = new EditCompletionDateViewModel(
                 progressId,
                 accessedVia,
-                delegateCourseProgress!.DelegateCourseInfo
+                delegateCourseProgress!.DelegateCourseInfo,
+                returnPageQuery
             );
             return View(model);
         }
@@ -181,7 +190,8 @@
                 : (DateTime?)null;
 
             progressService.UpdateCompletionDate(progressId, completionDate);
-            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
+
+            return RedirectToPreviousPage(formData.DelegateId, formData.CustomisationId, accessedVia, formData.ReturnPageQuery);
         }
 
         [HttpGet]
@@ -212,6 +222,7 @@
                 accessedVia,
                 returnPageQuery
             );
+
             return View(model);
         }
 
@@ -240,19 +251,22 @@
             }
 
             progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, formData.Answer?.Trim());
-            // TODO: HEEDLS-862 Account for all possible access routes in redirection
-            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
+            
+            return RedirectToPreviousPage(formData.DelegateId, formData.CustomisationId, accessedVia, formData.ReturnPageQuery);
         }
 
         private IActionResult RedirectToPreviousPage(
             int delegateId,
-            int progressId,
-            DelegateAccessRoute accessedVia
+            int customisationId,
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery? returnPageQuery
         )
         {
             if (accessedVia.Equals(DelegateAccessRoute.CourseDelegates))
             {
-                return RedirectToAction("Index", new { progressId, accessedVia });
+                var routeData = returnPageQuery!.Value.ToRouteDataDictionary();
+                routeData.Add("customisationId", customisationId.ToString());
+                return RedirectToAction("Index", "CourseDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
             }
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
@@ -265,19 +279,12 @@
             int customisationId,
             int delegateId,
             DelegateAccessRoute accessedVia,
-            ReturnPageQuery? returnPageQuery = null
+            ReturnPageQuery? returnPageQuery
         )
         {
             progressService.UnlockProgress(progressId);
 
-            if (accessedVia.Equals(DelegateAccessRoute.CourseDelegates))
-            {
-                var routeData = returnPageQuery!.Value.ToRouteDataDictionary();
-                routeData.Add("customisationId", customisationId.ToString());
-                return RedirectToAction("Index", "CourseDelegates", routeData, returnPageQuery.Value.ItemIdToReturnTo);
-            }
-
-            return RedirectToAction("Index", "ViewDelegate", new { delegateId });
+            return RedirectToPreviousPage(delegateId, customisationId, accessedVia, returnPageQuery);
         }
 
         [Route("LearningLog")]
