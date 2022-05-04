@@ -141,12 +141,12 @@
 
         [TestCase(
             2,
-            "To evaluate the activity and access your certificate of completion, visit this url:"
+            "To evaluate the activity and access your certificate of completion, visit this URL:"
         )]
         [TestCase(
             1,
             "If you haven't already done so, please evaluate the activity to help us to improve provision " +
-            "for future delegates by visiting this url:"
+            "for future delegates by visiting this URL:"
         )]
         public void SendProgressCompletionNotification_shows_correct_text_for_completion_status(
             int completionStatus,

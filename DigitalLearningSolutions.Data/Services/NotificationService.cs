@@ -122,9 +122,9 @@
                 : $@"<p>If you haven't already done so, please evaluate the activity to help us to improve provision for future delegates by clicking
                     <a href='{finaliseUrl}'>here</a>. Only one evaluation can be submitted per completion.</p>";
             var textActivityCompletionInfo = completionStatus == 2
-                ? $@"To evaluate the activity and access your certificate of completion, visit this url: {finaliseUrl}."
+                ? $@"To evaluate the activity and access your certificate of completion, visit this URL: {finaliseUrl}."
                 : "If you haven't already done so, please evaluate the activity to help us to improve provision " +
-                  $@"for future delegates by visiting this url: {finaliseUrl}. Only one evaluation can be submitted per completion.";
+                  $@"for future delegates by visiting this URL: {finaliseUrl}. Only one evaluation can be submitted per completion.";
 
             if (numLearningLogItemsAffected == 1)
             {

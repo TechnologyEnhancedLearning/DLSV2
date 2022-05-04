@@ -74,26 +74,15 @@
 
                     if (action == TrackerEndpointAction.StoreAspProgressV2)
                     {
-                        if (query.ProgressId == null || query.Version == null || query.TutorialId == null ||
-                            query.CandidateId == null || query.CustomisationId == null)
-                        {
-                            return TrackerEndpointResponse.StoreAspProgressV2Exception;
-                        }
-
-                        if (query.TutorialTime == null || query.TutorialStatus == null)
-                        {
-                            return TrackerEndpointResponse.NullTutorialStatusOrTime;
-                        }
-
                         return trackerActionService.StoreAspProgressV2(
-                            query.ProgressId.Value,
-                            query.Version.Value,
+                            query.ProgressId,
+                            query.Version,
                             sessionVariables[TrackerEndpointSessionVariable.LmGvSectionRow],
-                            query.TutorialId.Value,
-                            query.TutorialTime.Value,
-                            query.TutorialStatus.Value,
-                            query.CandidateId.Value,
-                            query.CustomisationId.Value
+                            query.TutorialId,
+                            query.TutorialTime,
+                            query.TutorialStatus,
+                            query.CandidateId,
+                            query.CustomisationId
                         );
                     }
 

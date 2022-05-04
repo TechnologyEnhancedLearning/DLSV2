@@ -409,7 +409,8 @@
         {
             connection.Execute(
                 @"UPDATE Progress
-                    SET CustomisationVersion = @customisationVersion,
+                    SET
+                        CustomisationVersion = @customisationVersion,
                         SubmittedTime = @submittedTime,
                         ProgressText = @progressText,
                         DiagnosticScore =
@@ -421,7 +422,8 @@
                             INNER JOIN Customisations AS c ON p.CustomisationID = c.CustomisationID
                             INNER JOIN CustomisationTutorials AS ct ON ap.TutorialID = ct.TutorialID AND c.CustomisationID = ct.CustomisationID
                             INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
-                            WHERE (ap.ProgressID = @progressId) AND (ct.DiagStatus = 1))",
+                            WHERE ap.ProgressID = @progressId AND ct.DiagStatus = 1)
+                    WHERE (ProgressID = @progressId)",
                 new { progressId, customisationVersion, submittedTime, progressText }
             );
         }

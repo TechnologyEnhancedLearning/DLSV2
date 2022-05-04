@@ -18,14 +18,14 @@
         TrackerEndpointResponse StoreDiagnosticJson(int? progressId, string? diagnosticOutcome);
 
         TrackerEndpointResponse StoreAspProgressV2(
-            int progressId,
-            int version,
+            int? progressId,
+            int? version,
             string? progressText,
-            int tutorialId,
-            int tutorialTime,
-            int tutorialStatus,
-            int candidateId,
-            int customisationId
+            int? tutorialId,
+            int? tutorialTime,
+            int? tutorialStatus,
+            int? candidateId,
+            int? customisationId
         );
     }
 
@@ -119,17 +119,28 @@
         }
 
         public TrackerEndpointResponse StoreAspProgressV2(
-            int progressId,
-            int version,
+            int? progressId,
+            int? version,
             string? progressText,
-            int tutorialId,
-            int tutorialTime,
-            int tutorialStatus,
-            int candidateId,
-            int customisationId
+            int? tutorialId,
+            int? tutorialTime,
+            int? tutorialStatus,
+            int? candidateId,
+            int? customisationId
         )
         {
-            var progress = progressService.GetDetailedCourseProgress(progressId);
+            if (progressId == null || version == null || tutorialId == null ||
+                candidateId == null || customisationId == null)
+            {
+                return TrackerEndpointResponse.StoreAspProgressV2Exception;
+            }
+
+            if (tutorialTime == null || tutorialStatus == null)
+            {
+                return TrackerEndpointResponse.NullTutorialStatusOrTime;
+            }
+
+            var progress = progressService.GetDetailedCourseProgress(progressId.Value);
             if (progress == null || progress.DelegateId != candidateId || progress.CustomisationId != customisationId)
             {
                 return TrackerEndpointResponse.StoreAspProgressV2Exception;
@@ -139,11 +150,11 @@
             {
                 progressService.StoreAspProgressV2(
                     progress.ProgressId,
-                    version,
+                    version.Value,
                     progressText,
-                    tutorialId,
-                    tutorialTime,
-                    tutorialStatus
+                    tutorialId.Value,
+                    tutorialTime.Value,
+                    tutorialStatus.Value
                 );
             }
             catch (Exception ex)

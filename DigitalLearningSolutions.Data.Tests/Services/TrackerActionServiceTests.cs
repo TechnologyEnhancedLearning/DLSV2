@@ -215,6 +215,62 @@
             ).MustNotHaveHappened();
         }
 
+        [TestCase(null, 1, 123, 456, 789)]
+        [TestCase(101, null, 123, 456, 789)]
+        [TestCase(101, 1, null, 456, 789)]
+        [TestCase(101, 1, 123, null, 789)]
+        [TestCase(101, 1, 123, 456, null)]
+        public void
+            StoreAspProgressV2_returns_StoreAspProgressV2Exception_if_a_query_param_is_null(
+                int? progressId,
+                int? version,
+                int? tutorialId,
+                int? delegateId,
+                int? customisationId
+            )
+        {
+            // When
+            var result = trackerActionService.StoreAspProgressV2(
+                progressId,
+                version,
+                "text",
+                tutorialId,
+                1,
+                1,
+                delegateId,
+                customisationId
+            );
+
+            // Then
+            result.Should().Be(TrackerEndpointResponse.StoreAspProgressV2Exception);
+            A.CallTo(() => progressService.GetDetailedCourseProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [TestCase(null, 1)]
+        [TestCase(1, null)]
+        public void
+            StoreAspProgressV2_returns_NullTutorialStatusOrTime_if_tutorialTime_or_tutorialStatus_is_null(
+                int? tutorialTime,
+                int? tutorialStatus
+            )
+        {
+            // When
+            var result = trackerActionService.StoreAspProgressV2(
+                101,
+                1,
+                "text",
+                123,
+                tutorialTime,
+                tutorialStatus,
+                456,
+                789
+            );
+
+            // Then
+            result.Should().Be(TrackerEndpointResponse.NullTutorialStatusOrTime);
+            A.CallTo(() => progressService.GetDetailedCourseProgress(A<int>._)).MustNotHaveHappened();
+        }
+
         [Test]
         public void StoreAspProgressV2_returns_success_response_if_successful()
         {
