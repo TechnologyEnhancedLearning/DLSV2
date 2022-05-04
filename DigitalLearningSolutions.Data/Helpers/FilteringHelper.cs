@@ -163,6 +163,30 @@
             return BuildFilterValueString(group, group.Split('(')[0], propertyValue);
         }
 
+        public static string GetFilterValueForAdminField(
+            CourseAdminFieldWithAnswer courseAdminFieldWithAnswer
+        )
+        {
+            var group = GetFilterGroupForAdminField(courseAdminFieldWithAnswer.PromptNumber, courseAdminFieldWithAnswer.PromptText);
+
+            string propertyValue;
+
+            if (courseAdminFieldWithAnswer.Options.Any())
+            {
+                propertyValue = string.IsNullOrEmpty(courseAdminFieldWithAnswer.Answer)
+                    ? EmptyValue
+                    : courseAdminFieldWithAnswer.Answer;
+            }
+            else
+            {
+                propertyValue = string.IsNullOrEmpty(courseAdminFieldWithAnswer.Answer)
+                    ? FreeTextBlankValue
+                    : FreeTextNotBlankValue;
+            }
+
+            return BuildFilterValueString(group, group.Split('(')[0], propertyValue);
+        }
+
         public static string GetFilterValueForRegistrationPrompt(int promptNumber, string? answer, string prompt)
         {
             var group = GetFilterGroupForRegistrationPrompt(promptNumber, prompt);
