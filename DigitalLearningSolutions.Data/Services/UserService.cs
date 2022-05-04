@@ -74,6 +74,8 @@ namespace DigitalLearningSolutions.Data.Services
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
 
         void DeactivateOrDeleteAdmin(int adminId);
+
+        DelegateUserCard? GetDelegateUserCardById(int delegateId);
     }
 
     public class UserService : IUserService
@@ -451,6 +453,11 @@ namespace DigitalLearningSolutions.Data.Services
                     userDataService.DeactivateAdmin(adminId);
                 }
             }
+        }
+
+        public DelegateUserCard? GetDelegateUserCardById(int delegateId)
+        {
+            return userDataService.GetDelegateUserCardById(delegateId);
         }
 
         public DelegateUser? GetDelegateUserById(int delegateId)

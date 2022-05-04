@@ -11,6 +11,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -253,6 +254,70 @@
             progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, formData.Answer?.Trim());
             
             return RedirectToPreviousPage(formData.DelegateId, formData.CustomisationId, accessedVia, formData.ReturnPageQuery);
+        }
+
+        [HttpGet]
+        [Route("{delegateId:int}/{customisationId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyDelegateAccessedViaValidRoute))]
+        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
+        public IActionResult ConfirmRemoveFromCourse(
+            int delegateId,
+            int customisationId,
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery? returnPageQuery = null
+        )
+        {
+            if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
+            {
+                return new NotFoundResult();
+            }
+
+            var delegateUser = userService.GetDelegateUserCardById(delegateId);
+            var course = courseService.GetCourseNameAndApplication(customisationId);
+
+            var model = new RemoveFromCourseViewModel(
+                delegateId,
+                DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+                    delegateUser!.FirstName,
+                    delegateUser.LastName
+                ),
+                customisationId,
+                course!.CourseName,
+                false,
+                accessedVia,
+                returnPageQuery
+            );
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("{delegateId:int}/{customisationId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
+        public IActionResult ExecuteRemoveFromCourse(
+            int delegateId,
+            int customisationId,
+            DelegateAccessRoute accessedVia,
+            RemoveFromCourseViewModel model
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("ConfirmRemoveFromCourse", model);
+            }
+
+            if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
+            {
+                return new NotFoundResult();
+            }
+
+            courseService.RemoveDelegateFromCourse(
+                delegateId,
+                customisationId,
+                RemovalMethod.RemovedByAdmin
+            );
+
+            return RedirectToPreviousPage(delegateId, customisationId, accessedVia, model.ReturnPageQuery);
         }
 
         private IActionResult RedirectToPreviousPage(

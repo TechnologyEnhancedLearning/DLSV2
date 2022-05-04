@@ -25,7 +25,6 @@
     public class ViewDelegateController : Controller
     {
         private readonly IConfiguration config;
-        private readonly ICourseDataService courseDataService;
         private readonly ICourseService courseService;
         private readonly IPasswordResetService passwordResetService;
         private readonly PromptsService promptsService;
@@ -36,7 +35,6 @@
             PromptsService promptsService,
             ICourseService courseService,
             IPasswordResetService passwordResetService,
-            ICourseDataService courseDataService,
             IConfiguration config
         )
         {
@@ -44,7 +42,6 @@
             this.promptsService = promptsService;
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
-            this.courseDataService = courseDataService;
             this.config = config;
         }
 
@@ -88,81 +85,6 @@
             userDataService.DeactivateDelegateUser(delegateId);
 
             return RedirectToAction("Index", new { delegateId });
-        }
-
-        [HttpGet]
-        [Route("{customisationId:int}/{accessedVia}/Remove")]
-        [ServiceFilter(typeof(VerifyDelegateAccessedViaValidRoute))]
-        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
-        public IActionResult ConfirmRemoveFromCourse(
-            int delegateId,
-            int customisationId,
-            DelegateAccessRoute accessedVia,
-            ReturnPageQuery? returnPageQuery = null
-        )
-        {
-            if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
-            {
-                return new NotFoundResult();
-            }
-
-            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
-            var course = courseDataService.GetCourseNameAndApplication(customisationId);
-
-            var model = new RemoveFromCourseViewModel(
-                delegateId,
-                DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
-                    delegateUser!.FirstName,
-                    delegateUser.LastName
-                ),
-                customisationId,
-                course!.CourseName,
-                false,
-                accessedVia,
-                returnPageQuery
-            );
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [Route("{customisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
-        public IActionResult ExecuteRemoveFromCourse(
-            int delegateId,
-            int customisationId,
-            RemoveFromCourseViewModel model
-        )
-        {
-            if (!ModelState.IsValid)
-            {
-                return View("ConfirmRemoveFromCourse", model);
-            }
-
-            if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
-            {
-                return new NotFoundResult();
-            }
-
-            courseService.RemoveDelegateFromCourse(
-                delegateId,
-                customisationId,
-                RemovalMethod.RemovedByAdmin
-            );
-
-            if (!model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates))
-            {
-                return RedirectToAction("Index", "ViewDelegate", new { delegateId });
-            }
-
-            var routeData = model.ReturnPageQuery!.Value.ToRouteDataDictionary();
-            routeData.Add("customisationId", customisationId.ToString());
-            return RedirectToAction(
-                "Index",
-                "CourseDelegates",
-                routeData,
-                model.ReturnPageQuery.Value.ItemIdToReturnTo
-            );
         }
 
         [HttpPost]

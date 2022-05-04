@@ -61,7 +61,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Delegates/Groups/5/EditDescription?returnPageQuery=pageNumber%3D1",
             "Edit description for Activities worker or coordinator group (optional)"
         )]
-        [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName?returnPageQuery=pageNumber%3D1", "Edit group name")]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/103/EditGroupName?returnPageQuery=pageNumber%3D1",
+            "Edit group name"
+        )]
         [InlineData("/TrackingSystem/Delegates/Groups/Add", "Add new delegate group")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Activities worker or coordinator")]
         [InlineData(
@@ -87,8 +90,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         )]
         [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]
-        [InlineData("/TrackingSystem/Delegates/3/SetPassword?returnPageQuery=pageNumber%3D1", "Set delegate user password")]
-        [InlineData("/TrackingSystem/Delegates/3/View/100/ViewDelegate/Remove", "Remove enrolment")]
+        [InlineData(
+            "/TrackingSystem/Delegates/3/SetPassword?returnPageQuery=pageNumber%3D1",
+            "Set delegate user password"
+        )]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
@@ -110,6 +115,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData(
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/22657/EditAdminField/1?returnPageQuery=pageNumber%3D1",
             "Edit System Access Granted field for Entry Level - Win XP, Office 2003/07 OLD - Standard"
+        )]
+        [InlineData(
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/1/24158/Remove?returnPageQuery=pageNumber%3D1",
+            "Remove enrolment"
         )]
         [InlineData(
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/LearningLog",
