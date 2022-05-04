@@ -20,21 +20,12 @@ namespace DigitalLearningSolutions.Data.Services
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
-            string? professionalRegistrationNumber,
             int? inviteId = null
         );
 
-        string RegisterDelegateByCentre(
-            DelegateRegistrationModel delegateRegistrationModel,
-            string baseUrl,
-            string? professionalRegistrationNumber
-        );
+        string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
 
-        void RegisterCentreManager(
-            AdminRegistrationModel registrationModel,
-            int jobGroupId,
-            string? professionalRegistrationNumber
-        );
+        void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
 
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId);
     }
@@ -82,7 +73,6 @@ namespace DigitalLearningSolutions.Data.Services
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
-            string? professionalRegistrationNumber,
             int? supervisorDelegateId = null
         )
         {
@@ -115,7 +105,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             userDataService.UpdateDelegateProfessionalRegistrationNumber(
                 delegateUser.Id,
-                professionalRegistrationNumber,
+                delegateRegistrationModel.ProfessionalRegistrationNumber,
                 true
             );
 
@@ -151,15 +141,11 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public void RegisterCentreManager(
-            AdminRegistrationModel registrationModel,
-            int jobGroupId,
-            string? professionalRegistrationNumber
-        )
+        public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
         {
             using var transaction = new TransactionScope();
 
-            CreateDelegateAccountForAdmin(registrationModel, jobGroupId, professionalRegistrationNumber);
+            CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
 
             registrationDataService.RegisterAdmin(registrationModel);
 
@@ -197,6 +183,7 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateUser.Password,
                 true,
                 true,
+                delegateUser.ProfessionalRegistrationNumber,
                 categoryId,
                 adminRoles.IsCentreAdmin,
                 false,
@@ -212,11 +199,7 @@ namespace DigitalLearningSolutions.Data.Services
             registrationDataService.RegisterAdmin(adminRegistrationModel);
         }
 
-        public string RegisterDelegateByCentre(
-            DelegateRegistrationModel delegateRegistrationModel,
-            string baseUrl,
-            string? professionalRegistrationNumber
-        )
+        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
             using var transaction = new TransactionScope();
 
@@ -249,7 +232,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             userDataService.UpdateDelegateProfessionalRegistrationNumber(
                 delegateUser.Id,
-                professionalRegistrationNumber,
+                delegateRegistrationModel.ProfessionalRegistrationNumber,
                 true
             );
 
@@ -297,7 +280,7 @@ namespace DigitalLearningSolutions.Data.Services
                 ).Select(record => record.ID);
         }
 
-        private void CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel, int jobGroupId, string? professionalRegistrationNumber)
+        private void CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel, int jobGroupId)
         {
             var delegateRegistrationModel = new DelegateRegistrationModel(
                 registrationModel.FirstName,
@@ -307,7 +290,8 @@ namespace DigitalLearningSolutions.Data.Services
                 jobGroupId,
                 registrationModel.PasswordHash!,
                 true,
-                true
+                true,
+                registrationModel.ProfessionalRegistrationNumber
             );
 
             var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
@@ -335,7 +319,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             userDataService.UpdateDelegateProfessionalRegistrationNumber(
                 delegateUser.Id,
-                professionalRegistrationNumber,
+                registrationModel.ProfessionalRegistrationNumber,
                 true
             );
         }

@@ -8,7 +8,6 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -335,7 +334,7 @@
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
-            A.CallTo(() => registrationService.RegisterCentreManager(A<AdminRegistrationModel>._, A<int>._, A<string?>._))
+            A.CallTo(() => registrationService.RegisterCentreManager(A<AdminRegistrationModel>._, A<int>._))
                 .DoesNothing();
 
             // When
@@ -359,10 +358,10 @@
                                 !a.ImportOnly &&
                                 !a.IsContentCreator &&
                                 !a.IsTrainer &&
-                                !a.IsSupervisor
+                                !a.IsSupervisor &&
+                                a.ProfessionalRegistrationNumber == professionalRegistrationNumber
                         ),
-                        jobGroupId,
-                        professionalRegistrationNumber
+                        jobGroupId
                     )
                 )
                 .MustHaveHappened();

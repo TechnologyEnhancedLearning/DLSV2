@@ -326,8 +326,7 @@
             A.CallTo(
                     () => registrationService.RegisterDelegateByCentre(
                         A<DelegateRegistrationModel>._,
-                        A<string>._,
-                        null
+                        A<string>._
                     )
                 )
                 .Returns(sampleDelegateNumber);
@@ -356,8 +355,7 @@
             A.CallTo(
                     () => registrationService.RegisterDelegateByCentre(
                         A<DelegateRegistrationModel>._,
-                        A<string>._,
-                        null
+                        A<string>._
                     )
                 )
                 .Returns(candidateNumber);
@@ -387,10 +385,10 @@
                                     d.Active &&
                                     d.Approved &&
                                     !d.IsSelfRegistered &&
-                                    d.NotifyDate == data.WelcomeEmailDate
+                                    d.NotifyDate == data.WelcomeEmailDate &&
+                                    d.ProfessionalRegistrationNumber == data.ProfessionalRegistrationNumber
                             ),
-                            A<string>._,
-                            A<string?>._
+                            A<string>._
                         )
                 )
                 .MustHaveHappened();
@@ -406,8 +404,7 @@
             A.CallTo(
                     () => registrationService.RegisterDelegateByCentre(
                         A<DelegateRegistrationModel>._,
-                        A<string>._,
-                        null
+                        A<string>._
                     )
                 )
                 .Throws(new DelegateCreationFailedException(DelegateCreationError.UnexpectedError));
@@ -428,8 +425,7 @@
             A.CallTo(
                     () => registrationService.RegisterDelegateByCentre(
                         A<DelegateRegistrationModel>._,
-                        A<string>._,
-                        null
+                        A<string>._
                     )
                 )
                 .Throws(new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse));

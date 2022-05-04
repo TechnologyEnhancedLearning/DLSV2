@@ -33,13 +33,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [Route("/TrackingSystem/Delegates/Register/{action}")]
     public class RegisterDelegateByCentreController : Controller
     {
-        private readonly PromptsService promptsService;
+        private readonly IConfiguration config;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
-        private readonly IConfiguration config;
 
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
@@ -232,8 +232,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 var candidateNumber = registrationService.RegisterDelegateByCentre(
                     RegistrationMappingHelper.MapCentreRegistrationToDelegateRegistrationModel(data),
-                    baseUrl,
-                    data.ProfessionalRegistrationNumber
+                    baseUrl
                 );
 
                 TempData.Clear();

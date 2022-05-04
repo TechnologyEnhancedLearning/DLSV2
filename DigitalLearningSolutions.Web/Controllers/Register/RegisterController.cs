@@ -249,7 +249,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                         RegistrationMappingHelper.MapSelfRegistrationToDelegateRegistrationModel(data),
                         userIp,
                         refactoredTrackingSystemEnabled,
-                        data.ProfessionalRegistrationNumber,
                         data.SupervisorDelegateId
                     );
 
