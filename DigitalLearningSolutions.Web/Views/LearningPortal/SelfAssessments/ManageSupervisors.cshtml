@@ -50,11 +50,6 @@
               @if (supervisor.AddedByDelegate)
               {
                 <a asp-action="RemoveSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.ID">Remove</a>
-                @Html.Raw("&nbsp;")
-                @if (supervisor.Confirmed == null && supervisor.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
-                {
-                  <a asp-action="SendSupervisorReminder" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Send reminder</a>
-                }
               }
             </td>
           </tr>
