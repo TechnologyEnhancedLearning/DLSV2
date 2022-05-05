@@ -163,14 +163,14 @@
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser(approved: false);
 
             A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(expectedDelegateUser);
-            A.CallTo(() => userDataService.RemoveDelegateUser(2)).DoesNothing();
+            A.CallTo(() => userDataService.RemoveDelegateAccount(2)).DoesNothing();
             A.CallTo(() => emailService.SendEmail(A<Email>._)).DoesNothing();
 
             // When
             delegateApprovalsService.RejectDelegate(2, 2);
 
             // Then
-            A.CallTo(() => userDataService.RemoveDelegateUser(2)).MustHaveHappened();
+            A.CallTo(() => userDataService.RemoveDelegateAccount(2)).MustHaveHappened();
             A.CallTo(() => emailService.SendEmail(A<Email>._)).MustHaveHappened();
         }
 
@@ -181,7 +181,7 @@
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
 
             A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(expectedDelegateUser);
-            A.CallTo(() => userDataService.RemoveDelegateUser(2)).DoesNothing();
+            A.CallTo(() => userDataService.RemoveDelegateAccount(2)).DoesNothing();
             A.CallTo(() => emailService.SendEmail(A<Email>._)).DoesNothing();
 
             // When
@@ -189,7 +189,7 @@
 
             // Then
             action.Should().Throw<UserAccountInvalidStateException>();
-            A.CallTo(() => userDataService.RemoveDelegateUser(2)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.RemoveDelegateAccount(2)).MustNotHaveHappened();
             A.CallTo(() => emailService.SendEmail(A<Email>._)).MustNotHaveHappened();
         }
     }

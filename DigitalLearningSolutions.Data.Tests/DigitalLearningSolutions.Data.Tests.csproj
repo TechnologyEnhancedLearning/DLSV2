@@ -50,6 +50,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Update="TestData\AllDelegatesExportTest.xlsx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="TestData\EvaluationSummaryDownloadTest.xlsx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>

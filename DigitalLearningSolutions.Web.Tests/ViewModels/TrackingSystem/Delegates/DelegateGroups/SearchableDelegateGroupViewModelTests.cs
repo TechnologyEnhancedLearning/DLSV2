@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -29,7 +30,10 @@
             };
 
             // When
-            var result = new SearchableDelegateGroupViewModel(group, 3);
+            var result = new SearchableDelegateGroupViewModel(
+                group,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery(3, itemIdToReturnTo: "1-card")
+            );
 
             // Then
             using (new AssertionScope())
@@ -44,7 +48,6 @@
                 result.LinkedField.Should().Be("None");
                 result.ShouldAddNewRegistrantsToGroup.Should().Be("No");
                 result.ChangesToRegistrationDetailsShouldChangeGroupMembership.Should().Be("No");
-                result.Page.Should().Be(3);
             }
         }
 
@@ -59,7 +62,10 @@
             };
 
             // When
-            var result = new SearchableDelegateGroupViewModel(group, 3);
+            var result = new SearchableDelegateGroupViewModel(
+                group,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery(3, itemIdToReturnTo: "1-card")
+            );
 
             // Then
             using (new AssertionScope())

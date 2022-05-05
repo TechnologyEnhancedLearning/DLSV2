@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -31,7 +32,11 @@
         }
 
         [HttpGet]
-        public IActionResult Index(int delegateId, bool isFromViewDelegatePage, int? returnPage)
+        public IActionResult Index(
+            int delegateId,
+            bool isFromViewDelegatePage,
+            ReturnPageQuery? returnPageQuery = null
+        )
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
@@ -43,8 +48,8 @@
             var model = new SetDelegatePasswordViewModel(
                 DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName),
                 delegateId,
-                returnPage,
-                isFromViewDelegatePage
+                isFromViewDelegatePage,
+                returnPageQuery
             );
 
             return View(model);

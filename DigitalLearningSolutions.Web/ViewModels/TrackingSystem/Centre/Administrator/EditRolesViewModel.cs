@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -18,7 +19,7 @@
             int centreId,
             IEnumerable<Category> categories,
             CentreContractAdminUsage numberOfAdmins,
-            int? returnPage
+            ReturnPageQuery returnPageQuery
         ) : base(user, centreId)
         {
             IsCentreAdmin = user.IsCentreAdmin;
@@ -26,7 +27,7 @@
             IsNominatedSupervisor = user.IsNominatedSupervisor;
             IsTrainer = user.IsTrainer;
             IsContentCreator = user.IsContentCreator;
-            ReturnPage = returnPage;
+            ReturnPageQuery = returnPageQuery;
 
             if (user.IsCmsAdministrator)
             {

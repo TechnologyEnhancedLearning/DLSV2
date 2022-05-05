@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Courses
 {
     using System;
+    using DigitalLearningSolutions.Data.Exceptions;
 
     public class DelegateCourseInfo : CourseNameInfo
     {
@@ -126,5 +127,16 @@
         public bool IsProgressLocked { get; set; }
         public bool HasBeenPromptedForPrn { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
+
+        public string? GetAnswer(int promptNumber)
+        {
+            return promptNumber switch
+            {
+                1 => Answer1,
+                2 => Answer2,
+                3 => Answer3,
+                _ => throw new InvalidPromptNumberException(),
+            };
+        }
     }
 }

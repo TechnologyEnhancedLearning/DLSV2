@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword
 {
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class SetDelegatePasswordViewModel
@@ -10,14 +11,14 @@
         public SetDelegatePasswordViewModel(
             string name,
             int delegateId,
-            int? returnPage,
-            bool isFromViewDelegatePage = false
+            bool isFromViewDelegatePage = false,
+            ReturnPageQuery? returnPageQuery = null
         )
         {
             Name = name;
             DelegateId = delegateId;
             IsFromViewDelegatePage = isFromViewDelegatePage;
-            ReturnPage = returnPage;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public string Name { get; set; }
@@ -36,6 +37,6 @@
         [DataType(DataType.Password)]
         public string? Password { get; set; }
 
-        public int? ReturnPage { get; set; }
+        public ReturnPageQuery? ReturnPageQuery { get; set; }
     }
 }

@@ -25,13 +25,13 @@ namespace DigitalLearningSolutions.Data.Services
 
     public class DelegateUploadFileService : IDelegateUploadFileService
     {
+        private readonly IConfiguration configuration;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
+        private readonly IPasswordResetService passwordResetService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
-        private readonly IPasswordResetService passwordResetService;
-        private readonly IConfiguration configuration;
 
         public DelegateUploadFileService(
             IJobGroupsDataService jobGroupsDataService,
@@ -106,16 +106,7 @@ namespace DigitalLearningSolutions.Data.Services
                 return;
             }
 
-            var delegateUserByAliasId = GetDelegateUserByAliasIdOrDefault(centreId, delegateRow.AliasId);
-
-            if (delegateUserByAliasId != null && delegateUserByCandidateNumber != null &&
-                delegateUserByAliasId.CandidateNumber != delegateUserByCandidateNumber.CandidateNumber)
-            {
-                delegateRow.Error = BulkUploadResult.ErrorReason.AliasIdInUse;
-                return;
-            }
-
-            var userToUpdate = delegateUserByCandidateNumber ?? delegateUserByAliasId;
+            var userToUpdate = delegateUserByCandidateNumber;
             if (userToUpdate == null)
             {
                 if (!userService.IsDelegateEmailValidForCentre(delegateRow.Email!, centreId))
@@ -139,13 +130,7 @@ namespace DigitalLearningSolutions.Data.Services
                 : null;
         }
 
-        private DelegateUser? GetDelegateUserByAliasIdOrDefault(int centreId, string? aliasId)
-        {
-            return !string.IsNullOrEmpty(aliasId)
-                ? userDataService.GetDelegateUserByAliasId(aliasId, centreId)
-                : null;
-        }
-
+        // TODO HEEDLS-887 Check the removal of checking for other delegates with matching AliasID is correct
         private void ProcessPotentialUpdate(int centreId, DelegateTableRow delegateRow, DelegateUser delegateUser)
         {
             if (delegateRow.Email != delegateUser.EmailAddress &&
@@ -164,24 +149,28 @@ namespace DigitalLearningSolutions.Data.Services
             UpdateDelegate(delegateRow, delegateUser);
         }
 
+        // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
         private void UpdateDelegate(DelegateTableRow delegateRow, DelegateUser delegateUser)
         {
             try
             {
-                userDataService.UpdateDelegate(
-                    delegateUser.Id,
+                userDataService.UpdateUserDetails(
                     delegateRow.FirstName!,
                     delegateRow.LastName!,
+                    delegateRow.Email!,
                     delegateRow.JobGroupId!.Value,
+                    1 // TODO HEEDLS-887 This needs correcting to the correct UserId for the delegate record.
+                );
+
+                userDataService.UpdateDelegateAccount(
+                    delegateUser.Id,
                     delegateRow.Active!.Value,
                     delegateRow.Answer1,
                     delegateRow.Answer2,
                     delegateRow.Answer3,
                     delegateRow.Answer4,
                     delegateRow.Answer5,
-                    delegateRow.Answer6,
-                    delegateRow.AliasId,
-                    delegateRow.Email!
+                    delegateRow.Answer6
                 );
 
                 delegateRow.RowStatus = RowStatus.Updated;
@@ -211,7 +200,8 @@ namespace DigitalLearningSolutions.Data.Services
                         "Unknown return value when creating delegate record."
                     );
                 default:
-                    var newDelegateRecord = userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
+                    var newDelegateRecord =
+                        userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
                     SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, newDelegateRecord.Id);
                     if (welcomeEmailDate.HasValue)
                     {
@@ -223,6 +213,7 @@ namespace DigitalLearningSolutions.Data.Services
                             "DelegateBulkUpload_Refactor"
                         );
                     }
+
                     delegateRow.RowStatus = RowStatus.Registered;
                     break;
             }
@@ -263,7 +254,7 @@ namespace DigitalLearningSolutions.Data.Services
                 "Answer5",
                 "Answer6",
                 "Active",
-                "EmailAddress"
+                "EmailAddress",
             }.OrderBy(x => x);
             var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
             return actualHeaders.SequenceEqual(expectedHeaders);

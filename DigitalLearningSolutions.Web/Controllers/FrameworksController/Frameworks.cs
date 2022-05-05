@@ -17,6 +17,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public partial class FrameworksController
     {
@@ -100,11 +102,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 );
                 allFrameworksViewModel = new AllFrameworksViewModel(allFrameworksResult);
             }
+
+            var currentTab = tabname == "All" ? FrameworksTab.AllFrameworks : FrameworksTab.MyFrameworks;
             var frameworksViewModel = new FrameworksViewModel(
                 isFrameworkDeveloper,
                 isFrameworkContributor,
                 myFrameworksViewModel,
-                allFrameworksViewModel
+                allFrameworksViewModel,
+                currentTab
                 );
             return View("Developer/Frameworks", frameworksViewModel);
         }
@@ -480,7 +485,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/Summary", sessionNewFramework.DetailFramework);
         }
         [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
-        public IActionResult AddCollaborators(string actionname, int frameworkId)
+        public IActionResult AddCollaborators(string actionname, int frameworkId, bool error = false)
         {
             var adminId = GetAdminId();
             var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
@@ -492,6 +497,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 BaseFramework = framework,
                 Collaborators = collaborators,
+                Error = error,
             };
             return View("Developer/Collaborators", model);
         }
@@ -502,8 +508,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, userEmail, canModify);
             if (collaboratorId > 0)
+            {
                 frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminId());
-            return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
+                return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
+            }
+            else
+            {
+                return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname, error = true });
+            }
+
         }
 
         public IActionResult RemoveCollaborator(int frameworkId, string actionname, int id)
@@ -520,6 +533,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminId();
             var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var routeData = new Dictionary<string, string> { { "frameworkId", detailFramework?.ID.ToString() } };
             var model = new FrameworkViewModel()
             {
                 DetailFramework = detailFramework
@@ -529,13 +543,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 case "Details":
                     model.Collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
                     model.FrameworkDefaultQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId, adminId);
+                    model.TabNavLinks = new TabsNavViewModel(FrameworkTab.Details, routeData);
                     break;
                 case "Structure":
                     model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
                     model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
+                    model.TabNavLinks = new TabsNavViewModel(FrameworkTab.Structure, routeData);
                     break;
                 case "Comments":
                     model.CommentReplies = frameworkService.GetCommentsForFrameworkId(frameworkId, adminId);
+                    model.TabNavLinks = new TabsNavViewModel(FrameworkTab.Comments, routeData);
                     break;
             }
             return View("Developer/Framework", model);

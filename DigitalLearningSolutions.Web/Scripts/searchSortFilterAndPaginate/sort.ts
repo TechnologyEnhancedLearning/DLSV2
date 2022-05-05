@@ -65,6 +65,8 @@ export function getSortValue(
       return parseInt(getElementText(searchableElement, 'courses-count'), 10);
     case 'InProgressCount':
       return parseInt(getElementText(searchableElement, 'in-progress-count'), 10);
+    case 'CompletedCount':
+      return parseInt(getElementText(searchableElement, 'completed-count'), 10);
     case 'PassRate':
       return parseFloat(getElementText(searchableElement, 'pass-rate'));
     case 'CourseName':
@@ -103,7 +105,7 @@ function parseNonNegativeIntOrNotApplicable(value: string): number {
 
 export function getSortBy(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-by');
-  return element?.value ?? 'Name';
+  return element?.value ?? 'SearchableName';
 }
 
 export function getSortDirection(): string {

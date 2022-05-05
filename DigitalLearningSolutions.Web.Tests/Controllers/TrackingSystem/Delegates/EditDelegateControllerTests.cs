@@ -75,7 +75,6 @@
                 HasProfessionalRegistrationNumber = false,
             };
             A.CallTo(() => userService.NewEmailAddressIsValid(email, null, DelegateId, A<int>._)).Returns(false);
-            A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -92,33 +91,6 @@
         }
 
         [Test]
-        public void Index_post_returns_view_with_model_error_with_duplicate_alias()
-        {
-            // Given
-            const string alias = "alias";
-            var formData = new EditDelegateFormData
-            {
-                JobGroupId = 1,
-                AliasId = alias,
-            };
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
-            A.CallTo(() => userService.NewAliasIsValid(alias, DelegateId, A<int>._)).Returns(false);
-
-            // When
-            var result = controller.Index(formData, DelegateId);
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
-                AssertModelStateErrorIsExpected(
-                    result,
-                    "A user with this alias ID is already registered at this centre"
-                );
-            }
-        }
-
-        [Test]
         public void Index_post_returns_view_with_model_error_with_invalid_prn()
         {
             // Given
@@ -129,7 +101,6 @@
                 ProfessionalRegistrationNumber = "!&^£%&*^!%£",
             };
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
-            A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -155,7 +126,6 @@
                 HasProfessionalRegistrationNumber = false,
             };
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
-            A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
 
             // When
             var result = controller.Index(formData, DelegateId);

@@ -37,32 +37,6 @@
         }
 
         [Test]
-        public void GetAdminUserByUsername_Returns_admin_user()
-        {
-            // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
-
-            // When
-            var returnedAdminUser = userDataService.GetAdminUserByUsername("Username");
-
-            // Then
-            returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
-        }
-
-        [Test]
-        public void GetAdminUserByUsername_Returns_admin_user_category_name_all()
-        {
-            // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultCategoryNameAllAdminUser();
-
-            // When
-            var returnedAdminUser = userDataService.GetAdminUserByUsername("ebtnaxrbatnexr");
-
-            // Then
-            returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
-        }
-
-        [Test]
         public void GetAdminUserByEmailAddress_Returns_admin_user()
         {
             // Given
@@ -222,14 +196,14 @@
         }
 
         [Test]
-        public void DeleteAdmin_deletes_admin_record()
+        public void DeleteAdminAccount_deletes_admin_record()
         {
             // Given
             const int adminId = 25;
             using var transaction = new TransactionScope();
 
             // When
-            userDataService.DeleteAdminUser(adminId);
+            userDataService.DeleteAdminAccount(adminId);
             var result = userDataService.GetAdminUserById(adminId);
 
             // Then

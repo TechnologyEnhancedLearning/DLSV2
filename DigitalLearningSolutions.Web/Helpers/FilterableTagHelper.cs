@@ -130,6 +130,15 @@
                 tags.Add(new SearchableTagViewModel(CourseDelegateProgressRemovedFilterOptions.NotRemoved, true));
             }
 
+            if (courseDelegate.HasCompleted)
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateCompletionFilterOptions.Complete));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateCompletionFilterOptions.Incomplete));
+            }
+
             return tags;
         }
 

@@ -72,9 +72,10 @@
       }
       </div>
       <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small"
+         data-return-page-enabled="true"
          asp-action="@(Model.SupervisorDelegateDetail.CandidateAssessmentCount == 0 ? "RemoveSupervisorDelegate" : "RemoveSupervisorDelegateConfirm")"
          asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
-         asp-route-returnPage="@Model.Page">
+         asp-route-returnPageQuery="@Model.ReturnPageQuery">
         Remove staff member
       </a>
 

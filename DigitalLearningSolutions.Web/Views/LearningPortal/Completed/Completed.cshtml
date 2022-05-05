@@ -32,6 +32,7 @@
       </p>
     } else {
       <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+      <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
 
       <div id="searchable-elements">
         @foreach (var completedLearningItem in Model.CompletedActivities) {
@@ -43,15 +44,13 @@
         }
       </div>
     }
-    @if (Model.TotalPages > 1) {
-      <partial name="SearchablePage/_Pagination" model="Model" />
-    }
 
+    <partial name="SearchablePage/_Pagination" model="Model" />
   </div>
 </div>
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-  @section scripts {
-    <script src="@Url.Content("~/js/learningPortal/completed.js")" asp-append-version="true"></script>
-  }
+@section scripts {
+  <script src="@Url.Content("~/js/learningPortal/completed.js")" asp-append-version="true"></script>
+}
 }

@@ -58,15 +58,6 @@
             return user;
         }
 
-        public AdminUser? GetAdminUserByUsername(string username)
-        {
-            return connection.Query<AdminUser>(
-                @$"{BaseSelectAdminQuery}
-                    WHERE au.Active = 1 AND au.Approved = 1 AND (au.Login = @username OR au.Email = @username)",
-                new { username }
-            ).SingleOrDefault();
-        }
-
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
         {
             return connection.Query<AdminUser>(
@@ -122,17 +113,17 @@
         )
         {
             connection.Execute(
-                @"UPDATE AdminUsers
+                @"UPDATE AdminAccounts
                         SET
-                            CentreAdmin = @isCentreAdmin,
-                            Supervisor = @isSupervisor,
-                            NominatedSupervisor = @isNominatedSupervisor,
-                            Trainer = @isTrainer,
-                            ContentCreator = @isContentCreator,
-                            ContentManager = @isContentManager,
+                            IsCentreAdmin = @isCentreAdmin,
+                            IsSupervisor = @isSupervisor,
+                            IsNominatedSupervisor = @isNominatedSupervisor,
+                            IsTrainer = @isTrainer,
+                            IsContentCreator = @isContentCreator,
+                            IsContentManager = @isContentManager,
                             ImportOnly = @importOnly,
                             CategoryID = @categoryId
-                        WHERE AdminID = @adminId",
+                        WHERE ID = @adminId",
                 new
                 {
                     isCentreAdmin,
@@ -170,11 +161,11 @@
             );
         }
 
-        public void DeleteAdminUser(int adminId)
+        public void DeleteAdminAccount(int adminId)
         {
             connection.Execute(
-                @"DELETE AdminUsers
-                    WHERE AdminID = @adminId",
+                @"DELETE AdminAccounts
+                    WHERE ID = @adminId",
                 new { adminId }
             );
         }

@@ -45,6 +45,7 @@
         <p>The centre has no courses set up yet.</p>
       } else {
         <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
+        <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
 
         <div id="searchable-elements">
           @foreach (var course in Model.Courses) {
@@ -52,9 +53,8 @@
           }
         </div>
       }
-      @if (Model.TotalPages > 1) {
-        <partial name="SearchablePage/_Pagination" model="Model" />
-      }
+
+      <partial name="SearchablePage/_Pagination" model="Model" />
     </div>
   </div>
 </div>

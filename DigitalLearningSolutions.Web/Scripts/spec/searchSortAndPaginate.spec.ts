@@ -156,7 +156,7 @@ function createCourseCards() {
       <html>
       <head></head>
       <body>
-        <span id="page-indicator"></span>
+        <span class="page-indicator"></span>
         <div id="searchable-elements">
           <div class="searchable-element" id="course-a">
             <span name="name" class="searchable-element-title">a: Course</span>
