@@ -42,7 +42,8 @@
     } else {
       <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-4" />
       <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-      <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
+      <partial name="SearchablePage/_TopPaginationWithoutAlert" model="Model" />
+      <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
       <div id="searchable-elements">
         @foreach (var currentLearningItem in Model.CurrentActivities) {
@@ -57,7 +58,7 @@
       </div>
     }
 
-    <partial name="SearchablePage/_Pagination" model="Model" />
+    <partial name="SearchablePage/_BottomPaginationWithoutAlert" model="Model" />
   </div>
 </div>
 
