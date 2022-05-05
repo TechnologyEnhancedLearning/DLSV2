@@ -1,8 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -19,7 +23,17 @@
 
         public string Index([FromQuery] TrackerEndpointQueryParams queryParams)
         {
-            return trackerService.ProcessQuery(queryParams);
+            var sessionVariables = GetSessionVariablesDictionary();
+            return trackerService.ProcessQuery(queryParams, sessionVariables);
+        }
+
+        private Dictionary<TrackerEndpointSessionVariable, string?> GetSessionVariablesDictionary()
+        {
+            var sessionVariableKeys = Enumeration.GetAll<TrackerEndpointSessionVariable>();
+            return sessionVariableKeys.ToDictionary(
+                sessionVariableKey => sessionVariableKey,
+                sessionVariableKey => HttpContext.Session.GetString(sessionVariableKey.Name)
+            );
         }
     }
 }
