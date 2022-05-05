@@ -30,6 +30,8 @@ namespace DigitalLearningSolutions.Data.Services
         void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
 
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId);
+
+        string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel);
     }
 
     public class RegistrationService : IRegistrationService
@@ -79,8 +81,6 @@ namespace DigitalLearningSolutions.Data.Services
             int? supervisorDelegateId = null
         )
         {
-            ValidateRegistrationEmail(delegateRegistrationModel);
-
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
@@ -94,7 +94,7 @@ namespace DigitalLearningSolutions.Data.Services
                                                  centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
                                                  userIp == "::1";
 
-            var candidateNumber = registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
@@ -258,22 +258,23 @@ namespace DigitalLearningSolutions.Data.Services
             registrationDataService.RegisterAdmin(adminRegistrationModel);
         }
 
-        private string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
+        public string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
         {
-            var candidateNumberOrErrorCode = registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+            ValidateRegistrationEmail(delegateRegistrationModel);
 
-            var failureIfAny = DelegateCreationError.FromStoredProcedureErrorCode(candidateNumberOrErrorCode);
+            string candidateNumber;
 
-            if (failureIfAny != null)
+            try
             {
-                logger.LogError(
-                    $"Could not create account for delegate on registration. Failure: {failureIfAny.Name}."
-                );
-
-                throw new DelegateCreationFailedException(failureIfAny);
+                candidateNumber =
+                    registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+            }
+            catch
+            {
+                throw new DelegateCreationFailedException(DelegateCreationError.UnexpectedError);
             }
 
-            return candidateNumberOrErrorCode;
+            return candidateNumber;
         }
 
         private IEnumerable<int> GetPendingSupervisorDelegateIdsMatchingDelegate(
@@ -283,6 +284,7 @@ namespace DigitalLearningSolutions.Data.Services
             return supervisorDelegateService
                 .GetPendingSupervisorDelegateRecordsByEmailAndCentre(
                     delegateRegistrationModel.Centre,
+                    // TODO HEEDLS-886 it's undecided at time of comment whether this should be matched on centre email or primary email
                     delegateRegistrationModel.PrimaryEmail
                 ).Select(record => record.ID);
         }
@@ -300,7 +302,8 @@ namespace DigitalLearningSolutions.Data.Services
                 true
             );
 
-            var candidateNumberOrErrorCode = registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+            var candidateNumberOrErrorCode =
+                registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
             var failureIfAny = DelegateCreationError.FromStoredProcedureErrorCode(candidateNumberOrErrorCode);
             if (failureIfAny != null)
             {

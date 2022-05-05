@@ -23,6 +23,8 @@
 
         public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
         {
+            // TODO HEEDLS-886: this method previously returned error codes as well as candidate numbers.
+            // any code that calls it and handled those errors on the basis of the codes needs to be updated
             var userValues = new
                 {
                     delegateRegistrationModel.FirstName,
@@ -62,9 +64,13 @@
             var initials = delegateRegistrationModel.FirstName.Substring(1) +
                            delegateRegistrationModel.LastName.Substring(1);
 
+            string candidateNumber;
             // this SQL is reproduced mostly verbatim from the uspSaveNewCandidate_V10 procedure in the legacy codebase.
-            var candidateNumber = connection.QueryFirst<string>(
-                @"DECLARE @_MaxCandidateNumber AS integer
+            connection.Open();
+            using (var transaction = connection.BeginTransaction())
+            {
+                candidateNumber = connection.QueryFirst<string>(
+                    @"DECLARE @_MaxCandidateNumber AS integer
 		            SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
 									FROM      DelegateAccounts WITH (TABLOCK, HOLDLOCK)
 									WHERE     (LEFT(CandidateNumber, 2) = @initials)
@@ -74,8 +80,11 @@
 			            SET @_MaxCandidateNumber = 0
 			            END
 		            SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
-                new { initials }
-            );
+                    new { initials },
+                    transaction
+                );
+                transaction.Commit();
+            }
 
             var candidateValues = new
             {
