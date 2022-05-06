@@ -28,52 +28,53 @@
 
   @foreach (var competency in Model)
   {
-    <tbody class="nhsuk-table__body row-outer" id="comp-@competency.RowNo">
-      <tr role="row" class="nhsuk-table__row first-row">
-        <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
-          @if (competency.Description != null && !competency.AlwaysShowDescription)
-          {
-            <details class="nhsuk-details">
-              <summary class="nhsuk-details__summary">
-                <h2 class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-0">
-                  <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
-                  <span class="nhsuk-details__summary-text">@competency.Name</span>
-                </h2>
-              </summary>
-              <div class="nhsuk-details__text nhsuk-u-margin-left-6 nhsuk-u-margin-top-2">
-                @(Html.Raw(@competency.Description))
-              </div>
-            </details>
-          }
-          else
-          {
-            <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
-              <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
-            </h2>
-            @if (competency.Description != null)
-            {
-              <p class="nhsuk-u-margin-top-2">
-                @(Html.Raw(competency.Description))
-              </p>
-            }
-          }
-        </td>
-        <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo } })" />
-        <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
-          <span class="nhsuk-table-responsive__heading">Action </span>
-          <a asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]" asp-route-competencyNumber="@competency.RowNo">
-            Review
-          </a>
-        </td>
-      </tr>
-      @foreach (var question in competency.AssessmentQuestions.Skip(1))
+<tbody class="nhsuk-table__body row-outer" id="comp-@competency.RowNo">
+  <tr role="row" class="nhsuk-table__row first-row">
+    <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
+      @if (competency.Description != null && !competency.AlwaysShowDescription)
       {
-        <tr role="row" class="nhsuk-table__row">
-          <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo } })" />
-
-        </tr>
-
+        <details class="nhsuk-details">
+          <summary class="nhsuk-details__summary">
+            <h2 class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-0">
+              <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
+              <span class="nhsuk-details__summary-text">@competency.Name</span>
+            </h2>
+          </summary>
+          <div class="nhsuk-details__text nhsuk-u-margin-top-2">
+            @(Html.Raw(@competency.Description))
+          </div>
+        </details>
       }
-     </tbody>
-  }    
-</table>
+      else
+      {
+        <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
+          <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
+        </h2>
+        @if (competency.Description != null)
+        {
+          <p class="nhsuk-u-margin-top-2">
+            @(Html.Raw(competency.Description))
+          </p>
+        }
+      }
+    </td>
+    <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo } })" />
+    <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
+      <span class="nhsuk-table-responsive__heading">Action </span>
+      <a asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]" asp-route-competencyNumber="@competency.RowNo">
+        Review
+      </a>
+    </td>
+  </tr>
+  @foreach (var question in competency.AssessmentQuestions.Skip(1))
+  {
+    <tr role="row" class="nhsuk-table__row">
+      <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo } })" />
+
+    </tr>
+
+  }
+</tbody>
+      }
+    
+  </table>
