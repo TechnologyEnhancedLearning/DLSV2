@@ -11,9 +11,12 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.FindYourCentre;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
 
+    [FeatureGate(FeatureFlags.RefactoredFindYourCentrePage)]
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.FindYourCentre))]
+    [RedirectDelegateOnlyToLearningPortal]
     public class FindYourCentreController : Controller
     {
         private const string FindCentreFilterCookieName = "FindCentre";
@@ -32,7 +35,6 @@
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        [RedirectDelegateOnlyToLearningPortal]
         [Route("FindYourCentre/{page=1:int}")]
         public IActionResult Index(
             int page = 1,

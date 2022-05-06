@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.FindYourCentre
 @model FindYourCentreViewModel
 
-<link rel="stylesheet" href="@Url.Content("~/css/findYourCentre/Index.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/findYourCentre/findYourCentre.css")" asp-append-version="true">
 
 @{
   ViewData["Title"] = "Find Your Centre";
@@ -27,7 +27,7 @@
       <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchAndFilter" model="Model" />
 
       @if (Model.NoDataFound) {
-        <p>The centre has no courses set up yet.</p>
+        <p>No centres found.</p>
       } else {
         <div class="nhsuk-u-margin-right-auto nhsuk-u-margin-bottom-3">
           <partial name="SearchablePage/_SearchResultsCount" model="Model" />

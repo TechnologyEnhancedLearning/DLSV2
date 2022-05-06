@@ -24,9 +24,10 @@
             set => SearchableNameOverrideForFuzzySharp = value;
         }
 
-        public string RegionFilter => nameof(RegionName) +
-                                      FilteringHelper.Separator +
-                                      nameof(RegionName) +
-                                      FilteringHelper.Separator + RegionName;
+        public string RegionFilter => FilteringHelper.BuildFilterValueString(
+            nameof(RegionName),
+            nameof(RegionName),
+            RegionName
+        );
     }
 }

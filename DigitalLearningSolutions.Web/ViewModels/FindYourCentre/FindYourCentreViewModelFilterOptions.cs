@@ -16,8 +16,11 @@
             return regions.Select(
                 region => new FilterOptionModel(
                     region.regionName,
-                    nameof(CentreSummaryForFindYourCentre.RegionName) + FilteringHelper.Separator +
-                    nameof(CentreSummaryForFindYourCentre.RegionName) + FilteringHelper.Separator + region.regionName,
+                    FilteringHelper.BuildFilterValueString(
+                        nameof(CentreSummaryForFindYourCentre.RegionName),
+                        nameof(CentreSummaryForFindYourCentre.RegionName),
+                        region.regionName
+                    ),
                     FilterStatus.Default
                 )
             );

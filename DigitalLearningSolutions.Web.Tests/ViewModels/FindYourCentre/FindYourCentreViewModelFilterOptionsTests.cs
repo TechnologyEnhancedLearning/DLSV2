@@ -17,12 +17,12 @@
             {
                 new FilterOptionModel(
                     "Region1",
-                    "RegionName" + FilteringHelper.Separator + "RegionName" + FilteringHelper.Separator + "Region1",
+                    FilteringHelper.BuildFilterValueString("RegionName", "RegionName", "Region1"),
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
                     "Region2",
-                    "RegionName" + FilteringHelper.Separator + "RegionName" + FilteringHelper.Separator + "Region2",
+                    FilteringHelper.BuildFilterValueString("RegionName", "RegionName", "Region2"),
                     FilterStatus.Default
                 ),
             }

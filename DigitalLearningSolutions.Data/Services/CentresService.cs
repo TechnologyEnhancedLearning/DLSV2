@@ -9,11 +9,8 @@
     public interface ICentresService
     {
         IEnumerable<CentreRanking> GetCentresForCentreRankingPage(int centreId, int numberOfDays, int? regionId);
-
         int? GetCentreRankForCentre(int centreId);
-
         IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
-
         IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
         IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
     }

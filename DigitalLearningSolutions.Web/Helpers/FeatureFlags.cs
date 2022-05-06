@@ -9,5 +9,6 @@
         public const string CandidateAssessmentExcelExport = "CandidateAssessmentExcelExport";
         public const string UseSignposting = "UseSignposting";
         public const string PricingPageEnabled = "PricingPage";
+        public const string RefactoredFindYourCentrePage = "RefactoredFindYourCentrePage";
     }
 }
