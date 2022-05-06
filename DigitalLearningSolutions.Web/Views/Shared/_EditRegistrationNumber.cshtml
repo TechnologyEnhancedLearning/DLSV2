@@ -1,6 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common
 @using DigitalLearningSolutions.Web.ViewModels.Register
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EditDelegate
 @using Microsoft.AspNetCore.Mvc.ModelBinding
 
 @model IEditProfessionalRegistrationNumbers
@@ -15,18 +14,19 @@
   const string professionalRegConditionalId = "professional-reg-conditional-Id";
 
   var isRegisterJourney = Model is LearnerInformationViewModel;
-  var isEditDelegateByAdmin = Model is EditDelegateViewModel;
 }
+
+<input type="hidden"asp-for="IsSelfRegistrationOrEdit"/>
 
 <div class="nhsuk-form-group @(hasPrnErrorHasOccurred ? " nhsuk-form-group--error" : "" )">
   <fieldset id="HasProfessionalRegistrationNumber" class="nhsuk-fieldset" aria-describedby="professional-registration-hint">
 
     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
       <div class="nhsuk-label">
-        Do @(isEditDelegateByAdmin ? "they" : "you") have a Professional Registration Number?
+        Do @(!Model.IsSelfRegistrationOrEdit ? "they" : "you") have a Professional Registration Number?
       </div>
       <div class="nhsuk-hint nhsuk-u-margin-bottom-0" id="professional-registration-hint">
-        @(isEditDelegateByAdmin ? "They" : "You") should have a professional registration number if @(isEditDelegateByAdmin ? "they" : "you") are a health professional registered with a professional body such as the NMC, GMC or GDC.
+        @(!Model.IsSelfRegistrationOrEdit ? "They" : "You") should have a professional registration number if @(!Model.IsSelfRegistrationOrEdit ? "they" : "you") are a health professional registered with a professional body such as the NMC, GMC or GDC.
         @(isRegisterJourney ? "If you don't have it to hand, you can provide it later by visiting My account / Edit details." : "")
       </div>
     </legend>
