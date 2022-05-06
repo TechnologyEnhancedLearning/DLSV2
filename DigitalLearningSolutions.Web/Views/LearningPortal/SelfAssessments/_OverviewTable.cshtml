@@ -35,24 +35,24 @@
           {
             <details class="nhsuk-details">
               <summary class="nhsuk-details__summary">
-                <h2 class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-0">
+                <p class="nhsuk-heading-l nhsuk-u-font-size-24 nhsuk-u-margin-bottom-0">
                   <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
                   <span class="nhsuk-details__summary-text">@competency.Name</span>
-                </h2>
+                </p>
               </summary>
-              <div class="nhsuk-details__text nhsuk-u-margin-left-6 nhsuk-u-margin-top-2">
+              <div class="nhsuk-body-l nhsuk-details__text nhsuk-u-margin-left-6 nhsuk-u-margin-top-2">
                 @(Html.Raw(@competency.Description))
               </div>
             </details>
           }
           else
           {
-            <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
+            <p class="nhsuk-heading-l nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
               <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
-            </h2>
+            </p>
             @if (competency.Description != null)
             {
-              <p class="nhsuk-u-margin-top-2">
+              <p class="nhsuk-body-l nhsuk-u-margin-top-2">
                 @(Html.Raw(competency.Description))
               </p>
             }
