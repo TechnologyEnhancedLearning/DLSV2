@@ -289,35 +289,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void Registering_delegate_should_send_SupervisorDelegate_email_for_matching_id_record_only()
-        {
-            // Given
-            const int supervisorDelegateId = 2;
-            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
-            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
-
-            // When
-            registrationService.RegisterDelegate(
-                model,
-                string.Empty,
-                false,
-                null,
-                supervisorDelegateId
-            );
-
-            // Then
-            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId, 0))
-                .MustHaveHappened();
-            A.CallTo(
-                () => frameworkNotificationService.SendSupervisorDelegateAcceptance(
-                    A<int>.That.Matches(id => id != supervisorDelegateId),
-                    A<int>._
-                )
-            ).MustNotHaveHappened();
-        }
-
-        [Test]
         public void Error_when_registering_delegate_returns_error_code()
         {
             // Given
@@ -611,23 +582,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     777
                 )
             ).MustHaveHappened();
-        }
-
-        [Test]
-        public void RegisterDelegateByCentre_should_not_send_SupervisorDelegate_email()
-        {
-            // Given
-            const string baseUrl = "base.com";
-            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
-            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
-
-            // When
-            registrationService.RegisterDelegateByCentre(model, baseUrl);
-
-            // Then
-            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(A<int>._, A<int>._))
-                .MustNotHaveHappened();
         }
 
         [Test]

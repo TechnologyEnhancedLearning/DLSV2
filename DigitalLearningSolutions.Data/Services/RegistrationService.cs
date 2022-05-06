@@ -119,14 +119,6 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
-            if (foundRecordForSupervisorDelegateId)
-            {
-                frameworkNotificationService.SendSupervisorDelegateAcceptance(
-                    supervisorDelegateId!.Value,
-                    delegateUser.Id
-                );
-            }
-
             if (!delegateRegistrationModel.Approved)
             {
                 var contactInfo = centresDataService.GetCentreManagerDetails(delegateRegistrationModel.Centre);
