@@ -50,7 +50,8 @@
       </p>
     } else {
       <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-      <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
+      <partial name="SearchablePage/_TopPaginationWithoutAlert" model="Model" />
+      <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
       <div id="searchable-elements">
         @foreach (var resource in Model.RecommendedResources) {
@@ -59,7 +60,7 @@
       </div>
     }
 
-    <partial name="SearchablePage/_Pagination" model="Model" />
+    <partial name="SearchablePage/_BottomPaginationWithoutAlert" model="Model" />
   </div>
 </div>
 
