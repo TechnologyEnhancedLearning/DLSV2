@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.LearningContent;
     using Microsoft.AspNetCore.Mvc;
@@ -84,6 +85,8 @@
             );
 
             var model = new LearningContentViewModel(result, availableFilters, brand, tutorials);
+
+            Response.UpdateFilterCookie(BrandCoursesFilterCookieName, result.FilterString);
 
             return View(model);
         }
