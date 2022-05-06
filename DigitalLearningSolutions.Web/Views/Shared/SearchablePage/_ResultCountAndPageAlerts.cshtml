@@ -1,0 +1,8 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
+@model IBasePaginatedViewModel
+
+<span class="nhsuk-u-visually-hidden" role="alert">
+  <span class="results-count">@Model.MatchingSearchResults matching @(Model.MatchingSearchResults == 1 ? "result" : "results").</span>
+  <span class="nhsuk-u-visually-hidden">Page </span>
+  <span class="page-indicator" @(Model.TotalPages <= 1 ? "hidden" : "")>@Model.Page of @(Model.TotalPages).</span>
+</span>

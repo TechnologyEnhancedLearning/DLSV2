@@ -39,7 +39,7 @@
               <b>No courses found.</b>
             </p>
           } else {
-            <partial name="PaginatedPage/_PaginationNavWithoutAlert" model="Model" />
+            <partial name="PaginatedPage/_TopPaginationNavWithoutAlert" model="Model" />
 
             @foreach (var groupCourse in Model.GroupCourses) {
               <partial name="_GroupCourseCard" model="groupCourse" />

@@ -1,0 +1,9 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
+@model IBaseSearchablePageViewModel
+
+<p class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0">
+  @{
+    var count = Model.MatchingSearchResults;
+  }
+  <span class="results-count">@count matching @(count == 1 ? "result" : "results")</span>
+</p>

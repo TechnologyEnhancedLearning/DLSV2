@@ -112,6 +112,12 @@
         {
             var data = TempData.Peek<RegistrationData>()!;
 
+            ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
+                ModelState,
+                model.HasProfessionalRegistrationNumber,
+                model.ProfessionalRegistrationNumber
+            );
+
             if (!ModelState.IsValid)
             {
                 SetJobGroupOptions(model);
@@ -179,7 +185,10 @@
             }
 
             var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
-            registrationService.RegisterCentreManager(registrationModel, data.JobGroup!.Value);
+            registrationService.RegisterCentreManager(
+                registrationModel,
+                data.JobGroup!.Value
+            );
 
             return RedirectToAction("Confirmation");
         }

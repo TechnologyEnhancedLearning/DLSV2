@@ -41,6 +41,10 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<ApplicationDetails> GetApplicationsAvailableToCentreByCategory(int centreId, int? categoryId);
 
+        IEnumerable<ApplicationDetails> GetApplicationsByBrandId(int brandId);
+
+        Dictionary<int, int> GetNumsOfRecentProgressRecordsForBrand(int brandId, DateTime threeMonthsAgo);
+
         IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
 
         bool DoesCourseNameExistAtCentre(
@@ -502,6 +506,28 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
+        public IEnumerable<ApplicationDetails> GetApplicationsByBrandId(int brandId)
+        {
+            return connection.Query<ApplicationDetails>(
+                @"SELECT
+                        ap.ApplicationID,
+                        ap.ApplicationName,
+                        ap.PLAssess,
+                        ap.DiagAssess,
+                        ap.CreatedDate,
+                        ap.CourseTopicID,
+                        cc.CategoryName,
+                        ct.CourseTopic
+                    FROM Applications AS ap
+                    INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
+                    INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
+                    WHERE ap.ArchivedDate IS NULL
+                        AND ap.Debug = 0
+                        AND ap.BrandID = @brandId",
+                new { brandId }
+            );
+        }
+
         public IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId)
         {
             return connection.Query<Course>(
@@ -656,6 +682,29 @@ namespace DigitalLearningSolutions.Data.DataServices
                     courseOptions.DiagObjSelect,
                     customisationId,
                 }
+            );
+        }
+
+        public Dictionary<int, int> GetNumsOfRecentProgressRecordsForBrand(int brandId, DateTime threeMonthsAgo)
+        {
+            var query = connection.Query(
+                @"SELECT
+                        Applications.ApplicationID,
+                        COUNT(Progress.ProgressID) AS NumRecentProgressRecords
+                    FROM Applications
+                        INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
+                        INNER JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID
+                    WHERE Applications.BrandID = @brandId
+                      AND Applications.Debug = 0
+                      AND Applications.ArchivedDate IS NULL
+                      AND Progress.SubmittedTime > @threeMonthsAgo
+                    GROUP BY Applications.ApplicationID",
+                new
+                    { brandId, threeMonthsAgo }
+            );
+            return query.ToDictionary<dynamic?, int, int>(
+                entry => entry.ApplicationID,
+                entry => entry.NumRecentProgressRecords
             );
         }
 

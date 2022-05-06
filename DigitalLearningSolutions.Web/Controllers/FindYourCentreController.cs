@@ -1,32 +1,85 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.FindYourCentre;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
+    using Microsoft.FeatureManagement.Mvc;
 
+    [FeatureGate(FeatureFlags.RefactoredFindYourCentrePage)]
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.FindYourCentre))]
     [RedirectDelegateOnlyToLearningPortal]
     public class FindYourCentreController : Controller
     {
+        private const string FindCentreFilterCookieName = "FindCentre";
         private readonly ICentresService centresService;
-        private readonly IConfiguration configuration;
+        private readonly IRegionDataService regionDataService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
-        public FindYourCentreController(IConfiguration configuration, ICentresService centresService)
+        public FindYourCentreController(
+            ICentresService centresService,
+            IRegionDataService regionDataService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
+        )
         {
-            this.configuration = configuration;
             this.centresService = centresService;
+            this.regionDataService = regionDataService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
-        
-        public IActionResult Index(string? centreId)
+
+        [Route("FindYourCentre/{page=1:int}")]
+        public IActionResult Index(
+            int page = 1,
+            string? searchString = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
+            bool clearFilters = false,
+            int? itemsPerPage = null
+        )
         {
-            var model = centreId == null
-                ? new FindYourCentreViewModel(configuration)
-                : new FindYourCentreViewModel(centreId, configuration);
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                FindCentreFilterCookieName
+            );
+
+            var centreSummaries = centresService.GetAllCentreSummariesForFindCentre();
+            var regions = regionDataService.GetRegionsAlphabetical();
+
+            var availableFilters = FindYourCentreViewModelFilterOptions
+                .GetFindCentreFilterModels(regions).ToList();
+
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                new SearchOptions(searchString),
+                null,
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters
+                ),
+                new PaginationOptions(page, itemsPerPage)
+            );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                centreSummaries,
+                searchSortPaginationOptions
+            );
+
+            var model = new FindYourCentreViewModel(
+                result,
+                availableFilters
+            );
+
+            Response.UpdateFilterCookie(FindCentreFilterCookieName, result.FilterString);
 
             return View(model);
         }

@@ -11,8 +11,14 @@
         public static readonly TrackerEndpointResponse InvalidAction =
             new TrackerEndpointResponse(-2, nameof(InvalidAction));
 
+        public static readonly TrackerEndpointResponse NullTutorialStatusOrTime =
+            new TrackerEndpointResponse(-14, nameof(NullTutorialStatusOrTime));
+
         public static readonly TrackerEndpointResponse NullAction =
             new TrackerEndpointResponse(-15, nameof(NullAction));
+
+        public static readonly TrackerEndpointResponse StoreAspProgressV2Exception =
+            new TrackerEndpointResponse(-24, nameof(StoreAspProgressV2Exception));
 
         public static readonly TrackerEndpointResponse StoreDiagnosticScoreException =
             new TrackerEndpointResponse(-25, nameof(StoreDiagnosticScoreException));

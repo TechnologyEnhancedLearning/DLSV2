@@ -5,4 +5,6 @@
 
 <partial name="SearchablePage/_Sort" model="Model" />
 
-<partial name="SearchablePage/_Filters" model="Model" />
+@if (Model.Filters.Any()) {
+  <partial name="SearchablePage/_Filters" model="Model" />
+}

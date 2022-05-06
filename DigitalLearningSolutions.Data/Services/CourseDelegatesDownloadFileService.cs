@@ -183,6 +183,9 @@
         {
             var sheet = workbook.Worksheets.Add("Course Delegates");
 
+            // Set sheet to have outlining expand buttons at the top of the expanded section.
+            sheet.Outline.SummaryVLocation = XLOutlineSummaryVLocation.Top;
+
             var customRegistrationPrompts =
                 registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
@@ -265,8 +268,11 @@
             }
 
             var insertedDataRange = sheet.Cell(GetNextEmptyRowNumber(sheet), 1).InsertData(dataTable.Rows);
-            sheet.Rows(insertedDataRange.FirstRow().RowNumber(), insertedDataRange.LastRow().RowNumber())
-                .Group(true);
+            if (dataTable.Rows.Count > 0)
+            {
+                sheet.Rows(insertedDataRange.FirstRow().RowNumber(), insertedDataRange.LastRow().RowNumber())
+                    .Group(true);
+            }
         }
 
         private static int GetNextEmptyRowNumber(IXLWorksheet sheet)

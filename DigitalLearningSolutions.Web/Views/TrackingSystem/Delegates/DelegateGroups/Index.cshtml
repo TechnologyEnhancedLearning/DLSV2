@@ -44,7 +44,8 @@
         </p>
       } else {
         <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-        <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
+        <partial name="SearchablePage/_TopPaginationWithoutAlert" model="Model" />
+        <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
         <div id="searchable-elements">
           @foreach (var groupModel in Model.DelegateGroups) {
@@ -53,7 +54,7 @@
         </div>
       }
 
-      <partial name="SearchablePage/_Pagination" model="Model" />
+      <partial name="SearchablePage/_BottomPaginationWithoutAlert" model="Model" />
     </div>
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.DelegateGroups" />
@@ -64,5 +65,4 @@
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
 @section scripts {
   <script src="@Url.Content("~/js/trackingSystem/delegateGroups.js")" asp-append-version="true"></script>
-}
-}
+}}

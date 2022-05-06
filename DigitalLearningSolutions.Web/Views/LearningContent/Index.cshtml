@@ -21,17 +21,44 @@
   </nav>
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">@Model.Name</h1>
-    <p class="nhsuk-lede-text nhsuk-u-margin-top-4">@Model.Description</p>
-  </div>
-</div>
-
-@if (Model.Tutorials.Any()) {
-  <p class="nhsuk-u-margin-top-4">Course Tutorials</p>
-  <p class="nhsuk-body-m">Access to this content does not require login and progress is not tracked.</p>
-  foreach (var tutorial in Model.Tutorials) {
-    <partial name="_TutorialCard" model="tutorial" />
-  }
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+  <vc:loading-spinner page-has-side-nav-menu="true" />
 }
+<div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl">@Model.Name</h1>
+      <p class="nhsuk-lede-text nhsuk-u-margin-top-4">@Model.Description</p>
+    </div>
+  </div>
+
+  @if (Model.Tutorials.Any()) {
+    <h2 class="nhsuk-heading-l">Course Tutorials</h2>
+    <p class="nhsuk-body-m">Access to this content does not require login and progress is not tracked.</p>
+    foreach (var tutorial in Model.Tutorials) {
+      <partial name="_TutorialCard" model="tutorial" />
+    }
+  }
+
+  @if (Model.Applications.Any()) {
+    <h2 class="nhsuk-heading-l nhsuk-u-padding-top-7" id="courses-heading">Courses</h2>
+    <partial name="SearchablePage/Configurations/_SortAndFilter" model="Model" />
+
+    <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+    <partial name="SearchablePage/_TopPaginationWithoutAlert" model="Model" />
+    <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
+
+    <div id="searchable-elements">
+      @foreach (var application in Model.Applications) {
+        <partial name="_BrandCourseCard" model="@application" />
+      }
+    </div>
+
+    <partial name="SearchablePage/_BottomPaginationWithoutAlert" model="Model" />
+  }
+</div>
+<input type="hidden" id="brand-id" asp-for="BrandId" />
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+@section scripts {
+  <script src="@Url.Content("~/js/learningContent/brands.js")" asp-append-version="true"></script>
+}}
