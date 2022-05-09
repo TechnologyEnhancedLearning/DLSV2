@@ -70,7 +70,7 @@
             rowNum++;
             sheet.Cell(rowNum, 1).Value ="Learner PRN";
             sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
-            sheet.Cell(rowNum, 2).Value = (!string.IsNullOrEmpty(candidateAssessmentExportSummary.CandidatePrn) ? "Recorded" : "Not Recorded");
+            sheet.Cell(rowNum, 2).Value = (!string.IsNullOrEmpty(candidateAssessmentExportSummary.CandidatePrn) ? candidateAssessmentExportSummary.CandidatePrn.ToString() : "Not Recorded");
             rowNum++;
             sheet.Cell(rowNum, 1).Value ="Self Assessment";
             sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
