@@ -180,8 +180,10 @@ WHERE (ca.ID = @candidateAssessmentId  AND ca.CandidateID = @candidateId)",
             LAR.Result AS SelfAssessmentResult,
             LAR.SupportingComments AS SelfAssessmentComments,
             LAR.Reviewer,			
-        	CASE WHEN (LAR.PRN IS NULL OR LAR.PRN ='') THEN 'Not Recorded'			
-			ELSE 'Recorded' END AS ReviewerPrn,
+        	CASE WHEN (LAR.Reviewer = '') THEN ''
+                 WHEN ((LAR.PRN IS NULL OR LAR.PRN ='') AND LAR.Reviewer !='') THEN 'Not Recorded'
+                 WHEN ((LAR.PRN IS NOT NULL) AND LAR.Reviewer !='') THEN 'Recorded'
+			ELSE '' END AS ReviewerPrn,
             LAR.Verified AS Reviewed,
             LAR.Comments AS ReviewerComments,
             LAR.SignedOff AS ReviewerVerified,
