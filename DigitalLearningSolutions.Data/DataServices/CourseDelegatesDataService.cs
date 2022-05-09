@@ -55,9 +55,9 @@
                         p.RemovedDate,
                         p.Completed,
                         p.CustomisationId,
-                        p.Answer1,
-                        p.Answer2,
-                        p.Answer3,
+                        TRIM(p.Answer1) AS Answer1,
+                        TRIM(p.Answer2) AS Answer2,
+                        TRIM(p.Answer3) AS Answer3,
                         {AllAttemptsQuery},
                         {AttemptsPassedQuery}
                     FROM Candidates AS c
