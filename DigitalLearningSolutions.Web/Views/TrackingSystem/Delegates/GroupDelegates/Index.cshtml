@@ -41,7 +41,7 @@
               <b>No delegates found.</b>
             </p>
           } else {
-            <partial name="PaginatedPage/_TopPaginationNavWithoutAlert" model="Model" />
+            <partial name="PaginatedPage/_TopPaginationNav" model="Model" />
 
             @foreach (var groupDelegate in Model.GroupDelegates) {
               <partial name="_GroupDelegateCard" model="groupDelegate" />

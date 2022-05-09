@@ -81,7 +81,7 @@
               </p>
             } else {
               <partial name="SearchablePage/_SearchResultsCount" model="Model.CourseDetails" />
-              <partial name="SearchablePage/_TopPaginationWithoutAlert" model="Model.CourseDetails" />
+              <partial name="SearchablePage/_TopPagination" model="Model.CourseDetails" />
               <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model.CourseDetails" />
 
               <div id="searchable-elements">
@@ -91,7 +91,7 @@
               </div>
             }
             @if (Model.CourseDetails.TotalPages > 1) {
-              <partial name="SearchablePage/_BottomPaginationWithoutAlert" model="Model.CourseDetails" />
+              <partial name="SearchablePage/_BottomPagination" model="Model.CourseDetails" />
             }
           </div>
         </div>
