@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web.Controllers.SetPassword
 {
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -13,14 +14,17 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
     {
         private readonly IPasswordResetService passwordResetService;
         private readonly IPasswordService passwordService;
+        private readonly IUserService userService;
 
         public ResetPasswordController(
             IPasswordResetService passwordResetService,
-            IPasswordService passwordService
+            IPasswordService passwordService,
+            IUserService userService
         )
         {
             this.passwordResetService = passwordResetService;
             this.passwordService = passwordService;
+            this.userService = userService;
         }
 
         [HttpGet]
@@ -77,6 +81,12 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
 
             await passwordResetService.InvalidateResetPasswordForEmailAsync(resetPasswordData.Email);
             await passwordService.ChangePasswordAsync(resetPasswordData.Email, viewModel.Password!);
+            var adminUser = userService.GetUsersByEmailAddress(resetPasswordData.Email).adminUser;
+
+            if (adminUser != null)
+            {
+                userService.ResetFailedLoginCount(adminUser);
+            }
 
             TempData.Clear();
 

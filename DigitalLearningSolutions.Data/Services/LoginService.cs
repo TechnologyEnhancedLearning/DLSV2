@@ -58,18 +58,12 @@
             if (shouldIncreaseFailedLoginCount)
             {
                 userService.IncrementFailedLoginCount(unverifiedAdminUser!);
+                unverifiedAdminUser!.FailedLoginCount += 1;
             }
 
             if (adminAccountIsLocked)
             {
-                if (delegateAccountVerificationSuccessful)
-                {
-                    verifiedAdminUser = null;
-                }
-                else
-                {
-                    return new LoginResult(LoginAttemptResult.AccountLocked, unverifiedAdminUser);
-                }
+                return new LoginResult(LoginAttemptResult.AccountLocked, unverifiedAdminUser);
             }
 
             if (verifiedAdminUser == null && !delegateAccountVerificationSuccessful)

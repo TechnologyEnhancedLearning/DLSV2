@@ -68,7 +68,7 @@
                     ModelState.AddModelError("Password", "The password you have entered is incorrect");
                     return View("Index", model);
                 case LoginAttemptResult.AccountLocked:
-                    return RedirectToAction("AccountLocked", new { failedCount = loginResult.Accounts.AdminAccount!.FailedLoginCount + 1 });
+                    return RedirectToAction("AccountLocked", new { failedCount = loginResult.Accounts.AdminAccount!.FailedLoginCount });
                 case LoginAttemptResult.AccountNotApproved:
                     return View("AccountNotApproved");
                 case LoginAttemptResult.InactiveCentre:
@@ -175,7 +175,7 @@
                 IsPersistent = rememberMe,
                 IssuedUtc = DateTime.UtcNow
             };
-            
+
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
 
             return RedirectToReturnUrl(returnUrl) ?? RedirectToAction("Index", "Home");

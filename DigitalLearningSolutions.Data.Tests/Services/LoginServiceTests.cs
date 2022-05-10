@@ -365,30 +365,6 @@
         }
 
         [Test]
-        public void
-            AttemptLogin_does_not_increment_failed_count_for_locked_admin_if_delegate_exists_and_returns_single_centre_login_result()
-        {
-            // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: "email@test.com", failedLoginCount: 6);
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            GivenAdminUserAndDelegateUserAreVerified(adminUser, delegateUser);
-            GivenNoLinkedAccountsFound();
-            GivenDelegateUserHasActiveCentre(delegateUser);
-
-            // When
-            var result = loginService.AttemptLogin(Username, Password);
-
-            // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustNotHaveHappened();
-                result.LoginAttemptResult.Should().Be(LoginAttemptResult.LogIntoSingleCentre);
-                result.Accounts.AdminAccount.Should().BeNull();
-                result.Accounts.DelegateAccounts.Single().Should().Be(delegateUser);
-            }
-        }
-
-        [Test]
         public void AttemptLogin_find_multiple_delegates_and_returns_choose_a_centre_login_result()
         {
             // Given
