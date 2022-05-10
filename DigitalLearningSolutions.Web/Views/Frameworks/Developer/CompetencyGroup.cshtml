@@ -1,10 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyGroupViewModel;
 @{
-  ViewData["Title"] = "Competency Group";
-  ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Competency Group";
+    ViewData["Application"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
@@ -34,7 +35,6 @@
       <h1>
         Add new @Model.VocabSingular().ToLower() group
       </h1>
-
     }
     @if (Model.DetailFramework.PublishStatusID == 3)
     {
@@ -48,6 +48,12 @@
         <span nhs-validation-for="CompetencyGroupBase.Name"></span>
         <input class="nhsuk-input" asp-for="CompetencyGroupBase.Name" id="competency-group-name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-group-name-label">
       </nhs-form-group>
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" id="competency-description-label" for="competency-description">
+          @Model.VocabSingular() description
+        </label>
+        <textarea class="nhsuk-input html-editor" asp-for="CompetencyGroupBase.Description" id="competency-group-description" name="Description" type="text" aria-describedby="competency-group-description-label"></textarea>
+      </div>
       <input name="ID" type="hidden" asp-for="CompetencyGroupBase.ID" />
       <input name="CompetencyGroupID" type="hidden" asp-for="CompetencyGroupBase.CompetencyGroupID" />
 
@@ -65,3 +71,6 @@
     </div>
   </div>
 </div>
+@section scripts {
+  <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
+}
