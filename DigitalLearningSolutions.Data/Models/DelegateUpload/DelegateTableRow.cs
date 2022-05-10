@@ -3,25 +3,35 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Services;
 
     public enum RowStatus
     {
         NotYetProcessed,
         Skipped,
         Registered,
-        Updated
+        Updated,
     }
 
     public class DelegateTableRow
     {
+        private static readonly Regex PrnRegex = new Regex(@"^[a-z\d-]+$", RegexOptions.IgnoreCase);
+
         public DelegateTableRow(IXLTable table, IXLRangeRow row)
         {
             string? FindFieldValue(string name)
             {
                 var colNumber = table.FindColumn(col => col.FirstCell().Value.ToString() == name).ColumnNumber();
                 return row.Cell(colNumber).GetValue<string?>();
+            }
+
+            string? FindNullableFieldValue(string name)
+            {
+                var cellValue = FindFieldValue(name);
+                return !string.IsNullOrEmpty(cellValue) ? cellValue : null;
             }
 
             RowNumber = row.RowNumber();
@@ -38,6 +48,8 @@
             Answer6 = FindFieldValue("Answer6");
             AliasId = FindFieldValue("AliasID");
             Email = FindFieldValue("EmailAddress")?.Trim();
+            HasPrn = bool.TryParse(FindFieldValue("HasPRN"), out var hasPrn) ? hasPrn : (bool?)null;
+            Prn = FindNullableFieldValue("PRN");
             RowStatus = RowStatus.NotYetProcessed;
         }
 
@@ -55,6 +67,8 @@
         public string? Answer6 { get; set; }
         public string? AliasId { get; set; }
         public string? Email { get; set; }
+        public bool? HasPrn { get; set; }
+        public string? Prn { get; set; }
 
         public BulkUploadResult.ErrorReason? Error { get; set; }
         public RowStatus RowStatus { get; set; }
@@ -129,6 +143,18 @@
             {
                 Error = BulkUploadResult.ErrorReason.TooLongAnswer6;
             }
+            else if (HasPrn.HasValue && HasPrn.Value && string.IsNullOrEmpty(Prn))
+            {
+                Error = BulkUploadResult.ErrorReason.HasPrnButMissingPrnValue;
+            }
+            else if (!string.IsNullOrEmpty(Prn) && (Prn.Length < 5 || Prn.Length > 20))
+            {
+                Error = BulkUploadResult.ErrorReason.InvalidPrnLength;
+            }
+            else if (!string.IsNullOrEmpty(Prn) && !PrnRegex.IsMatch(Prn))
+            {
+                Error = BulkUploadResult.ErrorReason.InvalidPrnCharacters;
+            }
 
             return !Error.HasValue;
         }
@@ -190,7 +216,20 @@
                 return false;
             }
 
-            return (delegateUser.EmailAddress ?? string.Empty) == Email;
+            if ((delegateUser.EmailAddress ?? string.Empty) != Email)
+            {
+                return false;
+            }
+
+            if (delegateUser.ProfessionalRegistrationNumber != Prn)
+            {
+                return false;
+            }
+
+            return DelegateDownloadFileService.GetHasPrnForDelegate(
+                delegateUser.HasBeenPromptedForPrn,
+                delegateUser.ProfessionalRegistrationNumber
+            ) == HasPrn;
         }
     }
 }
