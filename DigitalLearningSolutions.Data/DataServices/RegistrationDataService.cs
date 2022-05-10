@@ -25,6 +25,9 @@
         {
             // TODO HEEDLS-886: this method previously returned error codes as well as candidate numbers.
             // any code that calls it and handled those errors on the basis of the codes needs to be updated
+            connection.Open();
+            using var transaction = connection.BeginTransaction();
+
             var userValues = new
                 {
                     delegateRegistrationModel.FirstName,
@@ -58,7 +61,8 @@
                         @professionalRegistrationNumber,
                         @active
                     )",
-                    userValues
+                    userValues,
+                    transaction
                 );
 
             var initials = delegateRegistrationModel.FirstName.Substring(1) +
@@ -66,25 +70,20 @@
 
             string candidateNumber;
             // this SQL is reproduced mostly verbatim from the uspSaveNewCandidate_V10 procedure in the legacy codebase.
-            connection.Open();
-            using (var transaction = connection.BeginTransaction())
-            {
-                candidateNumber = connection.QueryFirst<string>(
-                    @"DECLARE @_MaxCandidateNumber AS integer
-		            SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
-									FROM      DelegateAccounts WITH (TABLOCK, HOLDLOCK)
-									WHERE     (LEFT(CandidateNumber, 2) = @initials)
-									ORDER BY nCandidateNumber DESC)
-		            IF @_MaxCandidateNumber IS Null
-			            BEGIN
-			            SET @_MaxCandidateNumber = 0
-			            END
-		            SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
-                    new { initials },
-                    transaction
-                );
-                transaction.Commit();
-            }
+            candidateNumber = connection.QueryFirst<string>(
+                @"DECLARE @_MaxCandidateNumber AS integer
+		        SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
+								FROM      DelegateAccounts WITH (TABLOCK, HOLDLOCK)
+								WHERE     (LEFT(CandidateNumber, 2) = @initials)
+								ORDER BY nCandidateNumber DESC)
+		        IF @_MaxCandidateNumber IS Null
+			        BEGIN
+			        SET @_MaxCandidateNumber = 0
+			        END
+		        SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
+                new { initials },
+                transaction
+            );
 
             var candidateValues = new
             {
@@ -164,8 +163,11 @@
                         @hasBeenPromptedForPrn_deprecated,
                         @hasDismissedLhLoginWarning_deprecated
                     )",
-                    candidateValues
+                    candidateValues,
+                transaction
                 );
+
+            transaction.Commit();
 
             // TODO HEEDLS-874 deal with group assignment
 

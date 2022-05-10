@@ -197,7 +197,11 @@ namespace DigitalLearningSolutions.Data.Services
         {
             if (userDataService.AnyEmailsInSetAreAlreadyInUse(new[] { model.PrimaryEmail, model.SecondaryEmail }))
             {
-                throw new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse);
+                var error = DelegateCreationError.EmailAlreadyInUse;
+                logger.LogError(
+                    $"Could not create account for delegate on registration. Failure: {error.Name}."
+                );
+                throw new DelegateCreationFailedException(error);
             }
         }
 
@@ -271,7 +275,11 @@ namespace DigitalLearningSolutions.Data.Services
             }
             catch
             {
-                throw new DelegateCreationFailedException(DelegateCreationError.UnexpectedError);
+                var error = DelegateCreationError.UnexpectedError;
+                logger.LogError(
+                    $"Could not create account for delegate on registration. Failure: {error.Name}."
+                );
+                throw new DelegateCreationFailedException(error);
             }
 
             return candidateNumber;
@@ -284,7 +292,7 @@ namespace DigitalLearningSolutions.Data.Services
             return supervisorDelegateService
                 .GetPendingSupervisorDelegateRecordsByEmailAndCentre(
                     delegateRegistrationModel.Centre,
-                    // TODO HEEDLS-886 it's undecided at time of comment whether this should be matched on centre email or primary email
+                    // TODO HEEDLS-899 it's undecided at time of comment whether this should be matched on centre email or primary email
                     delegateRegistrationModel.PrimaryEmail
                 ).Select(record => record.ID);
         }
