@@ -40,7 +40,7 @@
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
-<partial name="SelfAssessments/_SearchSelfAssessmentOverview" model="@Model.SearchViewModel" view-data="@(new ViewDataDictionary(ViewData) { { "parent", Model } })"/>
+<partial name="SelfAssessments/_SearchSelfAssessmentOverview" model="@Model.SearchViewModel" view-data="@(new ViewDataDictionary(ViewData) { { "parent", Model } })" />
 <partial name="_OverviewActionButtons.cshtml" model=Model />
 <p><span role="alert">@Model.CompetencyGroups.Sum(g => g.Count()) matching @Model.VocabPlural().ToLower()</span></p>
 @if (Model.CompetencyGroups.Any())
@@ -51,7 +51,7 @@
     var selfAssessedCount = questions.Count(q => q.ResultId.HasValue);
     var verifiedCount = questions.Count(q => q.Verified.HasValue);
     var competencySummaryViewData = new ViewDataDictionary(ViewData)
-    {
+{
       { "isSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed },
       { "questionsCount", questions.Count() },
       { "selfAssessedCount", selfAssessedCount },
@@ -62,11 +62,11 @@
     questionsTotal += questions.Count();
     <div class="nhsuk-panel competency-group-panel nhsuk-u-padding-0">
       @{
-          var expanderOpen = Model.CompetencyGroups.Count() == 1
-          ? "open"
-          : ViewContext.RouteData.Values.ContainsKey("competencyGroupId")
-            ? ViewContext.RouteData.Values["competencyGroupId"].Equals(competencyGroup.First().CompetencyGroupID.ToString()) ? "open" : ""
-            : "";
+        var expanderOpen = Model.CompetencyGroups.Count() == 1
+        ? "open"
+        : ViewContext.RouteData.Values.ContainsKey("competencyGroupId")
+          ? ViewContext.RouteData.Values["competencyGroupId"].Equals(competencyGroup.First().CompetencyGroupID.ToString()) ? "open" : ""
+          : "";
       }
       <details class="nhsuk-details nhsuk-expander" @(expanderOpen)>
         <summary class="nhsuk-details__summary">
