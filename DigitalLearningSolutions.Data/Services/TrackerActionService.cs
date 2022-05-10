@@ -156,16 +156,16 @@
                     tutorialTime.Value,
                     tutorialStatus.Value
                 );
+
+                if (tutorialStatus == 2)
+                {
+                    progressService.CheckProgressForCompletionAndSendEmailIfCompleted(progress);
+                }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
                 return TrackerEndpointResponse.StoreAspProgressV2Exception;
-            }
-
-            if (tutorialStatus == 2)
-            {
-                progressService.CheckProgressForCompletionAndSendEmailIfCompleted(progress);
             }
 
             return TrackerEndpointResponse.Success;
