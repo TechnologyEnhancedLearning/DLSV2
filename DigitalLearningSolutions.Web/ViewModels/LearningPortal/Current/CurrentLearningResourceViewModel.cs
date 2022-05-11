@@ -20,7 +20,6 @@
         }
 
         public int ResourceReferenceId { get; set; }
-
         public string LaunchResourceLink { get; set; }
         public string ResourceDescription { get; set; }
         public string CatalogueName { get; set; }

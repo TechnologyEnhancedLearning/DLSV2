@@ -316,6 +316,7 @@
         [TestCase("NicePascalCaseString", "Nice Pascal Case String")]
         [TestCase("ASlightlyMoreAwkwardOne", "A Slightly More Awkward One")]
         [TestCase("XMLFile", "XML File")]
+        [TestCase("AnXMLFile", "An XML File")]
         [TestCase("An Already Separated String", "An Already Separated String")]
         [TestCase("A Partially SeparatedString", "A Partially Separated String")]
         public void AddSpacesToPascalCaseString_returns_expected_result(string input, string expectedResult)
