@@ -172,7 +172,7 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.RegisterDelegate(
+                    () => registrationService.CreateDelegateAccountForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
@@ -193,12 +193,12 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.RegisterDelegate(
+                        registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>.That.Matches(
                                 d =>
                                     d.FirstName == data.FirstName &&
                                     d.LastName == data.LastName &&
-                                    d.Email == data.Email &&
+                                    d.PrimaryEmail == data.Email &&
                                     d.Centre == data.Centre &&
                                     d.JobGroup == data.JobGroup &&
                                     d.PasswordHash == data.PasswordHash &&
@@ -237,7 +237,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.RegisterDelegate(
+                        registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
@@ -263,7 +263,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.RegisterDelegate(
+                        registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
@@ -289,7 +289,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.RegisterDelegate(
+                        registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
@@ -308,7 +308,7 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.RegisterDelegate(
+                    () => registrationService.CreateDelegateAccountForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
@@ -337,7 +337,7 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.RegisterDelegate(
+                    () => registrationService.CreateDelegateAccountForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,

@@ -245,7 +245,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             try
             {
                 var (candidateNumber, approved) =
-                    registrationService.RegisterDelegate(
+                    registrationService.CreateDelegateAccountForNewUser(
                         RegistrationMappingHelper.MapSelfRegistrationToDelegateRegistrationModel(data),
                         userIp,
                         refactoredTrackingSystemEnabled,

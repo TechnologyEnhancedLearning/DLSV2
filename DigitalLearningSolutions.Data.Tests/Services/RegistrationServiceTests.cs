@@ -61,7 +61,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => centresDataService.GetCentreManagerDetails(A<int>._))
                 .Returns(("Test", "Approver", ApproverEmail));
 
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(A<DelegateRegistrationModel>._))
                 .Returns(NewCandidateNumber);
 
             registrationService = new RegistrationService(
@@ -86,7 +86,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            var (_, approved) = registrationService.RegisterDelegate(
+            var (_, approved) = registrationService.CreateDelegateAccountForNewUser(
                 model,
                 clientIp,
                 false,
@@ -96,7 +96,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                     () =>
-                        registrationDataService.RegisterDelegate(
+                        registrationDataService.RegisterNewUserAndDelegateAccount(
                             A<DelegateRegistrationModel>.That.Matches(d => d.Approved)
                         )
                 )
@@ -111,12 +111,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.RegisterDelegate(model, "::1", false, null);
+            registrationService.CreateDelegateAccountForNewUser(model, "::1", false, null);
 
             // Then
             A.CallTo(
                     () =>
-                        registrationDataService.RegisterDelegate(
+                        registrationDataService.RegisterNewUserAndDelegateAccount(
                             A<DelegateRegistrationModel>.That.Matches(d => d.Approved)
                         )
                 )
@@ -130,12 +130,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.RegisterDelegate(model, "987.654.321.100", false, null);
+            registrationService.CreateDelegateAccountForNewUser(model, "987.654.321.100", false, null);
 
             // Then
             A.CallTo(
                     () =>
-                        registrationDataService.RegisterDelegate(
+                        registrationDataService.RegisterNewUserAndDelegateAccount(
                             A<DelegateRegistrationModel>.That.Matches(d => !d.Approved)
                         )
                 )
@@ -149,7 +149,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.RegisterDelegate(model, string.Empty, false, null);
+            registrationService.CreateDelegateAccountForNewUser(model, string.Empty, false, null);
 
             // Then
             A.CallTo(
@@ -174,7 +174,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.RegisterDelegate(model, string.Empty, true, null);
+            registrationService.CreateDelegateAccountForNewUser(model, string.Empty, true, null);
 
             // Then
             A.CallTo(
@@ -199,7 +199,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.RegisterDelegate(model, "123.456.789.100", false, null);
+            registrationService.CreateDelegateAccountForNewUser(model, "123.456.789.100", false, null);
 
             // Then
             A.CallTo(
@@ -215,7 +215,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.RegisterDelegate(model, string.Empty, false, null);
+            registrationService.CreateDelegateAccountForNewUser(model, string.Empty, false, null);
 
             // Then
             A.CallTo(
@@ -235,7 +235,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // When
             var candidateNumber =
-                registrationService.RegisterDelegate(model, string.Empty, false, null)
+                registrationService.CreateDelegateAccountForNewUser(model, string.Empty, false, null)
                     .candidateNumber;
 
             // Then
@@ -258,7 +258,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(new DelegateUser { Id = 777 });
 
             // When
-            registrationService.RegisterDelegate(model, string.Empty, false, null, 999);
+            registrationService.CreateDelegateAccountForNewUser(model, string.Empty, false, null, 999);
 
             // Then
             A.CallTo(
@@ -277,7 +277,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             GivenNoPendingSupervisorDelegateRecordsForEmail();
 
             // When
-            registrationService.RegisterDelegate(model, string.Empty, false, null, 999);
+            registrationService.CreateDelegateAccountForNewUser(model, string.Empty, false, null, 999);
 
             // Then
             A.CallTo(
@@ -298,7 +298,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
 
             // When
-            registrationService.RegisterDelegate(
+            registrationService.CreateDelegateAccountForNewUser(
                 model,
                 string.Empty,
                 false,
@@ -318,31 +318,21 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void Error_when_registering_delegate_returns_error_code()
+        public void Error_when_registering_delegate_with_duplicate_email()
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns("-1");
+            A.CallTo(() => userDataService.AnyEmailsInSetAreAlreadyInUse(A<IEnumerable<string?>>._)).Returns(true);
 
             // When
-            Action act = () => registrationService.RegisterDelegate(model, string.Empty, false, null);
+            Action act = () => registrationService.CreateDelegateAccountForNewUser(model, string.Empty, false, null);
 
             // Then
             act.Should().Throw<DelegateCreationFailedException>();
-        }
-
-        [Test]
-        public void Error_when_registering_delegate_fails_fast()
-        {
-            // Given
-            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns("-1");
-
-            // When
-            Action act = () => registrationService.RegisterDelegate(model, string.Empty, false, null);
-
-            // Then
-            act.Should().Throw<DelegateCreationFailedException>();
+            A.CallTo(
+                () =>
+                    registrationDataService.RegisterNewUserAndDelegateAccount(A<DelegateRegistrationModel>._)
+            ).MustNotHaveHappened();
             A.CallTo(
                 () =>
                     emailService.SendEmail(A<Email>._)
@@ -362,7 +352,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            var (_, approved) = registrationService.RegisterDelegate(
+            var (_, approved) = registrationService.CreateDelegateAccountForNewUser(
                 model,
                 clientIp,
                 false,
@@ -394,7 +384,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                     () =>
-                        registrationDataService.RegisterDelegate(
+                        registrationDataService.RegisterNewUserAndDelegateAccount(
                             A<DelegateRegistrationModel>.That.Matches(d => d.Approved)
                         )
                 )
@@ -446,7 +436,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             registrationService.RegisterCentreManager(model, 1);
 
             // Then
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(A<DelegateRegistrationModel>._))
                 .MustHaveHappened(1, Times.Exactly);
             A.CallTo(
                 () =>
@@ -463,7 +453,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
+            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(A<DelegateRegistrationModel>._)).Returns("-1");
 
             // When
             Action act = () => registrationService.RegisterCentreManager(model, 1);
@@ -477,14 +467,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
+            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(A<DelegateRegistrationModel>._)).Returns("-1");
 
             // When
             Action act = () => registrationService.RegisterCentreManager(model, 1);
 
             // Then
             act.Should().Throw<Exception>();
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(A<DelegateRegistrationModel>._))
                 .MustHaveHappened(1, Times.Exactly);
             A.CallTo(
                 () =>
@@ -501,13 +491,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns(NewCandidateNumber);
+            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(model)).Returns(NewCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(model, "");
 
             // Then
-            A.CallTo(() => registrationDataService.RegisterDelegate(model)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(model)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(
                     () => passwordDataService.SetPasswordByCandidateNumber(
                         NewCandidateNumber,
@@ -523,13 +513,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
             model.PasswordHash = null;
-            A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns(NewCandidateNumber);
+            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(model)).Returns(NewCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(model, "");
 
             // Then
-            A.CallTo(() => registrationDataService.RegisterDelegate(model)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(model)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._))
                 .MustNotHaveHappened();
         }
@@ -543,7 +533,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 passwordHash: null,
                 notifyDate: new DateTime(2200, 1, 1)
             );
-            A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns(NewCandidateNumber);
+            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(model)).Returns(NewCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(model, baseUrl);
@@ -551,7 +541,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    model.Email,
+                    model.PrimaryEmail,
                     NewCandidateNumber,
                     baseUrl,
                     model.NotifyDate.Value,
@@ -566,7 +556,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             const string baseUrl = "base.com";
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns(NewCandidateNumber);
+            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(model)).Returns(NewCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(model, baseUrl);
@@ -591,7 +581,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
             GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
-            A.CallTo(() => registrationDataService.RegisterDelegate(model))
+            A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(model))
                 .Returns(NewCandidateNumber);
             A.CallTo(
                     () => userDataService.GetDelegateUserByCandidateNumber(
@@ -702,7 +692,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         a =>
                             a.FirstName == delegateUser.FirstName &&
                             a.LastName == delegateUser.LastName &&
-                            a.Email == delegateUser.EmailAddress &&
+                            a.PrimaryEmail == delegateUser.EmailAddress &&
                             a.Centre == delegateUser.CentreId &&
                             a.PasswordHash == delegateUser.Password &&
                             a.Active &&
