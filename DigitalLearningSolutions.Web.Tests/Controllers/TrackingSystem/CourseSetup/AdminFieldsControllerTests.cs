@@ -20,11 +20,9 @@
 
     public class AdminFieldsControllerTests
     {
-        private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService =
-            A.Fake<ICourseAdminFieldsDataService>();
-
-        private readonly ICourseAdminFieldsService courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
-        private readonly ICourseService courseService = A.Fake<ICourseService>();
+        private ICourseAdminFieldsDataService courseAdminFieldsDataService = null!;
+        private ICourseAdminFieldsService courseAdminFieldsService = null!;
+        private ICourseService courseService = null!;
         private AdminFieldsController controller = null!;
 
         private static IEnumerable<TestCaseData> AddAnswerModelErrorTestData
@@ -54,6 +52,9 @@
         [SetUp]
         public void Setup()
         {
+            courseAdminFieldsDataService = A.Fake<ICourseAdminFieldsDataService>();
+            courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
+            courseService = A.Fake<ICourseService>();
             controller = new AdminFieldsController(
                     courseAdminFieldsService,
                     courseAdminFieldsDataService
@@ -549,6 +550,106 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void AddAdminField_adds_model_error_if_field_name_is_already_in_use()
+        {
+            // Given
+            var model = new AddAdminFieldViewModel(1, "test");
+            var initialTempData = new AddAdminFieldData(model);
+            controller.TempData.Set(initialTempData);
+            const string action = "save";
+
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(A<int>._))
+                .Returns(new int[] { 1, 0, 0 });
+
+            // When
+            var result = controller.AddAdminField(100, model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<AddAdminFieldViewModel>();
+                AssertModelStateErrorIsExpected(result, "That field name already exists for this course");
+            }
+        }
+
+        [Test]
+        public void AddAdminField_adds_model_error_if_trimmed_case_insensitive_answer_is_already_in_options_list()
+        {
+            // Given
+            var model = new AddAdminFieldViewModel(1, "test", "  tEsT  ");
+            var initialTempData = new AddAdminFieldData(model);
+            controller.TempData.Set(initialTempData);
+            const string action = "addPrompt";
+
+            // When
+            var result =
+                controller.AddAdminField(1, model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<AddAdminFieldViewModel>();
+                AssertModelStateErrorIsExpected(result, "Each answer must be unique");
+            }
+        }
+
+        [Test]
+        public void EditAdminField_adds_model_error_if_trimmed_case_insensitive_answer_is_already_in_options_list()
+        {
+            // Given
+            var model = new EditAdminFieldViewModel(1, "prompt", "test");
+            model.Answer = "  tEsT  ";
+            var initialTempData = new EditAdminFieldData(model);
+            controller.TempData.Set(initialTempData);
+            const string action = "addPrompt";
+
+            // When
+            var result =
+                controller.EditAdminField(1, model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<EditAdminFieldViewModel>();
+                AssertModelStateErrorIsExpected(result, "Each answer must be unique");
+            }
+        }
+
+        [Test]
+        public void AddAdminFieldAnswersBulk_adds_model_error_if_trimmed_case_insensitive_bulk_edit_is_not_unique()
+        {
+            // Given
+            var model = new AddBulkAdminFieldAnswersViewModel("test\r\n   tEsT   ");
+
+            // When
+            var result = controller.AddAdminFieldAnswersBulk(1, model);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<AddBulkAdminFieldAnswersViewModel>();
+                AssertModelStateErrorIsExpected(result, "Each answer must be unique");
+            }
+        }
+
+        [Test]
+        public void EditAdminFieldAnswersBulk_adds_model_error_if_trimmed_case_insensitive_bulk_edit_is_not_unique()
+        {
+            // Given
+            var model = new BulkAdminFieldAnswersViewModel("test\r\n   tEsT   ");
+
+            // When
+            var result = controller.EditAdminFieldAnswersBulk(1, 1, model);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<BulkAdminFieldAnswersViewModel>();
+                AssertModelStateErrorIsExpected(result, "Each answer must be unique");
+            }
         }
 
         private static void AssertNumberOfConfiguredAnswersOnView(IActionResult result, int expectedCount)

@@ -32,6 +32,8 @@
             int customisationId,
             int centreId
         );
+
+        int[] GetCourseFieldPromptIdsForCustomisation(int customisationId);
     }
 
     public class CourseAdminFieldsDataService : ICourseAdminFieldsDataService
@@ -164,6 +166,23 @@
                         AND RemovedDate IS NULL",
                 new { customisationId, centreId }
             );
+        }
+
+        public int[] GetCourseFieldPromptIdsForCustomisation(
+            int customisationId
+        )
+        {
+            var result = connection.Query<(int, int, int)>(
+                @"SELECT
+                        CourseField1PromptID,
+                        CourseField2PromptID,
+                        CourseField3PromptID
+                    FROM Customisations
+                    WHERE CustomisationID = @customisationId",
+                new { customisationId }
+            ).Single();
+
+            return new int[] { result.Item1, result.Item2, result.Item3 };
         }
     }
 }

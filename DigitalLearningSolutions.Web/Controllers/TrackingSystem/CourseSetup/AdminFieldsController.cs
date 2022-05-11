@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
@@ -173,6 +174,7 @@
         public IActionResult AddAdminField(int customisationId, AddAdminFieldViewModel model, string action)
         {
             UpdateTempDataWithAddAdminFieldModelValues(model);
+            ValidateUniqueAdminFieldId(customisationId, model.AdminFieldId);
 
             if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
             {
@@ -306,10 +308,10 @@
             }
 
             if (courseAdminFieldsService.AddAdminFieldToCourse(
-                customisationId,
-                model.AdminFieldId!.Value,
-                model.OptionsString
-            ))
+                    customisationId,
+                    model.AdminFieldId!.Value,
+                    model.OptionsString
+                ))
             {
                 return RedirectToAction("Index", new { customisationId });
             }
@@ -343,21 +345,10 @@
             EditAdminFieldViewModel model
         )
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(model);
+                ValidateAndSetOptionsString(model);
             }
-
-            var optionsString =
-                NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
-
-            if (optionsString.Length > 1000)
-            {
-                SetTotalAnswersLengthTooLongError(model);
-                return View(model);
-            }
-
-            SetAdminFieldAnswersViewModelOptions(model, optionsString);
 
             return View(model);
         }
@@ -374,20 +365,13 @@
                 return View(model);
             }
 
-            var optionsString =
-                NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
+            ValidateAndSetOptionsString(model);
 
-            if (optionsString.Length > 1000)
+            if (ModelState.IsValid)
             {
-                SetTotalAnswersLengthTooLongError(model);
-                return View(model);
+                UpdateTempDataWithAddAdminFieldModelValues(model);
+                SetViewBagAdminFieldNameOptions(model.AdminFieldId);
             }
-
-            SetAdminFieldAnswersViewModelOptions(model, optionsString);
-
-            UpdateTempDataWithAddAdminFieldModelValues(model);
-
-            SetViewBagAdminFieldNameOptions(model.AdminFieldId);
 
             return View(model);
         }
@@ -477,6 +461,12 @@
             TempData.Set(data);
         }
 
+        private bool IsOptionsListUnique(List<string> optionsList)
+        {
+            var lowerCaseOptionsList = optionsList.Select(str => str.ToLower()).ToList();
+            return lowerCaseOptionsList.Count() == lowerCaseOptionsList.Distinct().Count();
+        }
+
         private void ValidateBulkOptionsString(string? optionsString)
         {
             if (optionsString != null && optionsString.Length > 1000)
@@ -494,6 +484,56 @@
                     nameof(BulkAdminFieldAnswersViewModel.OptionsString),
                     "Each answer must be 100 characters or fewer"
                 );
+            }
+
+            if (!IsOptionsListUnique(optionsList))
+            {
+                ModelState.AddModelError(
+                    nameof(BulkAdminFieldAnswersViewModel.OptionsString),
+                    "Each answer must be unique"
+                );
+            }
+        }
+
+        private void ValidateUniqueAdminFieldId(int customisationId, int? adminFieldId)
+        {
+            if (adminFieldId == null)
+            {
+                return;
+            }
+
+            var existingIds = courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(customisationId);
+
+            if (existingIds.Any(id => id == adminFieldId))
+            {
+                ModelState.AddModelError(
+                    nameof(AddAdminFieldViewModel.AdminFieldId),
+                    "That field name already exists for this course"
+                );
+            }
+        }
+
+        private void ValidateAndSetOptionsString(AdminFieldAnswersViewModel model)
+        {
+            var optionsString =
+                NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
+
+            if (optionsString.Length > 1000)
+            {
+                SetTotalAnswersLengthTooLongError(model);
+            }
+
+            if (!IsOptionsListUnique(NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(optionsString)))
+            {
+                ModelState.AddModelError(
+                    nameof(AdminFieldAnswersViewModel.OptionsString),
+                    "Each answer must be unique"
+                );
+            }
+
+            if (ModelState.IsValid)
+            {
+                SetAdminFieldAnswersViewModelOptions(model, optionsString);
             }
         }
     }
