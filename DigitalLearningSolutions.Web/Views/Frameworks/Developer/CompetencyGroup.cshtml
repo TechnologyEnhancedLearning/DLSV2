@@ -41,6 +41,10 @@
       <partial name="Shared/_PublishedWarning" />
     }
     <form method="post">
+      @if (!ViewData.ModelState.IsValid)
+      {
+        <partial name="_ErrorSummary" />
+      }
       <nhs-form-group nhs-validation-for="CompetencyGroupBase.Name">
         <label class="nhsuk-label" id="competency-group-name-label" for="competency-group-name">
           @Model.VocabSingular() group name
@@ -48,12 +52,13 @@
         <span nhs-validation-for="CompetencyGroupBase.Name"></span>
         <input class="nhsuk-input" asp-for="CompetencyGroupBase.Name" id="competency-group-name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-group-name-label">
       </nhs-form-group>
-      <div class="nhsuk-form-group">
+      <nhs-form-group nhs-validation-for="CompetencyGroupBase.Description">
         <label class="nhsuk-label" id="competency-description-label" for="competency-description">
           @Model.VocabSingular() description
         </label>
-        <textarea class="nhsuk-input html-editor" asp-for="CompetencyGroupBase.Description" id="competency-group-description" name="Description" type="text" aria-describedby="competency-group-description-label"></textarea>
-      </div>
+        <span nhs-validation-for="CompetencyGroupBase.Description"></span>
+        <input class="nhsuk-input html-editor" asp-for="CompetencyGroupBase.Description" id="competency-group-description" name="Description" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-group-description-label" />
+      </nhs-form-group>
       <input name="ID" type="hidden" asp-for="CompetencyGroupBase.ID" />
       <input name="CompetencyGroupID" type="hidden" asp-for="CompetencyGroupBase.CompetencyGroupID" />
 
