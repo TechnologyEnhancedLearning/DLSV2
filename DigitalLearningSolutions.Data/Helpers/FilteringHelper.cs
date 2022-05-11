@@ -137,33 +137,6 @@
         }
 
         public static string GetFilterValueForAdminField(
-            int promptNumber,
-            string? answer,
-            string prompt,
-            bool adminFieldHasOptions
-        )
-        {
-            var group = GetFilterGroupForAdminField(promptNumber, prompt);
-
-            string propertyValue;
-
-            if (adminFieldHasOptions)
-            {
-                propertyValue = string.IsNullOrEmpty(answer)
-                    ? EmptyValue
-                    : answer;
-            }
-            else
-            {
-                propertyValue = string.IsNullOrEmpty(answer)
-                    ? FreeTextBlankValue
-                    : FreeTextNotBlankValue;
-            }
-
-            return BuildFilterValueString(group, group.Split('(')[0], propertyValue);
-        }
-
-        public static string GetFilterValueForAdminField(
             CourseAdminFieldWithAnswer courseAdminFieldWithAnswer
         )
         {

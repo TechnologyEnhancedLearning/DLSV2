@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
@@ -21,6 +20,10 @@
 
     public class DelegateProgressControllerTests
     {
+        private const int ProgressId = 1;
+        private const int DelegateId = 1;
+        private const int CustomisationId = 1;
+        private const string CardId = "1-card";
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseService courseService = null!;
         private DelegateProgressController delegateProgressController = null!;
@@ -49,7 +52,7 @@
                         DelegateAccessRoute.CourseDelegates,
                         "CourseDelegates",
                         "Index",
-                        ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: "1-card")
+                        ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: CardId)
                     )
                     .SetName("UnlockCourseProgress_redirects_to_course_delegates_progress");
                 yield return
@@ -92,21 +95,19 @@
         )
         {
             // Given
-            const int progressId = 1;
             const int supervisorId = 1;
-            const string cardId = "1-card";
             var formData = new EditSupervisorFormData
             {
                 SupervisorId = supervisorId,
-                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: cardId),
+                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: CardId),
             };
-            A.CallTo(() => progressService.UpdateSupervisor(progressId, supervisorId)).DoesNothing();
+            A.CallTo(() => progressService.UpdateSupervisor(ProgressId, supervisorId)).DoesNothing();
 
             // When
-            var result = delegateProgressController.EditSupervisor(formData, progressId, accessedVia);
+            var result = delegateProgressController.EditSupervisor(formData, ProgressId, accessedVia);
 
             // Then
-            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? cardId : null;
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? CardId : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
                 .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
@@ -123,22 +124,20 @@
         )
         {
             // Given
-            const int progressId = 1;
-            const string cardId = "1-card";
             var formData = new EditCompleteByDateFormData
             {
                 Day = 1,
                 Month = 1,
                 Year = 2021,
-                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: cardId),
+                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: CardId),
             };
-            A.CallTo(() => progressService.UpdateCompleteByDate(progressId, A<DateTime?>._)).DoesNothing();
+            A.CallTo(() => progressService.UpdateCompleteByDate(ProgressId, A<DateTime?>._)).DoesNothing();
 
             // When
-            var result = delegateProgressController.EditCompleteByDate(formData, progressId, accessedVia);
+            var result = delegateProgressController.EditCompleteByDate(formData, ProgressId, accessedVia);
 
             // Then
-            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? cardId : null;
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? CardId : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
                 .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
@@ -155,20 +154,18 @@
         )
         {
             // Given
-            const int progressId = 1;
-            const string cardId = "1-card";
             var formData = new EditCompletionDateFormData
             {
                 Day = 1, Month = 1, Year = 2021,
-                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: cardId),
+                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: CardId),
             };
-            A.CallTo(() => progressService.UpdateCompletionDate(progressId, A<DateTime?>._)).DoesNothing();
+            A.CallTo(() => progressService.UpdateCompletionDate(ProgressId, A<DateTime?>._)).DoesNothing();
 
             // When
-            var result = delegateProgressController.EditCompletionDate(formData, progressId, accessedVia);
+            var result = delegateProgressController.EditCompletionDate(formData, ProgressId, accessedVia);
 
             // Then
-            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? cardId : null;
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? CardId : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
                 .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
@@ -178,44 +175,40 @@
             EditDelegateCourseAdminField_GET_returns_not_found_if_no_course_admin_field_corresponds_to_prompt_number()
         {
             // Given
-            const int progressId = 1;
-            const int customisationId = 100;
             const int validPromptNumber = 1;
             const int invalidPromptNumber = 2;
             const string promptText = "Prompt text";
             const string options = "Answer";
 
-            var delegateCourseInfo = new DelegateCourseInfo();
             var courseAdminFieldWithAnswer = new CourseAdminFieldWithAnswer(
                 validPromptNumber,
                 promptText,
                 options,
                 options
             );
-            var attemptStats = new AttemptStats(1, 1);
+            var delegateCourseInfo = new DelegateCourseInfo
+                { CourseAdminFields = new List<CourseAdminFieldWithAnswer> { courseAdminFieldWithAnswer } };
             var delegateCourseDetails = new DetailedCourseProgress(
                 new Progress(),
                 new List<DetailedSectionProgress>(),
-                delegateCourseInfo,
-                new List<CourseAdminFieldWithAnswer> { courseAdminFieldWithAnswer },
-                attemptStats
+                delegateCourseInfo
             );
 
             var courseAdminField = new CourseAdminField(validPromptNumber, promptText, options);
             var courseAdminFieldsForCourse = new CourseAdminFields(
-                customisationId,
+                CustomisationId,
                 new List<CourseAdminField> { courseAdminField }
             );
 
-            A.CallTo(() => progressService.GetDetailedCourseProgress(progressId))
+            A.CallTo(() => progressService.GetDetailedCourseProgress(ProgressId))
                 .Returns(delegateCourseDetails);
-            A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId))
+            A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(CustomisationId))
                 .Returns(courseAdminFieldsForCourse);
 
             // When
             var result = delegateProgressController.EditDelegateCourseAdminField(
                 invalidPromptNumber,
-                progressId,
+                ProgressId,
                 DelegateAccessRoute.CourseDelegates
             );
 
@@ -235,14 +228,12 @@
         )
         {
             // Given
-            const int progressId = 1;
             const int promptNumber = 1;
             const string answer = "Test Answer";
-            const string cardId = "1-card";
             var formData = new EditDelegateCourseAdminFieldFormData
             {
                 Answer = answer,
-                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: cardId),
+                ReturnPageQuery = ReturnPageQueryHelper.GetDefaultReturnPageQuery(itemIdToReturnTo: CardId),
             };
 
             A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(A<int>._, A<int>._, A<string>._))
@@ -252,14 +243,14 @@
             var result = delegateProgressController.EditDelegateCourseAdminField(
                 formData,
                 promptNumber,
-                progressId,
+                ProgressId,
                 accessedVia
             );
 
             // Then
-            A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer))
+            A.CallTo(() => progressService.UpdateCourseAdminFieldForDelegate(ProgressId, promptNumber, answer))
                 .MustHaveHappenedOnceExactly();
-            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? cardId : null;
+            var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates) ? CardId : null;
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
                 .WithActionName(expectedAction).WithFragment(expectedFragment);
         }
@@ -268,24 +259,24 @@
         public void EditDelegateCourseAdminField_POST_does_not_call_service_with_invalid_model()
         {
             // Given
-            const int progressId = 1;
             const int promptNumber = 1;
             const string answer = "Test Answer";
 
-            var delegateCourseInfo = new DelegateCourseInfo();
-            var courseAdminField = new CourseAdminFieldWithAnswer(promptNumber, "Prompt text", "Answer", null);
-            var attemptStats = new AttemptStats(1, 1);
+            var delegateCourseInfo = new DelegateCourseInfo
+            {
+                CourseAdminFields = new List<CourseAdminFieldWithAnswer>
+                    { new CourseAdminFieldWithAnswer(promptNumber, "Prompt text", "Answer", null) },
+            };
+
             var delegateCourseDetails = new DetailedCourseProgress(
                 new Progress(),
                 new List<DetailedSectionProgress>(),
-                delegateCourseInfo,
-                new List<CourseAdminFieldWithAnswer> { courseAdminField },
-                attemptStats
+                delegateCourseInfo
             );
 
             var formData = new EditDelegateCourseAdminFieldFormData { Answer = answer };
 
-            A.CallTo(() => progressService.GetDetailedCourseProgress(progressId))
+            A.CallTo(() => progressService.GetDetailedCourseProgress(ProgressId))
                 .Returns(delegateCourseDetails);
             delegateProgressController.ModelState.AddModelError("Answer", "Test error message");
 
@@ -293,7 +284,7 @@
             var result = delegateProgressController.EditDelegateCourseAdminField(
                 formData,
                 promptNumber,
-                progressId,
+                ProgressId,
                 DelegateAccessRoute.CourseDelegates
             );
 
@@ -316,23 +307,19 @@
         )
         {
             // Given
-            const int progressId = 1;
-            const int delegateId = 1;
-            const int customisationId = 1;
-
-            A.CallTo(() => progressService.UnlockProgress(progressId)).DoesNothing();
+            A.CallTo(() => progressService.UnlockProgress(ProgressId)).DoesNothing();
 
             // When
             var result = delegateProgressController.UnlockProgress(
-                progressId,
-                customisationId,
-                delegateId,
+                ProgressId,
+                CustomisationId,
+                DelegateId,
                 accessedVia,
                 returnPageQuery
             );
 
             // Then
-            A.CallTo(() => progressService.UnlockProgress(progressId)).MustHaveHappened();
+            A.CallTo(() => progressService.UnlockProgress(ProgressId)).MustHaveHappened();
             var expectedFragment = accessedVia.Equals(DelegateAccessRoute.CourseDelegates)
                 ? returnPageQuery!.Value.ItemIdToReturnTo
                 : null;
@@ -344,19 +331,20 @@
         public void Removal_confirmation_page_displays_for_valid_delegate_and_course()
         {
             // Given
-            A.CallTo(() => userService.GetDelegateUserCardById(1))
-                .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
-
-            A.CallTo(() => courseService.GetCourseNameAndApplication(1))
-                .Returns(new CourseNameInfo());
-
-            A.CallTo(() => courseService.DelegateHasCurrentProgress(1, 1))
+            var delegateCourseInfo = new DelegateCourseInfo();
+            var delegateCourseDetails = new DetailedCourseProgress(
+                new Progress(),
+                new List<DetailedSectionProgress>(),
+                delegateCourseInfo
+            );
+            A.CallTo(() => progressService.GetDetailedCourseProgress(ProgressId))
+                .Returns(delegateCourseDetails);
+            A.CallTo(() => courseService.DelegateHasCurrentProgress(ProgressId))
                 .Returns(true);
 
             // When
             var result = delegateProgressController.ConfirmRemoveFromCourse(
-                1,
-                1,
+                ProgressId,
                 DelegateAccessRoute.ViewDelegate
             );
 
@@ -368,19 +356,20 @@
         public void Removal_confirmation_page_returns_not_found_result_for_delegate_with_no_active_progress()
         {
             // Given
-            A.CallTo(() => userService.GetDelegateUserCardById(1))
-                .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
-
-            A.CallTo(() => courseService.GetCourseNameAndApplication(1))
-                .Returns(new CourseNameInfo());
-
-            A.CallTo(() => courseService.DelegateHasCurrentProgress(1, 1))
+            var delegateCourseInfo = new DelegateCourseInfo();
+            var delegateCourseDetails = new DetailedCourseProgress(
+                new Progress(),
+                new List<DetailedSectionProgress>(),
+                delegateCourseInfo
+            );
+            A.CallTo(() => progressService.GetDetailedCourseProgress(ProgressId))
+                .Returns(delegateCourseDetails);
+            A.CallTo(() => courseService.DelegateHasCurrentProgress(ProgressId))
                 .Returns(false);
 
             // When
             var result = delegateProgressController.ConfirmRemoveFromCourse(
-                1,
-                1,
+                ProgressId,
                 DelegateAccessRoute.ViewDelegate
             );
 
@@ -392,13 +381,15 @@
         public void Delegate_removal_for_delegate_with_no_active_progress_returns_not_found_result()
         {
             // Given
-            A.CallTo(() => userService.GetDelegateUserCardById(1))
-                .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
-
-            A.CallTo(() => courseService.GetCourseNameAndApplication(1))
-                .Returns(new CourseNameInfo());
-
-            A.CallTo(() => courseService.DelegateHasCurrentProgress(1, 1))
+            var delegateCourseInfo = new DelegateCourseInfo();
+            var delegateCourseDetails = new DetailedCourseProgress(
+                new Progress(),
+                new List<DetailedSectionProgress>(),
+                delegateCourseInfo
+            );
+            A.CallTo(() => progressService.GetDetailedCourseProgress(ProgressId))
+                .Returns(delegateCourseDetails);
+            A.CallTo(() => courseService.DelegateHasCurrentProgress(ProgressId))
                 .Returns(false);
 
             var model = new RemoveFromCourseViewModel
@@ -409,8 +400,7 @@
 
             // When
             var result = delegateProgressController.ExecuteRemoveFromCourse(
-                1,
-                1,
+                ProgressId,
                 DelegateAccessRoute.ViewDelegate,
                 model
             );
@@ -423,15 +413,17 @@
         public void Delegate_removal_for_valid_delegate_returns_redirect_to_action_view_delegate()
         {
             // Given
-            var delegateId = 1;
+            var delegateCourseInfo = new DelegateCourseInfo
+                { DelegateId = DelegateId, CustomisationId = CustomisationId };
+            var delegateCourseDetails = new DetailedCourseProgress(
+                new Progress { CandidateId = DelegateId, CustomisationId = CustomisationId },
+                new List<DetailedSectionProgress>(),
+                delegateCourseInfo
+            );
+            A.CallTo(() => progressService.GetDetailedCourseProgress(ProgressId))
+                .Returns(delegateCourseDetails);
 
-            A.CallTo(() => userService.GetDelegateUserCardById(1))
-                .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
-
-            A.CallTo(() => courseService.GetCourseNameAndApplication(1))
-                .Returns(new CourseNameInfo());
-
-            A.CallTo(() => courseService.DelegateHasCurrentProgress(1, 1))
+            A.CallTo(() => courseService.DelegateHasCurrentProgress(ProgressId))
                 .Returns(true);
 
             var model = new RemoveFromCourseViewModel
@@ -442,8 +434,7 @@
 
             // When
             var result = delegateProgressController.ExecuteRemoveFromCourse(
-                delegateId,
-                1,
+                ProgressId,
                 DelegateAccessRoute.ViewDelegate,
                 model
             );
@@ -453,22 +444,24 @@
                 .BeRedirectToActionResult()
                 .WithActionName("Index")
                 .WithControllerName("ViewDelegate")
-                .WithRouteValue("delegateId", delegateId);
+                .WithRouteValue("delegateId", DelegateId);
         }
 
         [Test]
-        public void Delegate_removal_for_valid_delegate_returns_redirect_to_action_delegate_courses()
+        public void Delegate_removal_for_valid_delegate_returns_redirect_to_action_course_delegates()
         {
             // Given
-            var customisationId = 1;
+            var delegateCourseInfo = new DelegateCourseInfo
+                { DelegateId = DelegateId, CustomisationId = CustomisationId };
+            var delegateCourseDetails = new DetailedCourseProgress(
+                new Progress { CandidateId = DelegateId, CustomisationId = CustomisationId },
+                new List<DetailedSectionProgress>(),
+                delegateCourseInfo
+            );
+            A.CallTo(() => progressService.GetDetailedCourseProgress(ProgressId))
+                .Returns(delegateCourseDetails);
 
-            A.CallTo(() => userService.GetDelegateUserCardById(1))
-                .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
-
-            A.CallTo(() => courseService.GetCourseNameAndApplication(1))
-                .Returns(new CourseNameInfo());
-
-            A.CallTo(() => courseService.DelegateHasCurrentProgress(1, 1))
+            A.CallTo(() => courseService.DelegateHasCurrentProgress(ProgressId))
                 .Returns(true);
 
             var model = new RemoveFromCourseViewModel
@@ -480,8 +473,7 @@
 
             // When
             var result = delegateProgressController.ExecuteRemoveFromCourse(
-                1,
-                customisationId,
+                ProgressId,
                 DelegateAccessRoute.CourseDelegates,
                 model
             );
@@ -491,7 +483,7 @@
                 .BeRedirectToActionResult()
                 .WithActionName("Index")
                 .WithControllerName("CourseDelegates")
-                .WithRouteValue("customisationId", customisationId.ToString());
+                .WithRouteValue("customisationId", CustomisationId.ToString());
         }
     }
 }

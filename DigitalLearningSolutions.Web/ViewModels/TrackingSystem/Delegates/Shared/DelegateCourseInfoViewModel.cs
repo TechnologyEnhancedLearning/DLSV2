@@ -14,25 +14,38 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
     public class DelegateCourseInfoViewModel : BaseFilterableViewModel
     {
         public DelegateCourseInfoViewModel(
-            DelegateCourseDetails details,
+            DelegateCourseInfo delegateCourseInfo,
             DelegateAccessRoute accessedVia,
-            ReturnPageQuery? returnPageQuery
-        )
+            ReturnPageQuery? returnPageQuery = null
+        ) : this(delegateCourseInfo)
         {
-            var info = details.DelegateCourseInfo;
-
             AccessedVia = accessedVia;
             ReturnPageQuery = returnPageQuery;
+        }
+
+        public DelegateCourseInfoViewModel(
+            CourseDelegate courseDelegate,
+            DelegateAccessRoute accessedVia,
+            ReturnPageQuery returnPageQuery
+        ) : this(courseDelegate)
+        {
+            AccessedVia = accessedVia;
+            ReturnPageQuery = returnPageQuery;
+            Tags = FilterableTagHelper.GetCurrentTagsForCourseDelegate(courseDelegate);
+        }
+
+        private DelegateCourseInfoViewModel(DelegateCourseInfo info)
+        {
             ProgressId = info.ProgressId;
             CustomisationId = info.CustomisationId;
 
-            DelegateId = details.DelegateCourseInfo.DelegateId;
+            DelegateId = info.DelegateId;
             DelegateName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
-                details.DelegateCourseInfo.DelegateFirstName,
-                details.DelegateCourseInfo.DelegateLastName
+                info.DelegateFirstName,
+                info.DelegateLastName
             );
-            Email = details.DelegateCourseInfo.DelegateEmail;
-            DelegateNumber = details.DelegateCourseInfo.DelegateNumber;
+            Email = info.DelegateEmail;
+            DelegateNumber = info.CandidateNumber;
             ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
                 info.HasBeenPromptedForPrn,
                 info.ProfessionalRegistrationNumber
@@ -54,14 +67,14 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
             RemovedDate = info.RemovedDate?.ToString(DateHelper.StandardDateAndTimeFormat);
 
             var enrolledByFullName = DisplayStringHelper.GetPotentiallyInactiveAdminName(
-                details.DelegateCourseInfo.EnrolledByForename,
-                details.DelegateCourseInfo.EnrolledBySurname,
-                details.DelegateCourseInfo.EnrolledByAdminActive
+                info.EnrolledByForename,
+                info.EnrolledBySurname,
+                info.EnrolledByAdminActive
             );
-            EnrolmentMethod = details.DelegateCourseInfo.EnrolmentMethodId switch
+            EnrolmentMethod = info.EnrolmentMethodId switch
             {
                 1 => "Self enrolled",
-                2 => "Enrolled by " + enrolledByFullName,
+                2 => "Enrolled by " + (enrolledByFullName ?? "Admin"),
                 3 => "Group",
                 _ => "System",
             };
@@ -69,79 +82,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
             LoginCount = info.LoginCount;
             LearningTime = info.LearningTime + " mins";
             DiagnosticScore = info.DiagnosticScore;
-            CourseAdminFieldsWithAnswers = details.CourseAdminFields;
+            CourseAdminFieldsWithAnswers = info.CourseAdminFields;
             IsAssessed = info.IsAssessed;
             IsProgressLocked = info.IsProgressLocked;
-            TotalAttempts = details.AttemptStats.TotalAttempts;
-            AttemptsPassed = details.AttemptStats.AttemptsPassed;
-            PassRate = details.AttemptStats.PassRate;
-
+            TotalAttempts = info.AllAttempts;
+            AttemptsPassed = info.AttemptsPassed;
+            PassRate = info.PassRate;
             CourseName = info.CourseName;
-        }
-
-        public DelegateCourseInfoViewModel(
-            CourseDelegate courseDelegate,
-            DelegateAccessRoute accessedVia,
-            ReturnPageQuery returnPageQuery,
-            string? courseName = null
-        )
-        {
-            AccessedVia = accessedVia;
-            ReturnPageQuery = returnPageQuery;
-            ProgressId = courseDelegate.ProgressId;
-            CustomisationId = courseDelegate.CustomisationId;
-
-            DelegateId = courseDelegate.DelegateId;
-            DelegateName = courseDelegate.FullNameForSearchingSorting;
-            Email = courseDelegate.EmailAddress;
-            DelegateNumber = courseDelegate.CandidateNumber;
-            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
-                courseDelegate.HasBeenPromptedForPrn,
-                courseDelegate.ProfessionalRegistrationNumber
-            );
-
-            Enrolled = courseDelegate.Enrolled.ToString(DateHelper.StandardDateAndTimeFormat);
-            Supervisor = courseDelegate.SupervisorSurname != null
-                ? DisplayStringHelper.GetPotentiallyInactiveAdminName(
-                    courseDelegate.SupervisorForename,
-                    courseDelegate.SupervisorSurname,
-                    courseDelegate.SupervisorAdminActive!.Value
-                )
-                : "None";
-
-            CompleteBy = courseDelegate.CompleteByDate?.ToString(DateHelper.StandardDateAndTimeFormat);
-            LastAccessed = courseDelegate.LastUpdated.ToString(DateHelper.StandardDateAndTimeFormat);
-            Completed = courseDelegate.Completed?.ToString(DateHelper.StandardDateAndTimeFormat);
-            Evaluated = courseDelegate.Evaluated?.ToString(DateHelper.StandardDateAndTimeFormat);
-            RemovedDate = courseDelegate.RemovedDate?.ToString(DateHelper.StandardDateAndTimeFormat);
-
-            var enrolledByFullName = DisplayStringHelper.GetPotentiallyInactiveAdminName(
-                courseDelegate.EnrolledByForename,
-                courseDelegate.EnrolledBySurname,
-                courseDelegate.EnrolledByAdminActive
-            );
-            EnrolmentMethod = courseDelegate.EnrolmentMethodId switch
-            {
-                1 => "Self enrolled",
-                2 => "Enrolled by " + enrolledByFullName,
-                3 => "Group",
-                _ => "System",
-            };
-
-            LoginCount = courseDelegate.LoginCount;
-            LearningTime = courseDelegate.LearningTime + " mins";
-            DiagnosticScore = courseDelegate.DiagnosticScore;
-            CourseAdminFieldsWithAnswers = courseDelegate.CourseAdminFields;
-            IsAssessed = courseDelegate.IsAssessed;
-
-            TotalAttempts = courseDelegate.AllAttempts;
-            AttemptsPassed = courseDelegate.AttemptsPassed;
-            PassRate = courseDelegate.PassRate;
-            IsProgressLocked = courseDelegate.Locked;
-
-            CourseName = courseName;
-            Registered = courseDelegate.Registered.ToString(DateHelper.StandardDateAndTimeFormat);
-            Tags = FilterableTagHelper.GetCurrentTagsForCourseDelegate(courseDelegate);
         }
 
         public DelegateAccessRoute AccessedVia { get; set; }
@@ -171,11 +118,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
         public int AttemptsPassed { get; set; }
         public double PassRate { get; set; }
         public bool IsProgressLocked { get; set; }
-
-        // View Delegate only property
         public string? CourseName { get; set; }
 
-        // Course Delegates only properties
-        public string Registered { get; set; }
+        public string? PassRateDisplayString =>
+            TotalAttempts != 0 ? PassRate + "%" : null;
     }
 }

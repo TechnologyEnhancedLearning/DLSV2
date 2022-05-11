@@ -26,8 +26,7 @@
                 d => new DelegateCourseInfoViewModel(
                     d,
                     DelegateAccessRoute.CourseDelegates,
-                    result.GetReturnPageQuery($"{d.DelegateId}-card"),
-                    currentCourse.CourseName
+                    result.GetReturnPageQuery($"{d.DelegateId}-card")
                 )
             );
             Filters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(

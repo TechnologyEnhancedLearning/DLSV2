@@ -21,13 +21,6 @@
       <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
       <dd class="nhsuk-summary-list__actions" />
     </div>
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Registered
-      </dt>
-      <partial name="_SummaryFieldValue" model="@Model.Registered" />
-      <dd class="nhsuk-summary-list__actions" />
-    </div>
   }
 
   <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -200,7 +193,7 @@
         Pass rate
       </dt>
       <dd class="nhsuk-summary-list__value" data-name-for-sorting="pass-rate">
-        @Model.PassRate%
+        @(Model.PassRateDisplayString ?? "-")
       </dd>
       <dd class="nhsuk-summary-list__actions"></dd>
     </div>

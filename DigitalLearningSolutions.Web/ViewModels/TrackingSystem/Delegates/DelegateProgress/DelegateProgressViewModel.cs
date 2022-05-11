@@ -4,22 +4,24 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
+    using Microsoft.Extensions.Configuration;
 
     public class DelegateProgressViewModel : DelegateCourseInfoViewModel
     {
         public DelegateProgressViewModel(
             DelegateAccessRoute accessedVia,
-            DetailedCourseProgress details,
-            string currentSystemBaseUrl,
+            DetailedCourseProgress progress,
+            IConfiguration config,
             ReturnPageQuery? returnPageQuery = null
-        ) : base(details, accessedVia, returnPageQuery)
+        ) : base(progress, accessedVia, returnPageQuery)
         {
-            IsCourseActive = details.DelegateCourseInfo.IsCourseActive;
+            IsCourseActive = progress.IsCourseActive;
 
-            AdminFields = details.CourseAdminFields.Select(
+            AdminFields = progress.CourseAdminFields.Select(
                     cp =>
                         new DelegateCourseAdminField(
                             cp.PromptNumber,
@@ -29,9 +31,9 @@
                 )
                 .ToList();
 
-            ProgressDownloadUrl = currentSystemBaseUrl + $"/tracking/summary?ProgressID={details.ProgressId}";
+            ProgressDownloadUrl = OldSystemEndpointHelper.GetDownloadSummaryUrl(config, progress.ProgressId);;
 
-            Sections = details.Sections.Select(s => new SectionProgressViewModel(s));
+            Sections = progress.Sections.Select(s => new SectionProgressViewModel(s));
         }
 
         public bool IsCourseActive { get; set; }

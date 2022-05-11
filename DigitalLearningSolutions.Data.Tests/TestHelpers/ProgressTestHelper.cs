@@ -146,9 +146,7 @@
             return new DetailedCourseProgress(
                 progress,
                 sections,
-                delegateCourseInfo,
-                new List<CourseAdminFieldWithAnswer>(),
-                new AttemptStats(1, 1)
+                delegateCourseInfo
             );
         }
     }

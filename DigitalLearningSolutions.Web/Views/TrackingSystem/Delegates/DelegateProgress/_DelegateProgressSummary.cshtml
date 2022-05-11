@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @model DelegateProgressViewModel
 
 <dl class="nhsuk-summary-list">
@@ -109,9 +108,7 @@
       <dt class="nhsuk-summary-list__key">
         Pass rate
       </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.PassRate%
-      </dd>
+      <partial name="_SummaryFieldValue" model="Model.PassRateDisplayString" />
     </div>
   }
 

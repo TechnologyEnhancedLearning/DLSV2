@@ -134,6 +134,7 @@
             var progress = progressDataService.GetProgressByProgressId(progressId);
 
             var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+            
 
             if (progress == null || courseInfo == null)
             {
@@ -141,13 +142,9 @@
             }
 
             var coursePrompts = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
-                courseInfo,
-                courseInfo.CustomisationId
+                courseInfo
             );
-
-            var attemptStats = courseInfo.IsAssessed
-                ? courseDataService.GetDelegateCourseAttemptStats(courseInfo.DelegateId, courseInfo.CustomisationId)
-                : new AttemptStats(0, 0);
+            courseInfo.CourseAdminFields = coursePrompts;
 
             var sections = progressDataService.GetSectionProgressDataForProgressEntry(progressId).ToList();
             foreach (var section in sections)
@@ -159,9 +156,7 @@
             return new DetailedCourseProgress(
                 progress,
                 sections,
-                courseInfo,
-                coursePrompts,
-                attemptStats
+                courseInfo
             );
         }
 
@@ -196,7 +191,7 @@
 
         public void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress)
         {
-            if (progress.DelegateCourseInfo.Completed != null)
+            if (progress.Completed != null)
             {
                 return;
             }

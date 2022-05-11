@@ -8,6 +8,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Mappers;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
@@ -42,7 +43,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             null,
             null,
             3,
-            1,
             "Kevin",
             "Whittaker (Developer)",
             true,
@@ -61,7 +61,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             false,
             "HG1",
             false,
-            null
+            null,
+            true
         );
 
         private SqlConnection connection = null!;
@@ -391,18 +392,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // Then
             result.Should().BeEquivalentTo(ExpectedCourseInfo);
-        }
-
-        [Test]
-        public void GetDelegateCoursesAttemptStats_should_return_delegate_course_info_correctly()
-        {
-            // When
-            var attemptStats = courseDataService.GetDelegateCourseAttemptStats(11, 100);
-
-            // Then
-            attemptStats.TotalAttempts.Should().Be(23);
-            attemptStats.AttemptsPassed.Should().Be(11);
-            attemptStats.PassRate.Should().Be(48);
         }
 
         [Test]
@@ -987,6 +976,53 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             finally
             {
                 transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void GetDelegatesOnCourseForExport_returns_expected_values()
+        {
+            // Given
+            var expectedFirstRecord = new CourseDelegateForExport
+            {
+                IsDelegateActive = true,
+                CandidateNumber = "PC97",
+                CompleteBy = null,
+                DelegateId = 32926,
+                DelegateEmail = "erpock.hs@5bntu",
+                Enrolled = new DateTime(2012, 07, 02, 13, 30, 37, 807),
+                DelegateFirstName = "xxxxx",
+                DelegateLastName = "xxxx",
+                LastUpdated = new DateTime(2012, 07, 31, 10, 18, 39, 993),
+                IsProgressLocked = false,
+                ProgressId = 18395,
+                RemovedDate = null,
+                Completed = null,
+                CustomisationId = 1,
+                RegistrationAnswer1 = null,
+                RegistrationAnswer2 = null,
+                RegistrationAnswer3 = null,
+                RegistrationAnswer4 = null,
+                RegistrationAnswer5 = null,
+                RegistrationAnswer6 = null,
+                Answer1 = "",
+                Answer2 = "",
+                Answer3 = "",
+                LoginCount = 1,
+                Duration = 0,
+                DiagnosticScore = 0,
+                AllAttempts = 0,
+                AttemptsPassed = 0,
+            };
+
+            // When
+            var result = courseDataService.GetDelegatesOnCourseForExport(1, 2).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(3);
+                result.First().Should().BeEquivalentTo(expectedFirstRecord);
             }
         }
     }

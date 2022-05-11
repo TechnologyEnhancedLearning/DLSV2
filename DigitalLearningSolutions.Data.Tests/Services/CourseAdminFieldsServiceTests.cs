@@ -71,40 +71,10 @@
             var expected = new List<CourseAdminFieldWithAnswer> { expected1, expected2 };
             A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100))
                 .Returns(PromptsTestHelper.GetDefaultCourseAdminFieldsResult());
-            var delegateCourseInfo = new DelegateCourseInfo { Answer1 = answer1, Answer2 = answer2 };
+            var delegateCourseInfo = new DelegateCourseInfo { Answer1 = answer1, Answer2 = answer2, CustomisationId = 100};
 
             // When
-            var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(delegateCourseInfo, 100);
-
-            // Then
-            result.Should().BeEquivalentTo(expected);
-        }
-
-        [Test]
-        public void
-            GetCourseAdminFieldsWithAnswersForCourseDelegate_Returns_Populated_List_of_CourseAdminFieldWithAnswer()
-        {
-            // Given
-            const string answer1 = "ans1";
-            const string answer2 = "ans2";
-            var expected1 = PromptsTestHelper.GetDefaultCourseAdminFieldWithAnswer(
-                1,
-                "System Access Granted",
-                "Test",
-                answer1
-            );
-            var expected2 = PromptsTestHelper.GetDefaultCourseAdminFieldWithAnswer(
-                2,
-                "Priority Access",
-                answer: answer2
-            );
-            var expected = new List<CourseAdminFieldWithAnswer> { expected1, expected2 };
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100))
-                .Returns(PromptsTestHelper.GetDefaultCourseAdminFieldsResult());
-            var courseDelegate = new CourseDelegate { Answer1 = answer1, Answer2 = answer2, CustomisationId = 100 };
-
-            // When
-            var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourseDelegate(courseDelegate);
+            var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(delegateCourseInfo);
 
             // Then
             result.Should().BeEquivalentTo(expected);

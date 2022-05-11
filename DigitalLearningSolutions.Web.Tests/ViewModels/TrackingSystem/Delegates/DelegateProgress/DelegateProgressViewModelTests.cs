@@ -8,8 +8,10 @@
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
+    using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class DelegateProgressViewModelTests
@@ -37,11 +39,9 @@
                 new DetailedCourseProgress(
                     new Progress(),
                     new List<DetailedSectionProgress>(),
-                    missingNamesDelegateInfo,
-                    new List<CourseAdminFieldWithAnswer>(),
-                    new AttemptStats(0, 0)
+                    missingNamesDelegateInfo
                 ),
-                "www.test.com",
+                A.Fake<IConfiguration>(),
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
             var fullNamesDelegateInfo = new DelegateCourseInfo
@@ -63,11 +63,9 @@
                 new DetailedCourseProgress(
                     new Progress(),
                     new List<DetailedSectionProgress>(),
-                    fullNamesDelegateInfo,
-                    new List<CourseAdminFieldWithAnswer>(),
-                    new AttemptStats(0, 0)
+                    fullNamesDelegateInfo
                 ),
-                "www.test.com",
+                A.Fake<IConfiguration>(),
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -97,11 +95,9 @@
                 new DetailedCourseProgress(
                     new Progress(),
                     new List<DetailedSectionProgress>(),
-                    delegateInfo,
-                    new List<CourseAdminFieldWithAnswer>(),
-                    new AttemptStats(0, 0)
+                    delegateInfo
                 ),
-                "www.test.com",
+                A.Fake<IConfiguration>(),
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
@@ -130,11 +126,9 @@
                 new DetailedCourseProgress(
                     new Progress(),
                     new List<DetailedSectionProgress>(),
-                    delegateInfo,
-                    new List<CourseAdminFieldWithAnswer>(),
-                    new AttemptStats(0, 0)
+                    delegateInfo
                 ),
-                "www.test.com",
+                A.Fake<IConfiguration>(),
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 

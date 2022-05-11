@@ -101,23 +101,23 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/CourseDelegates", "Course delegates")]
         [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104", "Delegate progress")]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditSupervisor?returnPageQuery=pageNumber%3D1",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditSupervisor",
             "Edit supervisor for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompleteByDate?returnPageQuery=pageNumber%3D1",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditCompleteByDate",
             "Edit complete by date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate?returnPageQuery=pageNumber%3D1",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditCompletionDate",
             "Edit completed date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/22657/EditAdminField/1?returnPageQuery=pageNumber%3D1",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/22657/EditAdminField/1",
             "Edit System Access Granted field for Entry Level - Win XP, Office 2003/07 OLD - Standard"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/1/24158/Remove?returnPageQuery=pageNumber%3D1",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/22657/Remove",
             "Remove enrolment"
         )]
         [InlineData(

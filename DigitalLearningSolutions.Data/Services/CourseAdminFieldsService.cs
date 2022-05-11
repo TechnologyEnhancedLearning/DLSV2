@@ -15,12 +15,8 @@
         public CourseAdminFields GetCourseAdminFieldsForCourse(int customisationId);
 
         public List<CourseAdminFieldWithAnswer> GetCourseAdminFieldsWithAnswersForCourse(
-            DelegateCourseInfo delegateCourseInfo,
-            int customisationId
+            DelegateCourseInfo delegateCourseInfo
         );
-
-        List<CourseAdminFieldWithAnswer>
-            GetCourseAdminFieldsWithAnswersForCourseDelegate(CourseDelegate courseDelegate);
 
         public void UpdateAdminFieldForCourse(int customisationId, int promptId, string? options);
 
@@ -68,22 +64,12 @@
         }
 
         public List<CourseAdminFieldWithAnswer> GetCourseAdminFieldsWithAnswersForCourse(
-            DelegateCourseInfo delegateCourseInfo,
-            int customisationId
+            DelegateCourseInfo delegateCourseInfo
         )
         {
-            var result = GetCourseAdminFieldsResultForCourse(customisationId);
+            var result = GetCourseAdminFieldsResultForCourse(delegateCourseInfo.CustomisationId);
 
             return PopulateCourseAdminFieldWithAnswerListFromResult(result, delegateCourseInfo);
-        }
-
-        public List<CourseAdminFieldWithAnswer> GetCourseAdminFieldsWithAnswersForCourseDelegate(
-            CourseDelegate courseDelegate
-        )
-        {
-            var result = GetCourseAdminFieldsResultForCourse(courseDelegate.CustomisationId);
-
-            return PopulateCourseAdminFieldWithAnswerListFromResult(result, courseDelegate);
         }
 
         public void UpdateAdminFieldForCourse(int customisationId, int promptId, string? options)
@@ -173,6 +159,15 @@
             }
 
             return adminFields;
+        }
+
+        public List<CourseAdminFieldWithAnswer> GetCourseAdminFieldsWithAnswersForCourseDelegate(
+            CourseDelegate courseDelegate
+        )
+        {
+            var result = GetCourseAdminFieldsResultForCourse(courseDelegate.CustomisationId);
+
+            return PopulateCourseAdminFieldWithAnswerListFromResult(result, courseDelegate);
         }
 
         private static IEnumerable<ResponseCount> GetResponseCountsForPrompt(

@@ -35,7 +35,7 @@
             {
                 context.Result = new NotFoundResult();
             }
-            else if (!ProgressRecordIsAccessibleToUser(courseDelegatesData.DelegateCourseInfo, controller.User))
+            else if (!ProgressRecordIsAccessibleToUser(courseDelegatesData, controller.User))
             {
                 context.Result = new NotFoundResult();
             }

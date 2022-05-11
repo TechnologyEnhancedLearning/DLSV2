@@ -11,7 +11,6 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -58,7 +57,7 @@
             var model = new DelegateProgressViewModel(
                 accessedVia,
                 courseDelegatesData!,
-                configuration.GetCurrentSystemBaseUrl()
+                configuration
             );
             return View(model);
         }
@@ -76,14 +75,14 @@
                 progressService.GetDetailedCourseProgress(progressId);
             var supervisors = userService.GetSupervisorsAtCentreForCategory(
                 centreId,
-                delegateCourseProgress!.DelegateCourseInfo.CourseCategoryId
+                delegateCourseProgress!.CourseCategoryId
             );
 
             var model = new EditSupervisorViewModel(
                 progressId,
                 accessedVia,
                 supervisors,
-                delegateCourseProgress!.DelegateCourseInfo,
+                delegateCourseProgress,
                 returnPageQuery
             );
             return View(model);
@@ -123,7 +122,7 @@
             var model = new EditCompleteByDateViewModel(
                 progressId,
                 accessedVia,
-                delegateCourseProgress!.DelegateCourseInfo,
+                delegateCourseProgress!,
                 returnPageQuery
             );
             return View(model);
@@ -166,7 +165,7 @@
             var model = new EditCompletionDateViewModel(
                 progressId,
                 accessedVia,
-                delegateCourseProgress!.DelegateCourseInfo,
+                delegateCourseProgress!,
                 returnPageQuery
             );
             return View(model);
@@ -208,7 +207,7 @@
                 progressService.GetDetailedCourseProgress(progressId);
 
             var courseAdminField = courseAdminFieldsService.GetCourseAdminFieldsForCourse(
-                delegateCourseProgress!.DelegateCourseInfo.CustomisationId
+                delegateCourseProgress!.CustomisationId
             ).AdminFields.Find(caf => caf.PromptNumber == promptNumber);
 
             if (courseAdminField == null)
@@ -219,7 +218,7 @@
             var model = new EditDelegateCourseAdminFieldViewModel(
                 progressId,
                 promptNumber,
-                delegateCourseProgress!,
+                delegateCourseProgress,
                 accessedVia,
                 returnPageQuery
             );
@@ -257,32 +256,21 @@
         }
 
         [HttpGet]
-        [Route("{delegateId:int}/{customisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyDelegateAccessedViaValidRoute))]
-        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
+        [Route("Remove")]
         public IActionResult ConfirmRemoveFromCourse(
-            int delegateId,
-            int customisationId,
+            int progressId,
             DelegateAccessRoute accessedVia,
             ReturnPageQuery? returnPageQuery = null
         )
         {
-            if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
+            var progress = progressService.GetDetailedCourseProgress(progressId);
+            if (!courseService.DelegateHasCurrentProgress(progressId) || progress == null)
             {
                 return new NotFoundResult();
             }
-
-            var delegateUser = userService.GetDelegateUserCardById(delegateId);
-            var course = courseService.GetCourseNameAndApplication(customisationId);
-
+            
             var model = new RemoveFromCourseViewModel(
-                delegateId,
-                DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
-                    delegateUser!.FirstName,
-                    delegateUser.LastName
-                ),
-                customisationId,
-                course!.CourseName,
+                progress,
                 false,
                 accessedVia,
                 returnPageQuery
@@ -292,11 +280,9 @@
         }
 
         [HttpPost]
-        [Route("{delegateId:int}/{customisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
+        [Route("Remove")]
         public IActionResult ExecuteRemoveFromCourse(
-            int delegateId,
-            int customisationId,
+            int progressId,
             DelegateAccessRoute accessedVia,
             RemoveFromCourseViewModel model
         )
@@ -306,18 +292,19 @@
                 return View("ConfirmRemoveFromCourse", model);
             }
 
-            if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
+            var progress = progressService.GetDetailedCourseProgress(progressId);
+            if (!courseService.DelegateHasCurrentProgress(progressId) || progress == null)
             {
                 return new NotFoundResult();
             }
 
             courseService.RemoveDelegateFromCourse(
-                delegateId,
-                customisationId,
+                progress.DelegateId,
+                progress.CustomisationId,
                 RemovalMethod.RemovedByAdmin
             );
 
-            return RedirectToPreviousPage(delegateId, customisationId, accessedVia, model.ReturnPageQuery);
+            return RedirectToPreviousPage(progress.DelegateId, progress.CustomisationId, accessedVia, model.ReturnPageQuery);
         }
 
         private IActionResult RedirectToPreviousPage(

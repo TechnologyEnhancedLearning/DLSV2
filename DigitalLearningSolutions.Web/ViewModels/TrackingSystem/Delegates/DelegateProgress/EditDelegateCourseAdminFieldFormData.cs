@@ -9,12 +9,12 @@
         public EditDelegateCourseAdminFieldFormData() { }
 
         protected EditDelegateCourseAdminFieldFormData(
-            DelegateCourseDetails details,
+            DelegateCourseInfo delegateCourseInfo,
             ReturnPageQuery? returnPageQuery = null
         )
         {
-            DelegateId = details.DelegateCourseInfo.DelegateId;
-            CustomisationId = details.DelegateCourseInfo.CustomisationId;
+            DelegateId = delegateCourseInfo.DelegateId;
+            CustomisationId = delegateCourseInfo.CustomisationId;
             ReturnPageQuery = returnPageQuery;
         }
 

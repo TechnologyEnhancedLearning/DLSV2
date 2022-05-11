@@ -2,17 +2,14 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
-    public class DetailedCourseProgress : DelegateCourseDetails
+    public class DetailedCourseProgress : DelegateCourseInfo
     {
         public DetailedCourseProgress(
             Progress progress,
             IEnumerable<DetailedSectionProgress> sections,
-            DelegateCourseInfo delegateCourseInfo,
-            List<CourseAdminFieldWithAnswer> courseAdminFields,
-            AttemptStats attemptStats
-        ) : base(delegateCourseInfo, courseAdminFields, attemptStats)
+            DelegateCourseInfo delegateCourseInfo
+        ) : base(delegateCourseInfo)
         {
             DiagnosticScore = progress.DiagnosticScore;
             ProgressId = progress.ProgressId;
@@ -21,10 +18,6 @@
             Sections = sections;
         }
 
-        public int ProgressId { get; set; }
-        public int CustomisationId { get; set; }
-        public int DelegateId { get; set; }
-        public int? DiagnosticScore { get; set; }
         public IEnumerable<DetailedSectionProgress> Sections { get; set; }
     }
 }

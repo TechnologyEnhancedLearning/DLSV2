@@ -72,9 +72,7 @@
                     new DetailedCourseProgress(
                         new Progress(),
                         new List<DetailedSectionProgress>(),
-                        delegateCourseInfo,
-                        new List<CourseAdminFieldWithAnswer>(),
-                        new AttemptStats(0, 0)
+                        delegateCourseInfo
                     )
                 );
 
@@ -101,9 +99,7 @@
                     new DetailedCourseProgress(
                         new Progress(),
                         new List<DetailedSectionProgress>(),
-                        delegateCourseInfo,
-                        new List<CourseAdminFieldWithAnswer>(),
-                        new AttemptStats(0, 0)
+                        delegateCourseInfo
                     )
                 );
 
@@ -130,9 +126,7 @@
                     new DetailedCourseProgress(
                         new Progress(),
                         new List<DetailedSectionProgress>(),
-                        delegateCourseInfo,
-                        new List<CourseAdminFieldWithAnswer>(),
-                        new AttemptStats(0, 0)
+                        delegateCourseInfo
                     )
                 );
 
@@ -159,9 +153,7 @@
                     new DetailedCourseProgress(
                         new Progress(),
                         new List<DetailedSectionProgress>(),
-                        delegateCourseInfo,
-                        new List<CourseAdminFieldWithAnswer>(),
-                        new AttemptStats(0, 0)
+                        delegateCourseInfo
                     )
                 );
 
@@ -188,9 +180,7 @@
                     new DetailedCourseProgress(
                         new Progress(),
                         new List<DetailedSectionProgress>(),
-                        delegateCourseInfo,
-                        new List<CourseAdminFieldWithAnswer>(),
-                        new AttemptStats(0, 0)
+                        delegateCourseInfo
                     )
                 );
 

@@ -16,7 +16,7 @@
         public ViewDelegateViewModel(
             DelegateUserCard delegateUser,
             IEnumerable<DelegateRegistrationPrompt> customFields,
-            IEnumerable<DelegateCourseDetails> delegateCourses
+            IEnumerable<DelegateCourseInfo> delegateCourses
         )
         {
             DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
@@ -24,8 +24,7 @@
                 .Select(
                     x => new DelegateCourseInfoViewModel(
                         x,
-                        DelegateAccessRoute.ViewDelegate,
-                        new ReturnPageQuery(1, $"{x.DelegateCourseInfo.CustomisationId}-card")
+                        DelegateAccessRoute.ViewDelegate
                     )
                 ).ToList();
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);

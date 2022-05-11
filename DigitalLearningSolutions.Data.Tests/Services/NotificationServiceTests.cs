@@ -55,7 +55,7 @@
             A.CallTo(
                 () => emailService.SendEmail(
                     A<Email>.That.Matches(
-                        e => e.To.SequenceEqual(new[] { progress.DelegateCourseInfo.DelegateEmail })
+                        e => e.To.SequenceEqual(new[] { progress.DelegateEmail })
                     )
                 )
             ).MustHaveHappenedOnceExactly();

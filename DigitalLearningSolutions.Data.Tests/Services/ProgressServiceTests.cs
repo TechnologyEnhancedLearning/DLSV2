@@ -264,26 +264,26 @@
                     PossibleScore = 5,
                 },
             };
-            var testCourseInfo = new DelegateCourseInfo
-            {
-                DelegateLastName = "lastName",
-                DelegateEmail = "email",
-                DelegateId = 99,
-                DelegateNumber = "five",
-                LastUpdated = DateTime.UnixEpoch,
-                Enrolled = DateTime.MinValue,
-                Completed = DateTime.Today,
-                CompleteBy = DateTime.Now,
-                CustomisationId = 10,
-                IsAssessed = true,
-            };
             var adminField = PromptsTestHelper.GetDefaultCourseAdminFieldWithAnswer(
                 2,
                 "Priority Access",
                 answer: "answer2"
             );
             var testCourseAdminFields = new List<CourseAdminFieldWithAnswer> { adminField };
-            var testAttemptStats = new AttemptStats(10, 5);
+            var testCourseInfo = new DelegateCourseInfo
+            {
+                DelegateLastName = "lastName",
+                DelegateEmail = "email",
+                DelegateId = 99,
+                CandidateNumber = "five",
+                LastUpdated = DateTime.UnixEpoch,
+                Enrolled = DateTime.MinValue,
+                Completed = DateTime.Today,
+                CompleteBy = DateTime.Now,
+                CustomisationId = 10,
+                IsAssessed = true,
+                CourseAdminFields = testCourseAdminFields
+            };
 
             A.CallTo(() => progressDataService.GetProgressByProgressId(1)).Returns(testCourseProgress);
             A.CallTo(() => progressDataService.GetSectionProgressDataForProgressEntry(1)).Returns(testSectionProgress);
@@ -292,16 +292,9 @@
             A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(1)).Returns(testCourseInfo);
             A.CallTo(
                 () => courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
-                    testCourseInfo,
-                    testCourseInfo.CustomisationId
+                    testCourseInfo
                 )
             ).Returns(testCourseAdminFields);
-            A.CallTo(
-                () => courseDataService.GetDelegateCourseAttemptStats(
-                    testCourseInfo.DelegateId,
-                    testCourseInfo.CustomisationId
-                )
-            ).Returns(testAttemptStats);
 
             var testSectionProgressWithTutorials = new List<DetailedSectionProgress>
             {
@@ -313,9 +306,7 @@
             var expectedResult = new DetailedCourseProgress(
                 testCourseProgress,
                 testSectionProgressWithTutorials,
-                testCourseInfo,
-                testCourseAdminFields,
-                testAttemptStats
+                testCourseInfo
             );
 
             // When

@@ -36,11 +36,10 @@
                 Completed = completedDate,
                 Evaluated = evaluatedDate,
             };
-            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
-
+            
             // When
             var model = new DelegateCourseInfoViewModel(
-                details,
+                info,
                 DelegateAccessRoute.CourseDelegates,
                 new ReturnPageQuery(1, null)
             );
@@ -71,11 +70,10 @@
                 EnrolmentMethodId = enrollmentMethodId, EnrolledByForename = "Test", EnrolledBySurname = "Admin",
                 EnrolledByAdminActive = true,
             };
-            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(
-                details,
+                info,
                 DelegateAccessRoute.CourseDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
@@ -92,11 +90,10 @@
             {
                 ApplicationName = "my application", CustomisationName = "",
             };
-            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(
-                details,
+                info,
                 DelegateAccessRoute.CourseDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
@@ -114,11 +111,10 @@
                 ApplicationName = "my application",
                 CustomisationName = "my customisation",
             };
-            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(
-                details,
+                info,
                 DelegateAccessRoute.CourseDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
@@ -136,11 +132,10 @@
                 SupervisorAdminId = null,
                 SupervisorSurname = null,
             };
-            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(
-                details,
+                info,
                 DelegateAccessRoute.CourseDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
@@ -159,11 +154,10 @@
                 SupervisorSurname = "surname",
                 SupervisorAdminActive = true,
             };
-            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(
-                details,
+                info,
                 DelegateAccessRoute.CourseDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
@@ -182,11 +176,10 @@
                 SupervisorSurname = "surname",
                 SupervisorAdminActive = true,
             };
-            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(
-                details,
+                info,
                 DelegateAccessRoute.CourseDelegates,
                 ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );

@@ -2,7 +2,9 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
 
     public class RemoveFromCourseViewModel : IValidatableObject
@@ -10,19 +12,20 @@
         public RemoveFromCourseViewModel() { }
 
         public RemoveFromCourseViewModel(
-            int delegateId,
-            string name,
-            int customisationId,
-            string courseName,
+            DetailedCourseProgress progress,
             bool confirm,
             DelegateAccessRoute accessedVia,
             ReturnPageQuery? returnPageQuery
         )
         {
-            DelegateId = delegateId;
-            Name = name;
-            CustomisationId = customisationId;
-            CourseName = courseName;
+            DelegateId = progress.DelegateId;
+            Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+                progress.DelegateFirstName,
+                progress.DelegateLastName
+            );
+            CustomisationId = progress.CustomisationId;
+            ProgressId = progress.ProgressId;
+            CourseName = progress.CourseName;
             Confirm = confirm;
             AccessedVia = accessedVia;
             ReturnPageQuery = returnPageQuery;
@@ -31,6 +34,7 @@
         public int DelegateId { get; set; }
         public string Name { get; set; }
         public int CustomisationId { get; set; }
+        public int ProgressId { get; set; }
         public string CourseName { get; set; }
         public bool Confirm { get; set; }
         public DelegateAccessRoute AccessedVia { get; set; }

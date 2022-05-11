@@ -7,8 +7,8 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.Email;
-    using DigitalLearningSolutions.Data.Models.Progress;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
     using MimeKit;
@@ -18,7 +18,7 @@
         Task SendUnlockRequest(int progressId);
 
         void SendProgressCompletionNotificationEmail(
-            DetailedCourseProgress progress,
+            DelegateCourseInfo progress,
             int completionStatus,
             int numLearningLogItemsAffected
         );
@@ -98,7 +98,7 @@
         }
 
         public void SendProgressCompletionNotificationEmail(
-            DetailedCourseProgress progress,
+            DelegateCourseInfo progress,
             int completionStatus,
             int numLearningLogItemsAffected
         )
@@ -109,8 +109,8 @@
                 progress.CustomisationId
             );
 
-            if (progressCompletionData == null || progress.DelegateCourseInfo.DelegateEmail == null ||
-                progress.DelegateCourseInfo.DelegateEmail.Trim() == string.Empty)
+            if (progressCompletionData == null || progress.DelegateEmail == null ||
+                progress.DelegateEmail.Trim() == string.Empty)
             {
                 return;
             }
@@ -155,7 +155,7 @@
             }
 
             const string emailSubjectLine = "Digital Learning Solutions Activity Complete";
-            var delegateNameOrGenericTitle = progress.DelegateCourseInfo.DelegateFirstName ?? "Digital Learning Solutions Delegate";
+            var delegateNameOrGenericTitle = progress.DelegateFirstName ?? "Digital Learning Solutions Delegate";
             var emailsToCc = GetEmailsToCc(
                 progressCompletionData.AdminEmail,
                 progressCompletionData.CourseNotificationEmail
@@ -176,7 +176,7 @@
             var email = new Email(
                 emailSubjectLine,
                 builder,
-                new[] { progress.DelegateCourseInfo.DelegateEmail },
+                new[] { progress.DelegateEmail },
                 emailsToCc
             );
             emailService.SendEmail(email);
