@@ -183,6 +183,7 @@
             // Surname Users
             // Email Users
             // Password Users
+
             // CentreId Admin
             // CategoryId Admin
             // CentreAdmin Admin
@@ -196,41 +197,39 @@
             // Supervisor Admin
             // NominatedSupervisor Admin
 
-            // TODO HEEDLS-856 isn't this just going to work for wholly new accounts?
-            // TODO HEEDLS-856 jobgroupID is nullable in written schema, non-null in DB
-            // TODO HEEDLS-856 what about PRN?
-            var userValues = new
-            {
-                forename = registrationModel.FirstName,
-                surname = registrationModel.LastName,
-                email = registrationModel.PrimaryEmail,
-                password = registrationModel.PasswordHash,
-                active = registrationModel.Active,
-            };
-
-            var userID = connection.QuerySingle<int>(
-                @"INSERT INTO Users
-                    (
-                        FirstName,
-                        LastName,
-                        PrimaryEmail,
-                        PasswordHash,
-                        Active
-                    )
-                    OUTPUT Inserted.ID
-                    VALUES
-                    (
-                        @firstName,
-                        @lastName,
-                        @primaryEmail,
-                        @passwordHash,
-                        @active
-                    )",
-                userValues
-            );
+            // var userValues = new
+            // {
+            //     firstName = registrationModel.FirstName,
+            //     lastName = registrationModel.LastName,
+            //     primaryEmail = registrationModel.Email,
+            //     passwordHash = registrationModel.PasswordHash,
+            //     active = registrationModel.Active,
+            // };
+            //
+            // var userID = connection.QuerySingle<int>(
+            //     @"INSERT INTO Users
+            //         (
+            //             FirstName,
+            //             LastName,
+            //             PrimaryEmail,
+            //             PasswordHash,
+            //             Active
+            //         )
+            //         OUTPUT Inserted.ID
+            //         VALUES
+            //         (
+            //             @firstName,
+            //             @lastName,
+            //             @primaryEmail,
+            //             @passwordHash,
+            //             @active
+            //         )",
+            //     userValues
+            // );
 
             var adminValues = new
             {
+                // so where does this come from?
                 userID,
                 centreID = registrationModel.Centre,
                 categoryID = registrationModel.CategoryId,
