@@ -229,20 +229,20 @@ export class SearchSortFilterAndPaginate {
   }
 
   static updateResultCount(count: number): void {
-    const resultCount = <HTMLSpanElement>document.getElementById('results-count');
+    const resultCounts = <HTMLSpanElement[]>Array.from(document.getElementsByClassName('results-count'));
 
-    if (resultCount === null) {
-      return;
-    }
+    resultCounts.forEach((resultCount) => {
+      const element = resultCount;
 
-    resultCount.hidden = false;
-    resultCount.setAttribute('aria-hidden', 'false');
-    const newResultCountMessage = this.getNewResultCountMessage(
-      count,
-      resultCount,
-    );
+      element.hidden = false;
+      element.setAttribute('aria-hidden', 'false');
+      const newResultCountMessage = this.getNewResultCountMessage(
+        count,
+        resultCount,
+      );
 
-    resultCount.innerHTML = newResultCountMessage;
+      element.innerHTML = newResultCountMessage;
+    });
   }
 
   static getNewResultCountMessage(

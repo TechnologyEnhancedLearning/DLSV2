@@ -9,7 +9,6 @@
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
-    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class CentresServiceTests
@@ -99,6 +98,20 @@
 
             // Then
             result.Should().BeEquivalentTo(centres);
+        }
+
+        [Test]
+        public void GetAllCentreSummariesForFindCentre_calls_dataService_and_returns_all_summary_details()
+        {
+            // Given
+            var expectedCentres = Builder<CentreSummaryForFindYourCentre>.CreateListOfSize(10).Build();
+            A.CallTo(() => centresDataService.GetAllCentreSummariesForFindCentre()).Returns(expectedCentres);
+
+            // When
+            var result = centresService.GetAllCentreSummariesForFindCentre();
+
+            // Then
+            result.Should().HaveCount(10);
         }
     }
 }

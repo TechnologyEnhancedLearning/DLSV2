@@ -67,7 +67,8 @@
         public void AdminFields_returns_AdminFields_page_when_appropriate_course_found_and_clears_TempData()
         {
             // Given
-            var courseAdminField1 = PromptsTestHelper.GetDefaultCourseAdminField(1, "System Access Granted", "Yes\r\nNo");
+            var courseAdminField1 =
+                PromptsTestHelper.GetDefaultCourseAdminField(1, "System Access Granted", "Yes\r\nNo");
             var courseAdminFields = new List<CourseAdminField> { courseAdminField1 };
             A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(A<int>._))
                 .Returns(PromptsTestHelper.GetDefaultCourseAdminFields(courseAdminFields));
@@ -114,16 +115,11 @@
         public void PostEditAdminField_add_configures_new_answer()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, "Test", "Options");
+            var model = new EditAdminFieldViewModel(1, "Test", "Options")
+            {
+                Answer = "new option",
+            };
             const string action = "addPrompt";
-
-            A.CallTo(
-                () => courseAdminFieldsService.UpdateAdminFieldForCourse(
-                    1,
-                    1,
-                    "Test"
-                )
-            ).DoesNothing();
 
             // When
             var result = controller.EditAdminField(1, model, action);
