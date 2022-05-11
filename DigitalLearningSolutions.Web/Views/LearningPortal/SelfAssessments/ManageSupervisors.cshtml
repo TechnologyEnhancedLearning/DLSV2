@@ -3,110 +3,111 @@
 
 
 @{
-  Layout = "SelfAssessments/_Layout";
-  ViewData["Title"] = "Self Assessment";
-  ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
+    Layout = "SelfAssessments/_Layout";
+    ViewData["Title"] = "Self Assessment";
+    ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a></li>
-  <li class="nhsuk-breadcrumb__item">Manage Supervisors</li>
+<li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a></li>
+<li class="nhsuk-breadcrumb__item">Manage Supervisors</li>
 }
 @section mobilebacklink
 {
-  <p class="nhsuk-breadcrumb__back">
+<p class="nhsuk-breadcrumb__back">
     <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
        asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-      Back to @Model.SelfAssessment.Name
+        Back to @Model.SelfAssessment.Name
     </a>
-  </p>
+</p>
 }
-  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-  <h1>@Model.SelfAssessment.Name - Manage Supervisors</h1>
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+<h1>@Model.SelfAssessment.Name - Manage Supervisors</h1>
 
 @if (Model.SelfAssessment.ManageSupervisorsDescription != null)
-{<p>
-    @Html.Raw(Model.SelfAssessment.ManageSupervisorsDescription)
+{
+    <p>
+        @Html.Raw(Model.SelfAssessment.ManageSupervisorsDescription)
     </p>
 }
 
-  @if (Model.Supervisors.Any())
-  {
+@if (Model.Supervisors.Any())
+{
     <table class="nhsuk-table-responsive">
-      <caption class="nhsuk-table__caption">Activity supervisors</caption>
-      <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
-          <th role="columnheader" class="" scope="col">
-            Name/role
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Action
-          </th>
-        </tr>
-      </thead>
-      <tbody class="nhsuk-table__body">
-        @foreach (var supervisor in Model.Supervisors)
-        {
-          <tr role="row" class="nhsuk-table__row">
-            <td class="nhsuk-table__cell">
-              <span class="nhsuk-table-responsive__heading">Name/role </span>
-              @supervisor.SupervisorName, @supervisor.RoleName
+        <caption class="nhsuk-table__caption">Activity supervisors</caption>
+        <thead role="rowgroup" class="nhsuk-table__head">
+            <tr role="row">
+                <th role="columnheader" class="" scope="col">
+                    Name/role
+                </th>
+                <th role="columnheader" class="" scope="col">
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+            @foreach (var supervisor in Model.Supervisors)
+            {
+                <tr role="row" class="nhsuk-table__row">
+                    <td class="nhsuk-table__cell">
+                        <span class="nhsuk-table-responsive__heading">Name/role </span>
+                        @supervisor.SupervisorName, @supervisor.RoleName
 
-            </td>
-            <td class="nhsuk-table__cell">
-              <span class="nhsuk-table-responsive__heading">Actions </span>
-              @if (supervisor.AddedByDelegate)
-              {
-                <a asp-action="RemoveSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.ID">Remove</a>
-              }
-            </td>
-          </tr>
-        }
-      </tbody>
+                    </td>
+                    <td class="nhsuk-table__cell">
+                        <span class="nhsuk-table-responsive__heading">Actions </span>
+                        @if (supervisor.AddedByDelegate)
+                        {
+                            <a asp-action="RemoveSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.ID">Remove</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
     </table>
 
-  }
-  else
-  {
+}
+else
+{
     <p class="nhsuk-lede-text">You have no supervisors for this activity.</p>
-  }
-  @if (Model.SuggestedSupervisors.Any())
-  {
+}
+@if (Model.SuggestedSupervisors.Any())
+{
     <h2 class="nhsuk-u-margin-top-6">Quick add</h2>
     <table class="nhsuk-table">
-      <caption class="nhsuk-table__caption">Supervisors for your other activities</caption>
-      <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
-          <th role="columnheader" class="" scope="col">
-            Name
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Action
-          </th>
-        </tr>
-      </thead>
-      <tbody class="nhsuk-table__body">
-        @foreach (var supervisor in Model.SuggestedSupervisors)
-        {
-          <tr role="row" class="nhsuk-table__row">
-            <td class="nhsuk-table__cell">@supervisor.SupervisorName</td>
-            <td class="nhsuk-table__cell ">
-              <a asp-action="QuickAddSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Add</a>
-            </td>
-          </tr>
-        }
-      </tbody>
+        <caption class="nhsuk-table__caption">Supervisors for your other activities</caption>
+        <thead role="rowgroup" class="nhsuk-table__head">
+            <tr role="row">
+                <th role="columnheader" class="" scope="col">
+                    Name
+                </th>
+                <th role="columnheader" class="" scope="col">
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+            @foreach (var supervisor in Model.SuggestedSupervisors)
+            {
+                <tr role="row" class="nhsuk-table__row">
+                    <td class="nhsuk-table__cell">@supervisor.SupervisorName</td>
+                    <td class="nhsuk-table__cell ">
+                        <a asp-action="QuickAddSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Add</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
     </table>
-  }
-  @if (Model.SelfAssessment.HasDelegateNominatedRoles)
-  {
+}
+@if (Model.SelfAssessment.HasDelegateNominatedRoles)
+{
     <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
-      <div class="nhsuk-grid-column-full">
-        <a class="nhsuk-button trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action="StartAddNewSupervisor">
-          Add new supervisor
-        </a>
-      </div>
+        <div class="nhsuk-grid-column-full">
+            <a class="nhsuk-button trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action="StartAddNewSupervisor">
+                Add new supervisor
+            </a>
+        </div>
     </div>
-  }
+}
 
 
 
