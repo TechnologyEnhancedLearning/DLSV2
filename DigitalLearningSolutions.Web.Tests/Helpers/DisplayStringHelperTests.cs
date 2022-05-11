@@ -319,6 +319,8 @@
         [TestCase("AnXMLFile", "An XML File")]
         [TestCase("An Already Separated String", "An Already Separated String")]
         [TestCase("A Partially SeparatedString", "A Partially Separated String")]
+        [TestCase("IDRecord", "ID Record")]
+        [TestCase("ID", "ID")]
         public void AddSpacesToPascalCaseString_returns_expected_result(string input, string expectedResult)
         {
             // When
