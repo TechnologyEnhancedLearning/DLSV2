@@ -9,7 +9,7 @@
     public interface IRegistrationDataService
     {
         string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel);
-        int RegisterAdmin(AdminRegistrationModel registrationModel);
+        int RegisterAdmin(AdminRegistrationModel registrationModel, int userId);
     }
 
     public class RegistrationDataService : IRegistrationDataService
@@ -174,117 +174,70 @@
             return candidateNumber;
         }
 
-        public int RegisterAdmin(AdminRegistrationModel registrationModel)
+        public int RegisterAdmin(AdminRegistrationModel registrationModel, int userId)
         {
             using var transaction = new TransactionScope();
 
-            // TODO HEEDLS-856
-            // Forename Users
-            // Surname Users
-            // Email Users
-            // Password Users
-
-            // CentreId Admin
-            // CategoryId Admin
-            // CentreAdmin Admin
-            // IsCentreManager Admin
-            // Approved appears in candidates only - remove
-            // Active Both???
-            // ContentCreator Admin
-            // ContentManager Admin
-            // ImportOnly Admin
-            // Trainer Admin
-            // Supervisor Admin
-            // NominatedSupervisor Admin
-
-            // var userValues = new
-            // {
-            //     firstName = registrationModel.FirstName,
-            //     lastName = registrationModel.LastName,
-            //     primaryEmail = registrationModel.Email,
-            //     passwordHash = registrationModel.PasswordHash,
-            //     active = registrationModel.Active,
-            // };
-            //
-            // var userID = connection.QuerySingle<int>(
-            //     @"INSERT INTO Users
-            //         (
-            //             FirstName,
-            //             LastName,
-            //             PrimaryEmail,
-            //             PasswordHash,
-            //             Active
-            //         )
-            //         OUTPUT Inserted.ID
-            //         VALUES
-            //         (
-            //             @firstName,
-            //             @lastName,
-            //             @primaryEmail,
-            //             @passwordHash,
-            //             @active
-            //         )",
-            //     userValues
-            // );
-
             var adminValues = new
             {
-                // so where does this come from?
-                userID,
+                userId,
                 centreID = registrationModel.Centre,
                 categoryID = registrationModel.CategoryId,
-                centreAdmin = registrationModel.IsCentreAdmin,
+                isCentreAdmin = registrationModel.IsCentreAdmin,
                 isCentreManager = registrationModel.IsCentreManager,
-                approved = registrationModel.Approved,
                 active = registrationModel.Active,
-                contentCreator = registrationModel.IsContentCreator,
-                contentManager = registrationModel.IsContentManager,
+                isContentCreator = registrationModel.IsContentCreator,
+                isContentManager = registrationModel.IsContentManager,
                 importOnly = registrationModel.ImportOnly,
-                trainer = registrationModel.IsTrainer,
-                supervisor = registrationModel.IsSupervisor,
-                nominatedSupervisor = registrationModel.IsNominatedSupervisor
+                isTrainer = registrationModel.IsTrainer,
+                isSupervisor = registrationModel.IsSupervisor,
+                isNominatedSupervisor = registrationModel.IsNominatedSupervisor,
+                // deprecated columns
+                forename_deprecated = "",
+                surname_deprecated = "",
+                password_deprecated = ""
             };
 
             var adminUserId = connection.QuerySingle<int>(
-                @"INSERT INTO AdminUsers
+                @"INSERT INTO AdminAccounts
                     (
-                        CentreId,
-                        CategoryId,
-                        CentreAdmin,
+                        UserID,
+                        CentreID,
+                        CategoryID,
+                        IsCentreAdmin,
                         IsCentreManager,
-                        Approved,
                         Active,
-                        ContentCreator,
-                        ContentManager,
+                        IsContentCreator,
+                        IsContentManager,
                         ImportOnly,
-                        Trainer,
-                        Supervisor,
-                        NominatedSupervisor
+                        IsTrainer,
+                        IsSupervisor,
+                        IsNominatedSupervisor,
+                        Forename_deprecated,
+                        Surname_deprecated,
+                        Password_deprecated
                     )
-                    OUTPUT Inserted.AdminID
+                    OUTPUT Inserted.ID
                     VALUES
                     (
-                        @forename,
-                        @surname,
-                        @email,
-                        @password,
+                        @userId,
                         @centreId,
                         @categoryId,
-                        @centreAdmin,
+                        @isCentreAdmin,
                         @isCentreManager,
-                        @approved,
                         @active,
-                        @contentCreator,
-                        @contentManager,
+                        @isContentCreator,
+                        @isContentManager,
                         @importOnly,
-                        @trainer,
-                        @supervisor,
-                        @nominatedSupervisor
+                        @isTrainer,
+                        @isSupervisor,
+                        @isNominatedSupervisor,
+                        @forename_deprecated,
+                        @surname_deprecated,
+                        @password_deprecated
                     )",
                 adminValues
             );
-
-            // TODO HEEDLS-856 then check this thing
 
             connection.Execute(
                 @"INSERT INTO NotificationUsers (NotificationId, AdminUserId)

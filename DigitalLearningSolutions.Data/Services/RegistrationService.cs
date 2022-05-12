@@ -211,7 +211,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
 
-            registrationDataService.RegisterAdmin(registrationModel);
+            registrationDataService.RegisterAdmin(registrationModel, 0);
 
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
@@ -259,7 +259,7 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateUser.ProfileImage
             );
 
-            registrationDataService.RegisterAdmin(adminRegistrationModel);
+            registrationDataService.RegisterAdmin(adminRegistrationModel, 0);
         }
 
         public string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)

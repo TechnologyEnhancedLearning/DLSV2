@@ -442,7 +442,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => registrationDataService.RegisterAdmin(model))
+            A.CallTo(() => registrationDataService.RegisterAdmin(model, 0))
                 .MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustHaveHappened(1, Times.Exactly);
@@ -480,7 +480,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
-            A.CallTo(() => registrationDataService.RegisterAdmin(model))
+            A.CallTo(() => registrationDataService.RegisterAdmin(model, 0))
                 .MustNotHaveHappened();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustNotHaveHappened();
@@ -704,7 +704,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                             a.IsContentCreator == adminRoles.IsContentCreator &&
                             a.IsTrainer == adminRoles.IsTrainer &&
                             a.IsSupervisor == adminRoles.IsSupervisor
-                    )
+                    ),
+                    0
                 )
             ).MustHaveHappened();
         }

@@ -146,19 +146,28 @@
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var registrationModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+            var registrationModel =
+                RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel(
+                    email: "bn.uhrawol@sk",
+                    categoryId: 1
+                );
 
             // When
-            service.RegisterAdmin(registrationModel);
+            service.RegisterAdmin(registrationModel, 4046);
 
             // Then
             var user = userDataService.GetAdminUserByEmailAddress(registrationModel.PrimaryEmail)!;
-            user.FirstName.Should().Be(registrationModel.FirstName);
-            user.LastName.Should().Be(registrationModel.LastName);
             user.CentreId.Should().Be(registrationModel.Centre);
-            user.Password.Should().Be(registrationModel.PasswordHash);
-            user.IsCentreAdmin.Should().BeTrue();
-            user.IsCentreManager.Should().BeTrue();
+            user.IsCentreAdmin.Should().Be(registrationModel.IsCentreAdmin);
+            user.IsCentreManager.Should().Be(registrationModel.IsCentreManager);
+            user.Approved.Should().Be(registrationModel.Approved);
+            user.Active.Should().Be(registrationModel.Active);
+            user.IsContentCreator.Should().Be(registrationModel.IsContentCreator);
+            user.IsContentManager.Should().Be(registrationModel.IsContentManager);
+            user.ImportOnly.Should().Be(registrationModel.ImportOnly);
+            user.IsTrainer.Should().Be(registrationModel.IsTrainer);
+            user.IsSupervisor.Should().Be(registrationModel.IsSupervisor);
+            user.IsNominatedSupervisor.Should().Be(registrationModel.IsNominatedSupervisor);
         }
 
         [Test]
@@ -167,10 +176,14 @@
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var registrationModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+            var registrationModel =
+                RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel(
+                    email: "bn.uhrawol@sk",
+                    categoryId: 1
+                );
 
             // When
-            service.RegisterAdmin(registrationModel);
+            service.RegisterAdmin(registrationModel, 4046);
 
             // Then
             var user = userDataService.GetAdminUserByEmailAddress(registrationModel.PrimaryEmail)!;
