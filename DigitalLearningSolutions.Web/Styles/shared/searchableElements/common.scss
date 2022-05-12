@@ -32,18 +32,23 @@ $button-hover-colour: #4c6272;
   }
 }
 
-.input-with-no-js-submit-button {
+.pagination-input-with-no-js-submit-button-border {
+  .js-enabled & {
+    border-right: 2px solid $nhsuk-form-border-color;
+    border-radius: 4px;
+
+    &:focus {
+      border-right: 4px solid $color_nhsuk-black;
+      margin-right: 0;
+    }
+  }
+}
+
+.pagination-input-with-no-js-submit-button {
   @extend .input-with-submit-button;
 
   #js-styling-hidden-area-while-loading & {
-    .js-enabled & {
-      border-right: 2px solid $nhsuk-form-border-color;
-      border-radius: 4px;
-
-      &:focus {
-        border-right: 4px solid $color_nhsuk-black;
-      }
-    }
+    @extend .pagination-input-with-no-js-submit-button-border
   }
 }
 

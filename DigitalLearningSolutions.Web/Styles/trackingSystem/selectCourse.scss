@@ -2,7 +2,8 @@
 @use "../shared/searchableElements/filter" as *;
 
 .filter-dropdown {
-  @extend .input-with-no-js-submit-button;
+  @extend .pagination-input-with-no-js-submit-button;
+  @extend .pagination-input-with-no-js-submit-button-border;
   width: 100%;
 
   @include mq($from: tablet) {

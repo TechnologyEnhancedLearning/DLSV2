@@ -9,7 +9,7 @@
 }
 
 .search-box {
-  @extend .input-with-no-js-submit-button;
+  @extend .pagination-input-with-no-js-submit-button;
   -webkit-appearance: none;
   flex: 1;
 }
