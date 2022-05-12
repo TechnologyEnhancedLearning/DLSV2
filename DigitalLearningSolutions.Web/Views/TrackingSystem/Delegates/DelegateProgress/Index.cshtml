@@ -19,12 +19,19 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-two-thirds">
+      <div class="nhsuk-grid-column-one-half">
         <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
       </div>
-      <div class="nhsuk-grid-column-one-third heading-button-group">
+      <div class="nhsuk-grid-column-one-half heading-button-group">
         <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button" href="@Model.ProgressDownloadUrl">
           Download
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary heading-button"
+           role="button"
+           asp-action="LearningLog"
+           asp-route-accessedVia="@Model.AccessedVia"
+           asp-route-progressId="@Model.ProgressId">
+          View learning log
         </a>
       </div>
     </div>
@@ -58,13 +65,5 @@
     @foreach (var section in Model.Sections) {
       <partial name="_SectionProgress" model="section" />
     }
-
-    <a class="nhsuk-button nhsuk-button--secondary"
-       role="button"
-       asp-action="LearningLog"
-       asp-route-accessedVia="@Model.AccessedVia"
-       asp-route-progressId="@Model.ProgressId">
-      View learning log
-    </a>
   </div>
 </div>
