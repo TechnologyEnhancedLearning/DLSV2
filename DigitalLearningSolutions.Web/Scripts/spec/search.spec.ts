@@ -11,7 +11,7 @@ describe('search', () => {
       <head></head>
       <body>
         <input type="text" id="search-field" value="cheese" />
-        <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+        <span hidden aria-hidden="true" aria-live="polite" class="results-count">0 matching results</span>
         <div id="searchable-elements">
           <div class="searchable-element">
             <span class="nhsuk-details__summary-text searchable-element-title">cheese</span>

@@ -45,7 +45,8 @@
     <partial name="SearchablePage/Configurations/_SortAndFilter" model="Model" />
 
     <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-    <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
+    <partial name="SearchablePage/_TopPagination" model="Model" />
+    <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
     <div id="searchable-elements">
       @foreach (var application in Model.Applications) {
@@ -53,7 +54,7 @@
       }
     </div>
 
-    <partial name="SearchablePage/_Pagination" model="Model" />
+    <partial name="SearchablePage/_BottomPagination" model="Model" />
   }
 </div>
 <input type="hidden" id="brand-id" asp-for="BrandId" />

@@ -100,7 +100,7 @@
         {
             var data = TempData.Peek<RegistrationData>()!;
 
-            var model = new LearnerInformationViewModel(data);
+            var model = new LearnerInformationViewModel(data, true);
             SetJobGroupOptions(model);
 
             return View(model);

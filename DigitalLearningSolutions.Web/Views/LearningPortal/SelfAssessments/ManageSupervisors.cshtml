@@ -32,9 +32,6 @@
             Name/role
           </th>
           <th role="columnheader" class="" scope="col">
-            Status
-          </th>
-          <th role="columnheader" class="" scope="col">
             Action
           </th>
         </tr>
@@ -49,29 +46,10 @@
 
             </td>
             <td class="nhsuk-table__cell">
-              <span class="nhsuk-table-responsive__heading">Status </span>
-              @if (supervisor.Confirmed == null)
-              {
-                <span class='nhsuk-tag nhsuk-tag--grey'>Unconfirmed</span>
-              }
-              else
-              {
-                <span class='nhsuk-tag'>Confirmed</span>
-              }
-            </td>
-            <td class="nhsuk-table__cell">
               <span class="nhsuk-table-responsive__heading">Actions </span>
               @if (supervisor.AddedByDelegate)
               {
                 <a asp-action="RemoveSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.ID">Remove</a>
-                @if (supervisor.Confirmed == null && supervisor.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
-                {
-                  <a asp-action="SendSupervisorReminder" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Send reminder</a>
-                }
-              }
-              else if (supervisor.Confirmed == null)
-              {
-                <a asp-action="ConfirmSupervisor" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Confirm</a> <a asp-action="RejectSupervisor" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Reject</a>
               }
             </td>
           </tr>
