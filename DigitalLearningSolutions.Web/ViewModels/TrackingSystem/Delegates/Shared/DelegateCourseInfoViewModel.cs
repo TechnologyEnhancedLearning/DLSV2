@@ -44,6 +44,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
                 info.DelegateFirstName,
                 info.DelegateLastName
             );
+            CourseDelegatesDisplayName =
+                NameQueryHelper.GetSortableFullName(info.DelegateFirstName, info.DelegateLastName);
             Email = info.DelegateEmail;
             DelegateNumber = info.CandidateNumber;
             ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
@@ -119,6 +121,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
         public double PassRate { get; set; }
         public bool IsProgressLocked { get; set; }
         public string? CourseName { get; set; }
+        public string CourseDelegatesDisplayName { get; set; }
 
         public string? PassRateDisplayString =>
             TotalAttempts != 0 ? PassRate + "%" : null;
