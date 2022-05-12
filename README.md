@@ -36,6 +36,27 @@ In JetBrains Rider the text editor settings can be set in `Settings > Editor > F
 
 To turn off git autoCrlf, run `git config --global core.autocrlf false` in a terminal.
 
+# Secret config settings
+Certain features of the system rely on having API keys and secrets available (as do some tests).
+
+Talk to the project team to get these secrets for you to store in the secrets manager.
+
+## Secrets manager
+We use Microsoft’s [Secret Manager](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows#secret-manager) to look after our secrets locally, so they don’t get tracked (or deleted) by git.
+
+It stores a GUID in the Web project’s csproj which points .NET to a json file in your appsettings when you run the application.
+
+Namely: `~\AppData\Roaming\Microsoft\UserSecrets\7ea176d2-09f5-4e3a-a3fa-7f3229882b70\secrets.json`
+
+## Environment variables
+We're using environment variables to set any settings we don't want to have committed to source control (e.g. database connection string on uat as it includes a password). In addition to the default .net core environment variables we're using any variables set with the prefix `DlsRefactor{EnvironmentName}_`. The prefix will be removed when reading the variable, see https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-3.1#environment-variables for details.
+
+For example, if you want to set the db connection string on uat then set an environment variable called DlsRefactorUAT_ConnectionStrings:DefaultConnection to the connection string you want (`__` can be used instead of `:` in situations where it's not possible to use `:` such as in a jenkinsfile or on a mac). This will override the ConnectionStrings:DefaultConnection set in the appSettings file.
+
+To set an environment variable you can either:
+1. When running locally you can specify environment variables in launchSettings.json.
+2. For a deployed instance you can set the environment variable in IIS manager on the server the app is deployed to. See https://stackoverflow.com/questions/31049152/publish-to-iis-setting-environment-variable for details. **NB** deploying will remove any environment variables for the site you're deploying to. Therefore to set an environment variable permanently you need to set it for the whole IIS server in IIS manager and lock it.
+
 # Setting up the database
 
 Get a database backup `.bak` file from the current system.
@@ -293,15 +314,6 @@ In order to set up your dev environment to send emails, make the following chang
 The recipient addresses can be set with Centres.NotifyEmail and Candidates.EmailAddress, and a course can be locked using Progress.PLLocked
 
 On test, the centre email is heedlstest@mailinator.com, and the user email is heedlstestuser@mailinator.com. These can be viewed by visiting [mailinator.com](https://www.mailinator.com/) and entering the email address at the top of the page.
-
-# Environment variables
-We're using environment variables to set any settings we don't want to have committed to source control (e.g. database connection string on uat as it includes a password). In addition to the default .net core environment variables we're using any variables set with the prefix `DlsRefactor{EnvironmentName}_`. The prefix will be removed when reading the variable, see https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-3.1#environment-variables for details.
-
-For example, if you want to set the db connection string on uat then set an environment variable called DlsRefactorUAT_ConnectionStrings:DefaultConnection to the connection string you want (`__` can be used instead of `:` in situations where it's not possible to use `:` such as in a jenkinsfile or on a mac). This will override the ConnectionStrings:DefaultConnection set in the appSettings file.
-
-To set an environment variable you can either:
-1. When running locally you can specify environment variables in launchSettings.json.
-2. For a deployed instance you can set the environment variable in IIS manager on the server the app is deployed to. See https://stackoverflow.com/questions/31049152/publish-to-iis-setting-environment-variable for details. **NB** deploying will remove any environment variables for the site you're deploying to. Therefore to set an environment variable permanently you need to set it for the whole IIS server in IIS manager and lock it.
 
 # GitHub Actions
 We have a GitHub Actions workflow set up. See `.github/workflows/continuous-integration-workflow.yml` for the config. This will build and test the code. If it fails it will email the committer. You can also see the build results on any open pull requests or in the actions tab of the repository: https://github.com/TechnologyEnhancedLearning/DLSV2/actions.
