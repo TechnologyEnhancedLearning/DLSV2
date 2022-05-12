@@ -87,6 +87,11 @@
             return minutes < 60 ? $"{minutes}m" : $"{minutes / 60}h {minutes % 60}m";
         }
 
+        public static string GetTimeStringForScreenReaderFromMinutes(int minutes)
+        {
+            return minutes < 60 ? $"{minutes} minutes" : $"{minutes / 60} hours {minutes % 60} minutes";
+        }
+
         public static string AddSpacesToPascalCaseString(string pascalCaseString)
         {
             return PascalRegex.Replace(pascalCaseString, " ");

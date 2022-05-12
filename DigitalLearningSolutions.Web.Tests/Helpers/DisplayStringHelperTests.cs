@@ -312,6 +312,21 @@
         }
 
         [Test]
+        [TestCase(0, "0 minutes")]
+        [TestCase(59, "59 minutes")]
+        [TestCase(60, "1 hours 0 minutes")]
+        [TestCase(89, "1 hours 29 minutes")]
+        [TestCase(2332, "38 hours 52 minutes")]
+        public void GetTimeStringForScreenReaderFromMinutes_returns_expected_result(int minutes, string expectedResult)
+        {
+            // When
+            var result = DisplayStringHelper.GetTimeStringForScreenReaderFromMinutes(minutes);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
         [TestCase("", "")]
         [TestCase("NicePascalCaseString", "Nice Pascal Case String")]
         [TestCase("ASlightlyMoreAwkwardOne", "A Slightly More Awkward One")]
