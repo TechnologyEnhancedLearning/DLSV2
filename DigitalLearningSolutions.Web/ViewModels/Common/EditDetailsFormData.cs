@@ -39,6 +39,8 @@
 
         public bool? HasProfessionalRegistrationNumber { get; set; }
 
+        public bool IsSelfRegistrationOrEdit { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (!JobGroupId.HasValue)

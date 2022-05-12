@@ -33,7 +33,6 @@
         SelfAssessmentResultSummary GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId);
         IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId);
         //UPDATE DATA
-        bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool UpdateSelfAssessmentResultSupervisorVerifications(int selfAssessmentResultSupervisorVerificationId, string? comments, bool signedOff, int adminId);
         bool RemoveCandidateAssessment(int candidateAssessmentId);
@@ -200,22 +199,6 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     FROM   {supervisorDelegateDetailTables}
                     WHERE (sd.ID = @supervisorDelegateId) AND (sd.CandidateID = @delegateId OR sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new { supervisorDelegateId, adminId, delegateId }
                ).FirstOrDefault();
-        }
-
-        public bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId)
-        {
-            var numberOfAffectedRows = connection.Execute(
-         @"UPDATE SupervisorDelegates SET Confirmed = getUTCDate()
-            WHERE ID = @supervisorDelegateId AND Confirmed IS NULL AND Removed IS NULL AND (CandidateID = @candidateId OR SupervisorAdminID = @adminId)",
-        new { supervisorDelegateId, candidateId, adminId });
-            if (numberOfAffectedRows < 1)
-            {
-                logger.LogWarning(
-                    $"Not confirming SupervisorDelegate as db update failed. supervisorDelegateId: {supervisorDelegateId}, candidateId: {candidateId}, adminId: {adminId}"
-                );
-                return false;
-            }
-            return true;
         }
 
         public bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId)
