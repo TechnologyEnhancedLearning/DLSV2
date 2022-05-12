@@ -9,6 +9,7 @@
     public interface IRegistrationDataService
     {
         string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel);
+
         int RegisterAdmin(AdminRegistrationModel registrationModel, int userId);
     }
 
@@ -29,15 +30,15 @@
             using var transaction = connection.BeginTransaction();
 
             var userValues = new
-                {
-                    delegateRegistrationModel.FirstName,
-                    delegateRegistrationModel.LastName,
-                    delegateRegistrationModel.PrimaryEmail,
-                    delegateRegistrationModel.JobGroup,
-                    delegateRegistrationModel.Active,
-                    PasswordHash = "temp",
-                    ProfessionalRegistrationNumber = (string?)null,
-                };
+            {
+                delegateRegistrationModel.FirstName,
+                delegateRegistrationModel.LastName,
+                delegateRegistrationModel.PrimaryEmail,
+                delegateRegistrationModel.JobGroup,
+                delegateRegistrationModel.Active,
+                PasswordHash = "temp",
+                ProfessionalRegistrationNumber = (string?)null,
+            };
 
             var userId = connection.QuerySingle<int>(
                 @"INSERT INTO Users
@@ -61,9 +62,9 @@
                         @professionalRegistrationNumber,
                         @active
                     )",
-                    userValues,
-                    transaction
-                );
+                userValues,
+                transaction
+            );
 
             var initials = delegateRegistrationModel.FirstName.Substring(0, 1) +
                            delegateRegistrationModel.LastName.Substring(0, 1);
@@ -163,9 +164,9 @@
                         @hasBeenPromptedForPrn_deprecated,
                         @hasDismissedLhLoginWarning_deprecated
                     )",
-                    candidateValues,
+                candidateValues,
                 transaction
-                );
+            );
 
             transaction.Commit();
 

@@ -117,8 +117,10 @@
                     userLookup3.Should().NotThrow();
                     userLookup4.Should().NotThrow();
                     userLookup5.Should().NotThrow();
-                    userLookup6.Should().Throw<InvalidOperationException>().WithMessage("Sequence contains no elements");
-                    userLookup7.Should().Throw<InvalidOperationException>().WithMessage("Sequence contains no elements");
+                    userLookup6.Should().Throw<InvalidOperationException>()
+                        .WithMessage("Sequence contains no elements");
+                    userLookup7.Should().Throw<InvalidOperationException>()
+                        .WithMessage("Sequence contains no elements");
                 }
             }
             // we clean up manually due to difficulties in parallel invocation of data service methods inside a transaction.
@@ -128,7 +130,6 @@
                 connection.Execute("DELETE FROM DelegateAccounts WHERE CandidateNumber LIKE 'XQ%'");
                 connection.Execute("DELETE FROM Users WHERE FirstName = 'Xavier' AND LastName = 'Quondam'");
             }
-
         }
 
         private Action GetRegistrationAction(DelegateRegistrationModel model)
