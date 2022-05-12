@@ -9,6 +9,7 @@
     public interface IRegistrationDataService
     {
         string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel);
+
         int RegisterAdmin(AdminRegistrationModel registrationModel);
     }
 
@@ -29,15 +30,15 @@
             using var transaction = connection.BeginTransaction();
 
             var userValues = new
-                {
-                    delegateRegistrationModel.FirstName,
-                    delegateRegistrationModel.LastName,
-                    delegateRegistrationModel.PrimaryEmail,
-                    delegateRegistrationModel.JobGroup,
-                    delegateRegistrationModel.Active,
-                    PasswordHash = "temp",
-                    ProfessionalRegistrationNumber = (string?)null,
-                };
+            {
+                delegateRegistrationModel.FirstName,
+                delegateRegistrationModel.LastName,
+                delegateRegistrationModel.PrimaryEmail,
+                delegateRegistrationModel.JobGroup,
+                delegateRegistrationModel.Active,
+                PasswordHash = "temp",
+                ProfessionalRegistrationNumber = (string?)null,
+            };
 
             var userId = connection.QuerySingle<int>(
                 @"INSERT INTO Users
@@ -61,16 +62,39 @@
                         @professionalRegistrationNumber,
                         @active
                     )",
-                    userValues,
-                    transaction
-                );
+                userValues,
+                transaction
+            );
+
+            var userCentreDetailsValues = new
+            {
+                userId,
+                CentreId = delegateRegistrationModel.Centre,
+                Email = delegateRegistrationModel.SecondaryEmail,
+            };
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails
+                    (
+                        UserId,
+                        CentreId,
+                        Email
+                    )
+                    VALUES
+                    (
+                        @userId,
+                        @centreId,
+                        @email
+                    )",
+                userCentreDetailsValues,
+                transaction
+            );
 
             var initials = delegateRegistrationModel.FirstName.Substring(0, 1) +
                            delegateRegistrationModel.LastName.Substring(0, 1);
 
-            string candidateNumber;
             // this SQL is reproduced mostly verbatim from the uspSaveNewCandidate_V10 procedure in the legacy codebase.
-            candidateNumber = connection.QueryFirst<string>(
+            var candidateNumber = connection.QueryFirst<string>(
                 @"DECLARE @_MaxCandidateNumber AS integer
 		        SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
 								FROM      DelegateAccounts WITH (TABLOCKX, HOLDLOCK)
@@ -91,7 +115,6 @@
                 CentreId = delegateRegistrationModel.Centre,
                 DateRegistered = DateTime.UtcNow,
                 candidateNumber,
-                Email = delegateRegistrationModel.SecondaryEmail,
                 delegateRegistrationModel.Answer1,
                 delegateRegistrationModel.Answer2,
                 delegateRegistrationModel.Answer3,
@@ -104,6 +127,7 @@
                 delegateRegistrationModel.IsSelfRegistered,
                 DetailsLastChecked = DateTime.UtcNow,
                 // null-equivalent data for non-nullable deprecated values
+                Email_deprecated = "",
                 LastName_deprecated = "",
                 JobGroupID_deprecated = 0,
                 SkipPW_deprecated = false,
@@ -163,9 +187,9 @@
                         @hasBeenPromptedForPrn_deprecated,
                         @hasDismissedLhLoginWarning_deprecated
                     )",
-                    candidateValues,
+                candidateValues,
                 transaction
-                );
+            );
 
             transaction.Commit();
 
@@ -239,6 +263,29 @@
                         @nominatedSupervisor
                     )",
                 values
+            );
+
+            var userCentreDetailsValues = new
+            {
+                adminUserId,
+                CentreId = registrationModel.Centre,
+                Email = registrationModel.SecondaryEmail,
+            };
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails
+                    (
+                        UserId,
+                        CentreId,
+                        Email
+                    )
+                    VALUES
+                    (
+                        @userId,
+                        @centreId,
+                        @email
+                    )",
+                userCentreDetailsValues
             );
 
             connection.Execute(
