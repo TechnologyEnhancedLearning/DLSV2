@@ -168,7 +168,8 @@
                         Answer3,
                         Answer4,
                         Answer5,
-                        Answer6
+                        Answer6,
+                        CandidateNumber
                     FROM Candidates
                     WHERE CandidateNumber = @candidateNumber",
                 new { candidateNumber }

@@ -27,8 +27,8 @@ namespace DigitalLearningSolutions.Data.Services
     {
         private readonly IConfiguration configuration;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IRegistrationService registrationService;
         private readonly IPasswordResetService passwordResetService;
-        private readonly IRegistrationDataService registrationDataService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
@@ -36,7 +36,7 @@ namespace DigitalLearningSolutions.Data.Services
         public DelegateUploadFileService(
             IJobGroupsDataService jobGroupsDataService,
             IUserDataService userDataService,
-            IRegistrationDataService registrationDataService,
+            IRegistrationService registrationDataService,
             ISupervisorDelegateService supervisorDelegateService,
             IUserService userService,
             IPasswordResetService passwordResetService,
@@ -44,7 +44,7 @@ namespace DigitalLearningSolutions.Data.Services
         )
         {
             this.userDataService = userDataService;
-            this.registrationDataService = registrationDataService;
+            this.registrationService = registrationDataService;
             this.supervisorDelegateService = supervisorDelegateService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
@@ -184,7 +184,8 @@ namespace DigitalLearningSolutions.Data.Services
         private void RegisterDelegate(DelegateTableRow delegateRow, DateTime? welcomeEmailDate, int centreId)
         {
             var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
-            var errorCodeOrCandidateNumber = registrationDataService.RegisterDelegate(model);
+
+            var errorCodeOrCandidateNumber = registrationService.CreateAccountAndReturnCandidateNumber(model);
             switch (errorCodeOrCandidateNumber)
             {
                 case "-1":
