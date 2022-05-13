@@ -73,7 +73,7 @@
             {
                 registrationService.PromoteDelegateToAdmin(
                     formData.GetAdminRoles(),
-                    formData.LearningCategory,
+                    formData.LearningCategory == 0 ? (int?)null : formData.LearningCategory,
                     delegateId
                 );
             }

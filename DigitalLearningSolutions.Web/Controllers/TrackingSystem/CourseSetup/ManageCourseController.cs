@@ -284,9 +284,8 @@
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter()!;
-            var categoryIdFilter = categoryId == 0 ? null : categoryId;
 
-            var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryIdFilter)
+            var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryId)
                 .ToList();
             centreCourses.RemoveAll(c => c.id == customisationId);
             centreCourses.Insert(0, (customisationId, "Same course"));
