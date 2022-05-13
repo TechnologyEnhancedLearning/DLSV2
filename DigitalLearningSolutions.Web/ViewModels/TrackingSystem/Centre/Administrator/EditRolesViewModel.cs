@@ -42,7 +42,7 @@
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole;
             }
 
-            LearningCategory = user.CategoryId;
+            LearningCategory = user.CategoryId ?? 0;
             LearningCategories = SelectListHelper.MapOptionsToSelectListItems(
                 categories.Select(c => (c.CourseCategoryID, c.CategoryName)),
                 user.CategoryId

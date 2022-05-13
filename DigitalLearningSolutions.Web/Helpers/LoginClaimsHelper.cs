@@ -93,7 +93,7 @@
 
             if (adminLoginDetails != null)
             {
-                claims.Add(new Claim(CustomClaimTypes.AdminCategoryId, adminLoginDetails.CategoryId.ToString()));
+                claims.Add(new Claim(CustomClaimTypes.AdminCategoryId, adminLoginDetails.CategoryId?.ToString()));
             }
 
             return claims;

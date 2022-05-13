@@ -1140,7 +1140,7 @@
                 .With(au => au.CategoryId = 1)
                 .TheNext(2)
                 .With(au => au.IsSupervisor = true)
-                .With(au => au.CategoryId = 0)
+                .With(au => au.CategoryId = null)
                 .TheNext(3)
                 .With(au => au.IsSupervisor = true)
                 .With(au => au.CategoryId = 2)
@@ -1153,7 +1153,7 @@
             // Then
             result.Should().HaveCount(5);
             result.Should().OnlyContain(au => au.IsSupervisor);
-            result.Should().OnlyContain(au => au.CategoryId == 0 || au.CategoryId == 1);
+            result.Should().OnlyContain(au => au.CategoryId == null || au.CategoryId == 1);
         }
 
         [Test]

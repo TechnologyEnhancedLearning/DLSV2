@@ -17,7 +17,7 @@
         public bool PublishToAll { get; set; }
         public bool SummaryReports { get; set; }
         public bool IsUserAdmin { get; set; }
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
         public bool IsSupervisor { get; set; }
         public bool IsTrainer { get; set; }
         public bool IsFrameworkDeveloper { get; set; }
