@@ -5,11 +5,13 @@
 
     public class ChooseACentreViewModel
     {
-        public ChooseACentreViewModel(List<CentreUserDetails> centreUserDetails)
+        public ChooseACentreViewModel(List<CentreUserDetails> centreUserDetails, bool adminAccountsAreLocked)
         {
             CentreUserDetails = centreUserDetails;
+            AdminAccountsAreLocked = adminAccountsAreLocked;
         }
 
         public List<CentreUserDetails> CentreUserDetails { get; set; }
+        public bool AdminAccountsAreLocked { get; set; }
     }
 }

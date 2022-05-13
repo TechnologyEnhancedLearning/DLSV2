@@ -8,20 +8,19 @@
     {
         public LoginResult(
             LoginAttemptResult result,
-            AdminUser? adminUser = null,
-            List<DelegateUser>? delegateUsers = null,
+            UserEntity? userEntity = null,
             List<CentreUserDetails>? availableCentres = null
-        )
+            )
         {
             LoginAttemptResult = result;
-            Accounts = new UserAccountSet(adminUser, delegateUsers);
+            UserEntity = userEntity;
             AvailableCentres = availableCentres ?? new List<CentreUserDetails>();
         }
 
         public LoginAttemptResult LoginAttemptResult { get; set; }
 
-        public UserAccountSet Accounts { get; set; }
-
         public List<CentreUserDetails> AvailableCentres { get; set; }
+
+        public UserEntity? UserEntity { get; set; }
     }
 }

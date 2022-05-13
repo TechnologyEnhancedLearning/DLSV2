@@ -29,7 +29,7 @@ namespace DigitalLearningSolutions.Data.Services
             List<DelegateUser> delegateUsers
         );
 
-        List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
+        List<CentreUserDetails> GetUserCentres(UserEntity userEntity);
 
         void UpdateUserAccountDetailsForAllVerifiedUsers(
             MyAccountDetailsData myAccountDetailsData,
@@ -44,9 +44,9 @@ namespace DigitalLearningSolutions.Data.Services
 
         bool IsDelegateEmailValidForCentre(string email, int centreId);
 
-        void ResetFailedLoginCount(AdminUser adminUser);
+        void ResetFailedLoginCount(UserAccount userAccount);
 
-        void IncrementFailedLoginCount(AdminUser adminUser);
+        void UpdateFailedLoginCount(UserAccount userAccount);
 
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId);
 
@@ -72,6 +72,10 @@ namespace DigitalLearningSolutions.Data.Services
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
 
         void DeactivateOrDeleteAdmin(int adminId);
+
+        UserEntity? GetUserById(int userId);
+
+        UserEntity? GetUserByUsername(string username);
     }
 
     public class UserService : IUserService
@@ -166,19 +170,23 @@ namespace DigitalLearningSolutions.Data.Services
             return (adminUserWithActiveCentre, delegateUsersWithActiveCentres);
         }
 
-        public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        public List<CentreUserDetails> GetUserCentres(UserEntity userEntity)
         {
-            var availableCentres = delegateUsers
+            var availableCentres = userEntity.DelegateAccounts
                 .Select(
-                    du =>
-                        new CentreUserDetails(du.CentreId, du.CentreName, adminUser?.CentreId == du.CentreId, true)
-                )
-                .ToList();
+                    da => new CentreUserDetails(
+                        da,
+                        userEntity.AdminAccounts.SingleOrDefault(aa => aa.CentreId == da.CentreId)
+                    )
+                ).ToList();
 
-            if (adminUser != null && availableCentres.All(c => c.CentreId != adminUser.CentreId))
-            {
-                availableCentres.Add(new CentreUserDetails(adminUser.CentreId, adminUser.CentreName, true));
-            }
+            var centreAccountsWithAdminOnly = userEntity.AdminAccounts.Where(
+                aa => userEntity.DelegateAccounts.All(da => da.CentreId != aa.CentreId)
+            );
+
+            availableCentres.AddRange(
+                centreAccountsWithAdminOnly.Select(adminAccount => new CentreUserDetails(adminAccount))
+            );
 
             return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
         }
@@ -296,17 +304,17 @@ namespace DigitalLearningSolutions.Data.Services
             return !duplicateUsers.Any();
         }
 
-        public void ResetFailedLoginCount(AdminUser adminUser)
+        public void ResetFailedLoginCount(UserAccount userAccount)
         {
-            if (adminUser.FailedLoginCount != 0)
+            if (userAccount.FailedLoginCount != 0)
             {
-                userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0);
+                userDataService.UpdateUserFailedLoginCount(userAccount.Id, 0);
             }
         }
 
-        public void IncrementFailedLoginCount(AdminUser adminUser)
+        public void UpdateFailedLoginCount(UserAccount userAccount)
         {
-            userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
+            userDataService.UpdateUserFailedLoginCount(userAccount.Id, userAccount.FailedLoginCount);
         }
 
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId)
@@ -443,6 +451,35 @@ namespace DigitalLearningSolutions.Data.Services
                     userDataService.DeactivateAdmin(adminId);
                 }
             }
+        }
+
+        public UserEntity? GetUserById(int userId)
+        {
+            var userAccount = userDataService.GetUserAccountById(userId);
+
+            if (userAccount == null)
+            {
+                return null;
+            }
+
+            var adminAccounts = userDataService.GetAdminAccountsByUserId(userId).ToList();
+            var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userId).ToList();
+
+            if (!adminAccounts.Any() && !delegateAccounts.Any())
+            {
+                throw new UserAccountNotFoundException(
+                    "No AdminAccounts or DelegateAccounts link to User with ID: " + userId
+                );
+            }
+
+            return new UserEntity(userAccount, adminAccounts, delegateAccounts);
+        }
+
+        public UserEntity? GetUserByUsername(string username)
+        {
+           var userId = userDataService.GetUserIdFromUsername(username);
+
+           return userId == null ? null : GetUserById(userId.Value);
         }
 
         public DelegateUser? GetDelegateUserById(int delegateId)

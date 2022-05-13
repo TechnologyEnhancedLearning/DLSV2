@@ -1,9 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -25,152 +26,139 @@
 
         public LoginResult AttemptLogin(string username, string password)
         {
-            var (unverifiedAdminUser, unverifiedDelegateUsers) = userService.GetUsersByUsername(username);
+            // TODO: Add DEPRECATED TAG to old user models that are still used elsewhere?
+            var userEntity = userService.GetUserByUsername(username);
 
-            if (NoAccounts(unverifiedAdminUser, unverifiedDelegateUsers))
+            if (userEntity == null)
             {
                 return new LoginResult(LoginAttemptResult.InvalidUsername);
             }
 
-            var (verifiedAdminUser, verifiedDelegateUsers) = userVerificationService.VerifyUsers(
-                password,
-                unverifiedAdminUser,
-                unverifiedDelegateUsers
-            );
+            var verificationResult = userVerificationService.VerifyUserEntity(password, userEntity);
+            var singleCentreToLogUserInto = GetCentreIdIfLoggingUserIntoSingleCentre(userEntity, username);
 
-            if (MultipleEmailsUsedAcrossAccounts(verifiedAdminUser, verifiedDelegateUsers))
+            if (!verificationResult.PasswordMatchesAtLeastOneAccountPassword)
             {
-                throw new LoginWithMultipleEmailsException("Not all accounts have the same email");
-            }
-
-            var adminAccountVerificationAttemptedAndFailed = unverifiedAdminUser != null && verifiedAdminUser == null;
-            var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
-            var shouldIncreaseFailedLoginCount =
-                adminAccountVerificationAttemptedAndFailed &&
-                !delegateAccountVerificationSuccessful;
-
-            var adminAccountIsAlreadyLocked = unverifiedAdminUser?.IsLocked == true;
-            var adminAccountHasJustBecomeLocked = unverifiedAdminUser?.FailedLoginCount == 4 &&
-                                                  shouldIncreaseFailedLoginCount;
-
-            var adminAccountIsLocked = adminAccountIsAlreadyLocked || adminAccountHasJustBecomeLocked;
-
-            if (shouldIncreaseFailedLoginCount)
-            {
-                userService.IncrementFailedLoginCount(unverifiedAdminUser!);
-            }
-
-            if (adminAccountIsLocked)
-            {
-                if (delegateAccountVerificationSuccessful)
+                if (userEntity.AdminAccounts.Any())
                 {
-                    verifiedAdminUser = null;
+                    userEntity.UserAccount.FailedLoginCount += 1;
+                    userService.UpdateFailedLoginCount(userEntity.UserAccount);
                 }
-                else
-                {
-                    return new LoginResult(LoginAttemptResult.AccountLocked, unverifiedAdminUser);
-                }
+
+                // TODO: if we have multiple accounts, and at least one delegate only account exists at a centre without any admins, we might show them the Choose a centre page instead?
+                return userEntity.IsLocked ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity) : new LoginResult(LoginAttemptResult.InvalidPassword);
             }
 
-            if (verifiedAdminUser == null && !delegateAccountVerificationSuccessful)
+            if (verificationResult.PasswordMatchesAtLeastOneAccountPassword && !verificationResult.PasswordMatchesAllAccountPasswords)
             {
-                return new LoginResult(LoginAttemptResult.InvalidPassword);
+                return new LoginResult(LoginAttemptResult.AccountsHaveMismatchedPasswords);
             }
 
-            if (verifiedAdminUser != null)
+            if (userEntity.IsLocked)
             {
-                userService.ResetFailedLoginCount(verifiedAdminUser);
+                return new LoginResult(LoginAttemptResult.AccountLocked, userEntity);
             }
 
-            var approvedVerifiedDelegates = verifiedDelegateUsers.Where(du => du.Approved).ToList();
-            if (verifiedAdminUser == null && !approvedVerifiedDelegates.Any())
+            // TODO: do we always want to do this? Need to make sure we aren't unlocking admin accounts when logging in via single
+            userService.ResetFailedLoginCount(userEntity.UserAccount);
+
+            if (singleCentreToLogUserInto == null)
+            {
+                var availableCentres = userService.GetUserCentres(userEntity);
+                return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity, availableCentres);
+            }
+
+            // TODO: Need to change this so that we can get redirected into ChooseACentre if other accounts are available.
+            var userEntityWithSingleAccount = LoginHelper.FilterUserEntityForLoggingIntoSingleCentre(userEntity, singleCentreToLogUserInto.Value);
+
+            var adminAccountToLogInto = userEntityWithSingleAccount.AdminAccounts.SingleOrDefault();
+            var delegateAccountToLogInto = userEntityWithSingleAccount.DelegateAccounts.SingleOrDefault();
+
+            // TODO These are set to false if all are null. In reality, these should never be null as there should always be at least one
+            var centreIsActive = adminAccountToLogInto?.CentreActive ?? delegateAccountToLogInto?.CentreActive ?? false;
+            if (!centreIsActive)
+            {
+                return new LoginResult(LoginAttemptResult.InactiveCentre);
+            }
+
+            var showInactiveAccountPage = FilterSingleCentreUserEntityIfAccountsAreInactive(ref userEntityWithSingleAccount);
+            if (showInactiveAccountPage)
+            {
+                return new LoginResult(LoginAttemptResult.InactiveAccount);
+            }
+
+            // Refresh delegateAccountToLogInto as it may have been removed if inactive
+            delegateAccountToLogInto = userEntityWithSingleAccount.DelegateAccounts.SingleOrDefault();
+            // TODO: do we want to prevent log in of admin account if not approved?
+            if (delegateAccountToLogInto is { Approved: false })
             {
                 return new LoginResult(LoginAttemptResult.AccountNotApproved);
             }
 
-            var (verifiedLinkedAdmin, verifiedLinkedDelegates) = GetVerifiedLinkedAccounts(
-                password,
-                approvedVerifiedDelegates,
-                verifiedAdminUser
-            );
-
-            var adminUserToLoginIfCentreActive = verifiedLinkedAdmin;
-            if (adminUserToLoginIfCentreActive?.IsLocked == true)
-            {
-                adminUserToLoginIfCentreActive = null;
-            }
-
-            var delegateUsersToLogInIfCentreActive =
-                approvedVerifiedDelegates.Concat(verifiedLinkedDelegates)
-                    .GroupBy(du => du.Id)
-                    .Select(g => g.First())
-                    .ToList();
-
-            var (adminUserToLogIn, delegateUsersToLogIn) = userService.GetUsersWithActiveCentres(
-                adminUserToLoginIfCentreActive,
-                delegateUsersToLogInIfCentreActive
-            );
-            var availableCentres = userService.GetUserCentres(adminUserToLogIn, delegateUsersToLogIn);
-
-            return availableCentres.Count switch
-            {
-                0 => new LoginResult(LoginAttemptResult.InactiveCentre),
-                1 => new LoginResult(
-                    LoginAttemptResult.LogIntoSingleCentre,
-                    adminUserToLogIn,
-                    delegateUsersToLogIn
-                ),
-                _ => new LoginResult(
-                    LoginAttemptResult.ChooseACentre,
-                    adminUserToLogIn,
-                    delegateUsersToLogIn,
-                    availableCentres
-                )
-            };
+            return new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntityWithSingleAccount);
         }
 
-        private (AdminUser? verifiedLinkedAdmin, List<DelegateUser> verifiedLinkedDelegates) GetVerifiedLinkedAccounts(
-            string password,
-            List<DelegateUser> approvedVerifiedDelegates,
-            AdminUser? verifiedAdminUser
-        )
+        private int? GetCentreIdIfLoggingUserIntoSingleCentre(UserEntity userEntity, string username)
         {
-            var verifiedAssociatedAdmin = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
-                approvedVerifiedDelegates,
-                password
-            );
-
-            // If we find a new linked admin we must be logging in by CandidateNumber or AliasID.
-            // In this case, we are trying to log directly into a centre so we discard an admin at a different centre.
-            if (approvedVerifiedDelegates.All(du => du.CentreId != verifiedAssociatedAdmin?.CentreId))
+            // Determine if there is only a single account
+            var userHasOneAdminAccountAndDelegateAccountOrFewer =
+                userEntity.AdminAccounts.Count() <= 1 && userEntity.DelegateAccounts.Count() <= 1;
+            if (userHasOneAdminAccountAndDelegateAccountOrFewer)
             {
-                verifiedAssociatedAdmin = null;
+                var adminCentreId = userEntity.AdminAccounts.SingleOrDefault()?.CentreId;
+                var delegateCentreId = userEntity.DelegateAccounts.SingleOrDefault()?.CentreId;
+                if (adminCentreId == delegateCentreId)
+                {
+                    return adminCentreId ?? delegateCentreId;
+                }
             }
 
-            var verifiedLinkedAdmin = verifiedAdminUser ?? verifiedAssociatedAdmin;
-
-            var verifiedLinkedDelegates =
-                userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser, password);
-            return (verifiedLinkedAdmin, verifiedLinkedDelegates);
-        }
-
-        private static bool MultipleEmailsUsedAcrossAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
-        {
-            var emails = delegateUsers.Select(du => du.EmailAddress?.ToLowerInvariant())
-                .ToList();
-
-            if (adminUser != null)
+            // Determine if we are logging in via candidate number.
+            var delegateAccountToLogIntoIfCandidateNumberUsed = userEntity.DelegateAccounts.SingleOrDefault(da =>
+                string.Equals(da.CandidateNumber, username, StringComparison.CurrentCultureIgnoreCase));
+            if (delegateAccountToLogIntoIfCandidateNumberUsed == null)
             {
-                emails.Add(adminUser.EmailAddress?.ToLowerInvariant());
+                return null;
             }
 
-            var uniqueEmails = emails.Distinct().ToList();
-            return uniqueEmails.Count > 1;
+            return delegateAccountToLogIntoIfCandidateNumberUsed.CentreId;
         }
 
-        private static bool NoAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        /// <summary>
+        /// Determines which accounts are inactive, and whether we should take the user to the
+        /// InactiveAccount page. Will remove the AdminAccount from the UserEntity if it is inactive
+        /// and the delegate account is not.
+        /// </summary>
+        /// <returns>True if the user should be shown the InactiveAccount page. False if we should log the user in</returns>
+        private bool FilterSingleCentreUserEntityIfAccountsAreInactive(ref UserEntity userEntity)
         {
-            return adminUser == null && delegateUsers.Count == 0;
+            var adminAccountIsActive = userEntity.AdminAccounts.SingleOrDefault()?.Active;
+            var delegateAccountIsActive = userEntity.DelegateAccounts.SingleOrDefault()?.Active;
+
+            if (adminAccountIsActive == null)
+            {
+                return !delegateAccountIsActive!.Value;
+            }
+
+            if (delegateAccountIsActive == null)
+            {
+                return !adminAccountIsActive!.Value;
+            }
+
+            // TODO: If one account is inactive, and the other active, we log the user in on the active account only.
+            if (!adminAccountIsActive.Value && delegateAccountIsActive.Value)
+            {
+                userEntity.AdminAccounts = new List<AdminAccount>();
+                return false;
+            }
+
+            if (adminAccountIsActive.Value && !delegateAccountIsActive.Value)
+            {
+                userEntity.DelegateAccounts = new List<DelegateAccount>();
+                return false;
+            }
+
+            return !(adminAccountIsActive.Value && delegateAccountIsActive.Value);
         }
     }
 }

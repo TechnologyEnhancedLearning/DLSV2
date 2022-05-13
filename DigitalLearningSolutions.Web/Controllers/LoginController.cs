@@ -6,6 +6,7 @@
     using System.Security.Claims;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -58,35 +59,36 @@
             }
 
             var loginResult = loginService.AttemptLogin(model.Username!.Trim(), model.Password!);
-            var (adminLoginDetails, delegateLoginDetails) = GetLoginDetails(loginResult.Accounts);
             switch (loginResult.LoginAttemptResult)
             {
                 case LoginAttemptResult.InvalidUsername:
-                    ModelState.AddModelError("Username", "A user with this email address or user ID could not be found");
+                    ModelState.AddModelError("Username", "A user with this email address or delegate ID could not be found");
                     return View("Index", model);
                 case LoginAttemptResult.InvalidPassword:
                     ModelState.AddModelError("Password", "The password you have entered is incorrect");
                     return View("Index", model);
                 case LoginAttemptResult.AccountLocked:
-                    return RedirectToAction("AccountLocked", new { failedCount = loginResult.Accounts.AdminAccount!.FailedLoginCount + 1 });
+                    return RedirectToAction("AccountLocked", new { failedCount = loginResult.UserEntity!.UserAccount.FailedLoginCount });
                 case LoginAttemptResult.AccountNotApproved:
                     return View("AccountNotApproved");
                 case LoginAttemptResult.InactiveCentre:
                     return View("CentreInactive");
+                case LoginAttemptResult.AccountsHaveMismatchedPasswords:
+                    return View("MismatchingPasswords");
+                case LoginAttemptResult.InactiveAccount:
+                    return View("AccountInactive");
                 case LoginAttemptResult.LogIntoSingleCentre:
-                    sessionService.StartAdminSession(adminLoginDetails?.Id);
+                    sessionService.StartAdminSession(loginResult.UserEntity!.AdminAccounts.FirstOrDefault()?.Id);
                     return await LogIn(
-                        adminLoginDetails,
-                        delegateLoginDetails.FirstOrDefault(),
+                        loginResult.UserEntity,
                         model.RememberMe,
                         model.ReturnUrl
                     );
                 case LoginAttemptResult.ChooseACentre:
-                    var chooseACentreViewModel = new ChooseACentreViewModel(loginResult.AvailableCentres);
+                    var chooseACentreViewModel = new ChooseACentreViewModel(loginResult.AvailableCentres, loginResult.UserEntity!.IsLocked);
                     SetTempDataForChooseACentre(
                         model.RememberMe,
-                        adminLoginDetails,
-                        delegateLoginDetails,
+                        loginResult.UserEntity!,
                         chooseACentreViewModel,
                         model.ReturnUrl
                     );
@@ -96,11 +98,13 @@
             }
         }
 
+        // TODO Change the Service Filter to be dependent on the new user entity
         [ServiceFilter(typeof(RedirectEmptySessionData<List<CentreUserDetails>>))]
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult ChooseACentre()
         {
+            // TODO: sort out ChooseACentre page
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
@@ -115,17 +119,16 @@
         public async Task<IActionResult> ChooseCentre(int centreId)
         {
             var rememberMe = (bool)TempData["RememberMe"];
-            var adminLoginDetails = TempData.Peek<AdminLoginDetails>();
-            var delegateLoginDetails = TempData.Peek<List<DelegateLoginDetails>>();
+            var userEntity = TempData.Peek<UserEntity>();
             var returnUrl = (string?)TempData["ReturnUrl"];
             TempData.Clear();
 
-            var adminAccountForChosenCentre = adminLoginDetails?.CentreId == centreId ? adminLoginDetails : null;
-            var delegateAccountForChosenCentre =
-                delegateLoginDetails?.FirstOrDefault(du => du.CentreId == centreId);
+            // TODO: Likely need to filter this down further if we have admin/delegate account at this centre, but need to log in to only one because inactive etc.
+            var userEntityWithJustTheSingleAccountsAttached = LoginHelper.FilterUserEntityForLoggingIntoSingleCentre(userEntity!, centreId);
 
-            sessionService.StartAdminSession(adminAccountForChosenCentre?.Id);
-            return await LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl);
+            sessionService.StartAdminSession(userEntityWithJustTheSingleAccountsAttached!.AdminAccounts.SingleOrDefault()?.Id);
+
+            return await LogIn(userEntityWithJustTheSingleAccountsAttached, rememberMe, returnUrl);
         }
 
         [HttpGet]
@@ -134,40 +137,27 @@
             return View(failedCount);
         }
 
-        private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails(
-            UserAccountSet accounts
-        )
-        {
-            var (adminUser, delegateUsers) = accounts;
-            var adminLoginDetails = adminUser != null ? new AdminLoginDetails(adminUser) : null;
-            var delegateLoginDetails = delegateUsers.Select(du => new DelegateLoginDetails(du)).ToList();
-            return (adminLoginDetails, delegateLoginDetails);
-        }
-
         private void SetTempDataForChooseACentre(
             bool rememberMe,
-            AdminLoginDetails? adminLoginDetails,
-            List<DelegateLoginDetails> delegateLoginDetails,
+            UserEntity userEntity,
             ChooseACentreViewModel chooseACentreViewModel,
             string? returnUrl
         )
         {
             TempData.Clear();
             TempData["RememberMe"] = rememberMe;
-            TempData.Set(adminLoginDetails);
-            TempData.Set(delegateLoginDetails);
+            TempData.Set(userEntity);
             TempData.Set(chooseACentreViewModel);
             TempData["ReturnUrl"] = returnUrl;
         }
 
         private async Task<IActionResult> LogIn(
-            AdminLoginDetails? adminLoginDetails,
-            DelegateLoginDetails? delegateLoginDetails,
+            UserEntity userEntity,
             bool rememberMe,
             string? returnUrl
         )
         {
-            var claims = LoginClaimsHelper.GetClaimsForSignIn(adminLoginDetails, delegateLoginDetails);
+            var claims = LoginClaimsHelper.GetClaimsForSignIn(userEntity);
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
             var authProperties = new AuthenticationProperties
             {

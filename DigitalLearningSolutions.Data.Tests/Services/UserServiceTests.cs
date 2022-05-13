@@ -720,7 +720,7 @@
             userService.ResetFailedLoginCount(adminUser);
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0)).MustHaveHappened();
+            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(adminUser.Id, 0)).MustHaveHappened();
         }
 
         [Test]
@@ -733,7 +733,7 @@
             userService.ResetFailedLoginCount(adminUser);
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(adminUser.Id, 0)).MustNotHaveHappened();
         }
 
         [Test]
@@ -744,10 +744,10 @@
             const int expectedCount = 5;
 
             // When
-            userService.IncrementFailedLoginCount(adminUser);
+            userService.UpdateFailedLoginCount(adminUser);
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, expectedCount))
+            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(adminUser.Id, expectedCount))
                 .MustHaveHappened();
         }
 

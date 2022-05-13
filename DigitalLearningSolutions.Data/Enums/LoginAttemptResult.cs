@@ -8,6 +8,8 @@
         AccountNotApproved,
         AccountLocked,
         InvalidPassword,
-        InvalidUsername
+        InvalidUsername,
+        InactiveAccount,
+        AccountsHaveMismatchedPasswords,
     }
 }

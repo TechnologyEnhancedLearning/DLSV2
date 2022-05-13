@@ -138,7 +138,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustHaveHappened();
+                A.CallTo(() => userService.UpdateFailedLoginCount(adminUser)).MustHaveHappened();
                 result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidPassword);
                 result.Accounts.AdminAccount.Should().BeNull();
                 result.Accounts.DelegateAccounts.Should().BeEmpty();
@@ -158,7 +158,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustHaveHappened();
+                A.CallTo(() => userService.UpdateFailedLoginCount(adminUser)).MustHaveHappened();
                 result.LoginAttemptResult.Should().Be(LoginAttemptResult.AccountLocked);
                 result.Accounts.AdminAccount.Should().Be(adminUser);
                 result.Accounts.DelegateAccounts.Should().BeEmpty();
@@ -178,7 +178,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustHaveHappened();
+                A.CallTo(() => userService.UpdateFailedLoginCount(adminUser)).MustHaveHappened();
                 result.LoginAttemptResult.Should().Be(LoginAttemptResult.AccountLocked);
                 result.Accounts.AdminAccount.Should().Be(adminUser);
                 result.Accounts.DelegateAccounts.Should().BeEmpty();
@@ -381,7 +381,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustNotHaveHappened();
+                A.CallTo(() => userService.UpdateFailedLoginCount(adminUser)).MustNotHaveHappened();
                 result.LoginAttemptResult.Should().Be(LoginAttemptResult.LogIntoSingleCentre);
                 result.Accounts.AdminAccount.Should().BeNull();
                 result.Accounts.DelegateAccounts.Single().Should().Be(delegateUser);
@@ -466,7 +466,7 @@
         {
             GivenAdminUsersFoundByUsername(adminUser);
             GivenNoAccountsAreVerified();
-            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).DoesNothing();
+            A.CallTo(() => userService.UpdateFailedLoginCount(adminUser)).DoesNothing();
         }
 
         private void GivenNoAccountsAreVerified()

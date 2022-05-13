@@ -156,7 +156,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult UnlockAccount(int adminId)
         {
-            userDataService.UpdateAdminUserFailedLoginCount(adminId, 0);
+            userDataService.UpdateUserFailedLoginCount(adminId, 0);
 
             return RedirectToAction("Index");
         }
