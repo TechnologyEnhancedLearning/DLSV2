@@ -127,7 +127,6 @@
                 delegateRegistrationModel.IsSelfRegistered,
                 DetailsLastChecked = DateTime.UtcNow,
                 // null-equivalent data for non-nullable deprecated values
-                Email_deprecated = "",
                 LastName_deprecated = "",
                 JobGroupID_deprecated = 0,
                 SkipPW_deprecated = false,
@@ -263,29 +262,6 @@
                         @nominatedSupervisor
                     )",
                 values
-            );
-
-            var userCentreDetailsValues = new
-            {
-                adminUserId,
-                CentreId = registrationModel.Centre,
-                Email = registrationModel.SecondaryEmail,
-            };
-
-            connection.Execute(
-                @"INSERT INTO UserCentreDetails
-                    (
-                        UserId,
-                        CentreId,
-                        Email
-                    )
-                    VALUES
-                    (
-                        @userId,
-                        @centreId,
-                        @email
-                    )",
-                userCentreDetailsValues
             );
 
             connection.Execute(
