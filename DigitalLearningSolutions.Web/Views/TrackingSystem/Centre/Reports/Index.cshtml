@@ -22,26 +22,36 @@
 
     <span class="nhsuk-body-l">View reports for <span class="nhsuk-u-font-weight-bold">@Model.ReportsFilterModel.CourseCategoryName</span> courses.</span>
 
-    <partial name="_FilterDisplayCard.cshtml" model="@Model.ReportsFilterModel" />
+    @if (Model.HasActivity) {
+      <partial name="_FilterDisplayCard.cshtml" model="@Model.ReportsFilterModel" />
 
-    <h2 class="nhsuk-heading-m">Usage stats</h2>
+      <h2 class="nhsuk-heading-m">Usage stats</h2>
 
-    <div id="activity-graph" class="js-only-block">
-      <partial name="_ActivityGraph.cshtml" />
-    </div>
-    <div id="activity-graph-data-error" class="js-only-block" hidden>
-      <vc:inset-text text="Too many chart data points to display. Please select a smaller date range or a bigger reporting interval to view data on a chart."
-                     css-class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4" />
-    </div>
-    <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
+      <div id="activity-graph" class="js-only-block">
+        <partial name="_ActivityGraph.cshtml" />
+      </div>
+      <div id="activity-graph-data-error" class="js-only-block" hidden>
+        <vc:inset-text text="Too many chart data points to display. Please select a smaller date range or a bigger reporting interval to view data on a chart."
+                       css-class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4" />
+      </div>
+      <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
 
-    <a class="nhsuk-button nhsuk-u-margin-top-6"
-       asp-controller="Reports"
-       asp-action="DownloadUsageData"
-       asp-all-route-data="@Model.ReportsFilterModel.FilterValues"
-       role="button">
-      Download usage data
-    </a>
+      <a class="nhsuk-button nhsuk-u-margin-top-6"
+         asp-controller="Reports"
+         asp-action="DownloadUsageData"
+         asp-all-route-data="@Model.ReportsFilterModel.FilterValues"
+         role="button">
+        Download usage data
+      </a>
+    } else {
+      var place =
+        Model.ReportsFilterModel.CourseCategoryName == "All"
+          ? "at this centre"
+          : $"for the course category {Model.ReportsFilterModel.CourseCategoryName}";
+      <p class="nhsuk-body-l">
+        There has not yet been any activity @place.
+      </p>
+    }
 
     <hr />
     <h2 class="nhsuk-heading-m">Evaluation summary</h2>
@@ -55,13 +65,15 @@
       }
     </ul>
 
-    <a class="nhsuk-button"
-       asp-controller="Reports"
-       asp-action="DownloadEvaluationSummaries"
-       asp-all-route-data="@Model.ReportsFilterModel.FilterValues"
-       role="button">
-      Download evaluation summary
-    </a>
+    @if (Model.HasActivity) {
+      <a class="nhsuk-button"
+         asp-controller="Reports"
+         asp-action="DownloadEvaluationSummaries"
+         asp-all-route-data="@Model.ReportsFilterModel.FilterValues"
+         role="button">
+        Download evaluation summary
+      </a>
+    }
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Reports" />

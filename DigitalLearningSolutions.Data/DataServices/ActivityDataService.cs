@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             int? customisationId
         );
 
-        DateTime GetStartOfActivityForCentre(int centreId);
+        DateTime? GetStartOfActivityForCentre(int centreId, int? courseCategoryId = null);
     }
 
     public class ActivityDataService : IActivityDataService
@@ -72,14 +72,21 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public DateTime GetStartOfActivityForCentre(int centreId)
+        public DateTime? GetStartOfActivityForCentre(int centreId, int? courseCategoryId = null)
         {
-            return connection.QuerySingleOrDefault<DateTime>(
-                @"SELECT MIN(LogDate)
+            return courseCategoryId == null
+                ? connection.QuerySingleOrDefault<DateTime?>(
+                    @"SELECT MIN(LogDate)
                     FROM tActivityLog
                     WHERE CentreID = @centreId",
-                new { centreId }
-            );
+                    new { centreId }
+                )
+                : connection.QuerySingleOrDefault<DateTime?>(
+                    @"SELECT MIN(LogDate)
+                    FROM tActivityLog
+                    WHERE CentreID = @centreId AND CourseCategoryId = @courseCategoryId",
+                    new { centreId, courseCategoryId }
+                );
         }
     }
 }
