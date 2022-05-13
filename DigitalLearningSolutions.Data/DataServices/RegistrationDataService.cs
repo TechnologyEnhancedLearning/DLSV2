@@ -104,7 +104,7 @@
                 delegateRegistrationModel.IsExternalRegistered,
                 delegateRegistrationModel.IsSelfRegistered,
                 DetailsLastChecked = DateTime.UtcNow,
-                // null-equivalent data for non-nullable deprecated values
+                // TODO HEEDLS-889 currently non-null deprecated columns
                 LastName_deprecated = "",
                 JobGroupID_deprecated = 0,
                 SkipPW_deprecated = false,
@@ -193,7 +193,7 @@
                 isTrainer = registrationModel.IsTrainer,
                 isSupervisor = registrationModel.IsSupervisor,
                 isNominatedSupervisor = registrationModel.IsNominatedSupervisor,
-                // deprecated columns
+                // TODO HEEDLS-889 currently non-null deprecated columns
                 forename_deprecated = "",
                 surname_deprecated = "",
                 password_deprecated = ""

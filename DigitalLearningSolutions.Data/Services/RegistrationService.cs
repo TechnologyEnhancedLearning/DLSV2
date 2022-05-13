@@ -211,6 +211,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
 
+            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
             registrationDataService.RegisterAdmin(registrationModel, 0);
 
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
@@ -259,6 +260,7 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateUser.ProfileImage
             );
 
+            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
             registrationDataService.RegisterAdmin(adminRegistrationModel, 0);
         }
 

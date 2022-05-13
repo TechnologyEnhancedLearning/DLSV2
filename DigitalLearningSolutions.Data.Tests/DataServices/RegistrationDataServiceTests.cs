@@ -149,15 +149,14 @@
             // Given
             var registrationModel =
                 RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel(
-                    email: "bn.uhrawol@sk",
                     categoryId: 1
                 );
 
             // When
-            service.RegisterAdmin(registrationModel, 4046);
+            var id = service.RegisterAdmin(registrationModel, 4046);
 
             // Then
-            var user = userDataService.GetAdminUserByEmailAddress(registrationModel.PrimaryEmail)!;
+            var user = userDataService.GetAdminUserById(id)!;
             user.CentreId.Should().Be(registrationModel.Centre);
             user.IsCentreAdmin.Should().Be(registrationModel.IsCentreAdmin);
             user.IsCentreManager.Should().Be(registrationModel.IsCentreManager);
@@ -179,15 +178,14 @@
             // Given
             var registrationModel =
                 RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel(
-                    email: "bn.uhrawol@sk",
                     categoryId: 1
                 );
 
             // When
-            service.RegisterAdmin(registrationModel, 4046);
+            var id = service.RegisterAdmin(registrationModel, 4046);
 
             // Then
-            var user = userDataService.GetAdminUserByEmailAddress(registrationModel.PrimaryEmail)!;
+            var user = userDataService.GetAdminUserById(id)!;
             var preferences = notificationPreferencesDataService.GetNotificationPreferencesForAdmin(user.Id).ToList();
             preferences.Count.Should().Be(7);
             preferences.Should().ContainSingle(n => n.NotificationId.Equals(1) && !n.Accepted);

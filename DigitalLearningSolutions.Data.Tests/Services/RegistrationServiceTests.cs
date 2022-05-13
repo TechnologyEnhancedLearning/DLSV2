@@ -442,6 +442,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustHaveHappened(1, Times.Exactly);
+            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
             A.CallTo(() => registrationDataService.RegisterAdmin(model, 0))
                 .MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
@@ -480,6 +481,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
+            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
             A.CallTo(() => registrationDataService.RegisterAdmin(model, 0))
                 .MustNotHaveHappened();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
@@ -705,6 +707,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                             a.IsTrainer == adminRoles.IsTrainer &&
                             a.IsSupervisor == adminRoles.IsSupervisor
                     ),
+                    // TODO HEEDLS-900 these user IDs are placeholders and should be updated
                     0
                 )
             ).MustHaveHappened();
