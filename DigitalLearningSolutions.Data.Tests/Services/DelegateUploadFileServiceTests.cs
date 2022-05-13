@@ -256,7 +256,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void ProcessDelegateTable_has_invalid_PRN_cahracters_error_for_PRN_wthin_invalid_characters()
+        public void ProcessDelegateTable_has_invalid_PRN_characters_error_for_PRN_with_invalid_characters()
         {
             var row = GetSampleDelegateDataRow(hasPrn: true, prn: "^%£PRN");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnCharacters);
@@ -265,14 +265,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         [Test]
         public void ProcessDelegateTable_has_invalid_PRN_length_error_for_PRN_too_short()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "PRN");
+            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "PRN1");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnLength);
         }
 
         [Test]
         public void ProcessDelegateTable_has_invalid_PRN_length_error_for_PRN_too_long()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "PRNIsMuchTooLongForTheAllowedLength");
+            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "PRNAboveAllowedLength");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnLength);
         }
 

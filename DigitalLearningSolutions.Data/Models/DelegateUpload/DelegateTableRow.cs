@@ -31,7 +31,7 @@
             string? FindNullableFieldValue(string name)
             {
                 var cellValue = FindFieldValue(name);
-                return !string.IsNullOrEmpty(cellValue) ? cellValue : null;
+                return !string.IsNullOrWhiteSpace(cellValue) ? cellValue : null;
             }
 
             RowNumber = row.RowNumber();
