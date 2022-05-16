@@ -247,6 +247,7 @@
                                 AND (ca.CandidateID = @candidateId)
                                 AND (sd.SupervisorAdminID = AdminUsers.AdminID)
                                 AND (cas.Removed IS NULL)
+                                AND (sd.Removed IS NULL)
                          ) ",
                 new { centreId, selfAssessmentId, candidateId }
             );
