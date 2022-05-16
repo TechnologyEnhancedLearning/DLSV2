@@ -25,9 +25,17 @@
 
 @if (Model.SelfAssessment.ManageSupervisorsDescription != null)
 {
-    <p>
-        @Html.Raw(Model.SelfAssessment.ManageSupervisorsDescription)
-    </p>
+    <div class="nhsuk-warning-callout">
+        <h3 class="nhsuk-warning-callout__label">
+            <span role="text">
+                <span class="nhsuk-u-visually-hidden">Important: </span>
+                How to choose your supervisors
+            </span>
+        </h3>
+        <p>
+            @Html.Raw(Model.SelfAssessment.ManageSupervisorsDescription)
+        </p>
+    </div>
 }
 
 @if (Model.Supervisors.Any())
