@@ -40,6 +40,8 @@ export class SearchSortFilterAndPaginate {
 
   private readonly functionToRunAfterDisplayingData: VoidFunction;
 
+  private readonly idConsideredTopForScrolling: string;
+
   // Route provided should be a relative path with no leading /
   constructor(
     route: string,
@@ -50,6 +52,7 @@ export class SearchSortFilterAndPaginate {
     searchableElementClassSuffixes = ['title'],
     queryParameterToRetain = '',
     functionToRunAfterDisplayingData: VoidFunction = defaultVoidFunction,
+    idConsideredTopForScrolling = '',
   ) {
     this.spinnerContainer = document.getElementById('loading-spinner-container') as HTMLElement;
     this.spinner = document.getElementById('dynamic-loading-spinner') as HTMLElement;
@@ -62,6 +65,7 @@ export class SearchSortFilterAndPaginate {
     this.searchEnabled = searchEnabled;
     this.paginationEnabled = paginationEnabled;
     this.filterEnabled = filterEnabled;
+    this.idConsideredTopForScrolling = idConsideredTopForScrolling;
 
     SearchSortFilterAndPaginate.getSearchableElements(route, searchableElementClassSuffixes)
       .then((searchableData) => {
@@ -95,7 +99,7 @@ export class SearchSortFilterAndPaginate {
   private onFilterUpdated(searchableData: ISearchableData): void {
     this.updatePageNumberIfPaginated(1, searchableData);
     this.searchSortAndPaginate(searchableData);
-    SearchSortFilterAndPaginate.scrollToTop();
+    this.scrollToTop();
   }
 
   private onSortUpdated(searchableData: ISearchableData): void {
@@ -116,13 +120,13 @@ export class SearchSortFilterAndPaginate {
   private onNextPagePressed(searchableData: ISearchableData): void {
     this.updatePageNumberIfPaginated(this.page + 1, searchableData);
     this.searchSortAndPaginate(searchableData);
-    SearchSortFilterAndPaginate.scrollToTop();
+    this.scrollToTop();
   }
 
   private onPreviousPagePressed(searchableData: ISearchableData): void {
     this.updatePageNumberIfPaginated(this.page - 1, searchableData);
     this.searchSortAndPaginate(searchableData);
-    SearchSortFilterAndPaginate.scrollToTop();
+    this.scrollToTop();
   }
 
   private searchSortAndPaginate(
@@ -139,11 +143,16 @@ export class SearchSortFilterAndPaginate {
     const sortedUniqueElements = _.uniqBy(sortedElements, 'parentIndex');
 
     const resultCount = sortedUniqueElements.length;
-    SearchSortFilterAndPaginate.updateResultCount(resultCount);
 
     const paginatedElements = this.paginationEnabled
       ? paginateResults(sortedUniqueElements, this.page)
       : sortedUniqueElements;
+
+    // We keep both updates here (plus the one in paginateResults). This allows pages where
+    // there is only a results count, or only a page number to continue to work
+    SearchSortFilterAndPaginate.updateResultCount(resultCount);
+    this.updateResultCountAndPageNumber(resultCount);
+
     this.displaySearchableElementsAndRunPostDisplayFunction(paginatedElements);
   }
 
@@ -224,21 +233,45 @@ export class SearchSortFilterAndPaginate {
     Details();
   }
 
-  static updateResultCount(count: number): void {
-    const resultCount = <HTMLSpanElement>document.getElementById('results-count');
+  updateResultCountAndPageNumber(count: number): void {
+    const element = <HTMLSpanElement>document.getElementById('result-count-and-page-number');
+    const oldMessage = element.innerHTML;
 
-    if (resultCount === null) {
-      return;
+    const newResultCountMessage = count === 1 ? '1 matching result.' : `${count.toString()} matching results.`;
+
+    element.hidden = false;
+    element.setAttribute('aria-hidden', 'false');
+
+    const itemsPerPage = getItemsPerPageValue();
+    const totalPages = Math.ceil(count / itemsPerPage);
+
+    const newPageMessage = `Page ${this.page} of ${totalPages}.`;
+
+    const newMessage = `${newResultCountMessage} ${newPageMessage}`;
+
+    if (newMessage === oldMessage) {
+      // Screen reader does not announce the message if it has not changed
+      element.innerHTML = `${newMessage}&nbsp`;
+    } else {
+      element.innerHTML = newMessage;
     }
+  }
 
-    resultCount.hidden = false;
-    resultCount.setAttribute('aria-hidden', 'false');
-    const newResultCountMessage = this.getNewResultCountMessage(
-      count,
-      resultCount,
-    );
+  static updateResultCount(count: number): void {
+    const resultCounts = <HTMLSpanElement[]>Array.from(document.getElementsByClassName('results-count'));
 
-    resultCount.innerHTML = newResultCountMessage;
+    resultCounts.forEach((resultCount) => {
+      const element = resultCount;
+
+      element.hidden = false;
+      element.setAttribute('aria-hidden', 'false');
+      const newResultCountMessage = this.getNewResultCountMessage(
+        count,
+        resultCount,
+      );
+
+      element.innerHTML = newResultCountMessage;
+    });
   }
 
   static getNewResultCountMessage(
@@ -256,8 +289,12 @@ export class SearchSortFilterAndPaginate {
     return newResultCountMessage;
   }
 
-  private static scrollToTop(): void {
-    window.scrollTo(0, 0);
+  private scrollToTop(): void {
+    if (this.idConsideredTopForScrolling !== '') {
+      document.getElementById(this.idConsideredTopForScrolling)?.scrollIntoView();
+    } else {
+      window.scrollTo(0, 0);
+    }
   }
 
   private updatePageNumberIfPaginated(

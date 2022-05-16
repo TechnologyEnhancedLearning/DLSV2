@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class SearchableRecommendedResourceViewModel
     {
@@ -16,7 +17,7 @@
             LearningHubReferenceId = recommendedResource.LearningHubReferenceId;
             ResourceName = recommendedResource.ResourceName;
             ResourceDescription = recommendedResource.ResourceDescription;
-            ResourceType = recommendedResource.ResourceType;
+            ResourceType = DisplayStringHelper.AddSpacesToPascalCaseString(recommendedResource.ResourceType);
             CatalogueName = recommendedResource.CatalogueName;
             ResourceLink = recommendedResource.ResourceLink;
             IsInActionPlan = recommendedResource.IsInActionPlan;

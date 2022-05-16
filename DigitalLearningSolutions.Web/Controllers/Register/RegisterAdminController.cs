@@ -100,7 +100,7 @@
         {
             var data = TempData.Peek<RegistrationData>()!;
 
-            var model = new LearnerInformationViewModel(data);
+            var model = new LearnerInformationViewModel(data, true);
             SetJobGroupOptions(model);
 
             return View(model);
@@ -111,6 +111,12 @@
         public IActionResult LearnerInformation(LearnerInformationViewModel model)
         {
             var data = TempData.Peek<RegistrationData>()!;
+
+            ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
+                ModelState,
+                model.HasProfessionalRegistrationNumber,
+                model.ProfessionalRegistrationNumber
+            );
 
             if (!ModelState.IsValid)
             {
@@ -179,7 +185,10 @@
             }
 
             var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
-            registrationService.RegisterCentreManager(registrationModel, data.JobGroup!.Value);
+            registrationService.RegisterCentreManager(
+                registrationModel,
+                data.JobGroup!.Value
+            );
 
             return RedirectToAction("Confirmation");
         }

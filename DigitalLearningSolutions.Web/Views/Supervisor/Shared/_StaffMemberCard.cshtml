@@ -92,14 +92,4 @@
       View self assessments (@Model.SupervisorDelegateDetail.CandidateAssessmentCount)
     </a>
   }
-  else if (Model.SupervisorDelegateDetail.AddedByDelegate)
-  {
-        <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
-           aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
-           asp-controller="Supervisor"
-           asp-action="ConfirmSupervise"
-           asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
-          Confirm
-        </a>
-  }
   </div>

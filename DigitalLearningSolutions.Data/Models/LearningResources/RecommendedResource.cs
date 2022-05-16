@@ -47,7 +47,7 @@
         public bool IsCompleted { get; set; }
 
         public int? LearningLogId { get; set; }
-        
+
         public decimal RecommendationScore { get; set; }
 
         public override string SearchableName

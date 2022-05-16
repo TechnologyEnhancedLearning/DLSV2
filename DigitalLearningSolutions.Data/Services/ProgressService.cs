@@ -26,17 +26,40 @@
             int promptNumber,
             string? answer
         );
+
+        void StoreAspProgressV2(
+            int progressId,
+            int version,
+            string? progressText,
+            int tutorialId,
+            int tutorialTime,
+            int tutorialStatus
+        );
+
+        void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress);
     }
 
     public class ProgressService : IProgressService
     {
+        private readonly IClockService clockService;
         private readonly ICourseDataService courseDataService;
+        private readonly ILearningLogItemsDataService learningLogItemsDataService;
+        private readonly INotificationService notificationService;
         private readonly IProgressDataService progressDataService;
 
-        public ProgressService(ICourseDataService courseDataService, IProgressDataService progressDataService)
+        public ProgressService(
+            ICourseDataService courseDataService,
+            IProgressDataService progressDataService,
+            INotificationService notificationService,
+            ILearningLogItemsDataService learningLogItemsDataService,
+            IClockService clockService
+        )
         {
             this.courseDataService = courseDataService;
             this.progressDataService = progressDataService;
+            this.notificationService = notificationService;
+            this.learningLogItemsDataService = learningLogItemsDataService;
+            this.clockService = clockService;
         }
 
         public void UpdateSupervisor(int progressId, int? newSupervisorId)
@@ -130,6 +153,47 @@
         )
         {
             progressDataService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer);
+        }
+
+        public void StoreAspProgressV2(
+            int progressId,
+            int version,
+            string? progressText,
+            int tutorialId,
+            int tutorialTime,
+            int tutorialStatus
+        )
+        {
+            var timeNow = clockService.UtcNow;
+            progressDataService.UpdateProgressDetailsForStoreAspProgressV2(
+                progressId,
+                version,
+                timeNow,
+                progressText ?? string.Empty
+            );
+            progressDataService.UpdateAspProgressTutTime(tutorialId, progressId, tutorialTime);
+            progressDataService.UpdateAspProgressTutStat(tutorialId, progressId, tutorialStatus);
+        }
+
+        public void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress)
+        {
+            if (!(progress is { Completed: null }))
+            {
+                return;
+            }
+
+            var completionStatus = progressDataService.GetCompletionStatusForProgress(progress.ProgressId);
+            if (completionStatus > 0)
+            {
+                progressDataService.SetCompletionDate(progress.ProgressId, DateTime.UtcNow);
+                var numLearningLogItemsAffected =
+                    learningLogItemsDataService.MarkLearningLogItemsCompleteByProgressId(progress.ProgressId);
+                notificationService.SendProgressCompletionNotificationEmail(
+                    progress,
+                    completionStatus,
+                    numLearningLogItemsAffected
+                );
+            }
         }
     }
 }
