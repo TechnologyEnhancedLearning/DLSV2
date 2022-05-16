@@ -53,8 +53,8 @@
         <input class="nhsuk-input" asp-for="CompetencyGroupBase.Name" id="competency-group-name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-group-name-label">
       </nhs-form-group>
       <nhs-form-group nhs-validation-for="CompetencyGroupBase.Description">
-        <label class="nhsuk-label" id="competency-description-label" for="competency-description">
-          @Model.VocabSingular() description
+        <label class="nhsuk-label" id="competency-group-description-label" for="competency-group-description">
+          @Model.VocabSingular() group description
         </label>
         <span nhs-validation-for="CompetencyGroupBase.Description"></span>
         <input class="nhsuk-input html-editor" asp-for="CompetencyGroupBase.Description" id="competency-group-description" name="Description" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-group-description-label" />
