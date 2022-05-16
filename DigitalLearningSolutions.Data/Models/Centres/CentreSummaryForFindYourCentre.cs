@@ -29,5 +29,19 @@
             nameof(RegionName),
             RegionName
         );
+
+        public string WebsiteHref => GenerateWebsiteHref();
+
+        public string EmailHref => GenerateEmailHref();
+
+        private string GenerateWebsiteHref()
+        {
+            return $"https://{WebUrl}";
+        }
+
+        private string GenerateEmailHref()
+        {
+            return $"mailto:{Email}";
+        }
     }
 }

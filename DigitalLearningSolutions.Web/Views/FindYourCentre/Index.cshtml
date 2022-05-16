@@ -32,10 +32,10 @@
           <p>No centres found.</p>
         } else {
           <div class="nhsuk-u-margin-right-auto nhsuk-u-margin-bottom-3">
-            <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+            <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
           </div>
 
-          <partial name="SearchablePage/_Pagination" model="Model" />
+          <partial name="SearchablePage/_TopPagination" model="Model" />
 
           <div id="searchable-elements">
             @foreach (var centre in Model.CentreSummaries) {
@@ -44,7 +44,7 @@
           </div>
         }
 
-        <partial name="SearchablePage/_Pagination" model="Model" />
+        <partial name="SearchablePage/_BottomPagination" model="Model" />
       </div>
     </div>
   </div>

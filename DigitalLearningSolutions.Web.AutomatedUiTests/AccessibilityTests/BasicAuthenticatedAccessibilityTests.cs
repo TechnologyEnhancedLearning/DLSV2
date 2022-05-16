@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [Theory]
         [InlineData("/MyAccount", "My account")]
         [InlineData("/MyAccount/EditDetails", "Edit details")]
+        [InlineData("/FindYourCentre", "Find your centre")]
         [InlineData("/Signposting/LaunchLearningResource/3", "View resource \"Test image resource\"")]
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData(
@@ -61,7 +62,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Delegates/Groups/5/EditDescription?returnPageQuery=pageNumber%3D1",
             "Edit description for Activities worker or coordinator group (optional)"
         )]
-        [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName?returnPageQuery=pageNumber%3D1", "Edit group name")]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/103/EditGroupName?returnPageQuery=pageNumber%3D1",
+            "Edit group name"
+        )]
         [InlineData("/TrackingSystem/Delegates/Groups/Add", "Add new delegate group")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Activities worker or coordinator")]
         [InlineData(
@@ -87,7 +91,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         )]
         [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]
-        [InlineData("/TrackingSystem/Delegates/3/SetPassword?returnPageQuery=pageNumber%3D1", "Set delegate user password")]
+        [InlineData(
+            "/TrackingSystem/Delegates/3/SetPassword?returnPageQuery=pageNumber%3D1",
+            "Set delegate user password"
+        )]
         [InlineData("/TrackingSystem/Delegates/3/View/100/ViewDelegate/Remove", "Remove enrolment")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
