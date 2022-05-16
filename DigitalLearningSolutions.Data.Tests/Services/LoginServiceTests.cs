@@ -341,7 +341,8 @@
         }
 
         [Test]
-        public void AttemptLogin_does_not_use_linked_admin_if_admin_account_found_is_at_different_centre_and_returns_single_centre_login_result()
+        public void
+            AttemptLogin_does_not_use_linked_admin_if_admin_account_found_is_at_different_centre_and_returns_single_centre_login_result()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(centreId: 2);
@@ -474,14 +475,20 @@
         private void GivenNoLinkedDelegateAccountsFound()
         {
             A.CallTo(
-                () => userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(A<AdminUser?>._, Password)
+                () => userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
+                    A<AdminUser?>._,
+                    Password
+                )
             ).Returns(new List<DelegateUser>());
         }
 
         private void GivenLinkedDelegateAccountsFound(List<DelegateUser> delegateUsers)
         {
             A.CallTo(
-                () => userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(A<AdminUser?>._, Password)
+                () => userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
+                    A<AdminUser?>._,
+                    Password
+                )
             ).Returns(delegateUsers);
         }
 
