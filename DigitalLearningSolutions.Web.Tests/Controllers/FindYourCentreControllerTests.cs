@@ -10,6 +10,7 @@
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class FindYourCentreControllerTests
@@ -18,6 +19,7 @@
         private IRegionDataService regionDataService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private FindYourCentreController controller = null!;
+        private IConfiguration configuration = null!;
 
         [SetUp]
         public void Setup()
@@ -25,11 +27,13 @@
             regionDataService = A.Fake<IRegionDataService>();
             centresService = A.Fake<ICentresService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
+            configuration = A.Fake<IConfiguration>();
 
             controller = new FindYourCentreController(
                 centresService,
                 regionDataService,
-                searchSortFilterPaginateService
+                searchSortFilterPaginateService,
+                configuration
             );
         }
 

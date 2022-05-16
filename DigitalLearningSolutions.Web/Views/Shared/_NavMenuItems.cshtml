@@ -1,7 +1,6 @@
 ﻿@using DigitalLearningSolutions.Data.Enums
 @using DigitalLearningSolutions.Data.Extensions
 @using DigitalLearningSolutions.Web.Extensions
-@using DigitalLearningSolutions.Web.Helpers
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
@@ -12,18 +11,10 @@
   </a>
 </li>
 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.FindYourCentre)">
-  <feature name="@(FeatureFlags.RefactoredFindYourCentrePage)">
-    <a class="nhsuk-header__navigation-link" asp-controller="FindYourCentre" asp-action="Index">
-      Find your centre
-      <partial name="_NhsChevronRight" />
-    </a>
-  </feature>
-  <feature name="@(FeatureFlags.RefactoredFindYourCentrePage)" negate="true">
-    <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/findyourcentre">
-      Find your centre
-      <partial name="_NhsChevronRight" />
-    </a>
-  </feature>
+  <a class="nhsuk-header__navigation-link" asp-controller="FindYourCentre" asp-action="Index">
+    Find your centre
+    <partial name="_NhsChevronRight" />
+  </a>
 </li>
 @if (Configuration.IsPricingPageEnabled()) {
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Pricing)">

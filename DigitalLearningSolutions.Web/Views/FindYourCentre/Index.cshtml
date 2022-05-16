@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.FindYourCentre
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.FindYourCentre
 @model FindYourCentreViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/findYourCentre/findYourCentre.css")" asp-append-version="true">
@@ -7,42 +8,56 @@
   ViewData["Title"] = "Find Your Centre";
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-      <vc:loading-spinner page-has-side-nav-menu="false" />
-    }
-    <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-full">
-          <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-8" id="page-heading">Find your centre</h1>
-          <p class="nhsuk-body-l">
-            All of the learning content is delivered through our network of training centres.
-            Use the map to find centres close you (switch on location services) or search for a suitable centre
-            using the list below. Click a centre in the map or list for contact details.
-          </p>
+<feature name="@(FeatureFlags.RefactoredFindYourCentrePage)">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+        <vc:loading-spinner page-has-side-nav-menu="false" />
+      }
+      <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-full">
+            <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-8" id="page-heading">Find your centre</h1>
+            <p class="nhsuk-body-l">
+              All of the learning content is delivered through our network of training centres.
+              Use the map to find centres close to you (switch on location services) or search for a suitable centre
+              using the list below. Click a centre in the map or list for contact details.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchAndFilter" model="Model" />
+        <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchAndFilter" model="Model" />
 
-      @if (Model.NoDataFound) {
-        <p>No centres found.</p>
-      } else {
-        <div class="nhsuk-u-margin-right-auto nhsuk-u-margin-bottom-3">
-          <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-        </div>
+        @if (Model.NoDataFound) {
+          <p>No centres found.</p>
+        } else {
+          <div class="nhsuk-u-margin-right-auto nhsuk-u-margin-bottom-3">
+            <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+          </div>
+
+          <partial name="SearchablePage/_Pagination" model="Model" />
+
+          <div id="searchable-elements">
+            @foreach (var centre in Model.CentreSummaries) {
+              <partial name="_CentreSummaryCard" model="centre" />
+            }
+          </div>
+        }
 
         <partial name="SearchablePage/_Pagination" model="Model" />
-
-        <div id="searchable-elements">
-          @foreach (var centre in Model.CentreSummaries) {
-            <partial name="_CentreSummaryCard" model="centre" />
-          }
-        </div>
-      }
-
-      <partial name="SearchablePage/_Pagination" model="Model" />
+      </div>
     </div>
   </div>
-</div>
+</feature>
+
+<feature name="@(FeatureFlags.RefactoredFindYourCentrePage)" negate="true">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl heading-margin-2" id="page-heading">Find your centre</h1>
+    </div>
+  </div>
+
+  <div class="nhsuk-grid-row responsive-iframe-wrapper responsive-iframe-wrapper-padding">
+    <iframe class="responsive-iframe" title="Find Your Centre" src="@Model.Url"></iframe>
+  </div>
+</feature>

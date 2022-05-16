@@ -11,9 +11,8 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.FindYourCentre;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.FeatureManagement.Mvc;
+    using Microsoft.Extensions.Configuration;
 
-    [FeatureGate(FeatureFlags.RefactoredFindYourCentrePage)]
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.FindYourCentre))]
     [RedirectDelegateOnlyToLearningPortal]
@@ -23,16 +22,19 @@
         private readonly ICentresService centresService;
         private readonly IRegionDataService regionDataService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly IConfiguration configuration;
 
         public FindYourCentreController(
             ICentresService centresService,
             IRegionDataService regionDataService,
-            ISearchSortFilterPaginateService searchSortFilterPaginateService
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
+            IConfiguration configuration
         )
         {
             this.centresService = centresService;
             this.regionDataService = regionDataService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
+            this.configuration = configuration;
         }
 
         [Route("FindYourCentre/{page=1:int}")]
@@ -60,7 +62,7 @@
                 .GetFindCentreFilterModels(regions).ToList();
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
-                new SearchOptions(searchString),
+                new SearchOptions(searchString, searchMatchCutoff: 90),
                 null,
                 new FilterOptions(
                     existingFilterString,
@@ -76,7 +78,8 @@
 
             var model = new FindYourCentreViewModel(
                 result,
-                availableFilters
+                availableFilters,
+                configuration
             );
 
             Response.UpdateFilterCookie(FindCentreFilterCookieName, result.FilterString);
