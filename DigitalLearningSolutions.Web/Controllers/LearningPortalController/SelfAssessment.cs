@@ -440,7 +440,9 @@
             if (assessment.HasDelegateNominatedRoles)
             {
                 suggestedSupervisors = selfAssessmentService
-                    .GetOtherSupervisorsForCandidate(selfAssessmentId, candidateId).ToList();
+                    .GetOtherSupervisorsForCandidate(selfAssessmentId, candidateId)
+                    .Where(item => supervisors.All(s => !item.SupervisorAdminID.Equals(s.SupervisorAdminID)))
+                    .ToList();
             }
 
             var model = new ManageSupervisorsViewModel
@@ -758,6 +760,26 @@
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
 
+        public IActionResult ConfirmSupervisor(int supervisorDelegateId, int selfAssessmentId)
+        {
+            supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, GetCandidateId(), 0);
+            frameworkNotificationService.SendSupervisorDelegateConfirmed(
+                supervisorDelegateId,
+                0,
+                User.GetCandidateIdKnownNotNull()
+            );
+            return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
+        }
+
+        public IActionResult RejectSupervisor(int supervisorDelegateId, int selfAssessmentId)
+        {
+            supervisorService.RemoveSupervisorDelegateById(supervisorDelegateId, GetCandidateId(), 0);
+            frameworkNotificationService.SendSupervisorDelegateRejected(
+                supervisorDelegateId,
+                User.GetCandidateIdKnownNotNull()
+            );
+            return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
+        }
 
         public IActionResult StartRequestVerification(int selfAssessmentId)
         {

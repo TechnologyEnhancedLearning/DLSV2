@@ -108,7 +108,7 @@
         )
         {
             return connection.Query<SelfAssessmentSupervisor>(
-                @"SELECT
+                @"SELECT DISTINCT
                     sd.ID AS SupervisorDelegateID,
                     sd.SupervisorAdminID,
                     sd.SupervisorEmail,
