@@ -41,8 +41,7 @@
 }
 
 .sort-submit {
-  @extend .right-submit-button;
-  background-color: $button-dark-blue;
+  @extend .inline-button;
 
   #js-styling-hidden-area-while-loading & {
     .js-enabled & {

@@ -58,12 +58,12 @@
             <div class="nhsuk-grid-column-full nhsuk-form-group">
               <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Choose course</label>
               <div class="course-dropdown-container">
-                <select id="selected-customisation-Id" class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown course-dropdown"
+                <select id="selected-customisation-Id" class="nhsuk-select course-dropdown"
                         asp-for="CustomisationId"
                         asp-items="Model.Courses"
                         aria-label="Choose course">
                 </select>
-                <button class="nhsuk-search__submit course-submit" type="submit">
+                <button class="nhsuk-button course-submit" type="submit">
                   Select
                 </button>
               </div>

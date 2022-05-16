@@ -61,11 +61,10 @@
 }
 
 .filter-submit {
-  @extend .right-submit-button;
+  @extend .inline-button;
 
   &__dropdown {
-    @extend .right-submit-button;
-    background-color: $button-dark-blue;
+    @extend .inline-button;
 
     @include mq($from: tablet) {
       width: 20%;
@@ -100,7 +99,7 @@
 }
 
 .filter-submit__clear {
-  @extend .right-submit-button;
+  @extend .inline-button;
   width: 20%;
   border-radius: 4px;
   background-color: $color_nhsuk-red;
