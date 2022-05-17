@@ -76,12 +76,11 @@
           </span>
         </summary>
         <div class="nhsuk-details__text">
+          <partial name="SelfAssessments/_CompetencySummary" view-data="@competencySummaryViewData" />
           @if (!String.IsNullOrEmpty(groupDetails.CompetencyGroupDescription))
           {
             <p class="nhsuk-body-l nhsuk-u-margin-left-7">@Html.Raw(groupDetails.CompetencyGroupDescription)</p>
           }
-          <partial name="SelfAssessments/_CompetencySummary" view-data="@competencySummaryViewData" />
-
           @if (Model.SelfAssessment.LinearNavigation)
           {
             <partial name="SelfAssessments/_MeanScores"
