@@ -442,7 +442,9 @@
             if (assessment.HasDelegateNominatedRoles)
             {
                 suggestedSupervisors = selfAssessmentService
-                    .GetOtherSupervisorsForCandidate(selfAssessmentId, candidateId).ToList();
+                    .GetOtherSupervisorsForCandidate(selfAssessmentId, candidateId)
+                    .Where(item => supervisors.All(s => !item.SupervisorAdminID.Equals(s.SupervisorAdminID)))
+                    .ToList();
             }
 
             var model = new ManageSupervisorsViewModel
@@ -759,7 +761,6 @@
             );
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
-
 
         public IActionResult StartRequestVerification(int selfAssessmentId)
         {
