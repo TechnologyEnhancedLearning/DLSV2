@@ -400,7 +400,7 @@
             var groupName = "Technical proficiency";
 
             // When
-            var result = frameworkService.InsertCompetencyGroup(groupName, ValidAdminId);
+            var result = frameworkService.InsertCompetencyGroup(groupName, null, ValidAdminId);
             // Then
             result.Should().Be(4);
         }
@@ -411,7 +411,7 @@
             var groupName = "";
 
             // When
-            var result = frameworkService.InsertCompetencyGroup(groupName, ValidAdminId);
+            var result = frameworkService.InsertCompetencyGroup(groupName, null, ValidAdminId);
             // Then
             result.Should().Be(-2);
         }
