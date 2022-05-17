@@ -103,13 +103,6 @@
                 delegateRegistrationModel.IsExternalRegistered,
                 delegateRegistrationModel.IsSelfRegistered,
                 DetailsLastChecked = DateTime.UtcNow,
-                // null-equivalent data for non-nullable deprecated values
-                LastName_deprecated = "",
-                JobGroupID_deprecated = 0,
-                SkipPW_deprecated = false,
-                PublicSkypeLink_deprecated = false,
-                HasBeenPromptedForPrn_deprecated = false,
-                HasDismissedLhLoginWarning_deprecated = false,
             };
 
             connection.Execute(
@@ -130,13 +123,7 @@
                         Active,
                         ExternalReg,
                         SelfReg,
-                        CentreSpecificDetailsLastChecked,
-                        LastName_deprecated,
-                        JobGroupID_deprecated,
-                        SkipPW_deprecated,
-                        PublicSkypeLink_deprecated,
-                        HasBeenPromptedForPrn_deprecated,
-                        HasDismissedLhLoginWarning_deprecated
+                        CentreSpecificDetailsLastChecked
                     )
                     VALUES
                     (
@@ -155,13 +142,7 @@
                         @active,
                         @isExternalRegistered,
                         @isSelfRegistered,
-                        @detailsLastChecked,
-                        @lastName_deprecated,
-                        @jobGroupID_deprecated,
-                        @skipPW_deprecated,
-                        @publicSkypeLink_deprecated,
-                        @hasBeenPromptedForPrn_deprecated,
-                        @hasDismissedLhLoginWarning_deprecated
+                        @detailsLastChecked
                     )",
                     candidateValues,
                 transaction
