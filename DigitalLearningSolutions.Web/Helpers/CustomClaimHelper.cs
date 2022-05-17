@@ -51,7 +51,7 @@
             return user.FindFirst(customClaimType)?.Value;
         }
 
-        public static string? GetUserEmail(this ClaimsPrincipal user)
+        public static string? GetUserPrimaryEmail(this ClaimsPrincipal user)
         {
             return user.FindFirst(ClaimTypes.Email).Value;
         }

@@ -116,12 +116,6 @@
             return await LogIn(userEntity!, rememberMe, returnUrl, tempCentreIdToLogInto);
         }
 
-        [HttpGet]
-        public IActionResult AccountLocked(int failedCount)
-        {
-            return View(failedCount);
-        }
-
         private void SetTempDataForChooseACentre(bool rememberMe, string? returnUrl)
         {
             TempData.Clear();
