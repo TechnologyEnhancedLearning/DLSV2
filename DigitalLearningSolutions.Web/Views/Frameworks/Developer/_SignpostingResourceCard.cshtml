@@ -15,7 +15,7 @@
     @if (!String.IsNullOrEmpty(Model.Resource.ResourceType))
     {
       <div class="nhsuk-grid-row nhsuk-u-margin-left-1 nhsuk-u-clear">
-        <strong class="nhsuk-tag nhsuk-tag--@(SignpostingHelper.DisplayTagColour(Model.Resource.ResourceType))">@Model.Resource.ResourceType</strong>
+        <strong class="nhsuk-tag nhsuk-tag--@(SignpostingHelper.DisplayTagColour(Model.Resource.ResourceType))">@DisplayStringHelper.AddSpacesToPascalCaseString(Model.Resource.ResourceType)</strong>
       </div>
     }
     <div class="nhsuk-u-margin-left-1 nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-3">

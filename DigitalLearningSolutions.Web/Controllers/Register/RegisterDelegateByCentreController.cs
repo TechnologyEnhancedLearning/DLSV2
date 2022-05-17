@@ -108,7 +108,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            var model = new LearnerInformationViewModel(data);
+            var model = new LearnerInformationViewModel(data, false);
 
             PopulateLearnerInformationExtraFields(model, data);
 
