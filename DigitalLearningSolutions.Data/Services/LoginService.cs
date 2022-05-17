@@ -95,12 +95,8 @@
                 da =>
                     string.Equals(da.CandidateNumber, username, StringComparison.CurrentCultureIgnoreCase)
             );
-            if (delegateAccountToLogIntoIfCandidateNumberUsed == null)
-            {
-                return null;
-            }
 
-            return delegateAccountToLogIntoIfCandidateNumberUsed.CentreId;
+            return delegateAccountToLogIntoIfCandidateNumberUsed?.CentreId;
         }
     }
 }

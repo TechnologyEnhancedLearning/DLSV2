@@ -96,7 +96,7 @@
         public IActionResult ChooseACentre()
         {
             // TODO HEEDLS-912: sort out ChooseACentre page
-            var model = new ChooseACentreViewModel(new List<CentreUserDetails>(), false);
+            var model = new ChooseACentreViewModel(new List<CentreUserDetails>());
             return View("ChooseACentre", model);
         }
 

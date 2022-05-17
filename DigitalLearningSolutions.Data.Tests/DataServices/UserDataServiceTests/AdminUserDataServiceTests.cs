@@ -6,6 +6,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public partial class UserDataServiceTests
@@ -156,7 +157,7 @@
         }
 
         [Test]
-        public void UpdateAdminUserFailedLoginCount_updates_user()
+        public void UpdateUserFailedLoginCount_updates_user()
         {
             using var transaction = new TransactionScope();
             try
@@ -208,6 +209,20 @@
 
             // Then
             result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetAdminAccountsByUserId_returns_expected_accounts()
+        {
+            // When
+            var result = userDataService.GetAdminAccountsByUserId(2).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(1);
+                result.Single().Should().BeEquivalentTo(UserTestHelper.GetDefaultAdminAccount());
+            }
         }
     }
 }
