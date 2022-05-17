@@ -48,6 +48,7 @@
 
   foreach (var competencyGroup in Model.CompetencyGroups)
   {
+    var groupDetails = competencyGroup.First();
     var questions = competencyGroup.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required);
     var selfAssessedCount = questions.Count(q => q.ResultId.HasValue);
     var verifiedCount = questions.Count(q => q.Verified.HasValue);
@@ -77,11 +78,13 @@
         </summary>
         <div class="nhsuk-details__text">
           <partial name="SelfAssessments/_CompetencySummary" view-data="@competencySummaryViewData" />
-
-
-                    @if (Model.SelfAssessment.LinearNavigation)
-                    {
-                        <partial name="SelfAssessments/_MeanScores"
+          @if (!String.IsNullOrEmpty(groupDetails.CompetencyGroupDescription))
+          {
+            <p class="nhsuk-body-l nhsuk-u-margin-left-7">@Html.Raw(groupDetails.CompetencyGroupDescription)</p>
+          }
+          @if (Model.SelfAssessment.LinearNavigation)
+          {
+            <partial name="SelfAssessments/_MeanScores"
                      view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
                     }
 
