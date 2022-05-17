@@ -10,25 +10,11 @@
   const string blankRadioId = "leave-blank";
 
   var routeParamsForBackLink = new Dictionary<string, string?>();
-
-  // TODO: HEEDLS-862 Account for all possible access routes in back link
-  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates) && Model.ReturnPageQuery == null) {
-    routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
-    routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
-  } else if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+    
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
-  }
-}
-
-@*TODO: HEEDLS-862 - Change these breadcrumbs to account for all access routes*@
-
-@section NavBreadcrumbs {
-  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesProgressBreadcrumbs.cshtml" model="(Model.CustomisationId, Model.ProgressId)" />
-  } else {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateProgressBreadcrumbs.cshtml" model="(Model.DelegateId, Model.ProgressId)" />
   }
 }
 
@@ -93,10 +79,8 @@
       </div>
     </div>
 
-    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates) && Model.ReturnPageQuery == null) {
-      <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
-    } else if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-      <vc:cancel-link-with-return-page-query asp-controller="CourseDelegates" asp-action="Index" route-data="@routeParamsForBackLink" return-page-query="@Model.ReturnPageQuery.Value" />
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+      <vc:cancel-link-with-return-page-query asp-controller="CourseDelegates" asp-action="Index" route-data="@routeParamsForBackLink" return-page-query="@Model.ReturnPageQuery!.Value" />
     } else {
       <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
     }

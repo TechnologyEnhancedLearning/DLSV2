@@ -74,6 +74,8 @@ namespace DigitalLearningSolutions.Data.Services
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
 
         void DeactivateOrDeleteAdmin(int adminId);
+
+        DelegateUserCard? GetDelegateUserCardById(int delegateId);
     }
 
     public class UserService : IUserService
@@ -447,10 +449,18 @@ namespace DigitalLearningSolutions.Data.Services
                 }
                 catch (Exception ex)
                 {
-                    logger.LogWarning(ex, $"Error attempting to delete admin {adminId} with no sessions, deactivating them instead.");
+                    logger.LogWarning(
+                        ex,
+                        $"Error attempting to delete admin {adminId} with no sessions, deactivating them instead."
+                    );
                     userDataService.DeactivateAdmin(adminId);
                 }
             }
+        }
+
+        public DelegateUserCard? GetDelegateUserCardById(int delegateId)
+        {
+            return userDataService.GetDelegateUserCardById(delegateId);
         }
 
         public DelegateUser? GetDelegateUserById(int delegateId)

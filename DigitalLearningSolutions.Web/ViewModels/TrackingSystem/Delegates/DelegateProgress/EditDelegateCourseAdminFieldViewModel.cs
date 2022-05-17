@@ -13,21 +13,21 @@
         public EditDelegateCourseAdminFieldViewModel(
             int progressId,
             int promptNumber,
-            DelegateCourseDetails details,
+            DelegateCourseInfo delegateCourseInfo,
             DelegateAccessRoute accessedVia,
             ReturnPageQuery? returnPageQuery = null
-        ) : base(details, returnPageQuery)
+        ) : base(delegateCourseInfo, returnPageQuery)
         {
-            var courseAdminField = details.CourseAdminFields.Single(c => c.PromptNumber == promptNumber);
+            var courseAdminField = delegateCourseInfo.CourseAdminFields.Single(c => c.PromptNumber == promptNumber);
 
             Options = courseAdminField.Options;
-            Answer = details.DelegateCourseInfo.GetAnswer(promptNumber);
-            Radios = GetRadioItems(details.DelegateCourseInfo, promptNumber);
+            Answer = delegateCourseInfo.GetAnswer(promptNumber);
+            Radios = GetRadioItems(delegateCourseInfo, promptNumber);
             PromptText = courseAdminField.PromptText;
-            CourseName = details.DelegateCourseInfo.CourseName;
+            CourseName = delegateCourseInfo.CourseName;
             DelegateName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
-                details.DelegateCourseInfo.DelegateFirstName,
-                details.DelegateCourseInfo.DelegateLastName
+                delegateCourseInfo.DelegateFirstName,
+                delegateCourseInfo.DelegateLastName
             );
             ProgressId = progressId;
             AccessedVia = accessedVia;
@@ -35,21 +35,21 @@
 
         public EditDelegateCourseAdminFieldViewModel(
             EditDelegateCourseAdminFieldFormData formData,
-            DelegateCourseDetails details,
+            DelegateCourseInfo delegateCourseInfo,
             int progressId,
             int promptNumber,
             DelegateAccessRoute accessedVia
         ) : base(formData)
         {
-            var courseAdminField = details.CourseAdminFields.Single(c => c.PromptNumber == promptNumber);
+            var courseAdminField = delegateCourseInfo.CourseAdminFields.Single(c => c.PromptNumber == promptNumber);
 
             Options = courseAdminField!.Options;
-            Radios = GetRadioItems(details.DelegateCourseInfo, promptNumber);
+            Radios = GetRadioItems(delegateCourseInfo, promptNumber);
             PromptText = courseAdminField.PromptText;
-            CourseName = details.DelegateCourseInfo.CourseName;
+            CourseName = delegateCourseInfo.CourseName;
             DelegateName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
-                details.DelegateCourseInfo.DelegateFirstName,
-                details.DelegateCourseInfo.DelegateLastName
+                delegateCourseInfo.DelegateFirstName,
+                delegateCourseInfo.DelegateLastName
             );
             ProgressId = progressId;
             AccessedVia = accessedVia;

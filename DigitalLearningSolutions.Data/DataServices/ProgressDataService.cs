@@ -6,6 +6,7 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Progress;
     using Microsoft.Extensions.Logging;
 
     public interface IProgressDataService

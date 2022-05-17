@@ -1,6 +1,6 @@
 ﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @using Microsoft.Extensions.Configuration
 @model RemoveFromCourseViewModel
 
@@ -48,9 +48,11 @@
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-3"
           asp-action="ExecuteRemoveFromCourse"
-          asp-route-delegateId="@Model.DelegateId"
-          asp-route-customisationId="@Model.CustomisationId"
+          asp-route-progressId="@Model.ProgressId"
           asp-route-accessedVia="@Model.AccessedVia">
+      <input type="hidden" asp-for="DelegateId" />
+      <input type="hidden" asp-for="ProgressId" />
+      <input type="hidden" asp-for="CustomisationId" />
       <input type="hidden" asp-for="@Model.Name" />
       <input type="hidden" asp-for="@Model.CourseName" />
       <input type="hidden" asp-for="@Model.ReturnPageQuery" />

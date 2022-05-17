@@ -137,25 +137,22 @@
         }
 
         public static string GetFilterValueForAdminField(
-            int promptNumber,
-            string? answer,
-            string prompt,
-            bool adminFieldHasOptions
+            CourseAdminFieldWithAnswer courseAdminFieldWithAnswer
         )
         {
-            var group = GetFilterGroupForAdminField(promptNumber, prompt);
+            var group = GetFilterGroupForAdminField(courseAdminFieldWithAnswer.PromptNumber, courseAdminFieldWithAnswer.PromptText);
 
             string propertyValue;
 
-            if (adminFieldHasOptions)
+            if (courseAdminFieldWithAnswer.Options.Any())
             {
-                propertyValue = string.IsNullOrEmpty(answer)
+                propertyValue = string.IsNullOrEmpty(courseAdminFieldWithAnswer.Answer)
                     ? EmptyValue
-                    : answer;
+                    : courseAdminFieldWithAnswer.Answer;
             }
             else
             {
-                propertyValue = string.IsNullOrEmpty(answer)
+                propertyValue = string.IsNullOrEmpty(courseAdminFieldWithAnswer.Answer)
                     ? FreeTextBlankValue
                     : FreeTextNotBlankValue;
             }
