@@ -153,7 +153,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // Then
             A.CallTo(() => passwordResetService.InvalidateResetPasswordForEmailAsync("email"))
-                .MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -177,7 +177,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // Then
             A.CallTo(() => passwordService.ChangePasswordAsync("email", "testPass-9"))
-                .MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -203,7 +203,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // Then
             A.CallTo(() => userService.ResetFailedLoginCount(adminUser))
-                .MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
         }
 
         [Test]
