@@ -183,6 +183,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         [Test]
         public async Task Post_to_index_should_clear_failed_login_attempt_count_if_model_and_hash_valid()
         {
+            // Given
             A.CallTo(
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
