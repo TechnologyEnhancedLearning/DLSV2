@@ -60,17 +60,17 @@
                         <span class="nhsuk-table-responsive__heading">Name/role </span>
                         @supervisor.SupervisorName, @supervisor.RoleName
 
-                    </td>
-                    <td class="nhsuk-table__cell">
-                        <span class="nhsuk-table-responsive__heading">Actions </span>
-                        @if (supervisor.AddedByDelegate)
-                        {
-                            <a asp-action="RemoveSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.ID">Remove</a>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
+            </td>
+            <td class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Actions </span>
+              @if (supervisor.AddedByDelegate)
+              {
+                <a asp-action="RemoveSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Remove</a>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
     </table>
 
 }
