@@ -66,12 +66,35 @@
                 transaction
             );
 
+            var userCentreDetailsValues = new
+            {
+                userId,
+                CentreId = delegateRegistrationModel.Centre,
+                Email = delegateRegistrationModel.SecondaryEmail,
+            };
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails
+                    (
+                        UserId,
+                        CentreId,
+                        Email
+                    )
+                    VALUES
+                    (
+                        @userId,
+                        @centreId,
+                        @email
+                    )",
+                userCentreDetailsValues,
+                transaction
+            );
+
             var initials = delegateRegistrationModel.FirstName.Substring(0, 1) +
                            delegateRegistrationModel.LastName.Substring(0, 1);
 
-            string candidateNumber;
             // this SQL is reproduced mostly verbatim from the uspSaveNewCandidate_V10 procedure in the legacy codebase.
-            candidateNumber = connection.QueryFirst<string>(
+            var candidateNumber = connection.QueryFirst<string>(
                 @"DECLARE @_MaxCandidateNumber AS integer
 		        SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
 								FROM      DelegateAccounts WITH (TABLOCKX, HOLDLOCK)
@@ -92,7 +115,6 @@
                 CentreId = delegateRegistrationModel.Centre,
                 DateRegistered = DateTime.UtcNow,
                 candidateNumber,
-                Email = delegateRegistrationModel.SecondaryEmail,
                 delegateRegistrationModel.Answer1,
                 delegateRegistrationModel.Answer2,
                 delegateRegistrationModel.Answer3,
