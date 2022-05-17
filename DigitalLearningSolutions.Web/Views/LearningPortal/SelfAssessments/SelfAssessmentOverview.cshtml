@@ -45,37 +45,39 @@
 <p><span role="alert">@Model.CompetencyGroups.Sum(g => g.Count()) matching @Model.VocabPlural().ToLower()</span></p>
 @if (Model.CompetencyGroups.Any())
 {
-    foreach (var competencyGroup in Model.CompetencyGroups)
-    {
-        var questions = competencyGroup.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required);
-        var selfAssessedCount = questions.Count(q => q.ResultId.HasValue);
-        var verifiedCount = questions.Count(q => q.Verified.HasValue);
-        var competencySummaryViewData = new ViewDataDictionary(ViewData)
-    {
+
+  foreach (var competencyGroup in Model.CompetencyGroups)
+  {
+    var questions = competencyGroup.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required);
+    var selfAssessedCount = questions.Count(q => q.ResultId.HasValue);
+    var verifiedCount = questions.Count(q => q.Verified.HasValue);
+    var competencySummaryViewData = new ViewDataDictionary(ViewData)
+{
       { "isSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed },
       { "questionsCount", questions.Count() },
       { "selfAssessedCount", selfAssessedCount },
       { "verifiedCount", verifiedCount }
     };
-        selfAssessedTotal += selfAssessedCount;
-        verifiedTotal += verifiedCount;
-        questionsTotal += questions.Count();
-        <div class="nhsuk-panel competency-group-panel nhsuk-u-padding-0">
-            @{
-                var expanderOpen = Model.CompetencyGroups.Count() == 1
-                ? "open"
-                : ViewContext.RouteData.Values.ContainsKey("competencyGroupId")
-                ? ViewContext.RouteData.Values["competencyGroupId"].Equals(competencyGroup.First().CompetencyGroupID.ToString()) ? "open" : ""
-                : "";
-            }
-            <details class="nhsuk-details nhsuk-expander" @(expanderOpen)>
-                <summary class="nhsuk-details__summary">
-                    <span class="competency-group-title nhsuk-details__summary-text">
-                        @competencyGroup.Key
-                    </span>
-                </summary>
-                <div class="nhsuk-details__text">
-                    <partial name="SelfAssessments/_CompetencySummary" view-data="@competencySummaryViewData" />
+    selfAssessedTotal += selfAssessedCount;
+    verifiedTotal += verifiedCount;
+    questionsTotal += questions.Count();
+    <div class="nhsuk-panel competency-group-panel nhsuk-u-padding-0">
+      @{
+        var expanderOpen = Model.CompetencyGroups.Count() == 1
+        ? "open"
+        : ViewContext.RouteData.Values.ContainsKey("competencyGroupId")
+          ? ViewContext.RouteData.Values["competencyGroupId"].Equals(competencyGroup.First().CompetencyGroupID.ToString()) ? "open" : ""
+          : "";
+      }
+      <details class="nhsuk-details nhsuk-expander" @(expanderOpen)>
+        <summary class="nhsuk-details__summary">
+          <span class="competency-group-title nhsuk-details__summary-text">
+            @competencyGroup.Key
+          </span>
+        </summary>
+        <div class="nhsuk-details__text">
+          <partial name="SelfAssessments/_CompetencySummary" view-data="@competencySummaryViewData" />
+
 
                     @if (Model.SelfAssessment.LinearNavigation)
                     {
@@ -83,9 +85,40 @@
                      view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
                     }
 
-                    <partial name="SelfAssessments/_OverviewTable"
-                     view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation }, { "selfAssessment", Model.SelfAssessment } })"
-                     model="competencyGroup" />
+
+
+          <style>
+            .nhsuk-expander[open] details.nhsuk-details[open] .nhsuk-details__summary-text::before {
+              display: block;
+              width: 0;
+              height: 0;
+              border-style: solid;
+              border-color: transparent;
+              clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+              border-width: 12.124px 7px 0 7px;
+              border-top-color: inherit;
+            }
+            .nhsuk-details[open] .nhsuk-details .nhsuk-details__summary-text::before {
+              bottom: 0;
+              content: "";
+              left: 0;
+              margin: auto;
+              position: absolute;
+              top: 0;
+              display: block;
+              width: 0;
+              height: 0;
+              border-style: solid;
+              border-color: transparent;
+              clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+              border-width: 7px 0 7px 12.124px;
+              border-left-color: inherit;
+            }
+          </style>
+          <partial name="SelfAssessments/_OverviewTable"
+                   view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation }, { "selfAssessment", Model.SelfAssessment } })"
+                   model="competencyGroup" />
+
 
                 </div>
             </details>

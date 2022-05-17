@@ -8,6 +8,9 @@
         private const string Divider = " / ";
         private static readonly string[] Units = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
 
+        private static readonly Regex PascalRegex =
+            new Regex(@"(?<=[A-Z])(?=[A-Z][a-z])|(?<=[^A-Z\s])(?=[A-Z])|(?<=[A-Za-z])(?=[^A-Za-z\s])");
+
         public static string FormatNumberWithLimit(int number, int limit)
         {
             return limit == -1 ? number.ToString() : number + Divider + limit;
@@ -82,6 +85,16 @@
         public static string GetTimeStringFromMinutes(int minutes)
         {
             return minutes < 60 ? $"{minutes}m" : $"{minutes / 60}h {minutes % 60}m";
+        }
+
+        public static string GetTimeStringForScreenReaderFromMinutes(int minutes)
+        {
+            return minutes < 60 ? $"{minutes} minutes" : $"{minutes / 60} hours {minutes % 60} minutes";
+        }
+
+        public static string AddSpacesToPascalCaseString(string pascalCaseString)
+        {
+            return PascalRegex.Replace(pascalCaseString, " ");
         }
     }
 }

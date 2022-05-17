@@ -114,13 +114,13 @@
                 return;
             }
 
-            var finaliseUrl = configuration.GetAppRootPath() + "/tracking/finalise" +
+            var finaliseUrl = configuration.GetCurrentSystemBaseUrl() + "/tracking/finalise" +
                               $@"?SessionID={progressCompletionData.SessionId}&ProgressID={progress.ProgressId}&UserCentreID={progressCompletionData.CentreId}";
 
             var htmlActivityCompletionInfo = completionStatus == 2
-                ? $@"<p>To evaluate the activity and access your certificate of completion, click <a href='{finaliseUrl}'>here</a>.</p>"
-                : $@"<p>If you haven't already done so, please evaluate the activity to help us to improve provision for future delegates by clicking
-                    <a href='{finaliseUrl}'>here</a>. Only one evaluation can be submitted per completion.</p>";
+                ? $@"<a href='{finaliseUrl}'><p>Evaluate the activity and access your certificate of completion here.</p></a>"
+                : $@"<p>If you haven't already done so, please <a href='{finaliseUrl}'>evaluate the activity</a> to help us
+                        to improve provision for future delegates. Only one evaluation can be submitted per completion.</p>";
             var textActivityCompletionInfo = completionStatus == 2
                 ? $@"To evaluate the activity and access your certificate of completion, visit this URL: {finaliseUrl}."
                 : "If you haven't already done so, please evaluate the activity to help us to improve provision " +
