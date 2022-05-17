@@ -181,7 +181,6 @@
         public static MyAccountDetailsData GetDefaultAccountDetailsData(
             int? adminId = null,
             int? delegateId = null,
-            string password = "password",
             string firstName = "firstname",
             string surname = "lastname",
             string email = "email@email.com",
@@ -191,7 +190,6 @@
             return new MyAccountDetailsData(
                 adminId,
                 delegateId,
-                password,
                 firstName,
                 surname,
                 email,

@@ -119,13 +119,12 @@
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
-            A.CallTo(() => userService.UpdateUserAccountDetailsForAllVerifiedUsers(A<MyAccountDetailsData>._, null)).DoesNothing();
+            A.CallTo(() => userService.UpdateUserAccountDetailsForAllUsers(A<MyAccountDetailsData>._, null)).DoesNothing();
             var model = new MyAccountEditDetailsFormData
             {
                 FirstName = "Test",
                 LastName = "User",
                 Email = Email,
-                Password = "password",
             };
             var parameterName = typeof(MyAccountController).GetMethod("Index")?.GetParameters()
                 .SingleOrDefault(p => p.ParameterType == typeof(DlsSubApplication))?.Name;
@@ -135,7 +134,7 @@
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).MustHaveHappened();
-            A.CallTo(() => userService.UpdateUserAccountDetailsForAllVerifiedUsers(A<MyAccountDetailsData>._, null))
+            A.CallTo(() => userService.UpdateUserAccountDetailsForAllUsers(A<MyAccountDetailsData>._, null))
                 .MustHaveHappened();
 
             result.Should().BeRedirectToActionResult().WithActionName("Index").WithRouteValue(
@@ -182,47 +181,6 @@
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
             myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.ProfileImageFile)].ValidationState
                 .Should().Be(ModelValidationState.Invalid);
-        }
-
-        [Test]
-        public void EditDetailsPostSave_with_invalid_password_fails_validation()
-        {
-            // Given
-            var myAccountController = new MyAccountController(
-                centreRegistrationPromptsService,
-                userService,
-                imageResizeService,
-                jobGroupsDataService,
-                promptsService
-            ).WithDefaultContext().WithMockUser(true, delegateId: null);
-            A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(false);
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
-            A.CallTo(() => userService.UpdateUserAccountDetailsForAllVerifiedUsers(A<MyAccountDetailsData>._, null))
-                .DoesNothing();
-
-            var formData = new MyAccountEditDetailsFormData
-            {
-                FirstName = "Test",
-                LastName = "User",
-                Email = Email,
-                Password = "password",
-            };
-            var expectedModel = new MyAccountEditDetailsViewModel(
-                formData,
-                new List<(int id, string name)>(),
-                new List<EditDelegateRegistrationPromptViewModel>(),
-                DlsSubApplication.Default
-            );
-
-            // When
-            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
-
-            // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int>._))
-                .MustNotHaveHappened();
-            result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
-            myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Password)].ValidationState.Should().Be
-                (ModelValidationState.Invalid);
         }
 
         [Test]

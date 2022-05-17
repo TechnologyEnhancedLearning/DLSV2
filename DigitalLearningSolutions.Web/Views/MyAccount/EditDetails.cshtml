@@ -21,7 +21,6 @@
                                                    nameof(Model.Email),
                                                    nameof(Model.HasProfessionalRegistrationNumber),
                                                    nameof(Model.ProfessionalRegistrationNumber),
-                                                   nameof(Model.Password),
                                                    nameof(Model.JobGroupId),
                                                    nameof(Model.Answer1),
                                                    nameof(Model.Answer2),
@@ -150,16 +149,6 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input
-        asp-for="@nameof(Model.Password)"
-        label="Confirm password to save changes:"
-        populate-with-current-value="false"
-        type="password"
-        spell-check="false"
-        autocomplete=""
-        hint-text=""
-        css-class="nhsuk-u-width-one-half" />
-
       <button name="action" class="nhsuk-button" value="save">Save</button>
     </div>
   </div>

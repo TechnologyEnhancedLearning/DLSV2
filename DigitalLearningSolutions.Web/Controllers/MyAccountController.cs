@@ -124,15 +124,6 @@
                 );
             }
 
-            if (formData.Password != null &&
-                !userService.IsPasswordValid(userAdminId, userDelegateId, formData.Password))
-            {
-                ModelState.AddModelError(
-                    nameof(MyAccountEditDetailsFormData.Password),
-                    CommonValidationErrorMessages.IncorrectPassword
-                );
-            }
-
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
                 ModelState,
                 formData.HasProfessionalRegistrationNumber,
@@ -160,7 +151,7 @@
                 userDelegateId,
                 User.GetCentreId()
             );
-            userService.UpdateUserAccountDetailsForAllVerifiedUsers(accountDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetailsForAllUsers(accountDetailsData, centreAnswersData);
 
             return RedirectToAction("Index", new { dlsSubApplication = dlsSubApplication.UrlSegment });
         }

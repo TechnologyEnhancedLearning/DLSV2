@@ -16,7 +16,6 @@
             var accountDetailsData = new MyAccountDetailsData(
                 userAdminId,
                 userDelegateId,
-                formData.Password!,
                 formData.FirstName!,
                 formData.LastName!,
                 formData.Email!,

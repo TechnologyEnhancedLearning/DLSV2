@@ -62,10 +62,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
         }
 
-        [Required(ErrorMessage = "Enter your current password")]
-        [DataType(DataType.Password)]
-        public string? Password { get; set; }
-
         public byte[]? ProfileImage { get; set; }
 
         [AllowedExtensions(new[] { ".png", ".tiff", ".jpg", ".jpeg", ".bmp", ".gif" })]

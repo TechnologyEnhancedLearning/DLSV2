@@ -31,7 +31,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
 
-        void UpdateUserAccountDetailsForAllVerifiedUsers(
+        void UpdateUserAccountDetailsForAllUsers(
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
         );
@@ -184,30 +184,29 @@ namespace DigitalLearningSolutions.Data.Services
         }
 
         // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
-        public void UpdateUserAccountDetailsForAllVerifiedUsers(
+        public void UpdateUserAccountDetailsForAllUsers(
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
         )
         {
-            var (verifiedAdminUser, verifiedDelegateUsers) =
-                GetVerifiedLinkedUsersAccounts(
+            var (adminUser, delegateUsers) =
+                GetLinkedUsersAccounts(
                     myAccountDetailsData.AdminId,
-                    myAccountDetailsData.DelegateId,
-                    myAccountDetailsData.Password
+                    myAccountDetailsData.DelegateId
                 );
 
-            if (verifiedAdminUser != null)
+            if (adminUser != null)
             {
                 userDataService.UpdateAdminUser(
                     myAccountDetailsData.FirstName,
                     myAccountDetailsData.Surname,
                     myAccountDetailsData.Email,
                     myAccountDetailsData.ProfileImage,
-                    verifiedAdminUser.Id
+                    adminUser.Id
                 );
             }
 
-            if (verifiedDelegateUsers.Count != 0)
+            if (delegateUsers.Count != 0)
             {
                 userDataService.UpdateUser(
                     myAccountDetailsData.FirstName,
@@ -221,7 +220,7 @@ namespace DigitalLearningSolutions.Data.Services
                 );
 
                 var oldDelegateDetails =
-                    verifiedDelegateUsers.SingleOrDefault(u => u.Id == myAccountDetailsData.DelegateId);
+                    delegateUsers.SingleOrDefault(u => u.Id == myAccountDetailsData.DelegateId);
 
                 if (oldDelegateDetails != null && centreAnswersData != null)
                 {
@@ -279,6 +278,26 @@ namespace DigitalLearningSolutions.Data.Services
             var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
 
             return userVerificationService.VerifyUsers(password, adminUser, delegateUsers);
+        }
+
+        private UserAccountSet GetLinkedUsersAccounts(int? adminId, int? delegateId)
+        {
+            var (loggedInAdminUser, loggedInDelegateUser) = GetUsersById(adminId, delegateId);
+
+            var signedInEmailIfAny = loggedInAdminUser?.EmailAddress ?? loggedInDelegateUser?.EmailAddress;
+
+            if (string.IsNullOrWhiteSpace(signedInEmailIfAny))
+            {
+                var loggedInDelegateUsers = loggedInDelegateUser != null
+                    ? new List<DelegateUser> { loggedInDelegateUser }
+                    : new List<DelegateUser>();
+
+                return new UserAccountSet(loggedInAdminUser, loggedInDelegateUsers);
+            }
+
+            var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
+
+            return new UserAccountSet(adminUser, delegateUsers);
         }
 
         public bool IsPasswordValid(int? adminId, int? delegateId, string password)
