@@ -96,6 +96,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 headers[10].Should().Be("Answer6");
                 headers[11].Should().Be("Active");
                 headers[12].Should().Be("EmailAddress");
+                headers[13].Should().Be("HasPRN");
+                headers[14].Should().Be("PRN");
                 table.RowCount().Should().Be(4);
                 var row = table.Row(2);
                 row.Cell(1).GetString().Should().Be("Person");
@@ -111,6 +113,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 row.Cell(11).GetString().Should().BeEmpty();
                 row.Cell(12).GetString().Should().Be("True");
                 row.Cell(13).GetString().Should().Be("Test@Test");
+                row.Cell(14).GetString().Should().Be("False");
+                row.Cell(15).GetString().Should().BeEmpty();
             }
         }
 
@@ -242,6 +246,34 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             var row = GetSampleDelegateDataRow(emailAddress: "white space@test.com");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.WhitespaceInEmail);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_missing_PRN_error_for_HasPRN_true_with_missing_PRN()
+        {
+            var row = GetSampleDelegateDataRow(hasPrn: true);
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.HasPrnButMissingPrnValue);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_invalid_PRN_characters_error_for_PRN_with_invalid_characters()
+        {
+            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "^%£PRN");
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnCharacters);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_invalid_PRN_length_error_for_PRN_too_short()
+        {
+            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "PRN1");
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnLength);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_invalid_PRN_length_error_for_PRN_too_long()
+        {
+            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "PRNAboveAllowedLength");
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnLength);
         }
 
         [Test]
@@ -548,6 +580,94 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
+        public void ProcessDelegateTable_update_updates_delegate_PRN_if_HasPRN_is_true_and_PRN_has_value()
+        {
+            // Given
+            const string delegateId = "DELEGATE";
+            const string prn = "PRN1234";
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: true, prn: prn);
+            var table = CreateTableFromData(new[] { row });
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
+
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+                .Returns(candidateNumberDelegate);
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
+            ACallToUserDataServiceUpdateDelegateDoesNothing();
+
+            // When
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+
+            // Then
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(candidateNumberDelegate.Id, prn, true)
+            ).MustHaveHappened();
+            result.ProcessedCount.Should().Be(1);
+            result.UpdatedCount.Should().Be(1);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_update_updates_delegate_PRN_if_HasPRN_is_false_and_PRN_does_not_have_value()
+        {
+            // Given
+            const string delegateId = "DELEGATE";
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: false);
+            var table = CreateTableFromData(new[] { row });
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
+
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+                .Returns(candidateNumberDelegate);
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
+            ACallToUserDataServiceUpdateDelegateDoesNothing();
+
+            // When
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+
+            // Then
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(candidateNumberDelegate.Id, null, true)
+            ).MustHaveHappened();
+            result.ProcessedCount.Should().Be(1);
+            result.UpdatedCount.Should().Be(1);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_update_does_not_update_delegate_PRN_if_HasPRN_is_empty()
+        {
+            // Given
+            const string delegateId = "DELEGATE";
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
+            var table = CreateTableFromData(new[] { row });
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
+
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+                .Returns(candidateNumberDelegate);
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
+            ACallToUserDataServiceUpdateDelegateDoesNothing();
+
+            // When
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+
+            // Then
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).MustNotHaveHappened();
+            result.ProcessedCount.Should().Be(1);
+            result.UpdatedCount.Should().Be(1);
+        }
+
+        [Test]
         public void ProcessDelegateTable_calls_register_with_expected_values()
         {
             // Given
@@ -816,6 +936,96 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
+        public void ProcessDelegateTable_successful_register_updates_delegate_PRN_if_HasPRN_is_true_and_PRN_has_value()
+        {
+            // Given
+            const string candidateNumber = "DELEGATE";
+            const int newDelegateRecordId = 5;
+            const string prn = "PRN1234";
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: true, prn: prn);
+            var table = CreateTableFromData(new[] { row });
+            
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+                .Returns(candidateNumber);
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
+                .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
+
+            // When
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+
+            // Then
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+                .MustHaveHappened();
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(newDelegateRecordId, prn, true)
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void ProcessDelegateTable_successful_register_updates_delegate_PRN_if_HasPRN_is_false_and_PRN_does_not_have_value()
+        {
+            // Given
+            const string candidateNumber = "DELEGATE";
+            const int newDelegateRecordId = 5;
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: false);
+            var table = CreateTableFromData(new[] { row });
+
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+                .Returns(candidateNumber);
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
+                .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
+
+            // When
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+
+            // Then
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+                .MustHaveHappened();
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(newDelegateRecordId, null, true)
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void ProcessDelegateTable_successful_register_does_not_update_delegate_PRN_if_HasPRN_is_empty()
+        {
+            // Given
+            const string candidateNumber = "DELEGATE";
+            const int newDelegateRecordId = 5;
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
+            var table = CreateTableFromData(new[] { row });
+
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+                .Returns(candidateNumber);
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
+                .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
+
+            // When
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+
+            // Then
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+                .MustHaveHappened();
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
         public void ProcessDelegateTable_counts_updated_correctly()
         {
             // Given
@@ -988,7 +1198,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             string answer6 = "",
             string active = "True",
             string aliasId = "",
-            string jobGroupId = "1"
+            string jobGroupId = "1",
+            bool? hasPrn = null,
+            string? prn = null
         )
         {
             return new DelegateDataRow(
@@ -1004,7 +1216,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 answer5,
                 answer6,
                 aliasId,
-                emailAddress
+                emailAddress,
+                hasPrn,
+                prn
             );
         }
 
@@ -1077,7 +1291,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 string answer5,
                 string answer6,
                 string aliasId,
-                string emailAddress
+                string emailAddress,
+                bool? hasPrn,
+                string? prn
             )
             {
                 DelegateID = candidateNumber;
@@ -1093,6 +1309,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 Answer6 = answer6;
                 AliasID = aliasId;
                 EmailAddress = emailAddress;
+                HasPRN = hasPrn;
+                PRN = prn;
             }
 
             public string DelegateID { get; }
@@ -1108,6 +1326,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             public string Answer6 { get; }
             public string AliasID { get; }
             public string EmailAddress { get; }
+            public bool? HasPRN { get; set; }
+            public string? PRN { get; set; }
         }
     }
 }
