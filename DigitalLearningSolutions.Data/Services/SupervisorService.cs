@@ -524,11 +524,12 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
         public bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId)
         {
             var numberOfAffectedRows = connection.Execute(
-         @"DELETE FROM cas
-FROM  CandidateAssessmentSupervisors AS cas INNER JOIN
-         CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
-WHERE (ca.SelfAssessmentID = @selfAssessmentId) AND (cas.SupervisorDelegateId = @supervisorDelegateId)",
-        new { selfAssessmentId, supervisorDelegateId });
+                @"UPDATE cas 
+                    SET Removed = getUTCDate() 
+                    FROM CandidateAssessmentSupervisors AS cas 
+                    INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
+                    WHERE (ca.SelfAssessmentID = @selfAssessmentID) AND (cas.SupervisorDelegateId = @supervisorDelegateId)",
+                new { selfAssessmentId, supervisorDelegateId });
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
@@ -537,8 +538,9 @@ WHERE (ca.SelfAssessmentID = @selfAssessmentId) AND (cas.SupervisorDelegateId = 
                 return false;
             }
             connection.Execute(
-         @"UPDATE SupervisorDelegates SET Removed = getUTCDate() 
-            WHERE ID = @supervisorDelegateId AND (SELECT COUNT(*) FROM CandidateAssessmentSupervisors WHERE SupervisorDelegateId = @supervisorDelegateId) = 0",
+                 @"UPDATE SupervisorDelegates SET Removed = getUTCDate() 
+                    WHERE ID = @supervisorDelegateId AND
+                        (SELECT COUNT(*) FROM CandidateAssessmentSupervisors WHERE SupervisorDelegateId = @supervisorDelegateId AND Removed IS NULL) = 0",
         new { supervisorDelegateId });
             return true;
         }
