@@ -74,19 +74,12 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public DateTime? GetStartOfActivityForCentre(int centreId, int? courseCategoryId = null)
         {
-            return courseCategoryId == null
-                ? connection.QuerySingleOrDefault<DateTime?>(
-                    @"SELECT MIN(LogDate)
+            return connection.QuerySingleOrDefault<DateTime?>(
+                @"SELECT MIN(LogDate)
                     FROM tActivityLog
-                    WHERE CentreID = @centreId",
-                    new { centreId }
-                )
-                : connection.QuerySingleOrDefault<DateTime?>(
-                    @"SELECT MIN(LogDate)
-                    FROM tActivityLog
-                    WHERE CentreID = @centreId AND CourseCategoryId = @courseCategoryId",
-                    new { centreId, courseCategoryId }
-                );
+                    WHERE CentreID = @centreId AND (CourseCategoryID = @courseCategoryId OR @courseCategoryId IS NULL)",
+                new { centreId, courseCategoryId }
+            );
         }
     }
 }
