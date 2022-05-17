@@ -24,8 +24,10 @@
         void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int delegateId);
         void SendProfileAssessmentSignedOff(int supervisorDelegateId, int candidateAssessmentId, string? supervisorComments, bool signedOff, int adminId);
     }
+   
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
+
         private readonly IConfigDataService configDataService;
         private readonly IEmailService emailService;
         private readonly IFrameworkService frameworkService;
@@ -194,6 +196,7 @@
             };
             emailService.SendEmail(new Email(emailSubjectLine, builder, outcomeNotification.OwnerEmail, outcomeNotification.UserEmail));
         }
+
 
         public void SendSupervisorDelegateInvite(int supervisorDelegateId, int adminId)
         {

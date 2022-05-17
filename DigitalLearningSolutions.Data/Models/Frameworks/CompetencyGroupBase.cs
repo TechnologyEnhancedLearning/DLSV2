@@ -5,8 +5,12 @@
     {
         public int ID { get; set; }
         public int CompetencyGroupID { get; set; }
-        [StringLength(255, MinimumLength = 3)]
+
+        [StringLength(maximumLength: 255, MinimumLength = 3)]
         [Required]
         public string Name { get; set; }
+
+        [StringLength(maximumLength: 1000)]
+        public string? Description { get; set; }
     }
 }

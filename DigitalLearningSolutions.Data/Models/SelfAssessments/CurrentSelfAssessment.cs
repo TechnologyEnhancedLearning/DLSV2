@@ -16,5 +16,6 @@
         public string? SignOffRoleName { get; set; }
         public string? SignOffRequestorStatement { get; set; }
         public bool EnforceRoleRequirementsForSignOff { get; set; }
+        public string? ManageSupervisorsDescription { get; set; }
     }
 }

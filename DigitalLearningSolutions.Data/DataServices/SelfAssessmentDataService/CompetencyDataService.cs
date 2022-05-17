@@ -93,6 +93,7 @@
             C.Description AS Description,
             CG.Name AS CompetencyGroup,
             CG.ID AS CompetencyGroupID,
+            CG.Description AS CompetencyGroupDescription,
             COALESCE(
                 (SELECT TOP(1) FrameworkConfig
                 FROM Frameworks F
