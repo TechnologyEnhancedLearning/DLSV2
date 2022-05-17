@@ -363,6 +363,7 @@
             {
                 DelegateSelfAssessment = delegateSelfAssessment,
                 SupervisorDelegate = supervisorDelegate,
+                SupervisorName = supervisorDelegate.SupervisorName,
                 Competency = competency,
                 ResultSupervisorVerificationId = assessmentQuestion.SelfAssessmentResultSupervisorVerificationId,
                 SupervisorComments = assessmentQuestion.SupervisorComments,

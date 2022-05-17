@@ -206,21 +206,39 @@ else if (ViewContext.RouteData.Values["viewMode"].ToString() == "View" && Model.
       }
 
       <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Confirmed
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @if (Model.SignedOff)
-        {
-          <span class="nhsuk-tag nhsuk-tag--green">Yes</span>
-        }
-        else
-        {
-          <span class="nhsuk-tag nhsuk-tag--red">No</span>
-        }
-      </dd>
-
+        <dt class="nhsuk-summary-list__key">
+          Reviewed
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Html.Raw(Model.Verified.ToString("dd/mm/yyyy"))<text> </text>@Model.SupervisorName
+        </dd>
       </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Confirmed
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @if (Model.SignedOff)
+          {
+            <span class="nhsuk-tag nhsuk-tag--green">Yes</span>
+          }
+          else
+          {
+            <span class="nhsuk-tag nhsuk-tag--red">No</span>
+          }
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Comments
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Html.Raw(Model.SupervisorComments)
+        </dd>
+      </div>
+
     </dl>
     @if ((bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
     {

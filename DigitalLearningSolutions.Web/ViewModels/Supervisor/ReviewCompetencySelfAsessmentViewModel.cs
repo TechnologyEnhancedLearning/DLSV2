@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Supervisor;
+    using System;
     using System.ComponentModel.DataAnnotations;
 
     public class ReviewCompetencySelfAsessmentViewModel
@@ -16,5 +17,7 @@
         [Required(ErrorMessage = "Required")]
         public string SupervisorSignedOff { get; set; }        
         public string Status { get; set; }
+        public DateTime Verified { get; set; }
+        public string SupervisorName { get; set; }
     }
 }
