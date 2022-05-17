@@ -27,13 +27,13 @@
     {
         private const string IpAddress = "1.1.1.1";
         private const int SupervisorDelegateId = 1;
-
-        private PromptsService promptsService = null!;
         private ICentresDataService centresDataService = null!;
         private RegisterController controller = null!;
         private ICryptoService cryptoService = null!;
         private IFeatureManager featureManager = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+
+        private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
@@ -176,7 +176,6 @@
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
-                        A<string?>._,
                         A<int>._
                     )
                 )
@@ -211,11 +210,11 @@
                                     d.Active &&
                                     d.IsSelfRegistered &&
                                     d.NotifyDate != null &&
-                                    d.AliasId == null
+                                    d.AliasId == null &&
+                                    d.ProfessionalRegistrationNumber == data.ProfessionalRegistrationNumber
                             ),
                             IpAddress,
                             false,
-                            null,
                             SupervisorDelegateId
                         )
                 )
@@ -241,7 +240,6 @@
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
-                            null,
                             SupervisorDelegateId
                         )
                 )
@@ -267,7 +265,6 @@
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
-                            null,
                             SupervisorDelegateId
                         )
                 )
@@ -293,7 +290,6 @@
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
-                            null,
                             SupervisorDelegateId
                         )
                 )
@@ -312,7 +308,6 @@
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
-                        A<string?>._,
                         A<int>._
                     )
                 )
@@ -341,7 +336,6 @@
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
-                        A<string?>._,
                         A<int>._
                     )
                 )

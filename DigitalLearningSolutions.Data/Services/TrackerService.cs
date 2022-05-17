@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using Microsoft.Extensions.Logging;
@@ -9,7 +10,10 @@
 
     public interface ITrackerService
     {
-        string ProcessQuery(TrackerEndpointQueryParams query);
+        string ProcessQuery(
+            TrackerEndpointQueryParams query,
+            Dictionary<TrackerEndpointSessionVariable, string?> sessionVariables
+        );
     }
 
     public class TrackerService : ITrackerService
@@ -27,7 +31,10 @@
             this.trackerActionService = trackerActionService;
         }
 
-        public string ProcessQuery(TrackerEndpointQueryParams query)
+        public string ProcessQuery(
+            TrackerEndpointQueryParams query,
+            Dictionary<TrackerEndpointSessionVariable, string?> sessionVariables
+        )
         {
             if (string.IsNullOrWhiteSpace(query.Action))
             {
@@ -62,6 +69,20 @@
                         return trackerActionService.StoreDiagnosticJson(
                             query.ProgressId,
                             query.DiagnosticOutcome
+                        );
+                    }
+
+                    if (action == TrackerEndpointAction.StoreAspProgressV2)
+                    {
+                        return trackerActionService.StoreAspProgressV2(
+                            query.ProgressId,
+                            query.Version,
+                            sessionVariables[TrackerEndpointSessionVariable.LmGvSectionRow],
+                            query.TutorialId,
+                            query.TutorialTime,
+                            query.TutorialStatus,
+                            query.CandidateId,
+                            query.CustomisationId
                         );
                     }
 

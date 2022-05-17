@@ -97,6 +97,8 @@
 
         IEnumerable<string> GetTopicsForCentreAndCentrallyManagedCourses(int centreId);
 
+        IEnumerable<ApplicationWithSections> GetApplicationsThatHaveSectionsByBrandId(int brandId);
+
         int CreateNewCentreCourse(Customisation customisation);
 
         LearningLog? GetLearningLogDetails(int progressId);
@@ -104,28 +106,34 @@
 
     public class CourseService : ICourseService
     {
+        private readonly IClockService clockService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseDataService courseDataService;
         private readonly ICourseTopicsDataService courseTopicsDataService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IProgressDataService progressDataService;
+        private readonly ISectionService sectionService;
 
         public CourseService(
+            IClockService clockService,
             ICourseDataService courseDataService,
             ICourseAdminFieldsService courseAdminFieldsService,
             IProgressDataService progressDataService,
             IGroupsDataService groupsDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
-            ICourseTopicsDataService courseTopicsDataService
+            ICourseTopicsDataService courseTopicsDataService,
+            ISectionService sectionService
         )
         {
+            this.clockService = clockService;
             this.courseDataService = courseDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.progressDataService = progressDataService;
             this.groupsDataService = groupsDataService;
             this.courseCategoriesDataService = courseCategoriesDataService;
             this.courseTopicsDataService = courseTopicsDataService;
+            this.sectionService = sectionService;
         }
 
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId)
@@ -403,6 +411,32 @@
             var activeApplications = courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId);
             var filteredApplications = activeApplications.Where(c => c.CourseTopicId == topicId || topicId == null);
             return filteredApplications.OrderBy(a => a.ApplicationName);
+        }
+
+        public IEnumerable<ApplicationWithSections> GetApplicationsThatHaveSectionsByBrandId(int brandId)
+        {
+            var numRecordsByApplicationId =
+                courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId, clockService.UtcNow.AddMonths(-3));
+
+            var applications = courseDataService.GetApplicationsByBrandId(brandId);
+
+            double maxPopularity = numRecordsByApplicationId.Any() ? numRecordsByApplicationId.Values.Max() : 0;
+
+            var applicationsWithSections = applications.Select(
+                application => new ApplicationWithSections(
+                    application,
+                    sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(
+                        application.ApplicationId
+                    ),
+                    maxPopularity == 0
+                        ? 0
+                        : numRecordsByApplicationId.GetValueOrDefault(application.ApplicationId, 0) / maxPopularity
+                )
+            );
+
+            var applicationsWithPopulatedSections = applicationsWithSections.Where(a => a.Sections.Any());
+
+            return applicationsWithPopulatedSections;
         }
 
         public LearningLog? GetLearningLogDetails(int progressId)

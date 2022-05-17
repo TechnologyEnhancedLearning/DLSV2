@@ -1,16 +1,18 @@
 # Installs
 
-- [Visual Studio Professional 2022](https://visualstudio.microsoft.com/downloads/)
-    - Make sure you have the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension
-    - [JetBrains Rider](https://www.jetbrains.com/rider/) can work as an alternative to Visual Studio. Follow the setup steps laid out below. In addition, you'll have to run `npm run dev` manually to build the JS and SASS.
+- IDE
+  - Option 1: [JetBrains Rider](https://www.jetbrains.com/rider/)
+    - In addition to the setup described in this readme, you'll have to run `npm run dev` manually to build the JS and SASS.
+  - Option 2: [Visual Studio Professional 2022](https://visualstudio.microsoft.com/downloads/)
+      - Make sure you have the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension. This means you won't have to run `npm run dev` manually to build the JS and SASS.
 - SQL Server 2019
 - [SQL Server Management Studio 18](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15)
 - [Git](https://git-scm.com/)
 - [NPM](https://www.npmjs.com/get-npm)
 - [SASS](http://www.sass-lang.com/install) for the command line
-	- Specifically, follow the "Install Anywhere (Standalone)" guide. Simply download and extract the files somewhere, and point PATH at the dart-sass folder. This should allow you to use the "sass" command.
-	- You don't want to install it via NPM, as those are JavaScript versions that perform significantly worse.
-	- At time of writing (2022-03-14), we are using [version 1.49.9 of dart-sass](https://github.com/sass/dart-sass/releases/tag/1.49.9) 
+    - Specifically, follow the "Install Anywhere (Standalone)" guide. Simply download and extract the files somewhere, and point PATH at the dart-sass folder. This should allow you to use the "sass" command.
+    - You don't want to install it via NPM, as those are JavaScript versions that perform significantly worse.
+    - At time of writing (2022-03-14), we are using [version 1.49.9 of dart-sass](https://github.com/sass/dart-sass/releases/tag/1.49.9)
 
 # Getting the code
 
@@ -20,7 +22,7 @@ Checkout the `digitallearningsolutions` repository from [GitHub](https://github.
 git checkout https://github.com/TechnologyEnhancedLearning/DLSV2.git
 ```
 
-You should now be able to open the solution in Visual Studio 2019 by finding and double-clicking the `DigitalLearningSolutions.sln` file.
+You should now be able to open the solution in your IDE by finding and double-clicking the `DigitalLearningSolutions.sln` file.
 
 # Configuring text editor
 

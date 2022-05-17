@@ -57,6 +57,7 @@
                 null,
                 true,
                 true,
+                "PRN",
                 0,
                 true,
                 true,

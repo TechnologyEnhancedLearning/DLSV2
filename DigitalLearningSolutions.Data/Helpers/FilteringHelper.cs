@@ -22,7 +22,7 @@
 
         public static string BuildFilterValueString(string group, string propertyName, string propertyValue)
         {
-            return group + Separator + propertyName + Separator + propertyValue;
+            return group + Separator + propertyName + Separator + propertyValue.Trim();
         }
 
         public static string? AddNewFilterToFilterString(string? existingFilterString, string? newFilterToAdd)
@@ -178,8 +178,8 @@
 
             var options = prompt.Options.Select(
                 option => new FilterOptionModel(
-                    option,
-                    BuildFilterValueString(group, group.Split('(')[0], option),
+                    option.Trim(),
+                    BuildFilterValueString(group, group.Split('(')[0], option.Trim()),
                     FilterStatus.Default
                 )
             ).ToList();

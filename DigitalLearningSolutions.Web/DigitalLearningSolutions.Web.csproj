@@ -1,58 +1,59 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Nullable>annotations</Nullable>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
-    <TypeScriptToolsVersion>3.9</TypeScriptToolsVersion>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <Nullable>annotations</Nullable>
+    </PropertyGroup>
 
     <PropertyGroup>
-    <GenerateProgramFile>false</GenerateProgramFile>
-    <UserSecretsId>7ea176d2-09f5-4e3a-a3fa-7f3229882b70</UserSecretsId>
-  </PropertyGroup>
+        <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+        <TypeScriptToolsVersion>3.9</TypeScriptToolsVersion>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <GenerateProgramFile>false</GenerateProgramFile>
+        <UserSecretsId>7ea176d2-09f5-4e3a-a3fa-7f3229882b70</UserSecretsId>
+    </PropertyGroup>
 
     <ItemGroup>
-    <Content Remove="wwwroot\README.txt" />
-  </ItemGroup>
+        <Content Remove="wwwroot\README.txt" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Scripts\checkboxes.ts" />
-    <None Remove="Scripts\common.ts" />
-    <None Remove="Scripts\frameworks\branding.ts" />
-    <None Remove="Scripts\helpers\constants.ts" />
-    <None Remove="Scripts\index.d.ts" />
-    <None Remove="Scripts\learningMenu\contentViewer.ts" />
-    <None Remove="Scripts\learningMenu\diagnosticContentViewer.ts" />
-    <None Remove="Scripts\learningMenu\fullscreen.ts" />
-    <None Remove="Scripts\learningMenu\postLearningContentViewer.ts" />
-    <None Remove="Scripts\learningPortal\dlscommon.ts" />
-    <None Remove="Scripts\learningPortal\recommendedLearning.ts" />
-    <None Remove="Scripts\learningPortal\sortCourses.ts" />
-    <None Remove="Scripts\learningPortal\verificationPickResults.ts" />
-    <None Remove="Scripts\nhsuk.ts" />
-    <None Remove="Scripts\searchSortFilterAndPaginate\paginate.ts" />
-    <None Remove="Scripts\searchSortFilterAndPaginate\search.ts" />
-    <None Remove="Scripts\searchSortFilterAndPaginate\searchSortAndPaginate.ts" />
-    <None Remove="Scripts\searchSortFilterAndPaginate\sort.ts" />
-    <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
-    <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
-    <None Remove="Scripts\supervisor\assessmentVerify.ts" />
-    <None Remove="Scripts\supervisor\staffList.ts" />
-    <None Remove="Scripts\supervisor\verify.ts" />
-    <None Remove="Scripts\support\faqs.ts" />
-    <None Remove="Scripts\trackingSystem\addCourseToGroupSelectCourse.ts" />
-    <None Remove="Scripts\trackingSystem\allDelegates.ts" />
-    <None Remove="Scripts\trackingSystem\centreCourseSetup.ts" />
-    <None Remove="Scripts\trackingSystem\courseDelegates.ts" />
-    <None Remove="Scripts\trackingSystem\editCourseContent.ts" />
-    <None Remove="Scripts\trackingSystem\emailDelegates.ts" />
-    <None Remove="Scripts\trackingSystem\learningLog.ts" />
-    <None Remove="Scripts\trackingSystem\reports.ts" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="Scripts\checkboxes.ts" />
+        <None Remove="Scripts\common.ts" />
+        <None Remove="Scripts\frameworks\branding.ts" />
+        <None Remove="Scripts\helpers\constants.ts" />
+        <None Remove="Scripts\index.d.ts" />
+        <None Remove="Scripts\learningContent\brands.ts" />
+        <None Remove="Scripts\learningMenu\contentViewer.ts" />
+        <None Remove="Scripts\learningMenu\diagnosticContentViewer.ts" />
+        <None Remove="Scripts\learningMenu\fullscreen.ts" />
+        <None Remove="Scripts\learningMenu\postLearningContentViewer.ts" />
+        <None Remove="Scripts\learningPortal\dlscommon.ts" />
+        <None Remove="Scripts\learningPortal\recommendedLearning.ts" />
+        <None Remove="Scripts\learningPortal\sortCourses.ts" />
+        <None Remove="Scripts\learningPortal\verificationPickResults.ts" />
+        <None Remove="Scripts\nhsuk.ts" />
+        <None Remove="Scripts\searchSortFilterAndPaginate\paginate.ts" />
+        <None Remove="Scripts\searchSortFilterAndPaginate\search.ts" />
+        <None Remove="Scripts\searchSortFilterAndPaginate\searchSortAndPaginate.ts" />
+        <None Remove="Scripts\searchSortFilterAndPaginate\sort.ts" />
+        <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
+        <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
+        <None Remove="Scripts\supervisor\assessmentVerify.ts" />
+        <None Remove="Scripts\supervisor\staffList.ts" />
+        <None Remove="Scripts\supervisor\verify.ts" />
+        <None Remove="Scripts\support\faqs.ts" />
+        <None Remove="Scripts\trackingSystem\addCourseToGroupSelectCourse.ts" />
+        <None Remove="Scripts\trackingSystem\allDelegates.ts" />
+        <None Remove="Scripts\trackingSystem\centreCourseSetup.ts" />
+        <None Remove="Scripts\trackingSystem\courseDelegates.ts" />
+        <None Remove="Scripts\trackingSystem\editCourseContent.ts" />
+        <None Remove="Scripts\trackingSystem\emailDelegates.ts" />
+        <None Remove="Scripts\trackingSystem\learningLog.ts" />
+        <None Remove="Scripts\trackingSystem\reports.ts" />
+    </ItemGroup>
 
     <ItemGroup>
     <PackageReference Include="FluentMigrator" Version="3.2.9" />
@@ -66,83 +67,89 @@
     <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
+    <PackageReference Include="Npm" Version="3.5.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="wwwroot\favicon.ico" />
-    <None Include="wwwroot\images\itSkillsPathwayLogo.png" />
-    <None Include="wwwroot\images\nhsDigitalLogo.png" />
-    <None Include="wwwroot\images\reasonableAdjustmentFlagLogo.png" />
-    <None Include="wwwroot\README.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DigitalLearningSolutions.Data.Migrations\DigitalLearningSolutions.Data.Migrations.csproj" />
-    <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <TypeScriptCompile Include="Scripts\checkboxes.ts" />
-    <TypeScriptCompile Include="Scripts\common.ts" />
-    <TypeScriptCompile Include="Scripts\checkboxGroup.ts" />
-    <TypeScriptCompile Include="Scripts\frameworks\branding.ts" />
-    <TypeScriptCompile Include="Scripts\learningMenu\fullscreen.ts" />
-    <TypeScriptCompile Include="Scripts\learningMenu\postLearningContentViewer.ts" />
-    <TypeScriptCompile Include="Scripts\learningMenu\diagnosticContentViewer.ts" />
-    <TypeScriptCompile Include="Scripts\learningMenu\contentViewer.ts" />
-    <TypeScriptCompile Include="Scripts\learningPortal\available.ts" />
-    <TypeScriptCompile Include="Scripts\learningPortal\completed.ts" />
-    <TypeScriptCompile Include="Scripts\learningPortal\current.ts" />
-    <TypeScriptCompile Include="Scripts\learningPortal\dlscommon.ts" />
-    <TypeScriptCompile Include="Scripts\index.d.ts" />
-    <TypeScriptCompile Include="Scripts\learningPortal\recommendedLearning.ts" />
-    <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
-    <TypeScriptCompile Include="Scripts\learningPortal\verificationPickResults.ts" />
-    <TypeScriptCompile Include="Scripts\nhsuk.ts" />
-    <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\filter.ts" />
-    <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\paginate.ts" />
-    <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\search.ts" />
-    <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\sort.ts" />
-    <TypeScriptCompile Include="Scripts\spec\filter.spec.ts" />
-    <TypeScriptCompile Include="Scripts\spec\getSearchableElements.ts" />
-    <TypeScriptCompile Include="Scripts\spec\learningMenu\fullscreen.spec.ts" />
-    <TypeScriptCompile Include="Scripts\spec\paginate.spec.ts" />
-    <TypeScriptCompile Include="Scripts\spec\search.spec.ts" />
-    <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />
-    <TypeScriptCompile Include="Scripts\spec\sort.spec.ts" />
-    <TypeScriptCompile Include="Scripts\supervisor\assessmentVerify.ts" />
-    <TypeScriptCompile Include="Scripts\supervisor\verify.ts" />
-    <TypeScriptCompile Include="Scripts\supervisor\staffList.ts" />
-    <TypeScriptCompile Include="Scripts\support\faqs.ts" />
-    <TypeScriptCompile Include="Scripts\trackingSystem\addCourseToGroupSelectCourse.ts" />
-    <TypeScriptCompile Include="Scripts\trackingSystem\addNewCentreCourseSelectCourse.ts" />
-    <TypeScriptCompile Include="Scripts\trackingSystem\courseDelegates.ts" />
-    <TypeScriptCompile Include="Scripts\trackingSystem\editCourseContent.ts" />
-    <TypeScriptCompile Include="Scripts\trackingSystem\emailDelegates.ts" />
-    <TypeScriptCompile Include="Scripts\trackingSystem\allDelegates.ts" />
-    <TypeScriptCompile Include="Scripts\trackingSystem\centreAdministrators.ts" />
-    <TypeScriptCompile Include="Scripts\trackingSystem\centreCourseSetup.ts" />
-    <TypeScriptCompile Include="Scripts\trackingSystem\delegateGroups.ts" />
-    <TypeScriptCompile Include="Scripts\trackingSystem\learningLog.ts" />
-    <TypeScriptCompile Include="Scripts\trackingSystem\reports.ts" />
-  </ItemGroup>
-    
-    <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
-    <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <Exec Command="npm install" />
-    <Exec Command="npm run build" />
-    <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
-      <DistFiles Include="wwwroot\**" />
-      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
-        <RelativePath>%(DistFiles.Identity)</RelativePath>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </ResolvedFileToPublish>
+        <None Include="wwwroot\favicon.ico" />
+        <None Include="wwwroot\images\itSkillsPathwayLogo.png" />
+        <None Include="wwwroot\images\nhsDigitalLogo.png" />
+        <None Include="wwwroot\images\reasonableAdjustmentFlagLogo.png" />
+        <None Include="wwwroot\README.txt" />
     </ItemGroup>
-  </Target>
 
-  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+    <ItemGroup>
+        <ProjectReference Include="..\DigitalLearningSolutions.Data.Migrations\DigitalLearningSolutions.Data.Migrations.csproj" />
+        <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <TypeScriptCompile Include="Scripts\checkboxes.ts" />
+        <TypeScriptCompile Include="Scripts\common.ts" />
+        <TypeScriptCompile Include="Scripts\checkboxGroup.ts" />
+        <TypeScriptCompile Include="Scripts\frameworks\branding.ts" />
+        <TypeScriptCompile Include="Scripts\learningContent\brands.ts" />
+        <TypeScriptCompile Include="Scripts\learningMenu\fullscreen.ts" />
+        <TypeScriptCompile Include="Scripts\learningMenu\postLearningContentViewer.ts" />
+        <TypeScriptCompile Include="Scripts\learningMenu\diagnosticContentViewer.ts" />
+        <TypeScriptCompile Include="Scripts\learningMenu\contentViewer.ts" />
+        <TypeScriptCompile Include="Scripts\learningPortal\available.ts" />
+        <TypeScriptCompile Include="Scripts\learningPortal\completed.ts" />
+        <TypeScriptCompile Include="Scripts\learningPortal\current.ts" />
+        <TypeScriptCompile Include="Scripts\learningPortal\dlscommon.ts" />
+        <TypeScriptCompile Include="Scripts\index.d.ts" />
+        <TypeScriptCompile Include="Scripts\learningPortal\recommendedLearning.ts" />
+        <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
+        <TypeScriptCompile Include="Scripts\learningPortal\verificationPickResults.ts" />
+        <TypeScriptCompile Include="Scripts\nhsuk.ts" />
+        <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\filter.ts" />
+        <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\paginate.ts" />
+        <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\search.ts" />
+        <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\sort.ts" />
+        <TypeScriptCompile Include="Scripts\spec\filter.spec.ts" />
+        <TypeScriptCompile Include="Scripts\spec\getSearchableElements.ts" />
+        <TypeScriptCompile Include="Scripts\spec\learningMenu\fullscreen.spec.ts" />
+        <TypeScriptCompile Include="Scripts\spec\paginate.spec.ts" />
+        <TypeScriptCompile Include="Scripts\spec\search.spec.ts" />
+        <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />
+        <TypeScriptCompile Include="Scripts\spec\sort.spec.ts" />
+        <TypeScriptCompile Include="Scripts\supervisor\assessmentVerify.ts" />
+        <TypeScriptCompile Include="Scripts\supervisor\verify.ts" />
+        <TypeScriptCompile Include="Scripts\supervisor\staffList.ts" />
+        <TypeScriptCompile Include="Scripts\support\faqs.ts" />
+        <TypeScriptCompile Include="Scripts\trackingSystem\addCourseToGroupSelectCourse.ts" />
+        <TypeScriptCompile Include="Scripts\trackingSystem\addNewCentreCourseSelectCourse.ts" />
+        <TypeScriptCompile Include="Scripts\trackingSystem\courseDelegates.ts" />
+        <TypeScriptCompile Include="Scripts\trackingSystem\editCourseContent.ts" />
+        <TypeScriptCompile Include="Scripts\trackingSystem\emailDelegates.ts" />
+        <TypeScriptCompile Include="Scripts\trackingSystem\allDelegates.ts" />
+        <TypeScriptCompile Include="Scripts\trackingSystem\centreAdministrators.ts" />
+        <TypeScriptCompile Include="Scripts\trackingSystem\centreCourseSetup.ts" />
+        <TypeScriptCompile Include="Scripts\trackingSystem\delegateGroups.ts" />
+        <TypeScriptCompile Include="Scripts\trackingSystem\learningLog.ts" />
+        <TypeScriptCompile Include="Scripts\trackingSystem\reports.ts" />
+    </ItemGroup>
+
+    <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+        <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+        <Exec Command="npm install" />
+        <Exec Command="npm run build" />
+        <!-- Include the newly-built files in the publish output -->
+        <ItemGroup>
+            <DistFiles Include="wwwroot\**" />
+            <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+                <RelativePath>%(DistFiles.Identity)</RelativePath>
+                <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+            </ResolvedFileToPublish>
+        </ItemGroup>
+    </Target>
+
+    <ProjectExtensions>
+        <VisualStudio>
+            <UserProperties />
+        </VisualStudio>
+    </ProjectExtensions>
 
 </Project>
