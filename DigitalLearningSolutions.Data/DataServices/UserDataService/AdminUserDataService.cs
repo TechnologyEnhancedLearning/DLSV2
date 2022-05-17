@@ -158,8 +158,7 @@
                 new { adminId }
             );
         }
-
-        // TODO: do we want to set the category name to "All" when the category id is null?
+        
         public IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId)
         {
             return connection.Query<AdminAccount>(
@@ -179,7 +178,10 @@
                         aa.IsSupervisor,
                         aa.IsTrainer,
                         aa.CategoryID,
-                        cc.CategoryName,
+                        CASE
+                            WHEN aa.CategoryID IS NULL THEN 'All'
+                            ELSE cc.CategoryName
+                        END AS CategoryName,
                         aa.IsFrameworkDeveloper,
                         aa.IsFrameworkContributor,
                         aa.IsWorkforceManager,

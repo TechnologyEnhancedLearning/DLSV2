@@ -22,6 +22,19 @@
         public IEnumerable<AdminAccount> AdminAccounts { get; set; }
         public IEnumerable<DelegateAccount> DelegateAccounts { get; set; }
 
-        public bool IsLocked => AdminAccounts.Any() && UserAccount.FailedLoginCount >= FailedLoginThreshold;
+        public bool AdminAccountsLocked => UserAccount.FailedLoginCount >= FailedLoginThreshold;
+
+        public bool IsSingleCentreAccount()
+        {
+            if (AdminAccounts.Count() > 1 || DelegateAccounts.Count() > 1)
+            {
+                return false;
+            }
+
+            var adminCentreId = AdminAccounts.SingleOrDefault()?.CentreId;
+            var delegateCentreId = DelegateAccounts.SingleOrDefault()?.CentreId;
+
+            return adminCentreId == null || delegateCentreId == null || adminCentreId == delegateCentreId;
+        }
     }
 }

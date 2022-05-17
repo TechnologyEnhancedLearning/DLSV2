@@ -162,7 +162,7 @@
             try
             {
                 // When
-                userDataService.UpdateUserFailedLoginCount(7, 3);
+                userDataService.UpdateUserFailedLoginCount(2, 3);
                 var updatedUser = userDataService.GetAdminUserById(7)!;
 
                 // Then

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
@@ -26,6 +27,7 @@
         private ILogger<LoginController> logger = null!;
         private ILoginService loginService = null!;
         private ISessionService sessionService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
@@ -33,8 +35,9 @@
             loginService = A.Fake<ILoginService>();
             sessionService = A.Fake<ISessionService>();
             logger = A.Fake<ILogger<LoginController>>();
+            userService = A.Fake<IUserService>();
 
-            controller = new LoginController(loginService, sessionService, logger)
+            controller = new LoginController(loginService, sessionService, logger, userService)
                 .WithDefaultContext()
                 .WithMockUser(false)
                 .WithMockTempData()
@@ -63,7 +66,8 @@
             var controllerWithAuthenticatedUser = new LoginController(
                     loginService,
                     sessionService,
-                    logger
+                    logger,
+                    userService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true);
@@ -216,29 +220,16 @@
         }
 
         [Test]
-        public async Task Unapproved_delegate_account_redirects_to_not_approved_page()
-        {
-            // Given
-            A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
-                new LoginResult(LoginAttemptResult.AccountNotApproved)
-            );
-
-            // When
-            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
-
-            // Then
-            result.Should().BeViewResult().WithViewName("AccountNotApproved");
-        }
-
-        [Test]
         public async Task Multiple_available_centres_should_redirect_to_ChooseACentre_page()
         {
             // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1");
-            var expectedDelegateUsers = new List<DelegateUser>
-                { UserTestHelper.GetDefaultDelegateUser(centreId: 2, centreName: "Centre 2") };
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount> { UserTestHelper.GetDefaultAdminAccount() },
+                new List<DelegateAccount> { UserTestHelper.GetDefaultDelegateAccount() }
+            );
             A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
-                new LoginResult(LoginAttemptResult.ChooseACentre, expectedAdminUser, expectedDelegateUsers)
+                new LoginResult(LoginAttemptResult.ChooseACentre, userEntity, 2)
             );
 
             // When
@@ -252,16 +243,20 @@
         public async Task Log_in_as_admin_records_admin_session()
         {
             // Given
-            var expectedAdmin = UserTestHelper.GetDefaultAdminUser(10);
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount> { UserTestHelper.GetDefaultAdminAccount() },
+                new List<DelegateAccount>()
+                );
             A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
-                new LoginResult(LoginAttemptResult.LogIntoSingleCentre, expectedAdmin, new List<DelegateUser>())
+                new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntity, 2)
             );
 
             // When
             await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => sessionService.StartAdminSession(expectedAdmin.Id))
+            A.CallTo(() => sessionService.StartAdminSession(userEntity.AdminAccounts.Single().Id))
                 .MustHaveHappened();
         }
 
@@ -269,9 +264,13 @@
         public async Task Log_in_as_delegate_does_not_record_admin_session()
         {
             // Given
-            var expectedDelegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() };
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>(),
+                new List<DelegateAccount> { UserTestHelper.GetDefaultDelegateAccount() }
+            );
             A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
-                new LoginResult(LoginAttemptResult.LogIntoSingleCentre, delegateUsers: expectedDelegates)
+                new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntity, 2)
             );
 
             // When
@@ -286,11 +285,14 @@
         public async Task Multiple_approved_accounts_at_same_centre_should_log_in()
         {
             // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1");
-            var expectedDelegateUsers = new List<DelegateUser>
-                { UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "Centre 1", approved: true) };
+            
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount> { UserTestHelper.GetDefaultAdminAccount() },
+                new List<DelegateAccount> { UserTestHelper.GetDefaultDelegateAccount() }
+            );
             A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
-                new LoginResult(LoginAttemptResult.LogIntoSingleCentre, expectedAdminUser, expectedDelegateUsers)
+                new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntity, 2)
             );
 
             // When
@@ -299,22 +301,6 @@
             // Then
             result.Should().BeRedirectToActionResult()
                 .WithControllerName("Home").WithActionName("Index");
-        }
-
-        [Test]
-        public async Task
-            When_user_has_verified_accounts_only_at_inactive_centres_then_redirect_to_centre_inactive_page()
-        {
-            // Given
-            A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
-                new LoginResult(LoginAttemptResult.InactiveCentre)
-            );
-
-            // When
-            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
-
-            // Then
-            result.Should().BeViewResult().WithViewName("CentreInactive");
         }
 
         [Test]
@@ -327,32 +313,20 @@
             await controller.Index(LoginTestHelper.GetDefaultLoginViewModel("\ttest@example.com "));
 
             // Then
-            A.CallTo(() => loginService.AttemptLogin("test@example.com", "testPassword")).MustHaveHappened(1, Times.Exactly);
-        }
-
-        [Test]
-        public async Task Locked_admin_returns_locked_view()
-        {
-            // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
-            A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
-                new LoginResult(LoginAttemptResult.AccountLocked, adminUser)
-            );
-
-            // When
-            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
-
-            // Then
-            result.Should().BeRedirectToActionResult().WithActionName("AccountLocked");
+            A.CallTo(() => loginService.AttemptLogin("test@example.com", "testPassword"))
+                .MustHaveHappened(1, Times.Exactly);
         }
 
         private void GivenSignInIsSuccessful()
         {
-            var admin = UserTestHelper.GetDefaultAdminUser();
-            var delegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() };
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount> { UserTestHelper.GetDefaultAdminAccount() },
+                new List<DelegateAccount> { UserTestHelper.GetDefaultDelegateAccount() }
+            );
 
             A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
-                new LoginResult(LoginAttemptResult.LogIntoSingleCentre, admin, delegates)
+                new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntity, 2)
             );
         }
     }

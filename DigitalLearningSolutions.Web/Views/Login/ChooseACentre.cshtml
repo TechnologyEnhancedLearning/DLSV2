@@ -17,7 +17,14 @@
     <p class="nhsuk-body-l">
       You are registered at more than one centre. Please choose the centre you would like to sign in to.
     </p>
-    @* TODO: Add the Reset Password link and description *@
+
+    @* TODO HEEDLS-912: Remove this temporary button *@
+    <a role="button" class="nhsuk-button delete-button" style="width: 100%; height: 100px; font-size: xx-large;"
+       asp-action="ChooseCentre" asp-route-centreId="0">
+      Log into first available temporary
+    </a>
+
+    @* TODO HEEDLS-912: Add the Reset Password link and description *@
     <table role="table" class="nhsuk-table-responsive">
       <thead role="rowgroup" class="nhsuk-table__head">
       <tr role="row">
@@ -38,7 +45,7 @@
           <td role="cell" class="nhsuk-table__cell choose-centre-td">
             <span class="nhsuk-table-responsive__heading">Centre: </span>
             @centreRow.CentreName
-            @* TODO UAR-912 Add tags for the new fields here *@
+            @* TODO HEEDLS-912: Add tags for the new fields here *@
           </td>
           <td role="cell" class="nhsuk-table__cell choose-centre-td">
             <span class="nhsuk-table-responsive__heading">Roles: </span>
@@ -56,10 +63,10 @@
             </div>
           </td>
           <td role="cell" class="nhsuk-table__cell choose-centre-td">
-            @* TODO Correct these hide the button in all cases where we should. Will be properly dealt with in UAR-912*@
+            @* TODO HEEDLS-912: Correct these hide the button in all cases where we should.*@
             @{
-              var hideChooseButton = (centreRow.IsApproved != null && centreRow.IsApproved == false) ||
-                                     (centreRow.DelegateIsActive == false && centreRow.AdminIsActive == false);
+              var hideChooseButton = centreRow.IsApproved != null && centreRow.IsApproved == false ||
+                                     centreRow.DelegateIsActive == false && centreRow.AdminIsActive == false;
 
             }
             @if (!hideChooseButton) {

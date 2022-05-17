@@ -5,6 +5,7 @@
     public class CustomPolicies
     {
         public const string UserOnly = "UserOnly";
+        public const string UserDelegateOnly = "UserDelegateOnly";
         public const string UserCentreAdmin = "UserCentreAdmin";
         public const string UserFrameworksAdminOnly = "UserFrameworksAdminOnly";
         public const string UserCentreManager = "UserCentreManager";
@@ -13,6 +14,11 @@
         public const string UserSuperAdmin = "UserSuperAdmin";
 
         public static AuthorizationPolicyBuilder ConfigurePolicyUserOnly(AuthorizationPolicyBuilder policy)
+        {
+            return policy.RequireAssertion(context => context.User.GetUserId() != null);
+        }
+
+        public static AuthorizationPolicyBuilder ConfigurePolicyUserDelegateOnly(AuthorizationPolicyBuilder policy)
         {
             return policy.RequireAssertion(
                 context => context.User.GetCandidateId() != null

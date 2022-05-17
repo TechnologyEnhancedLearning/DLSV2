@@ -10,6 +10,154 @@
 
     public static class UserTestHelper
     {
+        public static UserAccount GetDefaultUserAccount(
+            int id = 2,
+            string primaryEmail = "test@gmail.com",
+            string passwordHash = "Password",
+            string firstName = "forename",
+            string lastName = "surname",
+            int jobGroupId = 10,
+            string jobGroupName = "Other",
+            string? professionalRegistrationNumber = null,
+            byte[]? profileImage = null,
+            bool active = true,
+            int? resetPasswordId = null,
+            DateTime? termsAgreed = null,
+            int failedLoginCount = 0,
+            bool hasBeenPromptedForPrn = false,
+            int? learningHubAuthId = null,
+            bool hasDismissedLhLoginWarning = false,
+            DateTime? emailVerified = null,
+            DateTime? detailsLastChecked = null
+        )
+        {
+            return new UserAccount
+            {
+                Id = id,
+                PrimaryEmail = primaryEmail,
+                PasswordHash = passwordHash,
+                FirstName = firstName,
+                LastName = lastName,
+                JobGroupId = jobGroupId,
+                JobGroupName = jobGroupName,
+                ProfessionalRegistrationNumber = professionalRegistrationNumber,
+                ProfileImage = profileImage,
+                Active = active,
+                ResetPasswordId = resetPasswordId,
+                TermsAgreed = termsAgreed,
+                FailedLoginCount = failedLoginCount,
+                HasBeenPromptedForPrn = hasBeenPromptedForPrn,
+                LearningHubAuthId = learningHubAuthId,
+                HasDismissedLhLoginWarning = hasDismissedLhLoginWarning,
+                EmailVerified = emailVerified,
+                DetailsLastChecked = detailsLastChecked,
+            };
+        }
+
+        public static DelegateAccount GetDefaultDelegateAccount(
+            int id = 2,
+            int userId = 61188,
+            bool active = true,
+            int centreId = 2,
+            string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
+            bool centreActive = true,
+            string candidateNumber = "SV1234",
+            DateTime? dateRegistered = null,
+            string? answer1 = null,
+            string? answer2 = null,
+            string? answer3 = null,
+            string? answer4 = null,
+            string? answer5 = null,
+            string? answer6 = null,
+            bool approved = true,
+            bool externalReg = false,
+            bool selfReg = false,
+            string? oldPassword = "password",
+            DateTime? centreSpecificDetailsLastChecked = null
+        )
+        {
+            dateRegistered ??= DateTime.Parse("2010-09-22 06:52:09.080");
+            centreSpecificDetailsLastChecked ??= DateTime.Parse("2022-04-27 16:29:12.270");
+            return new DelegateAccount
+            {
+                Id = id,
+                UserId = userId,
+                Active = active,
+                CentreId = centreId,
+                CentreName = centreName,
+                CentreActive = centreActive,
+                CandidateNumber = candidateNumber,
+                DateRegistered = dateRegistered.Value,
+                Answer1 = answer1,
+                Answer2 = answer2,
+                Answer3 = answer3,
+                Answer4 = answer4,
+                Answer5 = answer5,
+                Answer6 = answer6,
+                Approved = approved,
+                ExternalReg = externalReg,
+                SelfReg = selfReg,
+                OldPassword = oldPassword,
+                CentreSpecificDetailsLastChecked = centreSpecificDetailsLastChecked,
+            };
+        }
+
+        public static AdminAccount GetDefaultAdminAccount(
+            int id = 7,
+            int userId = 2,
+            int centreId = 2,
+            string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
+            bool centreActive = true,
+            bool active = true,
+            bool isCentreAdmin = true,
+            bool isCentreManager = true,
+            bool isContentCreator = false,
+            bool isContentManager = true,
+            bool publishToAll = true,
+            bool isReportsViewer = false,
+            bool isSuperAdmin = true,
+            int categoryId = 1,
+            string? categoryName = "Undefined",
+            bool isSupervisor = true,
+            bool isTrainer = true,
+            bool isFrameworkDeveloper = true,
+            bool importOnly = true,
+            bool isFrameworkContributor = false,
+            bool isLocalWorkforceManager = false,
+            bool isNominatedSupervisor = false,
+            bool isWorkforceContributor = false,
+            bool isWorkforceManager = false
+        )
+        {
+            return new AdminAccount
+            {
+                Id = id,
+                UserId = userId,
+                CentreId = centreId,
+                CentreName = centreName,
+                CentreActive = centreActive,
+                IsCentreAdmin = isCentreAdmin,
+                IsReportsViewer = isReportsViewer,
+                IsSuperAdmin = isSuperAdmin,
+                IsCentreManager = isCentreManager,
+                Active = active,
+                IsContentManager = isContentManager,
+                PublishToAll = publishToAll,
+                ImportOnly = importOnly,
+                IsContentCreator = isContentCreator,
+                IsSupervisor = isSupervisor,
+                IsTrainer = isTrainer,
+                CategoryId = categoryId,
+                CategoryName = categoryName,
+                IsFrameworkDeveloper = isFrameworkDeveloper,
+                IsFrameworkContributor = isFrameworkContributor,
+                IsWorkforceManager = isWorkforceManager,
+                IsWorkforceContributor = isWorkforceContributor,
+                IsLocalWorkforceManager = isLocalWorkforceManager,
+                IsNominatedSupervisor = isNominatedSupervisor,
+            };
+        }
+
         public static DelegateUser GetDefaultDelegateUser(
             int id = 2,
             int centreId = 2,

@@ -4,6 +4,12 @@
 
     public static class CustomClaimHelper
     {
+        public static int? GetUserId(this ClaimsPrincipal user)
+        {
+            var id = user.GetCustomClaimAsInt(CustomClaimTypes.UserId);
+            return id == 0 ? null : id;
+        }
+
         public static int? GetAdminId(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);

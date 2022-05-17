@@ -29,8 +29,6 @@ namespace DigitalLearningSolutions.Data.Services
             List<DelegateUser> delegateUsers
         );
 
-        List<CentreUserDetails> GetUserCentres(UserEntity userEntity);
-
         void UpdateUserAccountDetailsForAllVerifiedUsers(
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
@@ -170,27 +168,6 @@ namespace DigitalLearningSolutions.Data.Services
             return (adminUserWithActiveCentre, delegateUsersWithActiveCentres);
         }
 
-        public List<CentreUserDetails> GetUserCentres(UserEntity userEntity)
-        {
-            var availableCentres = userEntity.DelegateAccounts
-                .Select(
-                    da => new CentreUserDetails(
-                        da,
-                        userEntity.AdminAccounts.SingleOrDefault(aa => aa.CentreId == da.CentreId)
-                    )
-                ).ToList();
-
-            var centreAccountsWithAdminOnly = userEntity.AdminAccounts.Where(
-                aa => userEntity.DelegateAccounts.All(da => da.CentreId != aa.CentreId)
-            );
-
-            availableCentres.AddRange(
-                centreAccountsWithAdminOnly.Select(adminAccount => new CentreUserDetails(adminAccount))
-            );
-
-            return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
-        }
-
         // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
         public void UpdateUserAccountDetailsForAllVerifiedUsers(
             MyAccountDetailsData myAccountDetailsData,
@@ -314,7 +291,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         public void UpdateFailedLoginCount(UserAccount userAccount)
         {
-            userDataService.UpdateUserFailedLoginCount(userAccount.Id, userAccount.FailedLoginCount);
+            userDataService.UpdateUserFailedLoginCount(userAccount.Id, userAccount.FailedLoginCount + 1);
         }
 
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId)
@@ -477,9 +454,9 @@ namespace DigitalLearningSolutions.Data.Services
 
         public UserEntity? GetUserByUsername(string username)
         {
-           var userId = userDataService.GetUserIdFromUsername(username);
+            var userId = userDataService.GetUserIdFromUsername(username);
 
-           return userId == null ? null : GetUserById(userId.Value);
+            return userId == null ? null : GetUserById(userId.Value);
         }
 
         public DelegateUser? GetDelegateUserById(int delegateId)

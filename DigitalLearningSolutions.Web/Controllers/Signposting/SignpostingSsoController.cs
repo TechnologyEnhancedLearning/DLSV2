@@ -17,7 +17,7 @@
     [FeatureGate(FeatureFlags.UseSignposting)]
     [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
     [Route("Signposting")]
-    [Authorize(Policy = CustomPolicies.UserOnly)]
+    [Authorize(Policy = CustomPolicies.UserDelegateOnly)]
     public class SignpostingSsoController : Controller
     {
         private readonly ILearningHubLinkService learningHubLinkService;

@@ -4,9 +4,6 @@
     {
         LogIntoSingleCentre,
         ChooseACentre,
-        InactiveCentre,
-        AccountNotApproved,
-        AccountLocked,
         InvalidPassword,
         InvalidUsername,
         InactiveAccount,

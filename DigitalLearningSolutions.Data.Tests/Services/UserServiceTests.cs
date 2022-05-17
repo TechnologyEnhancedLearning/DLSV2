@@ -201,28 +201,6 @@
         }
 
         [Test]
-        public void GetUserCentres_returns_centres_correctly_ordered()
-        {
-            // Given
-            var inputDelegateList = new List<DelegateUser>
-            {
-                UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "First Centre"),
-                UserTestHelper.GetDefaultDelegateUser(centreId: 3, centreName: "Third Centre"),
-                UserTestHelper.GetDefaultDelegateUser(centreId: 4, centreName: "Fourth Centre"),
-            };
-            var inputAdminAccount = UserTestHelper.GetDefaultAdminUser(centreId: 2, centreName: "Second Centre");
-            // Expect Admin first, alphabetical after
-            var expectedIdOrder = new List<int> { 2, 1, 4, 3 };
-
-            // When
-            var result = userService.GetUserCentres(inputAdminAccount, inputDelegateList);
-            var resultIdOrder = result.Select(details => details.CentreId).ToList();
-
-            // Then
-            Assert.That(resultIdOrder.SequenceEqual(expectedIdOrder));
-        }
-
-        [Test]
         public void UpdateUserAccountDetailsForAllVerifiedUsers_with_null_delegate_only_updates_admin()
         {
             // Given
@@ -714,40 +692,40 @@
         public void ResetFailedLoginCount_resets_count()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
+            var userAccount = UserTestHelper.GetDefaultUserAccount(failedLoginCount: 4);
 
             // When
-            userService.ResetFailedLoginCount(adminUser);
+            userService.ResetFailedLoginCount(userAccount);
 
             // Then
-            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(adminUser.Id, 0)).MustHaveHappened();
+            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(userAccount.Id, 0)).MustHaveHappened();
         }
 
         [Test]
         public void ResetFailedLoginCount_doesnt_call_data_service_with_FailedLoginCount_of_zero()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 0);
+            var userAccount = UserTestHelper.GetDefaultUserAccount(failedLoginCount: 0);
 
             // When
-            userService.ResetFailedLoginCount(adminUser);
+            userService.ResetFailedLoginCount(userAccount);
 
             // Then
-            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(adminUser.Id, 0)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(userAccount.Id, 0)).MustNotHaveHappened();
         }
 
         [Test]
         public void IncrementFailedLoginCount_updates_count_to_expected_value()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
+            var userAccount = UserTestHelper.GetDefaultUserAccount(failedLoginCount: 4);
             const int expectedCount = 5;
 
             // When
-            userService.UpdateFailedLoginCount(adminUser);
+            userService.UpdateFailedLoginCount(userAccount);
 
             // Then
-            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(adminUser.Id, expectedCount))
+            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(userAccount.Id, expectedCount))
                 .MustHaveHappened();
         }
 

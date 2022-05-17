@@ -153,7 +153,7 @@
         public int? GetUserIdFromUsername(string username)
         {
             var userIds = connection.Query<int?>(
-                @"SELECT u.ID
+                @"SELECT DISTINCT u.ID
                     FROM Users AS u
                     INNER JOIN DelegateAccounts AS da ON da.UserID = u.ID
                     WHERE u.PrimaryEmail = @username OR da.CandidateNumber = @username",
