@@ -291,7 +291,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         public void UpdateFailedLoginCount(UserAccount userAccount)
         {
-            userDataService.UpdateUserFailedLoginCount(userAccount.Id, userAccount.FailedLoginCount + 1);
+            userDataService.UpdateUserFailedLoginCount(userAccount.Id, userAccount.FailedLoginCount);
         }
 
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId)

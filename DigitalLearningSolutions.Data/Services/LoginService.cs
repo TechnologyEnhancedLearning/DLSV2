@@ -46,9 +46,10 @@
 
             if (!verificationResult.PasswordMatchesAtLeastOneAccountPassword)
             {
+                userEntity.UserAccount.FailedLoginCount += 1;
                 userService.UpdateFailedLoginCount(userEntity.UserAccount);
 
-                return new LoginResult(LoginAttemptResult.InvalidPassword);
+                return userEntity.AdminAccountsLocked ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity) : new LoginResult(LoginAttemptResult.InvalidPassword);
             }
             
             if (!userEntity.AdminAccountsLocked)

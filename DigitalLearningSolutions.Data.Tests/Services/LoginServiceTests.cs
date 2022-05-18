@@ -100,12 +100,20 @@
         }
 
         [Test]
+        [TestCase(LoginAttemptResult.InvalidPassword, 0)]
+        [TestCase(LoginAttemptResult.InvalidPassword, 3)]
+        [TestCase(LoginAttemptResult.AccountLocked, 4)]
+        [TestCase(LoginAttemptResult.AccountLocked, 5)]
+        [TestCase(LoginAttemptResult.AccountLocked, 10)]
         public void
-            AttemptLogin_returns_invalid_password_and_increments_failed_login_count_when_user_account_found_does_not_match_any_passwords()
+            AttemptLogin_returns_expected_result_and_increments_failed_login_count_when_user_account_found_does_not_match_any_passwords(
+                LoginAttemptResult expectedResult,
+                int currentFailedLoginCount
+            )
         {
             // Given
             var userEntity = new UserEntity(
-                UserTestHelper.GetDefaultUserAccount(),
+                UserTestHelper.GetDefaultUserAccount(failedLoginCount: currentFailedLoginCount),
                 new List<AdminAccount>(),
                 new List<DelegateAccount>
                 {
@@ -124,8 +132,16 @@
             // Then
             using (new AssertionScope())
             {
-                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidPassword);
-                result.UserEntity.Should().BeNull();
+                result.LoginAttemptResult.Should().Be(expectedResult);
+                if (expectedResult == LoginAttemptResult.InvalidPassword)
+                {
+                    result.UserEntity.Should().BeNull();
+                }
+                else
+                {
+                    result.UserEntity.Should().BeEquivalentTo(userEntity);
+                }
+
                 result.CentreToLogInto.Should().BeNull();
                 A.CallTo(() => userService.UpdateFailedLoginCount(userEntity.UserAccount)).MustHaveHappened();
             }
@@ -141,7 +157,7 @@
                 new List<AdminAccount>(),
                 new List<DelegateAccount>
                 {
-                    UserTestHelper.GetDefaultDelegateAccount()
+                    UserTestHelper.GetDefaultDelegateAccount(),
                 }
             );
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);

@@ -718,8 +718,8 @@
         public void IncrementFailedLoginCount_updates_count_to_expected_value()
         {
             // Given
-            var userAccount = UserTestHelper.GetDefaultUserAccount(failedLoginCount: 4);
             const int expectedCount = 5;
+            var userAccount = UserTestHelper.GetDefaultUserAccount(failedLoginCount: expectedCount);
 
             // When
             userService.UpdateFailedLoginCount(userAccount);

@@ -8,5 +8,6 @@
         InvalidUsername,
         InactiveAccount,
         AccountsHaveMismatchedPasswords,
+        AccountLocked,
     }
 }
