@@ -1,4 +1,5 @@
 @using DigitalLearningSolutions.Web.ViewModels.Register
+@using DigitalLearningSolutions.Web.Extensions
 @model PersonalInformationViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -31,7 +32,7 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="given-name"
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half highlight-required-fields" />
 
       <vc:text-input asp-for="LastName"
                      label="Last name"
@@ -40,7 +41,7 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="family-name"
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half highlight-required-fields" />
 
       <vc:text-input asp-for="Email"
                      label="Email"
@@ -49,8 +50,11 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="email"
-                     css-class="nhsuk-u-width-one-half" />
-
+                     css-class="nhsuk-u-width-one-half highlight-required-fields" />
+      @if (Html.AnyFieldIsRequired(Model))
+      {
+        <partial name="../Shared/_RequiredLegend" />
+      }
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 

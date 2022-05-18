@@ -1,6 +1,7 @@
 @inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.ViewModels.Register
 @using Microsoft.Extensions.Configuration
+@using DigitalLearningSolutions.Web.Extensions
 @model LearnerInformationViewModel
 
 @{
@@ -39,7 +40,7 @@
                       value="@Model.JobGroup?.ToString()"
                       hint-text=""
                       deselectable="false"
-                      css-class="nhsuk-u-width-one-half"
+                      css-class="nhsuk-u-width-one-half highlight-required-fields"
                       default-option="Select a job group"
                       select-list-options="@Model.JobGroupOptions" />
 
@@ -52,7 +53,7 @@
                           value="@customField.Answer"
                           hint-text=""
                           deselectable="@(!customField.Mandatory)"
-                          css-class="nhsuk-u-width-one-half"
+                          css-class="nhsuk-u-width-one-half highlight-required-fields"
                           default-option="Select a @customField.Prompt.ToLower()"
                           select-list-options="@customField.Options" />
         } else {
@@ -63,8 +64,12 @@
                          spell-check="false"
                          hint-text=""
                          autocomplete=""
-                         css-class="nhsuk-u-width-one-half" />
+                         css-class="nhsuk-u-width-one-half highlight-required-fields" />
         }
+      }
+      @if (Html.AnyFieldIsRequired(Model))
+      {
+        <partial name="../Shared/_RequiredLegend" />
       }
 
       <a class="nhsuk-button nhsuk-button--secondary" asp-controller="RegisterDelegateByCentre" asp-action="PersonalInformation" role="button">Back</a>

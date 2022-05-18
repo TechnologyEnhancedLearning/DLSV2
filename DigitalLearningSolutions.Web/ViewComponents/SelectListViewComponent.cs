@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
+    using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
@@ -22,6 +24,7 @@
 
             var property = model.GetType().GetProperty(aspFor);
 
+            var required = cssClass.Contains("highlight-required-fields") && property != null && Attribute.IsDefined(property, typeof(RequiredAttribute)) ? true : false;
             var hasError = ViewData.ModelState[property?.Name]?.Errors?.Count > 0;
             var errorMessage = hasError ? ViewData.ModelState[property?.Name]?.Errors[0].ErrorMessage : null;
 
@@ -36,7 +39,8 @@
                 string.IsNullOrEmpty(hintText) ? null : hintText,
                 errorMessage,
                 hasError,
-                deselectable ?? false
+                deselectable ?? false,
+                required
             );
             return View(selectListViewModel);
         }

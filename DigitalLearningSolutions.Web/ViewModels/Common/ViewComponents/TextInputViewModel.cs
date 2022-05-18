@@ -15,7 +15,8 @@
             string? autocomplete,
             IEnumerable<string> errorMessages,
             string? cssClass = null,
-            string? hintText = null
+            string? hintText = null,
+            bool required = false
         )
         {
             var errorMessageList = errorMessages.ToList();
@@ -31,6 +32,7 @@
             HintText = hintText;
             ErrorMessages = errorMessageList;
             HasError = errorMessageList.Any();
+            Required = required;
         }
 
         public string Id { get; set; }
@@ -42,6 +44,7 @@
         public bool SpellCheck { get; set; }
         public string? Autocomplete { get; set; }
         public string? HintText { get; set; }
+        public bool Required { get; set; }
         public IEnumerable<string> ErrorMessages { get; set; }
         public readonly bool HasError;
     }

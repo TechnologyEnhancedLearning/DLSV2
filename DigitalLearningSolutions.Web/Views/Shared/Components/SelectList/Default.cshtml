@@ -1,7 +1,7 @@
 @using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model SelectListViewModel
 
-<div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
+<div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")" style="white-space:nowrap">
   <label class="nhsuk-label" for="@Model.Name">
     @Model.Label
   </label>
@@ -25,4 +25,8 @@
       <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value != null ? "" : "selected")>@Model.DefaultOption</option>
     }
   </select>
+  @if (Model.Required)
+  {
+    <partial name="_RequiredField" />
+  }
 </div>

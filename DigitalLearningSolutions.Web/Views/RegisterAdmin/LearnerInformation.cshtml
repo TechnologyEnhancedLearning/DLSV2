@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@using DigitalLearningSolutions.Web.Extensions
 @model LearnerInformationViewModel
 
 @{
@@ -21,11 +22,15 @@
                       value="@Model.JobGroup?.ToString()"
                       hint-text=""
                       deselectable="false"
-                      css-class="nhsuk-u-width-one-half"
+                      css-class="nhsuk-u-width-one-half highlight-required-fields"
                       default-option="Select a job group"
                       select-list-options="@Model.JobGroupOptions" />
 
       <partial name="_EditRegistrationNumber" model="@Model" />
+      @if (Html.AnyFieldIsRequired(Model))
+      {
+        <partial name="../Shared/_RequiredLegend" />
+      }
 
       <a class="nhsuk-button nhsuk-button--secondary" asp-controller="RegisterAdmin" asp-action="PersonalInformation" role="button">Back</a>
       <button class="nhsuk-button" type="submit">Next</button>
