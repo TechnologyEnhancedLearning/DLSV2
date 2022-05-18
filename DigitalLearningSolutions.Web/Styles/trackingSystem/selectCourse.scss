@@ -4,19 +4,15 @@
 .filter-dropdown {
   @extend .pagination-input-with-no-js-submit-button;
   @extend .pagination-input-with-no-js-submit-button-border;
-  width: 100%;
-
-  @include mq($from: tablet) {
-    flex: 1;
-  }
-
-  .js-enabled & {
-    width: 100%;
-  }
 }
 
 .course-dropdown {
   border-radius: 4px;
   padding: 0 9px;
   font-size: 16px;
+  height: 52px;
+
+  @include mq($from: tablet) {
+    height: 40px;
+  }
 }

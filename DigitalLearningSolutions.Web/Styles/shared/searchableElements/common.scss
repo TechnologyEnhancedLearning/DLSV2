@@ -7,7 +7,7 @@ $button-hover-colour: #4c6272;
 $button-active-colour: #002f5c;
 
 .inline-button {
-  height: 40px;
+  height: 52px;
   min-width: 100px;
   box-shadow: none;
   font-size: inherit;
@@ -25,6 +25,10 @@ $button-active-colour: #002f5c;
 
   &:hover:not(:focus):not(:active) {
     background-color: $button-hover-colour;
+  }
+
+  @include mq($from: tablet) {
+    height: 40px;
   }
 }
 
