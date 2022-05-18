@@ -235,25 +235,27 @@ export class SearchSortFilterAndPaginate {
 
   updateResultCountAndPageNumber(count: number): void {
     const element = <HTMLSpanElement>document.getElementById('result-count-and-page-number');
-    const oldMessage = element.innerHTML;
+    if (element) {
+      const oldMessage = element.innerHTML;
 
-    const newResultCountMessage = count === 1 ? '1 matching result.' : `${count.toString()} matching results.`;
+      const newResultCountMessage = count === 1 ? '1 matching result.' : `${count.toString()} matching results.`;
 
-    element.hidden = false;
-    element.setAttribute('aria-hidden', 'false');
+      element.hidden = false;
+      element.setAttribute('aria-hidden', 'false');
 
-    const itemsPerPage = getItemsPerPageValue();
-    const totalPages = Math.ceil(count / itemsPerPage);
+      const itemsPerPage = getItemsPerPageValue();
+      const totalPages = Math.ceil(count / itemsPerPage);
 
-    const newPageMessage = `Page ${this.page} of ${totalPages}.`;
+      const newPageMessage = `Page ${this.page} of ${totalPages}.`;
 
-    const newMessage = `${newResultCountMessage} ${newPageMessage}`;
+      const newMessage = `${newResultCountMessage} ${newPageMessage}`;
 
-    if (newMessage === oldMessage) {
-      // Screen reader does not announce the message if it has not changed
-      element.innerHTML = `${newMessage}&nbsp`;
-    } else {
-      element.innerHTML = newMessage;
+      if (newMessage === oldMessage) {
+        // Screen reader does not announce the message if it has not changed
+        element.innerHTML = `${newMessage}&nbsp;`;
+      } else {
+        element.innerHTML = newMessage;
+      }
     }
   }
 
@@ -283,7 +285,7 @@ export class SearchSortFilterAndPaginate {
 
     if (newResultCountMessage === oldResultCountMessage) {
       // Screen reader does not announce the message if it has not changed
-      return `${newResultCountMessage}&nbsp`;
+      return `${newResultCountMessage}&nbsp;`;
     }
 
     return newResultCountMessage;
