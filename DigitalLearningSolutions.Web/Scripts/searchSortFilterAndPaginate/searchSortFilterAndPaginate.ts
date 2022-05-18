@@ -252,7 +252,7 @@ export class SearchSortFilterAndPaginate {
 
       if (newMessage === oldMessage) {
         // Screen reader does not announce the message if it has not changed
-        element.innerHTML = `${newMessage}&nbsp`;
+        element.innerHTML = `${newMessage}&nbsp;`;
       } else {
         element.innerHTML = newMessage;
       }
@@ -285,7 +285,7 @@ export class SearchSortFilterAndPaginate {
 
     if (newResultCountMessage === oldResultCountMessage) {
       // Screen reader does not announce the message if it has not changed
-      return `${newResultCountMessage}&nbsp`;
+      return `${newResultCountMessage}&nbsp;`;
     }
 
     return newResultCountMessage;
