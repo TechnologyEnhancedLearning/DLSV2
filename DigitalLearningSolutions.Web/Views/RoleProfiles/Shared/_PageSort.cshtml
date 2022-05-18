@@ -3,7 +3,7 @@
 
 <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Sort by</label>
 <div class="sort-box-container">
-  <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-by-dropdown"
+  <select class="nhsuk-select sort-by-dropdown"
           id="select-sort-by"
           asp-for="SortBy"
           asp-items="Model.RoleProfileSortByOptions"
@@ -11,7 +11,7 @@
   </select>
 
   <div class="sort-order-button-container frameworks-sort-order-button-container">
-    <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-direction-dropdown"
+    <select class="nhsuk-select sort-direction-dropdown"
             id="select-sort-direction"
             asp-for="SortDirection"
             aria-label="Sort direction">
@@ -19,7 +19,7 @@
       <option value="Descending">Descending</option>
     </select>
 
-    <button class="nhsuk-search__submit sort-submit" type="submit">
+    <button class="nhsuk-button sort-submit" type="submit">
       Sort
     </button>
   </div>
