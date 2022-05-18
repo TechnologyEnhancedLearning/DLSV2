@@ -68,7 +68,7 @@
                      css-class="nhsuk-u-width-one-half highlight-required-fields" />
       @if(Html.AnyFieldIsRequired(Model))
       {
-        <span>some requied field</span>
+        <partial name="../Shared/_RequiredLegend" />
       }
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
