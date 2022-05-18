@@ -436,8 +436,8 @@
 
             ModelState.AddModelError(
                 nameof(AdminFieldAnswersViewModel.Answer),
-                "The complete list of answers must be 1000 characters or fewer " +
-                $"({remainingLengthShownToUser} character{remainingLengthPluralitySuffix} remaining for the new answer, " +
+                "The complete list of responses must be 1000 characters or fewer " +
+                $"({remainingLengthShownToUser} character{remainingLengthPluralitySuffix} remaining for the new response, " +
                 $"{answerLength} character{answerLengthPluralitySuffix} {verb} entered)"
             );
         }
@@ -473,7 +473,7 @@
             {
                 ModelState.AddModelError(
                     nameof(BulkAdminFieldAnswersViewModel.OptionsString),
-                    "The complete list of answers must be 1000 characters or fewer"
+                    "The complete list of responses must be 1000 characters or fewer"
                 );
             }
 
@@ -482,7 +482,7 @@
             {
                 ModelState.AddModelError(
                     nameof(BulkAdminFieldAnswersViewModel.OptionsString),
-                    "Each answer must be 100 characters or fewer"
+                    "Each response must be 100 characters or fewer"
                 );
             }
 
@@ -490,7 +490,7 @@
             {
                 ModelState.AddModelError(
                     nameof(BulkAdminFieldAnswersViewModel.OptionsString),
-                    "Each answer must be unique"
+                    "Each response must be unique"
                 );
             }
         }
@@ -527,7 +527,7 @@
             {
                 ModelState.AddModelError(
                     nameof(AdminFieldAnswersViewModel.OptionsString),
-                    "Each answer must be unique"
+                    "Each response must be unique"
                 );
             }
 
