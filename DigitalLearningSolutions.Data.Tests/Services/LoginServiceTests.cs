@@ -91,6 +91,7 @@
             GivenResetFailedLoginCountDoesNothing(adminUser);
             GivenNoLinkedAccountsFound();
             GivenSingleActiveCentreIsFound(adminUser, delegateUsers);
+            GivenAdminUserIsFoundByEmail(adminUser, delegateUsers);
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -192,6 +193,7 @@
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(approved: false);
             var delegateUsers = new List<DelegateUser> { delegateUser };
             GivenDelegateUsersAreVerified(delegateUsers);
+            GivenAdminUserIsFoundByEmail(null, delegateUsers);
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -215,6 +217,7 @@
             GivenDelegateUsersAreVerified(delegateUsers);
             GivenNoLinkedAccountsFound();
             GivenNoActiveCentresAreFound();
+            GivenAdminUserIsFoundByEmail(null, delegateUsers);
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -299,6 +302,7 @@
             GivenLinkedAdminUserIsFound(linkedAdminUser);
             GivenNoLinkedDelegateAccountsFound();
             GivenSingleActiveCentreIsFound(linkedAdminUser, delegateUsers);
+            GivenAdminUserIsFoundByEmail(linkedAdminUser, delegateUsers);
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -314,7 +318,7 @@
 
         [Test]
         public void
-            AttemptLogin_does_not_use_linked_admin_if_admin_is_locked_and_single_delegate_exists_and_returns_single_centre_login_result()
+            AttemptLogin_uses_linked_admin_if_admin_is_locked_and_single_delegate_exists_and_returns_locked_account()
         {
             // Given
             var linkedAdminUser = UserTestHelper.GetDefaultAdminUser(
@@ -327,6 +331,7 @@
             GivenLinkedAdminUserIsFound(linkedAdminUser);
             GivenNoLinkedDelegateAccountsFound();
             GivenDelegateUserHasActiveCentre(delegateUser);
+            GivenAdminUserIsFoundByEmail(linkedAdminUser, delegateUsers);
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -334,9 +339,9 @@
             // Then
             using (new AssertionScope())
             {
-                result.LoginAttemptResult.Should().Be(LoginAttemptResult.LogIntoSingleCentre);
-                result.Accounts.AdminAccount.Should().BeNull();
-                result.Accounts.DelegateAccounts.Single().Should().Be(delegateUser);
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.AccountLocked);
+                result.Accounts.AdminAccount.Should().Be(linkedAdminUser);
+                result.Accounts.DelegateAccounts.Should().BeEmpty();
             }
         }
 
@@ -352,6 +357,7 @@
             GivenLinkedAdminUserIsFound(linkedAdminUser);
             GivenNoLinkedDelegateAccountsFound();
             GivenDelegateUserHasActiveCentre(delegateUser);
+            GivenAdminUserIsFoundByEmail(null, delegateUsers);
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -375,6 +381,7 @@
             GivenDelegateUsersAreVerified(delegateUsers);
             GivenNoLinkedAccountsFound();
             GivenMultipleActiveCentresAreFound(null, delegateUsers);
+            GivenAdminUserIsFoundByEmail(null, delegateUsers);
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -399,6 +406,7 @@
             GivenResetFailedLoginCountDoesNothing(adminUser);
             GivenNoLinkedAccountsFound();
             GivenMultipleActiveCentresAreFound(adminUser, delegateUsers);
+            GivenAdminUserIsFoundByEmail(adminUser, delegateUsers);
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -569,6 +577,11 @@
                     new CentreUserDetails(secondCentreId, secondCentreName, adminUser != null)
                 }
             );
+        }
+
+        private void GivenAdminUserIsFoundByEmail(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        {
+            A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns((adminUser, delegateUsers));
         }
     }
 }
