@@ -15,7 +15,8 @@ beforeAll(() => {
 });
 
 describe('closeMpe', () => {
-  it('should redirect to post learning assessment',
+  it(
+    'should redirect to post learning assessment',
     () => {
       // Given
       window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/PostLearning/Content';
@@ -25,9 +26,11 @@ describe('closeMpe', () => {
 
       // Then
       expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/PostLearning');
-    });
+    },
+  );
 
-  it('should redirect to post learning assessment after entering fullscreen',
+  it(
+    'should redirect to post learning assessment after entering fullscreen',
     () => {
       // Given
       window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/PostLearning/Content#';
@@ -37,9 +40,11 @@ describe('closeMpe', () => {
 
       // Then
       expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/PostLearning');
-    });
+    },
+  );
 
-  it('should do nothing on unexpected page',
+  it(
+    'should do nothing on unexpected page',
     () => {
       // Given
       const url = 'https://localhost:44363/LearningMenu/123/456';
@@ -50,5 +55,6 @@ describe('closeMpe', () => {
 
       // Then
       expect(window.location.href).toEqual(url);
-    });
+    },
+  );
 });

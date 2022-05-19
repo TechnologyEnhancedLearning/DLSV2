@@ -12,19 +12,23 @@ export function setUpPagination(
   const itemsPerPageSelect = getItemsPerPageSelect();
 
   previousButtons.forEach((button) => {
-    button.addEventListener('click',
+    button.addEventListener(
+      'click',
       (event) => {
         event.preventDefault();
         onPreviousPressed();
-      });
+      },
+    );
   });
 
   nextButtons.forEach((button) => {
-    button.addEventListener('click',
+    button.addEventListener(
+      'click',
       (event) => {
         event.preventDefault();
         onNextPressed();
-      });
+      },
+    );
   });
 
   if (itemsPerPageSelect !== null) {

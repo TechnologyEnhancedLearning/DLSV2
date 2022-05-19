@@ -26,7 +26,8 @@ describe('getSortValue', () => {
   ${'courses-count'}    | ${'7'}            | ${'CoursesCount'}                    | ${7}
   ${'faq-id'}           | ${'86'}           | ${'FaqId'}                           | ${86}
   ${'faq-weighting'}    | ${'100'}          | ${'Weighting'}                       | ${100}
-  `('should correctly sort $fieldName by $sortBy',
+  `(
+    'should correctly sort $fieldName by $sortBy',
     ({
       fieldName, fieldValue, sortBy, expectedSortValue,
     }) => {
@@ -52,7 +53,8 @@ describe('getSortValue', () => {
 
       // Then
       expect(actualValue).toEqual(expectedSortValue);
-    });
+    },
+  );
 });
 
 describe('sortSearchableElements current', () => {
