@@ -49,9 +49,9 @@
                 adminAccountVerificationAttemptedAndFailed &&
                 !delegateAccountVerificationSuccessful;
 
-            var userEmail = verifiedDelegateUsers.Any() ? verifiedDelegateUsers[0].EmailAddress : null;
+            var userEmail = delegateAccountVerificationSuccessful ? verifiedDelegateUsers[0].EmailAddress : null;
             var adminAccountAssociatedWithDelegateAccount =
-                userEmail == null ? null : userService.GetUsersByEmailAddress(userEmail).adminUser;
+                userEmail == null ? null : userService.GetAdminUserByEmailAddress(userEmail);
 
             var adminAccountIsAlreadyLocked = unverifiedAdminUser?.IsLocked == true ||
                                               adminAccountAssociatedWithDelegateAccount?.IsLocked == true;

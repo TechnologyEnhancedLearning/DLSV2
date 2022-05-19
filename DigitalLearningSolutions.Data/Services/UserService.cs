@@ -20,6 +20,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         DelegateUser? GetDelegateUserById(int delegateId);
 
+        AdminUser? GetAdminUserByEmailAddress(string emailAddress);
+
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
 
         List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
@@ -142,9 +144,18 @@ namespace DigitalLearningSolutions.Data.Services
             return (adminUser, delegateUser);
         }
 
+        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
+        {
+            return string.IsNullOrWhiteSpace(emailAddress)
+                ? null
+                : userDataService.GetAdminUserByEmailAddress(emailAddress);
+        }
+
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
         {
-            return userDataService.GetDelegateUsersByEmailAddress(emailAddress);
+            return string.IsNullOrWhiteSpace(emailAddress)
+                ? new List<DelegateUser>()
+                : userDataService.GetDelegateUsersByEmailAddress(emailAddress);
         }
 
         public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
@@ -447,7 +458,10 @@ namespace DigitalLearningSolutions.Data.Services
                 }
                 catch (Exception ex)
                 {
-                    logger.LogWarning(ex, $"Error attempting to delete admin {adminId} with no sessions, deactivating them instead.");
+                    logger.LogWarning(
+                        ex,
+                        $"Error attempting to delete admin {adminId} with no sessions, deactivating them instead."
+                    );
                     userDataService.DeactivateAdmin(adminId);
                 }
             }
