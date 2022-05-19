@@ -52,7 +52,7 @@
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var categoryIdFilter = User.GetAdminCategoryId();
 
             var customFields = promptsService.GetDelegateRegistrationPromptsForCentre(centreId, delegateUser);
             var delegateCourses =
