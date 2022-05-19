@@ -1,4 +1,4 @@
-﻿module.exports = {
+module.exports = {
   env: {
     test: {
       presets: [
@@ -7,7 +7,7 @@
             targets: {
               ie: '11',
             },
-            corejs: '3.6',
+            corejs: '3',
             useBuiltIns: 'entry',
           },
         ],

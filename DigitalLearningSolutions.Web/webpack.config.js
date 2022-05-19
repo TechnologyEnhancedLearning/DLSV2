@@ -3,14 +3,16 @@ const path = require('path');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const entry = {};
-glob.sync('./Scripts/**/*.ts',
+glob.sync(
+  './Scripts/**/*.ts',
   {
     ignore: [
       './Scripts/**/*.d.ts',
       './Scripts/helpers/**/*.ts',
       './Scripts/spec/**/*.*',
     ],
-  }).forEach((file) => {
+  },
+).forEach((file) => {
   const name = file.replace('./Scripts/', '').replace('.ts', '');
   entry[name] = file;
 });
@@ -18,6 +20,7 @@ glob.sync('./Scripts/**/*.ts',
 const config = {
   entry,
   mode: 'production',
+  target: ['web', 'es5'],
   output: {
     path: path.join(__dirname, './wwwroot/js/'),
     filename: '[name].js',
@@ -38,7 +41,7 @@ const config = {
                 targets: {
                   ie: '11',
                 },
-                corejs: '3.6',
+                corejs: '3',
                 useBuiltIns: 'entry',
               },
             ],
@@ -53,7 +56,21 @@ const config = {
     ],
   },
   plugins: [
-    new ForkTsCheckerWebpackPlugin(),
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        diagnosticOptions: {
+          semantic: true,
+          syntactic: true,
+        },
+        mode: 'write-references',
+      },
+      issue: {
+        exclude: [
+          { file: 'node_modules/**' },
+          { file: '**/*.spec.ts' },
+        ],
+      },
+    }),
   ],
   resolve: {
     extensions: ['.ts', '.js'],
