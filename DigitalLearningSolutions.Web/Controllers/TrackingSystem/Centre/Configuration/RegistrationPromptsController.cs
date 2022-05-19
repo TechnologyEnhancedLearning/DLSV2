@@ -342,7 +342,7 @@
 
             if (model.OptionsStringContainsDuplicates())
             {
-                ModelState.AddModelError("", "The list of answers contains duplicate options");
+                ModelState.AddModelError("", "The list of responses contains duplicate options");
                 return View("EditRegistrationPrompt", model);
             }
 
@@ -412,7 +412,7 @@
 
             if (model.OptionsStringContainsDuplicates())
             {
-                ModelState.AddModelError("", "The list of answers contains duplicate options");
+                ModelState.AddModelError("", "The list of responses contains duplicate options");
                 return View("AddRegistrationPromptConfigureAnswers", model);
             }
 
@@ -474,8 +474,8 @@
 
             ModelState.AddModelError(
                 nameof(RegistrationPromptAnswersViewModel.Answer),
-                "The complete list of answers must be 4000 characters or fewer " +
-                $"({remainingLengthShownToUser} character{remainingLengthPluralitySuffix} remaining for the new answer, " +
+                "The complete list of responses must be 4000 characters or fewer " +
+                $"({remainingLengthShownToUser} character{remainingLengthPluralitySuffix} remaining for the new response, " +
                 $"{answerLength} character{answerLengthPluralitySuffix} {verb} entered)"
             );
         }
@@ -512,7 +512,7 @@
             {
                 ModelState.AddModelError(
                     nameof(BulkRegistrationPromptAnswersViewModel.OptionsString),
-                    "The complete list of answers must be 4000 characters or fewer"
+                    "The complete list of responses must be 4000 characters or fewer"
                 );
             }
 
@@ -521,7 +521,7 @@
             {
                 ModelState.AddModelError(
                     nameof(BulkRegistrationPromptAnswersViewModel.OptionsString),
-                    "Each answer must be 100 characters or fewer"
+                    "Each response must be 100 characters or fewer"
                 );
             }
         }
