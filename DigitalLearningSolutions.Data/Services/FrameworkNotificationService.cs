@@ -144,10 +144,10 @@
             dlsUrlBuilder.Path += "LearningPortal/Current";
             return dlsUrlBuilder.Uri.ToString();
         }
-        public string GetSelfAssessmentUrl(int selfAssessmentId, bool? overview = true)
+        public string GetSelfAssessmentUrl(int selfAssessmentId)
         {
             var dlsUrlBuilder = GetDLSUriBuilder();
-            dlsUrlBuilder.Path += $"LearningPortal/SelfAssessment/{selfAssessmentId}" + ((bool)overview ? "/Overview" : "");
+            dlsUrlBuilder.Path += $"LearningPortal/SelfAssessment/{selfAssessmentId}/Overview";
             return dlsUrlBuilder.Uri.ToString();
         }
         public string GetSupervisorReviewUrl()
@@ -235,7 +235,7 @@
         {
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
-            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID, false);
+            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
             var completeByString = completeByDate == null ? $"Your {delegateSelfAssessment.SupervisorRoleTitle} did not specify a date by which the self assessment should be completed." : $"Your {delegateSelfAssessment.SupervisorRoleTitle} indicated that this self assessment should be completed by {completeByDate.Value.ToShortDateString()}.";
             var supervisorReviewString = delegateSelfAssessment.SupervisorResultsReview | delegateSelfAssessment.SupervisorSelfAssessmentReview ? $"You will be able to request review for your self assessments against this profile from your {delegateSelfAssessment.SupervisorRoleTitle}." : "";
             string emailSubjectLine = $"You have been enrolled on the profile assessment {delegateSelfAssessment.RoleName} by {supervisorDelegate.SupervisorName} - Digital Learning Solutions";
@@ -254,7 +254,7 @@
         {
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
-            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID, false);
+            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
             string emailSubjectLine = $"Reminder to complete the profile assessment {delegateSelfAssessment.RoleName} - Digital Learning Solutions";
             var builder = new BodyBuilder();
             builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
