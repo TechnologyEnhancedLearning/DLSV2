@@ -23,15 +23,15 @@ pipeline {
         stage('TS Build') {
             steps {
                 dir("DigitalLearningSolutions.Web/") {
-                    bat "npm ci"
-                    bat "npm run build"
+                    bat "yarn install --frozen-lockfile"
+                    bat "yarn build"
                 }
             }
         }
         stage('TS Lint') {
             steps {
                 dir ("DigitalLearningSolutions.Web/") {
-                    bat "npm run lint"
+                    bat "yarn lint"
                 }
             }
         }
@@ -64,7 +64,7 @@ pipeline {
         stage('TS Tests') {
             steps {
                 dir ("DigitalLearningSolutions.Web/") {
-                    bat "npm test"
+                    bat "yarn test"
                 }
             }
         }

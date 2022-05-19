@@ -2,16 +2,17 @@
 
 - IDE
   - Option 1: [JetBrains Rider](https://www.jetbrains.com/rider/)
-    - In addition to the setup described in this readme, you'll have to run `npm run dev` manually to build the JS and SASS.
+    - In addition to the setup described in this readme, you'll have to run `yarn dev` manually to build the JS and SASS.
   - Option 2: [Visual Studio Professional 2022](https://visualstudio.microsoft.com/downloads/)
-      - Make sure you have the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension. This means you won't have to run `npm run dev` manually to build the JS and SASS.
+      - Make sure you have the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension. This means you won't have to run `yarn dev` manually to build the JS and SASS.
 - SQL Server 2019
 - [SQL Server Management Studio 18](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15)
-- [Git](https://git-scm.com/)
-- [NPM](https://www.npmjs.com/get-npm)
-- [SASS](http://www.sass-lang.com/install) for the command line
+- [Git](https://git-scm.com/download)
+- [Node](https://nodejs.org/en/download/) at least version 12.x
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/) version 1.x
+- [SASS](https://www.sass-lang.com/install) for the command line
     - Specifically, follow the "Install Anywhere (Standalone)" guide. Simply download and extract the files somewhere, and point PATH at the dart-sass folder. This should allow you to use the "sass" command.
-    - You don't want to install it via NPM, as those are JavaScript versions that perform significantly worse.
+    - You don't want to install it via Yarn, as those are JavaScript versions that perform significantly worse.
     - At time of writing (2022-03-14), we are using [version 1.49.9 of dart-sass](https://github.com/sass/dart-sass/releases/tag/1.49.9)
 
 # Getting the code
@@ -213,12 +214,12 @@ Open the file and click the icon to the left of the class name.
 Open the solution explorer. Right click the test project you want (DigitalLearningSolutions.Web.Tests, DigitalLearningSolutions.Data.Tests, etc.) and select "Run tests".
 
 ## Typescript tests
-The typescrpt tests are run using Jasmine, and can be found in `DigitalLearningSolutions.Web/Scripts/spec`. The tests can be run using the Task Runner Explorer, or from the terminal using `npm t` inside DigitalLearningSolutions.Web.
+The typescript tests are run using Jasmine, and can be found in `DigitalLearningSolutions.Web/Scripts/spec`. The tests can be run using the Task Runner Explorer, or from the terminal using `yarn test` inside DigitalLearningSolutions.Web.
 
 ## Typescript linting
 The typescript is linted with eslint. In Visual Studio, go to `Tools>Options>Text Editor>Javascript/Typescript>Linting>General` and tick "Enable ESLint".  This should highlight any lint errors in the editor. It's not the most reliable, and if in doubt, run the lint manually.
 
-Linting can be run with `npm run lint` inside `DigitalLearningSolutions.Web`. `npm run lint-fix` may autofix some errors.
+Linting can be run with `yarn lint` inside `DigitalLearningSolutions.Web`. `yarn lint-fix` may autofix some errors.
 
 # Troubleshooting
 
@@ -231,7 +232,7 @@ This might be a result of the css directory not being built.
 
 It should have been automatically built by the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension. Check if you have it installed in Visual Studio.
 
-Otherwise, you can work around it by manually building the css by opening a console in the project directory and running `npm run dev` (for development) or `npm run build`.
+Otherwise, you can work around it by manually building the css by opening a console in the project directory and running `yarn dev` (for development) or `yarn build`.
 
 ## npm error when opening the project in Visual Studio
 If you see an error that looks something like:
@@ -242,7 +243,7 @@ This can be fixed by making sure PATH is on the top of the 'External Web Tools' 
 1. Open the options menu in Visual Studio (F4).
 2. Search for 'External Web Tools'.
 3. In the list select `$(PATH)` and use the up arrow button to move it to the top of the list.
-4. Restart Visual Studio or double click the build command in the Task Runner Explorer to rerun the npm build.
+4. Restart Visual Studio or double click the build command in the Task Runner Explorer to rerun the yarn build.
 5. This might cause the build to fail, if tools such as SASS can no longer be found. If this occurs:
     1. Delete the `node_modules` folder in `DigitalLearningSolutions.Web`
     2. Run the install command in the Task Runner Explorer to reinstall the `node_modules`
