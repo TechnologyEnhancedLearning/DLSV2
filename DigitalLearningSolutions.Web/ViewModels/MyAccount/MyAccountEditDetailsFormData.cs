@@ -16,7 +16,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         protected MyAccountEditDetailsFormData(
             AdminUser? adminUser,
             DelegateUser? delegateUser,
-            List<(int id, string name)> jobGroups
+            List<(int id, string name)> jobGroups,
+            string? returnUrl
         )
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
@@ -41,6 +42,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
                     delegateUser?.HasBeenPromptedForPrn,
                     delegateUser?.ProfessionalRegistrationNumber
                 );
+            ReturnUrl = returnUrl;
         }
 
         protected MyAccountEditDetailsFormData(MyAccountEditDetailsFormData formData)
@@ -60,6 +62,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer6 = formData.Answer6;
             HasProfessionalRegistrationNumber = formData.HasProfessionalRegistrationNumber;
             ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
+            ReturnUrl = formData.ReturnUrl;
         }
 
         [Required(ErrorMessage = "Enter your current password")]
@@ -72,5 +75,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public IFormFile? ProfileImageFile { get; set; }
 
         public bool IsDelegateUser { get; set; }
+
+        public string? ReturnUrl { get; set; }
     }
 }

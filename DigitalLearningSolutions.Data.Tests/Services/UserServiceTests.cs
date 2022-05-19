@@ -16,6 +16,7 @@
     using FluentAssertions;
     using FluentAssertions.Common;
     using FluentAssertions.Execution;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -28,6 +29,8 @@
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private IUserVerificationService userVerificationService = null!;
+        private IClockService clockService = null!;
+        private IConfiguration configuration = null!;
 
         [SetUp]
         public void Setup()
@@ -38,13 +41,18 @@
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             sessionDataService = A.Fake<ISessionDataService>();
             logger = A.Fake<Logger<IUserService>>();
+            clockService = A.Fake<IClockService>();
+            configuration = A.Fake<IConfiguration>();
+
             userService = new UserService(
                 userDataService,
                 groupsService,
                 userVerificationService,
                 centreContractAdminUsageService,
                 sessionDataService,
-                logger
+                logger,
+                clockService,
+                configuration
             );
         }
 

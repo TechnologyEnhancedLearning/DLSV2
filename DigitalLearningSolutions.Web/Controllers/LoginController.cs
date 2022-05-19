@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Login;
@@ -73,7 +74,7 @@
                 case LoginAttemptResult.AccountsHaveMismatchedPasswords:
                     return View("MismatchingPasswords");
                 case LoginAttemptResult.AccountLocked:
-                    return View("AccountLocked", loginResult.UserEntity!.UserAccount.FailedLoginCount + 1 );
+                    return View("AccountLocked", loginResult.UserEntity!.UserAccount.FailedLoginCount + 1);
                 case LoginAttemptResult.InactiveAccount:
                     return View("AccountInactive");
                 case LoginAttemptResult.LogIntoSingleCentre:
@@ -149,7 +150,19 @@
 
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
 
-            return RedirectToReturnUrl(returnUrl) ?? RedirectToAction("Index", "Home");
+            if (!userService.ShouldForceDetailsCheck(userEntity, centreIdToLogInto))
+            {
+                return this.RedirectToReturnUrl(returnUrl, logger) ?? RedirectToAction("Index", "Home");
+            }
+
+            if (returnUrl == null)
+            {
+                return RedirectToAction("EditDetails", "MyAccount");
+            }
+
+            var dlsSubAppSection = returnUrl.Split('/')[1];
+            DlsSubApplication.TryGetFromUrlSegment(dlsSubAppSection, out var dlsSubApplication);
+            return RedirectToAction("EditDetails", "MyAccount", new { returnUrl, dlsSubApplication });
         }
 
         private async Task BasicLogInAsync(UserEntity userEntity, bool rememberMe)
@@ -164,21 +177,6 @@
             };
 
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
-        }
-
-        private IActionResult? RedirectToReturnUrl(string? returnUrl)
-        {
-            if (!string.IsNullOrEmpty(returnUrl))
-            {
-                if (Url.IsLocalUrl(returnUrl))
-                {
-                    return Redirect(returnUrl);
-                }
-
-                logger.LogWarning($"Attempted login redirect to non-local returnUrl {returnUrl}");
-            }
-
-            return null;
         }
     }
 }
