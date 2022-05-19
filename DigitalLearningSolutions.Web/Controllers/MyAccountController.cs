@@ -68,7 +68,7 @@
         [NoCaching]
         [HttpGet("EditDetails")]
         [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
-        public IActionResult EditDetails(DlsSubApplication dlsSubApplication, string? returnUrl)
+        public IActionResult EditDetails(DlsSubApplication dlsSubApplication, string? returnUrl = null)
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
@@ -96,8 +96,7 @@
         public IActionResult EditDetails(
             MyAccountEditDetailsFormData formData,
             string action,
-            DlsSubApplication dlsSubApplication,
-            string? returnUrl
+            DlsSubApplication dlsSubApplication
         )
         {
             return action switch

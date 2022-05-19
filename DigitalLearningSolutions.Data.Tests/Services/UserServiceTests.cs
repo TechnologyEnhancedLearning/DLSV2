@@ -23,14 +23,14 @@
     public class UserServiceTests
     {
         private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
+        private IClockService clockService = null!;
+        private IConfiguration configuration = null!;
         private IGroupsService groupsService = null!;
         private ILogger<IUserService> logger = null!;
         private ISessionDataService sessionDataService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private IUserVerificationService userVerificationService = null!;
-        private IClockService clockService = null!;
-        private IConfiguration configuration = null!;
 
         [SetUp]
         public void Setup()
@@ -1276,15 +1276,15 @@
             A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._)).Returns(delegateAccounts);
 
             // When
-           var result = userService.GetUserById(userId);
+            var result = userService.GetUserById(userId);
 
-           // Then
-           using (new AssertionScope())
-           {
-               result.Should().NotBeNull();
-               result!.UserAccount.Should().BeEquivalentTo(userAccount);
-               result.AdminAccounts.Should().BeEquivalentTo(adminAccounts);
-               result.DelegateAccounts.Should().BeEquivalentTo(delegateAccounts);
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result!.UserAccount.Should().BeEquivalentTo(userAccount);
+                result.AdminAccounts.Should().BeEquivalentTo(adminAccounts);
+                result.DelegateAccounts.Should().BeEquivalentTo(delegateAccounts);
             }
         }
 
@@ -1331,6 +1331,103 @@
                 result.AdminAccounts.Should().BeEquivalentTo(adminAccounts);
                 result.DelegateAccounts.Should().BeEquivalentTo(delegateAccounts);
             }
+        }
+
+        [Test]
+        [TestCase("test@test", false)]
+        [TestCase("testtest", true)]
+        [TestCase("@testtest", true)]
+        [TestCase("testtest@", true)]
+        public void ShouldForceDetailsCheck_returns_expected_result_depending_on_user_account_primary_email(
+            string email,
+            bool expectedResult
+        )
+        {
+            // Given
+            var now = new DateTime(2022, 5, 5);
+            var yesterday = now.AddDays(-1);
+            A.CallTo(() => configuration["MonthsToPromptUserDetailsCheck"]).Returns("6");
+            A.CallTo(() => clockService.UtcNow).Returns(now);
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(primaryEmail: email, detailsLastChecked: yesterday),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: yesterday) }
+            );
+
+            // When
+            var result = userService.ShouldForceDetailsCheck(userEntity, 2);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        public void ShouldForceDetailsCheck_returns_true_when_user_account_details_last_checked_is_beyond_threshold()
+        {
+            // Given
+            var now = new DateTime(2022, 5, 5);
+            var yesterday = now.AddDays(-1);
+            var sevenMonthsAgo = now.AddMonths(-7);
+            A.CallTo(() => configuration["MonthsToPromptUserDetailsCheck"]).Returns("6");
+            A.CallTo(() => clockService.UtcNow).Returns(now);
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(detailsLastChecked: sevenMonthsAgo),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: yesterday) }
+            );
+
+            // When
+            var result = userService.ShouldForceDetailsCheck(userEntity, 2);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void ShouldForceDetailsCheck_returns_true_when_delegate_account_details_last_checked_is_beyond_threshold()
+        {
+            // Given
+            var now = new DateTime(2022, 5, 5);
+            var yesterday = now.AddDays(-1);
+            var sevenMonthsAgo = now.AddMonths(-7);
+            A.CallTo(() => configuration["MonthsToPromptUserDetailsCheck"]).Returns("6");
+            A.CallTo(() => clockService.UtcNow).Returns(now);
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: sevenMonthsAgo) }
+            );
+
+            // When
+            var result = userService.ShouldForceDetailsCheck(userEntity, 2);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void ShouldForceDetailsCheck_returns_false_when_all_details_are_valid_or_below_threshold()
+        {
+            // Given
+            var now = new DateTime(2022, 5, 5);
+            var yesterday = now.AddDays(-1);
+            A.CallTo(() => configuration["MonthsToPromptUserDetailsCheck"]).Returns("6");
+            A.CallTo(() => clockService.UtcNow).Returns(now);
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: yesterday) }
+            );
+
+            // When
+            var result = userService.ShouldForceDetailsCheck(userEntity, 2);
+
+            // Then
+            result.Should().BeFalse();
         }
 
         private void AssertAdminPermissionsCalledCorrectly(

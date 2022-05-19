@@ -25,12 +25,13 @@
     public class MyAccountControllerTests
     {
         private const string Email = "test@user.com";
-        private PromptsService promptsService = null!;
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private IImageResizeService imageResizeService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
-        private IUserService userService = null!;
         private ILogger<MyAccountController> logger = null!;
+        private PromptsService promptsService = null!;
+        private IUrlHelper urlHelper = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -41,6 +42,7 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             promptsService = new PromptsService(centreRegistrationPromptsService);
             logger = A.Fake<ILogger<MyAccountController>>();
+            urlHelper = A.Fake<IUrlHelper>();
         }
 
         [Test]
@@ -92,7 +94,13 @@
                 PromptsTestHelper.GetDefaultCentreRegistrationPrompts(customPromptLists, 2)
             );
             var formData = new MyAccountEditDetailsFormData();
-            var expectedPrompt = new EditDelegateRegistrationPromptViewModel(1, "Custom Prompt", true, new List<string>(), null);
+            var expectedPrompt = new EditDelegateRegistrationPromptViewModel(
+                1,
+                "Custom Prompt",
+                true,
+                new List<string>(),
+                null
+            );
             var expectedModel = new MyAccountEditDetailsViewModel(
                 formData,
                 new List<(int id, string name)>(),
@@ -125,7 +133,8 @@
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
-            A.CallTo(() => userService.UpdateUserAccountDetailsForAllVerifiedUsers(A<MyAccountDetailsData>._, null)).DoesNothing();
+            A.CallTo(() => userService.UpdateUserAccountDetailsForAllVerifiedUsers(A<MyAccountDetailsData>._, null))
+                .DoesNothing();
             var model = new MyAccountEditDetailsFormData
             {
                 FirstName = "Test",
@@ -144,6 +153,84 @@
             A.CallTo(() => userService.UpdateUserAccountDetailsForAllVerifiedUsers(A<MyAccountDetailsData>._, null))
                 .MustHaveHappened();
 
+            result.Should().BeRedirectToActionResult().WithActionName("Index").WithRouteValue(
+                parameterName,
+                DlsSubApplication.Default.UrlSegment
+            );
+        }
+
+        [Test]
+        public void EditDetailsPostSave_with_valid_info_and_valid_return_url_redirects_to_return_url()
+        {
+            // Given
+            const string returnUrl = "/TrackingSystem/Centre/Dashboard";
+            var myAccountController = new MyAccountController(
+                centreRegistrationPromptsService,
+                userService,
+                imageResizeService,
+                jobGroupsDataService,
+                promptsService,
+                logger
+            ).WithDefaultContext()
+                .WithMockUser(true, delegateId: null)
+                .WithMockUrlHelper(urlHelper);
+            A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
+            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
+            A.CallTo(() => userService.UpdateUserAccountDetailsForAllVerifiedUsers(A<MyAccountDetailsData>._, null))
+                .DoesNothing();
+            A.CallTo(() => urlHelper.IsLocalUrl(returnUrl)).Returns(true);
+            var model = new MyAccountEditDetailsFormData
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Email = Email,
+                Password = "password",
+                ReturnUrl = returnUrl,
+            };
+            var parameterName = typeof(MyAccountController).GetMethod("Index")?.GetParameters()
+                .SingleOrDefault(p => p.ParameterType == typeof(DlsSubApplication))?.Name;
+
+            // When
+            var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
+
+            // Then
+            result.Should().BeRedirectResult().WithUrl(returnUrl);
+        }
+
+        [Test]
+        public void EditDetailsPostSave_with_valid_info_and_invalid_return_url_redirects_to_index()
+        {
+            // Given
+            var myAccountController = new MyAccountController(
+                    centreRegistrationPromptsService,
+                    userService,
+                    imageResizeService,
+                    jobGroupsDataService,
+                    promptsService,
+                    logger
+                ).WithDefaultContext()
+                .WithMockUser(true, delegateId: null)
+                .WithMockUrlHelper(urlHelper);
+            A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
+            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
+            A.CallTo(() => userService.UpdateUserAccountDetailsForAllVerifiedUsers(A<MyAccountDetailsData>._, null))
+                .DoesNothing();
+            A.CallTo(() => urlHelper.IsLocalUrl(A<string>._)).Returns(false);
+            var model = new MyAccountEditDetailsFormData
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Email = Email,
+                Password = "password",
+                ReturnUrl = "/TrackingSystem/Centre/Dashboard",
+            };
+            var parameterName = typeof(MyAccountController).GetMethod("Index")?.GetParameters()
+                .SingleOrDefault(p => p.ParameterType == typeof(DlsSubApplication))?.Name;
+
+            // When
+            var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
+
+            // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index").WithRouteValue(
                 parameterName,
                 DlsSubApplication.Default.UrlSegment
@@ -172,7 +259,13 @@
             {
                 ProfileImageFile = A.Fake<FormFile>(),
             };
-            var expectedPrompt = new EditDelegateRegistrationPromptViewModel(1, "Custom Prompt", true, new List<string>(), null);
+            var expectedPrompt = new EditDelegateRegistrationPromptViewModel(
+                1,
+                "Custom Prompt",
+                true,
+                new List<string>(),
+                null
+            );
             var expectedModel = new MyAccountEditDetailsViewModel(
                 formData,
                 new List<(int id, string name)>(),

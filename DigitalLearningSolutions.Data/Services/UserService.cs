@@ -484,7 +484,7 @@ namespace DigitalLearningSolutions.Data.Services
                                                   userEntity.UserAccount.DetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now;
             var delegateAccountTriggersDetailsCheck = delegateAccount != null &&
                                                       (delegateAccount.CentreSpecificDetailsLastChecked == null ||
-                                                       delegateAccount.CentreSpecificDetailsLastChecked.Value < now);
+                                                       delegateAccount.CentreSpecificDetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now);
             var primaryEmailIsInvalid = !new EmailAddressAttribute().IsValid(userEntity.UserAccount.PrimaryEmail);
             return userAccountTriggersDetailsCheck || delegateAccountTriggersDetailsCheck || primaryEmailIsInvalid;
         }
