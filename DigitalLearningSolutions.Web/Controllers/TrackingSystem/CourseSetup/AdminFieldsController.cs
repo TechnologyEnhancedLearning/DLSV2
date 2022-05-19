@@ -308,10 +308,10 @@
             }
 
             if (courseAdminFieldsService.AddAdminFieldToCourse(
-                    customisationId,
-                    model.AdminFieldId!.Value,
-                    model.OptionsString
-                ))
+                customisationId,
+                model.AdminFieldId!.Value,
+                model.OptionsString
+            ))
             {
                 return RedirectToAction("Index", new { customisationId });
             }

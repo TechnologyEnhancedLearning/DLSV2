@@ -562,7 +562,7 @@
             const string action = "save";
 
             A.CallTo(() => courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(A<int>._))
-                .Returns(new int[] { 1, 0, 0 });
+                .Returns(new [] { 1, 0, 0 });
 
             // When
             var result = controller.AddAdminField(100, model, action);
@@ -585,8 +585,7 @@
             const string action = "addPrompt";
 
             // When
-            var result =
-                controller.AddAdminField(1, model, action);
+            var result = controller.AddAdminField(1, model, action);
 
             // Then
             using (new AssertionScope())
@@ -607,8 +606,7 @@
             const string action = "addPrompt";
 
             // When
-            var result =
-                controller.EditAdminField(1, model, action);
+            var result = controller.EditAdminField(1, model, action);
 
             // Then
             using (new AssertionScope())
