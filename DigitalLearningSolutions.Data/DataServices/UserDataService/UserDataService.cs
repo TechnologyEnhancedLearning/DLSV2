@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
@@ -53,6 +54,8 @@
             int userId
         );
 
+        void UpdateUserDetailsLastChecked(DateTime detailsLastChecked, int userId);
+
         void UpdateDelegateAccount(
             int delegateId,
             bool active,
@@ -63,6 +66,8 @@
             string? answer5,
             string? answer6
         );
+
+        void UpdateDelegateAccountCentreSpecificDetailsLastChecked(DateTime detailsLastChecked, int userId);
 
         void ApproveDelegateUsers(params int[] ids);
 
@@ -137,6 +142,17 @@
                         ELSE 0
                         END",
                 new { emails }
+            );
+        }
+
+        public void UpdateUserDetailsLastChecked(DateTime detailsLastChecked, int userId)
+        {
+            connection.Execute(
+                @"UPDATE Users
+                        SET
+                            DetailsLastChecked = @detailsLastChecked
+                        WHERE ID = @userId",
+                new { detailsLastChecked, userId }
             );
         }
     }

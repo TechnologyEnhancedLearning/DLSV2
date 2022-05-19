@@ -195,6 +195,10 @@ namespace DigitalLearningSolutions.Data.Services
                     myAccountDetailsData.DelegateId
                 );
 
+            var userId = adminUser?.Id ?? delegateUsers[0].Id;
+            var detailsLastChecked = DateTime.Now;
+            userDataService.UpdateUserDetailsLastChecked(detailsLastChecked, userId);
+
             if (adminUser != null)
             {
                 userDataService.UpdateAdminUser(
@@ -208,6 +212,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (delegateUsers.Count != 0)
             {
+                userDataService.UpdateDelegateAccountCentreSpecificDetailsLastChecked(detailsLastChecked, userId);
                 userDataService.UpdateUser(
                     myAccountDetailsData.FirstName,
                     myAccountDetailsData.Surname,
@@ -216,7 +221,7 @@ namespace DigitalLearningSolutions.Data.Services
                     myAccountDetailsData.ProfessionalRegistrationNumber,
                     myAccountDetailsData.HasBeenPromptedForPrn,
                     centreAnswersData.JobGroupId,
-                    1 // TODO HEEDLS-887 This needs correcting to the correct UserId for the delegate record.
+                    userId
                 );
 
                 var oldDelegateDetails =

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
@@ -228,6 +229,17 @@
                     answer5,
                     answer6,
                 }
+            );
+        }
+
+        public void UpdateDelegateAccountCentreSpecificDetailsLastChecked(DateTime detailsLastChecked, int userId)
+        {
+            connection.Execute(
+                @"UPDATE DelegateAccounts
+                        SET
+                            CentreSpecificDetailsLastChecked = @detailsLastChecked
+                        WHERE UserID = @userId",
+                new { detailsLastChecked, userId }
             );
         }
 
