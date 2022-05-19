@@ -29,7 +29,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
 
-        void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId);
+        void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId);
 
         string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel);
     }
@@ -218,7 +218,7 @@ namespace DigitalLearningSolutions.Data.Services
             transaction.Complete();
         }
 
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId)
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 

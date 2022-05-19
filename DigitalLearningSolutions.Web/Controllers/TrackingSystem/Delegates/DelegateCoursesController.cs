@@ -60,7 +60,7 @@
             );
 
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var categoryId = User.GetAdminCategoryId();
 
             var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId);
 
@@ -97,7 +97,7 @@
         public IActionResult AllCourseStatistics()
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var categoryId = User.GetAdminCategoryId();
             var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId);
 
             var model = new AllDelegateCourseStatisticsViewModel(details);
@@ -114,7 +114,7 @@
         )
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var categoryId = User.GetAdminCategoryId();
             var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFile(
                 centreId,
                 categoryId,

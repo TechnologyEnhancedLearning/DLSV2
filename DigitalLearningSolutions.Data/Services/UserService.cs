@@ -53,7 +53,7 @@ namespace DigitalLearningSolutions.Data.Services
         void UpdateAdminUserPermissions(
             int adminId,
             AdminRoles adminRoles,
-            int categoryId
+            int? categoryId
         );
 
         void UpdateUserAccountDetailsViaDelegateAccount(
@@ -320,7 +320,7 @@ namespace DigitalLearningSolutions.Data.Services
         public void UpdateAdminUserPermissions(
             int adminId,
             AdminRoles adminRoles,
-            int categoryId
+            int? categoryId
         )
         {
             if (NewUserRolesExceedAvailableSpots(adminId, adminRoles))
@@ -404,7 +404,7 @@ namespace DigitalLearningSolutions.Data.Services
         public IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId)
         {
             return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor)
-                .Where(au => au.CategoryId == categoryId || au.CategoryId == 0);
+                .Where(au => au.CategoryId == categoryId || au.CategoryId == null);
         }
 
         public bool DelegateUserLearningHubAccountIsLinked(int delegateId)

@@ -16,7 +16,7 @@
                 data.PasswordHash!,
                 true,
                 true,
-                0,
+                null,
                 true,
                 true,
                 false,
