@@ -4,7 +4,9 @@
     using System.Data;
     using System.Transactions;
     using Dapper;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public interface IRegistrationDataService
     {
@@ -16,6 +18,7 @@
     public class RegistrationDataService : IRegistrationDataService
     {
         private readonly IDbConnection connection;
+        private readonly IUserDataService userDataService;
 
         public RegistrationDataService(IDbConnection connection)
         {
@@ -66,29 +69,15 @@
                 transaction
             );
 
-            var userCentreDetailsValues = new
+            if (!string.IsNullOrWhiteSpace(delegateRegistrationModel.SecondaryEmail))
             {
-                userId,
-                CentreId = delegateRegistrationModel.Centre,
-                Email = delegateRegistrationModel.SecondaryEmail,
-            };
-
-            connection.Execute(
-                @"INSERT INTO UserCentreDetails
-                    (
-                        UserId,
-                        CentreId,
-                        Email
-                    )
-                    VALUES
-                    (
-                        @userId,
-                        @centreId,
-                        @email
-                    )",
-                userCentreDetailsValues,
-                transaction
-            );
+                userDataService.CreateOrUpdateUserCentreDetails(
+                    userId,
+                    delegateRegistrationModel.Centre,
+                    delegateRegistrationModel.SecondaryEmail,
+                    transaction
+                );
+            }
 
             var initials = delegateRegistrationModel.FirstName.Substring(0, 1) +
                            delegateRegistrationModel.LastName.Substring(0, 1);
@@ -142,7 +131,6 @@
                         CentreID,
                         DateRegistered,
                         CandidateNumber,
-                        Email,
                         Answer1,
                         Answer2,
                         Answer3,
@@ -167,7 +155,6 @@
                         @centreId,
                         @dateRegistered,
                         @candidateNumber,
-                        @email,
                         @answer1,
                         @answer2,
                         @answer3,
@@ -199,7 +186,18 @@
 
         public int RegisterAdmin(AdminRegistrationModel registrationModel, int userId)
         {
-            using var transaction = new TransactionScope();
+            connection.Open();
+            using var transaction = connection.BeginTransaction();
+
+            if (!string.IsNullOrWhiteSpace(registrationModel.SecondaryEmail))
+            {
+                userDataService.CreateOrUpdateUserCentreDetails(
+                    userId,
+                    registrationModel.Centre,
+                    registrationModel.SecondaryEmail,
+                    transaction
+                );
+            }
 
             var adminValues = new
             {
@@ -259,7 +257,8 @@
                         @surname_deprecated,
                         @password_deprecated
                     )",
-                adminValues
+                adminValues,
+                transaction
             );
 
             connection.Execute(
@@ -271,7 +270,7 @@
                 new { adminUserId, roles = registrationModel.GetNotificationRoles() }
             );
 
-            transaction.Complete();
+            transaction.Commit();
 
             return adminUserId;
         }

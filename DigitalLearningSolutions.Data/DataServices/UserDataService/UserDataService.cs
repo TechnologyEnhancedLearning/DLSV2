@@ -114,7 +114,16 @@
 
         bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails);
 
+        bool EmailIsInUseByOtherUser(int userId, string email);
+
         void DeleteAdminAccount(int adminId);
+
+        void CreateOrUpdateUserCentreDetails(
+            int userId,
+            int centreId,
+            string email,
+            IDbTransaction? transaction = null
+        );
     }
 
     public partial class UserDataService : IUserDataService
@@ -124,20 +133,6 @@
         public UserDataService(IDbConnection connection)
         {
             this.connection = connection;
-        }
-
-        public bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails)
-        {
-            return connection.QueryFirst<bool>(
-                @"SELECT CASE
-                        WHEN EXISTS (SELECT ID FROM USERS WHERE PrimaryEmail IN @emails)
-                            OR EXISTS (SELECT ID FROM DelegateAccounts da WHERE da.Email IN @emails AND da.Email IS NOT NULL)
-                            OR EXISTS (SELECT ID FROM AdminAccounts aa WHERE aa.Email IN @emails AND aa.Email IS NOT NULL)
-                        THEN 1
-                        ELSE 0
-                        END",
-                new { emails }
-            );
         }
     }
 }

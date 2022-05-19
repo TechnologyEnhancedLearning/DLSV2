@@ -266,14 +266,21 @@ namespace DigitalLearningSolutions.Data.Services
 
         public string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
         {
-            ValidateRegistrationEmail(delegateRegistrationModel);
-
             string candidateNumber;
 
             try
             {
+                ValidateRegistrationEmail(delegateRegistrationModel);
                 candidateNumber =
                     registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+            }
+            catch (DelegateCreationFailedException e)
+            {
+                var error = e.Error;
+                logger.LogError(
+                    $"Could not create account for delegate on registration. Failure: {error.Name}."
+                );
+                throw new DelegateCreationFailedException(error);
             }
             catch
             {
