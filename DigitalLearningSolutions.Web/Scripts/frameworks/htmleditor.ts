@@ -1,8 +1,8 @@
-import * as jodit from 'jodit';
+import { Jodit } from 'jodit';
 
 let jodited = false;
 if (jodited === false) {
-  const editor = new jodit.Jodit('.html-editor', {
+  const editor = Jodit.make('.html-editor', {
     buttons: [
       'source', '|',
       'bold',
@@ -58,7 +58,11 @@ if (jodited === false) {
       'ol', '|',
       'undo', 'redo',
     ],
+    style: {
+      backgroundColor: '#FFF',
+    },
   });
+
   if (editor != null) {
     jodited = true;
   }
