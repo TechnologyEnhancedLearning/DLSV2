@@ -30,6 +30,8 @@
             string endDateString,
             int centreId
         );
+
+        string GetCourseCategoryNameForActivityFilter(int? courseCategoryId);
     }
 
     public class ActivityService : IActivityService
@@ -211,20 +213,20 @@
             return (startDate, endDateIsSet ? endDate : (DateTime?)null);
         }
 
+        public string GetCourseCategoryNameForActivityFilter(int? courseCategoryId)
+        {
+            var courseCategoryName = courseCategoryId.HasValue
+                ? courseCategoriesDataService.GetCourseCategoryName(courseCategoryId.Value)
+                : "All";
+            return courseCategoryName ?? "All";
+        }
+
         private string GetJobGroupNameForActivityFilter(int? jobGroupId)
         {
             var jobGroupName = jobGroupId.HasValue
                 ? jobGroupsDataService.GetJobGroupName(jobGroupId.Value)
                 : "All";
             return jobGroupName ?? "All";
-        }
-
-        private string GetCourseCategoryNameForActivityFilter(int? courseCategoryId)
-        {
-            var courseCategoryName = courseCategoryId.HasValue
-                ? courseCategoriesDataService.GetCourseCategoryName(courseCategoryId.Value)
-                : "All";
-            return courseCategoryName ?? "All";
         }
 
         private string GetCourseNameForActivityFilter(int? courseId)
