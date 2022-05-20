@@ -23,15 +23,19 @@ pipeline {
         stage('TS Build') {
             steps {
                 dir("DigitalLearningSolutions.Web/") {
-                    bat "yarn install --frozen-lockfile"
-                    bat "yarn build"
+                    nodejs(nodeJSInstallationName: 'NodeJS-16') {
+                        bat "yarn install --frozen-lockfile"
+                        bat "yarn build"
+                    }
                 }
             }
         }
         stage('TS Lint') {
             steps {
                 dir ("DigitalLearningSolutions.Web/") {
-                    bat "yarn lint"
+                    nodejs(nodeJSInstallationName: 'NodeJS-16') {
+                        bat "yarn lint"
+                    }
                 }
             }
         }
@@ -64,7 +68,9 @@ pipeline {
         stage('TS Tests') {
             steps {
                 dir ("DigitalLearningSolutions.Web/") {
-                    bat "yarn test"
+                    nodejs(nodeJSInstallationName: 'NodeJS-16') {
+                        bat "yarn test"
+                    }
                 }
             }
         }
