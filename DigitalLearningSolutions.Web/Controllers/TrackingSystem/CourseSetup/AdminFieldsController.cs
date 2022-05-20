@@ -490,7 +490,7 @@
             {
                 ModelState.AddModelError(
                     nameof(BulkAdminFieldAnswersViewModel.OptionsString),
-                    "Each response must be unique"
+                    "The list of responses contains duplicate options"
                 );
             }
         }
@@ -526,8 +526,8 @@
             if (!IsOptionsListUnique(NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(optionsString)))
             {
                 ModelState.AddModelError(
-                    nameof(AdminFieldAnswersViewModel.OptionsString),
-                    "Each response must be unique"
+                    nameof(AdminFieldAnswersViewModel.Answer),
+                    "That response is already in the list of options"
                 );
             }
 
