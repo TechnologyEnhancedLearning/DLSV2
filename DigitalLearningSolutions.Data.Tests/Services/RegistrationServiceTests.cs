@@ -319,7 +319,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            A.CallTo(() => userDataService.AnyEmailsInSetAreAlreadyInUse(A<IEnumerable<string?>>._)).Returns(true);
+            A.CallTo(() => userDataService.AnyEmailsInSetAreAlreadyInUse(A<IEnumerable<string?>>._, null)).Returns(true);
 
             // When
             Action act = () => registrationService.CreateDelegateAccountForNewUser(model, string.Empty, false);
@@ -437,7 +437,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => registrationDataService.RegisterAdmin(model))
+            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
+            A.CallTo(() => registrationDataService.RegisterAdmin(model, 0))
                 .MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustHaveHappened(1, Times.Exactly);
@@ -477,7 +478,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
-            A.CallTo(() => registrationDataService.RegisterAdmin(model))
+            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
+            A.CallTo(() => registrationDataService.RegisterAdmin(model, 0))
                 .MustNotHaveHappened();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustNotHaveHappened();
@@ -734,7 +736,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                             a.IsContentCreator == adminRoles.IsContentCreator &&
                             a.IsTrainer == adminRoles.IsTrainer &&
                             a.IsSupervisor == adminRoles.IsSupervisor
-                    )
+                    ),
+                    // TODO HEEDLS-900 these user IDs are placeholders and should be updated
+                    0
                 )
             ).MustHaveHappened();
         }

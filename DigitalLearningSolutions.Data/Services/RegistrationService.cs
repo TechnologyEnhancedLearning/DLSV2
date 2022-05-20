@@ -207,7 +207,8 @@ namespace DigitalLearningSolutions.Data.Services
 
             CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
 
-            registrationDataService.RegisterAdmin(registrationModel);
+            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
+            registrationDataService.RegisterAdmin(registrationModel, 0);
 
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
@@ -256,19 +257,24 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateUser.ProfileImage
             );
 
-            registrationDataService.RegisterAdmin(adminRegistrationModel);
+            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
+            registrationDataService.RegisterAdmin(adminRegistrationModel, 0);
         }
 
         public string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
         {
-            ValidateRegistrationEmail(delegateRegistrationModel);
-
-            string candidateNumber;
-
             try
             {
-                candidateNumber =
-                    registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+                ValidateRegistrationEmail(delegateRegistrationModel);
+                return registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+            }
+            catch (DelegateCreationFailedException e)
+            {
+                var error = e.Error;
+                logger.LogError(
+                    $"Could not create account for delegate on registration. Failure: {error.Name}."
+                );
+                throw new DelegateCreationFailedException(error);
             }
             catch
             {
@@ -278,8 +284,6 @@ namespace DigitalLearningSolutions.Data.Services
                 );
                 throw new DelegateCreationFailedException(error);
             }
-
-            return candidateNumber;
         }
 
         private IEnumerable<int> GetPendingSupervisorDelegateIdsMatchingDelegate(
