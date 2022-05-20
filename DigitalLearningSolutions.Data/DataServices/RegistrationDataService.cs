@@ -194,11 +194,7 @@
                 importOnly = registrationModel.ImportOnly,
                 isTrainer = registrationModel.IsTrainer,
                 isSupervisor = registrationModel.IsSupervisor,
-                isNominatedSupervisor = registrationModel.IsNominatedSupervisor,
-                // TODO HEEDLS-889 currently non-null deprecated columns
-                forename_deprecated = "",
-                surname_deprecated = "",
-                password_deprecated = ""
+                isNominatedSupervisor = registrationModel.IsNominatedSupervisor
             };
 
             var adminUserId = connection.QuerySingle<int>(
@@ -215,10 +211,7 @@
                         ImportOnly,
                         IsTrainer,
                         IsSupervisor,
-                        IsNominatedSupervisor,
-                        Forename_deprecated,
-                        Surname_deprecated,
-                        Password_deprecated
+                        IsNominatedSupervisor
                     )
                     OUTPUT Inserted.ID
                     VALUES
@@ -234,10 +227,7 @@
                         @importOnly,
                         @isTrainer,
                         @isSupervisor,
-                        @isNominatedSupervisor,
-                        @forename_deprecated,
-                        @surname_deprecated,
-                        @password_deprecated
+                        @isNominatedSupervisor
                     )",
                 adminValues,
                 transaction
