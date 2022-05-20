@@ -146,10 +146,10 @@
             dlsUrlBuilder.Path += "LearningPortal/Current";
             return dlsUrlBuilder.Uri.ToString();
         }
-        public string GetSelfAssessmentUrl(int selfAssessmentId, bool? overview = true)
+        public string GetSelfAssessmentUrl(int selfAssessmentId, bool overview = true)
         {
             var dlsUrlBuilder = GetDLSUriBuilder();
-            dlsUrlBuilder.Path += $"LearningPortal/SelfAssessment/{selfAssessmentId}/Overview";
+            dlsUrlBuilder.Path += $"LearningPortal/SelfAssessment/{selfAssessmentId}" + (overview? "/overview" : "");
             return dlsUrlBuilder.Uri.ToString();
         }
         public string GetSupervisorReviewUrl()
