@@ -43,7 +43,7 @@
         [TestCase("test@gmail.com", true)]
         [TestCase("sample@admin.email", false)]
         [TestCase("sample@delegate.email", true)]
-        public void EmailIsInUseByOtherUser_throws_if_email_is_in_use_by_other_user(string email, bool expectedResult)
+        public void EmailIsInUseByOtherUser_returns_true_if_email_is_in_use_by_other_user(string email, bool expectedResult)
         {
             using var transaction = new TransactionScope();
 

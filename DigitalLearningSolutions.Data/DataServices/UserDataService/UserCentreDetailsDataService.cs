@@ -34,7 +34,8 @@
                         THEN 1
                         ELSE 0
                         END",
-                new { userId, centreId }
+                new { userId, centreId },
+                transaction
                 );
 
             if (detailsAlreadyExist)
@@ -71,8 +72,8 @@
         {
             return connection.QuerySingle<bool>(
                 @"SELECT CASE
-                        WHEN EXISTS (SELECT ID FROM USERS WITH (UPDLOCK, TABLOCKX, HOLDLOCK) WHERE PrimaryEmail = @email AND ID <> @userId)
-                        OR EXISTS (SELECT ID FROM UserCentreDetails d WITH (UPDLOCK, TABLOCKX, HOLDLOCK)
+                        WHEN EXISTS (SELECT ID FROM USERS WHERE PrimaryEmail = @email AND ID <> @userId)
+                        OR EXISTS (SELECT ID FROM UserCentreDetails d
                             WHERE d.Email = @email AND d.Email IS NOT NULL AND d.UserID <> @userId)
                         THEN 1
                         ELSE 0
@@ -84,8 +85,8 @@
         {
             return connection.QueryFirst<bool>(
                 @"SELECT CASE
-                        WHEN EXISTS (SELECT ID FROM Users WITH (UPDLOCK, TABLOCKX, HOLDLOCK) WHERE PrimaryEmail IN @emails)
-                            OR EXISTS (SELECT ID FROM UserCentreDetails d WITH (UPDLOCK, TABLOCKX, HOLDLOCK) WHERE d.Email IN @emails AND d.Email IS NOT NULL)
+                        WHEN EXISTS (SELECT ID FROM Users WHERE PrimaryEmail IN @emails)
+                            OR EXISTS (SELECT ID FROM UserCentreDetails d WHERE d.Email IN @emails AND d.Email IS NOT NULL)
                         THEN 1
                         ELSE 0
                         END",

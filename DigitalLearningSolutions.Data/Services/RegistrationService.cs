@@ -266,13 +266,10 @@ namespace DigitalLearningSolutions.Data.Services
 
         public string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
         {
-            string candidateNumber;
-
             try
             {
                 ValidateRegistrationEmail(delegateRegistrationModel);
-                candidateNumber =
-                    registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+                return registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
             }
             catch (DelegateCreationFailedException e)
             {
@@ -290,8 +287,6 @@ namespace DigitalLearningSolutions.Data.Services
                 );
                 throw new DelegateCreationFailedException(error);
             }
-
-            return candidateNumber;
         }
 
         private IEnumerable<int> GetPendingSupervisorDelegateIdsMatchingDelegate(
