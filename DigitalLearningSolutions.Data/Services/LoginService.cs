@@ -5,7 +5,6 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
-    using DocumentFormat.OpenXml.Wordprocessing;
 
     public interface ILoginService
     {
@@ -50,19 +49,20 @@
                 userEntity.UserAccount.FailedLoginCount += 1;
                 userService.UpdateFailedLoginCount(userEntity.UserAccount);
 
-                return userEntity.IsLocked ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity) : new LoginResult(LoginAttemptResult.InvalidPassword);
-            }
-            
-            if (!userEntity.IsLocked || !userEntity.AdminAccounts.Any())
-            {
-                userService.ResetFailedLoginCount(userEntity.UserAccount);
+                return userEntity.IsLocked
+                    ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity)
+                    : new LoginResult(LoginAttemptResult.InvalidPassword);
             }
 
-            return DetermineDestinationForSuccessfulLogin(userEntity, username);
+            return userEntity.IsLocked
+                ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity)
+                : DetermineDestinationForSuccessfulLogin(userEntity, username);
         }
 
-        private static LoginResult DetermineDestinationForSuccessfulLogin(UserEntity userEntity, string username)
+        private LoginResult DetermineDestinationForSuccessfulLogin(UserEntity userEntity, string username)
         {
+            userService.ResetFailedLoginCount(userEntity.UserAccount);
+
             var singleCentreToLogUserInto = GetCentreIdIfLoggingUserIntoSingleCentre(userEntity, username);
             if (singleCentreToLogUserInto == null)
             {
@@ -77,13 +77,7 @@
             var centreIsActive = adminAccountToLogInto?.CentreActive ?? delegateAccountToLogInto?.CentreActive ?? false;
             var accountAtCentreIsActive = adminAccountToLogInto?.Active ?? delegateAccountToLogInto?.Active ?? false;
 
-            var adminAccountIsAtSingleCentreAndIsLocked = userEntity.IsLocked && adminAccountToLogInto != null;
-            if (adminAccountIsAtSingleCentreAndIsLocked)
-            {
-                return new LoginResult(LoginAttemptResult.AccountLocked, userEntity);
-            }
-
-            if (!centreIsActive || !accountAtCentreIsActive || delegateAccountToLogInto is { Approved: false } )
+            if (!centreIsActive || !accountAtCentreIsActive || delegateAccountToLogInto is { Approved: false })
             {
                 return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity);
             }

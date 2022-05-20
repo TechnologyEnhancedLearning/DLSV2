@@ -1243,19 +1243,6 @@
         }
 
         [Test]
-        public void GetUserById_throws_UserAccountNotFoundException_when_no_admin_or_delegate_accounts_found()
-        {
-            // Given
-            const int userId = 2;
-            A.CallTo(() => userDataService.GetUserAccountById(userId)).Returns(UserTestHelper.GetDefaultUserAccount());
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(A<int>._)).Returns(new List<AdminAccount>());
-            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._)).Returns(new List<DelegateAccount>());
-
-            // Then
-            Assert.Throws<UserAccountNotFoundException>(() => userService.GetUserById(userId));
-        }
-
-        [Test]
         public void GetUserById_returns_populated_user_entity_when_accounts_are_returned()
         {
             // Given

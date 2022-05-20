@@ -73,7 +73,7 @@
                 case LoginAttemptResult.AccountsHaveMismatchedPasswords:
                     return View("MismatchingPasswords");
                 case LoginAttemptResult.AccountLocked:
-                    return View("AccountLocked", loginResult.UserEntity!.UserAccount.FailedLoginCount + 1 );
+                    return View("AccountLocked", loginResult.UserEntity!.UserAccount.FailedLoginCount);
                 case LoginAttemptResult.InactiveAccount:
                     return View("AccountInactive");
                 case LoginAttemptResult.LogIntoSingleCentre:

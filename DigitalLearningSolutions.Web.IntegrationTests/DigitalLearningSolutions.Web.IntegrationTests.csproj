@@ -22,7 +22,6 @@
   </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
         <ProjectReference Include="..\DigitalLearningSolutions.Web\DigitalLearningSolutions.Web.csproj" />
     </ItemGroup>
 

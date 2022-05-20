@@ -442,13 +442,6 @@ namespace DigitalLearningSolutions.Data.Services
             var adminAccounts = userDataService.GetAdminAccountsByUserId(userId).ToList();
             var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userId).ToList();
 
-            if (!adminAccounts.Any() && !delegateAccounts.Any())
-            {
-                throw new UserAccountNotFoundException(
-                    "No AdminAccounts or DelegateAccounts link to User with ID: " + userId
-                );
-            }
-
             return new UserEntity(userAccount, adminAccounts, delegateAccounts);
         }
 
