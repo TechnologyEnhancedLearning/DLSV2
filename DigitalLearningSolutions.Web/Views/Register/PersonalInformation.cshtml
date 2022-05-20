@@ -72,20 +72,29 @@
                      autocomplete="family-name"
                      css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input asp-for="Email"
-                     label="Email"
+      <vc:text-input asp-for="PrimaryEmail"
+                     label="Primary Email"
                      populate-with-current-value="true"
                      type="text"
                      spell-check="false"
-                     hint-text=""
-                     autocomplete="email"
+                     hint-text="This will be used for logging into the system. All communications will be sent to this email by default."
+                     autocomplete="primary-email"
+                     css-class="nhsuk-u-width-one-half" />
+
+      <vc:text-input asp-for="SecondaryEmail"
+                     label="Centre Email"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text="If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address. Your primary email address will still be used for logging in and notifications for managing your account."
+                     autocomplete="secondary-email"
                      css-class="nhsuk-u-width-one-half" />
 
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 
     <p class="nhsuk-u-font-size-24">
-      Alternatively, if you already have an account, log in:
+      Alternatively, if you already have an account and would like to register at a new centre, log in and register through the My Account page:
     </p>
     <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Login" asp-action="Index" role="button">
       Log in
