@@ -5,10 +5,11 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Extensions;
 
     public partial class UserDataService
     {
-        public void CreateOrUpdateUserCentreDetails(
+        public void SetCentreEmail(
             int userId,
             int centreId,
             string email,
@@ -17,10 +18,7 @@
         {
             if (transaction == null)
             {
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                }
+                connection.EnsureOpen();
                 transaction = connection.BeginTransaction();
             }
 

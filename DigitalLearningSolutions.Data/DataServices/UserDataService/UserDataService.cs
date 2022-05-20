@@ -118,7 +118,7 @@
 
         void DeleteAdminAccount(int adminId);
 
-        void CreateOrUpdateUserCentreDetails(
+        void SetCentreEmail(
             int userId,
             int centreId,
             string email,

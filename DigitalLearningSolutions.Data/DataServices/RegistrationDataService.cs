@@ -5,6 +5,7 @@
     using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -29,10 +30,7 @@
         {
             // TODO HEEDLS-886: this method previously returned error codes as well as candidate numbers.
             // any code that calls it and handled those errors on the basis of the codes needs to be updated
-            if (connection.State != ConnectionState.Open)
-            {
-                connection.Open();
-            }
+            connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
 
             var userValues = new
@@ -74,7 +72,7 @@
 
             if (!string.IsNullOrWhiteSpace(delegateRegistrationModel.SecondaryEmail))
             {
-                userDataService.CreateOrUpdateUserCentreDetails(
+                userDataService.SetCentreEmail(
                     userId,
                     delegateRegistrationModel.Centre,
                     delegateRegistrationModel.SecondaryEmail,
@@ -189,15 +187,12 @@
 
         public int RegisterAdmin(AdminRegistrationModel registrationModel, int userId)
         {
-            if (connection.State != ConnectionState.Open)
-            {
-                connection.Open();
-            }
+            connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
 
             if (!string.IsNullOrWhiteSpace(registrationModel.SecondaryEmail))
             {
-                userDataService.CreateOrUpdateUserCentreDetails(
+                userDataService.SetCentreEmail(
                     userId,
                     registrationModel.Centre,
                     registrationModel.SecondaryEmail,
