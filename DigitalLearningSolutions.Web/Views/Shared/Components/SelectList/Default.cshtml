@@ -2,7 +2,7 @@
 @model SelectListViewModel
 
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")" style="white-space:nowrap">
-  <label class="nhsuk-label" for="@Model.Name">
+  <label id="@(Model.Name)-description" class="nhsuk-label" for="@Model.Name">
     @Model.Label
   </label>
   @if (Model.HintText != null) {
@@ -16,7 +16,7 @@
     </span>
   }
   <select class="nhsuk-select @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
-          aria-describedby="@Model.Name-error @Model.Name-hint"
+          aria-describedby="@(Model.Name)-description @(Model.HasError ? $"{Model.Name}-error": "") @(!String.IsNullOrEmpty(Model.HintText) ? $"{Model.Name}-hint" : "")"
           id="@Model.Id"
           name="@Model.Name"
           value="@Model.Value"

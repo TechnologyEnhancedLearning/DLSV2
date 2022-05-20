@@ -2,7 +2,7 @@
 @model TextInputViewModel
 
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")" style="white-space:nowrap">
-  <label class="nhsuk-label" for="@Model.Name">
+  <label id="@(Model.Name)-description" class="nhsuk-label" for="@Model.Name">
     @Model.Label
   </label>
   @if (Model.HintText != null) {
@@ -14,7 +14,7 @@
     <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
       @foreach (var errorMessage in Model.ErrorMessages) {
         <span class="error-message--margin-bottom-1 nhsuk-error-message">
-          <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
+          <span class="nhsuk-u-visually-hidden">Error:</span> <span id="@(Model.Name)-error">@errorMessage</span>
         </span>
       }
     </div>
@@ -26,7 +26,7 @@
          type="@Model.Type"
          spellcheck="@Model.SpellCheck"
          autocomplete="@Model.Autocomplete"
-         aria-describedby="@Model.Name-error @Model.Name-hint" />
+         aria-describedby="@(Model.Name)-description @(Model.HasError ? $"{Model.Name}-error": "") @(!String.IsNullOrEmpty(Model.HintText) ? $"{Model.Name}-hint" : "")" />
   @if (Model.Required)
   {
     <partial name="_RequiredField" />
