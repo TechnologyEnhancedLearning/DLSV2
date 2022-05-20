@@ -8,7 +8,7 @@
         {
             driver.Navigate().GoToUrl(baseUrl + "/Login");
             var username = driver.FindElement(By.Id("Username"));
-            username.SendKeys("admin");
+            username.SendKeys("ES2");
 
             var password = driver.FindElement(By.Id("Password"));
             password.SendKeys("password-1");

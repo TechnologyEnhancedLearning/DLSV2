@@ -13,6 +13,11 @@
             List<DelegateUser> unverifiedDelegateUsers
         );
 
+        UserEntityVerificationResult VerifyUserEntity(
+            string password,
+            UserEntity userEntity
+        );
+
         List<DelegateUser> GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(AdminUser? adminUser, string password);
 
         /// <summary>
@@ -48,6 +53,17 @@
                     .ToList();
 
             return new UserAccountSet(verifiedAdminUser, verifiedDelegateUsers);
+        }
+
+        public UserEntityVerificationResult VerifyUserEntity(string password, UserEntity userEntity)
+        {
+            var userAccountPassed = cryptoService.VerifyHashedPassword(userEntity.UserAccount.PasswordHash, password);
+            var passedDelegateIds = userEntity.DelegateAccounts.Where(
+                d => d.OldPassword == null || cryptoService.VerifyHashedPassword(d.OldPassword, password)
+            ).Select(d => d.Id);
+            var failedDelegateIds = userEntity.DelegateAccounts.Select(d => d.Id)
+                .Where(id => !passedDelegateIds.Contains(id));
+            return new UserEntityVerificationResult(userAccountPassed, passedDelegateIds, failedDelegateIds);
         }
 
         public List<DelegateUser> GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(

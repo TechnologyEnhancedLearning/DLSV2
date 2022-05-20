@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.IntegrationTests.TestHelpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Builder;
@@ -25,8 +27,14 @@
                             async context =>
                             {
                                 var delegateId = int.Parse(context.Request.Query["delegateId"]);
+                                var userAccount = TestUserDataService.GetUserAccount(delegateId);
                                 var delegateUser = TestUserDataService.GetDelegate(delegateId);
-                                var claims = LoginClaimsHelper.GetClaimsForSignIn(null, delegateUser);
+                                var userEntity = new UserEntity(
+                                    userAccount,
+                                    new List<AdminAccount>(),
+                                    new List<DelegateAccount> { delegateUser }
+                                );
+                                var claims = LoginClaimsHelper.GetClaimsForSignIn(userEntity, 1);
                                 var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
                                 var authProperties = new AuthenticationProperties
                                 {

@@ -139,17 +139,6 @@
             );
         }
 
-        public void UpdateAdminUserFailedLoginCount(int adminId, int updatedCount)
-        {
-            connection.Execute(
-                    @"UPDATE AdminUsers
-                        SET
-                            FailedLoginCount = @updatedCount
-                        WHERE AdminID = @adminId",
-                    new { adminId, updatedCount}
-                );
-        }
-
         public void DeactivateAdmin(int adminId)
         {
             connection.Execute(
@@ -167,6 +156,44 @@
                 @"DELETE AdminAccounts
                     WHERE ID = @adminId",
                 new { adminId }
+            );
+        }
+        
+        public IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId)
+        {
+            return connection.Query<AdminAccount>(
+                @"SELECT aa.ID,
+                        aa.CentreID,
+                        ce.CentreName,
+                        ce.Active AS CentreActive,
+                        aa.IsCentreAdmin,
+                        aa.IsReportsViewer,
+                        aa.IsSuperAdmin,
+                        aa.IsCentreManager,
+                        aa.Active,
+                        aa.IsContentManager,
+                        aa.PublishToAll,
+                        aa.ImportOnly,
+                        aa.IsContentCreator,
+                        aa.IsSupervisor,
+                        aa.IsTrainer,
+                        aa.CategoryID,
+                        CASE
+                            WHEN aa.CategoryID IS NULL THEN 'All'
+                            ELSE cc.CategoryName
+                        END AS CategoryName,
+                        aa.IsFrameworkDeveloper,
+                        aa.IsFrameworkContributor,
+                        aa.IsWorkforceManager,
+                        aa.IsWorkforceContributor,
+                        aa.IsLocalWorkforceManager,
+                        aa.IsNominatedSupervisor,
+                        aa.UserID
+                    FROM AdminAccounts AS aa
+                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = aa.CategoryID
+                    INNER JOIN Centres AS ce ON ce.CentreId = aa.CentreId
+                    WHERE aa.UserID = @userId",
+                new { userId }
             );
         }
     }

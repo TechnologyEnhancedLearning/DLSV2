@@ -74,6 +74,10 @@ namespace DigitalLearningSolutions.Web
                         policy => CustomPolicies.ConfigurePolicyUserOnly(policy)
                     );
                     options.AddPolicy(
+                        CustomPolicies.UserDelegateOnly,
+                        policy => CustomPolicies.ConfigurePolicyUserDelegateOnly(policy)
+                    );
+                    options.AddPolicy(
                         CustomPolicies.UserCentreAdmin,
                         policy => CustomPolicies.ConfigurePolicyUserCentreAdmin(policy)
                     );

@@ -55,5 +55,27 @@
             // Then
             result.Should().Be(expectedResult);
         }
+
+        [Test]
+        [TestCase("email@test.com", 61188)]
+        [TestCase("ES2", 1)]
+        public void GetUserIdFromUsername_returns_expected_id_for_username(string username, int expectedUserId)
+        {
+            // When
+            var result = userDataService.GetUserIdFromUsername(username);
+
+            // Then
+            result.Should().Be(expectedUserId);
+        }
+
+        [Test]
+        public void GetUserAccountById_returns_expected_user_account()
+        {
+            // When
+            var result = userDataService.GetUserAccountById(2);
+
+            // Then
+            result.Should().BeEquivalentTo(UserTestHelper.GetDefaultUserAccount());
+        }
     }
 }
