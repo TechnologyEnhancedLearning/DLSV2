@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
@@ -16,7 +16,6 @@
     {
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDataService courseDataService = null!;
-        private ICourseDelegatesDataService courseDelegatesDataService = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
 
         [SetUp]
@@ -24,12 +23,10 @@
         {
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             courseDataService = A.Fake<ICourseDataService>();
-            courseDelegatesDataService = A.Fake<ICourseDelegatesDataService>();
 
             courseDelegatesService = new CourseDelegatesService(
                 courseAdminFieldsService,
-                courseDataService,
-                courseDelegatesDataService
+                courseDataService
             );
         }
 
@@ -40,19 +37,25 @@
             const int centreId = 2;
             const int categoryId = 1;
             const int customisationId = 1;
+            var delegateCourseInfo = new DelegateCourseInfo();
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(
                     new List<CourseAssessmentDetails>
                         { new CourseAssessmentDetails { CustomisationId = customisationId } }
                 );
-            A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
-                .Returns(new List<CourseDelegate> { new CourseDelegate() });
+            A.CallTo(() => courseDataService.GetDelegateCourseInfosForCourse(A<int>._, A<int>._))
+                .Returns(new List<DelegateCourseInfo> { delegateCourseInfo });
             A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(A<int>._))
                 .Returns(
                     new CourseAdminFields(
                         customisationId,
                         new List<CourseAdminField> { new CourseAdminField(1, "prompt", null) }
                     )
+                );
+            A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(delegateCourseInfo))
+                .Returns(
+                    new List<CourseAdminFieldWithAnswer>
+                        { new CourseAdminFieldWithAnswer(1, "prompt", null, "answer") }
                 );
 
             // When
@@ -67,6 +70,7 @@
             {
                 result.Courses.Should().HaveCount(1);
                 result.Delegates.Should().HaveCount(1);
+                result.Delegates.First().CourseAdminFields.Should().HaveCount(1);
                 result.CustomisationId.Should().Be(customisationId);
                 result.CourseAdminFields.Should().HaveCount(1);
             }
@@ -85,7 +89,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
+                A.CallTo(() => courseDataService.GetDelegateCourseInfosForCourse(A<int>._, A<int>._))
                     .MustNotHaveHappened();
                 result.Courses.Should().BeEmpty();
                 result.Delegates.Should().BeEmpty();
@@ -103,8 +107,8 @@
             const int categoryId = 1;
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(new List<CourseAssessmentDetails> { new CourseAssessmentDetails { CustomisationId = 1 } });
-            A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
-                .Returns(new List<CourseDelegate> { new CourseDelegate() });
+            A.CallTo(() => courseDataService.GetDelegateCourseInfosForCourse(A<int>._, A<int>._))
+                .Returns(new List<DelegateCourseInfo> { new DelegateCourseInfo() });
             A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(A<int>._))
                 .Returns(
                     new CourseAdminFields(
@@ -121,7 +125,7 @@
             );
 
             // Then
-            A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(customisationId, centreId))
+            A.CallTo(() => courseDataService.GetDelegateCourseInfosForCourse(customisationId, centreId))
                 .MustHaveHappened();
             A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId))
                 .MustHaveHappenedOnceExactly();
@@ -147,7 +151,7 @@
                     customisationId
                 )
             );
-            A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
+            A.CallTo(() => courseDataService.GetDelegateCourseInfosForCourse(A<int>._, A<int>._))
                 .MustNotHaveHappened();
             A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(A<int>._))
                 .MustNotHaveHappened();

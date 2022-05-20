@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.Email;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
@@ -17,7 +18,7 @@
         Task SendUnlockRequest(int progressId);
 
         void SendProgressCompletionNotificationEmail(
-            DetailedCourseProgress progress,
+            DelegateCourseInfo progress,
             int completionStatus,
             int numLearningLogItemsAffected
         );
@@ -97,7 +98,7 @@
         }
 
         public void SendProgressCompletionNotificationEmail(
-            DetailedCourseProgress progress,
+            DelegateCourseInfo progress,
             int completionStatus,
             int numLearningLogItemsAffected
         )

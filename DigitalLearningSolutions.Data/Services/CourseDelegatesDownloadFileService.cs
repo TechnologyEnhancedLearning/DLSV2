@@ -54,18 +54,18 @@
         private const string AdminFieldThree = "Admin field 3";
 
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
-        private readonly ICourseDelegatesDataService courseDelegatesDataService;
+        private readonly ICourseDataService courseDataService;
         private readonly ICourseService courseService;
         private readonly ICentreRegistrationPromptsService registrationPromptsService;
 
         public CourseDelegatesDownloadFileService(
-            ICourseDelegatesDataService courseDelegatesDataService,
+            ICourseDataService courseDataService,
             ICourseAdminFieldsService courseAdminFieldsService,
             ICentreRegistrationPromptsService registrationPromptsService,
             ICourseService courseService
         )
         {
-            this.courseDelegatesDataService = courseDelegatesDataService;
+            this.courseDataService = courseDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.registrationPromptsService = registrationPromptsService;
             this.courseService = courseService;
@@ -134,7 +134,7 @@
 
             var customRegistrationPrompts = registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
-            var courseDelegates = courseDelegatesDataService.GetDelegatesOnCourseForExport(customisationId, centreId)
+            var courseDelegates = courseDataService.GetDelegatesOnCourseForExport(customisationId, centreId)
                 .ToList();
 
             var filteredCourseDelegates =
@@ -252,7 +252,7 @@
 
             var sortedCourseDelegates =
                 GenericSortingHelper.SortAllItems(
-                    courseDelegatesDataService.GetDelegatesOnCourseForExport(course.CustomisationId, centreId)
+                    courseDataService.GetDelegatesOnCourseForExport(course.CustomisationId, centreId)
                         .AsQueryable(),
                     nameof(CourseDelegateForExport.FullNameForSearchingSorting),
                     GenericSortingHelper.Ascending
@@ -383,9 +383,9 @@
 
             SetCommonRowValues(dataTable, courseDelegate, registrationRegistrationPrompts, row);
 
-            row[AdminFieldOne] = courseDelegate.CourseAnswer1;
-            row[AdminFieldTwo] = courseDelegate.CourseAnswer2;
-            row[AdminFieldThree] = courseDelegate.CourseAnswer3;
+            row[AdminFieldOne] = courseDelegate.Answer1;
+            row[AdminFieldTwo] = courseDelegate.Answer2;
+            row[AdminFieldThree] = courseDelegate.Answer3;
 
             dataTable.Rows.Add(row);
         }
@@ -397,9 +397,9 @@
             DataRow row
         )
         {
-            row[LastName] = courseDelegate.LastName;
-            row[FirstName] = courseDelegate.FirstName;
-            row[Email] = courseDelegate.EmailAddress;
+            row[LastName] = courseDelegate.DelegateLastName;
+            row[FirstName] = courseDelegate.DelegateFirstName;
+            row[Email] = courseDelegate.DelegateEmail;
 
             foreach (var prompt in registrationRegistrationPrompts.CustomPrompts)
             {
@@ -418,16 +418,16 @@
             row[DelegateId] = courseDelegate.CandidateNumber;
             row[Enrolled] = courseDelegate.Enrolled.Date;
             row[LastAccessed] = courseDelegate.LastUpdated.Date;
-            row[CompleteBy] = courseDelegate.CompleteByDate?.Date;
+            row[CompleteBy] = courseDelegate.CompleteBy?.Date;
             row[CompletedDate] = courseDelegate.Completed?.Date;
             row[Logins] = courseDelegate.LoginCount;
             row[TimeMinutes] = courseDelegate.Duration;
             row[DiagnosticScore] = courseDelegate.DiagnosticScore;
             row[AssessmentsPassed] = courseDelegate.AttemptsPassed;
             row[PassRate] = courseDelegate.PassRate;
-            row[Active] = courseDelegate.Active;
+            row[Active] = courseDelegate.IsDelegateActive;
             row[RemovedDate] = courseDelegate.RemovedDate?.Date;
-            row[Locked] = courseDelegate.Locked;
+            row[Locked] = courseDelegate.IsProgressLocked;
         }
 
         private static void FormatWorksheetColumns(IXLWorkbook workbook, DataTable dataTable)

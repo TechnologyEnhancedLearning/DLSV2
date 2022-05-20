@@ -37,8 +37,8 @@
         <div class="nhsuk-grid-column-full">
           <form id="select-all-form" method="get" asp-action="Index">
             <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Select</label>
-            <button type="submit" class="nhsuk-search__submit select-all-button" id="select-all-button" name="selectAll" value="true">Select all</button>
-            <button type="submit" class="nhsuk-search__submit select-all-button" id="deselect-all-button" name="selectAll" value="false">Deselect all</button>
+            <button type="submit" class="nhsuk-button select-all-button" id="select-all-button" name="selectAll" value="true">Select all</button>
+            <button type="submit" class="nhsuk-button select-all-button" id="deselect-all-button" name="selectAll" value="false">Deselect all</button>
           </form>
         </div>
       </div>
@@ -70,7 +70,7 @@
 </div>
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-  @section scripts {
-    <script src="@Url.Content("~/js/trackingSystem/emailDelegates.js")" asp-append-version="true"></script>
-  }
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/emailDelegates.js")" asp-append-version="true"></script>
+}
 }

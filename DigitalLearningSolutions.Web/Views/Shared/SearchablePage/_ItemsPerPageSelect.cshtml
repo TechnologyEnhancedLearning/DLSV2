@@ -5,12 +5,10 @@
   <input type="hidden" name="searchString" value="@Model.SearchString" />
   <input type="hidden" name="sortBy" value="@Model.SortBy" />
   <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
-  @if (Model.FilterEnabled)
-  {
+  @if (Model.FilterEnabled) {
     <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
   }
-  @foreach (var (key, value) in Model.RouteData)
-  {
+  @foreach (var (key, value) in Model.RouteData) {
     <input type="hidden" name="@key" value="@value" />
   }
 
@@ -19,13 +17,13 @@
       Items per page
     </label>
     <div class="nhsuk-u-width-full items-per-page-button-container">
-      <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown items-per-page-dropdown nhsuk-u-margin-bottom-0"
+      <select class="nhsuk-select items-per-page-dropdown nhsuk-u-margin-bottom-0"
               id="items-per-page-select"
               asp-for="ItemsPerPage"
               asp-items="Model.ItemsPerPageSelectListItems"
               aria-label="Items per page">
       </select>
-      <button class="nhsuk-search__submit items-per-page-submit" type="submit" asp-route-page="1">
+      <button class="nhsuk-button items-per-page-submit" type="submit" asp-route-page="1">
         Update
       </button>
     </div>

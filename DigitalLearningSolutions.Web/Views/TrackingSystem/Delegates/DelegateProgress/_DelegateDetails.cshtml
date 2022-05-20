@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @model DelegateProgressViewModel
 
 <div class="nhsuk-card">
@@ -16,7 +16,15 @@
         <dt class="nhsuk-summary-list__key">
           Email
         </dt>
-        <partial name="_SummaryFieldValue" model="@Model.DelegateEmail" />
+        <partial name="_SummaryFieldValue" model="@Model.Email" />
+      </div>
+      <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Delegate ID
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.DelegateNumber
+        </dd>
       </div>
       <div class="nhsuk-summary-list__row basic-summary-list__row">
         <dt class="nhsuk-summary-list__key">

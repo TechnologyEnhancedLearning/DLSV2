@@ -6,6 +6,8 @@
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
@@ -15,6 +17,7 @@
     public class ProgressServiceTests
     {
         private IClockService clockService = null!;
+        private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDataService courseDataService = null!;
         private ILearningLogItemsDataService learningLogItemsDataService = null!;
         private INotificationService notificationService = null!;
@@ -29,13 +32,15 @@
             notificationService = A.Fake<INotificationService>();
             learningLogItemsDataService = A.Fake<ILearningLogItemsDataService>();
             clockService = A.Fake<IClockService>();
+            courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
 
             progressService = new ProgressService(
                 courseDataService,
                 progressDataService,
                 notificationService,
                 learningLogItemsDataService,
-                clockService
+                clockService, 
+                courseAdminFieldsService
             );
         }
 
@@ -259,16 +264,25 @@
                     PossibleScore = 5,
                 },
             };
+            var adminField = PromptsTestHelper.GetDefaultCourseAdminFieldWithAnswer(
+                2,
+                "Priority Access",
+                answer: "answer2"
+            );
+            var testCourseAdminFields = new List<CourseAdminFieldWithAnswer> { adminField };
             var testCourseInfo = new DelegateCourseInfo
             {
                 DelegateLastName = "lastName",
                 DelegateEmail = "email",
                 DelegateId = 99,
-                DelegateNumber = "five",
+                CandidateNumber = "five",
                 LastUpdated = DateTime.UnixEpoch,
                 Enrolled = DateTime.MinValue,
                 Completed = DateTime.Today,
                 CompleteBy = DateTime.Now,
+                CustomisationId = 10,
+                IsAssessed = true,
+                CourseAdminFields = testCourseAdminFields
             };
 
             A.CallTo(() => progressDataService.GetProgressByProgressId(1)).Returns(testCourseProgress);
@@ -276,6 +290,11 @@
             A.CallTo(() => progressDataService.GetTutorialProgressDataForSection(1, 2)).Returns(testTutorialProgress1);
             A.CallTo(() => progressDataService.GetTutorialProgressDataForSection(1, 3)).Returns(testTutorialProgress2);
             A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(1)).Returns(testCourseInfo);
+            A.CallTo(
+                () => courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
+                    testCourseInfo
+                )
+            ).Returns(testCourseAdminFields);
 
             var testSectionProgressWithTutorials = new List<DetailedSectionProgress>
             {

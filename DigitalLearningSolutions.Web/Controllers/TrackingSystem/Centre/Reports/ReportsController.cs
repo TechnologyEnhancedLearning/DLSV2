@@ -61,7 +61,9 @@
                 filterModel,
                 evaluationResponseBreakdowns,
                 filterData.StartDate,
-                filterData.EndDate ?? DateTime.Today
+                filterData.EndDate ?? DateTime.Today,
+                activityService.GetActivityStartDateForCentre(centreId, categoryIdFilter) != null,
+                activityService.GetCourseCategoryNameForActivityFilter(categoryIdFilter)
             );
             return View(model);
         }
@@ -182,7 +184,7 @@
             string startDate,
             string endDate,
             ReportInterval reportInterval
-            )
+        )
         {
             var centreId = User.GetCentreId();
             var adminCategoryIdFilter = User.GetAdminCourseCategoryFilter();

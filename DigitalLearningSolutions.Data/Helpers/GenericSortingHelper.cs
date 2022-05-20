@@ -153,7 +153,7 @@
             4,
             nameof(CompleteByDate),
             "Complete by date",
-            nameof(CourseDelegate.CompleteByDate)
+            nameof(CourseDelegate.CompleteBy)
         );
 
         public static readonly CourseDelegatesSortByOption CompletedDate = new CourseDelegatesSortByOption(
