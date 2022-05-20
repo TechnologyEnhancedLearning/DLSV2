@@ -5,7 +5,8 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.Progress;
 
     public interface IProgressService
     {
@@ -42,6 +43,7 @@
     public class ProgressService : IProgressService
     {
         private readonly IClockService clockService;
+        private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDataService courseDataService;
         private readonly ILearningLogItemsDataService learningLogItemsDataService;
         private readonly INotificationService notificationService;
@@ -52,7 +54,8 @@
             IProgressDataService progressDataService,
             INotificationService notificationService,
             ILearningLogItemsDataService learningLogItemsDataService,
-            IClockService clockService
+            IClockService clockService,
+            ICourseAdminFieldsService courseAdminFieldsService
         )
         {
             this.courseDataService = courseDataService;
@@ -60,6 +63,7 @@
             this.notificationService = notificationService;
             this.learningLogItemsDataService = learningLogItemsDataService;
             this.clockService = clockService;
+            this.courseAdminFieldsService = courseAdminFieldsService;
         }
 
         public void UpdateSupervisor(int progressId, int? newSupervisorId)
@@ -130,11 +134,17 @@
             var progress = progressDataService.GetProgressByProgressId(progressId);
 
             var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+            
 
             if (progress == null || courseInfo == null)
             {
                 return null;
             }
+
+            var coursePrompts = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
+                courseInfo
+            );
+            courseInfo.CourseAdminFields = coursePrompts;
 
             var sections = progressDataService.GetSectionProgressDataForProgressEntry(progressId).ToList();
             foreach (var section in sections)
@@ -143,7 +153,11 @@
                     progressDataService.GetTutorialProgressDataForSection(progressId, section.SectionId);
             }
 
-            return new DetailedCourseProgress(progress, sections, courseInfo);
+            return new DetailedCourseProgress(
+                progress,
+                sections,
+                courseInfo
+            );
         }
 
         public void UpdateCourseAdminFieldForDelegate(
@@ -177,7 +191,7 @@
 
         public void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress)
         {
-            if (!(progress is { Completed: null }))
+            if (progress.Completed != null)
             {
                 return;
             }

@@ -23,8 +23,8 @@
 
         public string? OptionsString { get; set; }
 
-        [Required(ErrorMessage = "Enter an answer")]
-        [MaxLength(100, ErrorMessage = "Answer must be 100 characters or fewer")]
+        [Required(ErrorMessage = "Enter a response")]
+        [MaxLength(100, ErrorMessage = "Response must be 100 characters or fewer")]
         public string? Answer { get; set; }
 
         public bool IncludeAnswersTableCaption { get; set; }
@@ -41,7 +41,7 @@
             {
                 validationResults.Add(
                     new ValidationResult(
-                        "That answer is already in the list of options",
+                        "That response is already in the list of options",
                         new[]
                         {
                             nameof(Answer),
@@ -54,7 +54,7 @@
             {
                 validationResults.Add(
                     new ValidationResult(
-                        "The list of answers contains duplicate options",
+                        "The list of responses contains duplicate options",
                         new string[] { }
                     )
                 );

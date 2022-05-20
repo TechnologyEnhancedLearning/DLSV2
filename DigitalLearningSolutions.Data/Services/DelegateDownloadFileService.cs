@@ -112,6 +112,8 @@
                     x.Answer6,
                     x.Active,
                     x.EmailAddress,
+                    HasPRN = GetHasPrnForDelegate(x.HasBeenPromptedForPrn, x.ProfessionalRegistrationNumber),
+                    PRN = x.HasBeenPromptedForPrn ? x.ProfessionalRegistrationNumber : null,
                 }
             );
             
@@ -278,6 +280,11 @@
             {
                 ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.Boolean);
             }
+        }
+
+        public static bool? GetHasPrnForDelegate(bool hasBeenPromptedForPrn, string? professionalRegistrationNumber)
+        {
+            return hasBeenPromptedForPrn ? (bool?)(professionalRegistrationNumber != null) : null;
         }
     }
 }

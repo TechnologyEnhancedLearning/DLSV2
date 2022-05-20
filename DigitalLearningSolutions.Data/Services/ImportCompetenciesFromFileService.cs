@@ -75,7 +75,7 @@ namespace DigitalLearningSolutions.Data.Services
             int? frameworkCompetencyGroupId = null;
             if (competencyRow.CompetencyGroupName != null)
             {
-                var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyRow.CompetencyGroupName, adminUserId);
+                var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyRow.CompetencyGroupName, null, adminUserId);
                 if (newCompetencyGroupId > 0)
                 {
                     frameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminUserId);

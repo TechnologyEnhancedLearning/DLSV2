@@ -8,7 +8,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
     {
         public BasicAuthenticatedAccessibilityTests(AuthenticatedAccessibilityTestsFixture<Startup> fixture) : base(
             fixture
-        ) { }
+        )
+        { }
 
         [Theory]
         [InlineData("/MyAccount", "My account")]
@@ -95,7 +96,6 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Delegates/3/SetPassword?returnPageQuery=pageNumber%3D1",
             "Set delegate user password"
         )]
-        [InlineData("/TrackingSystem/Delegates/3/View/100/ViewDelegate/Remove", "Remove enrolment")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
@@ -103,20 +103,24 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/CourseDelegates", "Course delegates")]
         [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104", "Delegate progress")]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditSupervisor",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditSupervisor",
             "Edit supervisor for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompleteByDate",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditCompleteByDate",
             "Edit complete by date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditCompletionDate",
             "Edit completed date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/22657/EditAdminField/1",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/22657/EditAdminField/1",
             "Edit System Access Granted field for Entry Level - Win XP, Office 2003/07 OLD - Standard"
+        )]
+        [InlineData(
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/22657/Remove",
+            "Remove enrolment"
         )]
         [InlineData(
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/LearningLog",

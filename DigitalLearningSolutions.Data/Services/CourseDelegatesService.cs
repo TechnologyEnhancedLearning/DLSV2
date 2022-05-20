@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
     public interface ICourseDelegatesService
@@ -22,17 +23,14 @@
     {
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDataService courseDataService;
-        private readonly ICourseDelegatesDataService courseDelegatesDataService;
 
         public CourseDelegatesService(
             ICourseAdminFieldsService courseAdminFieldsService,
-            ICourseDataService courseDataService,
-            ICourseDelegatesDataService courseDelegatesDataService
+            ICourseDataService courseDataService
         )
         {
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.courseDataService = courseDataService;
-            this.courseDelegatesDataService = courseDelegatesDataService;
         }
 
         public CourseDelegatesData GetCoursesAndCourseDelegatesForCentre(
@@ -67,12 +65,25 @@
                 ? courseAdminFieldsService.GetCourseAdminFieldsForCourse(currentCustomisationId.Value).AdminFields
                 : new List<CourseAdminField>();
 
-            return new CourseDelegatesData(currentCustomisationId, orderedCourses, courseDelegates, courseAdminFields);
+            return new CourseDelegatesData(
+                currentCustomisationId,
+                orderedCourses,
+                courseDelegates,
+                courseAdminFields
+            );
         }
 
         public IEnumerable<CourseDelegate> GetCourseDelegatesForCentre(int customisationId, int centreId)
         {
-            return courseDelegatesDataService.GetDelegatesOnCourse(customisationId, centreId);
+            return courseDataService.GetDelegateCourseInfosForCourse(customisationId, centreId)
+                .Select(GetCourseDelegateWithAdminFields);
+        }
+
+        private CourseDelegate GetCourseDelegateWithAdminFields(DelegateCourseInfo delegateCourseInfo)
+        {
+            var coursePrompts = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(delegateCourseInfo);
+            delegateCourseInfo.CourseAdminFields = coursePrompts;
+            return new CourseDelegate(delegateCourseInfo);
         }
     }
 }

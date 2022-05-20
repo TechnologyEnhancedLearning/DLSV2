@@ -66,12 +66,19 @@
   {
     foreach (var competencyGroup in Model.CompetencyGroups)
     {
+      var groupDetails = competencyGroup.First();
       <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
-        <caption class="nhsuk-table__caption"><h3>@competencyGroup.Key</h3></caption>
+        <caption class="nhsuk-table__caption">
+          <h3>@competencyGroup.Key</h3>
+          @if (!String.IsNullOrEmpty(groupDetails.CompetencyGroupDescription))
+          {
+            <p class="nhsuk-body-l">@Html.Raw(groupDetails.CompetencyGroupDescription)</p>
+          }
+        </caption>
         <thead role="rowgroup" class="nhsuk-table__head">
           <tr role="row">
             <th role="columnheader" class="" scope="col">
-              @competencyGroup.First().Vocabulary
+              @groupDetails.Vocabulary
             </th>
             <th role="columnheader" class="" scope="col">
               @(string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.QuestionLabel) ? "Question" :

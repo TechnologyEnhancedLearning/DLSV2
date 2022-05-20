@@ -9,24 +9,29 @@
 }
 
 .search-box {
-  @extend .input-with-no-js-submit-button;
+  @extend .pagination-input-with-no-js-submit-button;
   -webkit-appearance: none;
   flex: 1;
-}
-
-.nhsuk-search__submit {
-  background-color: $button-dark-blue;
-
-  .nhsuk-icon__search {
-    fill: $color_nhsuk-white;
-  }
-
-  &:hover {
-    background-color: $button-hover-colour;
-  }
+  padding: 0 13px;
 }
 
 .search-submit {
+  @extend .inline-button;
+  line-height: 0;
+  width: 44px;
+  min-width: 44px;
+  padding: 0;
+
+  .nhsuk-icon__search {
+    height: 27px;
+    width: 27px;
+    fill: $color_nhsuk-white;
+  }
+
+  &:focus:not(:active) .nhsuk-icon__search {
+    fill: $nhsuk-focus-text-color;
+  }
+
   #js-styling-hidden-area-while-loading & {
     .js-enabled & {
       display: none;

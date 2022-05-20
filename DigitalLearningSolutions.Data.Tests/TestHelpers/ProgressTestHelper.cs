@@ -1,10 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.Progress;
     using Microsoft.Data.SqlClient;
 
     public class ProgressTestHelper
@@ -140,7 +143,11 @@
                 Completed = completed,
             };
 
-            return new DetailedCourseProgress(progress, sections, delegateCourseInfo);
+            return new DetailedCourseProgress(
+                progress,
+                sections,
+                delegateCourseInfo
+            );
         }
     }
 }

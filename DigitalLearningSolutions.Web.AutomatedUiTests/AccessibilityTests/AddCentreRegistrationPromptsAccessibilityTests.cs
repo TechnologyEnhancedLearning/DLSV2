@@ -25,16 +25,16 @@
             Driver.SelectDropdownItemValue("CustomPromptId", "20");
             Driver.SubmitForm();
 
-            ValidatePageHeading("Configure answers");
+            ValidatePageHeading("Configure responses");
             var configureAnswerInitialResult = new AxeBuilder(Driver).Analyze();
 
             AddAnswer("Answer 1");
             AddAnswer("Answer 2");
-            ValidatePageHeading("Configure answers");
+            ValidatePageHeading("Configure responses");
             var configureAnswerWithAnswersResult = new AxeBuilder(Driver).Analyze();
 
             Driver.ClickButtonByText("Bulk edit");
-            ValidatePageHeading("Configure answers in bulk");
+            ValidatePageHeading("Configure responses in bulk");
             var bulkAdditionResult = new AxeBuilder(Driver).Analyze();
 
             Driver.ClickButtonByText("Next");

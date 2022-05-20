@@ -18,7 +18,7 @@
                 bool includeAllCentreCourses = false
             );
 
-        public bool DelegateHasCurrentProgress(int delegateId, int customisationId);
+        public bool DelegateHasCurrentProgress(int progressId);
 
         public void RemoveDelegateFromCourse(
             int delegateId,
@@ -26,13 +26,11 @@
             RemovalMethod removalMethod
         );
 
-        IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
+        IEnumerable<DelegateCourseInfo> GetAllCoursesInCategoryForDelegate(
             int delegateId,
             int centreId,
             int? courseCategoryId
         );
-
-        DelegateCourseDetails? GetDelegateCourseProgress(int progressId);
 
         bool? VerifyAdminUserCanManageCourse(int customisationId, int centreId, int? categoryId);
 
@@ -158,7 +156,7 @@
             );
         }
 
-        public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
+        public IEnumerable<DelegateCourseInfo> GetAllCoursesInCategoryForDelegate(
             int delegateId,
             int centreId,
             int? courseCategoryId
@@ -167,15 +165,8 @@
             return courseDataService.GetDelegateCoursesInfo(delegateId)
                 .Where(info => info.CustomisationCentreId == centreId || info.AllCentresCourse)
                 .Where(info => courseCategoryId == null || info.CourseCategoryId == courseCategoryId)
-                .Select(GetDelegateAttemptsAndCourseAdminFields)
-                .Where(info => info.DelegateCourseInfo.RemovedDate == null);
-        }
-
-        public DelegateCourseDetails? GetDelegateCourseProgress(int progressId)
-        {
-            var info = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
-
-            return info == null ? null : GetDelegateAttemptsAndCourseAdminFields(info);
+                .Select(PopulateDelegateCourseInfoAdminFields)
+                .Where(info => info.RemovedDate == null);
         }
 
         public bool? VerifyAdminUserCanManageCourse(int customisationId, int centreId, int? categoryId)
@@ -301,11 +292,10 @@
             );
         }
 
-        public bool DelegateHasCurrentProgress(int delegateId, int customisationId)
+        public bool DelegateHasCurrentProgress(int progressId)
         {
-            return progressDataService
-                .GetDelegateProgressForCourse(delegateId, customisationId)
-                .Any(p => p.Completed == null && p.RemovedDate == null);
+            var progress = progressDataService.GetProgressByProgressId(progressId);
+            return progress is { Completed: null, RemovedDate: null };
         }
 
         public IEnumerable<CourseAssessmentDetails> GetEligibleCoursesToAddToGroup(
@@ -453,20 +443,15 @@
             return new LearningLog(delegateCourseInfo, learningLogEntries);
         }
 
-        public DelegateCourseDetails GetDelegateAttemptsAndCourseAdminFields(
+        private DelegateCourseInfo PopulateDelegateCourseInfoAdminFields(
             DelegateCourseInfo info
         )
         {
             var coursePrompts = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
-                info,
-                info.CustomisationId
+                info
             );
-
-            var attemptStats = info.IsAssessed
-                ? courseDataService.GetDelegateCourseAttemptStats(info.DelegateId, info.CustomisationId)
-                : new AttemptStats(0, 0);
-
-            return new DelegateCourseDetails(info, coursePrompts, attemptStats);
+            info.CourseAdminFields = coursePrompts;
+            return info;
         }
     }
 }
