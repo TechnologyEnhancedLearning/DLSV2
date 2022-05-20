@@ -17,7 +17,7 @@
                 true,
                 true,
                 data.ProfessionalRegistrationNumber,
-                0,
+                null,
                 true,
                 true,
                 false,

@@ -55,10 +55,8 @@ namespace DigitalLearningSolutions.Data.Services
         void UpdateAdminUserPermissions(
             int adminId,
             AdminRoles adminRoles,
-            int categoryId
+            int? categoryId
         );
-
-        bool NewAliasIsValid(string? aliasId, int delegateUserId, int centreId);
 
         void UpdateUserAccountDetailsViaDelegateAccount(
             EditDelegateDetailsData editDelegateDetailsData,
@@ -108,7 +106,13 @@ namespace DigitalLearningSolutions.Data.Services
 
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
         {
-            var adminUser = userDataService.GetAdminUserByUsername(username);
+            // TODO HEEDLS-887 Check this is the correct behaviour for getting users. This may end up getting cleared up by login fixes
+            var adminUser = userDataService.GetAdminUserByEmailAddress(username);
+            if (adminUser != null && (!adminUser.Active || !adminUser.Approved))
+            {
+                adminUser = null;
+            }
+
             var delegateUsers = userDataService.GetDelegateUsersByUsername(username);
 
             return (adminUser, delegateUsers);
@@ -192,6 +196,7 @@ namespace DigitalLearningSolutions.Data.Services
             return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
         }
 
+        // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
         public void UpdateUserAccountDetailsForAllVerifiedUsers(
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
@@ -217,15 +222,15 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (verifiedDelegateUsers.Count != 0)
             {
-                var delegateIds = verifiedDelegateUsers.Select(d => d.Id).ToArray();
-                userDataService.UpdateDelegateUsers(
+                userDataService.UpdateUser(
                     myAccountDetailsData.FirstName,
                     myAccountDetailsData.Surname,
                     myAccountDetailsData.Email,
                     myAccountDetailsData.ProfileImage,
                     myAccountDetailsData.ProfessionalRegistrationNumber,
                     myAccountDetailsData.HasBeenPromptedForPrn,
-                    delegateIds
+                    centreAnswersData.JobGroupId,
+                    1 // TODO HEEDLS-887 This needs correcting to the correct UserId for the delegate record.
                 );
 
                 var oldDelegateDetails =
@@ -235,7 +240,6 @@ namespace DigitalLearningSolutions.Data.Services
                 {
                     userDataService.UpdateDelegateUserCentrePrompts(
                         myAccountDetailsData.DelegateId!.Value,
-                        centreAnswersData.JobGroupId,
                         centreAnswersData.Answer1,
                         centreAnswersData.Answer2,
                         centreAnswersData.Answer3,
@@ -329,7 +333,7 @@ namespace DigitalLearningSolutions.Data.Services
         public void UpdateAdminUserPermissions(
             int adminId,
             AdminRoles adminRoles,
-            int categoryId
+            int? categoryId
         )
         {
             if (NewUserRolesExceedAvailableSpots(adminId, adminRoles))
@@ -353,17 +357,7 @@ namespace DigitalLearningSolutions.Data.Services
             );
         }
 
-        public bool NewAliasIsValid(string? aliasId, int delegateUserId, int centreId)
-        {
-            if (aliasId == null)
-            {
-                return true;
-            }
-
-            var delegateUsers = userDataService.GetDelegateUsersByAliasId(aliasId);
-            return !delegateUsers.Any(du => du.Id != delegateUserId && du.CentreId == centreId);
-        }
-
+        // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
         public void UpdateUserAccountDetailsViaDelegateAccount(
             EditDelegateDetailsData editDelegateDetailsData,
             CentreAnswersData centreAnswersData
@@ -383,28 +377,23 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
-            var delegateIds = delegateUsers.Select(d => d.Id).ToArray();
-            userDataService.UpdateDelegateAccountDetails(
+            userDataService.UpdateUserDetails(
                 editDelegateDetailsData.FirstName,
                 editDelegateDetailsData.Surname,
                 editDelegateDetailsData.Email,
-                delegateIds
+                centreAnswersData.JobGroupId,
+                1 // TODO HEEDLS-887 This needs correcting to the correct UserId for the delegate record.
             );
 
-            userDataService.UpdateDelegate(
+            userDataService.UpdateDelegateAccount(
                 editDelegateDetailsData.DelegateId,
-                editDelegateDetailsData.FirstName,
-                editDelegateDetailsData.Surname,
-                centreAnswersData.JobGroupId,
                 delegateUser.Active,
                 centreAnswersData.Answer1,
                 centreAnswersData.Answer2,
                 centreAnswersData.Answer3,
                 centreAnswersData.Answer4,
                 centreAnswersData.Answer5,
-                centreAnswersData.Answer6,
-                editDelegateDetailsData.Alias,
-                editDelegateDetailsData.Email
+                centreAnswersData.Answer6
             );
 
             userDataService.UpdateDelegateProfessionalRegistrationNumber(
@@ -428,7 +417,7 @@ namespace DigitalLearningSolutions.Data.Services
         public IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId)
         {
             return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor)
-                .Where(au => au.CategoryId == categoryId || au.CategoryId == 0);
+                .Where(au => au.CategoryId == categoryId || au.CategoryId == null);
         }
 
         public bool DelegateUserLearningHubAccountIsLinked(int delegateId)
@@ -456,7 +445,7 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 try
                 {
-                    userDataService.DeleteAdminUser(adminId);
+                    userDataService.DeleteAdminAccount(adminId);
                 }
                 catch (Exception ex)
                 {

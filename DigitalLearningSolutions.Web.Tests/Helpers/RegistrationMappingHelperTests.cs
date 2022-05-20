@@ -19,7 +19,7 @@
             // Then
             result.FirstName.Should().Be(data.FirstName);
             result.LastName.Should().Be(data.LastName);
-            result.Email.Should().Be(data.Email);
+            result.PrimaryEmail.Should().Be(data.Email);
             result.Centre.Should().Be(data.Centre);
             result.JobGroup.Should().Be(data.JobGroup);
             result.PasswordHash.Should().Be(data.PasswordHash);
