@@ -11,12 +11,11 @@
     {
         [Test]
         [TestCase(new string[] { }, false)]
-        [TestCase(new[] { "fake", null }, false)]
+        [TestCase(new[] { "fake" }, false)]
         [TestCase(new[] { "test@gmail.com" }, true)]
         [TestCase(new[] { "sample@admin.email" }, true)]
         [TestCase(new[] { "sample@delegate.email" }, true)]
         [TestCase(new[] { "test@gmail.com", "sample@admin.email", "sample@delegate.email", "fake" }, true)]
-        [TestCase(new[] { "sample@admin.email", null }, true)]
         public void AnyEmailsInSetAreAlreadyInUse_returns_true_if_and_only_if_emails_are_in_use(
             IEnumerable<string?> emails,
             bool expectedResult
@@ -38,7 +37,6 @@
         }
 
         [Test]
-        [TestCase(null, false)]
         [TestCase("vrmei.@akwnthsbcu", false)]
         [TestCase("test@gmail.com", true)]
         [TestCase("sample@admin.email", false)]

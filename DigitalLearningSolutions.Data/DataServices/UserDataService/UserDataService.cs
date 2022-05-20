@@ -112,9 +112,9 @@
             bool hasBeenPromptedForPrn
         );
 
-        bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails);
+        bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails, IDbTransaction? transaction = null);
 
-        bool EmailIsInUseByOtherUser(int userId, string email);
+        bool EmailIsInUseByOtherUser(int userId, string email, IDbTransaction? transaction = null);
 
         void DeleteAdminAccount(int adminId);
 

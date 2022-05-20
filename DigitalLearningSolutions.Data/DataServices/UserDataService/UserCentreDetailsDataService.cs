@@ -15,7 +15,13 @@
             IDbTransaction? transaction = null
         )
         {
-            if (EmailIsInUseByOtherUser(userId, email))
+            if (transaction == null)
+            {
+                connection.Open();
+                transaction = connection.BeginTransaction();
+            }
+
+            if (EmailIsInUseByOtherUser(userId, email, transaction))
             {
                 throw new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse);
             }
@@ -68,29 +74,31 @@
             }
         }
 
-        public bool EmailIsInUseByOtherUser(int userId, string email)
+        public bool EmailIsInUseByOtherUser(int userId, string email, IDbTransaction? transaction = null)
         {
             return connection.QuerySingle<bool>(
                 @"SELECT CASE
                         WHEN EXISTS (SELECT ID FROM USERS WHERE PrimaryEmail = @email AND ID <> @userId)
                         OR EXISTS (SELECT ID FROM UserCentreDetails d
-                            WHERE d.Email = @email AND d.Email IS NOT NULL AND d.UserID <> @userId)
+                            WHERE d.Email = @email AND d.UserID <> @userId)
                         THEN 1
                         ELSE 0
                         END",
-                new { email, userId });
+                new { email, userId },
+                transaction);
         }
 
-        public bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails)
+        public bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails, IDbTransaction? transaction = null)
         {
             return connection.QueryFirst<bool>(
                 @"SELECT CASE
                         WHEN EXISTS (SELECT ID FROM Users WHERE PrimaryEmail IN @emails)
-                            OR EXISTS (SELECT ID FROM UserCentreDetails d WHERE d.Email IN @emails AND d.Email IS NOT NULL)
+                            OR EXISTS (SELECT ID FROM UserCentreDetails d WHERE d.Email IN @emails)
                         THEN 1
                         ELSE 0
                         END",
-                new { emails }
+                new { emails },
+                transaction
             );
         }
     }
