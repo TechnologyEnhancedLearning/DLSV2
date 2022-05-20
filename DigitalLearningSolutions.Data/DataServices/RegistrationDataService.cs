@@ -4,18 +4,22 @@
     using System.Data;
     using System.Transactions;
     using Dapper;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public interface IRegistrationDataService
     {
         string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel);
 
-        int RegisterAdmin(AdminRegistrationModel registrationModel);
+        int RegisterAdmin(AdminRegistrationModel registrationModel, int userId);
     }
 
     public class RegistrationDataService : IRegistrationDataService
     {
         private readonly IDbConnection connection;
+        private readonly IUserDataService userDataService;
 
         public RegistrationDataService(IDbConnection connection)
         {
@@ -26,7 +30,7 @@
         {
             // TODO HEEDLS-886: this method previously returned error codes as well as candidate numbers.
             // any code that calls it and handled those errors on the basis of the codes needs to be updated
-            connection.Open();
+            connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
 
             var userValues = new
@@ -66,29 +70,15 @@
                 transaction
             );
 
-            var userCentreDetailsValues = new
+            if (!string.IsNullOrWhiteSpace(delegateRegistrationModel.SecondaryEmail))
             {
-                userId,
-                CentreId = delegateRegistrationModel.Centre,
-                Email = delegateRegistrationModel.SecondaryEmail,
-            };
-
-            connection.Execute(
-                @"INSERT INTO UserCentreDetails
-                    (
-                        UserId,
-                        CentreId,
-                        Email
-                    )
-                    VALUES
-                    (
-                        @userId,
-                        @centreId,
-                        @email
-                    )",
-                userCentreDetailsValues,
-                transaction
-            );
+                userDataService.SetCentreEmail(
+                    userId,
+                    delegateRegistrationModel.Centre,
+                    delegateRegistrationModel.SecondaryEmail,
+                    transaction
+                );
+            }
 
             var initials = delegateRegistrationModel.FirstName.Substring(0, 1) +
                            delegateRegistrationModel.LastName.Substring(0, 1);
@@ -126,7 +116,7 @@
                 delegateRegistrationModel.IsExternalRegistered,
                 delegateRegistrationModel.IsSelfRegistered,
                 DetailsLastChecked = DateTime.UtcNow,
-                // null-equivalent data for non-nullable deprecated values
+                // TODO HEEDLS-889 currently non-null deprecated columns
                 LastName_deprecated = "",
                 JobGroupID_deprecated = 0,
                 SkipPW_deprecated = false,
@@ -142,7 +132,6 @@
                         CentreID,
                         DateRegistered,
                         CandidateNumber,
-                        Email,
                         Answer1,
                         Answer2,
                         Answer3,
@@ -167,7 +156,6 @@
                         @centreId,
                         @dateRegistered,
                         @candidateNumber,
-                        @email,
                         @answer1,
                         @answer2,
                         @answer3,
@@ -197,71 +185,81 @@
             return candidateNumber;
         }
 
-        public int RegisterAdmin(AdminRegistrationModel registrationModel)
+        public int RegisterAdmin(AdminRegistrationModel registrationModel, int userId)
         {
-            var values = new
+            connection.EnsureOpen();
+            using var transaction = connection.BeginTransaction();
+
+            if (!string.IsNullOrWhiteSpace(registrationModel.SecondaryEmail))
             {
-                forename = registrationModel.FirstName,
-                surname = registrationModel.LastName,
-                email = registrationModel.PrimaryEmail,
-                password = registrationModel.PasswordHash,
+                userDataService.SetCentreEmail(
+                    userId,
+                    registrationModel.Centre,
+                    registrationModel.SecondaryEmail,
+                    transaction
+                );
+            }
+
+            var adminValues = new
+            {
+                userId,
                 centreID = registrationModel.Centre,
-                categoryId = registrationModel.CategoryId,
-                centreAdmin = registrationModel.IsCentreAdmin,
+                categoryID = registrationModel.CategoryId,
+                isCentreAdmin = registrationModel.IsCentreAdmin,
                 isCentreManager = registrationModel.IsCentreManager,
-                approved = registrationModel.Approved,
                 active = registrationModel.Active,
-                contentCreator = registrationModel.IsContentCreator,
-                contentManager = registrationModel.IsContentManager,
+                isContentCreator = registrationModel.IsContentCreator,
+                isContentManager = registrationModel.IsContentManager,
                 importOnly = registrationModel.ImportOnly,
-                trainer = registrationModel.IsTrainer,
-                supervisor = registrationModel.IsSupervisor,
-                nominatedSupervisor = registrationModel.IsNominatedSupervisor
+                isTrainer = registrationModel.IsTrainer,
+                isSupervisor = registrationModel.IsSupervisor,
+                isNominatedSupervisor = registrationModel.IsNominatedSupervisor,
+                // TODO HEEDLS-889 currently non-null deprecated columns
+                forename_deprecated = "",
+                surname_deprecated = "",
+                password_deprecated = ""
             };
 
-            using var transaction = new TransactionScope();
-
             var adminUserId = connection.QuerySingle<int>(
-                @"INSERT INTO AdminUsers
+                @"INSERT INTO AdminAccounts
                     (
-                        Forename,
-                        Surname,
-                        Email,
-                        Password,
-                        CentreId,
-                        CategoryId,
-                        CentreAdmin,
+                        UserID,
+                        CentreID,
+                        CategoryID,
+                        IsCentreAdmin,
                         IsCentreManager,
-                        Approved,
                         Active,
-                        ContentCreator,
-                        ContentManager,
+                        IsContentCreator,
+                        IsContentManager,
                         ImportOnly,
-                        Trainer,
-                        Supervisor,
-                        NominatedSupervisor
+                        IsTrainer,
+                        IsSupervisor,
+                        IsNominatedSupervisor,
+                        Forename_deprecated,
+                        Surname_deprecated,
+                        Password_deprecated
                     )
-                    OUTPUT Inserted.AdminID
+                    OUTPUT Inserted.ID
                     VALUES
                     (
-                        @forename,
-                        @surname,
-                        @email,
-                        @password,
+                        @userId,
                         @centreId,
                         @categoryId,
-                        @centreAdmin,
+                        @isCentreAdmin,
                         @isCentreManager,
-                        @approved,
                         @active,
-                        @contentCreator,
-                        @contentManager,
+                        @isContentCreator,
+                        @isContentManager,
                         @importOnly,
-                        @trainer,
-                        @supervisor,
-                        @nominatedSupervisor
+                        @isTrainer,
+                        @isSupervisor,
+                        @isNominatedSupervisor,
+                        @forename_deprecated,
+                        @surname_deprecated,
+                        @password_deprecated
                     )",
-                values
+                adminValues,
+                transaction
             );
 
             connection.Execute(
@@ -273,7 +271,7 @@
                 new { adminUserId, roles = registrationModel.GetNotificationRoles() }
             );
 
-            transaction.Complete();
+            transaction.Commit();
 
             return adminUserId;
         }
