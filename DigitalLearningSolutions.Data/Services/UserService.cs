@@ -256,9 +256,10 @@ namespace DigitalLearningSolutions.Data.Services
                 return true;
             }
 
-            var (adminUsersWithNewEmail, delegateUsersWithNewEmail) = GetUsersByEmailAddress(emailAddress);
+            var (adminUserWithNewEmail, delegateUsersWithNewEmail) = GetUsersByEmailAddress(emailAddress);
 
-            return adminUsersWithNewEmail == null && delegateUsersWithNewEmail.Count(u => u.CentreId == centreId) == 0;
+            return (adminUserWithNewEmail == null || adminUserId == adminUserWithNewEmail.Id) &&
+                   delegateUsersWithNewEmail.Count(u => u.Id != delegateUserId) == 0;
         }
 
         public UserAccountSet GetVerifiedLinkedUsersAccounts(

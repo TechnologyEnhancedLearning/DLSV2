@@ -505,7 +505,7 @@
         }
 
         [Test]
-        public void NewEmailAddressIsValid_returns_true_with_existing_delegate_at_different_centre_with_email()
+        public void NewEmailAddressIsValid_returns_false_with_existing_delegate_at_different_centre_with_email()
         {
             // Given
             const string email = "email@test.com";
@@ -517,6 +517,47 @@
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
                 (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email, centreId: 3) });
+
+            // When
+            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.CentreId);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void NewEmailAddressIsValid_returns_true_with_same_admin_at_different_centre_with_email()
+        {
+            // Given
+            const string email = "email@test.com";
+            const string oldEmail = "oldemail@test.com";
+            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: oldEmail);
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: oldEmail);
+            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns(new List<DelegateUser>());
+
+            // When
+            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.CentreId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void NewEmailAddressIsValid_returns_true_with_same_delegate_at_different_centre_with_email()
+        {
+            // Given
+            const string email = "email@test.com";
+            const string oldEmail = "oldemail@test.com";
+            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: oldEmail);
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: oldEmail);
+            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
+                (new List<DelegateUser> { delegateUser });
 
             // When
             var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.CentreId);

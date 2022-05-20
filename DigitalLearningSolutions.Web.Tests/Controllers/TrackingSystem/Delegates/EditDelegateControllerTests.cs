@@ -85,7 +85,7 @@
                 result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
                 AssertModelStateErrorIsExpected(
                     result,
-                    "A user with this email address is already registered at this centre"
+                    "This email address is already in use"
                 );
             }
         }
