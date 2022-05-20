@@ -29,7 +29,10 @@
         {
             // TODO HEEDLS-886: this method previously returned error codes as well as candidate numbers.
             // any code that calls it and handled those errors on the basis of the codes needs to be updated
-            connection.Open();
+            if (connection.State != ConnectionState.Open)
+            {
+                connection.Open();
+            }
             using var transaction = connection.BeginTransaction();
 
             var userValues = new
@@ -186,7 +189,10 @@
 
         public int RegisterAdmin(AdminRegistrationModel registrationModel, int userId)
         {
-            connection.Open();
+            if (connection.State != ConnectionState.Open)
+            {
+                connection.Open();
+            }
             using var transaction = connection.BeginTransaction();
 
             if (!string.IsNullOrWhiteSpace(registrationModel.SecondaryEmail))

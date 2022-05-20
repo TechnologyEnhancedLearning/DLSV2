@@ -17,7 +17,10 @@
         {
             if (transaction == null)
             {
-                connection.Open();
+                if (connection.State != ConnectionState.Open)
+                {
+                    connection.Open();
+                }
                 transaction = connection.BeginTransaction();
             }
 
