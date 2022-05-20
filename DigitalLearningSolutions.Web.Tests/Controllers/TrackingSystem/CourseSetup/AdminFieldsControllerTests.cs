@@ -20,11 +20,9 @@
 
     public class AdminFieldsControllerTests
     {
-        private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService =
-            A.Fake<ICourseAdminFieldsDataService>();
-
-        private readonly ICourseAdminFieldsService courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
-        private readonly ICourseService courseService = A.Fake<ICourseService>();
+        private ICourseAdminFieldsDataService courseAdminFieldsDataService = null!;
+        private ICourseAdminFieldsService courseAdminFieldsService = null!;
+        private ICourseService courseService = null!;
         private AdminFieldsController controller = null!;
 
         private static IEnumerable<TestCaseData> AddAnswerModelErrorTestData
@@ -34,19 +32,19 @@
                 yield return new TestCaseData(
                     new string('x', 1000),
                     "xx",
-                    "The complete list of answers must be 1000 characters or fewer (0 characters remaining for the new answer, 2 characters were entered)"
+                    "The complete list of responses must be 1000 characters or fewer (0 characters remaining for the new response, 2 characters were entered)"
                 ).SetName("Error_message_shows_zero_characters_remaining_if_options_string_is_at_max_length");
                 yield return new TestCaseData(
                     new string('x', 998),
                     "xx",
-                    "The complete list of answers must be 1000 characters or fewer (0 characters remaining for the new answer, 2 characters were entered)"
+                    "The complete list of responses must be 1000 characters or fewer (0 characters remaining for the new response, 2 characters were entered)"
                 ).SetName(
                     "Error_message_shows_zero_characters_remaining_if_options_string_is_two_less_than_max_length"
                 );
                 yield return new TestCaseData(
                     new string('x', 996),
                     "xxxx",
-                    "The complete list of answers must be 1000 characters or fewer (2 characters remaining for the new answer, 4 characters were entered)"
+                    "The complete list of responses must be 1000 characters or fewer (2 characters remaining for the new response, 4 characters were entered)"
                 ).SetName("Error_message_shows_two_less_than_number_of_characters_remaining_if_possible_to_add_answer");
             }
         }
@@ -54,6 +52,9 @@
         [SetUp]
         public void Setup()
         {
+            courseAdminFieldsDataService = A.Fake<ICourseAdminFieldsDataService>();
+            courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
+            courseService = A.Fake<ICourseService>();
             controller = new AdminFieldsController(
                     courseAdminFieldsService,
                     courseAdminFieldsDataService
@@ -67,7 +68,8 @@
         public void AdminFields_returns_AdminFields_page_when_appropriate_course_found_and_clears_TempData()
         {
             // Given
-            var courseAdminField1 = PromptsTestHelper.GetDefaultCourseAdminField(1, "System Access Granted", "Yes\r\nNo");
+            var courseAdminField1 =
+                PromptsTestHelper.GetDefaultCourseAdminField(1, "System Access Granted", "Yes\r\nNo");
             var courseAdminFields = new List<CourseAdminField> { courseAdminField1 };
             A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(A<int>._))
                 .Returns(PromptsTestHelper.GetDefaultCourseAdminFields(courseAdminFields));
@@ -114,16 +116,11 @@
         public void PostEditAdminField_add_configures_new_answer()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, "Test", "Options");
+            var model = new EditAdminFieldViewModel(1, "Test", "Options")
+            {
+                Answer = "new option",
+            };
             const string action = "addPrompt";
-
-            A.CallTo(
-                () => courseAdminFieldsService.UpdateAdminFieldForCourse(
-                    1,
-                    1,
-                    "Test"
-                )
-            ).DoesNothing();
 
             // When
             var result = controller.EditAdminField(1, model, action);
@@ -553,6 +550,104 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void AddAdminField_adds_model_error_if_field_name_is_already_in_use()
+        {
+            // Given
+            var model = new AddAdminFieldViewModel(1, "test");
+            var initialTempData = new AddAdminFieldData(model);
+            controller.TempData.Set(initialTempData);
+            const string action = "save";
+
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(A<int>._))
+                .Returns(new [] { 1, 0, 0 });
+
+            // When
+            var result = controller.AddAdminField(100, model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<AddAdminFieldViewModel>();
+                AssertModelStateErrorIsExpected(result, "That field name already exists for this course");
+            }
+        }
+
+        [Test]
+        public void AddAdminField_adds_model_error_if_trimmed_case_insensitive_answer_is_already_in_options_list()
+        {
+            // Given
+            var model = new AddAdminFieldViewModel(1, "test", "  tEsT  ");
+            var initialTempData = new AddAdminFieldData(model);
+            controller.TempData.Set(initialTempData);
+            const string action = "addPrompt";
+
+            // When
+            var result = controller.AddAdminField(1, model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<AddAdminFieldViewModel>();
+                AssertModelStateErrorIsExpected(result, "Each response must be unique");
+            }
+        }
+
+        [Test]
+        public void EditAdminField_adds_model_error_if_trimmed_case_insensitive_answer_is_already_in_options_list()
+        {
+            // Given
+            var model = new EditAdminFieldViewModel(1, "prompt", "test");
+            model.Answer = "  tEsT  ";
+            var initialTempData = new EditAdminFieldData(model);
+            controller.TempData.Set(initialTempData);
+            const string action = "addPrompt";
+
+            // When
+            var result = controller.EditAdminField(1, model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<EditAdminFieldViewModel>();
+                AssertModelStateErrorIsExpected(result, "Each response must be unique");
+            }
+        }
+
+        [Test]
+        public void AddAdminFieldAnswersBulk_adds_model_error_if_trimmed_case_insensitive_bulk_edit_is_not_unique()
+        {
+            // Given
+            var model = new AddBulkAdminFieldAnswersViewModel("test\r\n   tEsT   ");
+
+            // When
+            var result = controller.AddAdminFieldAnswersBulk(1, model);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<AddBulkAdminFieldAnswersViewModel>();
+                AssertModelStateErrorIsExpected(result, "Each response must be unique");
+            }
+        }
+
+        [Test]
+        public void EditAdminFieldAnswersBulk_adds_model_error_if_trimmed_case_insensitive_bulk_edit_is_not_unique()
+        {
+            // Given
+            var model = new BulkAdminFieldAnswersViewModel("test\r\n   tEsT   ");
+
+            // When
+            var result = controller.EditAdminFieldAnswersBulk(1, 1, model);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<BulkAdminFieldAnswersViewModel>();
+                AssertModelStateErrorIsExpected(result, "Each response must be unique");
+            }
         }
 
         private static void AssertNumberOfConfiguredAnswersOnView(IActionResult result, int expectedCount)

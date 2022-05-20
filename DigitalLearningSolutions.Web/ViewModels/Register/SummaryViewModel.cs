@@ -14,13 +14,13 @@
             FirstName = data.FirstName;
             LastName = data.LastName;
             Email = data.Email;
+            ProfessionalRegistrationNumber = data.ProfessionalRegistrationNumber ?? "Not professionally registered";
+            HasProfessionalRegistrationNumber = data.HasProfessionalRegistrationNumber;
         }
 
         public SummaryViewModel(DelegateRegistrationData data) : this((RegistrationData)data)
         {
             IsCentreSpecificRegistration = data.IsCentreSpecificRegistration;
-            ProfessionalRegistrationNumber = data.ProfessionalRegistrationNumber ?? "Not professionally registered";
-            HasProfessionalRegistrationNumber = data.HasProfessionalRegistrationNumber;
         }
 
         public string? FirstName { get; set; }

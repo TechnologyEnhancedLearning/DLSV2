@@ -6,7 +6,9 @@
     public interface ISessionService
     {
         void StartOrUpdateDelegateSession(int candidateId, int customisationId, ISession httpContextSession);
+
         void StopDelegateSession(int candidateId, ISession httpContextSession);
+
         void StartAdminSession(int? adminId);
     }
 

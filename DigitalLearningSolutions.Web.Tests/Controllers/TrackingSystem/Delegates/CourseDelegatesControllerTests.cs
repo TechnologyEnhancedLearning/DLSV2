@@ -91,9 +91,9 @@
             var courseDelegate = Builder<CourseDelegate>
                 .CreateListOfSize(2)
                 .TheFirst(1)
-                .With(c => c.Active = false)
+                .With(c => c.IsDelegateActive = false)
                 .TheLast(1)
-                .With(c => c.Active = true)
+                .With(c => c.IsDelegateActive = true)
                 .Build();
             A.CallTo(
                     () => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
@@ -114,7 +114,7 @@
             var httpRequest = A.Fake<HttpRequest>();
             var httpResponse = A.Fake<HttpResponse>();
             const string cookieName = "CourseDelegatesFilter";
-            const string cookieValue = "AccountStatus|Active|true";
+            const string cookieValue = "AccountStatus|IsDelegateActive|true";
 
             var courseDelegatesController = new CourseDelegatesController(
                     courseAdminFieldsService,
@@ -139,7 +139,7 @@
             using (new AssertionScope())
             {
                 result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.ExistingFilterString.Should()
-                    .Be("AccountStatus|Active|true");
+                    .Be("AccountStatus|IsDelegateActive|true");
 
                 A.CallTo(
                         () => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(

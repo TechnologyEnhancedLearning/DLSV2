@@ -135,7 +135,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return RedirectToAction("Index");
             }
 
-            var model = new LearnerInformationViewModel(data);
+            var model = new LearnerInformationViewModel(data, true);
             PopulateLearnerInformationExtraFields(model, data);
             return View(model);
         }
@@ -249,7 +249,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                         RegistrationMappingHelper.MapSelfRegistrationToDelegateRegistrationModel(data),
                         userIp,
                         refactoredTrackingSystemEnabled,
-                        data.ProfessionalRegistrationNumber,
                         data.SupervisorDelegateId
                     );
 

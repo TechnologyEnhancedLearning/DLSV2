@@ -15,6 +15,7 @@
         IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical();
         Centre? GetCentreDetailsById(int centreId);
         IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
+        IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
 
         void UpdateCentreManagerDetails(
             int centreId,
@@ -183,6 +184,27 @@
             );
         }
 
+        public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()
+        {
+            return connection.Query<CentreSummaryForFindYourCentre>(
+                @"SELECT c.CentreID,
+                            c.CentreName,
+                            c.RegionID,
+                            r.RegionName,
+                            c.pwTelephone AS Telephone,
+                            c.pwEmail AS Email,
+                            c.pwWebURL AS WebUrl,
+                            c.pwHours AS Hours,
+                            c.pwTrainingLocations AS TrainingLocations,
+                            c.pwTrustsCovered AS TrustsCovered,
+                            c.pwGeneralInfo AS GeneralInfo,
+                            c.kbSelfRegister AS SelfRegister
+                        FROM Centres AS c
+                        INNER JOIN Regions AS r ON r.RegionID = c.RegionID
+                        WHERE c.Active = 1 AND c.Lat IS NOT NULL AND c.Long IS NOT NULL AND c.ShowOnMap = 1"
+            );
+        }
+
         public void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
@@ -319,18 +341,18 @@
                         SELECT
                             Count(c.CentreID) AS DelegateSessionCount,
                             c.CentreID
-                        FROM [Sessions] s 
-                        INNER JOIN Candidates c ON s.CandidateID = c.CandidateID 
+                        FROM [Sessions] s
+                        INNER JOIN Candidates c ON s.CandidateID = c.CandidateID
                         INNER JOIN Centres ct ON c.CentreID = ct.CentreID
-                        WHERE 
-                            s.LoginTime > @dateSince 
-                            AND c.CentreID <> 101 AND c.CentreID <> 374 
+                        WHERE
+                            s.LoginTime > @dateSince
+                            AND c.CentreID <> 101 AND c.CentreID <> 374
                             AND (ct.RegionID = @RegionID OR @RegionID IS NULL)
                         GROUP BY c.CentreID
-                    ), 
+                    ),
                     Rankings AS
                     (
-                        SELECT 
+                        SELECT
                             RANK() OVER (ORDER BY sc.DelegateSessionCount DESC) AS Ranking,
                             c.CentreID,
                             c.CentreName,

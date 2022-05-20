@@ -29,7 +29,10 @@
             TooLongAnswer5,
             TooLongAnswer6,
             BadFormatEmail,
-            WhitespaceInEmail
+            WhitespaceInEmail,
+            HasPrnButMissingPrnValue,
+            InvalidPrnLength,
+            InvalidPrnCharacters,
         }
 
         public BulkUploadResult() { }

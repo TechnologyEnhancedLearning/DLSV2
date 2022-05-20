@@ -4,11 +4,11 @@
 <p class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0">
   @if (Model.SearchString == null)
   {
-    <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+    <span hidden aria-hidden="true" aria-live="polite" class="results-count">0 matching results</span>
   }
   else
   {
     var count = Model.MatchingSearchResults;
-    <span role="alert" id="results-count">@count matching @(count == 1 ? "result" : "results")</span>
+    <span role="alert" class="results-count">@count matching @(count == 1 ? "result" : "results")</span>
   }
 </p>

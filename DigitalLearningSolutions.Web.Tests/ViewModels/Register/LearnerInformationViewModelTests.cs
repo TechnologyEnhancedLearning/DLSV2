@@ -14,7 +14,7 @@
             var data = RegistrationDataHelper.SampleRegistrationData();
 
             // When
-            var result = new LearnerInformationViewModel(data);
+            var result = new LearnerInformationViewModel(data, false);
 
             // Then
             result.JobGroup.Should().Be(data.JobGroup);
@@ -27,7 +27,7 @@
             var data = RegistrationDataHelper.SampleDelegateRegistrationData();
 
             // When
-            var result = new LearnerInformationViewModel(data);
+            var result = new LearnerInformationViewModel(data, false);
 
             // Then
             result.JobGroup.Should().Be(data.JobGroup);

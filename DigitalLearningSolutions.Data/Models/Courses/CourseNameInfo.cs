@@ -4,6 +4,14 @@
 
     public class CourseNameInfo : BaseSearchableItem
     {
+        public CourseNameInfo() { }
+
+        public CourseNameInfo(CourseNameInfo courseNameInfo)
+        {
+            CustomisationName = courseNameInfo.CustomisationName;
+            ApplicationName = courseNameInfo.ApplicationName;
+        }
+
         public string CustomisationName { get; set; } = null!;
         public string ApplicationName { get; set; } = null!;
 

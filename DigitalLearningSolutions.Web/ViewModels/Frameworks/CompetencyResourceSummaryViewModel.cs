@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 {
+    using DigitalLearningSolutions.Web.Helpers;
+
     public class CompetencyResourceSummaryViewModel : BaseSignpostingViewModel
     {
         private string _Link;
@@ -24,7 +26,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         }
 
         public string ResourceName => Resource?.Title ?? String.Empty;
-        public string ResourceType => Resource?.ResourceType ?? String.Empty;
+        public string ResourceType => DisplayStringHelper.AddSpacesToPascalCaseString(Resource?.ResourceType ?? String.Empty);
         public string Description => Resource?.Description ?? String.Empty;
         public string Link
         {

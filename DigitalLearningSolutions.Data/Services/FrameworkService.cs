@@ -116,7 +116,7 @@
         //INSERT DATA
         BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
 
-        int InsertCompetencyGroup(string groupName, int adminId);
+        int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId);
 
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
@@ -190,6 +190,7 @@
             int frameworkCompetencyGroupId,
             int competencyGroupId,
             string name,
+            string? description,
             int adminId
         );
 
@@ -478,7 +479,7 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             return GetBrandedFrameworkByFrameworkId(frameworkId, adminId);
         }
 
-        public int InsertCompetencyGroup(string groupName, int adminId)
+        public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId)
         {
             if ((groupName.Length == 0) | (adminId < 1))
             {
@@ -498,9 +499,9 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             }
 
             var numberOfAffectedRows = connection.Execute(
-                @"INSERT INTO CompetencyGroups ([Name], UpdatedByAdminID)
-                    VALUES (@groupName, @adminId)",
-                new { groupName, adminId }
+                @"INSERT INTO CompetencyGroups ([Name], [Description], UpdatedByAdminID)
+                    VALUES (@groupName, @groupDescription, @adminId)",
+                new { groupName, groupDescription, adminId }
             );
             if (numberOfAffectedRows < 1)
             {
@@ -913,7 +914,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
         public CompetencyGroupBase? GetCompetencyGroupBaseById(int Id)
         {
             return connection.QueryFirstOrDefault<CompetencyGroupBase>(
-                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name
+                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, cg.Description
                     FROM   FrameworkCompetencyGroups AS fcg
                         INNER JOIN CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID
                     WHERE (fcg.ID = @Id)",
@@ -936,6 +937,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             int frameworkCompetencyGroupId,
             int competencyGroupId,
             string name,
+            string? description,
             int adminId
         )
         {
@@ -955,13 +957,13 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             );
             if (usedElsewhere > 0)
             {
-                var newCompetencyGroupId = InsertCompetencyGroup(name, adminId);
+                var newCompetencyGroupId = InsertCompetencyGroup(name, description, adminId);
                 if (newCompetencyGroupId > 0)
                 {
                     var numberOfAffectedRows = connection.Execute(
                         @"UPDATE FrameworkCompetencyGroups
-                    SET CompetencyGroupID = @newCompetencyGroupId, UpdatedByAdminID = @adminId
-                    WHERE ID = @frameworkCompetencyGroupId",
+                            SET CompetencyGroupID = @newCompetencyGroupId, UpdatedByAdminID = @adminId
+                            WHERE ID = @frameworkCompetencyGroupId",
                         new { newCompetencyGroupId, adminId, frameworkCompetencyGroupId }
                     );
                     if (numberOfAffectedRows < 1)
@@ -976,9 +978,9 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             else
             {
                 var numberOfAffectedRows = connection.Execute(
-                    @"UPDATE CompetencyGroups SET Name = @name, UpdatedByAdminID = @adminId
+                    @"UPDATE CompetencyGroups SET Name = @name, UpdatedByAdminID = @adminId, Description = @description
                     WHERE ID = @competencyGroupId",
-                    new { name, adminId, competencyGroupId }
+                    new { name, adminId, competencyGroupId, description }
                 );
                 if (numberOfAffectedRows < 1)
                 {

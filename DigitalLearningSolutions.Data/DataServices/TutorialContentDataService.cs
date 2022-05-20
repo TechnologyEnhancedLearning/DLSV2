@@ -329,7 +329,9 @@ namespace DigitalLearningSolutions.Data.DataServices
             return connection.Query<Tutorial>(
                 @"SELECT
                         tu.TutorialID,
-                        tu.TutorialName
+                        tu.TutorialName,
+                        tu.OverrideTutorialMins,
+                        tu.AverageTutMins
                     FROM dbo.Tutorials AS tu
                     WHERE tu.SectionID = @sectionId
                     AND tu.ArchivedDate IS NULL",

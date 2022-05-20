@@ -9,7 +9,8 @@
             int centre,
             string? passwordHash,
             bool active,
-            bool approved
+            bool approved,
+            string? professionalRegistrationNumber
         )
         {
             FirstName = firstName;
@@ -20,6 +21,7 @@
             PasswordHash = passwordHash;
             Active = active;
             Approved = approved;
+            ProfessionalRegistrationNumber = professionalRegistrationNumber;
         }
 
         public string FirstName { get; set; }
@@ -37,5 +39,7 @@
         public bool Approved { get; set; }
 
         public bool Active { get; set; }
+
+        public string? ProfessionalRegistrationNumber { get; set; }
     }
 }
