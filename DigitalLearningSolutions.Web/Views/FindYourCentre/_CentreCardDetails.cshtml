@@ -39,7 +39,11 @@
         Website
       </dt>
       <dd class="nhsuk-summary-list__value">
-        <a href="@Model.WebsiteHref" target="_blank">@Model.WebUrl</a>
+        @if (Model.IsValidUrl(Model.WebUrl)) {
+          <a href="@Model.WebsiteHref" target="_blank">@Model.WebUrl</a>
+        } else {
+          @Model.WebUrl
+        }
       </dd>
     </div>
   }

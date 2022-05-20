@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
@@ -12,6 +13,7 @@
     using DigitalLearningSolutions.Web.ViewModels.FindYourCentre;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.FeatureManagement;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.FindYourCentre))]
@@ -23,22 +25,25 @@
         private readonly IRegionDataService regionDataService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IConfiguration configuration;
+        private readonly IFeatureManager featureManager;
 
         public FindYourCentreController(
             ICentresService centresService,
             IRegionDataService regionDataService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            IFeatureManager featureManager
         )
         {
             this.centresService = centresService;
             this.regionDataService = regionDataService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.configuration = configuration;
+            this.featureManager = featureManager;
         }
 
         [Route("FindYourCentre/{page=1:int}")]
-        public IActionResult Index(
+        public async Task<IActionResult> Index(
             int page = 1,
             string? searchString = null,
             string? existingFilterString = null,
@@ -47,6 +52,13 @@
             int? itemsPerPage = null
         )
         {
+            if (!await featureManager.IsEnabledAsync(FeatureFlags.RefactoredFindYourCentrePage))
+            {
+                var model = new FindYourCentreViewModel(configuration);
+
+                return View("Index", model);
+            }
+
             existingFilterString = FilteringHelper.GetFilterString(
                 existingFilterString,
                 newFilterToAdd,
@@ -76,15 +88,14 @@
                 searchSortPaginationOptions
             );
 
-            var model = new FindYourCentreViewModel(
+            var refactoredModel = new RefactoredFindYourCentreViewModel(
                 result,
-                availableFilters,
-                configuration
+                availableFilters
             );
 
             Response.UpdateFilterCookie(FindCentreFilterCookieName, result.FilterString);
 
-            return View(model);
+            return View("RefactoredFindYourCentre", refactoredModel);
         }
 
         public IActionResult CentreData()

@@ -11,6 +11,7 @@
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.FeatureManagement;
     using NUnit.Framework;
 
     public class FindYourCentreControllerTests
@@ -20,6 +21,7 @@
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private FindYourCentreController controller = null!;
         private IConfiguration configuration = null!;
+        private IFeatureManager featureManager = null!;
 
         [SetUp]
         public void Setup()
@@ -28,12 +30,14 @@
             centresService = A.Fake<ICentresService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             configuration = A.Fake<IConfiguration>();
+            featureManager = A.Fake<IFeatureManager>();
 
             controller = new FindYourCentreController(
                 centresService,
                 regionDataService,
                 searchSortFilterPaginateService,
-                configuration
+                configuration,
+                featureManager
             );
         }
 
