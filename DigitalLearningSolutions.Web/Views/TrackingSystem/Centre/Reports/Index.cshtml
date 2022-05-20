@@ -55,6 +55,14 @@
           </li>
         }
       </ul>
+
+      <a class="nhsuk-button"
+         asp-controller="Reports"
+         asp-action="DownloadEvaluationSummaries"
+         asp-all-route-data="@Model.ReportsFilterModel.FilterValues"
+         role="button">
+        Download evaluation summary
+      </a>
     } else {
       var place = Model.Category == "All" ? "at this centre" : $"for course category {Model.Category}";
       <p class="nhsuk-body-l">
