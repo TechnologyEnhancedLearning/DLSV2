@@ -463,7 +463,6 @@ namespace DigitalLearningSolutions.Data.Services
             var userId = userDataService.GetUserIdFromUsername(username);
 
             return userId == null ? null : GetUserById(userId.Value);
-            }
         }
 
         public DelegateUserCard? GetDelegateUserCardById(int delegateId)
