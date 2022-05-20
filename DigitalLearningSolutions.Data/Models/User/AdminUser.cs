@@ -1,11 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
 
     public class AdminUser : User
     {
-        private const int FailedLoginThreshold = 5;
-
         public bool IsCentreAdmin { get; set; }
 
         public bool IsCentreManager { get; set; }
@@ -40,7 +39,7 @@
 
         public int FailedLoginCount { get; set; }
 
-        public bool IsLocked => FailedLoginCount >= FailedLoginThreshold;
+        public bool IsLocked => FailedLoginCount >= AuthHelper.FailedLoginThreshold;
         public bool IsCmsAdministrator => ImportOnly && IsContentManager;
         public bool IsCmsManager => IsContentManager && !ImportOnly;
 

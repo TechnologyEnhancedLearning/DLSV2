@@ -6,7 +6,6 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
-    using Microsoft.Extensions.Logging;
 
     public interface IUserDataService
     {
@@ -155,7 +154,7 @@
             var userIds = connection.Query<int?>(
                 @"SELECT DISTINCT u.ID
                     FROM Users AS u
-                    INNER JOIN DelegateAccounts AS da ON da.UserID = u.ID
+                    LEFT JOIN DelegateAccounts AS da ON da.UserID = u.ID
                     WHERE u.PrimaryEmail = @username OR da.CandidateNumber = @username",
                 new { username }
             ).ToList();
@@ -170,7 +169,7 @@
             return userIds.SingleOrDefault();
         }
 
-        public UserAccount? GetUserAccountById (int userId)
+        public UserAccount? GetUserAccountById(int userId)
         {
             return connection.Query<UserAccount>(
                 @"SELECT u.ID, 
@@ -205,7 +204,7 @@
                         SET
                             FailedLoginCount = @updatedCount
                         WHERE ID = @userId",
-                new { userId, updatedCount}
+                new { userId, updatedCount }
             );
         }
     }

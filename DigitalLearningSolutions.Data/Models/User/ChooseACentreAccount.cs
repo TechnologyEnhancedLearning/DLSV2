@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
-    public class CentreUserDetails
+    public class ChooseACentreAccount
     {
         public int CentreId { get; set; }
         public string CentreName { get; set; }

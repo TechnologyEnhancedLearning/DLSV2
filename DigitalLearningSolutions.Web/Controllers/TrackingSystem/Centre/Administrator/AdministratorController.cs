@@ -156,7 +156,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult UnlockAccount(int adminId)
         {
-            // TODO HEEDLS-887 - this needs to be userId for the admin
+            // TODO HEEDLS-920 - this needs to be userId for the admin
             userDataService.UpdateUserFailedLoginCount(adminId, 0);
 
             return RedirectToAction("Index");

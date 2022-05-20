@@ -23,7 +23,7 @@
             var result = new UserEntity(userAccount, new List<AdminAccount>(), new List<DelegateAccount>());
 
             // Then
-            result.AdminAccountsLocked.Should().Be(expectedValue);
+            result.IsLocked.Should().Be(expectedValue);
         }
 
         [Test]

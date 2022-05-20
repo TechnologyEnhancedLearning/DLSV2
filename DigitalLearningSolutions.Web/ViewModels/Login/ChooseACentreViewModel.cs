@@ -5,11 +5,11 @@
 
     public class ChooseACentreViewModel
     {
-        public ChooseACentreViewModel(List<CentreUserDetails> centreUserDetails)
+        public ChooseACentreViewModel(List<ChooseACentreAccount> centreUserDetails)
         {
             CentreUserDetails = centreUserDetails;
         }
 
-        public List<CentreUserDetails> CentreUserDetails { get; set; }
+        public List<ChooseACentreAccount> CentreUserDetails { get; set; }
     }
 }
