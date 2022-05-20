@@ -140,7 +140,7 @@
             userService.UpdateAdminUserPermissions(
                 adminId,
                 model.GetAdminRoles(),
-                model.LearningCategory
+                AdminCategoryHelper.AdminCategoryToCategoryId(model.LearningCategory)
             );
 
             return RedirectToAction(

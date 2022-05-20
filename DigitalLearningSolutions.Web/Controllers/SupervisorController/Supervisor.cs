@@ -153,17 +153,6 @@
             }
         }
 
-        public IActionResult ConfirmSupervise(int supervisorDelegateId)
-        {
-            var adminId = GetAdminID();
-            if (supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, 0, adminId))
-            {
-                frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, adminId, 0);
-            }
-
-            return RedirectToAction("MyStaffList");
-        }
-
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {

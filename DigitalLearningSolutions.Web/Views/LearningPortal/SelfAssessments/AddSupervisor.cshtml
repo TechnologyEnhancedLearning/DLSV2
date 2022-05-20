@@ -67,9 +67,12 @@
             </div>
           </fieldset>
         </nhs-form-group>
-        <button class="nhsuk-button" type="submit">
-          Next
-        </button>
+        @if (Model.Supervisors.Count() > 0)
+        {
+          <button class="nhsuk-button" type="submit">
+            Next
+          </button>
+        }
       </form>
     </div>
   </div>

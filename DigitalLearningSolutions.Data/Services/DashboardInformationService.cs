@@ -46,7 +46,7 @@
             var courseCount =
                 courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(
                     centreId,
-                    adminUser!.CategoryIdFilter
+                    adminUser.CategoryId
                 );
             var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
             var supportTicketCount = adminUser.IsCentreManager

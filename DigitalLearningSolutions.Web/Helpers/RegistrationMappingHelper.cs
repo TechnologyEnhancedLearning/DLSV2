@@ -16,7 +16,8 @@
                 data.PasswordHash!,
                 true,
                 true,
-                0,
+                data.ProfessionalRegistrationNumber,
+                null,
                 true,
                 true,
                 false,
@@ -28,7 +29,9 @@
             );
         }
 
-        public static DelegateRegistrationModel MapSelfRegistrationToDelegateRegistrationModel(DelegateRegistrationData data)
+        public static DelegateRegistrationModel MapSelfRegistrationToDelegateRegistrationModel(
+            DelegateRegistrationData data
+        )
         {
             return new DelegateRegistrationModel(
                 data.FirstName!,
@@ -45,11 +48,14 @@
                 data.Answer6,
                 true,
                 true,
+                data.ProfessionalRegistrationNumber,
                 notifyDate: DateTime.Now
             );
         }
 
-        public static DelegateRegistrationModel MapCentreRegistrationToDelegateRegistrationModel(DelegateRegistrationByCentreData data)
+        public static DelegateRegistrationModel MapCentreRegistrationToDelegateRegistrationModel(
+            DelegateRegistrationByCentreData data
+        )
         {
             return new DelegateRegistrationModel(
                 data.FirstName!,
@@ -66,6 +72,7 @@
                 data.Answer6,
                 false,
                 true,
+                data.ProfessionalRegistrationNumber,
                 true,
                 data.Alias,
                 data.WelcomeEmailDate

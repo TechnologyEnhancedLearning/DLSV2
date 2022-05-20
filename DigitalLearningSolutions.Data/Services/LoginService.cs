@@ -49,7 +49,12 @@
                 adminAccountVerificationAttemptedAndFailed &&
                 !delegateAccountVerificationSuccessful;
 
-            var adminAccountIsAlreadyLocked = unverifiedAdminUser?.IsLocked == true;
+            var userEmail = delegateAccountVerificationSuccessful ? verifiedDelegateUsers[0].EmailAddress : null;
+            var adminAccountAssociatedWithDelegateAccount =
+                userEmail == null ? null : userService.GetAdminUserByEmailAddress(userEmail);
+
+            var adminAccountIsAlreadyLocked = unverifiedAdminUser?.IsLocked == true ||
+                                              adminAccountAssociatedWithDelegateAccount?.IsLocked == true;
             var adminAccountHasJustBecomeLocked = unverifiedAdminUser?.FailedLoginCount == 4 &&
                                                   shouldIncreaseFailedLoginCount;
 
@@ -58,18 +63,13 @@
             if (shouldIncreaseFailedLoginCount)
             {
                 userService.IncrementFailedLoginCount(unverifiedAdminUser!);
+                unverifiedAdminUser!.FailedLoginCount += 1;
             }
 
             if (adminAccountIsLocked)
             {
-                if (delegateAccountVerificationSuccessful)
-                {
-                    verifiedAdminUser = null;
-                }
-                else
-                {
-                    return new LoginResult(LoginAttemptResult.AccountLocked, unverifiedAdminUser);
-                }
+                var adminAccount = unverifiedAdminUser ?? adminAccountAssociatedWithDelegateAccount;
+                return new LoginResult(LoginAttemptResult.AccountLocked, adminAccount);
             }
 
             if (verifiedAdminUser == null && !delegateAccountVerificationSuccessful)
@@ -135,10 +135,11 @@
             AdminUser? verifiedAdminUser
         )
         {
-            var verifiedAssociatedAdmin = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
-                approvedVerifiedDelegates,
-                password
-            );
+            var verifiedAssociatedAdmin =
+                userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
+                    approvedVerifiedDelegates,
+                    password
+                );
 
             // If we find a new linked admin we must be logging in by CandidateNumber or AliasID.
             // In this case, we are trying to log directly into a centre so we discard an admin at a different centre.
@@ -150,7 +151,10 @@
             var verifiedLinkedAdmin = verifiedAdminUser ?? verifiedAssociatedAdmin;
 
             var verifiedLinkedDelegates =
-                userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser, password);
+                userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
+                    verifiedAdminUser,
+                    password
+                );
             return (verifiedLinkedAdmin, verifiedLinkedDelegates);
         }
 

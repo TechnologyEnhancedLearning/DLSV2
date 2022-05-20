@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FizzWare.NBuilder;
@@ -20,6 +21,7 @@
     {
         private const int CentreId = 2;
         private const int AdminCategoryId = 0;
+        private IClockService clockService = null!;
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseCategoriesDataService courseCategoriesDataService = null!;
         private ICourseDataService courseDataService = null!;
@@ -27,10 +29,12 @@
         private ICourseTopicsDataService courseTopicsDataService = null!;
         private IGroupsDataService groupsDataService = null!;
         private IProgressDataService progressDataService = null!;
+        private ISectionService sectionService = null!;
 
         [SetUp]
         public void Setup()
         {
+            clockService = A.Fake<IClockService>();
             courseDataService = A.Fake<ICourseDataService>();
             A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(CentreId, AdminCategoryId))
                 .Returns(GetSampleCourses());
@@ -39,13 +43,16 @@
             groupsDataService = A.Fake<IGroupsDataService>();
             courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
+            sectionService = A.Fake<ISectionService>();
             courseService = new CourseService(
+                clockService,
                 courseDataService,
                 courseAdminFieldsService,
                 progressDataService,
                 groupsDataService,
                 courseCategoriesDataService,
-                courseTopicsDataService
+                courseTopicsDataService,
+                sectionService
             );
         }
 
@@ -136,57 +143,6 @@
                     AllCentres = true,
                 },
             };
-        }
-
-        [Test]
-        public void GetDelegateAttemptsAndCourseAdminFields_should_call_correct_data_service_and_helper_methods()
-        {
-            // Given
-            const int delegateId = 20;
-            const int customisationId = 111;
-            var attemptStatsReturnedByDataService = new AttemptStats(10, 5);
-            var info = new DelegateCourseInfo
-                { DelegateId = delegateId, CustomisationId = customisationId, IsAssessed = true };
-            A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(delegateId, customisationId))
-                .Returns(attemptStatsReturnedByDataService);
-
-            // When
-            var results = courseService.GetDelegateAttemptsAndCourseAdminFields(info);
-
-            // Then
-            A.CallTo(
-                () => courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
-                    info,
-                    customisationId
-                )
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(delegateId, customisationId))
-                .MustHaveHappenedOnceExactly();
-            results.DelegateCourseInfo.Should().BeEquivalentTo(info);
-            results.AttemptStats.Should().Be(attemptStatsReturnedByDataService);
-        }
-
-        [Test]
-        public void GetDelegateAttemptsAndCourseAdminFields_should_not_fetch_attempt_stats_if_course_not_assessed()
-        {
-            // Given
-            const int customisationId = 111;
-            var info = new DelegateCourseInfo
-                { CustomisationId = customisationId, IsAssessed = false };
-
-            // When
-            var result = courseService.GetDelegateAttemptsAndCourseAdminFields(info);
-
-            // Then
-            A.CallTo(
-                () => courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
-                    info,
-                    customisationId
-                )
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(A<int>._, A<int>._)).MustNotHaveHappened();
-            result.DelegateCourseInfo.Should().BeEquivalentTo(info);
-            result.AttemptStats.Should().BeEquivalentTo(new AttemptStats(0, 0));
         }
 
         [Test]
@@ -506,17 +462,12 @@
         public void DelegateHasCurrentProgress_returns_true_if_delegate_has_current_progress()
         {
             // Given
-            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
-                new List<Progress>
-                {
-                    new Progress { ProgressId = 1, Completed = null, RemovedDate = null },
-                    new Progress { ProgressId = 1, Completed = DateTime.UtcNow, RemovedDate = null },
-                    new Progress { ProgressId = 1, Completed = null, RemovedDate = DateTime.UtcNow },
-                }
+            A.CallTo(() => progressDataService.GetProgressByProgressId(1)).Returns(
+                new Progress { ProgressId = 1, Completed = null, RemovedDate = null }
             );
 
             // When
-            var result = courseService.DelegateHasCurrentProgress(1, 1);
+            var result = courseService.DelegateHasCurrentProgress(1);
 
             // then
             result.Should().BeTrue();
@@ -526,31 +477,10 @@
         public void DelegateHasCurrentProgress_returns_false_if_delegate_has_no_current_progress()
         {
             // Given
-            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
-                new List<Progress>()
-            );
+            A.CallTo(() => progressDataService.GetProgressByProgressId(1)).Returns(null);
 
             // When
-            var result = courseService.DelegateHasCurrentProgress(1, 1);
-
-            // then
-            result.Should().BeFalse();
-        }
-
-        [Test]
-        public void DelegateHasCurrentProgress_returns_false_if_delegate_has_only_completed_or_removed_progress()
-        {
-            // Given
-            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
-                new List<Progress>
-                {
-                    new Progress { ProgressId = 1, Completed = DateTime.UtcNow, RemovedDate = null },
-                    new Progress { ProgressId = 1, Completed = null, RemovedDate = DateTime.UtcNow },
-                }
-            );
-
-            // When
-            var result = courseService.DelegateHasCurrentProgress(1, 1);
+            var result = courseService.DelegateHasCurrentProgress(1);
 
             // then
             result.Should().BeFalse();
@@ -781,7 +711,7 @@
             // Then
             result.Count.Should().Be(2);
             result.All(
-                x => x.DelegateCourseInfo.CustomisationCentreId == centreId || x.DelegateCourseInfo.AllCentresCourse
+                x => x.CustomisationCentreId == centreId || x.AllCentresCourse
             ).Should().BeTrue();
         }
 
@@ -804,7 +734,7 @@
 
             // Then
             result.Count.Should().Be(2);
-            result.All(x => x.DelegateCourseInfo.CourseCategoryId == 1).Should().BeTrue();
+            result.All(x => x.CourseCategoryId == 1).Should().BeTrue();
         }
 
         [Test]
@@ -883,6 +813,51 @@
 
             // Then
             result.Single().Should().Be(topicName);
+        }
+
+        [Test]
+        public void GetApplicationsThatHaveSectionsByBrandId_returns_expected_applications()
+        {
+            // Given
+            const int brandId = 1;
+            const int idForApplicationWithSections = 1;
+            var validationTime = new DateTime(22, 4, 5, 11, 30, 30);
+            var applications = Builder<ApplicationDetails>.CreateListOfSize(10).All().Build();
+            var sections = Builder<Section>.CreateListOfSize(5).Build().ToList();
+
+            A.CallTo(() => clockService.UtcNow).Returns(validationTime);
+            A.CallTo(
+                () => courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId, validationTime.AddMonths(-3))
+            ).Returns(new Dictionary<int, int>());
+            A.CallTo(() => courseDataService.GetApplicationsByBrandId(brandId)).Returns(applications);
+            A.CallTo(() => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(idForApplicationWithSections))
+                .Returns(sections);
+
+            // When
+            var result = courseService.GetApplicationsThatHaveSectionsByBrandId(brandId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                var expectedResult = applications.Select(a => new ApplicationWithSections(a, sections, 0))
+                    .Where(a => a.ApplicationId == idForApplicationWithSections);
+                result.Should().BeEquivalentTo(expectedResult);
+                A.CallTo(
+                    () => clockService.UtcNow
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => courseDataService.GetNumsOfRecentProgressRecordsForBrand(
+                        brandId,
+                        validationTime.AddMonths(-3)
+                    )
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => courseDataService.GetApplicationsByBrandId(brandId)
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(idForApplicationWithSections)
+                ).MustHaveHappenedOnceExactly();
+            }
         }
 
         [Test]

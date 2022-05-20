@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Data;
-    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -27,7 +26,7 @@
             bool isContentCreator,
             bool isContentManager,
             bool importOnly,
-            int categoryId
+            int? categoryId
         );
 
         void UpdateAdminUserFailedLoginCount(int adminId, int updatedCount);
@@ -112,9 +111,18 @@
             bool hasBeenPromptedForPrn
         );
 
-        bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails);
+        bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails, IDbTransaction? transaction = null);
+
+        bool EmailIsInUseByOtherUser(int userId, string email, IDbTransaction? transaction = null);
 
         void DeleteAdminAccount(int adminId);
+
+        void SetCentreEmail(
+            int userId,
+            int centreId,
+            string email,
+            IDbTransaction? transaction = null
+        );
     }
 
     public partial class UserDataService : IUserDataService
@@ -124,20 +132,6 @@
         public UserDataService(IDbConnection connection)
         {
             this.connection = connection;
-        }
-
-        public bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails)
-        {
-            return connection.QueryFirst<bool>(
-                @"SELECT CASE
-                        WHEN EXISTS (SELECT ID FROM USERS WHERE PrimaryEmail IN @emails)
-                            OR EXISTS (SELECT ID FROM DelegateAccounts da WHERE da.Email IN @emails AND da.Email IS NOT NULL)
-                            OR EXISTS (SELECT ID FROM AdminAccounts aa WHERE aa.Email IN @emails AND aa.Email IS NOT NULL)
-                        THEN 1
-                        ELSE 0
-                        END",
-                new { emails }
-            );
         }
     }
 }

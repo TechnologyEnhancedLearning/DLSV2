@@ -7,14 +7,6 @@
   }
 }
 
-.select-all-button {
-  @extend .right-submit-button;
-  @include nhsuk-font(16);
-  background-color: $button-dark-blue;
-  border-radius: 4px;
-  margin-right: nhsuk-spacing(2);
-}
-
 .deselect-all-button {
   @extend .select-all-button;
 }

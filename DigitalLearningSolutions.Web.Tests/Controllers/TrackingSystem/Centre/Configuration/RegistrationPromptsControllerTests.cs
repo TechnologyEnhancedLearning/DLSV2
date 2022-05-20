@@ -32,19 +32,19 @@
                 yield return new TestCaseData(
                     new string('x', 4000),
                     "xx",
-                    "The complete list of answers must be 4000 characters or fewer (0 characters remaining for the new answer, 2 characters were entered)"
+                    "The complete list of responses must be 4000 characters or fewer (0 characters remaining for the new response, 2 characters were entered)"
                 ).SetName("Error_message_shows_zero_characters_remaining_if_options_string_is_at_max_length");
                 yield return new TestCaseData(
                     new string('x', 3998),
                     "xx",
-                    "The complete list of answers must be 4000 characters or fewer (0 characters remaining for the new answer, 2 characters were entered)"
+                    "The complete list of responses must be 4000 characters or fewer (0 characters remaining for the new response, 2 characters were entered)"
                 ).SetName(
                     "Error_message_shows_zero_characters_remaining_if_options_string_is_two_less_than_max_length"
                 );
                 yield return new TestCaseData(
                     new string('x', 3996),
                     "xxxx",
-                    "The complete list of answers must be 4000 characters or fewer (2 characters remaining for the new answer, 4 characters were entered)"
+                    "The complete list of responses must be 4000 characters or fewer (2 characters remaining for the new response, 4 characters were entered)"
                 ).SetName("Error_message_shows_two_less_than_number_of_characters_remaining_if_possible_to_add_answer");
             }
         }
