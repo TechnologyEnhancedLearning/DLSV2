@@ -276,11 +276,11 @@
             }
 
             if (centreRegistrationPromptsService.AddCentreRegistrationPrompt(
-                    User.GetCentreId(),
-                    data.SelectPromptViewModel.CustomPromptId!.Value,
-                    data.SelectPromptViewModel.Mandatory,
-                    data.ConfigureAnswersViewModel.OptionsString
-                ))
+                User.GetCentreId(),
+                data.SelectPromptViewModel.CustomPromptId!.Value,
+                data.SelectPromptViewModel.Mandatory,
+                data.ConfigureAnswersViewModel.OptionsString
+            ))
             {
                 TempData.Clear();
                 return RedirectToAction("Index");
@@ -506,6 +506,12 @@
             TempData.Set(data);
         }
 
+        private bool IsOptionsListUnique(List<string> optionsList)
+        {
+            var lowerCaseOptionsList = optionsList.Select(str => str.ToLower()).ToList();
+            return lowerCaseOptionsList.Count() == lowerCaseOptionsList.Distinct().Count();
+        }
+
         private void ValidateBulkOptionsString(string? optionsString)
         {
             if (optionsString != null && optionsString.Length > 4000)
@@ -522,6 +528,14 @@
                 ModelState.AddModelError(
                     nameof(BulkRegistrationPromptAnswersViewModel.OptionsString),
                     "Each response must be 100 characters or fewer"
+                );
+            }
+
+            if (!IsOptionsListUnique(optionsList))
+            {
+                ModelState.AddModelError(
+                    nameof(BulkRegistrationPromptAnswersViewModel.OptionsString),
+                    "The list of responses contains duplicate options"
                 );
             }
         }

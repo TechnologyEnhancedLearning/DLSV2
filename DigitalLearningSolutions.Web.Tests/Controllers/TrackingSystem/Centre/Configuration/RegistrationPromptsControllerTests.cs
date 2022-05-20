@@ -477,6 +477,24 @@
             }
         }
 
+        [Test]
+        public void
+            EditRegistrationPromptBulkPost_adds_model_error_if_trimmed_case_insensitive_bulk_edit_is_not_unique()
+        {
+            // Given
+            var model = new BulkRegistrationPromptAnswersViewModel("test\r\n   tEsT   ", false, 1);
+
+            // When
+            var result = registrationPromptsController.EditRegistrationPromptBulkPost(model);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<BulkRegistrationPromptAnswersViewModel>();
+                AssertModelStateErrorIsExpected(result, "The list of responses contains duplicate options");
+            }
+        }
+
         private void AssertSelectPromptViewModelIsExpectedModel(AddRegistrationPromptSelectPromptViewModel promptModel)
         {
             registrationPromptsController.TempData.Peek<AddRegistrationPromptData>()!.SelectPromptViewModel.Should()
