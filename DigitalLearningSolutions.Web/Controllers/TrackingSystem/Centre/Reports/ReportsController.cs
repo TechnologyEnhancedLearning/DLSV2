@@ -62,7 +62,8 @@
                 evaluationResponseBreakdowns,
                 filterData.StartDate,
                 filterData.EndDate ?? DateTime.Today,
-                activityService.GetActivityStartDateForCentre(centreId, categoryIdFilter) != null
+                activityService.GetActivityStartDateForCentre(centreId, categoryIdFilter) != null,
+                activityService.GetCourseCategoryNameForActivityFilter(categoryIdFilter)
             );
             return View(model);
         }
