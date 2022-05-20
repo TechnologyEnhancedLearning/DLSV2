@@ -367,6 +367,7 @@
                 Competency = competency,
                 ResultSupervisorVerificationId = assessmentQuestion.SelfAssessmentResultSupervisorVerificationId,
                 SupervisorComments = assessmentQuestion.SupervisorComments,
+                Verified = assessmentQuestion.Verified,
                 SignedOff = assessmentQuestion.SignedOff != null ? (bool)assessmentQuestion.SignedOff : false
             };
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
