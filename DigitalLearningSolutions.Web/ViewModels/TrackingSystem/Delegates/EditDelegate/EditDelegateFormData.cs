@@ -35,6 +35,7 @@
                     delegateUser.HasBeenPromptedForPrn,
                     delegateUser.ProfessionalRegistrationNumber
                 );
+            IsSelfRegistrationOrEdit = false;
         }
 
         public EditDelegateFormData(EditDelegateFormData formData)
@@ -52,6 +53,7 @@
             AliasId = formData.AliasId;
             ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
             HasProfessionalRegistrationNumber = formData.HasProfessionalRegistrationNumber;
+            IsSelfRegistrationOrEdit = false;
         }
 
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]

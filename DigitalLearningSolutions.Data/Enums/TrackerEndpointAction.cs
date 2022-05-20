@@ -5,5 +5,6 @@
         GetObjectiveArray,
         GetObjectiveArrayCc,
         StoreDiagnosticJson,
+        StoreAspProgressV2,
     }
 }

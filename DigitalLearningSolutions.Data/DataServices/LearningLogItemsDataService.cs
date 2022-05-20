@@ -32,6 +32,8 @@
         public void SetCompleteByDate(int learningLogItemId, DateTime? completeByDate);
 
         void RemoveLearningLogItem(int learningLogId, int removedById, DateTime removedDate);
+
+        int MarkLearningLogItemsCompleteByProgressId(int progressId);
     }
 
     public class LearningLogItemsDataService : ILearningLogItemsDataService
@@ -229,6 +231,15 @@
                         ArchivedById = @removedById
                     WHERE LearningLogItemId = @learningLogId",
                 new { learningLogId, removedById, removedDate }
+            );
+        }
+
+        public int MarkLearningLogItemsCompleteByProgressId(int progressId)
+        {
+            return connection.Execute(
+                "UpdateLearningLogItemsMarkCompleteForRelatedCourseCompletion",
+                new { progressId },
+                commandType: CommandType.StoredProcedure
             );
         }
     }

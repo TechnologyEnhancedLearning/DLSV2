@@ -12,7 +12,8 @@
             string? passwordHash,
             bool active,
             bool approved,
-            int categoryId,
+            string? professionalRegistrationNumber,
+            int? categoryId,
             bool isCentreAdmin,
             bool isCentreManager,
             bool isSupervisor,
@@ -22,7 +23,7 @@
             bool isCmsAdmin,
             bool isCmsManager,
             byte[]? profileImage = null
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved)
+        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
             CategoryId = categoryId;
             IsCentreAdmin = isCentreAdmin;
@@ -64,7 +65,7 @@
 
         public bool IsContentCreator { get; set; }
 
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
 
         public byte[]? ProfileImage { get; set; }
 

@@ -41,6 +41,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
                     delegateUser?.HasBeenPromptedForPrn,
                     delegateUser?.ProfessionalRegistrationNumber
                 );
+            IsSelfRegistrationOrEdit = true;
         }
 
         protected MyAccountEditDetailsFormData(MyAccountEditDetailsFormData formData)
@@ -60,6 +61,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer6 = formData.Answer6;
             HasProfessionalRegistrationNumber = formData.HasProfessionalRegistrationNumber;
             ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
+            IsSelfRegistrationOrEdit = true;
         }
 
         [Required(ErrorMessage = "Enter your current password")]

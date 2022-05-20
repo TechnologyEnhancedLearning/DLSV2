@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Data;
-    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
@@ -28,7 +27,7 @@
             bool isContentCreator,
             bool isContentManager,
             bool importOnly,
-            int categoryId
+            int? categoryId
         );
 
         void UpdateUserFailedLoginCount(int userId, int updatedCount);

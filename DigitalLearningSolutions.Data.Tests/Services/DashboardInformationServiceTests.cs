@@ -133,7 +133,7 @@
                 () =>
                     courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(
                         CentreId,
-                        adminUser!.CategoryIdFilter
+                        adminUser!.CategoryId
                     )
             ).Returns(courseCount);
             A.CallTo(() => userDataService.GetNumberOfActiveAdminsAtCentre(CentreId)).Returns(adminCount);

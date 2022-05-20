@@ -26,7 +26,7 @@
                 au.PublishToAll,
                 au.SummaryReports,
                 au.UserAdmin AS IsUserAdmin,
-                au.CategoryID,
+                CASE WHEN au.CategoryID = 0 THEN NULL ELSE au.CategoryID END AS CategoryId,
                 CASE
                     WHEN au.CategoryID = 0 THEN 'All'
                     ELSE cc.CategoryName
@@ -109,7 +109,7 @@
             bool isContentCreator,
             bool isContentManager,
             bool importOnly,
-            int categoryId
+            int? categoryId
         )
         {
             connection.Execute(

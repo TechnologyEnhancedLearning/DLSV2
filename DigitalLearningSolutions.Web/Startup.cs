@@ -237,7 +237,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
             services.AddScoped<ICourseDataService, CourseDataService>();
-            services.AddScoped<ICourseDelegatesDataService, CourseDelegatesDataService>();
             services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
             services.AddScoped<IEmailDataService, EmailDataService>();
