@@ -5,6 +5,7 @@
     public class CustomPolicies
     {
         public const string UserOnly = "UserOnly";
+        public const string UserDelegateOnly = "UserDelegateOnly";
         public const string UserCentreAdmin = "UserCentreAdmin";
         public const string UserFrameworksAdminOnly = "UserFrameworksAdminOnly";
         public const string UserCentreManager = "UserCentreManager";
@@ -14,17 +15,23 @@
 
         public static AuthorizationPolicyBuilder ConfigurePolicyUserOnly(AuthorizationPolicyBuilder policy)
         {
+            return policy.RequireAssertion(context => context.User.GetUserId() != null);
+        }
+
+        public static AuthorizationPolicyBuilder ConfigurePolicyUserDelegateOnly(AuthorizationPolicyBuilder policy)
+        {
             return policy.RequireAssertion(
-                context => context.User.GetCandidateId() != null
-                           && context.User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) == true
+                context => context.User.GetUserId() != null && context.User.GetCandidateId() != null &&
+                           context.User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) == true
             );
         }
 
         public static AuthorizationPolicyBuilder ConfigurePolicyUserCentreAdmin(AuthorizationPolicyBuilder policy)
         {
             return policy.RequireAssertion(
-                context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
-                           && context.User.HasCentreAdminPermissions()
+                context => context.User.GetUserId() != null &&
+                           context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null &&
+                           context.User.HasCentreAdminPermissions()
             );
         }
 
@@ -33,8 +40,9 @@
         )
         {
             return policy.RequireAssertion(
-                context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
-                           && (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) == true) |
+                context => context.User.GetUserId() != null &&
+                           context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null &&
+                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) == true) |
                            (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) == true) |
                            (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) == true) |
                            (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor) == true)
@@ -46,7 +54,8 @@
         )
         {
             return policy.RequireAssertion(
-                context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null &&
+                context => context.User.GetUserId() != null &&
+                           context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null &&
                            context.User.HasCentreManagerPermissions()
             );
         }
@@ -56,24 +65,26 @@
         )
         {
             return policy.RequireAssertion(
-                context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
-                           && (context.User.HasCentreAdminPermissions()
-                               || context.User.HasFrameworksAdminPermissions())
+                context => context.User.GetUserId() != null &&
+                           context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null &&
+                           (context.User.HasCentreAdminPermissions() || context.User.HasFrameworksAdminPermissions())
             );
         }
 
         public static AuthorizationPolicyBuilder ConfigurePolicyUserSupervisor(AuthorizationPolicyBuilder policy)
         {
             return policy.RequireAssertion(
-                context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
-                           && context.User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true
+                context => context.User.GetUserId() != null &&
+                           context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null &&
+                           context.User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true
             );
         }
 
         public static AuthorizationPolicyBuilder ConfigurePolicyUserSuperAdmin(AuthorizationPolicyBuilder policy)
         {
             return policy.RequireAssertion(
-                context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null &&
+                context => context.User.GetUserId() != null &&
+                           context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null &&
                            context.User.HasSuperAdminPermissions()
             );
         }

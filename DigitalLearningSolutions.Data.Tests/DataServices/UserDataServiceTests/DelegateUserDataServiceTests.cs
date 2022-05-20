@@ -427,5 +427,19 @@
             updatedUser.ProfessionalRegistrationNumber.Should().Be(prn);
             updatedUser.HasBeenPromptedForPrn.Should().BeTrue();
         }
+
+        [Test]
+        public void GetDelegateAccountsByUserId_returns_expected_accounts()
+        {
+            // When
+            var result = userDataService.GetDelegateAccountsByUserId(61188).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(1);
+                result.Single().Should().BeEquivalentTo(UserTestHelper.GetDefaultDelegateAccount());
+            }
+        }
     }
 }

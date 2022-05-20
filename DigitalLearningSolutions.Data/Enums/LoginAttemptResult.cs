@@ -4,10 +4,10 @@
     {
         LogIntoSingleCentre,
         ChooseACentre,
-        InactiveCentre,
-        AccountNotApproved,
-        AccountLocked,
         InvalidPassword,
-        InvalidUsername
+        InvalidUsername,
+        InactiveAccount,
+        AccountsHaveMismatchedPasswords,
+        AccountLocked,
     }
 }
