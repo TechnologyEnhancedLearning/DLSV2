@@ -74,7 +74,7 @@
                 Email = email,
                 HasProfessionalRegistrationNumber = false,
             };
-            A.CallTo(() => userService.NewEmailAddressIsValid(email, null, DelegateId, A<int>._)).Returns(false);
+            A.CallTo(() => userService.NewEmailAddressIsValid(email, null, DelegateId, null)).Returns(false);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -100,7 +100,7 @@
                 HasProfessionalRegistrationNumber = true,
                 ProfessionalRegistrationNumber = "!&^£%&*^!%£",
             };
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, null)).Returns(true);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -125,7 +125,7 @@
                 JobGroupId = 1,
                 HasProfessionalRegistrationNumber = false,
             };
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int?>._)).Returns(true);
 
             // When
             var result = controller.Index(formData, DelegateId);

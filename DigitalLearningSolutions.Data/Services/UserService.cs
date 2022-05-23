@@ -41,7 +41,7 @@ namespace DigitalLearningSolutions.Data.Services
             string emailAddress,
             int? adminUserId,
             int? delegateUserId,
-            int userId
+            int? userId = null
         );
 
         UserAccountSet GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password);
@@ -256,7 +256,7 @@ namespace DigitalLearningSolutions.Data.Services
             string emailAddress,
             int? adminUserId,
             int? delegateUserId,
-            int userId
+            int? userId = null
         )
         {
             var (adminUser, delegateUser) = GetUsersById(adminUserId, delegateUserId);
@@ -265,11 +265,13 @@ namespace DigitalLearningSolutions.Data.Services
                 return true;
             }
 
+            // userId will be null when this is called from EditDelegateController, so we will have a delegateUser
+            var userChangingEmailId = userId ?? userDataService.GetUserIdFromUsername(delegateUser!.CandidateNumber);
             var (adminUserWithNewEmail, delegateUsersWithNewEmail) = GetUsersByEmailAddress(emailAddress);
 
             return (adminUserWithNewEmail == null || adminUserId == adminUserWithNewEmail.Id) &&
                    delegateUsersWithNewEmail.Count(
-                       u => userDataService.GetUserIdFromUsername(u.EmailAddress!) != userId
+                       u => userDataService.GetUserIdFromUsername(u.EmailAddress!) != userChangingEmailId
                    ) == 0;
         }
 

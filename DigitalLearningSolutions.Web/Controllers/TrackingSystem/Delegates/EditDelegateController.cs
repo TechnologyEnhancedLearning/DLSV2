@@ -75,7 +75,6 @@
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
-            // TODO: Change this to the correct user id
             if (!userService.NewEmailAddressIsValid(formData.Email!, null, delegateId, User.GetUserId()!.Value))
             {
                 ModelState.AddModelError(

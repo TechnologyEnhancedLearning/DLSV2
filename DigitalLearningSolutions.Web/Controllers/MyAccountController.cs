@@ -140,7 +140,7 @@
                     formData.Email!,
                     userAdminId,
                     userDelegateId,
-                    User.GetUserId()!.Value
+                    User.GetUserId()
                 ))
             {
                 ModelState.AddModelError(
