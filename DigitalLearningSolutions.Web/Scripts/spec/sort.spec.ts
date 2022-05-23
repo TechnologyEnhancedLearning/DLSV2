@@ -139,7 +139,7 @@ describe('sortSearchableElements completed', () => {
             <span name="name" class="searchable-element-title">a: Course</span>
             <p name="started-date">31/01/2010</p>
             <p name="accessed-date">22/02/2010</p>
-            <p name="completed-date">22/03/2010</p>
+            <p name="completed-date">22/03/2010 15:59</p>
             <p name="diagnostic-score">123</p>
             <p name="passed-sections">4/6</p>
           </div>
@@ -147,14 +147,14 @@ describe('sortSearchableElements completed', () => {
             <span name="name" class="searchable-element-title">B: Course</span>
             <p name="started-date">01/02/2010</p>
             <p name="accessed-date">22/02/2011</p>
-            <p name="completed-date">22/03/2011</p>
+            <p name="completed-date">22/03/2011 10:01</p>
             <p name="diagnostic-score">0</p>
           </div>
           <div class="searchable-element" id="course-c">
             <span name="name" class="searchable-element-title">c: course</span>
             <p name="started-date">22/01/2001</p>
             <p name="accessed-date">23/02/2011</p>
-            <p name="completed-date">22/02/2011</p>
+            <p name="completed-date">22/03/2011 10:00</p>
             <p name="evaluated-date">24/02/2011</p>
             <p name="passed-sections">0/6</p>
           </div>
