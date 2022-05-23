@@ -1,0 +1,7 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
+@model IBaseSearchablePageViewModel
+
+<form method="get">
+  <partial name="SearchablePage/_SearchSortFilterInputsForPagination" model="Model" />
+  <partial name="PaginatedPage/_TopPaginationNav" model="Model" />
+</form>

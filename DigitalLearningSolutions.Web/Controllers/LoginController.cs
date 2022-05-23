@@ -73,20 +73,19 @@
                 case LoginAttemptResult.AccountsHaveMismatchedPasswords:
                     return View("MismatchingPasswords");
                 case LoginAttemptResult.AccountLocked:
-                    return View("AccountLocked", loginResult.UserEntity!.UserAccount.FailedLoginCount + 1 );
+                    return View("AccountLocked", loginResult.UserEntity!.UserAccount.FailedLoginCount);
                 case LoginAttemptResult.InactiveAccount:
                     return View("AccountInactive");
                 case LoginAttemptResult.LogIntoSingleCentre:
-                    return await LogIn(
+                    return await LogIntoCentreAsync(
                         loginResult.UserEntity!,
                         model.RememberMe,
                         model.ReturnUrl,
                         loginResult.CentreToLogInto!.Value
                     );
                 case LoginAttemptResult.ChooseACentre:
-                    SetTempDataForChooseACentre(model.RememberMe, model.ReturnUrl);
-                    await BasicLogInAsync(loginResult.UserEntity!, model.RememberMe);
-                    return RedirectToAction("ChooseACentre", "Login");
+                    await CentrelessLogInAsync(loginResult.UserEntity!, model.RememberMe);
+                    return RedirectToAction("ChooseACentre", "Login", new { returnUrl = model.ReturnUrl });
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -95,44 +94,34 @@
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         [Authorize(Policy = CustomPolicies.UserOnly)]
-        public IActionResult ChooseACentre()
+        public IActionResult ChooseACentre(string? returnUrl)
         {
             // TODO HEEDLS-912: sort out ChooseACentre page
-            var model = new ChooseACentreViewModel(new List<CentreUserDetails>());
+            var model = new ChooseACentreViewModel(new List<ChooseACentreAccount>());
             return View("ChooseACentre", model);
         }
 
         [HttpGet]
         [Authorize(Policy = CustomPolicies.UserOnly)]
-        public async Task<IActionResult> ChooseCentre(int centreId)
+        public async Task<IActionResult> ChooseCentre(int centreId, string? returnUrl)
         {
-            var rememberMe = (bool)TempData["RememberMe"];
-            var returnUrl = (string?)TempData["ReturnUrl"];
-            TempData.Clear();
-
             // TODO HEEDLS-912: sort out ChooseACentre page
+            var rememberMe = true;
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
             var firstAdminAccountCentreId = userEntity!.AdminAccounts.FirstOrDefault()?.CentreId;
             var firstDelegateAccountCentreId = userEntity.DelegateAccounts.FirstOrDefault()?.CentreId;
             var tempCentreIdToLogInto = (firstAdminAccountCentreId ?? firstDelegateAccountCentreId)!.Value;
-            return await LogIn(userEntity!, rememberMe, returnUrl, tempCentreIdToLogInto);
+            return await LogIntoCentreAsync(userEntity!, rememberMe, returnUrl, tempCentreIdToLogInto);
         }
 
-        private void SetTempDataForChooseACentre(bool rememberMe, string? returnUrl)
-        {
-            TempData.Clear();
-            TempData["RememberMe"] = rememberMe;
-            TempData["ReturnUrl"] = returnUrl;
-        }
-
-        private async Task<IActionResult> LogIn(
+        private async Task<IActionResult> LogIntoCentreAsync(
             UserEntity userEntity,
             bool rememberMe,
             string? returnUrl,
             int centreIdToLogInto
         )
         {
-            var claims = LoginClaimsHelper.GetClaimsForSignIn(userEntity, centreIdToLogInto);
+            var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, centreIdToLogInto);
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
             var authProperties = new AuthenticationProperties
             {
@@ -152,9 +141,9 @@
             return RedirectToReturnUrl(returnUrl) ?? RedirectToAction("Index", "Home");
         }
 
-        private async Task BasicLogInAsync(UserEntity userEntity, bool rememberMe)
+        private async Task CentrelessLogInAsync(UserEntity userEntity, bool rememberMe)
         {
-            var claims = LoginClaimsHelper.GetClaimsForBasicSignIn(userEntity.UserAccount);
+            var claims = LoginClaimsHelper.GetClaimsForCentrelessSignIn(userEntity.UserAccount);
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
             var authProperties = new AuthenticationProperties
             {

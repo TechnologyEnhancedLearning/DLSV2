@@ -1,0 +1,28 @@
+﻿@using DigitalLearningSolutions.Data.Models.Centres
+@model CentreSummaryForFindYourCentre
+
+<div class="searchable-element nhsuk-panel card-with-buttons word-break" id="@Model.CentreId-card">
+  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.CentreId-name" name="course-name">
+        @Model.CentreName
+      </span>
+    </summary>
+
+    <div class="nhsuk-details__text">
+
+      <partial name="_CentreCardDetails" model="@Model" />
+
+      @if (Model.SelfRegister) {
+        <a class="nhsuk-button nhsuk-u-margin-right-2"
+           role="button"
+           asp-controller="Register"
+           asp-action="Index"
+           asp-route-centreId="@Model.CentreId">
+          Register
+        </a>
+      }
+
+    </div>
+  </details>
+</div>

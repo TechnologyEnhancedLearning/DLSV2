@@ -7,7 +7,6 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
-    using Microsoft.Extensions.Logging;
 
     public interface IUserDataService
     {
@@ -30,7 +29,7 @@
             bool isContentCreator,
             bool isContentManager,
             bool importOnly,
-            int categoryId
+            int? categoryId
         );
 
         void UpdateUserFailedLoginCount(int userId, int updatedCount);
@@ -119,7 +118,9 @@
             bool hasBeenPromptedForPrn
         );
 
-        bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails);
+        bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails, IDbTransaction? transaction = null);
+
+        bool EmailIsInUseByOtherUser(int userId, string email, IDbTransaction? transaction = null);
 
         void DeleteAdminAccount(int adminId);
 
@@ -130,6 +131,13 @@
         IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId);
 
         IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId);
+
+        void SetCentreEmail(
+            int userId,
+            int centreId,
+            string email,
+            IDbTransaction? transaction = null
+        );
     }
 
     public partial class UserDataService : IUserDataService
@@ -139,20 +147,6 @@
         public UserDataService(IDbConnection connection)
         {
             this.connection = connection;
-        }
-
-        public bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails)
-        {
-            return connection.QueryFirst<bool>(
-                @"SELECT CASE
-                        WHEN EXISTS (SELECT ID FROM USERS WHERE PrimaryEmail IN @emails)
-                            OR EXISTS (SELECT ID FROM DelegateAccounts da WHERE da.Email IN @emails AND da.Email IS NOT NULL)
-                            OR EXISTS (SELECT ID FROM AdminAccounts aa WHERE aa.Email IN @emails AND aa.Email IS NOT NULL)
-                        THEN 1
-                        ELSE 0
-                        END",
-                new { emails }
-            );
         }
 
         public void UpdateUserDetailsLastChecked(DateTime detailsLastChecked, int userId)
@@ -171,7 +165,7 @@
             var userIds = connection.Query<int?>(
                 @"SELECT DISTINCT u.ID
                     FROM Users AS u
-                    INNER JOIN DelegateAccounts AS da ON da.UserID = u.ID
+                    LEFT JOIN DelegateAccounts AS da ON da.UserID = u.ID
                     WHERE u.PrimaryEmail = @username OR da.CandidateNumber = @username",
                 new { username }
             ).ToList();
@@ -186,7 +180,7 @@
             return userIds.SingleOrDefault();
         }
 
-        public UserAccount? GetUserAccountById (int userId)
+        public UserAccount? GetUserAccountById(int userId)
         {
             return connection.Query<UserAccount>(
                 @"SELECT u.ID,
@@ -221,7 +215,7 @@
                         SET
                             FailedLoginCount = @updatedCount
                         WHERE ID = @userId",
-                new { userId, updatedCount}
+                new { userId, updatedCount }
             );
         }
     }

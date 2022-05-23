@@ -28,14 +28,14 @@
 
     public class RegisterDelegateByCentreControllerTests
     {
-        private PromptsService promptsService = null!;
+        private IConfiguration config = null!;
         private RegisterDelegateByCentreController controller = null!;
         private ICryptoService cryptoService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
-        private IConfiguration config = null!;
 
         [SetUp]
         public void Setup()
@@ -72,7 +72,7 @@
                 LastName = "User",
                 Centre = duplicateUser.CentreId,
                 Email = duplicateUser.EmailAddress,
-                Alias = "testUser"
+                Alias = "testUser",
             };
             A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
                 .Returns(false);
@@ -98,7 +98,7 @@
                 LastName = "User",
                 Centre = duplicateUser.CentreId + 1,
                 Email = duplicateUser.EmailAddress,
-                Alias = "testUser"
+                Alias = "testUser",
             };
             A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
                 .Returns(true);
@@ -124,7 +124,7 @@
                 LastName = "User",
                 Centre = duplicateUser.CentreId,
                 Email = "unique@email",
-                Alias = duplicateAlias
+                Alias = duplicateAlias,
             };
             A.CallTo(() => userDataService.GetAllDelegateUsersByUsername(duplicateAlias))
                 .Returns(new List<DelegateUser> { duplicateUser });
@@ -150,7 +150,7 @@
                 LastName = "User",
                 Centre = duplicateUser.CentreId + 1,
                 Email = duplicateUser.EmailAddress,
-                Alias = duplicateAlias
+                Alias = duplicateAlias,
             };
             A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
                 .Returns(true);
@@ -181,7 +181,7 @@
                 LastName = lastName,
                 Email = email,
                 Alias = alias,
-                Centre = 1
+                Centre = 1,
             };
             A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
                 .Returns(true);
@@ -208,6 +208,7 @@
             const string answer4 = "answer4";
             const string answer5 = "answer5";
             const string answer6 = "answer6";
+            const string professionalRegistrationNumber = "PRN1234";
 
             controller.TempData.Set(new DelegateRegistrationByCentreData { Centre = 1 });
             var model = new LearnerInformationViewModel
@@ -218,7 +219,9 @@
                 Answer3 = answer3,
                 Answer4 = answer4,
                 Answer5 = answer5,
-                Answer6 = answer6
+                Answer6 = answer6,
+                HasProfessionalRegistrationNumber = true,
+                ProfessionalRegistrationNumber = professionalRegistrationNumber,
             };
 
             // When
@@ -233,6 +236,8 @@
             data.Answer4.Should().Be(answer4);
             data.Answer5.Should().Be(answer5);
             data.Answer6.Should().Be(answer6);
+            data.HasProfessionalRegistrationNumber.Should().BeTrue();
+            data.ProfessionalRegistrationNumber.Should().Be(professionalRegistrationNumber);
         }
 
         [Test]
@@ -314,11 +319,16 @@
             var data = new DelegateRegistrationByCentreData
             {
                 FirstName = "Test", LastName = "User", Email = "test@mail.com", Centre = 5, JobGroup = 0,
-                WelcomeEmailDate = new DateTime(2200, 7, 7)
+                WelcomeEmailDate = new DateTime(2200, 7, 7),
             };
             controller.TempData.Set(data);
             var model = new SummaryViewModel();
-            A.CallTo(() => registrationService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._, A<string>._))
+            A.CallTo(
+                    () => registrationService.RegisterDelegateByCentre(
+                        A<DelegateRegistrationModel>._,
+                        A<string>._
+                    )
+                )
                 .Returns(sampleDelegateNumber);
 
             // When
@@ -338,9 +348,16 @@
         {
             // Given
             const string candidateNumber = "TN1";
-            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationByCentreData(welcomeEmailDate: DateTime.Now);
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationByCentreData(
+                welcomeEmailDate: DateTime.Now
+            );
             controller.TempData.Set(data);
-            A.CallTo(() => registrationService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._, A<string>._))
+            A.CallTo(
+                    () => registrationService.RegisterDelegateByCentre(
+                        A<DelegateRegistrationModel>._,
+                        A<string>._
+                    )
+                )
                 .Returns(candidateNumber);
 
             // When
@@ -368,7 +385,8 @@
                                     d.Active &&
                                     d.Approved &&
                                     !d.IsSelfRegistered &&
-                                    d.NotifyDate == data.WelcomeEmailDate
+                                    d.NotifyDate == data.WelcomeEmailDate &&
+                                    d.ProfessionalRegistrationNumber == data.ProfessionalRegistrationNumber
                             ),
                             A<string>._
                         )
@@ -383,7 +401,12 @@
             // Given
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationByCentreData();
             controller.TempData.Set(data);
-            A.CallTo(() => registrationService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._, A<string>._))
+            A.CallTo(
+                    () => registrationService.RegisterDelegateByCentre(
+                        A<DelegateRegistrationModel>._,
+                        A<string>._
+                    )
+                )
                 .Throws(new DelegateCreationFailedException(DelegateCreationError.UnexpectedError));
 
             // When
@@ -399,7 +422,12 @@
             // Given
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationByCentreData();
             controller.TempData.Set(data);
-            A.CallTo(() => registrationService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._, A<string>._))
+            A.CallTo(
+                    () => registrationService.RegisterDelegateByCentre(
+                        A<DelegateRegistrationModel>._,
+                        A<string>._
+                    )
+                )
                 .Throws(new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse));
 
             // When

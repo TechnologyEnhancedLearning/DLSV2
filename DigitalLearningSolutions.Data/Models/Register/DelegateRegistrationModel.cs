@@ -20,10 +20,11 @@
             string? answer6,
             bool isSelfRegistered,
             bool active,
+            string? professionalRegistrationNumber,
             bool approved = false,
             string? aliasId = null,
             DateTime? notifyDate = null
-            ) : base(firstName, lastName, email, centre, passwordHash, active, approved)
+        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
             Answer1 = answer1;
             Answer2 = answer2;
@@ -45,8 +46,9 @@
             int jobGroup,
             string? passwordHash,
             bool active,
-            bool approved
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved)
+            bool approved,
+            string? professionalRegistrationNumber
+        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
             JobGroup = jobGroup;
         }
@@ -70,6 +72,7 @@
             row.Answer6,
             false,
             row.Active!.Value,
+            null,
             true,
             row.AliasId,
             welcomeEmailDate

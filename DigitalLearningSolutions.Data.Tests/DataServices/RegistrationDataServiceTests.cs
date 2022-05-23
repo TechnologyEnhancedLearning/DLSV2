@@ -117,8 +117,10 @@
                     userLookup3.Should().NotThrow();
                     userLookup4.Should().NotThrow();
                     userLookup5.Should().NotThrow();
-                    userLookup6.Should().Throw<InvalidOperationException>().WithMessage("Sequence contains no elements");
-                    userLookup7.Should().Throw<InvalidOperationException>().WithMessage("Sequence contains no elements");
+                    userLookup6.Should().Throw<InvalidOperationException>()
+                        .WithMessage("Sequence contains no elements");
+                    userLookup7.Should().Throw<InvalidOperationException>()
+                        .WithMessage("Sequence contains no elements");
                 }
             }
             // we clean up manually due to difficulties in parallel invocation of data service methods inside a transaction.
@@ -128,7 +130,6 @@
                 connection.Execute("DELETE FROM DelegateAccounts WHERE CandidateNumber LIKE 'XQ%'");
                 connection.Execute("DELETE FROM Users WHERE FirstName = 'Xavier' AND LastName = 'Quondam'");
             }
-
         }
 
         private Action GetRegistrationAction(DelegateRegistrationModel model)
@@ -146,19 +147,27 @@
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var registrationModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+            var registrationModel =
+                RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel(
+                    categoryId: 1
+                );
 
             // When
-            service.RegisterAdmin(registrationModel);
+            var id = service.RegisterAdmin(registrationModel, 4046);
 
             // Then
-            var user = userDataService.GetAdminUserByEmailAddress(registrationModel.PrimaryEmail)!;
-            user.FirstName.Should().Be(registrationModel.FirstName);
-            user.LastName.Should().Be(registrationModel.LastName);
+            var user = userDataService.GetAdminUserById(id)!;
             user.CentreId.Should().Be(registrationModel.Centre);
-            user.Password.Should().Be(registrationModel.PasswordHash);
-            user.IsCentreAdmin.Should().BeTrue();
-            user.IsCentreManager.Should().BeTrue();
+            user.IsCentreAdmin.Should().Be(registrationModel.IsCentreAdmin);
+            user.IsCentreManager.Should().Be(registrationModel.IsCentreManager);
+            user.Approved.Should().Be(registrationModel.Approved);
+            user.Active.Should().Be(registrationModel.Active);
+            user.IsContentCreator.Should().Be(registrationModel.IsContentCreator);
+            user.IsContentManager.Should().Be(registrationModel.IsContentManager);
+            user.ImportOnly.Should().Be(registrationModel.ImportOnly);
+            user.IsTrainer.Should().Be(registrationModel.IsTrainer);
+            user.IsSupervisor.Should().Be(registrationModel.IsSupervisor);
+            user.IsNominatedSupervisor.Should().Be(registrationModel.IsNominatedSupervisor);
         }
 
         [Test]
@@ -167,13 +176,16 @@
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var registrationModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+            var registrationModel =
+                RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel(
+                    categoryId: 1
+                );
 
             // When
-            service.RegisterAdmin(registrationModel);
+            var id = service.RegisterAdmin(registrationModel, 4046);
 
             // Then
-            var user = userDataService.GetAdminUserByEmailAddress(registrationModel.PrimaryEmail)!;
+            var user = userDataService.GetAdminUserById(id)!;
             var preferences = notificationPreferencesDataService.GetNotificationPreferencesForAdmin(user.Id).ToList();
             preferences.Count.Should().Be(7);
             preferences.Should().ContainSingle(n => n.NotificationId.Equals(1) && !n.Accepted);

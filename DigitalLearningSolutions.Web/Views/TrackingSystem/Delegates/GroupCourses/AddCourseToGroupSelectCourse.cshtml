@@ -30,7 +30,8 @@
       </p>
     } else {
       <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-      <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
+      <partial name="SearchablePage/_TopPagination" model="Model" />
+      <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
       <div id="searchable-elements">
         @foreach (var course in Model.Courses) {
@@ -39,7 +40,7 @@
       </div>
     }
 
-    <partial name="SearchablePage/_Pagination" model="Model" />
+    <partial name="SearchablePage/_BottomPagination" model="Model" />
 
     <div class="nhsuk-u-padding-top-4">
       <vc:cancel-link asp-controller="GroupCourses" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />

@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
-
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor
 @model MyStaffListViewModel;
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -39,7 +38,7 @@
   <h1>My Staff</h1>
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      @if (Model.SuperviseDelegateDetailViewModels.Any() | Model.SearchString != null) {
+      @if (Model.SuperviseDelegateDetailViewModels.Any() | (Model.SearchString != null)) {
         <form method="get" role="search" asp-action="Index" asp-route-page="@Model.Page">
           <div class="nhsuk-grid-row">
             <partial name="SearchablePage/_Search" model="Model" />
@@ -47,18 +46,19 @@
           <div class="nhsuk-grid-row">
             <div class="nhsuk-grid-column-full">
               <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-              <partial name="SearchablePage/_PaginationWithoutAlert" model="Model" />
+              <partial name="SearchablePage/_TopPagination" model="Model" />
+              <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
               <input type="hidden" id="select-sort-by" value="SearchableName" />
               <input type="hidden" id="select-sort-direction" value="Ascending" />
-              @if (@Model.SuperviseDelegateDetailViewModels.Any()) {
+              @if (Model.SuperviseDelegateDetailViewModels.Any()) {
                 <div id="searchable-elements">
                   @foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetailViewModels) {
                     <partial name="Shared/_StaffMemberCard" model="supervisorDelegateDetail" />
                   }
                 </div>
 
-                <partial name="SearchablePage/_Pagination" model="Model" />
+                <partial name="SearchablePage/_BottomPagination" model="Model" />
               } else {
                 <p>Please change your search criteria and try again.</p>
               }
@@ -112,5 +112,4 @@
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
 @section scripts {
   <script src="@Url.Content("~/js/supervisor/staffList.js")" asp-append-version="true"></script>
-}
-}
+}}

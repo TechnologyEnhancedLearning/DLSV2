@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
@@ -9,22 +10,27 @@
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class FindYourCentreControllerTests
     {
         private ICentresService centresService = null!;
-        private IConfiguration configuration = null!;
+        private IRegionDataService regionDataService = null!;
+        private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private FindYourCentreController controller = null!;
 
         [SetUp]
         public void Setup()
         {
-            configuration = A.Fake<IConfiguration>();
+            regionDataService = A.Fake<IRegionDataService>();
             centresService = A.Fake<ICentresService>();
+            searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
-            controller = new FindYourCentreController(configuration, centresService);
+            controller = new FindYourCentreController(
+                centresService,
+                regionDataService,
+                searchSortFilterPaginateService
+            );
         }
 
         [Test]

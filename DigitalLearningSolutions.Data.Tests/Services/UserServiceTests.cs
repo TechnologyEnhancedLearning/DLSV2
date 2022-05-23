@@ -1085,7 +1085,7 @@
                 .With(au => au.CategoryId = 1)
                 .TheNext(2)
                 .With(au => au.IsSupervisor = true)
-                .With(au => au.CategoryId = 0)
+                .With(au => au.CategoryId = null)
                 .TheNext(3)
                 .With(au => au.IsSupervisor = true)
                 .With(au => au.CategoryId = 2)
@@ -1098,7 +1098,7 @@
             // Then
             result.Should().HaveCount(5);
             result.Should().OnlyContain(au => au.IsSupervisor);
-            result.Should().OnlyContain(au => au.CategoryId == 0 || au.CategoryId == 1);
+            result.Should().OnlyContain(au => au.CategoryId == null || au.CategoryId == 1);
         }
 
         [Test]
@@ -1207,19 +1207,6 @@
                 A.CallTo(() => userDataService.GetAdminAccountsByUserId(A<int>._)).MustNotHaveHappened();
                 A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._)).MustNotHaveHappened();
             }
-        }
-
-        [Test]
-        public void GetUserById_throws_UserAccountNotFoundException_when_no_admin_or_delegate_accounts_found()
-        {
-            // Given
-            const int userId = 2;
-            A.CallTo(() => userDataService.GetUserAccountById(userId)).Returns(UserTestHelper.GetDefaultUserAccount());
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(A<int>._)).Returns(new List<AdminAccount>());
-            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._)).Returns(new List<DelegateAccount>());
-
-            // Then
-            Assert.Throws<UserAccountNotFoundException>(() => userService.GetUserById(userId));
         }
 
         [Test]

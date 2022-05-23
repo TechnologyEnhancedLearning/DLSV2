@@ -4,21 +4,46 @@
 $nhs-dark-grey: #425563;
 $button-dark-blue: #003d78;
 $button-hover-colour: #4c6272;
+$button-active-colour: #002f5c;
+
+.inline-button {
+  height: 52px;
+  min-width: 100px;
+  box-shadow: none;
+  font-size: inherit;
+  font-weight: inherit;
+  border: 0;
+  border-radius: 0px 4px 4px 0px;
+  margin: 0;
+  padding: 8px 4px;
+  background-color: $button-dark-blue;
+
+  &:active {
+    top: inherit;
+    background-color: $button-active-colour;
+  }
+
+  &:hover:not(:focus):not(:active) {
+    background-color: $button-hover-colour;
+  }
+
+  @include mq($from: tablet) {
+    height: 40px;
+  }
+}
 
 .input-with-submit-button {
   border: 2px solid $nhsuk-form-border-color;
   border-right: 0;
   border-radius: 4px 0 0 4px;
   height: 52px;
-  padding: 0 12px;
+  padding: 0 9px;
   font-size: 16px;
   float: left;
   margin-bottom: nhsuk-spacing(4);
   outline: none;
 
   &:focus {
-    border: 4px solid $color_nhsuk_black;
-    box-shadow: 0 0 0 4px $nhsuk-focus-color;
     margin-right: 4px;
   }
 
@@ -32,18 +57,22 @@ $button-hover-colour: #4c6272;
   }
 }
 
-.input-with-no-js-submit-button {
+.pagination-input-with-no-js-submit-button-border {
+  .js-enabled & {
+    border-right: 2px solid $nhsuk-form-border-color;
+    border-radius: 4px;
+
+    &:focus {
+      margin-right: 0;
+    }
+  }
+}
+
+.pagination-input-with-no-js-submit-button {
   @extend .input-with-submit-button;
 
   #js-styling-hidden-area-while-loading & {
-    .js-enabled & {
-      border-right: 2px solid $nhsuk-form-border-color;
-      border-radius: 4px;
-
-      &:focus {
-        border-right: 4px solid $color_nhsuk-black;
-      }
-    }
+    @extend .pagination-input-with-no-js-submit-button-border
   }
 }
 
@@ -55,16 +84,11 @@ $button-hover-colour: #4c6272;
   border: 2px solid $nhsuk-form-border-color;
   border-radius: 4px;
   height: 52px;
-  padding: 0 12px;
+  padding: 0 9px;
   font-size: 16px;
   float: left;
   margin-bottom: nhsuk-spacing(4);
   outline: none;
-
-  &:focus {
-    border: 4px solid $color_nhsuk_black;
-    box-shadow: 0 0 0 4px $nhsuk-focus-color;
-  }
 
   &::-webkit-search-cancel-button {
     -webkit-appearance: none;
@@ -77,22 +101,11 @@ $button-hover-colour: #4c6272;
   }
 }
 
-.right-submit-button {
-  float: left;
-  color: $color_nhsuk-white;
-  min-width: 100px;
-  padding: 8px 4px;
-
-  &:hover {
-    background-color: $button-hover-colour;
-  }
-}
-
 .select-all-button {
-  @extend .right-submit-button;
+  @extend .inline-button;
   width: auto;
   border-radius: 4px;
-  margin-right: nhsuk-spacing(2);
+  margin-right: nhsuk-spacing(1);
 }
 
 .search-sort-container {

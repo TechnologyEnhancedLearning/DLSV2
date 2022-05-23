@@ -169,5 +169,18 @@
                 result.Should().BeEquivalentTo(expectedResult);
             }
         }
+
+        [Test]
+        public void GetCourseFieldPromptIdsForCustomisation_returns_expected_results()
+        {
+            // Given
+            var expectedResult = new [] { 1, 2, 0 };
+
+            // When
+            var result = courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(100);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedResult);
+        }
     }
 }

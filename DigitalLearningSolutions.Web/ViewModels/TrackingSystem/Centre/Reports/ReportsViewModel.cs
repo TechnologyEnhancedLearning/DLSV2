@@ -14,18 +14,21 @@
             ReportsFilterModel filterModel,
             IEnumerable<EvaluationResponseBreakdown> evaluationResponseBreakdowns,
             DateTime startDate,
-            DateTime endDate
+            DateTime endDate,
+            bool hasActivity
         )
         {
             UsageStatsTableViewModel = new UsageStatsTableViewModel(activity, startDate, endDate);
             ReportsFilterModel = filterModel;
             EvaluationSummaryBreakdown =
                 evaluationResponseBreakdowns.Select(model => new EvaluationSummaryViewModel(model));
+            HasActivity = hasActivity;
         }
 
         public UsageStatsTableViewModel UsageStatsTableViewModel { get; set; }
         public ReportsFilterModel ReportsFilterModel { get; set; }
         public IEnumerable<EvaluationSummaryViewModel> EvaluationSummaryBreakdown { get; set; }
+        public bool HasActivity { get; set; }
     }
 
     public class UsageStatsTableViewModel

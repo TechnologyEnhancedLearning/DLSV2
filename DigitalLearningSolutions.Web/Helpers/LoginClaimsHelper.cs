@@ -7,18 +7,18 @@
 
     public static class LoginClaimsHelper
     {
-        public static List<Claim> GetClaimsForSignIn(
+        public static List<Claim> GetClaimsForSignIntoCentre(
             UserEntity userEntity,
             int centreIdToLogInto
         )
         {
             var adminAccount = userEntity.AdminAccounts.SingleOrDefault(aa => aa.CentreId == centreIdToLogInto);
-            var delegateAccount = userEntity.DelegateAccounts.SingleOrDefault(aa => aa.CentreId == centreIdToLogInto);
+            var delegateAccount = userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == centreIdToLogInto);
 
-            var basicClaims = GetClaimsForBasicSignIn(userEntity.UserAccount);
+            var basicClaims = GetClaimsForCentrelessSignIn(userEntity.UserAccount);
 
             var adminClaims = GetAdminSpecificClaimsForSignIn(adminAccount);
-            var delegateClaims = GetClaimsForDelegateSignIn(delegateAccount);
+            var delegateClaims = GetDelegateSpecificClaimsForSignIn(delegateAccount);
 
             var claims = new List<Claim>
             {
@@ -71,7 +71,7 @@
             return basicClaims.Concat(adminClaims).Concat(delegateClaims).Concat(claims).ToList();
         }
 
-        public static List<Claim> GetClaimsForBasicSignIn(
+        public static List<Claim> GetClaimsForCentrelessSignIn(
             UserAccount userAccount
         )
         {
@@ -86,7 +86,7 @@
             return claims;
         }
 
-        private static IEnumerable<Claim> GetClaimsForDelegateSignIn(
+        private static IEnumerable<Claim> GetDelegateSpecificClaimsForSignIn(
             DelegateAccount? delegateAccount
         )
         {

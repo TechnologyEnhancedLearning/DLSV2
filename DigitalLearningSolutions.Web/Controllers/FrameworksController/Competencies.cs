@@ -3,6 +3,7 @@ using DigitalLearningSolutions.Data.Models.SelfAssessments;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 
@@ -34,8 +35,18 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             if (!ModelState.IsValid)
             {
-                ModelState.Remove(nameof(CompetencyGroupBase.Name));
-                ModelState.AddModelError(nameof(CompetencyGroupBase.Name), "Please enter a valid competency group name (between 3 and 255 characters)");
+                if(ModelState["Name"].ValidationState == ModelValidationState.Invalid)
+                {
+                    ModelState.Remove(nameof(CompetencyGroupBase.Name));
+                    ModelState.AddModelError(nameof(CompetencyGroupBase.Name), "Please enter a valid competency group name (between 3 and 255 characters)");
+                }
+
+                if(ModelState["Description"].ValidationState == ModelValidationState.Invalid)
+                {
+                    ModelState.Remove(nameof(CompetencyGroupBase.Description));
+                    ModelState.AddModelError(nameof(CompetencyGroupBase.Description), "Please enter a valid competency group description (between 0 and 1000 characters)");
+                }
+
                 // do something
                 var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
                 if (detailFramework == null) return StatusCode(404);
@@ -51,10 +62,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (userRole < 2) return StatusCode(403);
             if (competencyGroupBase.ID > 0)
             {
-                frameworkService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupBase.CompetencyGroupID, competencyGroupBase.Name, adminId);
+                frameworkService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupBase.CompetencyGroupID, competencyGroupBase.Name, competencyGroupBase.Description, adminId);
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
             }
-            var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyGroupBase.Name, adminId);
+            var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyGroupBase.Name, competencyGroupBase.Description, adminId);
             if (newCompetencyGroupId > 0)
             {
                 var newFrameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminId);

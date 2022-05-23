@@ -114,7 +114,7 @@
             // Given
             var userEntity = new UserEntity(
                 UserTestHelper.GetDefaultUserAccount(failedLoginCount: currentFailedLoginCount),
-                new List<AdminAccount>(),
+                new List<AdminAccount> { UserTestHelper.GetDefaultAdminAccount() },
                 new List<DelegateAccount>
                 {
                     UserTestHelper.GetDefaultDelegateAccount(),
@@ -175,6 +175,145 @@
                 result.UserEntity.Should().Be(userEntity);
                 result.CentreToLogInto.Should().Be(userEntity.DelegateAccounts.Single().CentreId);
                 A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).MustHaveHappened();
+            }
+        }
+
+        [Test]
+        public void
+            AttemptLogin_returns_locked_account_when_user_account_is_already_locked_and_correct_password_is_provided()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(failedLoginCount: 5),
+                new List<AdminAccount> { UserTestHelper.GetDefaultAdminAccount() },
+                new List<DelegateAccount>
+                {
+                    UserTestHelper.GetDefaultDelegateAccount(),
+                }
+            );
+            A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
+                .Returns(new UserEntityVerificationResult(true, new[] { 2 }, new List<int>()));
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.AccountLocked);
+                result.UserEntity.Should().Be(userEntity);
+                result.CentreToLogInto.Should().BeNull();
+                A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).MustNotHaveHappened();
+            }
+        }
+
+        [Test]
+        public void
+            AttemptLogin_returns_choose_a_centre_when_logging_into_single_inactive_centre_and_successfully_logging_in()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>(),
+                new List<DelegateAccount> { UserTestHelper.GetDefaultDelegateAccount(centreActive: false) }
+            );
+            A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
+                .Returns(new UserEntityVerificationResult(true, new[] { 2 }, new List<int>()));
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.ChooseACentre);
+                result.UserEntity.Should().Be(userEntity);
+                result.CentreToLogInto.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void
+            AttemptLogin_returns_choose_a_centre_when_logging_into_single_inactive_account_and_successfully_logging_in()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>(),
+                new List<DelegateAccount> { UserTestHelper.GetDefaultDelegateAccount(active: false) }
+            );
+            A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
+                .Returns(new UserEntityVerificationResult(true, new[] { 2 }, new List<int>()));
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.ChooseACentre);
+                result.UserEntity.Should().Be(userEntity);
+                result.CentreToLogInto.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void
+            AttemptLogin_returns_choose_a_centre_when_logging_into_unapproved_account_and_successfully_logging_in()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>(),
+                new List<DelegateAccount> { UserTestHelper.GetDefaultDelegateAccount(approved: false) }
+            );
+            A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
+                .Returns(new UserEntityVerificationResult(true, new[] { 2 }, new List<int>()));
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.ChooseACentre);
+                result.UserEntity.Should().Be(userEntity);
+                result.CentreToLogInto.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void
+            AttemptLogin_returns_choose_a_centre_when_user_account_has_no_centres_and_successfully_logging_in()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>()
+            );
+            A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
+                .Returns(new UserEntityVerificationResult(true, new[] { 2 }, new List<int>()));
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.ChooseACentre);
+                result.UserEntity.Should().Be(userEntity);
+                result.CentreToLogInto.Should().BeNull();
             }
         }
     }

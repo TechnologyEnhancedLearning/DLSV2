@@ -2,11 +2,10 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
 
     public class UserEntity
     {
-        private const int FailedLoginThreshold = 5;
-
         public UserEntity(
             UserAccount userAccount,
             IEnumerable<AdminAccount> adminAccounts,
@@ -22,7 +21,7 @@
         public IEnumerable<AdminAccount> AdminAccounts { get; set; }
         public IEnumerable<DelegateAccount> DelegateAccounts { get; set; }
 
-        public bool AdminAccountsLocked => UserAccount.FailedLoginCount >= FailedLoginThreshold;
+        public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold && AdminAccounts.Any();
 
         public bool IsSingleCentreAccount()
         {

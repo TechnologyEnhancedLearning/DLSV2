@@ -17,13 +17,13 @@
         public static string AddStringToNewlineSeparatedList(string? list, string newItem)
         {
             var options = list != null ? SplitNewlineSeparatedList(list) : new List<string>();
-            options.Add(newItem);
+            options.Add(newItem.Trim());
             return JoinNewlineSeparatedList(options);
         }
 
         public static List<string> SplitNewlineSeparatedList(string? list)
         {
-            return list == null ? new List<string>() : list.Split(Separator).ToList();
+            return list == null ? new List<string>() : list.Split(Separator).Select(value => value.Trim()).ToList();
         }
 
         public static string JoinNewlineSeparatedList(IEnumerable<string> strings)

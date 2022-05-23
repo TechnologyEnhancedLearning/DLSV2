@@ -24,6 +24,8 @@
         public int? Centre { get; set; }
 
         public int? JobGroup { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
+        public bool? HasProfessionalRegistrationNumber { get; set; }
 
         public string? PasswordHash { get; set; }
 
@@ -38,6 +40,8 @@
         public virtual void SetLearnerInformation(LearnerInformationViewModel model)
         {
             JobGroup = model.JobGroup;
+            ProfessionalRegistrationNumber = model.HasProfessionalRegistrationNumber == true ? model.ProfessionalRegistrationNumber : null;
+            HasProfessionalRegistrationNumber = model.HasProfessionalRegistrationNumber;
         }
     }
 }

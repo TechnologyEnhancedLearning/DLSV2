@@ -20,6 +20,8 @@
             {
                 WelcomeEmailDate = data.WelcomeEmailDate!.Value.ToString(DateHelper.StandardDateFormat);
             }
+            ProfessionalRegistrationNumber = data.ProfessionalRegistrationNumber ?? "Not professionally registered";
+            HasProfessionalRegistrationNumber = data.HasProfessionalRegistrationNumber;
         }
 
         public string? FirstName { get; set; }
@@ -30,6 +32,8 @@
         public string? WelcomeEmailDate { get; set; }
         public bool ShouldSendEmail => WelcomeEmailDate != null;
         public string? JobGroup { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
+        public bool? HasProfessionalRegistrationNumber { get; set; }
         public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; } = new List<DelegateRegistrationPrompt>();
     }
 }

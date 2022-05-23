@@ -58,12 +58,12 @@
             <div class="nhsuk-grid-column-full nhsuk-form-group">
               <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Choose course</label>
               <div class="course-dropdown-container">
-                <select id="selected-customisation-Id" class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown course-dropdown"
+                <select id="selected-customisation-Id" class="nhsuk-select course-dropdown"
                         asp-for="CustomisationId"
                         asp-items="Model.Courses"
                         aria-label="Choose course">
                 </select>
-                <button class="nhsuk-search__submit course-submit" type="submit">
+                <button class="nhsuk-button course-submit" type="submit">
                   Select
                 </button>
               </div>
@@ -81,7 +81,8 @@
               </p>
             } else {
               <partial name="SearchablePage/_SearchResultsCount" model="Model.CourseDetails" />
-              <partial name="SearchablePage/_PaginationWithoutAlert" model="Model.CourseDetails" />
+              <partial name="SearchablePage/_TopPagination" model="Model.CourseDetails" />
+              <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model.CourseDetails" />
 
               <div id="searchable-elements">
                 @foreach (var delegateUser in Model.CourseDetails.Delegates) {
@@ -90,7 +91,7 @@
               </div>
             }
             @if (Model.CourseDetails.TotalPages > 1) {
-              <partial name="SearchablePage/_Pagination" model="Model.CourseDetails" />
+              <partial name="SearchablePage/_BottomPagination" model="Model.CourseDetails" />
             }
           </div>
         </div>
