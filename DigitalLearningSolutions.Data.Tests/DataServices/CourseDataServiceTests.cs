@@ -524,7 +524,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Given
             const int brandId = 1;
 
-            var expectedFirstApplication = new ApplicationDetails()
+            var expectedFirstApplication = new ApplicationDetails
             {
                 ApplicationId = 1,
                 ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
