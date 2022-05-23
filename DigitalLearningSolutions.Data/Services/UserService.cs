@@ -30,11 +30,17 @@ namespace DigitalLearningSolutions.Data.Services
         );
 
         void UpdateUserAccountDetailsForAllUsers(
+            int userId,
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
         );
 
-        bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId);
+        bool NewEmailAddressIsValid(
+            string emailAddress,
+            int? adminUserId,
+            int? delegateUserId,
+            int userId
+        );
 
         UserAccountSet GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password);
 
@@ -170,6 +176,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
         public void UpdateUserAccountDetailsForAllUsers(
+            int userId,
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
         )
@@ -180,7 +187,6 @@ namespace DigitalLearningSolutions.Data.Services
                     myAccountDetailsData.DelegateId
                 );
 
-            var userId = adminUser?.Id ?? delegateUsers[0].Id;
             var detailsLastChecked = DateTime.Now;
             userDataService.UpdateUserDetailsLastChecked(detailsLastChecked, userId);
 
@@ -233,7 +239,12 @@ namespace DigitalLearningSolutions.Data.Services
             }
         }
 
-        public bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId)
+        public bool NewEmailAddressIsValid(
+            string emailAddress,
+            int? adminUserId,
+            int? delegateUserId,
+            int userId
+        )
         {
             var (adminUser, delegateUser) = GetUsersById(adminUserId, delegateUserId);
             if (!UserEmailHasChanged(adminUser, emailAddress) && !UserEmailHasChanged(delegateUser, emailAddress))
@@ -244,7 +255,9 @@ namespace DigitalLearningSolutions.Data.Services
             var (adminUserWithNewEmail, delegateUsersWithNewEmail) = GetUsersByEmailAddress(emailAddress);
 
             return (adminUserWithNewEmail == null || adminUserId == adminUserWithNewEmail.Id) &&
-                   delegateUsersWithNewEmail.Count(u => u.Id != delegateUserId) == 0;
+                   delegateUsersWithNewEmail.Count(
+                       u => userDataService.GetUserIdFromUsername(u.EmailAddress!) != userId
+                   ) == 0;
         }
 
         public UserAccountSet GetVerifiedLinkedUsersAccounts(

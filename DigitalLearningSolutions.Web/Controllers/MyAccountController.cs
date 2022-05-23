@@ -136,7 +136,12 @@
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
-            if (!userService.NewEmailAddressIsValid(formData.Email!, userAdminId, userDelegateId, User.GetCentreId()))
+            if (!userService.NewEmailAddressIsValid(
+                    formData.Email!,
+                    userAdminId,
+                    userDelegateId,
+                    User.GetUserId()!.Value
+                ))
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
@@ -151,7 +156,11 @@
                 userDelegateId,
                 User.GetCentreId()
             );
-            userService.UpdateUserAccountDetailsForAllUsers(accountDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetailsForAllUsers(
+                User.GetUserId()!.Value,
+                accountDetailsData,
+                centreAnswersData
+            );
 
             return RedirectToAction("Index", new { dlsSubApplication = dlsSubApplication.UrlSegment });
         }

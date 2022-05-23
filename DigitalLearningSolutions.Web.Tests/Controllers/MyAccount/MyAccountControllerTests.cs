@@ -118,8 +118,9 @@
                 promptsService
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
-            A.CallTo(() => userService.UpdateUserAccountDetailsForAllUsers(A<MyAccountDetailsData>._, null)).DoesNothing();
+            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 7)).Returns(true);
+            A.CallTo(() => userService.UpdateUserAccountDetailsForAllUsers(A<int>._, A<MyAccountDetailsData>._, null))
+                .DoesNothing();
             var model = new MyAccountEditDetailsFormData
             {
                 FirstName = "Test",
@@ -134,7 +135,7 @@
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).MustHaveHappened();
-            A.CallTo(() => userService.UpdateUserAccountDetailsForAllUsers(A<MyAccountDetailsData>._, null))
+            A.CallTo(() => userService.UpdateUserAccountDetailsForAllUsers(A<int>._, A<MyAccountDetailsData>._, null))
                 .MustHaveHappened();
 
             result.Should().BeRedirectToActionResult().WithActionName("Index").WithRouteValue(
