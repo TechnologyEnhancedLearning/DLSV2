@@ -303,12 +303,12 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void GetNumsOfRecentProgressRecordsForBrand_returns_expected_dict()
         {
             // Given
-            var expectedDict = new Dictionary<int, int> { { 308, 1 } };
+            var expectedDict = new Dictionary<int, int> { { 206, 9 } };
 
             // When
             var dict = courseDataService.GetNumsOfRecentProgressRecordsForBrand(
-                1,
-                new DateTime(2022, 1, 5, 11, 30, 30)
+                2,
+                new DateTime(2020, 1, 5, 11, 30, 30)
             );
 
             // Then
