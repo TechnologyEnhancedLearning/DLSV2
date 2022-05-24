@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -19,7 +21,7 @@
 
     public class VerifyAdminUserCanAccessProgressTests
     {
-        private readonly ICourseService courseService = A.Fake<ICourseService>();
+        private readonly IProgressService progressService = A.Fake<IProgressService>();
         private ActionExecutingContext context = null!;
 
         [SetUp]
@@ -44,11 +46,11 @@
         public void Returns_NotFound_if_service_returns_null()
         {
             // Given
-            A.CallTo(() => courseService.GetDelegateCourseProgress(2))
+            A.CallTo(() => progressService.GetDetailedCourseProgress(2))
                 .Returns(null);
 
             // When
-            new VerifyAdminUserCanAccessProgress(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessProgress(progressService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
@@ -65,17 +67,17 @@
                 AllCentresCourse = false,
                 CourseCategoryId = 1,
             };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(2))
+            A.CallTo(() => progressService.GetDetailedCourseProgress(2))
                 .Returns(
-                    new DelegateCourseDetails(
-                        delegateCourseInfo,
-                        new List<CourseAdminFieldWithAnswer>(),
-                        new AttemptStats(0, 0)
+                    new DetailedCourseProgress(
+                        new Progress(),
+                        new List<DetailedSectionProgress>(),
+                        delegateCourseInfo
                     )
                 );
 
             // When
-            new VerifyAdminUserCanAccessProgress(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessProgress(progressService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
@@ -92,17 +94,17 @@
                 AllCentresCourse = false,
                 CourseCategoryId = 1,
             };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(2))
+            A.CallTo(() => progressService.GetDetailedCourseProgress(2))
                 .Returns(
-                    new DelegateCourseDetails(
-                        delegateCourseInfo,
-                        new List<CourseAdminFieldWithAnswer>(),
-                        new AttemptStats(0, 0)
+                    new DetailedCourseProgress(
+                        new Progress(),
+                        new List<DetailedSectionProgress>(),
+                        delegateCourseInfo
                     )
                 );
 
             // When
-            new VerifyAdminUserCanAccessProgress(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessProgress(progressService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
@@ -119,17 +121,17 @@
                 AllCentresCourse = false,
                 CourseCategoryId = 3,
             };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(2))
+            A.CallTo(() => progressService.GetDetailedCourseProgress(2))
                 .Returns(
-                    new DelegateCourseDetails(
-                        delegateCourseInfo,
-                        new List<CourseAdminFieldWithAnswer>(),
-                        new AttemptStats(0, 0)
+                    new DetailedCourseProgress(
+                        new Progress(),
+                        new List<DetailedSectionProgress>(),
+                        delegateCourseInfo
                     )
                 );
 
             // When
-            new VerifyAdminUserCanAccessProgress(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessProgress(progressService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
@@ -146,17 +148,17 @@
                 AllCentresCourse = false,
                 CourseCategoryId = 1,
             };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(2))
+            A.CallTo(() => progressService.GetDetailedCourseProgress(2))
                 .Returns(
-                    new DelegateCourseDetails(
-                        delegateCourseInfo,
-                        new List<CourseAdminFieldWithAnswer>(),
-                        new AttemptStats(0, 0)
+                    new DetailedCourseProgress(
+                        new Progress(),
+                        new List<DetailedSectionProgress>(),
+                        delegateCourseInfo
                     )
                 );
 
             // When
-            new VerifyAdminUserCanAccessProgress(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessProgress(progressService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNull();
@@ -173,17 +175,17 @@
                 AllCentresCourse = true,
                 CourseCategoryId = 1,
             };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(2))
+            A.CallTo(() => progressService.GetDetailedCourseProgress(2))
                 .Returns(
-                    new DelegateCourseDetails(
-                        delegateCourseInfo,
-                        new List<CourseAdminFieldWithAnswer>(),
-                        new AttemptStats(0, 0)
+                    new DetailedCourseProgress(
+                        new Progress(),
+                        new List<DetailedSectionProgress>(),
+                        delegateCourseInfo
                     )
                 );
 
             // When
-            new VerifyAdminUserCanAccessProgress(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessProgress(progressService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNull();

@@ -34,7 +34,7 @@
                                     new List<AdminAccount>(),
                                     new List<DelegateAccount> { delegateUser }
                                 );
-                                var claims = LoginClaimsHelper.GetClaimsForSignIn(userEntity, 1);
+                                var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 1);
                                 var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
                                 var authProperties = new AuthenticationProperties
                                 {

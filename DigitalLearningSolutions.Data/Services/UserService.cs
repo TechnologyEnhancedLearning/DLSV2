@@ -23,6 +23,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         DelegateUser? GetDelegateUserById(int delegateId);
 
+        AdminUser? GetAdminUserByEmailAddress(string emailAddress);
+
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
 
         List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
@@ -54,7 +56,7 @@ namespace DigitalLearningSolutions.Data.Services
         void UpdateAdminUserPermissions(
             int adminId,
             AdminRoles adminRoles,
-            int categoryId
+            int? categoryId
         );
 
         void UpdateUserAccountDetailsViaDelegateAccount(
@@ -77,6 +79,8 @@ namespace DigitalLearningSolutions.Data.Services
         UserEntity? GetUserById(int userId);
 
         UserEntity? GetUserByUsername(string username);
+
+        DelegateUserCard? GetDelegateUserCardById(int delegateId);
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
     }
@@ -159,9 +163,18 @@ namespace DigitalLearningSolutions.Data.Services
             return (adminUser, delegateUser);
         }
 
+        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
+        {
+            return string.IsNullOrWhiteSpace(emailAddress)
+                ? null
+                : userDataService.GetAdminUserByEmailAddress(emailAddress);
+        }
+
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
         {
-            return userDataService.GetDelegateUsersByEmailAddress(emailAddress);
+            return string.IsNullOrWhiteSpace(emailAddress)
+                ? new List<DelegateUser>()
+                : userDataService.GetDelegateUsersByEmailAddress(emailAddress);
         }
 
         public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
@@ -316,7 +329,7 @@ namespace DigitalLearningSolutions.Data.Services
         public void UpdateAdminUserPermissions(
             int adminId,
             AdminRoles adminRoles,
-            int categoryId
+            int? categoryId
         )
         {
             if (NewUserRolesExceedAvailableSpots(adminId, adminRoles))
@@ -400,7 +413,7 @@ namespace DigitalLearningSolutions.Data.Services
         public IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId)
         {
             return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor)
-                .Where(au => au.CategoryId == categoryId || au.CategoryId == 0);
+                .Where(au => au.CategoryId == categoryId || au.CategoryId == null);
         }
 
         public bool DelegateUserLearningHubAccountIsLinked(int delegateId)
@@ -453,13 +466,6 @@ namespace DigitalLearningSolutions.Data.Services
             var adminAccounts = userDataService.GetAdminAccountsByUserId(userId).ToList();
             var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userId).ToList();
 
-            if (!adminAccounts.Any() && !delegateAccounts.Any())
-            {
-                throw new UserAccountNotFoundException(
-                    "No AdminAccounts or DelegateAccounts link to User with ID: " + userId
-                );
-            }
-
             return new UserEntity(userAccount, adminAccounts, delegateAccounts);
         }
 
@@ -468,6 +474,11 @@ namespace DigitalLearningSolutions.Data.Services
             var userId = userDataService.GetUserIdFromUsername(username);
 
             return userId == null ? null : GetUserById(userId.Value);
+        }
+
+        public DelegateUserCard? GetDelegateUserCardById(int delegateId)
+        {
+            return userDataService.GetDelegateUserCardById(delegateId);
         }
 
         public DelegateUser? GetDelegateUserById(int delegateId)

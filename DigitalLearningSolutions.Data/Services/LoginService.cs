@@ -49,13 +49,19 @@
                 userEntity.UserAccount.FailedLoginCount += 1;
                 userService.UpdateFailedLoginCount(userEntity.UserAccount);
 
-                return userEntity.AdminAccountsLocked ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity) : new LoginResult(LoginAttemptResult.InvalidPassword);
+                return userEntity.IsLocked
+                    ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity)
+                    : new LoginResult(LoginAttemptResult.InvalidPassword);
             }
-            
-            if (!userEntity.AdminAccountsLocked)
-            {
-                userService.ResetFailedLoginCount(userEntity.UserAccount);
-            }
+
+            return userEntity.IsLocked
+                ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity)
+                : DetermineDestinationForSuccessfulLogin(userEntity, username);
+        }
+
+        private LoginResult DetermineDestinationForSuccessfulLogin(UserEntity userEntity, string username)
+        {
+            userService.ResetFailedLoginCount(userEntity.UserAccount);
 
             var singleCentreToLogUserInto = GetCentreIdIfLoggingUserIntoSingleCentre(userEntity, username);
             if (singleCentreToLogUserInto == null)
@@ -70,10 +76,8 @@
 
             var centreIsActive = adminAccountToLogInto?.CentreActive ?? delegateAccountToLogInto?.CentreActive ?? false;
             var accountAtCentreIsActive = adminAccountToLogInto?.Active ?? delegateAccountToLogInto?.Active ?? false;
-            var adminAccountIsAtSingleCentreAndIsLocked =
-                userEntity.AdminAccountsLocked && adminAccountToLogInto != null;
-            if (!centreIsActive || !accountAtCentreIsActive || delegateAccountToLogInto is { Approved: false } ||
-                adminAccountIsAtSingleCentreAndIsLocked)
+
+            if (!centreIsActive || !accountAtCentreIsActive || delegateAccountToLogInto is { Approved: false })
             {
                 return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity);
             }

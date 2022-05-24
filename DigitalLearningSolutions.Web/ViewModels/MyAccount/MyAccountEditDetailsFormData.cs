@@ -43,6 +43,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
                     delegateUser?.ProfessionalRegistrationNumber
                 );
             ReturnUrl = returnUrl;
+            IsSelfRegistrationOrEdit = true;
         }
 
         protected MyAccountEditDetailsFormData(MyAccountEditDetailsFormData formData)
@@ -63,6 +64,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             HasProfessionalRegistrationNumber = formData.HasProfessionalRegistrationNumber;
             ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
             ReturnUrl = formData.ReturnUrl;
+            IsSelfRegistrationOrEdit = true;
         }
 
         [Required(ErrorMessage = "Enter your current password")]

@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 {
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Models.Enums;
 
     public class EditCompletionDateViewModel : EditCompletionDateFormData
@@ -8,8 +9,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
         public EditCompletionDateViewModel(
             int progressId,
             DelegateAccessRoute accessedVia,
-            DelegateCourseInfo info
-        ) : base(info)
+            DelegateCourseInfo info,
+            ReturnPageQuery? returnPageQuery
+        ) : base(info, returnPageQuery)
         {
             ProgressId = progressId;
             AccessedVia = accessedVia;

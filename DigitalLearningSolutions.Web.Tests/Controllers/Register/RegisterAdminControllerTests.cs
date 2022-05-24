@@ -315,6 +315,7 @@
             const int centreId = 7;
             const int jobGroupId = 1;
             const string email = "right@email";
+            const string professionalRegistrationNumber = "PRN1234";
             var model = new SummaryViewModel
             {
                 Terms = true,
@@ -327,6 +328,8 @@
                 JobGroup = jobGroupId,
                 PasswordHash = "hash",
                 Email = email,
+                ProfessionalRegistrationNumber = professionalRegistrationNumber,
+                HasProfessionalRegistrationNumber = true,
             };
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
@@ -355,7 +358,8 @@
                                 !a.ImportOnly &&
                                 !a.IsContentCreator &&
                                 !a.IsTrainer &&
-                                !a.IsSupervisor
+                                !a.IsSupervisor &&
+                                a.ProfessionalRegistrationNumber == professionalRegistrationNumber
                         ),
                         jobGroupId
                     )

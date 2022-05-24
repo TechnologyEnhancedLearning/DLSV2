@@ -18,7 +18,7 @@
     }
 
     <div class="filter-value-container">
-      <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown"
+      <select class="nhsuk-select filter-dropdown"
               name="@Model.ActionParameterName"
               id="@Model.FilterProperty"
               aria-label="@Model.FilterName filter">
@@ -32,7 +32,7 @@
           </option>
         }
       </select>
-      <button class="non-js-only nhsuk-search__submit filter-submit filter-submit__dropdown" type="submit" id="@Model.FilterProperty-submit">
+      <button class="non-js-only nhsuk-button filter-submit filter-submit__dropdown" type="submit" id="@Model.FilterProperty-submit">
         Add filter
       </button>
     </div>

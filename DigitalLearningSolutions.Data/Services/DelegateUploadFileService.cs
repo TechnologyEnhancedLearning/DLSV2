@@ -173,6 +173,12 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateRow.Answer6
                 );
 
+                UpdateUserProfessionalRegistrationNumberIfNecessary(
+                    delegateRow.HasPrn,
+                    delegateRow.Prn,
+                    delegateUser.Id
+                );
+
                 delegateRow.RowStatus = RowStatus.Updated;
             }
             catch
@@ -200,8 +206,12 @@ namespace DigitalLearningSolutions.Data.Services
                         "Unknown return value when creating delegate record."
                     );
                 default:
-                    var newDelegateRecord =
-                        userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
+                    var newDelegateRecord = userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
+                    UpdateUserProfessionalRegistrationNumberIfNecessary(
+                        delegateRow.HasPrn,
+                        delegateRow.Prn,
+                        newDelegateRecord.Id
+                    );
                     SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, newDelegateRecord.Id);
                     if (welcomeEmailDate.HasValue)
                     {
@@ -216,6 +226,18 @@ namespace DigitalLearningSolutions.Data.Services
 
                     delegateRow.RowStatus = RowStatus.Registered;
                     break;
+            }
+        }
+
+        private void UpdateUserProfessionalRegistrationNumberIfNecessary(bool? delegateRowHasPrn, string? delegateRowPrn, int delegateId)
+        {
+            if (delegateRowHasPrn.HasValue)
+            {
+                userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                    delegateId,
+                    delegateRowHasPrn.Value ? delegateRowPrn : null,
+                    true
+                );
             }
         }
 
@@ -255,6 +277,8 @@ namespace DigitalLearningSolutions.Data.Services
                 "Answer6",
                 "Active",
                 "EmailAddress",
+                "HasPRN",
+                "PRN"
             }.OrderBy(x => x);
             var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
             return actualHeaders.SequenceEqual(expectedHeaders);

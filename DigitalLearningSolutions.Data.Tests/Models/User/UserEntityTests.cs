@@ -14,16 +14,37 @@
         [TestCase(4, false)]
         [TestCase(5, true)]
         [TestCase(10, true)]
-        public void AdminAccountsLocked_returns_expected_values(int failedLoginCount, bool expectedValue)
+        public void IsLocked_returns_expected_values(int failedLoginCount, bool expectedValue)
         {
             // Given
             var userAccount = UserTestHelper.GetDefaultUserAccount(failedLoginCount: failedLoginCount);
 
             // When
-            var result = new UserEntity(userAccount, new List<AdminAccount>(), new List<DelegateAccount>());
+            var result = new UserEntity(
+                userAccount,
+                new List<AdminAccount> { UserTestHelper.GetDefaultAdminAccount() },
+                new List<DelegateAccount>()
+            );
 
             // Then
-            result.AdminAccountsLocked.Should().Be(expectedValue);
+            result.IsLocked.Should().Be(expectedValue);
+        }
+
+        [Test]
+        public void IsLocked_returns_false_with_no_admin_accounts()
+        {
+            // Given
+            var userAccount = UserTestHelper.GetDefaultUserAccount(failedLoginCount: 5);
+
+            // When
+            var result = new UserEntity(
+                userAccount,
+                new List<AdminAccount>(),
+                new List<DelegateAccount>()
+            );
+
+            // Then
+            result.IsLocked.Should().BeFalse();
         }
 
         [Test]

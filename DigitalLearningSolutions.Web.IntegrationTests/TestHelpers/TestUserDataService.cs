@@ -7,7 +7,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using FakeItEasy;
 
-    public class TestUserDataService
+    public static class TestUserDataService
     {
         private static readonly List<UserAccount> UserAccountData = new List<UserAccount>
         {

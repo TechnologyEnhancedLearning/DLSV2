@@ -23,7 +23,7 @@
             );
 
             // When
-            var claims = LoginClaimsHelper.GetClaimsForSignIn(userEntity, 2);
+            var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 2);
 
             // Then
             claims.Should().Contain(claim => claim.Type == CustomClaimTypes.UserForename);
@@ -45,7 +45,7 @@
             );
 
             // When
-            var claims = LoginClaimsHelper.GetClaimsForSignIn(userEntity, 2);
+            var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 2);
 
             // Then
             claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.LearnCandidateId);
@@ -63,7 +63,7 @@
             );
 
             // When
-            var claims = LoginClaimsHelper.GetClaimsForSignIn(userEntity, 2);
+            var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 2);
 
             // Then
             claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserAdminId);

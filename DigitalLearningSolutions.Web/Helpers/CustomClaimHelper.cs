@@ -36,14 +36,10 @@
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserCentreId);
         }
 
-        /// <summary>
-        ///     Returns the Admin Category ID or null if the ID is non-existent
-        ///     Also returns null if ID is zero to match the data service convention of not filtering on NULL category filter
-        /// </summary>
-        public static int? GetAdminCourseCategoryFilter(this ClaimsPrincipal user)
+        public static int? GetAdminCategoryId(this ClaimsPrincipal user)
         {
-            var categoryId = user.GetCustomClaimAsInt(CustomClaimTypes.AdminCategoryId);
-            return categoryId == 0 ? null : categoryId;
+            var adminCategory = user.GetCustomClaimAsRequiredInt(CustomClaimTypes.AdminCategoryId);
+            return AdminCategoryHelper.AdminCategoryToCategoryId(adminCategory);
         }
 
         public static string? GetCustomClaim(this ClaimsPrincipal user, string customClaimType)
