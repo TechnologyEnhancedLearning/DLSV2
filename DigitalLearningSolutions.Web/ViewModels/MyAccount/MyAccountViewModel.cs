@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
@@ -23,8 +24,9 @@
             ProfilePicture = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
             Centre = adminUser?.CentreName ?? delegateUser?.CentreName;
             DelegateNumber = delegateUser?.CandidateNumber;
-            AliasId = delegateUser?.AliasId;
             JobGroup = delegateUser?.JobGroupName;
+            CentreEmail = delegateUser?.EmailAddress;
+            DateRegistered = delegateUser?.DateRegistered?.ToString("dd-MM-yyyy");
             ProfessionalRegistrationNumber = delegateUser == null
                 ? null
                 : PrnStringHelper.GetPrnDisplayString(
@@ -56,8 +58,6 @@
 
         public string? DelegateNumber { get; set; }
 
-        public string? AliasId { get; set; }
-
         public string? FirstName { get; set; }
 
         public string? Surname { get; set; }
@@ -67,6 +67,10 @@
         public string? JobGroup { get; set; }
 
         public string? ProfessionalRegistrationNumber { get; set; }
+
+        public string? CentreEmail { get; set; }
+
+        public string? DateRegistered { get; set; }
 
         public List<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
 

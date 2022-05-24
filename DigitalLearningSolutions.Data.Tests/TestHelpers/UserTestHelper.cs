@@ -352,6 +352,7 @@
         public static CentreAnswersData GetDefaultCentreAnswersData(
             int centreId = 1,
             int jobGroupId = 1,
+            string? centreEmail = null,
             string? answer1 = null,
             string? answer2 = null,
             string? answer3 = null,
@@ -360,7 +361,7 @@
             string? answer6 = null
         )
         {
-            return new CentreAnswersData(centreId, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6);
+            return new CentreAnswersData(centreId, jobGroupId, centreEmail, answer1, answer2, answer3, answer4, answer5, answer6);
         }
 
         public static void GivenDelegateUserIsInDatabase(DelegateUser user, SqlConnection sqlConnection)

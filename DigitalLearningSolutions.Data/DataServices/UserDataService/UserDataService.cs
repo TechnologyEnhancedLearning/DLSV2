@@ -138,6 +138,8 @@
             string email,
             IDbTransaction? transaction = null
         );
+
+        string? GetCentreEmail(int userId, int centreId);
     }
 
     public partial class UserDataService : IUserDataService

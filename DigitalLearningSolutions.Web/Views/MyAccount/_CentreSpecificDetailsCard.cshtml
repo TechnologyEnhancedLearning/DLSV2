@@ -1,0 +1,57 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@model MyAccountViewModel
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content nhsuk-u-padding-bottom-0">
+    <h2 class="nhsuk-card__heading">
+      Centre-specific details
+    </h2>
+    <div class="nhsuk-card__description">
+      <dl class="nhsuk-summary-list details-list-with-button">
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Centre
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.Centre" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+
+          <dt class="nhsuk-summary-list__key">
+            Centre email (optional)
+          </dt>
+          @if (string.IsNullOrWhiteSpace(Model.CentreEmail)) {
+            <partial name="_SummaryFieldValue" model="@Model.User" />
+            <div>
+              <strong class="nhsuk-tag nhsuk-tag--blue">Default</strong>
+            </div>
+          } else {
+            <partial name="_SummaryFieldValue" model="@Model.CentreEmail" />
+          }
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.DelegateNumber)) {
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Candidate number
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.DelegateNumber" />
+          </div>
+        }
+
+        @if (Model.DateRegistered != null) {
+          <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+              Date registered
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.DateRegistered" />
+          </div>
+        }
+
+        @foreach (var customField in Model.DelegateRegistrationPrompts) {
+          <partial name="../Shared/_CustomPromptSummaryListRow" model="@customField" />
+        }
+      </dl>
+    </div>
+  </div>
+</div>

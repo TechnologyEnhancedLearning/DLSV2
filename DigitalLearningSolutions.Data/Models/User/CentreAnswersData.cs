@@ -8,6 +8,7 @@
         public CentreAnswersData(
             int centreId,
             int jobGroupId,
+            string? centreEmail,
             string? answer1,
             string? answer2,
             string? answer3,
@@ -18,6 +19,7 @@
         {
             CentreId = centreId;
             JobGroupId = jobGroupId;
+            CentreEmail = centreEmail;
             Answer1 = answer1;
             Answer2 = answer2;
             Answer3 = answer3;
@@ -28,6 +30,7 @@
 
         public int CentreId { get; set; }
         public int JobGroupId { get; set; }
+        public string? CentreEmail { get; set; }
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }
         public string? Answer3 { get; set; }

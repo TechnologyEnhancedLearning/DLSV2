@@ -22,6 +22,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             LastName = adminUser?.LastName ?? delegateUser?.LastName;
             Email = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
+            CentreEmail = delegateUser?.EmailAddress;
             ProfileImage = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
 
             IsDelegateUser = delegateUser != null;
@@ -49,6 +50,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             FirstName = formData.FirstName;
             LastName = formData.LastName;
             Email = formData.Email;
+            CentreEmail = formData.CentreEmail;
             ProfileImageFile = formData.ProfileImageFile;
             ProfileImage = formData.ProfileImage;
             IsDelegateUser = formData.IsDelegateUser;

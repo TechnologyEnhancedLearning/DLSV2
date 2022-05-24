@@ -56,6 +56,7 @@
                     delegateUser
                 );
 
+            delegateUser.EmailAddress = userService.GetCentreEmail(User.GetUserId()!.Value, User.GetCentreId());
             var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts, dlsSubApplication);
 
             return View(model);
@@ -69,6 +70,7 @@
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            delegateUser.EmailAddress = userService.GetCentreEmail(User.GetUserId()!.Value, User.GetCentreId());
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
@@ -110,6 +112,7 @@
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
+            var userId = User.GetUserId();
 
             if (userDelegateId.HasValue)
             {
@@ -140,11 +143,25 @@
                     formData.Email!,
                     userAdminId,
                     userDelegateId,
-                    User.GetUserId()
+                    userId
                 ))
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
+                    "This email address is already in use"
+                );
+                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
+            }
+
+            if (!string.IsNullOrWhiteSpace(formData.CentreEmail) && !userService.NewEmailAddressIsValid(
+                    formData.CentreEmail,
+                    userAdminId,
+                    userDelegateId,
+                    userId
+                ))
+            {
+                ModelState.AddModelError(
+                    nameof(MyAccountEditDetailsFormData.CentreEmail),
                     "This email address is already in use"
                 );
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
@@ -157,7 +174,7 @@
                 User.GetCentreId()
             );
             userService.UpdateUserAccountDetailsForAllUsers(
-                User.GetUserId()!.Value,
+                userId!.Value,
                 accountDetailsData,
                 centreAnswersData
             );

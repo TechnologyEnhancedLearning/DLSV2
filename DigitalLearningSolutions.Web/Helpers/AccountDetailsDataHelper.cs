@@ -31,6 +31,7 @@
                 : new CentreAnswersData(
                     centreId,
                     formData.JobGroupId!.Value,
+                    formData.CentreEmail,
                     formData.Answer1,
                     formData.Answer2,
                     formData.Answer3,
@@ -62,6 +63,7 @@
             var centreAnswersData = new CentreAnswersData(
                 centreId,
                 formData.JobGroupId!.Value,
+                formData.CentreEmail,
                 formData.Answer1,
                 formData.Answer2,
                 formData.Answer3,

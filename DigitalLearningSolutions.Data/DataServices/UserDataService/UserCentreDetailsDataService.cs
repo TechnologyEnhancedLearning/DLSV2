@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
@@ -16,10 +17,12 @@
             IDbTransaction? transaction = null
         )
         {
+            var transactionShouldBeClosed = false;
             if (transaction == null)
             {
                 connection.EnsureOpen();
                 transaction = connection.BeginTransaction();
+                transactionShouldBeClosed = true;
             }
 
             if (EmailIsInUseByOtherUser(userId, email, transaction))
@@ -73,6 +76,11 @@
                     transaction
                 );
             }
+
+            if (transactionShouldBeClosed)
+            {
+                transaction.Commit();
+            }
         }
 
         public bool EmailIsInUseByOtherUser(int userId, string email, IDbTransaction? transaction = null)
@@ -101,6 +109,24 @@
                 new { emails },
                 transaction
             );
+        }
+
+        public string? GetCentreEmail(int userId, int centreId)
+        {
+            var emails = connection.Query<string?>(
+                @"SELECT Email
+                    FROM UserCentreDetails
+                    WHERE UserID = @userId AND CentreID = @centreId",
+                new { userId, centreId}
+            ).ToList();
+            if (emails.Count > 1)
+            {
+                throw new MultipleUserAccountsFoundException(
+                    $"User with id {userId} has several emails at centre with id {centreId}"
+                );
+            }
+
+            return emails.SingleOrDefault();
         }
     }
 }

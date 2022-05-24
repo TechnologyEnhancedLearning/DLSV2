@@ -84,6 +84,8 @@ namespace DigitalLearningSolutions.Data.Services
         UserEntity? GetUserByUsername(string username);
 
         DelegateUserCard? GetDelegateUserCardById(int delegateId);
+
+        string? GetCentreEmail(int userId, int centreId);
     }
 
     public class UserService : IUserService
@@ -224,14 +226,14 @@ namespace DigitalLearningSolutions.Data.Services
                     myAccountDetailsData.ProfileImage,
                     myAccountDetailsData.ProfessionalRegistrationNumber,
                     myAccountDetailsData.HasBeenPromptedForPrn,
-                    centreAnswersData.JobGroupId,
+                    centreAnswersData!.JobGroupId,
                     userId
                 );
 
                 var oldDelegateDetails =
                     delegateUsers.SingleOrDefault(u => u.Id == myAccountDetailsData.DelegateId);
 
-                if (oldDelegateDetails != null && centreAnswersData != null)
+                if (oldDelegateDetails != null)
                 {
                     userDataService.UpdateDelegateUserCentrePrompts(
                         myAccountDetailsData.DelegateId!.Value,
@@ -242,6 +244,15 @@ namespace DigitalLearningSolutions.Data.Services
                         centreAnswersData.Answer5,
                         centreAnswersData.Answer6
                     );
+
+                    if (!string.IsNullOrWhiteSpace(centreAnswersData.CentreEmail))
+                    {
+                        userDataService.SetCentreEmail(
+                            userId,
+                            centreAnswersData.CentreId,
+                            centreAnswersData.CentreEmail
+                        );
+                    }
 
                     groupsService.SynchroniseUserChangesWithGroups(
                         oldDelegateDetails,
@@ -267,12 +278,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             // userId will be null when this is called from EditDelegateController, so we will have a delegateUser
             var userChangingEmailId = userId ?? userDataService.GetUserIdFromUsername(delegateUser!.CandidateNumber);
-            var (adminUserWithNewEmail, delegateUsersWithNewEmail) = GetUsersByEmailAddress(emailAddress);
-
-            return (adminUserWithNewEmail == null || adminUserId == adminUserWithNewEmail.Id) &&
-                   delegateUsersWithNewEmail.Count(
-                       u => userDataService.GetUserIdFromUsername(u.EmailAddress!) != userChangingEmailId
-                   ) == 0;
+            return !userDataService.EmailIsInUseByOtherUser(userChangingEmailId!.Value, emailAddress);
         }
 
         public UserAccountSet GetVerifiedLinkedUsersAccounts(
@@ -553,6 +559,11 @@ namespace DigitalLearningSolutions.Data.Services
             }
 
             return false;
+        }
+
+        public string? GetCentreEmail(int userId, int centreId)
+        {
+            return userDataService.GetCentreEmail(userId, centreId);
         }
     }
 }

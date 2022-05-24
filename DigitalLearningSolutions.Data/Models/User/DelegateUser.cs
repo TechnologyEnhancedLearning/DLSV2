@@ -40,6 +40,7 @@
             return new CentreAnswersData(
                 CentreId,
                 JobGroupId,
+                null,
                 Answer1,
                 Answer2,
                 Answer3,

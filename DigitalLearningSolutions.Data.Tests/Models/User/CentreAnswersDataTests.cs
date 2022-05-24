@@ -11,6 +11,7 @@
         private readonly CentreAnswersData testAnswers = new CentreAnswersData(
             1,
             2,
+            null,
             "answer 1",
             "answer 2",
             "answer 3",

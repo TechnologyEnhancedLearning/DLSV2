@@ -275,7 +275,7 @@
                     true,
                     null
                 );
-            var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null);
+            var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress!)).Returns(null);
@@ -360,7 +360,7 @@
                     true,
                     null
                 );
-            var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null);
+            var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
@@ -442,69 +442,6 @@
             result.Should().BeTrue();
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustNotHaveHappened();
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).MustNotHaveHappened();
-        }
-
-        [Test]
-        public void NewEmailAddressIsValid_returns_false_with_existing_admin_with_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            const string oldEmail = "oldemail@test.com";
-            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: oldEmail);
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: oldEmail);
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email))
-                .Returns(UserTestHelper.GetDefaultAdminUser(1, emailAddress: email));
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns(new List<DelegateUser>());
-
-            // When
-            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.Id);
-
-            // Then
-            result.Should().BeFalse();
-        }
-
-        [Test]
-        public void NewEmailAddressIsValid_returns_false_with_existing_delegate_at_centre_with_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            const string oldEmail = "oldemail@test.com";
-            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: oldEmail);
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: oldEmail);
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
-                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email) });
-
-            // When
-            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.Id);
-
-            // Then
-            result.Should().BeFalse();
-        }
-
-        [Test]
-        public void NewEmailAddressIsValid_returns_false_with_existing_delegate_at_different_centre_with_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            const string oldEmail = "oldemail@test.com";
-            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: oldEmail);
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: oldEmail);
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
-                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email, centreId: 3) });
-
-            // When
-            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.Id);
-
-            // Then
-            result.Should().BeFalse();
         }
 
         [Test]
@@ -831,6 +768,7 @@
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
                 delegateUser.JobGroupId,
+                null,
                 delegateUser.Answer1,
                 delegateUser.Answer2,
                 delegateUser.Answer3,
@@ -876,6 +814,7 @@
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
                 delegateUser.JobGroupId,
+                null,
                 delegateUser.Answer1,
                 delegateUser.Answer2,
                 delegateUser.Answer3,
@@ -922,6 +861,7 @@
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
                 delegateUser.JobGroupId,
+                null,
                 delegateUser.Answer1,
                 delegateUser.Answer2,
                 delegateUser.Answer3,
@@ -969,6 +909,7 @@
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
                 delegateUser.JobGroupId,
+                null,
                 delegateUser.Answer1,
                 delegateUser.Answer2,
                 delegateUser.Answer3,
@@ -1014,6 +955,7 @@
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
                 delegateUser.JobGroupId,
+                null,
                 delegateUser.Answer1,
                 delegateUser.Answer2,
                 delegateUser.Answer3,
