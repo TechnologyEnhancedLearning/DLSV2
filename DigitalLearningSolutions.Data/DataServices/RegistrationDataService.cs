@@ -116,13 +116,6 @@
                 delegateRegistrationModel.IsExternalRegistered,
                 delegateRegistrationModel.IsSelfRegistered,
                 DetailsLastChecked = DateTime.UtcNow,
-                // TODO HEEDLS-889 currently non-null deprecated columns
-                LastName_deprecated = "",
-                JobGroupID_deprecated = 0,
-                SkipPW_deprecated = false,
-                PublicSkypeLink_deprecated = false,
-                HasBeenPromptedForPrn_deprecated = false,
-                HasDismissedLhLoginWarning_deprecated = false,
             };
 
             connection.Execute(
@@ -142,13 +135,7 @@
                         Active,
                         ExternalReg,
                         SelfReg,
-                        CentreSpecificDetailsLastChecked,
-                        LastName_deprecated,
-                        JobGroupID_deprecated,
-                        SkipPW_deprecated,
-                        PublicSkypeLink_deprecated,
-                        HasBeenPromptedForPrn_deprecated,
-                        HasDismissedLhLoginWarning_deprecated
+                        CentreSpecificDetailsLastChecked
                     )
                     VALUES
                     (
@@ -166,13 +153,7 @@
                         @active,
                         @isExternalRegistered,
                         @isSelfRegistered,
-                        @detailsLastChecked,
-                        @lastName_deprecated,
-                        @jobGroupID_deprecated,
-                        @skipPW_deprecated,
-                        @publicSkypeLink_deprecated,
-                        @hasBeenPromptedForPrn_deprecated,
-                        @hasDismissedLhLoginWarning_deprecated
+                        @detailsLastChecked
                     )",
                 candidateValues,
                 transaction
@@ -213,11 +194,7 @@
                 importOnly = registrationModel.ImportOnly,
                 isTrainer = registrationModel.IsTrainer,
                 isSupervisor = registrationModel.IsSupervisor,
-                isNominatedSupervisor = registrationModel.IsNominatedSupervisor,
-                // TODO HEEDLS-889 currently non-null deprecated columns
-                forename_deprecated = "",
-                surname_deprecated = "",
-                password_deprecated = ""
+                isNominatedSupervisor = registrationModel.IsNominatedSupervisor
             };
 
             var adminUserId = connection.QuerySingle<int>(
@@ -234,10 +211,7 @@
                         ImportOnly,
                         IsTrainer,
                         IsSupervisor,
-                        IsNominatedSupervisor,
-                        Forename_deprecated,
-                        Surname_deprecated,
-                        Password_deprecated
+                        IsNominatedSupervisor
                     )
                     OUTPUT Inserted.ID
                     VALUES
@@ -253,10 +227,7 @@
                         @importOnly,
                         @isTrainer,
                         @isSupervisor,
-                        @isNominatedSupervisor,
-                        @forename_deprecated,
-                        @surname_deprecated,
-                        @password_deprecated
+                        @isNominatedSupervisor
                     )",
                 adminValues,
                 transaction
