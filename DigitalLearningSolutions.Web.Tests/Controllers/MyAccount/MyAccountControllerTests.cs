@@ -187,8 +187,6 @@
                 Password = "password",
                 ReturnUrl = returnUrl,
             };
-            var parameterName = typeof(MyAccountController).GetMethod("Index")?.GetParameters()
-                .SingleOrDefault(p => p.ParameterType == typeof(DlsSubApplication))?.Name;
 
             // When
             var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);

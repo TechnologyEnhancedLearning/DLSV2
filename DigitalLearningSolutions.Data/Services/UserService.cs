@@ -88,13 +88,13 @@ namespace DigitalLearningSolutions.Data.Services
     public class UserService : IUserService
     {
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
+        private readonly IClockService clockService;
+        private readonly IConfiguration configuration;
         private readonly IGroupsService groupsService;
         private readonly ILogger<IUserService> logger;
         private readonly ISessionDataService sessionDataService;
         private readonly IUserDataService userDataService;
         private readonly IUserVerificationService userVerificationService;
-        private readonly IClockService clockService;
-        private readonly IConfiguration configuration;
 
         public UserService(
             IUserDataService userDataService,
@@ -488,16 +488,24 @@ namespace DigitalLearningSolutions.Data.Services
 
         public bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck)
         {
+            if (!new EmailAddressAttribute().IsValid(userEntity.UserAccount.PrimaryEmail))
+            {
+                return true;
+            }
+
             var delegateAccount = userEntity.DelegateAccounts.SingleOrDefault(aa => aa.CentreId == centreIdToCheck);
             var now = clockService.UtcNow;
             var monthThresholdToForceCheck = configuration.GetMonthsToPromptUserDetailsCheck();
-            var userAccountTriggersDetailsCheck = userEntity.UserAccount.DetailsLastChecked == null ||
-                                                  userEntity.UserAccount.DetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now;
-            var delegateAccountTriggersDetailsCheck = delegateAccount != null &&
-                                                      (delegateAccount.CentreSpecificDetailsLastChecked == null ||
-                                                       delegateAccount.CentreSpecificDetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now);
-            var primaryEmailIsInvalid = !new EmailAddressAttribute().IsValid(userEntity.UserAccount.PrimaryEmail);
-            return userAccountTriggersDetailsCheck || delegateAccountTriggersDetailsCheck || primaryEmailIsInvalid;
+
+            if (userEntity.UserAccount.DetailsLastChecked == null ||
+                userEntity.UserAccount.DetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now)
+            {
+                return true;
+            }
+
+            return delegateAccount != null &&
+                   (delegateAccount.CentreSpecificDetailsLastChecked == null ||
+                    delegateAccount.CentreSpecificDetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now);
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)
