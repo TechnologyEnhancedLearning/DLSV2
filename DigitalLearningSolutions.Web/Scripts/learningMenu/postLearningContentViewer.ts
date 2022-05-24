@@ -1,5 +1,6 @@
 import { setupFullscreen } from './fullscreen';
 
+// So Typescript knows window has closeMpe property
 declare global {
   interface Window {
     closeMpe: () => void;
