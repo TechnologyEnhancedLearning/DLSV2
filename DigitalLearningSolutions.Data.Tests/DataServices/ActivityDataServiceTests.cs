@@ -102,5 +102,15 @@
             // then
             result.Should().Be(DateTime.Parse("2010-09-22 06:52:21.880"));
         }
+
+        [Test]
+        public void GetStartOfActivityForCentreWithoutActivity_returns_null()
+        {
+            // when
+            var result = service.GetStartOfActivityForCentre(46);
+
+            // then
+            result.Should().BeNull();
+        }
     }
 }

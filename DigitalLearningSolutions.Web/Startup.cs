@@ -74,6 +74,10 @@ namespace DigitalLearningSolutions.Web
                         policy => CustomPolicies.ConfigurePolicyUserOnly(policy)
                     );
                     options.AddPolicy(
+                        CustomPolicies.UserDelegateOnly,
+                        policy => CustomPolicies.ConfigurePolicyUserDelegateOnly(policy)
+                    );
+                    options.AddPolicy(
                         CustomPolicies.UserCentreAdmin,
                         policy => CustomPolicies.ConfigurePolicyUserCentreAdmin(policy)
                     );
@@ -233,7 +237,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
             services.AddScoped<ICourseDataService, CourseDataService>();
-            services.AddScoped<ICourseDelegatesDataService, CourseDelegatesDataService>();
             services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
             services.AddScoped<IEmailDataService, EmailDataService>();
@@ -284,7 +287,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationByCentreData>>();
             services.AddScoped<RedirectEmptySessionData<AddRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<EditRegistrationPromptData>>();
-            services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
+            services.AddScoped<RedirectEmptySessionData<List<ChooseACentreAccount>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
             services.AddScoped<RedirectEmptySessionData<BulkUploadResult>>();

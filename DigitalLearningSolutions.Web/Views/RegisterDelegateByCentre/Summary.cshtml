@@ -86,6 +86,17 @@
           </a>
         </dd>
       </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Professional registration number
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="LearnerInformation">
+            Change<span class="nhsuk-u-visually-hidden"> professional registration number</span>
+          </a>
+        </dd>
+      </div>
       @foreach (var customField in Model.DelegateRegistrationPrompts) {
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">

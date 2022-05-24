@@ -22,7 +22,7 @@
 
         public static string BuildFilterValueString(string group, string propertyName, string propertyValue)
         {
-            return group + Separator + propertyName + Separator + propertyValue;
+            return group + Separator + propertyName + Separator + propertyValue.Trim();
         }
 
         public static string? AddNewFilterToFilterString(string? existingFilterString, string? newFilterToAdd)
@@ -137,25 +137,22 @@
         }
 
         public static string GetFilterValueForAdminField(
-            int promptNumber,
-            string? answer,
-            string prompt,
-            bool adminFieldHasOptions
+            CourseAdminFieldWithAnswer courseAdminFieldWithAnswer
         )
         {
-            var group = GetFilterGroupForAdminField(promptNumber, prompt);
+            var group = GetFilterGroupForAdminField(courseAdminFieldWithAnswer.PromptNumber, courseAdminFieldWithAnswer.PromptText);
 
             string propertyValue;
 
-            if (adminFieldHasOptions)
+            if (courseAdminFieldWithAnswer.Options.Any())
             {
-                propertyValue = string.IsNullOrEmpty(answer)
+                propertyValue = string.IsNullOrEmpty(courseAdminFieldWithAnswer.Answer)
                     ? EmptyValue
-                    : answer;
+                    : courseAdminFieldWithAnswer.Answer;
             }
             else
             {
-                propertyValue = string.IsNullOrEmpty(answer)
+                propertyValue = string.IsNullOrEmpty(courseAdminFieldWithAnswer.Answer)
                     ? FreeTextBlankValue
                     : FreeTextNotBlankValue;
             }
@@ -178,8 +175,8 @@
 
             var options = prompt.Options.Select(
                 option => new FilterOptionModel(
-                    option,
-                    BuildFilterValueString(group, group.Split('(')[0], option),
+                    option.Trim(),
+                    BuildFilterValueString(group, group.Split('(')[0], option.Trim()),
                     FilterStatus.Default
                 )
             ).ToList();

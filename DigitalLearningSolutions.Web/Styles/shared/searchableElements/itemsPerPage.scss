@@ -15,7 +15,7 @@
 }
 
 .items-per-page-dropdown {
-  @extend .input-with-no-js-submit-button;
+  @extend .pagination-input-with-no-js-submit-button;
   width: 100%;
 
   @include mq($from: tablet) {
@@ -45,8 +45,7 @@
 }
 
 .items-per-page-submit {
-  @extend .right-submit-button;
-  background-color: $button-dark-blue;
+  @extend .inline-button;
 
   #js-styling-hidden-area-while-loading & {
     .js-enabled & {

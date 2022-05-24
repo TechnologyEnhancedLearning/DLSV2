@@ -11,6 +11,18 @@
 
     public class TrackerServiceTests
     {
+        private const string DefaultProgressText = "Test progress text";
+
+        private readonly Dictionary<TrackerEndpointSessionVariable, string?> emptySessionVariablesDictionary =
+            new Dictionary<TrackerEndpointSessionVariable, string?>
+                { { TrackerEndpointSessionVariable.LmGvSectionRow, null } };
+
+        private readonly Dictionary<TrackerEndpointSessionVariable, string?> sessionVariablesForStoreAspProgressV2 =
+            new Dictionary<TrackerEndpointSessionVariable, string?>
+            {
+                { TrackerEndpointSessionVariable.LmGvSectionRow, DefaultProgressText },
+            };
+
         private ITrackerActionService actionService = null!;
         private ILogger<TrackerService> logger = null!;
         private ITrackerService trackerService = null!;
@@ -31,7 +43,7 @@
             var query = new TrackerEndpointQueryParams { Action = null };
 
             // When
-            var result = trackerService.ProcessQuery(query);
+            var result = trackerService.ProcessQuery(query, emptySessionVariablesDictionary);
 
             // Then
             result.Should().Be(TrackerEndpointResponse.NullAction);
@@ -44,7 +56,7 @@
             var query = new TrackerEndpointQueryParams { Action = "InvalidAction" };
 
             // When
-            var result = trackerService.ProcessQuery(query);
+            var result = trackerService.ProcessQuery(query, emptySessionVariablesDictionary);
 
             // Then
             result.Should().Be(TrackerEndpointResponse.InvalidAction);
@@ -58,7 +70,7 @@
                 { Action = "GetObjectiveArray", CustomisationId = 1, SectionId = 2 };
 
             // When
-            trackerService.ProcessQuery(query);
+            trackerService.ProcessQuery(query, emptySessionVariablesDictionary);
 
             // Then
             A.CallTo(() => actionService.GetObjectiveArray(1, 2)).MustHaveHappenedOnceExactly();
@@ -83,7 +95,7 @@
             A.CallTo(() => actionService.GetObjectiveArray(1, 1)).Returns(dataToReturn);
 
             // When
-            var result = trackerService.ProcessQuery(query);
+            var result = trackerService.ProcessQuery(query, emptySessionVariablesDictionary);
 
             // Then
             result.Should().Be(expectedJson);
@@ -100,7 +112,7 @@
             A.CallTo(() => actionService.GetObjectiveArray(1, 1)).Returns(dataToReturn);
 
             // When
-            var result = trackerService.ProcessQuery(query);
+            var result = trackerService.ProcessQuery(query, emptySessionVariablesDictionary);
 
             // Then
             result.Should().Be("{}");
@@ -128,10 +140,61 @@
             };
 
             // When
-            trackerService.ProcessQuery(query);
+            trackerService.ProcessQuery(query, emptySessionVariablesDictionary);
 
             // Then
             A.CallTo(() => actionService.GetObjectiveArrayCc(1, 2, expectedBool))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void ProcessQuery_with_StoreAspProgressV2_action_passes_query_params()
+        {
+            // Given
+            var query = new TrackerEndpointQueryParams
+            {
+                Action = "StoreAspProgressV2",
+                ProgressId = 101,
+                Version = 1,
+                TutorialId = 123,
+                TutorialTime = 2,
+                TutorialStatus = 3,
+                CandidateId = 456,
+                CustomisationId = 1,
+            };
+
+            var expectedResponse = TrackerEndpointResponse.Success;
+
+            A.CallTo(
+                () => actionService.StoreAspProgressV2(
+                    A<int>._,
+                    A<int>._,
+                    A<string>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).Returns(expectedResponse);
+
+            // When
+            var result = trackerService.ProcessQuery(query, sessionVariablesForStoreAspProgressV2);
+
+            // Then
+            result.Should().Be(expectedResponse);
+            A.CallTo(
+                    () => actionService.StoreAspProgressV2(
+                        query.ProgressId.Value,
+                        query.Version.Value,
+                        DefaultProgressText,
+                        query.TutorialId.Value,
+                        query.TutorialTime.Value,
+                        query.TutorialStatus.Value,
+                        query.CandidateId.Value,
+                        query.CustomisationId.Value
+                    )
+                )
                 .MustHaveHappenedOnceExactly();
         }
     }

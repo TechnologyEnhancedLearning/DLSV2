@@ -1,12 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateProgress
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.Progress;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
+    using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class DelegateProgressViewModelTests
@@ -24,7 +29,6 @@
                 SupervisorForename = null,
                 SupervisorSurname = null,
                 SupervisorAdminActive = true,
-                EnrolledByAdminId = null,
                 EnrolledByForename = null,
                 EnrolledBySurname = null,
                 EnrolledByAdminActive = true,
@@ -32,11 +36,13 @@
             };
             var missingNamesViewModel = new DelegateProgressViewModel(
                 DelegateAccessRoute.ViewDelegate,
-                new DelegateCourseDetails(
-                    missingNamesDelegateInfo,
-                    new List<CourseAdminFieldWithAnswer>(),
-                    new AttemptStats(0, 0)
-                )
+                new DetailedCourseProgress(
+                    new Progress(),
+                    new List<DetailedSectionProgress>(),
+                    missingNamesDelegateInfo
+                ),
+                A.Fake<IConfiguration>(),
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
             var fullNamesDelegateInfo = new DelegateCourseInfo
             {
@@ -47,7 +53,6 @@
                 SupervisorForename = "Tony",
                 SupervisorSurname = "Iommi",
                 SupervisorAdminActive = true,
-                EnrolledByAdminId = 1,
                 EnrolledByForename = "Geezer",
                 EnrolledBySurname = "Butler",
                 EnrolledByAdminActive = true,
@@ -55,11 +60,13 @@
             };
             var fullNamesViewModel = new DelegateProgressViewModel(
                 DelegateAccessRoute.ViewDelegate,
-                new DelegateCourseDetails(
-                    fullNamesDelegateInfo,
-                    new List<CourseAdminFieldWithAnswer>(),
-                    new AttemptStats(0, 0)
-                )
+                new DetailedCourseProgress(
+                    new Progress(),
+                    new List<DetailedSectionProgress>(),
+                    fullNamesDelegateInfo
+                ),
+                A.Fake<IConfiguration>(),
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
             // Then
@@ -67,10 +74,8 @@
             {
                 missingNamesViewModel.DelegateName.Should().Be("Osbourne");
                 missingNamesViewModel.Supervisor.Should().Be("None");
-                missingNamesViewModel.EnrolledByFullName.Should().BeNull();
                 fullNamesViewModel.DelegateName.Should().Be("Ozzy Osbourne");
                 fullNamesViewModel.Supervisor.Should().Be("Tony Iommi");
-                fullNamesViewModel.EnrolledByFullName.Should().Be("Geezer Butler");
             }
         }
 
@@ -87,11 +92,13 @@
             };
             var viewModel = new DelegateProgressViewModel(
                 DelegateAccessRoute.ViewDelegate,
-                new DelegateCourseDetails(
-                    delegateInfo,
-                    new List<CourseAdminFieldWithAnswer>(),
-                    new AttemptStats(0, 0)
-                )
+                new DetailedCourseProgress(
+                    new Progress(),
+                    new List<DetailedSectionProgress>(),
+                    delegateInfo
+                ),
+                A.Fake<IConfiguration>(),
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
             // Then
@@ -99,7 +106,7 @@
         }
 
         [Test]
-        [TestCase(1, "Self")]
+        [TestCase(1, "Self enrolled")]
         [TestCase(2, "Enrolled by Ronnie Dio")]
         [TestCase(3, "Group")]
         [TestCase(4, "System")]
@@ -109,7 +116,6 @@
             var delegateInfo = new DelegateCourseInfo
             {
                 EnrolmentMethodId = enrolmentMethodId,
-                EnrolledByAdminId = 1,
                 EnrolledByForename = "Ronnie",
                 EnrolledBySurname = "Dio",
                 EnrolledByAdminActive = true,
@@ -117,11 +123,13 @@
             };
             var viewModel = new DelegateProgressViewModel(
                 DelegateAccessRoute.ViewDelegate,
-                new DelegateCourseDetails(
-                    delegateInfo,
-                    new List<CourseAdminFieldWithAnswer>(),
-                    new AttemptStats(0, 0)
-                )
+                new DetailedCourseProgress(
+                    new Progress(),
+                    new List<DetailedSectionProgress>(),
+                    delegateInfo
+                ),
+                A.Fake<IConfiguration>(),
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
             );
 
             // Then

@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @model DelegateProgressViewModel
 
 @{
@@ -14,9 +14,27 @@
   }
 }
 
+<link rel="stylesheet" href="@Url.Content("~/css/shared/headingButtons.css")" asp-append-version="true">
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-half">
+        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+      </div>
+      <div class="nhsuk-grid-column-one-half heading-button-group">
+        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button" href="@Model.ProgressDownloadUrl">
+          Download
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary heading-button"
+           role="button"
+           asp-action="LearningLog"
+           asp-route-accessedVia="@Model.AccessedVia"
+           asp-route-progressId="@Model.ProgressId">
+          View learning log
+        </a>
+      </div>
+    </div>
 
     <partial name="_DelegateDetails" model="Model" />
 
@@ -35,18 +53,17 @@
 
     <partial name="_DelegateProgressSummary" model="Model" />
 
-    <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" role="button"
-       asp-action="DetailedProgress"
-       asp-route-progressId="@Model.ProgressId"
-       asp-route-accessedVia="@Model.AccessedVia">
-      View detailed progress
-    </a>
-    <a class="nhsuk-button nhsuk-button--secondary"
-       role="button"
-       asp-action="LearningLog"
-       asp-route-accessedVia="@Model.AccessedVia"
-       asp-route-progressId="@Model.ProgressId">
-      View learning log
-    </a>
+    <div class="nhsuk-grid-row nhsuk-inset-text">
+      <div class="nhsuk-grid-column-one-half nhsuk-body-l nhsuk-u-margin-bottom-0">
+        Overall diagnostic score:
+      </div>
+      <div class="nhsuk-grid-column-one-half nhsuk-body-l nhsuk-u-font-weight-bold word-break">
+        @(Model.DiagnosticScore.HasValue ? $"{Model.DiagnosticScore}%" : "N/A")
+      </div>
+    </div>
+
+    @foreach (var section in Model.Sections) {
+      <partial name="_SectionProgress" model="section" />
+    }
   </div>
 </div>

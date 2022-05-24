@@ -295,5 +295,54 @@
             // Then
             result.Should().Be(expectedResult);
         }
+
+        [Test]
+        [TestCase(0, "0m")]
+        [TestCase(59, "59m")]
+        [TestCase(60, "1h 0m")]
+        [TestCase(89, "1h 29m")]
+        [TestCase(2332, "38h 52m")]
+        public void GetTimeStringFromMinutes_returns_expected_result(int minutes, string expectedResult)
+        {
+            // When
+            var result = DisplayStringHelper.GetTimeStringFromMinutes(minutes);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        [TestCase(0, "0 minutes")]
+        [TestCase(59, "59 minutes")]
+        [TestCase(60, "1 hours 0 minutes")]
+        [TestCase(89, "1 hours 29 minutes")]
+        [TestCase(2332, "38 hours 52 minutes")]
+        public void GetTimeStringForScreenReaderFromMinutes_returns_expected_result(int minutes, string expectedResult)
+        {
+            // When
+            var result = DisplayStringHelper.GetTimeStringForScreenReaderFromMinutes(minutes);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        [TestCase("", "")]
+        [TestCase("NicePascalCaseString", "Nice Pascal Case String")]
+        [TestCase("ASlightlyMoreAwkwardOne", "A Slightly More Awkward One")]
+        [TestCase("XMLFile", "XML File")]
+        [TestCase("AnXMLFile", "An XML File")]
+        [TestCase("An Already Separated String", "An Already Separated String")]
+        [TestCase("A Partially SeparatedString", "A Partially Separated String")]
+        [TestCase("IDRecord", "ID Record")]
+        [TestCase("ID", "ID")]
+        public void AddSpacesToPascalCaseString_returns_expected_result(string input, string expectedResult)
+        {
+            // When
+            var result = DisplayStringHelper.AddSpacesToPascalCaseString(input);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
     }
 }

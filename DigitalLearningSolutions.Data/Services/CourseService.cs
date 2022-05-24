@@ -18,7 +18,7 @@
                 bool includeAllCentreCourses = false
             );
 
-        public bool DelegateHasCurrentProgress(int delegateId, int customisationId);
+        public bool DelegateHasCurrentProgress(int progressId);
 
         public void RemoveDelegateFromCourse(
             int delegateId,
@@ -26,13 +26,11 @@
             RemovalMethod removalMethod
         );
 
-        IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
+        IEnumerable<DelegateCourseInfo> GetAllCoursesInCategoryForDelegate(
             int delegateId,
             int centreId,
             int? courseCategoryId
         );
-
-        DelegateCourseDetails? GetDelegateCourseProgress(int progressId);
 
         bool? VerifyAdminUserCanManageCourse(int customisationId, int centreId, int? categoryId);
 
@@ -97,6 +95,8 @@
 
         IEnumerable<string> GetTopicsForCentreAndCentrallyManagedCourses(int centreId);
 
+        IEnumerable<ApplicationWithSections> GetApplicationsThatHaveSectionsByBrandId(int brandId);
+
         int CreateNewCentreCourse(Customisation customisation);
 
         LearningLog? GetLearningLogDetails(int progressId);
@@ -104,28 +104,34 @@
 
     public class CourseService : ICourseService
     {
+        private readonly IClockService clockService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseDataService courseDataService;
         private readonly ICourseTopicsDataService courseTopicsDataService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IProgressDataService progressDataService;
+        private readonly ISectionService sectionService;
 
         public CourseService(
+            IClockService clockService,
             ICourseDataService courseDataService,
             ICourseAdminFieldsService courseAdminFieldsService,
             IProgressDataService progressDataService,
             IGroupsDataService groupsDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
-            ICourseTopicsDataService courseTopicsDataService
+            ICourseTopicsDataService courseTopicsDataService,
+            ISectionService sectionService
         )
         {
+            this.clockService = clockService;
             this.courseDataService = courseDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.progressDataService = progressDataService;
             this.groupsDataService = groupsDataService;
             this.courseCategoriesDataService = courseCategoriesDataService;
             this.courseTopicsDataService = courseTopicsDataService;
+            this.sectionService = sectionService;
         }
 
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId)
@@ -150,7 +156,7 @@
             );
         }
 
-        public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
+        public IEnumerable<DelegateCourseInfo> GetAllCoursesInCategoryForDelegate(
             int delegateId,
             int centreId,
             int? courseCategoryId
@@ -159,15 +165,8 @@
             return courseDataService.GetDelegateCoursesInfo(delegateId)
                 .Where(info => info.CustomisationCentreId == centreId || info.AllCentresCourse)
                 .Where(info => courseCategoryId == null || info.CourseCategoryId == courseCategoryId)
-                .Select(GetDelegateAttemptsAndCourseAdminFields)
-                .Where(info => info.DelegateCourseInfo.RemovedDate == null);
-        }
-
-        public DelegateCourseDetails? GetDelegateCourseProgress(int progressId)
-        {
-            var info = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
-
-            return info == null ? null : GetDelegateAttemptsAndCourseAdminFields(info);
+                .Select(PopulateDelegateCourseInfoAdminFields)
+                .Where(info => info.RemovedDate == null);
         }
 
         public bool? VerifyAdminUserCanManageCourse(int customisationId, int centreId, int? categoryId)
@@ -293,11 +292,10 @@
             );
         }
 
-        public bool DelegateHasCurrentProgress(int delegateId, int customisationId)
+        public bool DelegateHasCurrentProgress(int progressId)
         {
-            return progressDataService
-                .GetDelegateProgressForCourse(delegateId, customisationId)
-                .Any(p => p.Completed == null && p.RemovedDate == null);
+            var progress = progressDataService.GetProgressByProgressId(progressId);
+            return progress is { Completed: null, RemovedDate: null };
         }
 
         public IEnumerable<CourseAssessmentDetails> GetEligibleCoursesToAddToGroup(
@@ -405,6 +403,32 @@
             return filteredApplications.OrderBy(a => a.ApplicationName);
         }
 
+        public IEnumerable<ApplicationWithSections> GetApplicationsThatHaveSectionsByBrandId(int brandId)
+        {
+            var numRecordsByApplicationId =
+                courseDataService.GetNumsOfRecentProgressRecordsForBrand(brandId, clockService.UtcNow.AddMonths(-3));
+
+            var applications = courseDataService.GetApplicationsByBrandId(brandId);
+
+            double maxPopularity = numRecordsByApplicationId.Any() ? numRecordsByApplicationId.Values.Max() : 0;
+
+            var applicationsWithSections = applications.Select(
+                application => new ApplicationWithSections(
+                    application,
+                    sectionService.GetSectionsThatHaveTutorialsAndPopulateTutorialsForApplication(
+                        application.ApplicationId
+                    ),
+                    maxPopularity == 0
+                        ? 0
+                        : numRecordsByApplicationId.GetValueOrDefault(application.ApplicationId, 0) / maxPopularity
+                )
+            );
+
+            var applicationsWithPopulatedSections = applicationsWithSections.Where(a => a.Sections.Any());
+
+            return applicationsWithPopulatedSections;
+        }
+
         public LearningLog? GetLearningLogDetails(int progressId)
         {
             var delegateCourseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
@@ -419,20 +443,15 @@
             return new LearningLog(delegateCourseInfo, learningLogEntries);
         }
 
-        public DelegateCourseDetails GetDelegateAttemptsAndCourseAdminFields(
+        private DelegateCourseInfo PopulateDelegateCourseInfoAdminFields(
             DelegateCourseInfo info
         )
         {
             var coursePrompts = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
-                info,
-                info.CustomisationId
+                info
             );
-
-            var attemptStats = info.IsAssessed
-                ? courseDataService.GetDelegateCourseAttemptStats(info.DelegateId, info.CustomisationId)
-                : new AttemptStats(0, 0);
-
-            return new DelegateCourseDetails(info, coursePrompts, attemptStats);
+            info.CourseAdminFields = coursePrompts;
+            return info;
         }
     }
 }

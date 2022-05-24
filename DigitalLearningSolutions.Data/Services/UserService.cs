@@ -20,6 +20,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         DelegateUser? GetDelegateUserById(int delegateId);
 
+        AdminUser? GetAdminUserByEmailAddress(string emailAddress);
+
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
 
         List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
@@ -28,8 +30,6 @@ namespace DigitalLearningSolutions.Data.Services
             AdminUser? adminUser,
             List<DelegateUser> delegateUsers
         );
-
-        List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
 
         void UpdateUserAccountDetailsForAllVerifiedUsers(
             MyAccountDetailsData myAccountDetailsData,
@@ -44,9 +44,9 @@ namespace DigitalLearningSolutions.Data.Services
 
         bool IsDelegateEmailValidForCentre(string email, int centreId);
 
-        void ResetFailedLoginCount(AdminUser adminUser);
+        void ResetFailedLoginCount(UserAccount userAccount);
 
-        void IncrementFailedLoginCount(AdminUser adminUser);
+        void UpdateFailedLoginCount(UserAccount userAccount);
 
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId);
 
@@ -72,6 +72,12 @@ namespace DigitalLearningSolutions.Data.Services
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
 
         void DeactivateOrDeleteAdmin(int adminId);
+
+        UserEntity? GetUserById(int userId);
+
+        UserEntity? GetUserByUsername(string username);
+
+        DelegateUserCard? GetDelegateUserCardById(int delegateId);
     }
 
     public class UserService : IUserService
@@ -146,9 +152,18 @@ namespace DigitalLearningSolutions.Data.Services
             return (adminUser, delegateUser);
         }
 
+        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
+        {
+            return string.IsNullOrWhiteSpace(emailAddress)
+                ? null
+                : userDataService.GetAdminUserByEmailAddress(emailAddress);
+        }
+
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
         {
-            return userDataService.GetDelegateUsersByEmailAddress(emailAddress);
+            return string.IsNullOrWhiteSpace(emailAddress)
+                ? new List<DelegateUser>()
+                : userDataService.GetDelegateUsersByEmailAddress(emailAddress);
         }
 
         public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
@@ -164,23 +179,6 @@ namespace DigitalLearningSolutions.Data.Services
             var adminUserWithActiveCentre = adminUser?.CentreActive == true ? adminUser : null;
             var delegateUsersWithActiveCentres = delegateUsers.Where(du => du.CentreActive).ToList();
             return (adminUserWithActiveCentre, delegateUsersWithActiveCentres);
-        }
-
-        public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
-        {
-            var availableCentres = delegateUsers
-                .Select(
-                    du =>
-                        new CentreUserDetails(du.CentreId, du.CentreName, adminUser?.CentreId == du.CentreId, true)
-                )
-                .ToList();
-
-            if (adminUser != null && availableCentres.All(c => c.CentreId != adminUser.CentreId))
-            {
-                availableCentres.Add(new CentreUserDetails(adminUser.CentreId, adminUser.CentreName, true));
-            }
-
-            return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
         }
 
         // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
@@ -296,17 +294,17 @@ namespace DigitalLearningSolutions.Data.Services
             return !duplicateUsers.Any();
         }
 
-        public void ResetFailedLoginCount(AdminUser adminUser)
+        public void ResetFailedLoginCount(UserAccount userAccount)
         {
-            if (adminUser.FailedLoginCount != 0)
+            if (userAccount.FailedLoginCount != 0)
             {
-                userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0);
+                userDataService.UpdateUserFailedLoginCount(userAccount.Id, 0);
             }
         }
 
-        public void IncrementFailedLoginCount(AdminUser adminUser)
+        public void UpdateFailedLoginCount(UserAccount userAccount)
         {
-            userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
+            userDataService.UpdateUserFailedLoginCount(userAccount.Id, userAccount.FailedLoginCount);
         }
 
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId)
@@ -443,6 +441,33 @@ namespace DigitalLearningSolutions.Data.Services
                     userDataService.DeactivateAdmin(adminId);
                 }
             }
+        }
+
+        public UserEntity? GetUserById(int userId)
+        {
+            var userAccount = userDataService.GetUserAccountById(userId);
+
+            if (userAccount == null)
+            {
+                return null;
+            }
+
+            var adminAccounts = userDataService.GetAdminAccountsByUserId(userId).ToList();
+            var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userId).ToList();
+
+            return new UserEntity(userAccount, adminAccounts, delegateAccounts);
+        }
+
+        public UserEntity? GetUserByUsername(string username)
+        {
+            var userId = userDataService.GetUserIdFromUsername(username);
+
+            return userId == null ? null : GetUserById(userId.Value);
+        }
+
+        public DelegateUserCard? GetDelegateUserCardById(int delegateId)
+        {
+            return userDataService.GetDelegateUserCardById(delegateId);
         }
 
         public DelegateUser? GetDelegateUserById(int delegateId)

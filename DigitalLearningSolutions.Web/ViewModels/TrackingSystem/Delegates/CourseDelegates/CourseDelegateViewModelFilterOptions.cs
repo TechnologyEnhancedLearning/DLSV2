@@ -54,25 +54,5 @@
             );
             return filters;
         }
-
-        public static Dictionary<int, string> GetAdminFieldFilters(
-            IEnumerable<DelegateCourseAdminField> adminFields,
-            IEnumerable<CourseAdminField> fieldsWithOptions
-        )
-        {
-            var fieldsWithOptionsIds = fieldsWithOptions.Select(c => c.PromptNumber);
-            return adminFields
-                .Select(
-                    adminField => new KeyValuePair<int, string>(
-                        adminField.PromptNumber,
-                        FilteringHelper.GetFilterValueForAdminField(
-                            adminField.PromptNumber,
-                            adminField.Answer,
-                            adminField.Prompt,
-                            fieldsWithOptionsIds.Contains(adminField.PromptNumber)
-                        )
-                    )
-                ).ToDictionary(x => x.Key, x => x.Value);
-        }
     }
 }

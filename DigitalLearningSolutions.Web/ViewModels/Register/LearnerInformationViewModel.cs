@@ -10,12 +10,18 @@
     {
         public LearnerInformationViewModel() { }
 
-        public LearnerInformationViewModel(RegistrationData data)
+        public LearnerInformationViewModel(RegistrationData data, bool isSelfRegistration)
         {
             JobGroup = data.JobGroup;
+            ProfessionalRegistrationNumber = data.ProfessionalRegistrationNumber;
+            HasProfessionalRegistrationNumber = data.HasProfessionalRegistrationNumber;
+            IsSelfRegistrationOrEdit = isSelfRegistration;
         }
 
-        public LearnerInformationViewModel(DelegateRegistrationData data) : this((RegistrationData)data)
+        public LearnerInformationViewModel(DelegateRegistrationData data, bool isSelfRegistration) : this(
+            (RegistrationData)data,
+            isSelfRegistration
+        )
         {
             Answer1 = data.Answer1;
             Answer2 = data.Answer2;
@@ -42,10 +48,12 @@
 
         public string? Answer6 { get; set; }
 
-        public IEnumerable<EditDelegateRegistrationPromptViewModel> DelegateRegistrationPrompts { get; set; } = new List<EditDelegateRegistrationPromptViewModel>();
+        public IEnumerable<EditDelegateRegistrationPromptViewModel> DelegateRegistrationPrompts { get; set; } =
+            new List<EditDelegateRegistrationPromptViewModel>();
 
         public IEnumerable<SelectListItem> JobGroupOptions { get; set; } = new List<SelectListItem>();
         public string? ProfessionalRegistrationNumber { get; set; }
         public bool? HasProfessionalRegistrationNumber { get; set; }
+        public bool IsSelfRegistrationOrEdit { get; set; }
     }
 }

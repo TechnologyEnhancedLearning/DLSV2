@@ -153,7 +153,7 @@
             4,
             nameof(CompleteByDate),
             "Complete by date",
-            nameof(CourseDelegate.CompleteByDate)
+            nameof(CourseDelegate.CompleteBy)
         );
 
         public static readonly CourseDelegatesSortByOption CompletedDate = new CourseDelegatesSortByOption(
@@ -225,5 +225,20 @@
 
         public static readonly (string DisplayText, string PropertyName) AssessmentScore =
             ("Assessment score", nameof(LearningLogEntry.AssessmentScore));
+    }
+
+    public static class BrandCoursesSortByOption
+    {
+        public static readonly (string DisplayText, string PropertyName) Title =
+            ("Title", nameof(ApplicationWithSections.ApplicationName));
+
+        public static readonly (string DisplayText, string PropertyName) Popularity =
+            ("Popularity", nameof(ApplicationWithSections.PopularityRating));
+
+        public static readonly (string DisplayText, string PropertyName) Length =
+            ("Length", nameof(ApplicationWithSections.TotalMins));
+
+        public static readonly (string DisplayText, string PropertyName) CreatedDate =
+            ("Created Date", nameof(ApplicationWithSections.CreatedDate));
     }
 }

@@ -5,7 +5,8 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.Progress;
 
     public interface IProgressService
     {
@@ -26,17 +27,43 @@
             int promptNumber,
             string? answer
         );
+
+        void StoreAspProgressV2(
+            int progressId,
+            int version,
+            string? progressText,
+            int tutorialId,
+            int tutorialTime,
+            int tutorialStatus
+        );
+
+        void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress);
     }
 
     public class ProgressService : IProgressService
     {
+        private readonly IClockService clockService;
+        private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDataService courseDataService;
+        private readonly ILearningLogItemsDataService learningLogItemsDataService;
+        private readonly INotificationService notificationService;
         private readonly IProgressDataService progressDataService;
 
-        public ProgressService(ICourseDataService courseDataService, IProgressDataService progressDataService)
+        public ProgressService(
+            ICourseDataService courseDataService,
+            IProgressDataService progressDataService,
+            INotificationService notificationService,
+            ILearningLogItemsDataService learningLogItemsDataService,
+            IClockService clockService,
+            ICourseAdminFieldsService courseAdminFieldsService
+        )
         {
             this.courseDataService = courseDataService;
             this.progressDataService = progressDataService;
+            this.notificationService = notificationService;
+            this.learningLogItemsDataService = learningLogItemsDataService;
+            this.clockService = clockService;
+            this.courseAdminFieldsService = courseAdminFieldsService;
         }
 
         public void UpdateSupervisor(int progressId, int? newSupervisorId)
@@ -107,11 +134,17 @@
             var progress = progressDataService.GetProgressByProgressId(progressId);
 
             var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+            
 
             if (progress == null || courseInfo == null)
             {
                 return null;
             }
+
+            var coursePrompts = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
+                courseInfo
+            );
+            courseInfo.CourseAdminFields = coursePrompts;
 
             var sections = progressDataService.GetSectionProgressDataForProgressEntry(progressId).ToList();
             foreach (var section in sections)
@@ -120,7 +153,11 @@
                     progressDataService.GetTutorialProgressDataForSection(progressId, section.SectionId);
             }
 
-            return new DetailedCourseProgress(progress, sections, courseInfo);
+            return new DetailedCourseProgress(
+                progress,
+                sections,
+                courseInfo
+            );
         }
 
         public void UpdateCourseAdminFieldForDelegate(
@@ -130,6 +167,47 @@
         )
         {
             progressDataService.UpdateCourseAdminFieldForDelegate(progressId, promptNumber, answer);
+        }
+
+        public void StoreAspProgressV2(
+            int progressId,
+            int version,
+            string? progressText,
+            int tutorialId,
+            int tutorialTime,
+            int tutorialStatus
+        )
+        {
+            var timeNow = clockService.UtcNow;
+            progressDataService.UpdateProgressDetailsForStoreAspProgressV2(
+                progressId,
+                version,
+                timeNow,
+                progressText ?? string.Empty
+            );
+            progressDataService.UpdateAspProgressTutTime(tutorialId, progressId, tutorialTime);
+            progressDataService.UpdateAspProgressTutStat(tutorialId, progressId, tutorialStatus);
+        }
+
+        public void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress)
+        {
+            if (progress.Completed != null)
+            {
+                return;
+            }
+
+            var completionStatus = progressDataService.GetCompletionStatusForProgress(progress.ProgressId);
+            if (completionStatus > 0)
+            {
+                progressDataService.SetCompletionDate(progress.ProgressId, DateTime.UtcNow);
+                var numLearningLogItemsAffected =
+                    learningLogItemsDataService.MarkLearningLogItemsCompleteByProgressId(progress.ProgressId);
+                notificationService.SendProgressCompletionNotificationEmail(
+                    progress,
+                    completionStatus,
+                    numLearningLogItemsAffected
+                );
+            }
         }
     }
 }

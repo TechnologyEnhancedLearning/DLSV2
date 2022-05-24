@@ -16,9 +16,9 @@
       @Model.SearchLabel
     </label>
 
-    <input class="search-box" id="search-field" name="searchString" type="search" placeholder="Search" autocomplete="off" value="@Model.SearchString" />
+    <input class="search-box nhsuk-input" id="search-field" name="searchString" type="search" placeholder="Search" autocomplete="off" value="@Model.SearchString" />
 
-    <button class="nhsuk-search__submit search-submit"
+    <button class="nhsuk-button search-submit"
             type="submit"
             asp-action="@ViewContext.RouteData.Values["action"].ToString()"
             asp-route-page="1">
