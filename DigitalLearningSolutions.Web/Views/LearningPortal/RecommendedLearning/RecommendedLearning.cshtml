@@ -20,10 +20,14 @@
       @Model.SelfAssessment.Name
     </a>
   </li>
+  <li class="nhsuk-breadcrumb__item">
+    <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-controller="LearningPortal" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.VocabPlural() home</a>
+  </li>
   <li class="nhsuk-breadcrumb__item">Recommended Learning</li>
 }
 
-@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+@if (Model.JavascriptSearchSortFilterPaginateEnabled)
+{
   <vc:loading-spinner page-has-side-nav-menu="false" />
 }
 <div class="nhsuk-grid-row" id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
@@ -31,7 +35,8 @@
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
     <div class="nhsuk-u-margin-bottom-4">
-      @if (!Model.ApiIsAccessible) {
+      @if (!Model.ApiIsAccessible)
+      {
         <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
                                       text="@LearningHubWarningTextHelper.ResourceDetailsMayBeOutOfDate" />
       }
@@ -44,17 +49,21 @@
     <input type="hidden" id="select-sort-by" value="@Model.SortBy" />
     <input type="hidden" id="select-sort-direction" value="@Model.SortDirection" />
 
-    @if (Model.NoDataFound) {
+    @if (Model.NoDataFound)
+    {
       <p class="nhsuk-u-margin-top-4" role="alert">
         <b>No resources found.</b>
       </p>
-    } else {
+    }
+    else
+    {
       <partial name="SearchablePage/_SearchResultsCount" model="Model" />
       <partial name="SearchablePage/_TopPagination" model="Model" />
       <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
       <div id="searchable-elements">
-        @foreach (var resource in Model.RecommendedResources) {
+        @foreach (var resource in Model.RecommendedResources)
+        {
           <partial name="_SearchableRecommendedResourceCard" model="resource" />
         }
       </div>
@@ -64,8 +73,9 @@
   </div>
 </div>
 
-@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
-@section scripts {
-  <script src="@Url.Content("~/js/learningPortal/recommendedLearning.js")" asp-append-version="true"></script>
-}
+@if (Model.JavascriptSearchSortFilterPaginateEnabled)
+{
+  @section scripts {
+    <script src="@Url.Content("~/js/learningPortal/recommendedLearning.js")" asp-append-version="true"></script>
+  }
 }
