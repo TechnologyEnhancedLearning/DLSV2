@@ -167,6 +167,22 @@
         }
 
         [Test]
+        public async Task Successful_sign_in_for_user_who_needs_details_check_redirects_to_edit_details()
+        {
+            // Given
+            GivenSignInIsSuccessful();
+            A.CallTo(() => userService.ShouldForceDetailsCheck(A<UserEntity>._, A<int>._)).Returns(true);
+
+            // When
+            var loginViewModel = LoginTestHelper.GetDefaultLoginViewModel();
+            var result = await controller.Index(loginViewModel);
+
+            // Then
+            result.Should().BeRedirectToActionResult()
+                .WithControllerName("MyAccount").WithActionName("EditDetails");
+        }
+
+        [Test]
         public async Task Successful_sign_in_should_call_SignInAsync()
         {
             // Given
