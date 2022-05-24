@@ -73,7 +73,8 @@ function drawChart() {
 
   const chart = new Chartist.Line('.ct-chart', chartData, options);
 
-  chart.on('draw',
+  chart.on(
+    'draw',
     // The type here is Chartist.ChartDrawData, but the type specification is missing getNode()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (drawnElement: any) => {
@@ -99,7 +100,8 @@ function drawChart() {
           transform: `translate(${translateX} ${translateY}) rotate(${rotation} ${xOrigin - translateX} ${yOrigin})`,
         });
       }
-    });
+    },
+  );
 
   const dataPointErrorContainer = getActivityGraphDataErrorElement();
   if (dataPointErrorContainer !== null) {

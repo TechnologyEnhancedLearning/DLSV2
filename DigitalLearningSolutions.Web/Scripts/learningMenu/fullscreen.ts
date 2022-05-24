@@ -1,11 +1,11 @@
 export function setupFullscreen(): void {
   getExitFullscreenButton()?.addEventListener(
     'click',
-    () => exitFullscreen()
+    () => exitFullscreen(),
   );
   getEnterFullscreenButton()?.addEventListener(
     'click',
-    () => enterFullscreen()
+    () => enterFullscreen(),
   );
 }
 

@@ -2,20 +2,24 @@ class Checkboxes {
   public static setUpSelectAndDeselectInGroupButtons(): void {
     const selectAllButtons = document.querySelectorAll('.select-all') as NodeListOf<HTMLAnchorElement>;
     selectAllButtons.forEach((button) => {
-      button.addEventListener('click',
+      button.addEventListener(
+        'click',
         () => {
           const group = button.getAttribute('data-group') as string;
           this.selectAllInGroup(group);
-        });
+        },
+      );
     });
 
     const deselectAllButtons = document.querySelectorAll('.deselect-all') as NodeListOf<HTMLAnchorElement>;
     deselectAllButtons.forEach((button) => {
-      button.addEventListener('click',
+      button.addEventListener(
+        'click',
         () => {
           const group = button.getAttribute('data-group') as string;
           this.deselectAllinGroup(group);
-        });
+        },
+      );
     });
   }
 
