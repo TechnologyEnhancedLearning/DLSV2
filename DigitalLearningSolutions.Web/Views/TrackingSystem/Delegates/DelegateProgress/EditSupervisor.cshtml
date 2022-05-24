@@ -34,11 +34,11 @@
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="EditSupervisor">
       <input type="hidden" asp-for="DelegateId" />
       <input type="hidden" asp-for="ProgressId" />
-      <input type="hidden" asp-for="ReturnPageQuery"/>
+      <input type="hidden" asp-for="CustomisationId" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
       <vc:select-list asp-for="@nameof(Model.SupervisorId)"
                       label="Supervisor"
                       value="@Model.SupervisorId.ToString()"
-
                       hint-text=""
                       deselectable="true"
                       css-class="nhsuk-u-width-one-half"
