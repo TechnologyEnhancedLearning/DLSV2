@@ -1,7 +1,7 @@
 const glob = require('glob');
 const path = require('path');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const { dependencies } = require('./package.json');
+const coreJsVersion = require('core-js/package.json').version;
 
 const entry = {};
 glob.sync(
@@ -17,8 +17,6 @@ glob.sync(
   const name = file.replace('./Scripts/', '').replace('.ts', '');
   entry[name] = file;
 });
-
-const coreJsVersion = dependencies['core-js'].replace(/[^\d.]+/g, '');
 
 const config = {
   entry,
