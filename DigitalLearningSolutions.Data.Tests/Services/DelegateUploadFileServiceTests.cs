@@ -357,7 +357,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
                 .Returns(candidateNumberDelegate);
-            ACallToUserDataServiceUpdateDelegateDoesNothing();
+            ACallToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -406,7 +406,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId)).Returns(null);
             A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(aliasIdDelegate);
-            ACallToUserDataServiceUpdateDelegateDoesNothing();
+            ACallToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -551,7 +551,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
                 .Returns(candidateNumberDelegate);
-            ACallToUserDataServiceUpdateDelegateDoesNothing();
+            ACallToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -591,11 +591,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
                 .Returns(candidateNumberDelegate);
-            A.CallTo(
-                () =>
-                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
-            ).DoesNothing();
-            ACallToUserDataServiceUpdateDelegateDoesNothing();
+            ACallToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -624,7 +620,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
             ).DoesNothing();
-            ACallToUserDataServiceUpdateDelegateDoesNothing();
+            ACallToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -639,7 +635,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void ProcessDelegateTable_update_does_not_update_delegate_PRN_if_HasPRN_is_empty()
+        public void ProcessDelegateTable_update_resets_delegate_PRN_if_HasPRN_is_empty()
         {
             // Given
             const string delegateId = "DELEGATE";
@@ -653,7 +649,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
             ).DoesNothing();
-            ACallToUserDataServiceUpdateDelegateDoesNothing();
+            ACallToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -661,8 +657,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () =>
-                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
-            ).MustNotHaveHappened();
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, null, false)
+            ).MustHaveHappenedOnceExactly();
             result.ProcessedCount.Should().Be(1);
             result.UpdatedCount.Should().Be(1);
         }
@@ -1036,7 +1032,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
                 .Returns(candidateNumberDelegate);
-            ACallToUserDataServiceUpdateDelegateDoesNothing();
+            ACallToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -1133,7 +1129,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
                 .Returns("ANY");
-            ACallToUserDataServiceUpdateDelegateDoesNothing();
+            ACallToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -1255,7 +1251,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             result.Errors.Should().HaveCount(1);
         }
 
-        private void ACallToUserDataServiceUpdateDelegateDoesNothing()
+        private void ACallToUserDataServiceUpdatesDoNothing()
         {
             A.CallTo(
                 () => userDataService.UpdateDelegate(
@@ -1273,6 +1269,10 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     A<string>._,
                     A<string>._
                 )
+            ).DoesNothing();
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
             ).DoesNothing();
         }
 
