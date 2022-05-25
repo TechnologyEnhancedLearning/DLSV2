@@ -8,21 +8,21 @@
     </h2>
     <div class="nhsuk-card__description">
       <dl class="nhsuk-summary-list details-list-with-button">
-        <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             First name
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.FirstName" />
         </div>
 
-        <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             Last name
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.Surname" />
         </div>
 
-        <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             Primary email address
           </dt>
@@ -30,14 +30,14 @@
         </div>
 
         @if (Model.DelegateNumber != null) {
-          <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
             <dt class="nhsuk-summary-list__key">
               Job group
             </dt>
             <partial name="_SummaryFieldValue" model="@Model.JobGroup" />
           </div>
 
-          <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
             <dt class="nhsuk-summary-list__key">
               Professional Registration Number
             </dt>
@@ -45,7 +45,7 @@
           </div>
         }
 
-        <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key profile-picture__label">
             Profile picture (optional)
           </dt>
