@@ -15,6 +15,10 @@
         Task SetPasswordByEmailAsync(string email, string passwordHash);
 
         Task SetPasswordForUsersAsync(IEnumerable<UserReference> users, string passwordHash);
+
+        Task SetPasswordByUserIdAsync(int userId, string passwordHash);
+
+        Task SetOldPasswordsToNullByUserIdAsync(int userId);
     }
 
     public class PasswordDataService : IPasswordDataService
@@ -69,6 +73,26 @@
                     AdminIds = userRefs.Where(ur => ur.UserType.Equals(UserType.AdminUser)).Select(ur => ur.Id),
                     DelegateIds = userRefs.Where(ur => ur.UserType.Equals(UserType.DelegateUser)).Select(ur => ur.Id),
                 }
+            );
+        }
+
+        public async Task SetPasswordByUserIdAsync(int userId, string passwordHash)
+        {
+            await connection.ExecuteAsync(
+                @"UPDATE Users
+                        SET PasswordHash = @passwordHash
+                        WHERE Users.ID = @userId",
+                new { userId, passwordHash }
+            );
+        }
+
+        public async Task SetOldPasswordsToNullByUserIdAsync(int userId)
+        {
+            await connection.ExecuteAsync(
+                @"UPDATE DelegateAccounts
+                        SET OldPassword = NULL
+                        WHERE UserId = @userId",
+                new { userId }
             );
         }
     }
