@@ -204,8 +204,7 @@
             var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 clockService.UtcNow,
                 hash,
-                user.Id,
-                user is DelegateUser ? UserType.DelegateUser : UserType.AdminUser
+                user.Id
             );
 
             passwordResetDataService.CreatePasswordReset(resetPasswordCreateModel);

@@ -7,6 +7,5 @@ namespace DigitalLearningSolutions.Data.Models.Auth
     {
         public int UserId { get; set; }
         public string Email { get; set; }
-        public UserType UserType { get; set; }
     }
 }
