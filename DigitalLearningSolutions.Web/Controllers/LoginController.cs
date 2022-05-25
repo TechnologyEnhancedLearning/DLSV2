@@ -93,7 +93,7 @@
 
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        [Authorize(Policy = CustomPolicies.UserOnly)]
+        [Authorize(Policy = CustomPolicies.BasicUser)]
         public IActionResult ChooseACentre(string? returnUrl)
         {
             // TODO HEEDLS-912: sort out ChooseACentre page
@@ -102,7 +102,7 @@
         }
 
         [HttpGet]
-        [Authorize(Policy = CustomPolicies.UserOnly)]
+        [Authorize(Policy = CustomPolicies.BasicUser)]
         public async Task<IActionResult> ChooseCentre(int centreId, string? returnUrl)
         {
             // TODO HEEDLS-912: sort out ChooseACentre page

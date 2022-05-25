@@ -70,8 +70,8 @@ namespace DigitalLearningSolutions.Web
                 options =>
                 {
                     options.AddPolicy(
-                        CustomPolicies.UserOnly,
-                        policy => CustomPolicies.ConfigurePolicyUserOnly(policy)
+                        CustomPolicies.BasicUser,
+                        policy => CustomPolicies.ConfigurePolicyBasicUser(policy)
                     );
                     options.AddPolicy(
                         CustomPolicies.UserDelegateOnly,

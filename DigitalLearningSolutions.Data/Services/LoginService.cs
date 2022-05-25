@@ -75,7 +75,8 @@
                 userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == singleCentreToLogUserInto.Value);
 
             var centreIsActive = adminAccountToLogInto?.CentreActive ?? delegateAccountToLogInto?.CentreActive ?? false;
-            var accountAtCentreIsActive = adminAccountToLogInto?.Active ?? delegateAccountToLogInto?.Active ?? false;
+            var accountAtCentreIsActive = (adminAccountToLogInto?.Active == null || adminAccountToLogInto.Active) &&
+                                          (delegateAccountToLogInto?.Active == null || delegateAccountToLogInto.Active);
 
             if (!centreIsActive || !accountAtCentreIsActive || delegateAccountToLogInto is { Approved: false })
             {
