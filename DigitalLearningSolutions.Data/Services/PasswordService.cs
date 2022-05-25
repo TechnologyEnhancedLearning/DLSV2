@@ -7,10 +7,6 @@
 
     public interface IPasswordService
     {
-        Task ChangePasswordAsync(string email, string newPassword);
-
-        Task ChangePasswordAsync(IEnumerable<UserReference> users, string newPassword);
-
         Task ChangePasswordAsync(int userId, string newPassword);
     }
 
@@ -23,18 +19,6 @@
         {
             this.cryptoService = cryptoService;
             this.passwordDataService = passwordDataService;
-        }
-
-        public async Task ChangePasswordAsync(string email, string newPassword)
-        {
-            var hashOfPassword = cryptoService.GetPasswordHash(newPassword);
-            await passwordDataService.SetPasswordByEmailAsync(email, hashOfPassword);
-        }
-
-        public async Task ChangePasswordAsync(IEnumerable<UserReference> users, string newPassword)
-        {
-            var hashOfPassword = cryptoService.GetPasswordHash(newPassword);
-            await passwordDataService.SetPasswordForUsersAsync(users, hashOfPassword);
         }
 
         public async Task ChangePasswordAsync(int userId, string newPassword)

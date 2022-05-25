@@ -38,7 +38,7 @@
             var result = await authenticatedController.Index(new ChangePasswordFormData(), DlsSubApplication.Default);
 
             // Then
-            ThenMustNotHaveChangedPassword();
+            A.CallTo(() => passwordService.ChangePasswordAsync(A<int>._, A<string>._)).MustNotHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
 
@@ -102,14 +102,6 @@
                     )
                 )
                 .MustHaveHappened(1, Times.Exactly);
-        }
-
-        private void ThenMustNotHaveChangedPassword()
-        {
-            A.CallTo(() => passwordService.ChangePasswordAsync(A<IEnumerable<UserReference>>._, A<string>._))
-                .MustNotHaveHappened();
-            A.CallTo(() => passwordService.ChangePasswordAsync(A<string>._, A<string>._)).MustNotHaveHappened();
-            A.CallTo(() => passwordService.ChangePasswordAsync(A<int>._, A<string>._)).MustNotHaveHappened();
         }
     }
 }
