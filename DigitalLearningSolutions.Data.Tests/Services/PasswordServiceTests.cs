@@ -76,8 +76,6 @@
 
         private void ThenHasNotSetPasswordForAnyUser(string passwordHash)
         {
-            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync(A<string>._, passwordHash))
-                .MustNotHaveHappened();
             A.CallTo(() => passwordDataService.SetPasswordByUserIdAsync(A<int>._, passwordHash))
                 .MustNotHaveHappened();
         }
