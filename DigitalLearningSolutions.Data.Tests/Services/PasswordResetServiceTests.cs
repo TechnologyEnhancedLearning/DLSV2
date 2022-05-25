@@ -6,7 +6,6 @@
     using System.Threading.Tasks;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Auth;
@@ -37,13 +36,8 @@
             passwordResetDataService = A.Fake<IPasswordResetDataService>();
             passwordService = A.Fake<IPasswordService>();
 
-            A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns
-            (
-                (
-                    UserTestHelper.GetDefaultAdminUser(),
-                    new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }
-                )
-            );
+            A.CallTo(() => userService.GetUserByEmailAddress(A<string>._))
+                .Returns(UserTestHelper.GetDefaultUserAccount());
 
             passwordResetService = new PasswordResetService(
                 userService,
@@ -58,7 +52,7 @@
         public void Trying_to_get_null_user_should_throw_an_exception()
         {
             // Given
-            A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns((null, new List<DelegateUser>()));
+            A.CallTo(() => userService.GetUserByEmailAddress(A<string>._)).Returns(null);
 
             // Then
             Assert.ThrowsAsync<UserAccountNotFoundException>(
@@ -74,12 +68,14 @@
         {
             // Given
             var emailAddress = "recipient@example.com";
-            var adminUser = Builder<AdminUser>.CreateNew()
-                .With(user => user.EmailAddress = emailAddress)
-                .Build();
+            var user = new UserAccount
+            {
+                FirstName = "Test",
+                LastName = "User",
+                PrimaryEmail = emailAddress,
+            };
 
-            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
-                .Returns((adminUser, new List<DelegateUser>()));
+            A.CallTo(() => userService.GetUserByEmailAddress(emailAddress)).Returns(user);
 
             // When
             await passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");
@@ -91,6 +87,7 @@
                             A<Email>.That.Matches(
                                 e =>
                                     e.To[0] == emailAddress &&
+                                    e.Body.TextBody.Contains("Dear Test User") &&
                                     e.Cc.IsNullOrEmpty() &&
                                     e.Bcc.IsNullOrEmpty() &&
                                     e.Subject == "Digital Learning Solutions Tracking System Password Reset"
@@ -106,22 +103,37 @@
             // Given
             var emailAddress = "recipient@example.com";
             var resetPasswordId = 1;
-            var adminUser = Builder<AdminUser>.CreateNew()
-                .With(user => user.ResetPasswordId = resetPasswordId)
-                .Build();
+            var user = new UserAccount
+            {
+                ResetPasswordId = resetPasswordId,
+            };
 
-            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
-                .Returns((adminUser, new List<DelegateUser>()));
+            A.CallTo(() => userService.GetUserByEmailAddress(emailAddress)).Returns(user);
 
             // When
             await passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");
 
             // Then
-            A.CallTo(
-                    () =>
-                        passwordResetDataService.RemoveResetPasswordAsync(resetPasswordId)
-                )
-                .MustHaveHappened();
+            A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(resetPasswordId)).MustHaveHappened();
+        }
+
+        [Test]
+        public async Task Requesting_password_reset_does_not_attempt_to_clear_previous_hashes_when_they_are_null()
+        {
+            // Given
+            var emailAddress = "recipient@example.com";
+            var user = new UserAccount
+            {
+                ResetPasswordId = null,
+            };
+
+            A.CallTo(() => userService.GetUserByEmailAddress(emailAddress)).Returns(user);
+
+            // When
+            await passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");
+
+            // Then
+            A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(A<int>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -156,27 +168,6 @@
 
             // Then
             hashIsValid.Should().BeFalse();
-        }
-
-        [Test]
-        public async Task InvalidateResetPasswordForEmailAsync_removes_reset_password_for_exact_users_matching_email()
-        {
-            // Given
-            var users = (
-                Builder<AdminUser>.CreateNew().With(u => u.ResetPasswordId = 1).Build(),
-                new[] { Builder<DelegateUser>.CreateNew().With(u => u.ResetPasswordId = 4).Build() }.ToList());
-            A.CallTo(() => userService.GetUsersByEmailAddress("email")).Returns(users);
-
-            // When
-            await passwordResetService.InvalidateResetPasswordForEmailAsync("email");
-
-            // Then
-            A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(1))
-                .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(4))
-                .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(A<int>._))
-                .WhenArgumentsMatch(args => args.Get<int>(0) != 1 && args.Get<int>(0) != 4).MustNotHaveHappened();
         }
 
         [Test]

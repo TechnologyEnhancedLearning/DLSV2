@@ -80,6 +80,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         UserEntity? GetUserByUsername(string username);
 
+        UserAccount? GetUserByEmailAddress(string emailAddress);
+
         string? GetCentreEmail(int userId, int centreId);
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
@@ -437,6 +439,11 @@ namespace DigitalLearningSolutions.Data.Services
             var userId = userDataService.GetUserIdFromUsername(username);
 
             return userId == null ? null : GetUserById(userId.Value);
+        }
+
+        public UserAccount? GetUserByEmailAddress(string emailAddress)
+        {
+            return userDataService.GetUserAccountByEmailAddress(emailAddress);
         }
 
         public DelegateUser? GetDelegateUserById(int delegateId)

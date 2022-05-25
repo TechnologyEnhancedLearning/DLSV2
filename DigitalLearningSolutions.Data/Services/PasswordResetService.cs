@@ -28,8 +28,6 @@
 
         Task GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
 
-        Task InvalidateResetPasswordForEmailAsync(string email);
-
         Task ResetPasswordAsync(ResetPasswordWithUserDetails passwordReset, string password);
 
         void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl);
@@ -74,14 +72,22 @@
 
         public async Task GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
         {
-            (User? user, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
-            user ??= delegateUsers.FirstOrDefault() ??
-                     throw new UserAccountNotFoundException(
-                         "No user account could be found with the specified email address"
-                     );
+            var user = userService.GetUserByEmailAddress(emailAddress);
 
-            await InvalidateResetPasswordForEmailAsync(emailAddress);
+            if (user == null)
+            {
+                throw new UserAccountNotFoundException(
+                    "No user account could be found with the specified email address"
+                );
+            }
+
+            if (user.ResetPasswordId != null)
+            {
+                await passwordResetDataService.RemoveResetPasswordAsync(user.ResetPasswordId.Value);
+            }
+
             string resetPasswordHash = GenerateResetPasswordHash(user);
+
             var resetPasswordEmail = GeneratePasswordResetEmail(
                 emailAddress,
                 resetPasswordHash,
@@ -96,16 +102,6 @@
             await passwordResetDataService.RemoveResetPasswordAsync(passwordReset.Id);
             await passwordService.ChangePasswordAsync(passwordReset.UserId, password!);
             userService.ResetFailedLoginCountByUserId(passwordReset.UserId);
-        }
-
-        public async Task InvalidateResetPasswordForEmailAsync(string email)
-        {
-            var resetPasswordIds = userService.GetUsersByEmailAddress(email).GetDistinctResetPasswordIds();
-
-            foreach (var resetPasswordId in resetPasswordIds)
-            {
-                await passwordResetDataService.RemoveResetPasswordAsync(resetPasswordId);
-            }
         }
 
         public void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl)
@@ -197,14 +193,24 @@
             emailService.ScheduleEmails(emails, addedByProcess, deliveryDate);
         }
 
+        private string GenerateResetPasswordHash(UserAccount user)
+        {
+            return GenerateResetPasswordHash(user.Id);
+        }
+
         private string GenerateResetPasswordHash(User user)
+        {
+            return GenerateResetPasswordHash(user.Id);
+        }
+
+        private string GenerateResetPasswordHash(int userId)
         {
             string hash = Guid.NewGuid().ToString();
 
             var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 clockService.UtcNow,
                 hash,
-                user.Id
+                userId
             );
 
             passwordResetDataService.CreatePasswordReset(resetPasswordCreateModel);

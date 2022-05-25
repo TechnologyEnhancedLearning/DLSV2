@@ -17,6 +17,7 @@
         public int? ResetPasswordId { get; set; }
         public DateTime? TermsAgreed { get; set; }
         public int FailedLoginCount { get; set; }
+
         /// <summary>
         ///     This signifies that the user has either seen the PRN fields themselves
         ///     or an admin has seen the PRN fields when editing the delegate.
@@ -24,9 +25,12 @@
         ///     means they have responded No or haven't answered it yet.
         /// </summary>
         public bool HasBeenPromptedForPrn { get; set; }
+
         public int? LearningHubAuthId { get; set; }
         public bool HasDismissedLhLoginWarning { get; set; }
         public DateTime? EmailVerified { get; set; }
         public DateTime? DetailsLastChecked { get; set; }
+
+        public string FullName => $"{FirstName} {LastName}";
     }
 }
