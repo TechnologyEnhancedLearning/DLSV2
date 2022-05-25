@@ -26,8 +26,8 @@
          type="@Model.Type"
          spellcheck="@Model.SpellCheck"
          autocomplete="@Model.Autocomplete"
-         @(Model.HasError ? $"aria-invalid=\"true\" aria-errormessage=\"{Model.Name}-error\"" : "")
-         aria-describedby="@(Model.Name)-description @(Model.HasError ? $"{Model.Name}-error": "") @(!String.IsNullOrEmpty(Model.HintText) ? $"{Model.Name}-hint" : "")" />
+         @Html.Raw(Model.HasError ? $"aria-invalid=\"true\" aria-errormessage=\"{Model.Name}-error\"" : null)
+         aria-describedby="@(Model.Name)-description @Html.Raw(Model.HasError ? $"{Model.Name}-error": null) @(!String.IsNullOrEmpty(Model.HintText) ? $"{Model.Name}-hint" : "")" />
   @if (Model.Required)
   {
     <partial name="_RequiredField" />
