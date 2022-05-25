@@ -16,8 +16,8 @@ const activityToggleableRowDisplayTableRow = 'table-row';
 const mobileMaxNumberOfEntriesForActivityGraph = 17;
 const desktopMaxNumberOfEntriesForActivityGraph = 31;
 
-const noActivityId = 'no-activity-message';
-const noActivityMessage = <HTMLElement>document.getElementById(noActivityId);
+const noActivityMessageId = 'no-activity-message';
+const noActivityMessage = <HTMLElement>document.getElementById(noActivityMessageId);
 
 let chartData: IChartistData;
 
