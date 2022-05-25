@@ -45,6 +45,11 @@
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? Email { get; set; }
 
+        [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
+        [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
+        [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
+        public string? SecondaryEmail { get; set; }
+
         [Required(ErrorMessage = "Select a centre")]
         public int? Centre { get; set; }
 

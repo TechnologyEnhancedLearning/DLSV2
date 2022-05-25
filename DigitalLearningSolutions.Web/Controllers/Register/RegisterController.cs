@@ -94,7 +94,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             // Check this email and centre combination doesn't already exist in case we were redirected
             // back here by the user trying to submit the final page of the form
-            ValidateEmailAddress(model);
+            ValidateEmailAddresses(model);
 
             return View(model);
         }
@@ -103,7 +103,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
-            ValidateEmailAddress(model);
+            ValidateEmailAddresses(model);
 
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
@@ -309,18 +309,26 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                    || centresDataService.GetCentreName(centreId.Value) != null;
         }
 
-        private void ValidateEmailAddress(PersonalInformationViewModel model)
+        private void ValidateEmailAddresses(PersonalInformationViewModel model)
         {
             if (model.Email == null || !model.Centre.HasValue)
             {
                 return;
             }
 
-            if (!userService.IsDelegateEmailValidForCentre(model.Email, model.Centre!.Value))
+            if (userService.EmailIsInUse(model.Email))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
-                    "A user with this email address is already registered at this centre"
+                    "A user with this primary email address is already registered; if this is you, please log in at this centre via the My Account page."
+                );
+            }
+
+            if (userService.EmailIsInUse(model.SecondaryEmail))
+            {
+                ModelState.AddModelError(
+                    nameof(PersonalInformationViewModel.SecondaryEmail),
+                    "A user with this email address is already registered at this centre; if this is you, please log in at this centre via the My Account page."
                 );
             }
         }

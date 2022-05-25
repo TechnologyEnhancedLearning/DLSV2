@@ -44,6 +44,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         bool IsDelegateEmailValidForCentre(string email, int centreId);
 
+        bool EmailIsInUse(string email);
+
         void ResetFailedLoginCount(UserAccount userAccount);
 
         void UpdateFailedLoginCount(UserAccount userAccount);
@@ -292,6 +294,11 @@ namespace DigitalLearningSolutions.Data.Services
                 .Where(u => u.CentreId == centreId);
 
             return !duplicateUsers.Any();
+        }
+
+        public bool EmailIsInUse(string email)
+        {
+            return userDataService.AnyEmailsInSetAreAlreadyInUse(new[] { email });
         }
 
         public void ResetFailedLoginCount(UserAccount userAccount)

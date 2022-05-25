@@ -42,6 +42,7 @@
                 delegateRegistrationModel.Active,
                 PasswordHash = "temp",
                 ProfessionalRegistrationNumber = (string?)null,
+                DetailsLastChecked = DateTime.UtcNow,
             };
 
             var userId = connection.QuerySingle<int>(
@@ -53,7 +54,8 @@
                         LastName,
                         JobGroupID,
                         ProfessionalRegistrationNumber,
-                        Active
+                        Active,
+                        DetailsLastChecked
                     )
                     OUTPUT Inserted.ID
                     VALUES
@@ -64,7 +66,8 @@
                         @lastName,
                         @jobGroup,
                         @professionalRegistrationNumber,
-                        @active
+                        @active,
+                        @detailsLastChecked
                     )",
                 userValues,
                 transaction
@@ -115,7 +118,7 @@
                 delegateRegistrationModel.Active,
                 delegateRegistrationModel.IsExternalRegistered,
                 delegateRegistrationModel.IsSelfRegistered,
-                DetailsLastChecked = DateTime.UtcNow,
+                CentreSpecificDetailsLastChecked = DateTime.UtcNow,
             };
 
             connection.Execute(
@@ -153,7 +156,7 @@
                         @active,
                         @isExternalRegistered,
                         @isSelfRegistered,
-                        @detailsLastChecked
+                        @centreSpecificDetailsLastChecked
                     )",
                 candidateValues,
                 transaction
@@ -194,7 +197,7 @@
                 importOnly = registrationModel.ImportOnly,
                 isTrainer = registrationModel.IsTrainer,
                 isSupervisor = registrationModel.IsSupervisor,
-                isNominatedSupervisor = registrationModel.IsNominatedSupervisor
+                isNominatedSupervisor = registrationModel.IsNominatedSupervisor,
             };
 
             var adminUserId = connection.QuerySingle<int>(
