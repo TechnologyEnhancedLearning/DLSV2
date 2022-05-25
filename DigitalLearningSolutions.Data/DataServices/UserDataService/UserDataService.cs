@@ -130,6 +130,8 @@
 
         IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId);
 
+        DelegateAccount? GetDelegateAccountById(int id);
+
         void SetCentreEmail(
             int userId,
             int centreId,

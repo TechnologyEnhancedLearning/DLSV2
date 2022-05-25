@@ -41,6 +41,30 @@
             INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID";
 
+        private const string BaseSelectDelegateAccountQuery =
+            @"SELECT
+                da.ID,
+                da.Active,
+                da.CentreID,
+                ce.CentreName,
+                ce.Active AS CentreActive,
+                da.DateRegistered,
+                da.CandidateNumber,
+                da.Answer1,
+                da.Answer2,
+                da.Answer3,
+                da.Answer4,
+                da.Answer5,
+                da.Answer6,
+                da.Approved,
+                da.ExternalReg,
+                da.SelfReg,
+                da.OldPassword,
+                da.UserID,
+                da.CentreSpecificDetailsLastChecked
+            FROM DelegateAccounts AS da
+            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreId";
+
         public DelegateUser? GetDelegateUserById(int id)
         {
             var user = connection.Query<DelegateUser>(
@@ -304,29 +328,16 @@
         public IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId)
         {
             return connection.Query<DelegateAccount>(
-                @"SELECT da.ID,
-                        da.Active,
-                        da.CentreID,
-                        ce.CentreName,
-                        ce.Active AS CentreActive,
-                        da.DateRegistered,
-                        da.CandidateNumber,
-                        da.Answer1,
-                        da.Answer2,
-                        da.Answer3,
-                        da.Answer4,
-                        da.Answer5,
-                        da.Answer6,
-                        da.Approved,
-                        da.ExternalReg,
-                        da.SelfReg,
-                        da.OldPassword,
-                        da.UserID,
-                        da.CentreSpecificDetailsLastChecked
-                    FROM DelegateAccounts AS da
-                    INNER JOIN Centres AS ce ON ce.CentreId = da.CentreId
-                    WHERE da.UserID = @userId",
+                @$"{BaseSelectDelegateAccountQuery} WHERE da.UserID = @userId",
                 new { userId }
+            );
+        }
+
+        public DelegateAccount? GetDelegateAccountById(int id)
+        {
+            return connection.QuerySingleOrDefault<DelegateAccount>(
+                @$"{BaseSelectDelegateAccountQuery} WHERE da.ID = @id",
+                new { id }
             );
         }
     }

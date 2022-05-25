@@ -62,13 +62,13 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
         {
             var resetPasswordData = TempData.Peek<ResetPasswordData>()!;
 
-            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
+            var passwordReset = await passwordResetService.GetValidPasswordResetEntityAsync(
                 resetPasswordData.Email,
                 resetPasswordData.ResetPasswordHash,
                 ResetPasswordHelpers.ResetPasswordHashExpiryTime
             );
 
-            if (!hashIsValid)
+            if (passwordReset == null)
             {
                 TempData.Clear();
                 return RedirectToAction("Error");
@@ -79,15 +79,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
                 return View(viewModel);
             }
 
-            await passwordResetService.InvalidateResetPasswordForEmailAsync(resetPasswordData.Email);
-            await passwordService.ChangePasswordAsync(resetPasswordData.Email, viewModel.Password!);
-            var adminUser = userService.GetUsersByEmailAddress(resetPasswordData.Email).adminUser;
-
-            if (adminUser != null)
-            {
-                // TODO: HEEDLS-890 Change this to the user account we're resetting the password for
-                userService.ResetFailedLoginCount(new UserAccount());
-            }
+            await passwordResetService.ResetPasswordAsync(passwordReset, viewModel.Password!);
 
             TempData.Clear();
 

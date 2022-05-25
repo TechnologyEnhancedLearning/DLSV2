@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Auth;
@@ -15,6 +14,12 @@
 
     public interface IPasswordResetService
     {
+        Task<ResetPasswordWithUserDetails?> GetValidPasswordResetEntityAsync(
+            string emailAddress,
+            string resetHash,
+            TimeSpan expiryTime
+        );
+
         Task<bool> EmailAndResetPasswordHashAreValidAsync(
             string emailAddress,
             string resetHash,
@@ -22,7 +27,11 @@
         );
 
         Task GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
+
         Task InvalidateResetPasswordForEmailAsync(string email);
+
+        Task ResetPasswordAsync(ResetPasswordWithUserDetails passwordReset, string password);
+
         void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl);
 
         void GenerateAndScheduleDelegateWelcomeEmail(
@@ -45,17 +54,20 @@
         private readonly IClockService clockService;
         private readonly IEmailService emailService;
         private readonly IPasswordResetDataService passwordResetDataService;
+        private readonly IPasswordService passwordService;
         private readonly IUserService userService;
 
         public PasswordResetService(
             IUserService userService,
             IPasswordResetDataService passwordResetDataService,
+            IPasswordService passwordService,
             IEmailService emailService,
             IClockService clockService
         )
         {
             this.userService = userService;
             this.passwordResetDataService = passwordResetDataService;
+            this.passwordService = passwordService;
             this.emailService = emailService;
             this.clockService = clockService;
         }
@@ -77,6 +89,13 @@
                 baseUrl
             );
             emailService.SendEmail(resetPasswordEmail);
+        }
+
+        public async Task ResetPasswordAsync(ResetPasswordWithUserDetails passwordReset, string password)
+        {
+            await passwordResetDataService.RemoveResetPasswordAsync(passwordReset.Id);
+            await passwordService.ChangePasswordAsync(passwordReset.UserId, password!);
+            userService.ResetFailedLoginCountByUserId(passwordReset.UserId);
         }
 
         public async Task InvalidateResetPasswordForEmailAsync(string email)
@@ -132,24 +151,31 @@
             emailService.ScheduleEmail(welcomeEmail, addedByProcess, deliveryDate);
         }
 
+        public async Task<ResetPasswordWithUserDetails?> GetValidPasswordResetEntityAsync(
+            string emailAddress,
+            string resetHash,
+            TimeSpan expiryTime
+        )
+        {
+            var resetPasswordEntity =
+                await passwordResetDataService.FindMatchingResetPasswordEntityWithUserDetailsAsync(
+                    emailAddress,
+                    resetHash
+                );
+
+            return
+                resetPasswordEntity != null && resetPasswordEntity.IsStillValidAt(clockService.UtcNow, expiryTime)
+                    ? resetPasswordEntity
+                    : null;
+        }
+
         public async Task<bool> EmailAndResetPasswordHashAreValidAsync(
             string emailAddress,
             string resetHash,
             TimeSpan expiryTime
         )
         {
-            var matchingResetPasswordEntities =
-                await passwordResetDataService.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
-                    emailAddress,
-                    resetHash
-                );
-
-            return matchingResetPasswordEntities.Any(
-                resetPassword => resetPassword.IsStillValidAt(
-                    clockService.UtcNow,
-                    expiryTime
-                )
-            );
+            return await GetValidPasswordResetEntityAsync(emailAddress, resetHash, expiryTime) != null;
         }
 
         public void SendWelcomeEmailsToDelegates(

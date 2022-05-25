@@ -47,6 +47,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         void ResetFailedLoginCount(UserAccount userAccount);
 
+        void ResetFailedLoginCountByUserId(int userId);
+
         void UpdateFailedLoginCount(UserAccount userAccount);
 
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId);
@@ -265,8 +267,13 @@ namespace DigitalLearningSolutions.Data.Services
         {
             if (userAccount.FailedLoginCount != 0)
             {
-                userDataService.UpdateUserFailedLoginCount(userAccount.Id, 0);
+                ResetFailedLoginCountByUserId(userAccount.Id);
             }
+        }
+
+        public void ResetFailedLoginCountByUserId(int userId)
+        {
+            userDataService.UpdateUserFailedLoginCount(userId, 0);
         }
 
         public void UpdateFailedLoginCount(UserAccount userAccount)
