@@ -16,6 +16,9 @@ const activityToggleableRowDisplayTableRow = 'table-row';
 const mobileMaxNumberOfEntriesForActivityGraph = 17;
 const desktopMaxNumberOfEntriesForActivityGraph = 31;
 
+const noActivityId = 'no-activity-message';
+const noActivityMessage = <HTMLElement>document.getElementById(noActivityId);
+
 let chartData: IChartistData;
 
 interface IActivityDataRowModel {
@@ -196,7 +199,9 @@ function setUpToggleActivityRowsButton() {
   });
 }
 
-setUpToggleActivityRowsButton();
-viewLessRows();
-fetchChartDataAndDrawGraph();
-window.onresize = drawChartOrDataPointMessage;
+if (!noActivityMessage) {
+  setUpToggleActivityRowsButton();
+  viewLessRows();
+  fetchChartDataAndDrawGraph();
+  window.onresize = drawChartOrDataPointMessage;
+}
