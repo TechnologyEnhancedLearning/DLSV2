@@ -1,12 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using FizzWare.NBuilder;
     using FluentAssertions;
     using Microsoft.Data.SqlClient;
     using NUnit.Framework;
@@ -53,14 +52,14 @@
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var existingAdminUser = UserTestHelper.GetDefaultAdminUser();
+            var existingUser = UserTestHelper.GetDefaultUserAccount();
             var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
-            await passwordDataService.SetPasswordByEmailAsync(existingAdminUser.EmailAddress!, newPasswordHash);
+            await passwordDataService.SetPasswordByEmailAsync(existingUser.PrimaryEmail, newPasswordHash);
 
             // Then
-            userDataService.GetAdminUserById(existingAdminUser.Id)?.Password.Should()
+            userDataService.GetUserAccountById(existingUser.Id)?.PasswordHash.Should()
                 .Be(PasswordHashNotYetInDb);
         }
 
@@ -70,16 +69,67 @@
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var existingAdminUser = UserTestHelper.GetDefaultAdminUser();
-            var existingAdminUserPassword = existingAdminUser.Password;
+            var existingUser = UserTestHelper.GetDefaultUserAccount();
+            var existingUserPassword = existingUser.PasswordHash;
             var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
             await passwordDataService.SetPasswordByEmailAsync("random.email@address.com", newPasswordHash);
 
             // Then
-            userDataService.GetAdminUserById(existingAdminUser.Id)?.Password.Should()
-                .Be(existingAdminUserPassword);
+            userDataService.GetAdminUserById(existingUser.Id)?.Password.Should()
+                .Be(existingUserPassword);
+        }
+
+        [Test]
+        public async Task SetPasswordByUserIdAsync_sets_password_for_matching_user()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var existingUser = UserTestHelper.GetDefaultUserAccount();
+            var newPasswordHash = PasswordHashNotYetInDb;
+
+            // When
+            await passwordDataService.SetPasswordByUserIdAsync(existingUser.Id, newPasswordHash);
+
+            // Then
+            userDataService.GetUserAccountById(existingUser.Id)?.PasswordHash.Should()
+                .Be(PasswordHashNotYetInDb);
+        }
+
+        [Test]
+        public async Task SetPasswordByUserIdAsync_does_not_set_password_for_all_users()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var existingUser = UserTestHelper.GetDefaultUserAccount();
+            var existingUserPassword = existingUser.PasswordHash;
+            var newPasswordHash = PasswordHashNotYetInDb;
+
+            // When
+            await passwordDataService.SetPasswordByUserIdAsync(-1, newPasswordHash);
+
+            // Then
+            userDataService.GetAdminUserById(existingUser.Id)?.Password.Should()
+                .Be(existingUserPassword);
+        }
+
+        [Test]
+        public async Task SetOldPasswordsToNullByUserIdAsync_nullifies_old_passwords_for_matching_user()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var existingDelegateAccount = UserTestHelper.GetDefaultDelegateAccount();
+
+            // When
+            await passwordDataService.SetOldPasswordsToNullByUserIdAsync(existingDelegateAccount.UserId);
+
+            // Then
+            userDataService.GetDelegateAccountsByUserId(existingDelegateAccount.UserId).First().OldPassword.Should()
+                .Be(null);
         }
 
         [Test]

@@ -98,7 +98,7 @@
                 .GetDefaultActionExecutingContext(
                     controller
                 )
-                .WithMockUser(true, 101, null);
+                .WithMockUser(true, 101, adminId: null);
             context.ActionDescriptor = new ActionDescriptor
             {
                 Parameters = new[]
@@ -158,7 +158,7 @@
                 .GetDefaultActionExecutingContext(
                     controller
                 )
-                .WithMockUser(true, 101, null);
+                .WithMockUser(true, 101, adminId: null);
             context.ActionDescriptor = new ActionDescriptor
             {
                 Parameters = new[]

@@ -376,6 +376,19 @@
         }
 
         [Test]
+        public void ResetFailedLoginCountByUserId_resets_count()
+        {
+            // Given
+            var userAccount = UserTestHelper.GetDefaultUserAccount(failedLoginCount: 4);
+
+            // When
+            userService.ResetFailedLoginCountByUserId(userAccount.Id);
+
+            // Then
+            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(userAccount.Id, 0)).MustHaveHappened();
+        }
+
+        [Test]
         public void ResetFailedLoginCount_resets_count()
         {
             // Given

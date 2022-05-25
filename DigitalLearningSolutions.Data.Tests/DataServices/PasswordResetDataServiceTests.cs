@@ -21,11 +21,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         private const string HashNotYetInDb = "HashThatDoesNotExistInTheDatabase";
         private SqlConnection connection = null!;
         private PasswordResetDataService service = null!;
-
         private UserDataService userDataService = null!;
-
-        [DatapointSource]
-        public UserType[] UserTypes = { UserType.AdminUser, UserType.DelegateUser }; // Used by theories - don't remove!
 
         [SetUp]
         public void SetUp()
@@ -35,37 +31,33 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             service = new PasswordResetDataService(connection, new NullLogger<PasswordResetDataService>());
         }
 
-        [Theory]
-        public async Task Can_Create_And_Find_A_Password_Reset_For_User(UserType userType)
+        [Test]
+        public async Task Can_Create_And_Find_A_Password_Reset_For_User()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
             var createTime = new DateTime(2021, 1, 1);
-            var testDelegateUser = userType.Equals(UserType.AdminUser)
-                ? (User)UserTestHelper.GetDefaultAdminUser()
-                : UserTestHelper.GetDefaultDelegateUser();
+            var testUser = UserTestHelper.GetDefaultUserAccount();
             var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 createTime,
                 "ResetPasswordHash",
-                testDelegateUser.Id,
-                userType
+                testUser.Id
             );
 
             // When
             service.CreatePasswordReset(resetPasswordCreateModel);
-            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
-                testDelegateUser.EmailAddress!,
+
+            var match = await service.FindMatchingResetPasswordEntityWithUserDetailsAsync(
+                testUser.PrimaryEmail,
                 resetPasswordCreateModel.Hash
             );
 
             // Then
-            matches.Count.Should().Be(1);
-            var match = matches.Single();
+            match.Should().NotBe(null);
 
-            match.UserId.Should().Be(testDelegateUser.Id);
-            match.Email.Should().Be(testDelegateUser.EmailAddress);
-            match.UserType.Should().Be(userType);
+            match!.UserId.Should().Be(testUser.Id);
+            match.Email.Should().Be(testUser.PrimaryEmail);
 
             match.Id.Should().BeGreaterThan(0);
             match.ResetPasswordHash.Should().Be(resetPasswordCreateModel.Hash);
@@ -81,23 +73,22 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             var emailToCheck = "EmailThat.DoesNotExist@InTheDatabase.com";
 
             var createTime = new DateTime(2021, 1, 1);
-            var testDelegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var testUser = UserTestHelper.GetDefaultUserAccount();
             var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 createTime,
                 "ResetPasswordHash",
-                testDelegateUser.Id,
-                UserType.DelegateUser
+                testUser.Id
             );
 
             // When
             service.CreatePasswordReset(resetPasswordCreateModel);
-            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
+            var match = await service.FindMatchingResetPasswordEntityWithUserDetailsAsync(
                 emailToCheck,
                 resetPasswordCreateModel.Hash
             );
 
             // Then
-            matches.Count.Should().Be(0);
+            match.Should().Be(null);
         }
 
         [Test]
@@ -108,94 +99,50 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Given
 
             var createTime = new DateTime(2021, 1, 1);
-            var testDelegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var testUser = UserTestHelper.GetDefaultUserAccount();
             var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 createTime,
                 "NormalHash",
-                testDelegateUser.Id,
-                UserType.DelegateUser
+                testUser.Id
             );
 
             // When
             service.CreatePasswordReset(resetPasswordCreateModel);
-            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
-                testDelegateUser.EmailAddress!,
+            var match = await service.FindMatchingResetPasswordEntityWithUserDetailsAsync(
+                testUser.PrimaryEmail,
                 HashNotYetInDb
             );
 
             // Then
-            matches.Count.Should().Be(0);
+            match.Should().Be(null);
         }
 
         [Test]
-        public async Task Removing_reset_hash_sets_ResetPasswordId_to_null_for_admin_user()
+        public async Task Removing_reset_hash_sets_ResetPasswordId_to_null_for_user()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var userId = UserTestHelper.GetDefaultAdminUser().Id;
-            var userRef = new UserReference(userId, UserType.AdminUser);
-            var resetPasswordId =
-                await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
+            var user = UserTestHelper.GetDefaultUserAccount();
+            var resetPasswordId = await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, user);
 
             // When
             await service.RemoveResetPasswordAsync(resetPasswordId);
 
             // Then
-            var userAfterRemoval = userDataService.GetAdminUserById(userId);
+            var userAfterRemoval = userDataService.GetUserAccountById(user.Id);
             userAfterRemoval.Should().NotBeNull();
             userAfterRemoval?.ResetPasswordId.Should().BeNull();
         }
 
         [Test]
-        public async Task Removing_reset_hash_sets_ResetPasswordId_to_null_for_delegate_user()
+        public async Task Removing_reset_hash_from_user_removes_ResetPassword_entity()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var userId = UserTestHelper.GetDefaultDelegateUser().Id;
-            var userRef = new UserReference(userId, UserType.DelegateUser);
-            var resetPasswordId =
-                await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
-
-            // When
-            await service.RemoveResetPasswordAsync(resetPasswordId);
-
-            // Then
-            var userAfterRemoval = userDataService.GetDelegateUserById(userRef.Id);
-            userAfterRemoval.Should().NotBeNull();
-            userAfterRemoval?.ResetPasswordId.Should().BeNull();
-        }
-
-        [Test]
-        public async Task Removing_reset_hash_from_admin_user_removes_ResetPassword_entity()
-        {
-            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            // Given
-            var userId = UserTestHelper.GetDefaultAdminUser().Id;
-            var userRef = new UserReference(userId, UserType.AdminUser);
-            var resetPasswordId =
-                await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
-
-            // When
-            await service.RemoveResetPasswordAsync(resetPasswordId);
-
-            // Then
-            var matchingResetPasswords = connection.GetResetPasswordById(resetPasswordId);
-            matchingResetPasswords.Should().BeEmpty();
-        }
-
-        [Test]
-        public async Task Removing_reset_hash_from_delegate_user_removes_ResetPassword_entity()
-        {
-            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            // Given
-            var userId = UserTestHelper.GetDefaultDelegateUser().Id;
-            var userRef = new UserReference(userId, UserType.DelegateUser);
-            var resetPasswordId =
-                await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
+            var user = UserTestHelper.GetDefaultUserAccount();
+            var resetPasswordId = await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, user);
 
             // When
             await service.RemoveResetPasswordAsync(resetPasswordId);
@@ -209,26 +156,18 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         ///     Adds reset password entity for a list of users.
         /// </summary>
         /// <param name="hash">Reset hash.</param>
-        /// <param name="users">Must contain at least 1 user.</param>
+        /// <param name="user">A UserAccount.</param>
         /// <returns>The id of the reset password entity.</returns>
         private async Task<int> GivenResetPasswordWithHashExistsForUsersAsync(
             string hash,
-            IEnumerable<UserReference> users
+            UserAccount user
         )
         {
-            var userList = users.ToList();
-
-            var firstUser = userList.First();
-
-            service.CreatePasswordReset
-                (new ResetPasswordCreateModel(DateTime.UtcNow, hash, firstUser.Id, firstUser.UserType));
+            service.CreatePasswordReset(new ResetPasswordCreateModel(DateTime.UtcNow, hash, user.Id));
 
             var resetPasswordId = await connection.GetResetPasswordIdByHashAsync(hash);
 
-            foreach (var user in userList.Skip(1))
-            {
-                await connection.SetResetPasswordIdForUserAsync(user, resetPasswordId);
-            }
+            await connection.SetResetPasswordIdForUserAsync(user, resetPasswordId);
 
             return resetPasswordId;
         }

@@ -450,5 +450,15 @@
                 result.Single().Should().BeEquivalentTo(UserTestHelper.GetDefaultDelegateAccount());
             }
         }
+
+        [Test]
+        public void GetDelegateAccountById_returns_expected_account()
+        {
+            // When
+            var result = userDataService.GetDelegateAccountById(2);
+
+            // Then
+            result.Should().BeEquivalentTo(UserTestHelper.GetDefaultDelegateAccount());
+        }
     }
 }
