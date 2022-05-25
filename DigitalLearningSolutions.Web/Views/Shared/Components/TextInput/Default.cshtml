@@ -26,6 +26,7 @@
          type="@Model.Type"
          spellcheck="@Model.SpellCheck"
          autocomplete="@Model.Autocomplete"
+         @(Model.HasError ? $"aria-invalid=\"true\" aria-errormessage=\"{Model.Name}-error\"" : "")
          aria-describedby="@(Model.Name)-description @(Model.HasError ? $"{Model.Name}-error": "") @(!String.IsNullOrEmpty(Model.HintText) ? $"{Model.Name}-hint" : "")" />
   @if (Model.Required)
   {
