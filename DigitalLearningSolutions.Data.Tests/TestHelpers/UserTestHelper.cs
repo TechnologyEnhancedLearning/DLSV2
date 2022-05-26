@@ -334,6 +334,7 @@
             string firstName = "firstname",
             string surname = "lastname",
             string email = "email@email.com",
+            int jobGroupId = 1,
             byte[]? profileImage = null
         )
         {
@@ -343,6 +344,7 @@
                 firstName,
                 surname,
                 email,
+                jobGroupId,
                 null,
                 true,
                 profileImage

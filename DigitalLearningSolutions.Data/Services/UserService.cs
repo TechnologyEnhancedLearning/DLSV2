@@ -34,7 +34,7 @@ namespace DigitalLearningSolutions.Data.Services
             List<DelegateUser> delegateUsers
         );
 
-        void UpdateUserAccountDetailsForAllUsers(
+        void UpdateUserDetailsAndCentreSpecificDetails(
             int userId,
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
@@ -201,76 +201,55 @@ namespace DigitalLearningSolutions.Data.Services
         }
 
         // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
-        public void UpdateUserAccountDetailsForAllUsers(
+        public void UpdateUserDetailsAndCentreSpecificDetails(
             int userId,
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
         )
         {
-            var (adminUser, delegateUsers) =
-                GetLinkedUsersAccounts(
-                    myAccountDetailsData.AdminId,
-                    myAccountDetailsData.DelegateId
-                );
+            var delegateUsers = userDataService.GetDelegateAccountsByUserId(userId).ToList();
 
             var detailsLastChecked = DateTime.Now;
-            userDataService.UpdateUserDetailsLastChecked(detailsLastChecked, userId);
 
-            if (adminUser != null)
-            {
-                userDataService.UpdateAdminUser(
-                    myAccountDetailsData.FirstName,
-                    myAccountDetailsData.Surname,
-                    myAccountDetailsData.Email,
-                    myAccountDetailsData.ProfileImage,
-                    adminUser.Id
-                );
-            }
+            userDataService.UpdateUser(
+                myAccountDetailsData.FirstName,
+                myAccountDetailsData.Surname,
+                myAccountDetailsData.Email,
+                myAccountDetailsData.ProfileImage,
+                myAccountDetailsData.ProfessionalRegistrationNumber,
+                myAccountDetailsData.HasBeenPromptedForPrn,
+                myAccountDetailsData.JobGroupId!.Value,
+                detailsLastChecked,
+                userId
+            );
 
             if (delegateUsers.Count != 0)
             {
-                userDataService.UpdateDelegateAccountCentreSpecificDetailsLastChecked(detailsLastChecked, userId);
-                userDataService.UpdateUser(
-                    myAccountDetailsData.FirstName,
-                    myAccountDetailsData.Surname,
-                    myAccountDetailsData.Email,
-                    myAccountDetailsData.ProfileImage,
-                    myAccountDetailsData.ProfessionalRegistrationNumber,
-                    myAccountDetailsData.HasBeenPromptedForPrn,
-                    centreAnswersData!.JobGroupId,
-                    userId
+                var delegateId = myAccountDetailsData.DelegateId!.Value;
+                var oldDelegateUserDetails = userDataService.GetDelegateUserById(delegateId);
+
+                userDataService.UpdateDelegateUserCentrePrompts(
+                    delegateId,
+                    centreAnswersData!.Answer1,
+                    centreAnswersData.Answer2,
+                    centreAnswersData.Answer3,
+                    centreAnswersData.Answer4,
+                    centreAnswersData.Answer5,
+                    centreAnswersData.Answer6,
+                    detailsLastChecked
                 );
 
-                var oldDelegateDetails =
-                    delegateUsers.SingleOrDefault(u => u.Id == myAccountDetailsData.DelegateId);
+                userDataService.SetCentreEmail(
+                    userId,
+                    centreAnswersData.CentreId,
+                    centreAnswersData.CentreEmail
+                );
 
-                if (oldDelegateDetails != null)
-                {
-                    userDataService.UpdateDelegateUserCentrePrompts(
-                        myAccountDetailsData.DelegateId!.Value,
-                        centreAnswersData.Answer1,
-                        centreAnswersData.Answer2,
-                        centreAnswersData.Answer3,
-                        centreAnswersData.Answer4,
-                        centreAnswersData.Answer5,
-                        centreAnswersData.Answer6
-                    );
-
-                    if (!string.IsNullOrWhiteSpace(centreAnswersData.CentreEmail))
-                    {
-                        userDataService.SetCentreEmail(
-                            userId,
-                            centreAnswersData.CentreId,
-                            centreAnswersData.CentreEmail
-                        );
-                    }
-
-                    groupsService.SynchroniseUserChangesWithGroups(
-                        oldDelegateDetails,
-                        myAccountDetailsData,
-                        centreAnswersData
-                    );
-                }
+                groupsService.SynchroniseUserChangesWithGroups(
+                    oldDelegateUserDetails!,
+                    myAccountDetailsData,
+                    centreAnswersData
+                );
             }
         }
 

@@ -52,10 +52,9 @@
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
             int jobGroupId,
+            DateTime detailsLastChecked,
             int userId
         );
-
-        void UpdateUserDetailsLastChecked(DateTime detailsLastChecked, int userId);
 
         void UpdateDelegateAccount(
             int delegateId,
@@ -67,8 +66,6 @@
             string? answer5,
             string? answer6
         );
-
-        void UpdateDelegateAccountCentreSpecificDetailsLastChecked(DateTime detailsLastChecked, int userId);
 
         void ApproveDelegateUsers(params int[] ids);
 
@@ -95,7 +92,8 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6
+            string? answer6,
+            DateTime detailsLastChecked
         );
 
         int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
@@ -135,7 +133,7 @@
         void SetCentreEmail(
             int userId,
             int centreId,
-            string email,
+            string? email,
             IDbTransaction? transaction = null
         );
 
@@ -149,17 +147,6 @@
         public UserDataService(IDbConnection connection)
         {
             this.connection = connection;
-        }
-
-        public void UpdateUserDetailsLastChecked(DateTime detailsLastChecked, int userId)
-        {
-            connection.Execute(
-                @"UPDATE Users
-                        SET
-                            DetailsLastChecked = @detailsLastChecked
-                        WHERE ID = @userId",
-                new { detailsLastChecked, userId }
-            );
         }
 
         public int? GetUserIdFromUsername(string username)

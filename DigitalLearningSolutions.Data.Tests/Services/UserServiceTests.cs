@@ -213,7 +213,6 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var password = "password";
             var firstName = "TestFirstName";
             var lastName = "TestLastName";
             var email = "test@email.com";
@@ -225,27 +224,14 @@
                     firstName,
                     lastName,
                     email,
+                    1,
                     professionalRegNumber,
                     true,
                     null
                 );
 
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(adminUser.EmailAddress!)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(adminUser.EmailAddress!))
-                .Returns(new List<DelegateUser>());
-            A.CallTo(() => userVerificationService.VerifyUsers(password, A<AdminUser?>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(adminUser, new List<DelegateUser>()));
-            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
-                .DoesNothing();
-            A.CallTo(() => userDataService.GetUserIdFromUsername(A<string>._)).Returns(adminUser.Id);
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._)).Returns(new List<DelegateAccount>());
 
-            // When
-            userService.UpdateUserAccountDetailsForAllUsers(adminUser.Id, accountDetailsData);
-
-            // Then
-            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
-                .MustHaveHappened();
             A.CallTo(
                     () => userDataService.UpdateUser(
                         A<string>._,
@@ -255,10 +241,30 @@
                         A<string>._,
                         A<bool>._,
                         A<int>._,
+                        A<DateTime>._,
                         A<int>._
                     )
                 )
-                .MustNotHaveHappened();
+                .DoesNothing();
+
+            // When
+            userService.UpdateUserDetailsAndCentreSpecificDetails(adminUser.Id, accountDetailsData);
+
+            // Then
+            A.CallTo(
+                    () => userDataService.UpdateUser(
+                        A<string>._,
+                        A<string>._,
+                        A<string>._,
+                        null,
+                        A<string>._,
+                        A<bool>._,
+                        A<int>._,
+                        A<DateTime>._,
+                        A<int>._
+                    )
+                )
+                .MustHaveHappened();
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).MustNotHaveHappened();
         }
 
@@ -267,7 +273,7 @@
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var password = "password";
+            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
             var firstName = "TestFirstName";
             var lastName = "TestLastName";
             var email = "test@email.com";
@@ -279,18 +285,16 @@
                     firstName,
                     lastName,
                     email,
+                    1,
                     professionalRegNumber,
                     true,
                     null
                 );
             var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null, null);
 
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress!)).Returns(null);
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(delegateUser.EmailAddress!))
-                .Returns(new List<DelegateUser> { delegateUser });
-            A.CallTo(() => userVerificationService.VerifyUsers(password, A<AdminUser?>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(null, new List<DelegateUser> { delegateUser }));
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateAccount.Id)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._))
+                .Returns(new List<DelegateAccount>{delegateAccount});
             A.CallTo(
                     () => userDataService.UpdateUser(
                         A<string>._,
@@ -300,6 +304,7 @@
                         A<string>._,
                         A<bool>._,
                         A<int>._,
+                        A<DateTime>._,
                         A<int>._
                     )
                 )
@@ -311,11 +316,13 @@
                     A<CentreAnswersData>._
                 )
             ).DoesNothing();
-            A.CallTo(() => userDataService.GetUserIdFromUsername(A<string>._))
-                .Returns(UserTestHelper.GetDefaultAdminUser().Id);
 
             // When
-            userService.UpdateUserAccountDetailsForAllUsers(UserTestHelper.GetDefaultAdminUser().Id, accountDetailsData, centreAnswersData);
+            userService.UpdateUserDetailsAndCentreSpecificDetails(
+                UserTestHelper.GetDefaultAdminUser().Id,
+                accountDetailsData,
+                centreAnswersData
+            );
 
             // Then
             A.CallTo(
@@ -327,13 +334,23 @@
                         A<string>._,
                         A<bool>._,
                         A<int>._,
+                        A<DateTime>._,
                         A<int>._
                     )
                 )
                 .MustHaveHappened();
-            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
-                .MustNotHaveHappened();
-            A.CallTo(() => userDataService.UpdateDelegateUserCentrePrompts(2, null, null, null, null, null, null))
+            A.CallTo(
+                    () => userDataService.UpdateDelegateUserCentrePrompts(
+                        2,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        A<DateTime>._
+                    )
+                )
                 .MustHaveHappened();
             A.CallTo(
                 () => groupsService.SynchroniseUserChangesWithGroups(
@@ -349,10 +366,9 @@
         public void UpdateUserAccountDetailsForAllUsers_with_both_admin_and_delegate_updates_both()
         {
             // Given
-            var signedInEmail = "oldtest@email.com";
-            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: signedInEmail);
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: signedInEmail);
-            var password = "password";
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var adminUser = UserTestHelper.GetDefaultAdminAccount();
+            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
             var firstName = "TestFirstName";
             var lastName = "TestLastName";
             var email = "test@email.com";
@@ -360,25 +376,20 @@
             var accountDetailsData =
                 new MyAccountDetailsData(
                     adminUser.Id,
-                    delegateUser.Id,
+                    delegateAccount.Id,
                     firstName,
                     lastName,
                     email,
+                    1,
                     professionalRegNumber,
                     true,
                     null
                 );
             var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null, null);
 
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(signedInEmail)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(signedInEmail))
-                .Returns(new List<DelegateUser> { delegateUser });
-            A.CallTo(() => userVerificationService.VerifyUsers(password, A<AdminUser?>._, A<List<DelegateUser>>._))
-                .Returns(
-                    new UserAccountSet(adminUser, new List<DelegateUser> { delegateUser })
-                );
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateAccount.Id)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._))
+                .Returns(new List<DelegateAccount>{delegateAccount});
             A.CallTo(
                     () => userDataService.UpdateUser(
                         A<string>._,
@@ -388,11 +399,10 @@
                         A<string>._,
                         A<bool>._,
                         A<int>._,
+                        A<DateTime>._,
                         A<int>._
                     )
                 )
-                .DoesNothing();
-            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .DoesNothing();
             A.CallTo(
                 () => groupsService.SynchroniseUserChangesWithGroups(
@@ -401,10 +411,9 @@
                     A<CentreAnswersData>._
                 )
             ).DoesNothing();
-            A.CallTo(() => userDataService.GetUserIdFromUsername(A<string>._)).Returns(adminUser.Id);
 
             // When
-            userService.UpdateUserAccountDetailsForAllUsers(adminUser.Id, accountDetailsData, centreAnswersData);
+            userService.UpdateUserDetailsAndCentreSpecificDetails(adminUser.Id, accountDetailsData, centreAnswersData);
 
             // Then
             A.CallTo(
@@ -416,13 +425,23 @@
                         A<string>._,
                         A<bool>._,
                         A<int>._,
+                        A<DateTime>._,
                         A<int>._
                     )
                 )
                 .MustHaveHappened();
-            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
-                .MustHaveHappened();
-            A.CallTo(() => userDataService.UpdateDelegateUserCentrePrompts(2, null, null, null, null, null, null))
+            A.CallTo(
+                    () => userDataService.UpdateDelegateUserCentrePrompts(
+                        2,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        A<DateTime>._
+                    )
+                )
                 .MustHaveHappened();
             A.CallTo(
                 () => groupsService.SynchroniseUserChangesWithGroups(
@@ -1282,7 +1301,8 @@
         }
 
         [Test]
-        public void ShouldForceDetailsCheck_returns_true_when_delegate_account_details_last_checked_is_beyond_threshold()
+        public void
+            ShouldForceDetailsCheck_returns_true_when_delegate_account_details_last_checked_is_beyond_threshold()
         {
             // Given
             var now = new DateTime(2022, 5, 5);

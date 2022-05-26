@@ -22,8 +22,8 @@
           @if (string.IsNullOrWhiteSpace(Model.CentreEmail)) {
             <dd class="nhsuk-summary-list__value">
               <div class="centre-email__row">
-                @Model.User
-                <strong class="nhsuk-tag nhsuk-tag--blue">Default</strong>
+                @Model.PrimaryEmail
+                <strong class="nhsuk-tag nhsuk-tag--blue">Primary email</strong>
               </div>
             </dd>
           } else {

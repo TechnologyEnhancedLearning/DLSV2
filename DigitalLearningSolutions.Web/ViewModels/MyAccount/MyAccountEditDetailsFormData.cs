@@ -17,13 +17,14 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             List<(int id, string name)> jobGroups,
+            string? centreEmail,
             string? returnUrl
         )
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             LastName = adminUser?.LastName ?? delegateUser?.LastName;
             Email = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
-            CentreEmail = delegateUser?.EmailAddress;
+            CentreEmail = centreEmail;
             ProfileImage = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
 
             IsDelegateUser = delegateUser != null;

@@ -133,7 +133,7 @@
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
-            A.CallTo(() => userService.UpdateUserAccountDetailsForAllUsers(A<int>._, A<MyAccountDetailsData>._, null))
+            A.CallTo(() => userService.UpdateUserDetailsAndCentreSpecificDetails(A<int>._, A<MyAccountDetailsData>._, null))
                 .DoesNothing();
             var model = new MyAccountEditDetailsFormData
             {
@@ -149,7 +149,7 @@
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).MustHaveHappened();
-            A.CallTo(() => userService.UpdateUserAccountDetailsForAllUsers(A<int>._, A<MyAccountDetailsData>._, null))
+            A.CallTo(() => userService.UpdateUserDetailsAndCentreSpecificDetails(A<int>._, A<MyAccountDetailsData>._, null))
                 .MustHaveHappened();
 
             result.Should().BeRedirectToActionResult().WithActionName("Index").WithRouteValue(
@@ -175,7 +175,7 @@
                 .WithMockUrlHelper(urlHelper);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
-            A.CallTo(() => userService.UpdateUserAccountDetailsForAllUsers(A<int>._, A<MyAccountDetailsData>._, null))
+            A.CallTo(() => userService.UpdateUserDetailsAndCentreSpecificDetails(A<int>._, A<MyAccountDetailsData>._, null))
                 .DoesNothing();
             A.CallTo(() => urlHelper.IsLocalUrl(returnUrl)).Returns(true);
             var model = new MyAccountEditDetailsFormData
@@ -209,7 +209,7 @@
                 .WithMockUrlHelper(urlHelper);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
-            A.CallTo(() => userService.UpdateUserAccountDetailsForAllUsers(A<int>._, A<MyAccountDetailsData>._, null))
+            A.CallTo(() => userService.UpdateUserDetailsAndCentreSpecificDetails(A<int>._, A<MyAccountDetailsData>._, null))
                 .DoesNothing();
             A.CallTo(() => urlHelper.IsLocalUrl(A<string>._)).Returns(false);
             var model = new MyAccountEditDetailsFormData

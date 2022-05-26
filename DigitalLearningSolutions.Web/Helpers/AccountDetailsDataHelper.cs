@@ -19,6 +19,7 @@
                 formData.FirstName!,
                 formData.LastName!,
                 formData.Email!,
+                formData.JobGroupId,
                 formData.HasProfessionalRegistrationNumber == true
                     ? formData.ProfessionalRegistrationNumber
                     : null,

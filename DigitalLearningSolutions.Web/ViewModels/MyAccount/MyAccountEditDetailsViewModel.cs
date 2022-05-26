@@ -14,10 +14,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             List<(int id, string name)> jobGroups,
+            string? centreEmail,
             List<EditDelegateRegistrationPromptViewModel> editDelegateRegistrationPromptViewModels,
             DlsSubApplication dlsSubApplication,
             string? returnUrl
-        ) : base(adminUser, delegateUser, jobGroups, returnUrl)
+        ) : base(adminUser, delegateUser, jobGroups, centreEmail, returnUrl)
         {
             DlsSubApplication = dlsSubApplication;
             JobGroups = SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(

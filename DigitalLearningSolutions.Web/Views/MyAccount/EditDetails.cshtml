@@ -74,9 +74,7 @@
         default-option="Select a job group"
         select-list-options="@Model.JobGroups" />
 
-      @if (Model.IsDelegateUser) {
-        <partial name="_EditRegistrationNumber" model="@Model" />
-      }
+      <partial name="_EditRegistrationNumber" model="@Model" />
 
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-one-half">

@@ -13,7 +13,7 @@
         public void SetCentreEmail(
             int userId,
             int centreId,
-            string email,
+            string? email,
             IDbTransaction? transaction = null
         )
         {
@@ -46,7 +46,7 @@
                         END",
                 new { userId, centreId },
                 transaction
-                );
+            );
 
             if (detailsAlreadyExist)
             {
@@ -55,7 +55,8 @@
                     SET Email = @email
                     WHERE userID = @userId AND centreID = @centreId",
                     userCentreDetailsValues,
-                    transaction);
+                    transaction
+                );
             }
             else
             {
@@ -94,7 +95,8 @@
                         ELSE 0
                         END",
                 new { email, userId },
-                transaction);
+                transaction
+            );
         }
 
         public bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails, IDbTransaction? transaction = null)
@@ -113,20 +115,12 @@
 
         public string? GetCentreEmail(int userId, int centreId)
         {
-            var emails = connection.Query<string?>(
+            return connection.Query<string?>(
                 @"SELECT Email
                     FROM UserCentreDetails
                     WHERE UserID = @userId AND CentreID = @centreId",
-                new { userId, centreId}
-            ).ToList();
-            if (emails.Count > 1)
-            {
-                throw new MultipleUserAccountsFoundException(
-                    $"User with id {userId} has several emails at centre with id {centreId}"
-                );
-            }
-
-            return emails.SingleOrDefault();
+                new { userId, centreId }
+            ).SingleOrDefault();
         }
     }
 }

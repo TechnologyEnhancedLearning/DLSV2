@@ -107,6 +107,7 @@
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
             int jobGroupId,
+            DateTime detailsLastChecked,
             int userId
         )
         {
@@ -119,7 +120,8 @@
                             ProfileImage = @profileImage,
                             ProfessionalRegistrationNumber = @professionalRegNumber,
                             HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
-                            JobGroupId = @jobGroupId
+                            JobGroupId = @jobGroupId,
+                            DetailsLastChecked = @detailsLastChecked
                         WHERE ID = @userId",
                 new
                 {
@@ -131,6 +133,7 @@
                     professionalRegNumber,
                     hasBeenPromptedForPrn,
                     jobGroupId,
+                    detailsLastChecked,
                 }
             );
         }
@@ -229,17 +232,6 @@
                     answer5,
                     answer6,
                 }
-            );
-        }
-
-        public void UpdateDelegateAccountCentreSpecificDetailsLastChecked(DateTime detailsLastChecked, int userId)
-        {
-            connection.Execute(
-                @"UPDATE DelegateAccounts
-                        SET
-                            CentreSpecificDetailsLastChecked = @detailsLastChecked
-                        WHERE UserID = @userId",
-                new { detailsLastChecked, userId }
             );
         }
 
