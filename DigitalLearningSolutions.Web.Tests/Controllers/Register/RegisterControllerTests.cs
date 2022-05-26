@@ -69,9 +69,13 @@
         }
 
         [Test]
-        public void PersonalInformationPost_with_existing_user_for_centre_fails_validation()
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        [TestCase(true, true)]
+        public void PersonalInformationPost_with_invalid_emails_fails_validation(bool primaryInUse, bool secondaryInUse)
         {
             // Given
+            controller.TempData.Set(new DelegateRegistrationData());
             var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
             var model = new PersonalInformationViewModel
             {
@@ -79,21 +83,26 @@
                 LastName = "User",
                 Centre = duplicateUser.CentreId,
                 Email = duplicateUser.EmailAddress,
+                SecondaryEmail = "centre email",
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
-                .Returns(false);
+            A.CallTo(() => userService.EmailIsInUse(model.Email!))
+                .Returns(primaryInUse);
+            A.CallTo(() => userService.EmailIsInUse(model.SecondaryEmail!))
+                .Returns(secondaryInUse);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.EmailIsInUse(model.Email!))
+                .MustHaveHappened();
+            A.CallTo(() => userService.EmailIsInUse(model.SecondaryEmail!))
                 .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
 
         [Test]
-        public void PersonalInformationPost_with_existing_user_for_different_centre_is_allowed()
+        public void PersonalInformationPost_with_valid_emails_is_allowed()
         {
             // Given
             controller.TempData.Set(new DelegateRegistrationData());
@@ -104,15 +113,20 @@
                 LastName = "User",
                 Centre = duplicateUser.CentreId + 1,
                 Email = duplicateUser.EmailAddress,
+                SecondaryEmail = "centre email",
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
-                .Returns(true);
+            A.CallTo(() => userService.EmailIsInUse(model.Email!))
+                .Returns(false);
+            A.CallTo(() => userService.EmailIsInUse(model.SecondaryEmail!))
+                .Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.EmailIsInUse(model.Email!))
+                .MustHaveHappened();
+            A.CallTo(() => userService.EmailIsInUse(model.SecondaryEmail!))
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
