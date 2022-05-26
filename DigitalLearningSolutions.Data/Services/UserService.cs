@@ -2,12 +2,15 @@ namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
     public interface IUserService
@@ -31,8 +34,6 @@ namespace DigitalLearningSolutions.Data.Services
             List<DelegateUser> delegateUsers
         );
 
-        List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
-
         void UpdateUserAccountDetailsForAllVerifiedUsers(
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
@@ -46,19 +47,17 @@ namespace DigitalLearningSolutions.Data.Services
 
         bool IsDelegateEmailValidForCentre(string email, int centreId);
 
-        void ResetFailedLoginCount(AdminUser adminUser);
+        void ResetFailedLoginCount(UserAccount userAccount);
 
-        void IncrementFailedLoginCount(AdminUser adminUser);
+        void UpdateFailedLoginCount(UserAccount userAccount);
 
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId);
 
         void UpdateAdminUserPermissions(
             int adminId,
             AdminRoles adminRoles,
-            int categoryId
+            int? categoryId
         );
-
-        bool NewAliasIsValid(string? aliasId, int delegateUserId, int centreId);
 
         void UpdateUserAccountDetailsViaDelegateAccount(
             EditDelegateDetailsData editDelegateDetailsData,
@@ -77,12 +76,20 @@ namespace DigitalLearningSolutions.Data.Services
 
         void DeactivateOrDeleteAdmin(int adminId);
 
+        UserEntity? GetUserById(int userId);
+
+        UserEntity? GetUserByUsername(string username);
+
         DelegateUserCard? GetDelegateUserCardById(int delegateId);
+
+        bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
     }
 
     public class UserService : IUserService
     {
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
+        private readonly IClockService clockService;
+        private readonly IConfiguration configuration;
         private readonly IGroupsService groupsService;
         private readonly ILogger<IUserService> logger;
         private readonly ISessionDataService sessionDataService;
@@ -95,7 +102,9 @@ namespace DigitalLearningSolutions.Data.Services
             IUserVerificationService userVerificationService,
             ICentreContractAdminUsageService centreContractAdminUsageService,
             ISessionDataService sessionDataService,
-            ILogger<IUserService> logger
+            ILogger<IUserService> logger,
+            IClockService clockService,
+            IConfiguration configuration
         )
         {
             this.userDataService = userDataService;
@@ -104,11 +113,19 @@ namespace DigitalLearningSolutions.Data.Services
             this.centreContractAdminUsageService = centreContractAdminUsageService;
             this.sessionDataService = sessionDataService;
             this.logger = logger;
+            this.clockService = clockService;
+            this.configuration = configuration;
         }
 
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
         {
-            var adminUser = userDataService.GetAdminUserByUsername(username);
+            // TODO HEEDLS-887 Check this is the correct behaviour for getting users. This may end up getting cleared up by login fixes
+            var adminUser = userDataService.GetAdminUserByEmailAddress(username);
+            if (adminUser != null && (!adminUser.Active || !adminUser.Approved))
+            {
+                adminUser = null;
+            }
+
             var delegateUsers = userDataService.GetDelegateUsersByUsername(username);
 
             return (adminUser, delegateUsers);
@@ -175,23 +192,7 @@ namespace DigitalLearningSolutions.Data.Services
             return (adminUserWithActiveCentre, delegateUsersWithActiveCentres);
         }
 
-        public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
-        {
-            var availableCentres = delegateUsers
-                .Select(
-                    du =>
-                        new CentreUserDetails(du.CentreId, du.CentreName, adminUser?.CentreId == du.CentreId, true)
-                )
-                .ToList();
-
-            if (adminUser != null && availableCentres.All(c => c.CentreId != adminUser.CentreId))
-            {
-                availableCentres.Add(new CentreUserDetails(adminUser.CentreId, adminUser.CentreName, true));
-            }
-
-            return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
-        }
-
+        // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
         public void UpdateUserAccountDetailsForAllVerifiedUsers(
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
@@ -217,15 +218,15 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (verifiedDelegateUsers.Count != 0)
             {
-                var delegateIds = verifiedDelegateUsers.Select(d => d.Id).ToArray();
-                userDataService.UpdateDelegateUsers(
+                userDataService.UpdateUser(
                     myAccountDetailsData.FirstName,
                     myAccountDetailsData.Surname,
                     myAccountDetailsData.Email,
                     myAccountDetailsData.ProfileImage,
                     myAccountDetailsData.ProfessionalRegistrationNumber,
                     myAccountDetailsData.HasBeenPromptedForPrn,
-                    delegateIds
+                    centreAnswersData.JobGroupId,
+                    1 // TODO HEEDLS-887 This needs correcting to the correct UserId for the delegate record.
                 );
 
                 var oldDelegateDetails =
@@ -235,7 +236,6 @@ namespace DigitalLearningSolutions.Data.Services
                 {
                     userDataService.UpdateDelegateUserCentrePrompts(
                         myAccountDetailsData.DelegateId!.Value,
-                        centreAnswersData.JobGroupId,
                         centreAnswersData.Answer1,
                         centreAnswersData.Answer2,
                         centreAnswersData.Answer3,
@@ -305,17 +305,17 @@ namespace DigitalLearningSolutions.Data.Services
             return !duplicateUsers.Any();
         }
 
-        public void ResetFailedLoginCount(AdminUser adminUser)
+        public void ResetFailedLoginCount(UserAccount userAccount)
         {
-            if (adminUser.FailedLoginCount != 0)
+            if (userAccount.FailedLoginCount != 0)
             {
-                userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0);
+                userDataService.UpdateUserFailedLoginCount(userAccount.Id, 0);
             }
         }
 
-        public void IncrementFailedLoginCount(AdminUser adminUser)
+        public void UpdateFailedLoginCount(UserAccount userAccount)
         {
-            userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
+            userDataService.UpdateUserFailedLoginCount(userAccount.Id, userAccount.FailedLoginCount);
         }
 
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId)
@@ -329,7 +329,7 @@ namespace DigitalLearningSolutions.Data.Services
         public void UpdateAdminUserPermissions(
             int adminId,
             AdminRoles adminRoles,
-            int categoryId
+            int? categoryId
         )
         {
             if (NewUserRolesExceedAvailableSpots(adminId, adminRoles))
@@ -353,17 +353,7 @@ namespace DigitalLearningSolutions.Data.Services
             );
         }
 
-        public bool NewAliasIsValid(string? aliasId, int delegateUserId, int centreId)
-        {
-            if (aliasId == null)
-            {
-                return true;
-            }
-
-            var delegateUsers = userDataService.GetDelegateUsersByAliasId(aliasId);
-            return !delegateUsers.Any(du => du.Id != delegateUserId && du.CentreId == centreId);
-        }
-
+        // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
         public void UpdateUserAccountDetailsViaDelegateAccount(
             EditDelegateDetailsData editDelegateDetailsData,
             CentreAnswersData centreAnswersData
@@ -383,28 +373,23 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
-            var delegateIds = delegateUsers.Select(d => d.Id).ToArray();
-            userDataService.UpdateDelegateAccountDetails(
+            userDataService.UpdateUserDetails(
                 editDelegateDetailsData.FirstName,
                 editDelegateDetailsData.Surname,
                 editDelegateDetailsData.Email,
-                delegateIds
+                centreAnswersData.JobGroupId,
+                1 // TODO HEEDLS-887 This needs correcting to the correct UserId for the delegate record.
             );
 
-            userDataService.UpdateDelegate(
+            userDataService.UpdateDelegateAccount(
                 editDelegateDetailsData.DelegateId,
-                editDelegateDetailsData.FirstName,
-                editDelegateDetailsData.Surname,
-                centreAnswersData.JobGroupId,
                 delegateUser.Active,
                 centreAnswersData.Answer1,
                 centreAnswersData.Answer2,
                 centreAnswersData.Answer3,
                 centreAnswersData.Answer4,
                 centreAnswersData.Answer5,
-                centreAnswersData.Answer6,
-                editDelegateDetailsData.Alias,
-                editDelegateDetailsData.Email
+                centreAnswersData.Answer6
             );
 
             userDataService.UpdateDelegateProfessionalRegistrationNumber(
@@ -428,7 +413,7 @@ namespace DigitalLearningSolutions.Data.Services
         public IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId)
         {
             return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor)
-                .Where(au => au.CategoryId == categoryId || au.CategoryId == 0);
+                .Where(au => au.CategoryId == categoryId || au.CategoryId == null);
         }
 
         public bool DelegateUserLearningHubAccountIsLinked(int delegateId)
@@ -456,7 +441,7 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 try
                 {
-                    userDataService.DeleteAdminUser(adminId);
+                    userDataService.DeleteAdminAccount(adminId);
                 }
                 catch (Exception ex)
                 {
@@ -469,6 +454,28 @@ namespace DigitalLearningSolutions.Data.Services
             }
         }
 
+        public UserEntity? GetUserById(int userId)
+        {
+            var userAccount = userDataService.GetUserAccountById(userId);
+
+            if (userAccount == null)
+            {
+                return null;
+            }
+
+            var adminAccounts = userDataService.GetAdminAccountsByUserId(userId).ToList();
+            var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userId).ToList();
+
+            return new UserEntity(userAccount, adminAccounts, delegateAccounts);
+        }
+
+        public UserEntity? GetUserByUsername(string username)
+        {
+            var userId = userDataService.GetUserIdFromUsername(username);
+
+            return userId == null ? null : GetUserById(userId.Value);
+        }
+
         public DelegateUserCard? GetDelegateUserCardById(int delegateId)
         {
             return userDataService.GetDelegateUserCardById(delegateId);
@@ -477,6 +484,28 @@ namespace DigitalLearningSolutions.Data.Services
         public DelegateUser? GetDelegateUserById(int delegateId)
         {
             return userDataService.GetDelegateUserById(delegateId);
+        }
+
+        public bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck)
+        {
+            if (!new EmailAddressAttribute().IsValid(userEntity.UserAccount.PrimaryEmail))
+            {
+                return true;
+            }
+
+            var delegateAccount = userEntity.DelegateAccounts.SingleOrDefault(aa => aa.CentreId == centreIdToCheck);
+            var now = clockService.UtcNow;
+            var monthThresholdToForceCheck = configuration.GetMonthsToPromptUserDetailsCheck();
+
+            if (userEntity.UserAccount.DetailsLastChecked == null ||
+                userEntity.UserAccount.DetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now)
+            {
+                return true;
+            }
+
+            return delegateAccount != null &&
+                   (delegateAccount.CentreSpecificDetailsLastChecked == null ||
+                    delegateAccount.CentreSpecificDetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now);
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)

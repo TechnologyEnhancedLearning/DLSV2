@@ -16,18 +16,21 @@
     using FluentAssertions;
     using FluentAssertions.Common;
     using FluentAssertions.Execution;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class UserServiceTests
     {
         private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
+        private IClockService clockService = null!;
+        private IConfiguration configuration = null!;
         private IGroupsService groupsService = null!;
+        private ILogger<IUserService> logger = null!;
+        private ISessionDataService sessionDataService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private IUserVerificationService userVerificationService = null!;
-        private ISessionDataService sessionDataService = null!;
-        private ILogger<IUserService> logger = null!;
 
         [SetUp]
         public void Setup()
@@ -38,13 +41,18 @@
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             sessionDataService = A.Fake<ISessionDataService>();
             logger = A.Fake<Logger<IUserService>>();
+            clockService = A.Fake<IClockService>();
+            configuration = A.Fake<IConfiguration>();
+
             userService = new UserService(
                 userDataService,
                 groupsService,
                 userVerificationService,
                 centreContractAdminUsageService,
                 sessionDataService,
-                logger
+                logger,
+                clockService,
+                configuration
             );
         }
 
@@ -54,7 +62,7 @@
             // Given
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._))
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._))
                 .Returns(expectedAdminUser);
             A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._))
                 .Returns(new List<DelegateUser> { expectedDelegateUser });
@@ -201,33 +209,11 @@
         }
 
         [Test]
-        public void GetUserCentres_returns_centres_correctly_ordered()
-        {
-            // Given
-            var inputDelegateList = new List<DelegateUser>
-            {
-                UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "First Centre"),
-                UserTestHelper.GetDefaultDelegateUser(centreId: 3, centreName: "Third Centre"),
-                UserTestHelper.GetDefaultDelegateUser(centreId: 4, centreName: "Fourth Centre"),
-            };
-            var inputAdminAccount = UserTestHelper.GetDefaultAdminUser(centreId: 2, centreName: "Second Centre");
-            // Expect Admin first, alphabetical after
-            var expectedIdOrder = new List<int> { 2, 1, 4, 3 };
-
-            // When
-            var result = userService.GetUserCentres(inputAdminAccount, inputDelegateList);
-            var resultIdOrder = result.Select(details => details.CentreId).ToList();
-
-            // Then
-            Assert.That(resultIdOrder.SequenceEqual(expectedIdOrder));
-        }
-
-        [Test]
         public void UpdateUserAccountDetailsForAllVerifiedUsers_with_null_delegate_only_updates_admin()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
-            string password = "password";
+            var password = "password";
             var firstName = "TestFirstName";
             var lastName = "TestLastName";
             var email = "test@email.com";
@@ -261,14 +247,15 @@
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .MustHaveHappened();
             A.CallTo(
-                    () => userDataService.UpdateDelegateUsers(
+                    () => userDataService.UpdateUser(
                         A<string>._,
                         A<string>._,
                         A<string>._,
                         null,
                         A<string>._,
                         A<bool>._,
-                        A<int[]>._
+                        A<int>._,
+                        A<int>._
                     )
                 )
                 .MustNotHaveHappened();
@@ -280,7 +267,7 @@
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            string password = "password";
+            var password = "password";
             var firstName = "TestFirstName";
             var lastName = "TestLastName";
             var email = "test@email.com";
@@ -306,14 +293,15 @@
             A.CallTo(() => userVerificationService.VerifyUsers(password, A<AdminUser?>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, new List<DelegateUser> { delegateUser }));
             A.CallTo(
-                    () => userDataService.UpdateDelegateUsers(
+                    () => userDataService.UpdateUser(
                         A<string>._,
                         A<string>._,
                         A<string>._,
                         null,
                         A<string>._,
                         A<bool>._,
-                        A<int[]>._
+                        A<int>._,
+                        A<int>._
                     )
                 )
                 .DoesNothing();
@@ -330,20 +318,21 @@
 
             // Then
             A.CallTo(
-                    () => userDataService.UpdateDelegateUsers(
+                    () => userDataService.UpdateUser(
                         A<string>._,
                         A<string>._,
                         A<string>._,
                         null,
                         A<string>._,
                         A<bool>._,
-                        A<int[]>._
+                        A<int>._,
+                        A<int>._
                     )
                 )
                 .MustHaveHappened();
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .MustNotHaveHappened();
-            A.CallTo(() => userDataService.UpdateDelegateUserCentrePrompts(2, 1, null, null, null, null, null, null))
+            A.CallTo(() => userDataService.UpdateDelegateUserCentrePrompts(2, null, null, null, null, null, null))
                 .MustHaveHappened();
             A.CallTo(
                 () => groupsService.SynchroniseUserChangesWithGroups(
@@ -359,10 +348,10 @@
         public void UpdateUserAccountDetailsForAllVerifiedUsers_with_both_admin_and_delegate_updates_both()
         {
             // Given
-            string signedInEmail = "oldtest@email.com";
+            var signedInEmail = "oldtest@email.com";
             var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: signedInEmail);
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: signedInEmail);
-            string password = "password";
+            var password = "password";
             var firstName = "TestFirstName";
             var lastName = "TestLastName";
             var email = "test@email.com";
@@ -391,14 +380,15 @@
                     new UserAccountSet(adminUser, new List<DelegateUser> { delegateUser })
                 );
             A.CallTo(
-                    () => userDataService.UpdateDelegateUsers(
+                    () => userDataService.UpdateUser(
                         A<string>._,
                         A<string>._,
                         A<string>._,
                         null,
                         A<string>._,
                         A<bool>._,
-                        A<int[]>._
+                        A<int>._,
+                        A<int>._
                     )
                 )
                 .DoesNothing();
@@ -417,20 +407,21 @@
 
             // Then
             A.CallTo(
-                    () => userDataService.UpdateDelegateUsers(
+                    () => userDataService.UpdateUser(
                         A<string>._,
                         A<string>._,
                         A<string>._,
                         null,
                         A<string>._,
                         A<bool>._,
-                        A<int[]>._
+                        A<int>._,
+                        A<int>._
                     )
                 )
                 .MustHaveHappened();
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .MustHaveHappened();
-            A.CallTo(() => userDataService.UpdateDelegateUserCentrePrompts(2, 1, null, null, null, null, null, null))
+            A.CallTo(() => userDataService.UpdateDelegateUserCentrePrompts(2, null, null, null, null, null, null))
                 .MustHaveHappened();
             A.CallTo(
                 () => groupsService.SynchroniseUserChangesWithGroups(
@@ -447,8 +438,8 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            string signedInEmail = "oldtest@email.com";
-            string password = "incorrectPassword";
+            var signedInEmail = "oldtest@email.com";
+            var password = "incorrectPassword";
             var firstName = "TestFirstName";
             var lastName = "TestLastName";
             var email = "test@email.com";
@@ -487,14 +478,15 @@
 
             // Then
             A.CallTo(
-                    () => userDataService.UpdateDelegateUsers(
+                    () => userDataService.UpdateUser(
                         A<string>._,
                         A<string>._,
                         A<string>._,
                         null,
                         A<string>._,
                         A<bool>._,
-                        A<int[]>._
+                        A<int>._,
+                        A<int>._
                     )
                 )
                 .MustNotHaveHappened();
@@ -502,7 +494,6 @@
                 .MustNotHaveHappened();
             A.CallTo(
                     () => userDataService.UpdateDelegateUserCentrePrompts(
-                        A<int>._,
                         A<int>._,
                         A<string?>._,
                         A<string?>._,
@@ -709,40 +700,40 @@
         public void ResetFailedLoginCount_resets_count()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
+            var userAccount = UserTestHelper.GetDefaultUserAccount(failedLoginCount: 4);
 
             // When
-            userService.ResetFailedLoginCount(adminUser);
+            userService.ResetFailedLoginCount(userAccount);
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0)).MustHaveHappened();
+            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(userAccount.Id, 0)).MustHaveHappened();
         }
 
         [Test]
         public void ResetFailedLoginCount_doesnt_call_data_service_with_FailedLoginCount_of_zero()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 0);
+            var userAccount = UserTestHelper.GetDefaultUserAccount(failedLoginCount: 0);
 
             // When
-            userService.ResetFailedLoginCount(adminUser);
+            userService.ResetFailedLoginCount(userAccount);
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(userAccount.Id, 0)).MustNotHaveHappened();
         }
 
         [Test]
         public void IncrementFailedLoginCount_updates_count_to_expected_value()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
             const int expectedCount = 5;
+            var userAccount = UserTestHelper.GetDefaultUserAccount(failedLoginCount: expectedCount);
 
             // When
-            userService.IncrementFailedLoginCount(adminUser);
+            userService.UpdateFailedLoginCount(userAccount);
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, expectedCount))
+            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(userAccount.Id, expectedCount))
                 .MustHaveHappened();
         }
 
@@ -856,65 +847,6 @@
                 )
             );
             AssertAdminPermissionUpdateMustNotHaveHappened();
-        }
-
-        [Test]
-        public void NewAliasIsValid_returns_true_with_null_alias()
-        {
-            // When
-            var result = userService.NewAliasIsValid(null, 1, 1);
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void NewAliasIsValid_returns_true_with_delegate_at_different_centre()
-        {
-            // Given
-            const string alias = "alias";
-            const int centreId = 1;
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(centreId: centreId, aliasId: alias);
-            A.CallTo(() => userDataService.GetDelegateUsersByAliasId(alias)).Returns(new[] { delegateUser });
-
-            // When
-            var result = userService.NewAliasIsValid(alias, 1, 2);
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void NewAliasIsValid_returns_false_with_delegate_at_the_same_centre()
-        {
-            // Given
-            const string alias = "alias";
-            const int centreId = 1;
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(centreId: centreId, aliasId: alias);
-            A.CallTo(() => userDataService.GetDelegateUsersByAliasId(alias)).Returns(new[] { delegateUser });
-
-            // When
-            var result = userService.NewAliasIsValid(alias, 1, centreId);
-
-            // Then
-            result.Should().BeFalse();
-        }
-
-        [Test]
-        public void NewAliasIsValid_returns_true_with_delegate_at_the_same_centre_that_is_the_delegate_we_are_checking()
-        {
-            // Given
-            const string alias = "alias";
-            const int centreId = 1;
-            const int delegateId = 2;
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(delegateId, centreId, aliasId: alias);
-            A.CallTo(() => userDataService.GetDelegateUsersByAliasId(alias)).Returns(new[] { delegateUser });
-
-            // When
-            var result = userService.NewAliasIsValid(alias, delegateId, centreId);
-
-            // Then
-            result.Should().BeTrue();
         }
 
         [Test]
@@ -1044,11 +976,12 @@
 
             // Then
             A.CallTo(
-                () => userDataService.UpdateDelegateAccountDetails(
+                () => userDataService.UpdateUserDetails(
                     editDelegateDetailsData.FirstName,
                     editDelegateDetailsData.Surname,
                     editDelegateDetailsData.Email,
-                    A<int[]>.That.Matches(x => x.First() == 2 && x.Last() == 3)
+                    centreAnswersData.JobGroupId,
+                    A<int>._
                 )
             ).MustHaveHappened();
         }
@@ -1101,7 +1034,6 @@
         [Test]
         public void UpdateUserAccountDetailsViaDelegateAccount_updates_single_account_if_no_email_set()
         {
-
             // Given
             const string email = "";
             const string prn = "PRNNUMBER";
@@ -1145,27 +1077,24 @@
                 )
             ).MustNotHaveHappened();
             A.CallTo(
-                () => userDataService.UpdateDelegateAccountDetails(
+                () => userDataService.UpdateUserDetails(
                     editDelegateDetailsData.FirstName,
                     editDelegateDetailsData.Surname,
                     editDelegateDetailsData.Email,
-                    A<int[]>.That.Matches(x => x.Length == 0))
+                    centreAnswersData.JobGroupId,
+                    A<int>._
+                )
             ).MustHaveHappened();
             A.CallTo(
-                () => userDataService.UpdateDelegate(
+                () => userDataService.UpdateDelegateAccount(
                     editDelegateDetailsData.DelegateId,
-                    editDelegateDetailsData.FirstName,
-                    editDelegateDetailsData.Surname,
-                    centreAnswersData.JobGroupId,
                     delegateUser.Active,
                     centreAnswersData.Answer1,
                     centreAnswersData.Answer2,
                     centreAnswersData.Answer3,
                     centreAnswersData.Answer4,
                     centreAnswersData.Answer5,
-                    centreAnswersData.Answer6,
-                    editDelegateDetailsData.Alias,
-                    editDelegateDetailsData.Email
+                    centreAnswersData.Answer6
                 )
             ).MustHaveHappened();
         }
@@ -1197,7 +1126,7 @@
                 .With(au => au.CategoryId = 1)
                 .TheNext(2)
                 .With(au => au.IsSupervisor = true)
-                .With(au => au.CategoryId = 0)
+                .With(au => au.CategoryId = null)
                 .TheNext(3)
                 .With(au => au.IsSupervisor = true)
                 .With(au => au.CategoryId = 2)
@@ -1210,7 +1139,7 @@
             // Then
             result.Should().HaveCount(5);
             result.Should().OnlyContain(au => au.IsSupervisor);
-            result.Should().OnlyContain(au => au.CategoryId == 0 || au.CategoryId == 1);
+            result.Should().OnlyContain(au => au.CategoryId == null || au.CategoryId == 1);
         }
 
         [Test]
@@ -1242,7 +1171,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(() => userDataService.DeactivateAdmin(adminId)).MustHaveHappenedOnceExactly();
-                A.CallTo(() => userDataService.DeleteAdminUser(adminId)).MustNotHaveHappened();
+                A.CallTo(() => userDataService.DeleteAdminAccount(adminId)).MustNotHaveHappened();
             }
         }
 
@@ -1259,7 +1188,7 @@
             // Them
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.DeleteAdminUser(adminId)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => userDataService.DeleteAdminAccount(adminId)).MustHaveHappenedOnceExactly();
                 A.CallTo(() => userDataService.DeactivateAdmin(adminId)).MustNotHaveHappened();
             }
         }
@@ -1270,7 +1199,7 @@
             // Given
             const int adminId = 1;
             A.CallTo(() => sessionDataService.HasAdminGotSessions(1)).Returns(false);
-            A.CallTo(() => userDataService.DeleteAdminUser(adminId)).Throws(new Exception());
+            A.CallTo(() => userDataService.DeleteAdminAccount(adminId)).Throws(new Exception());
 
             // When
             userService.DeactivateOrDeleteAdmin(adminId);
@@ -1278,7 +1207,7 @@
             // Them
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.DeleteAdminUser(adminId)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => userDataService.DeleteAdminAccount(adminId)).MustHaveHappenedOnceExactly();
                 A.CallTo(() => userDataService.DeactivateAdmin(adminId)).MustHaveHappenedOnceExactly();
             }
         }
@@ -1300,6 +1229,192 @@
             // Then
             result.adminUser.Should().BeNull();
             result.delegateUsers.Should().BeEmpty();
+        }
+
+        [Test]
+        public void GetUserById_returns_null_when_no_user_account_found()
+        {
+            // Given
+            const int userId = 2;
+            A.CallTo(() => userDataService.GetUserAccountById(userId)).Returns(null);
+
+            // When
+            var result = userService.GetUserById(userId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeNull();
+                A.CallTo(() => userDataService.GetAdminAccountsByUserId(A<int>._)).MustNotHaveHappened();
+                A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._)).MustNotHaveHappened();
+            }
+        }
+
+        [Test]
+        public void GetUserById_returns_populated_user_entity_when_accounts_are_returned()
+        {
+            // Given
+            const int userId = 2;
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+            var adminAccounts = Builder<AdminAccount>.CreateListOfSize(5).Build();
+            var delegateAccounts = Builder<DelegateAccount>.CreateListOfSize(7).Build();
+            A.CallTo(() => userDataService.GetUserAccountById(userId)).Returns(userAccount);
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(A<int>._)).Returns(adminAccounts);
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._)).Returns(delegateAccounts);
+
+            // When
+            var result = userService.GetUserById(userId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result!.UserAccount.Should().BeEquivalentTo(userAccount);
+                result.AdminAccounts.Should().BeEquivalentTo(adminAccounts);
+                result.DelegateAccounts.Should().BeEquivalentTo(delegateAccounts);
+            }
+        }
+
+        [Test]
+        public void GetUserByUsername_returns_null_and_does_not_call_GetUserById_when_no_user_account_found()
+        {
+            // Given
+            const string username = "username";
+            A.CallTo(() => userDataService.GetUserIdFromUsername(username)).Returns(null);
+
+            // When
+            var result = userService.GetUserByUsername(username);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeNull();
+                A.CallTo(() => userDataService.GetUserAccountById(A<int>._)).MustNotHaveHappened();
+            }
+        }
+
+        [Test]
+        public void GetUserByUsername_returns_populated_user_entity_when_accounts_are_found()
+        {
+            // Given
+            const int userId = 2;
+            const string username = "username";
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+            var adminAccounts = Builder<AdminAccount>.CreateListOfSize(5).Build();
+            var delegateAccounts = Builder<DelegateAccount>.CreateListOfSize(7).Build();
+            A.CallTo(() => userDataService.GetUserIdFromUsername(username)).Returns(userId);
+            A.CallTo(() => userDataService.GetUserAccountById(userId)).Returns(userAccount);
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(A<int>._)).Returns(adminAccounts);
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._)).Returns(delegateAccounts);
+
+            // When
+            var result = userService.GetUserById(userId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result!.UserAccount.Should().BeEquivalentTo(userAccount);
+                result.AdminAccounts.Should().BeEquivalentTo(adminAccounts);
+                result.DelegateAccounts.Should().BeEquivalentTo(delegateAccounts);
+            }
+        }
+
+        [Test]
+        [TestCase("test@test", false)]
+        [TestCase("testtest", true)]
+        [TestCase("@testtest", true)]
+        [TestCase("testtest@", true)]
+        public void ShouldForceDetailsCheck_returns_expected_result_depending_on_user_account_primary_email(
+            string email,
+            bool expectedResult
+        )
+        {
+            // Given
+            var now = new DateTime(2022, 5, 5);
+            var yesterday = now.AddDays(-1);
+            A.CallTo(() => configuration["MonthsToPromptUserDetailsCheck"]).Returns("6");
+            A.CallTo(() => clockService.UtcNow).Returns(now);
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(primaryEmail: email, detailsLastChecked: yesterday),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: yesterday) }
+            );
+
+            // When
+            var result = userService.ShouldForceDetailsCheck(userEntity, 2);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        public void ShouldForceDetailsCheck_returns_true_when_user_account_details_last_checked_is_beyond_threshold()
+        {
+            // Given
+            var now = new DateTime(2022, 5, 5);
+            var yesterday = now.AddDays(-1);
+            var sevenMonthsAgo = now.AddMonths(-7);
+            A.CallTo(() => configuration["MonthsToPromptUserDetailsCheck"]).Returns("6");
+            A.CallTo(() => clockService.UtcNow).Returns(now);
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(detailsLastChecked: sevenMonthsAgo),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: yesterday) }
+            );
+
+            // When
+            var result = userService.ShouldForceDetailsCheck(userEntity, 2);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void ShouldForceDetailsCheck_returns_true_when_delegate_account_details_last_checked_is_beyond_threshold()
+        {
+            // Given
+            var now = new DateTime(2022, 5, 5);
+            var yesterday = now.AddDays(-1);
+            var sevenMonthsAgo = now.AddMonths(-7);
+            A.CallTo(() => configuration["MonthsToPromptUserDetailsCheck"]).Returns("6");
+            A.CallTo(() => clockService.UtcNow).Returns(now);
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: sevenMonthsAgo) }
+            );
+
+            // When
+            var result = userService.ShouldForceDetailsCheck(userEntity, 2);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void ShouldForceDetailsCheck_returns_false_when_all_details_are_valid_or_below_threshold()
+        {
+            // Given
+            var now = new DateTime(2022, 5, 5);
+            var yesterday = now.AddDays(-1);
+            A.CallTo(() => configuration["MonthsToPromptUserDetailsCheck"]).Returns("6");
+            A.CallTo(() => clockService.UtcNow).Returns(now);
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: yesterday) }
+            );
+
+            // When
+            var result = userService.ShouldForceDetailsCheck(userEntity, 2);
+
+            // Then
+            result.Should().BeFalse();
         }
 
         private void AssertAdminPermissionsCalledCorrectly(

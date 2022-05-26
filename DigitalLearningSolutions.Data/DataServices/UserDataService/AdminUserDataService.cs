@@ -26,7 +26,7 @@
                 au.PublishToAll,
                 au.SummaryReports,
                 au.UserAdmin AS IsUserAdmin,
-                au.CategoryID,
+                CASE WHEN au.CategoryID = 0 THEN NULL ELSE au.CategoryID END AS CategoryId,
                 CASE
                     WHEN au.CategoryID = 0 THEN 'All'
                     ELSE cc.CategoryName
@@ -56,15 +56,6 @@
             ).SingleOrDefault();
 
             return user;
-        }
-
-        public AdminUser? GetAdminUserByUsername(string username)
-        {
-            return connection.Query<AdminUser>(
-                @$"{BaseSelectAdminQuery}
-                    WHERE au.Active = 1 AND au.Approved = 1 AND (au.Login = @username OR au.Email = @username)",
-                new { username }
-            ).SingleOrDefault();
         }
 
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
@@ -118,21 +109,21 @@
             bool isContentCreator,
             bool isContentManager,
             bool importOnly,
-            int categoryId
+            int? categoryId
         )
         {
             connection.Execute(
-                @"UPDATE AdminUsers
+                @"UPDATE AdminAccounts
                         SET
-                            CentreAdmin = @isCentreAdmin,
-                            Supervisor = @isSupervisor,
-                            NominatedSupervisor = @isNominatedSupervisor,
-                            Trainer = @isTrainer,
-                            ContentCreator = @isContentCreator,
-                            ContentManager = @isContentManager,
+                            IsCentreAdmin = @isCentreAdmin,
+                            IsSupervisor = @isSupervisor,
+                            IsNominatedSupervisor = @isNominatedSupervisor,
+                            IsTrainer = @isTrainer,
+                            IsContentCreator = @isContentCreator,
+                            IsContentManager = @isContentManager,
                             ImportOnly = @importOnly,
                             CategoryID = @categoryId
-                        WHERE AdminID = @adminId",
+                        WHERE ID = @adminId",
                 new
                 {
                     isCentreAdmin,
@@ -148,17 +139,6 @@
             );
         }
 
-        public void UpdateAdminUserFailedLoginCount(int adminId, int updatedCount)
-        {
-            connection.Execute(
-                    @"UPDATE AdminUsers
-                        SET
-                            FailedLoginCount = @updatedCount
-                        WHERE AdminID = @adminId",
-                    new { adminId, updatedCount}
-                );
-        }
-
         public void DeactivateAdmin(int adminId)
         {
             connection.Execute(
@@ -170,12 +150,50 @@
             );
         }
 
-        public void DeleteAdminUser(int adminId)
+        public void DeleteAdminAccount(int adminId)
         {
             connection.Execute(
-                @"DELETE AdminUsers
-                    WHERE AdminID = @adminId",
+                @"DELETE AdminAccounts
+                    WHERE ID = @adminId",
                 new { adminId }
+            );
+        }
+        
+        public IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId)
+        {
+            return connection.Query<AdminAccount>(
+                @"SELECT aa.ID,
+                        aa.CentreID,
+                        ce.CentreName,
+                        ce.Active AS CentreActive,
+                        aa.IsCentreAdmin,
+                        aa.IsReportsViewer,
+                        aa.IsSuperAdmin,
+                        aa.IsCentreManager,
+                        aa.Active,
+                        aa.IsContentManager,
+                        aa.PublishToAll,
+                        aa.ImportOnly,
+                        aa.IsContentCreator,
+                        aa.IsSupervisor,
+                        aa.IsTrainer,
+                        aa.CategoryID,
+                        CASE
+                            WHEN aa.CategoryID IS NULL THEN 'All'
+                            ELSE cc.CategoryName
+                        END AS CategoryName,
+                        aa.IsFrameworkDeveloper,
+                        aa.IsFrameworkContributor,
+                        aa.IsWorkforceManager,
+                        aa.IsWorkforceContributor,
+                        aa.IsLocalWorkforceManager,
+                        aa.IsNominatedSupervisor,
+                        aa.UserID
+                    FROM AdminAccounts AS aa
+                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = aa.CategoryID
+                    INNER JOIN Centres AS ce ON ce.CentreId = aa.CentreId
+                    WHERE aa.UserID = @userId",
+                new { userId }
             );
         }
     }

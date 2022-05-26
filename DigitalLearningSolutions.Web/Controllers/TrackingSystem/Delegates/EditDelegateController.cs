@@ -64,14 +64,6 @@
 
             promptsService.ValidateCentreRegistrationPrompts(formData, centreId, ModelState);
 
-            if (!userService.NewAliasIsValid(formData.AliasId, delegateId, centreId))
-            {
-                ModelState.AddModelError(
-                    nameof(EditDelegateFormData.AliasId),
-                    "A user with this alias ID is already registered at this centre"
-                );
-            }
-
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
                 ModelState,
                 formData.HasProfessionalRegistrationNumber,

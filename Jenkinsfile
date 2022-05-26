@@ -3,11 +3,8 @@ pipeline {
         label 'windows'
     }
     environment {
-        DlsRefactor_ConnectionStrings__UnitTestConnection = credentials('ci-db-connection-string')
+        DlsRefactor_ConnectionStrings__UnitTestConnection = credentials('uar-ci-db-connection-string')
         DlsRefactor_LearningHubOpenAPIKey = credentials('ci-learning-hub-open-api-key')
-    }
-    parameters {
-        booleanParam(name: 'DeployToUAT', defaultValue: false, description: 'Deploy changes to UAT after build? NB will not deploy to test if this is set')
     }
     stages {
         stage('Checkout') {
@@ -51,7 +48,7 @@ pipeline {
         }
         stage('Integration Tests') {
             environment {
-                DlsRefactor_ConnectionStrings__DefaultConnection = credentials('ci-db-connection-string')
+                DlsRefactor_ConnectionStrings__DefaultConnection = credentials('uar-ci-db-connection-string')
         }
             steps {
                 bat "dotnet test DigitalLearningSolutions.Web.IntegrationTests"
@@ -59,7 +56,7 @@ pipeline {
         }
         stage('Automated UI Tests') {
             environment {
-                DlsRefactor_ConnectionStrings__DefaultConnection = credentials('ci-db-connection-string')
+                DlsRefactor_ConnectionStrings__DefaultConnection = credentials('uar-ci-db-connection-string')
             }
             steps {
                 bat "dotnet test DigitalLearningSolutions.Web.AutomatedUiTests"
@@ -74,9 +71,9 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to test') {
+        stage('Deploy to UAR test') {
             when {
-                allOf { branch 'master'; not { expression { params.DeployToUAT } } }
+                branch 'uar-test'
             }
             steps {
                 withCredentials([string(credentialsId: 'deploy-test-password', variable: 'PASSWORD')]) {
@@ -84,20 +81,6 @@ pipeline {
                         bat "dotnet publish DigitalLearningSolutions.Web/DigitalLearningSolutions.Web.csproj /p:PublishProfile=DigitalLearningSolutions.Web/Properties/PublishProfiles/PublishToTest.pubxml /p:Password=$PASSWORD /p:AllowUntrustedCertificate=True"
                     }
                 }
-            }
-        }
-        stage('Deploy to UAT') {
-            when {
-                expression { params.DeployToUAT }
-            }
-            steps {
-                withCredentials([string(credentialsId: 'ftp-password', variable: 'PASSWORD')]) {
-                    nodejs(nodeJSInstallationName: 'NodeJS-16') {
-                        bat "DeployToUAT.bat \"Frida.Tveit:$PASSWORD\" 40.69.40.103"
-                    }
-                }
-                sendSlackMessageToTeamChannel(":tada: Successfully deployed to UAT", "good")
-                sendSlackNotificationToChannel("@kevin.whittaker", ":tada: Successfully deployed to UAT", "good")
             }
         }
     }

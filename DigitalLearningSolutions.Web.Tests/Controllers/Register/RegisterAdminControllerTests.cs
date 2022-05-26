@@ -347,7 +347,7 @@
                             a =>
                                 a.FirstName == data.FirstName &&
                                 a.LastName == data.LastName &&
-                                a.Email == data.Email! &&
+                                a.PrimaryEmail == data.Email! &&
                                 a.Centre == data.Centre!.Value &&
                                 a.PasswordHash == data.PasswordHash! &&
                                 a.Active &&

@@ -1,9 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System.Collections.Generic;
+    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -25,156 +24,84 @@
 
         public LoginResult AttemptLogin(string username, string password)
         {
-            var (unverifiedAdminUser, unverifiedDelegateUsers) = userService.GetUsersByUsername(username);
+            var userEntity = userService.GetUserByUsername(username);
 
-            if (NoAccounts(unverifiedAdminUser, unverifiedDelegateUsers))
+            if (userEntity == null)
             {
                 return new LoginResult(LoginAttemptResult.InvalidUsername);
             }
 
-            var (verifiedAdminUser, verifiedDelegateUsers) = userVerificationService.VerifyUsers(
-                password,
-                unverifiedAdminUser,
-                unverifiedDelegateUsers
-            );
-
-            if (MultipleEmailsUsedAcrossAccounts(verifiedAdminUser, verifiedDelegateUsers))
+            if (!userEntity.UserAccount.Active)
             {
-                throw new LoginWithMultipleEmailsException("Not all accounts have the same email");
+                return new LoginResult(LoginAttemptResult.InactiveAccount);
             }
 
-            var adminAccountVerificationAttemptedAndFailed = unverifiedAdminUser != null && verifiedAdminUser == null;
-            var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
-            var shouldIncreaseFailedLoginCount =
-                adminAccountVerificationAttemptedAndFailed &&
-                !delegateAccountVerificationSuccessful;
+            var verificationResult = userVerificationService.VerifyUserEntity(password, userEntity);
 
-            var userEmail = delegateAccountVerificationSuccessful ? verifiedDelegateUsers[0].EmailAddress : null;
-            var adminAccountAssociatedWithDelegateAccount =
-                userEmail == null ? null : userService.GetAdminUserByEmailAddress(userEmail);
-
-            var adminAccountIsAlreadyLocked = unverifiedAdminUser?.IsLocked == true ||
-                                              adminAccountAssociatedWithDelegateAccount?.IsLocked == true;
-            var adminAccountHasJustBecomeLocked = unverifiedAdminUser?.FailedLoginCount == 4 &&
-                                                  shouldIncreaseFailedLoginCount;
-
-            var adminAccountIsLocked = adminAccountIsAlreadyLocked || adminAccountHasJustBecomeLocked;
-
-            if (shouldIncreaseFailedLoginCount)
+            if (verificationResult.PasswordMatchesAtLeastOneAccountPassword &&
+                !verificationResult.PasswordMatchesAllAccountPasswords)
             {
-                userService.IncrementFailedLoginCount(unverifiedAdminUser!);
-                unverifiedAdminUser!.FailedLoginCount += 1;
+                return new LoginResult(LoginAttemptResult.AccountsHaveMismatchedPasswords);
             }
 
-            if (adminAccountIsLocked)
+            if (!verificationResult.PasswordMatchesAtLeastOneAccountPassword)
             {
-                var adminAccount = unverifiedAdminUser ?? adminAccountAssociatedWithDelegateAccount;
-                return new LoginResult(LoginAttemptResult.AccountLocked, adminAccount);
+                userEntity.UserAccount.FailedLoginCount += 1;
+                userService.UpdateFailedLoginCount(userEntity.UserAccount);
+
+                return userEntity.IsLocked
+                    ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity)
+                    : new LoginResult(LoginAttemptResult.InvalidPassword);
             }
 
-            if (verifiedAdminUser == null && !delegateAccountVerificationSuccessful)
-            {
-                return new LoginResult(LoginAttemptResult.InvalidPassword);
-            }
-
-            if (verifiedAdminUser != null)
-            {
-                userService.ResetFailedLoginCount(verifiedAdminUser);
-            }
-
-            var approvedVerifiedDelegates = verifiedDelegateUsers.Where(du => du.Approved).ToList();
-            if (verifiedAdminUser == null && !approvedVerifiedDelegates.Any())
-            {
-                return new LoginResult(LoginAttemptResult.AccountNotApproved);
-            }
-
-            var (verifiedLinkedAdmin, verifiedLinkedDelegates) = GetVerifiedLinkedAccounts(
-                password,
-                approvedVerifiedDelegates,
-                verifiedAdminUser
-            );
-
-            var adminUserToLoginIfCentreActive = verifiedLinkedAdmin;
-            if (adminUserToLoginIfCentreActive?.IsLocked == true)
-            {
-                adminUserToLoginIfCentreActive = null;
-            }
-
-            var delegateUsersToLogInIfCentreActive =
-                approvedVerifiedDelegates.Concat(verifiedLinkedDelegates)
-                    .GroupBy(du => du.Id)
-                    .Select(g => g.First())
-                    .ToList();
-
-            var (adminUserToLogIn, delegateUsersToLogIn) = userService.GetUsersWithActiveCentres(
-                adminUserToLoginIfCentreActive,
-                delegateUsersToLogInIfCentreActive
-            );
-            var availableCentres = userService.GetUserCentres(adminUserToLogIn, delegateUsersToLogIn);
-
-            return availableCentres.Count switch
-            {
-                0 => new LoginResult(LoginAttemptResult.InactiveCentre),
-                1 => new LoginResult(
-                    LoginAttemptResult.LogIntoSingleCentre,
-                    adminUserToLogIn,
-                    delegateUsersToLogIn
-                ),
-                _ => new LoginResult(
-                    LoginAttemptResult.ChooseACentre,
-                    adminUserToLogIn,
-                    delegateUsersToLogIn,
-                    availableCentres
-                )
-            };
+            return userEntity.IsLocked
+                ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity)
+                : DetermineDestinationForSuccessfulLogin(userEntity, username);
         }
 
-        private (AdminUser? verifiedLinkedAdmin, List<DelegateUser> verifiedLinkedDelegates) GetVerifiedLinkedAccounts(
-            string password,
-            List<DelegateUser> approvedVerifiedDelegates,
-            AdminUser? verifiedAdminUser
-        )
+        private LoginResult DetermineDestinationForSuccessfulLogin(UserEntity userEntity, string username)
         {
-            var verifiedAssociatedAdmin =
-                userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
-                    approvedVerifiedDelegates,
-                    password
-                );
+            userService.ResetFailedLoginCount(userEntity.UserAccount);
 
-            // If we find a new linked admin we must be logging in by CandidateNumber or AliasID.
-            // In this case, we are trying to log directly into a centre so we discard an admin at a different centre.
-            if (approvedVerifiedDelegates.All(du => du.CentreId != verifiedAssociatedAdmin?.CentreId))
+            var singleCentreToLogUserInto = GetCentreIdIfLoggingUserIntoSingleCentre(userEntity, username);
+            if (singleCentreToLogUserInto == null)
             {
-                verifiedAssociatedAdmin = null;
+                return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity);
             }
 
-            var verifiedLinkedAdmin = verifiedAdminUser ?? verifiedAssociatedAdmin;
+            var adminAccountToLogInto =
+                userEntity.AdminAccounts.SingleOrDefault(aa => aa.CentreId == singleCentreToLogUserInto.Value);
+            var delegateAccountToLogInto =
+                userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == singleCentreToLogUserInto.Value);
 
-            var verifiedLinkedDelegates =
-                userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
-                    verifiedAdminUser,
-                    password
-                );
-            return (verifiedLinkedAdmin, verifiedLinkedDelegates);
-        }
+            var centreIsActive = adminAccountToLogInto?.CentreActive ?? delegateAccountToLogInto?.CentreActive ?? false;
+            var accountAtCentreIsActive = adminAccountToLogInto?.Active ?? delegateAccountToLogInto?.Active ?? false;
 
-        private static bool MultipleEmailsUsedAcrossAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
-        {
-            var emails = delegateUsers.Select(du => du.EmailAddress?.ToLowerInvariant())
-                .ToList();
-
-            if (adminUser != null)
+            if (!centreIsActive || !accountAtCentreIsActive || delegateAccountToLogInto is { Approved: false })
             {
-                emails.Add(adminUser.EmailAddress?.ToLowerInvariant());
+                return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity);
             }
 
-            var uniqueEmails = emails.Distinct().ToList();
-            return uniqueEmails.Count > 1;
+            return new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntity, singleCentreToLogUserInto.Value);
         }
 
-        private static bool NoAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        private static int? GetCentreIdIfLoggingUserIntoSingleCentre(UserEntity userEntity, string username)
         {
-            return adminUser == null && delegateUsers.Count == 0;
+            // Determine if there is only a single account
+            if (userEntity.IsSingleCentreAccount())
+            {
+                var adminCentreId = userEntity.AdminAccounts.SingleOrDefault()?.CentreId;
+                var delegateCentreId = userEntity.DelegateAccounts.SingleOrDefault()?.CentreId;
+                return adminCentreId ?? delegateCentreId;
+            }
+
+            // Determine if we are logging in via candidate number.
+            var delegateAccountToLogIntoIfCandidateNumberUsed = userEntity.DelegateAccounts.SingleOrDefault(
+                da =>
+                    string.Equals(da.CandidateNumber, username, StringComparison.CurrentCultureIgnoreCase)
+            );
+
+            return delegateAccountToLogIntoIfCandidateNumberUsed?.CentreId;
         }
     }
 }

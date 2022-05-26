@@ -2,6 +2,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
@@ -84,7 +85,8 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
 
             if (adminUser != null)
             {
-                userService.ResetFailedLoginCount(adminUser);
+                // TODO: HEEDLS-890 Change this to the user account we're resetting the password for
+                userService.ResetFailedLoginCount(new UserAccount());
             }
 
             TempData.Clear();

@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
-    using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
+    using Dapper;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserDataService
@@ -10,15 +12,6 @@
         AdminUser? GetAdminUserById(int id);
 
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
-
-        /// <summary>
-        ///     Gets a single admin or null by Login or Email Address
-        /// </summary>
-        /// <exception cref="InvalidOperationException">
-        ///     Thrown in the case where 2 admins are found in the database.
-        ///     This should not occur as Login is not an editable column.
-        /// </exception>
-        AdminUser? GetAdminUserByUsername(string username);
 
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
 
@@ -35,10 +28,10 @@
             bool isContentCreator,
             bool isContentManager,
             bool importOnly,
-            int categoryId
+            int? categoryId
         );
 
-        void UpdateAdminUserFailedLoginCount(int adminId, int updatedCount);
+        void UpdateUserFailedLoginCount(int userId, int updatedCount);
 
         DelegateUser? GetDelegateUserById(int id);
 
@@ -50,47 +43,39 @@
 
         List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
 
-        void UpdateDelegateUsers(
+        void UpdateUser(
             string firstName,
             string surname,
-            string email,
+            string primaryEmail,
             byte[]? profileImage,
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
-            int[] ids
+            int jobGroupId,
+            int userId
         );
 
-        void UpdateDelegate(
+        void UpdateDelegateAccount(
             int delegateId,
-            string firstName,
-            string lastName,
-            int jobGroupId,
             bool active,
             string? answer1,
             string? answer2,
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6,
-            string? aliasId,
-            string emailAddress
+            string? answer6
         );
 
         void ApproveDelegateUsers(params int[] ids);
 
-        void RemoveDelegateUser(int delegateId);
+        void RemoveDelegateAccount(int delegateId);
 
         int GetNumberOfApprovedDelegatesAtCentre(int centreId);
-
-        DelegateUser? GetDelegateUserByAliasId(string aliasId, int centreId);
 
         DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId);
 
         void DeactivateDelegateUser(int delegateId);
 
-        IEnumerable<DelegateUser> GetDelegateUsersByAliasId(string aliasId);
-
-        void UpdateDelegateAccountDetails(string firstName, string surname, string email, int[] ids);
+        void UpdateUserDetails(string firstName, string surname, string primaryEmail, int jobGroupId, int userId);
 
         DelegateUserCard? GetDelegateUserCardById(int id);
 
@@ -100,7 +85,6 @@
 
         void UpdateDelegateUserCentrePrompts(
             int id,
-            int jobGroupId,
             string? answer1,
             string? answer2,
             string? answer3,
@@ -129,7 +113,26 @@
             bool hasBeenPromptedForPrn
         );
 
-        void DeleteAdminUser(int adminId);
+        bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails, IDbTransaction? transaction = null);
+
+        bool EmailIsInUseByOtherUser(int userId, string email, IDbTransaction? transaction = null);
+
+        void DeleteAdminAccount(int adminId);
+
+        int? GetUserIdFromUsername(string username);
+
+        UserAccount? GetUserAccountById(int userId);
+
+        IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId);
+
+        IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId);
+
+        void SetCentreEmail(
+            int userId,
+            int centreId,
+            string email,
+            IDbTransaction? transaction = null
+        );
     }
 
     public partial class UserDataService : IUserDataService
@@ -139,6 +142,65 @@
         public UserDataService(IDbConnection connection)
         {
             this.connection = connection;
+        }
+
+        public int? GetUserIdFromUsername(string username)
+        {
+            var userIds = connection.Query<int?>(
+                @"SELECT DISTINCT u.ID
+                    FROM Users AS u
+                    LEFT JOIN DelegateAccounts AS da ON da.UserID = u.ID
+                    WHERE u.PrimaryEmail = @username OR da.CandidateNumber = @username",
+                new { username }
+            ).ToList();
+
+            if (userIds.Count > 1)
+            {
+                throw new MultipleUserAccountsFoundException(
+                    "Recovered more than 1 User when logging in with username: " + username
+                );
+            }
+
+            return userIds.SingleOrDefault();
+        }
+
+        public UserAccount? GetUserAccountById(int userId)
+        {
+            return connection.Query<UserAccount>(
+                @"SELECT u.ID, 
+                        u.PrimaryEmail,
+                        u.PasswordHash,
+                        u.FirstName,
+                        u.LastName,
+                        u.JobGroupID,
+                        jg.JobGroupName,
+                        u.ProfessionalRegistrationNumber,
+                        u.ProfileImage,
+                        u.Active,
+                        u.ResetPasswordID,
+                        u.TermsAgreed,
+                        u.FailedLoginCount,
+                        u.HasBeenPromptedForPrn,
+                        u.LearningHubAuthId,
+                        u.HasDismissedLhLoginWarning,
+                        u.EmailVerified,
+                        u.DetailsLastChecked
+                    FROM Users AS u
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
+                    WHERE u.ID = @userId",
+                new { userId }
+            ).SingleOrDefault();
+        }
+
+        public void UpdateUserFailedLoginCount(int userId, int updatedCount)
+        {
+            connection.Execute(
+                @"UPDATE Users
+                        SET
+                            FailedLoginCount = @updatedCount
+                        WHERE ID = @userId",
+                new { userId, updatedCount }
+            );
         }
     }
 }

@@ -48,7 +48,7 @@
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var categoryIdFilter = User.GetAdminCategoryId();
 
             var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, categoryIdFilter);
 
@@ -124,7 +124,7 @@
 
             var centreId = User.GetCentreId();
 
-            var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
+            var adminCategoryFilter = User.GetAdminCategoryId();
 
             var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId).ToList();
             var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
@@ -165,7 +165,7 @@
         {
             var centreId = User.GetCentreId();
 
-            var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
+            var adminCategoryFilter = User.GetAdminCategoryId();
 
             var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId);
             var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);

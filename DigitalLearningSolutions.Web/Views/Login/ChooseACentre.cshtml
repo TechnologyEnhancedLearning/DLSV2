@@ -18,6 +18,13 @@
       You are registered at more than one centre. Please choose the centre you would like to sign in to.
     </p>
 
+    @* TODO HEEDLS-912: Remove this temporary button *@
+    <a role="button" class="nhsuk-button delete-button" style="font-size: xx-large; height: 100px; width: 100%;"
+       asp-action="ChooseCentre" asp-route-centreId="0">
+      Log into first available temporary
+    </a>
+
+    @* TODO HEEDLS-912: Add the Reset Password link and description *@
     <table role="table" class="nhsuk-table-responsive">
       <thead role="rowgroup" class="nhsuk-table__head">
       <tr role="row">
@@ -38,6 +45,7 @@
           <td role="cell" class="nhsuk-table__cell choose-centre-td">
             <span class="nhsuk-table-responsive__heading">Centre: </span>
             @centreRow.CentreName
+            @* TODO HEEDLS-912: Add tags for the new fields here *@
           </td>
           <td role="cell" class="nhsuk-table__cell choose-centre-td">
             <span class="nhsuk-table-responsive__heading">Roles: </span>
@@ -55,6 +63,7 @@
             </div>
           </td>
           <td role="cell" class="nhsuk-table__cell choose-centre-td">
+            @* TODO HEEDLS-912: Correct these hide the button in all cases where we should.*@
             <a role="button" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0"
                asp-action="ChooseCentre" asp-route-centreId="@centreRow.CentreId">
               Choose <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>

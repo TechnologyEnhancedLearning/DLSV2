@@ -13,13 +13,24 @@
             List<DelegateUser> unverifiedDelegateUsers
         );
 
-        List<DelegateUser> GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(AdminUser? adminUser, string password);
+        UserEntityVerificationResult VerifyUserEntity(
+            string password,
+            UserEntity userEntity
+        );
+
+        List<DelegateUser> GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
+            AdminUser? adminUser,
+            string password
+        );
 
         /// <summary>
-        /// Gets a single verified admin associated with a set of delegate users.
-        /// This method should only be called with a set of delegate users with the same email address.
+        ///     Gets a single verified admin associated with a set of delegate users.
+        ///     This method should only be called with a set of delegate users with the same email address.
         /// </summary>
-        AdminUser? GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(List<DelegateUser> delegateUsers, string password);
+        AdminUser? GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
+            List<DelegateUser> delegateUsers,
+            string password
+        );
     }
 
     public class UserVerificationService : IUserVerificationService
@@ -48,6 +59,16 @@
                     .ToList();
 
             return new UserAccountSet(verifiedAdminUser, verifiedDelegateUsers);
+        }
+
+        public UserEntityVerificationResult VerifyUserEntity(string password, UserEntity userEntity)
+        {
+            var userAccountPassed = cryptoService.VerifyHashedPassword(userEntity.UserAccount.PasswordHash, password);
+            var passedDelegateIds = userEntity.DelegateAccounts
+                .Where(d => d.OldPassword == null || cryptoService.VerifyHashedPassword(d.OldPassword, password))
+                .Select(d => d.Id).ToList();
+            var failedDelegateIds = userEntity.DelegateAccounts.Select(d => d.Id).Except(passedDelegateIds);
+            return new UserEntityVerificationResult(userAccountPassed, passedDelegateIds, failedDelegateIds);
         }
 
         public List<DelegateUser> GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
