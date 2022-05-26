@@ -147,12 +147,16 @@
             const bool isCheckDetailsRedirect = true;
             if (returnUrl == null)
             {
-                return RedirectToAction("EditDetails", "MyAccount", new {isCheckDetailsRedirect});
+                return RedirectToAction("EditDetails", "MyAccount", new { isCheckDetailsRedirect });
             }
 
             var dlsSubAppSection = returnUrl.Split('/')[1];
             DlsSubApplication.TryGetFromUrlSegment(dlsSubAppSection, out var dlsSubApplication);
-            return RedirectToAction("EditDetails", "MyAccount", new { returnUrl, dlsSubApplication, isCheckDetailsRedirect });
+            return RedirectToAction(
+                "EditDetails",
+                "MyAccount",
+                new { returnUrl, dlsSubApplication, isCheckDetailsRedirect }
+            );
         }
 
         private async Task CentrelessLogInAsync(UserEntity userEntity, bool rememberMe)
