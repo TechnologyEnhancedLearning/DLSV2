@@ -21,9 +21,10 @@
         private readonly IDbConnection connection;
         private readonly IUserDataService userDataService;
 
-        public RegistrationDataService(IDbConnection connection)
+        public RegistrationDataService(IDbConnection connection, IUserDataService userDataService)
         {
             this.connection = connection;
+            this.userDataService = userDataService;
         }
 
         public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
@@ -162,6 +163,7 @@
                 transaction
             );
 
+            //throw new Exception();
             transaction.Commit();
 
             // TODO HEEDLS-874 deal with group assignment

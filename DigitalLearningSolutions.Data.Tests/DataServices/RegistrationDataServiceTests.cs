@@ -25,8 +25,8 @@
         public void SetUp()
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
-            service = new RegistrationDataService(connection);
             userDataService = new UserDataService(connection);
+            service = new RegistrationDataService(connection, userDataService);
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }
 
@@ -135,7 +135,8 @@
         private Action GetRegistrationAction(DelegateRegistrationModel model)
         {
             var newConnection = ServiceTestHelper.GetDatabaseConnection();
-            var newService = new RegistrationDataService(newConnection);
+            var newUserDataService = new UserDataService(newConnection);
+            var newService = new RegistrationDataService(newConnection, newUserDataService);
 
             void Action() => newService.RegisterNewUserAndDelegateAccount(model);
             return Action;
