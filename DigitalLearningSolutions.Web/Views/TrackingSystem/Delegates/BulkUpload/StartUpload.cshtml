@@ -1,11 +1,9 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model UploadDelegatesViewModel
 
 @{
-  ViewData["Title"] = "Bulk upload/update delegates";
   var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Bulk upload/update delegates" : "Bulk upload/update delegates";
   const string dateInputId = "welcome-email-date";
   var exampleDate = DateTime.Today;
   var emailDateCss = "nhsuk-checkboxes__conditional"

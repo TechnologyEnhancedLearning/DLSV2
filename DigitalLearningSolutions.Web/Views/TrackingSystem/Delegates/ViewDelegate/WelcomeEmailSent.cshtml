@@ -1,6 +1,4 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
 @model WelcomeEmailSentViewModel
 
 @{
@@ -13,7 +11,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">Welcome email sent</h1>
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">@ViewData["Title"]</h1>
     <p>A welcome message has been sent to @Model.Name (@Model.CandidateNumber), inviting them to set their password and confirm their registration.</p>
   </div>
 </div>

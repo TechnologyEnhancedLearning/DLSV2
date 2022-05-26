@@ -1,7 +1,5 @@
-﻿@inject IConfiguration Configuration;
-@using DigitalLearningSolutions.Web.Models.Enums
+﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
-@using Microsoft.Extensions.Configuration
 @model AddDelegateGroupViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/delegateGroups.css")" asp-append-version="true">
@@ -24,7 +22,7 @@
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.GroupName), nameof(Model.GroupDescription) })" />
       }
 
-      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-8">Add new delegate group</h1>
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-8">@ViewData["Title"]</h1>
 
       <vc:text-input asp-for="@nameof(Model.GroupName)"
                      label="Group name"

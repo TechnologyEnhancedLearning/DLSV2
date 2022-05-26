@@ -1,7 +1,5 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
-@using Microsoft.Extensions.Configuration
 @model EditCourseSectionViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseContent.css")" asp-append-version="true">
@@ -14,7 +12,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
 
-    <h1 class="nhsuk-heading-xl">Edit section content</h1>
+    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
     <div class="nhsuk-card">
       <div class="nhsuk-card__content basic-card-content">
