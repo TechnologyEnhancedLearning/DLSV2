@@ -57,7 +57,26 @@ namespace DigitalLearningSolutions.Data.DataServices
         public void CreatePasswordReset(ResetPasswordCreateModel createModel)
         {
             var numberOfAffectedRows = connection.Execute(
-                GetCreateResetPasswordSql(),
+                @"
+                    BEGIN TRY
+                    DECLARE @ResetPasswordID INT
+                    BEGIN TRANSACTION
+                        INSERT INTO dbo.ResetPassword
+                            ([ResetPasswordHash]
+                            ,[PasswordResetDateTime])
+                        VALUES(@ResetPasswordHash, @CreateTime)
+
+                        SET @ResetPasswordID = SCOPE_IDENTITY()
+
+                        UPDATE Users
+                        SET ResetPasswordID = @ResetPasswordID
+                        WHERE ID = @UserID
+                    COMMIT TRANSACTION
+                END TRY
+                BEGIN CATCH
+                    ROLLBACK TRANSACTION
+                END CATCH
+                ",
                 new
                 {
                     ResetPasswordHash = createModel.Hash,
@@ -88,29 +107,6 @@ namespace DigitalLearningSolutions.Data.DataServices
                     END CATCH",
                 new { resetPasswordId }
             );
-        }
-
-        private static string GetCreateResetPasswordSql()
-        {
-            return $@"BEGIN TRY
-                        DECLARE @ResetPasswordID INT
-                        BEGIN TRANSACTION
-                            INSERT INTO dbo.ResetPassword
-                                ([ResetPasswordHash]
-                                ,[PasswordResetDateTime])
-                            VALUES(@ResetPasswordHash, @CreateTime)
-
-                            SET @ResetPasswordID = SCOPE_IDENTITY()
-
-                            UPDATE Users
-                            SET ResetPasswordID = @ResetPasswordID
-                            WHERE ID = @UserID
-                        COMMIT TRANSACTION
-                    END TRY
-                    BEGIN CATCH
-                        ROLLBACK TRANSACTION
-                    END CATCH
-                    ";
         }
     }
 }

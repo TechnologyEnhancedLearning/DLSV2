@@ -198,9 +198,9 @@
             return GenerateResetPasswordHash(user.Id);
         }
 
-        private string GenerateResetPasswordHash(User user)
+        private string GenerateResetPasswordHash(DelegateUser delegateUser)
         {
-            return GenerateResetPasswordHash(user.Id);
+            return GenerateResetPasswordHash(delegateUser.Id); // TODO: HEEDLS-887 delegateUser.Id != userId, so this is the wrong id to use here.
         }
 
         private string GenerateResetPasswordHash(int userId)
