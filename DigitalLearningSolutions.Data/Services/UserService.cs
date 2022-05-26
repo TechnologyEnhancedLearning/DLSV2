@@ -2,12 +2,15 @@ namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
     public interface IUserService
@@ -80,11 +83,15 @@ namespace DigitalLearningSolutions.Data.Services
         UserEntity? GetUserByUsername(string username);
 
         DelegateUserCard? GetDelegateUserCardById(int delegateId);
+
+        bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
     }
 
     public class UserService : IUserService
     {
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
+        private readonly IClockService clockService;
+        private readonly IConfiguration configuration;
         private readonly IGroupsService groupsService;
         private readonly ILogger<IUserService> logger;
         private readonly ISessionDataService sessionDataService;
@@ -97,7 +104,9 @@ namespace DigitalLearningSolutions.Data.Services
             IUserVerificationService userVerificationService,
             ICentreContractAdminUsageService centreContractAdminUsageService,
             ISessionDataService sessionDataService,
-            ILogger<IUserService> logger
+            ILogger<IUserService> logger,
+            IClockService clockService,
+            IConfiguration configuration
         )
         {
             this.userDataService = userDataService;
@@ -106,6 +115,8 @@ namespace DigitalLearningSolutions.Data.Services
             this.centreContractAdminUsageService = centreContractAdminUsageService;
             this.sessionDataService = sessionDataService;
             this.logger = logger;
+            this.clockService = clockService;
+            this.configuration = configuration;
         }
 
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
@@ -480,6 +491,28 @@ namespace DigitalLearningSolutions.Data.Services
         public DelegateUser? GetDelegateUserById(int delegateId)
         {
             return userDataService.GetDelegateUserById(delegateId);
+        }
+
+        public bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck)
+        {
+            if (!new EmailAddressAttribute().IsValid(userEntity.UserAccount.PrimaryEmail))
+            {
+                return true;
+            }
+
+            var delegateAccount = userEntity.DelegateAccounts.SingleOrDefault(aa => aa.CentreId == centreIdToCheck);
+            var now = clockService.UtcNow;
+            var monthThresholdToForceCheck = configuration.GetMonthsToPromptUserDetailsCheck();
+
+            if (userEntity.UserAccount.DetailsLastChecked == null ||
+                userEntity.UserAccount.DetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now)
+            {
+                return true;
+            }
+
+            return delegateAccount != null &&
+                   (delegateAccount.CentreSpecificDetailsLastChecked == null ||
+                    delegateAccount.CentreSpecificDetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now);
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)

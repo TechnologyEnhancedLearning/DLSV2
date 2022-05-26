@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
 
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
@@ -24,6 +25,7 @@
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly ILogger<MyAccountController> logger;
         private readonly PromptsService promptsService;
         private readonly IUserService userService;
 
@@ -32,7 +34,8 @@
             IUserService userService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
-            PromptsService registrationPromptsService
+            PromptsService registrationPromptsService,
+            ILogger<MyAccountController> logger
         )
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
@@ -40,6 +43,7 @@
             this.imageResizeService = imageResizeService;
             this.jobGroupsDataService = jobGroupsDataService;
             promptsService = registrationPromptsService;
+            this.logger = logger;
         }
 
         [NoCaching]
@@ -64,7 +68,7 @@
         [NoCaching]
         [HttpGet("EditDetails")]
         [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
-        public IActionResult EditDetails(DlsSubApplication dlsSubApplication)
+        public IActionResult EditDetails(DlsSubApplication dlsSubApplication, string? returnUrl = null)
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
@@ -79,7 +83,8 @@
                 delegateUser,
                 jobGroups,
                 customPrompts,
-                dlsSubApplication
+                dlsSubApplication,
+                returnUrl
             );
 
             return View(model);
@@ -162,7 +167,10 @@
             );
             userService.UpdateUserAccountDetailsForAllVerifiedUsers(accountDetailsData, centreAnswersData);
 
-            return RedirectToAction("Index", new { dlsSubApplication = dlsSubApplication.UrlSegment });
+            return this.RedirectToReturnUrl(formData.ReturnUrl, logger) ?? RedirectToAction(
+                "Index",
+                new { dlsSubApplication = dlsSubApplication.UrlSegment }
+            );
         }
 
         private IActionResult ReturnToEditDetailsViewWithErrors(
