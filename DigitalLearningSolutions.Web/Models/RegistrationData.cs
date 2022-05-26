@@ -21,6 +21,7 @@
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Email { get; set; }
+        public string? SecondaryEmail { get; set; }
         public int? Centre { get; set; }
 
         public int? JobGroup { get; set; }
@@ -33,6 +34,7 @@
         {
             Centre = model.Centre;
             Email = model.Email;
+            SecondaryEmail = model.SecondaryEmail;
             FirstName = model.FirstName;
             LastName = model.LastName;
         }

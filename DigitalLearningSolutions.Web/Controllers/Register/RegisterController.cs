@@ -324,7 +324,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 );
             }
 
-            if (userService.EmailIsInUse(model.SecondaryEmail))
+            if (model.SecondaryEmail != null && userService.EmailIsInUse(model.SecondaryEmail))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.SecondaryEmail),

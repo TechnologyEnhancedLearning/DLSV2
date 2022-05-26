@@ -9,6 +9,7 @@
             string firstName,
             string lastName,
             string email,
+            string? secondaryEmail,
             int centre,
             int jobGroup,
             string? passwordHash,
@@ -26,6 +27,7 @@
             DateTime? notifyDate = null
         ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
+            SecondaryEmail = secondaryEmail;
             Answer1 = answer1;
             Answer2 = answer2;
             Answer3 = answer3;
@@ -61,6 +63,7 @@
             row.FirstName!,
             row.LastName!,
             row.Email!,
+            null,
             centreId,
             row.JobGroupId!.Value,
             null,
@@ -77,6 +80,8 @@
             row.AliasId,
             welcomeEmailDate
         ) { }
+
+        public string? SecondaryEmail { get; set; }
 
         public string? Answer1 { get; set; }
 

@@ -191,7 +191,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         private void ValidateRegistrationEmail(DelegateRegistrationModel model)
         {
-            if (userDataService.AnyEmailsInSetAreAlreadyInUse(new[] { model.PrimaryEmail, model.SecondaryEmail }))
+            var emails = (IEnumerable<string>)new[] { model.PrimaryEmail, model.SecondaryEmail }.Where(e => e != null);
+            if (userDataService.AnyEmailsInSetAreAlreadyInUse(emails))
             {
                 var error = DelegateCreationError.EmailAlreadyInUse;
                 logger.LogError(

@@ -22,7 +22,8 @@
             bool isContentCreator,
             bool isCmsAdmin,
             bool isCmsManager,
-            byte[]? profileImage = null
+            byte[]? profileImage = null,
+            string? secondaryEmail = null
         ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
             CategoryId = categoryId;
@@ -49,7 +50,11 @@
                 ImportOnly = false;
                 IsContentManager = false;
             }
+
+            SecondaryEmail = secondaryEmail;
         }
+
+        public string? SecondaryEmail { get; set; }
 
         public bool IsCentreAdmin { get; set; }
 
