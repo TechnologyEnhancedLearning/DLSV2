@@ -69,31 +69,36 @@
                         firstName: "Xavier",
                         lastName: "Quondam",
                         centre: 3,
-                        email: "fake1"
+                        email: "fake1",
+                        secondaryEmail: "XQfake1"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                         firstName: "Xavier",
                         lastName: "Quondam",
                         centre: 3,
-                        email: "fake2"
+                        email: "fake2",
+                        secondaryEmail: "XQfake2"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                         firstName: "Xavier",
                         lastName: "Quondam",
                         centre: 3,
-                        email: "fake3"
+                        email: "fake3",
+                        secondaryEmail: "XQfake3"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                         firstName: "Xavier",
                         lastName: "Quondam",
                         centre: 3,
-                        email: "fake4"
+                        email: "fake4",
+                        secondaryEmail: "XQfake4"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                         firstName: "Xavier",
                         lastName: "Quondam",
                         centre: 3,
-                        email: "fake5"
+                        email: "fake5",
+                        secondaryEmail: "XQfake5"
                     ),
                 };
                 var actions = models.Select(GetRegistrationAction).ToArray();
@@ -127,6 +132,7 @@
             // if the test is failing, check the cleanup is working correctly.
             finally
             {
+                connection.Execute("DELETE FROM UserCentreDetails WHERE Email LIKE 'XQfake%'");
                 connection.Execute("DELETE FROM DelegateAccounts WHERE CandidateNumber LIKE 'XQ%'");
                 connection.Execute("DELETE FROM Users WHERE FirstName = 'Xavier' AND LastName = 'Quondam'");
             }
