@@ -102,8 +102,9 @@ function getElementText(searchableElement: ISearchableElement, elementName: stri
 
 function parseDateAndTime(dateString: string): Date {
   const possibleFormats = [
-    'dd/MM/yyyy HH:mm',
     'dd/MM/yyyy',
+    'dd/MM/yyyy HH:mm',
+    'dd/MM/yyyy HH:mm:ss',
   ];
 
   for (let i = 0; i < possibleFormats.length; i += 1) {
