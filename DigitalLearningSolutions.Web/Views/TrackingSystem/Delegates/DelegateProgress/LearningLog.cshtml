@@ -23,9 +23,13 @@
   }
 }
 
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+  <vc:loading-spinner page-has-side-nav-menu="false" />
+}
 <div class="nhsuk-grid-row" id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+    <span class="display-none" id="progress-id">@Model.ProgressId</span>
 
     <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateAndCourseNames.cshtml"
              model="(Model.DelegateNameAndEmail, Model.CourseName)" />
@@ -36,7 +40,6 @@
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-three-quarters">
           <partial name="SearchablePage/_Sort" model="Model" />
-          <span class="display-none" id="progress-id">@Model.ProgressId</span>
         </div>
       </div>
 
