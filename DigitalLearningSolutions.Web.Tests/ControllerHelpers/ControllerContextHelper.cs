@@ -183,5 +183,12 @@
 
             return controller;
         }
+
+        public static T WithMockUrlHelper<T>(this T controller, IUrlHelper urlHelper) where T : Controller
+        {
+            controller.Url = urlHelper;
+
+            return controller;
+        }
     }
 }

@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Common
-@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @model MyAccountEditDetailsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/myAccount.css")" asp-append-version="true">
@@ -15,32 +14,23 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] {
-                                                   nameof(Model.FirstName),
-                                                   nameof(Model.LastName),
-                                                   nameof(Model.Email),
-                                                   nameof(Model.JobGroupId),
-                                                   nameof(Model.HasProfessionalRegistrationNumber),
-                                                   nameof(Model.ProfessionalRegistrationNumber),
-                                                   nameof(Model.CentreEmail),
-                                                   nameof(Model.Answer1),
-                                                   nameof(Model.Answer2),
-                                                   nameof(Model.Answer3),
-                                                   nameof(Model.Answer4),
-                                                   nameof(Model.Answer5),
-                                                   nameof(Model.Answer6)
-                                                 })" />
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.JobGroupId), nameof(Model.HasProfessionalRegistrationNumber), nameof(Model.ProfessionalRegistrationNumber), nameof(Model.CentreEmail), nameof(Model.Answer1), nameof(Model.Answer2), nameof(Model.Answer3), nameof(Model.Answer4), nameof(Model.Answer5), nameof(Model.Answer6) })" />
     }
 
     <h1 class="nhsuk-heading-xl" id="app-page-heading">Edit details</h1>
   </div>
 </div>
 
+@if (!string.IsNullOrWhiteSpace(Model.ReturnUrl)) {
+  <vc:inset-text text="You should check that your details are up to date and accurate. Once you are confident that your details are up to date, please hit 'Save'." css-class="nhsuk-u-margin-top-0" />
+}
+
 <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDetails" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" enctype="multipart/form-data">
   <div class="hidden-submit">
     <button name="action" class="nhsuk-button" value="save" aria-hidden="true" tabindex="-1">Save</button>
   </div>
 
+  <input type="hidden" asp-for="ReturnUrl" />
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-full">
       <vc:text-input
@@ -134,7 +124,7 @@
           hint-text="@centreEmailHintText"
           css-class="nhsuk-u-width-one-half" />
 
-        @foreach (EditDelegateRegistrationPromptViewModel customField in Model.DelegateRegistrationPrompts) {
+        @foreach (var customField in Model.DelegateRegistrationPrompts) {
           @if (customField.Options.Any()) {
             <vc:select-list
               asp-for="@("Answer" + customField.PromptNumber)"
@@ -169,6 +159,18 @@
 </form>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <vc:cancel-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@routeParamsForIndexLink" />
+    @if (Url.IsLocalUrl(Model.ReturnUrl)) {
+      <link rel="stylesheet" href="@Url.Content("~/css/shared/components/cancelLink.css")" asp-append-version="true">
+      <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" href="@Model.ReturnUrl">
+          <svg class="nhsuk-icon nhsuk-icon__close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+          </svg>
+          Cancel
+        </a>
+      </div>
+    } else {
+      <vc:cancel-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@routeParamsForIndexLink" />
+    }
   </div>
 </div>
