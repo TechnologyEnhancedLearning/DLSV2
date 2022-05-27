@@ -37,7 +37,7 @@ namespace DigitalLearningSolutions.Data.Services
         void UpdateUserDetailsAndCentreSpecificDetails(
             int userId,
             MyAccountDetailsData myAccountDetailsData,
-            CentreAnswersData? centreAnswersData = null
+            CentreAnswersData centreAnswersData
         );
 
         bool NewEmailAddressIsValid(
@@ -204,12 +204,12 @@ namespace DigitalLearningSolutions.Data.Services
         public void UpdateUserDetailsAndCentreSpecificDetails(
             int userId,
             MyAccountDetailsData myAccountDetailsData,
-            CentreAnswersData? centreAnswersData = null
+            CentreAnswersData centreAnswersData
         )
         {
             var delegateUsers = userDataService.GetDelegateAccountsByUserId(userId).ToList();
 
-            var detailsLastChecked = DateTime.Now;
+            var detailsLastChecked = clockService.UtcNow;
 
             userDataService.UpdateUser(
                 myAccountDetailsData.FirstName,
@@ -223,6 +223,12 @@ namespace DigitalLearningSolutions.Data.Services
                 userId
             );
 
+            userDataService.SetCentreEmail(
+                userId,
+                centreAnswersData.CentreId,
+                centreAnswersData.CentreEmail
+            );
+
             if (delegateUsers.Count != 0)
             {
                 var delegateId = myAccountDetailsData.DelegateId!.Value;
@@ -230,19 +236,13 @@ namespace DigitalLearningSolutions.Data.Services
 
                 userDataService.UpdateDelegateUserCentrePrompts(
                     delegateId,
-                    centreAnswersData!.Answer1,
+                    centreAnswersData.Answer1,
                     centreAnswersData.Answer2,
                     centreAnswersData.Answer3,
                     centreAnswersData.Answer4,
                     centreAnswersData.Answer5,
                     centreAnswersData.Answer6,
                     detailsLastChecked
-                );
-
-                userDataService.SetCentreEmail(
-                    userId,
-                    centreAnswersData.CentreId,
-                    centreAnswersData.CentreEmail
                 );
 
                 groupsService.SynchroniseUserChangesWithGroups(
@@ -293,26 +293,6 @@ namespace DigitalLearningSolutions.Data.Services
             var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
 
             return userVerificationService.VerifyUsers(password, adminUser, delegateUsers);
-        }
-
-        private UserAccountSet GetLinkedUsersAccounts(int? adminId, int? delegateId)
-        {
-            var (loggedInAdminUser, loggedInDelegateUser) = GetUsersById(adminId, delegateId);
-
-            var signedInEmailIfAny = loggedInAdminUser?.EmailAddress ?? loggedInDelegateUser?.EmailAddress;
-
-            if (string.IsNullOrWhiteSpace(signedInEmailIfAny))
-            {
-                var loggedInDelegateUsers = loggedInDelegateUser != null
-                    ? new List<DelegateUser> { loggedInDelegateUser }
-                    : new List<DelegateUser>();
-
-                return new UserAccountSet(loggedInAdminUser, loggedInDelegateUsers);
-            }
-
-            var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
-
-            return new UserAccountSet(adminUser, delegateUsers);
         }
 
         public bool IsPasswordValid(int? adminId, int? delegateId, string password)

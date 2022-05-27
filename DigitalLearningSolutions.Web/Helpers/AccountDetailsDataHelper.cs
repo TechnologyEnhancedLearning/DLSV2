@@ -6,7 +6,7 @@
 
     public static class AccountDetailsDataHelper
     {
-        public static (MyAccountDetailsData, CentreAnswersData?) MapToUpdateAccountData(
+        public static (MyAccountDetailsData, CentreAnswersData) MapToUpdateAccountData(
             MyAccountEditDetailsFormData formData,
             int? userAdminId,
             int? userDelegateId,
@@ -27,9 +27,7 @@
                 formData.ProfileImage
             );
 
-            var centreAnswersData = userDelegateId == null
-                ? null
-                : new CentreAnswersData(
+            var centreAnswersData = new CentreAnswersData(
                     centreId,
                     formData.JobGroupId!.Value,
                     formData.CentreEmail,

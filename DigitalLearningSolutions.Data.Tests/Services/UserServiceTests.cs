@@ -209,7 +209,7 @@
         }
 
         [Test]
-        public void UpdateUserAccountDetailsForAllUsers_with_null_delegate_only_updates_admin()
+        public void UpdateUserDetailsAndCentreSpecificDetails_with_null_delegate_only_updates_admin()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
@@ -229,6 +229,7 @@
                     true,
                     null
                 );
+            var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._)).Returns(new List<DelegateAccount>());
 
@@ -248,7 +249,7 @@
                 .DoesNothing();
 
             // When
-            userService.UpdateUserDetailsAndCentreSpecificDetails(adminUser.Id, accountDetailsData);
+            userService.UpdateUserDetailsAndCentreSpecificDetails(adminUser.Id, accountDetailsData, centreAnswersData);
 
             // Then
             A.CallTo(
@@ -269,7 +270,7 @@
         }
 
         [Test]
-        public void UpdateUserAccountDetailsForAllUsers_with_null_admin_only_updates_delegate()
+        public void UpdateUserDetailsAndCentreSpecificDetails_with_null_admin_only_updates_delegate()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
@@ -363,7 +364,7 @@
         }
 
         [Test]
-        public void UpdateUserAccountDetailsForAllUsers_with_both_admin_and_delegate_updates_both()
+        public void UpdateUserDetailsAndCentreSpecificDetails_with_both_admin_and_delegate_updates_both()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();

@@ -79,7 +79,7 @@
             {
                 ModelState.AddModelError(
                     nameof(EditDetailsFormData.Email),
-                    "This email address is already in use"
+                    CommonValidationErrorMessages.EmailAlreadyInUse
                 );
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
