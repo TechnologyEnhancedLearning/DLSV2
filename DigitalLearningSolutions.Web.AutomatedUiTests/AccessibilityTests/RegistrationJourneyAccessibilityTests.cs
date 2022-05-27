@@ -59,7 +59,7 @@
             var registerResult = new AxeBuilder(Driver).Analyze();
             Driver.FillTextInput("FirstName", "Test");
             Driver.FillTextInput("LastName", "User");
-            Driver.FillTextInput("Email", "candidate@test.com");
+            Driver.FillTextInput("PrimaryEmail", "candidate@test.com");
             Driver.FillTextInput("Alias", "candid8");
             Driver.SubmitForm();
 
@@ -100,7 +100,7 @@
             var registerResult = new AxeBuilder(Driver).Analyze();
             Driver.FillTextInput("FirstName", "Test");
             Driver.FillTextInput("LastName", "User");
-            Driver.FillTextInput("Email", "candidate@test.com");
+            Driver.FillTextInput("PrimaryEmail", "candidate@test.com");
             Driver.FillTextInput("Alias", "candid8");
             Driver.SubmitForm();
 
