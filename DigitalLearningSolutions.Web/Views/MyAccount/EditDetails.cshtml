@@ -35,7 +35,7 @@
   </div>
 </div>
 
-@if (!string.IsNullOrWhiteSpace(Model.ReturnUrl)) {
+@if (Model.IsCheckDetailRedirect) {
   <vc:inset-text text="You should check that your details are up to date and accurate. Once you are confident that your details are up to date, please hit 'Save'." css-class="nhsuk-u-margin-top-0" />
 }
 
@@ -45,6 +45,7 @@
   </div>
 
   <input type="hidden" asp-for="ReturnUrl" />
+  <input type="hidden" asp-for="IsCheckDetailRedirect" />
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-full">
       <vc:text-input
@@ -140,25 +141,23 @@
 
         @foreach (var customField in Model.DelegateRegistrationPrompts) {
           @if (customField.Options.Any()) {
-            <vc:select-list
-              asp-for="@("Answer" + customField.PromptNumber)"
-              label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
-              value="@customField.Answer"
-              hint-text=""
-              deselectable="@(!customField.Mandatory)"
-              css-class="nhsuk-u-width-one-half"
-              default-option="Select a @customField.Prompt.ToLower()"
-              select-list-options="@customField.Options" />
+            <vc:select-list asp-for="@("Answer" + customField.PromptNumber)"
+                            label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
+                            value="@customField.Answer"
+                            hint-text=""
+                            deselectable="@(!customField.Mandatory)"
+                            css-class="nhsuk-u-width-one-half"
+                            default-option="Select a @customField.Prompt.ToLower()"
+                            select-list-options="@customField.Options" />
           } else {
-            <vc:text-input
-              asp-for="@("Answer" + customField.PromptNumber)"
-              label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
-              populate-with-current-value="true"
-              type="text"
-              spell-check="false"
-              autocomplete=""
-              hint-text=""
-              css-class="nhsuk-u-width-one-half" />
+            <vc:text-input asp-for="@("Answer" + customField.PromptNumber)"
+                           label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
+                           populate-with-current-value="true"
+                           type="text"
+                           spell-check="false"
+                           autocomplete=""
+                           hint-text=""
+                           css-class="nhsuk-u-width-one-half" />
           }
         }
       </div>

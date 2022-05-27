@@ -74,7 +74,11 @@
         [NoCaching]
         [HttpGet("EditDetails")]
         [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
-        public IActionResult EditDetails(DlsSubApplication dlsSubApplication, string? returnUrl = null)
+        public IActionResult EditDetails(
+            DlsSubApplication dlsSubApplication,
+            string? returnUrl = null,
+            bool isCheckDetailsRedirect = false
+        )
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
@@ -91,7 +95,8 @@
                 userService.GetCentreEmail(User.GetUserId()!.Value, User.GetCentreId()),
                 customPrompts,
                 dlsSubApplication,
-                returnUrl
+                returnUrl,
+                isCheckDetailsRedirect
             );
 
             return View(model);
