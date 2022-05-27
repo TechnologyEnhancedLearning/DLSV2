@@ -82,10 +82,10 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = duplicateUser.CentreId,
-                Email = duplicateUser.EmailAddress,
+                PrimaryEmail = duplicateUser.EmailAddress,
                 SecondaryEmail = "centre email",
             };
-            A.CallTo(() => userService.EmailIsInUse(model.Email!))
+            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
                 .Returns(primaryInUse);
             A.CallTo(() => userService.EmailIsInUse(model.SecondaryEmail!))
                 .Returns(secondaryInUse);
@@ -94,7 +94,7 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(model.Email!))
+            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
                 .MustHaveHappened();
             A.CallTo(() => userService.EmailIsInUse(model.SecondaryEmail!))
                 .MustHaveHappened();
@@ -112,10 +112,10 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = duplicateUser.CentreId + 1,
-                Email = duplicateUser.EmailAddress,
+                PrimaryEmail = duplicateUser.EmailAddress,
                 SecondaryEmail = "centre email",
             };
-            A.CallTo(() => userService.EmailIsInUse(model.Email!))
+            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
                 .Returns(false);
             A.CallTo(() => userService.EmailIsInUse(model.SecondaryEmail!))
                 .Returns(false);
@@ -124,7 +124,7 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(model.Email!))
+            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
                 .MustHaveHappened();
             A.CallTo(() => userService.EmailIsInUse(model.SecondaryEmail!))
                 .MustHaveHappened();

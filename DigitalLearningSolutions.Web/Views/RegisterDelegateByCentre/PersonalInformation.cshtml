@@ -18,7 +18,7 @@
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="PersonalInformation">
       @if (errorHasOccurred) {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Alias) })" />
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail), nameof(Model.Alias) })" />
       }
 
       <div class="nhsuk-u-margin-bottom-8">

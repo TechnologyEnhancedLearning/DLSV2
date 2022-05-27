@@ -33,7 +33,7 @@
         public virtual void SetPersonalInformation(PersonalInformationViewModel model)
         {
             Centre = model.Centre;
-            Email = model.Email;
+            Email = model.PrimaryEmail;
             SecondaryEmail = model.SecondaryEmail;
             FirstName = model.FirstName;
             LastName = model.LastName;

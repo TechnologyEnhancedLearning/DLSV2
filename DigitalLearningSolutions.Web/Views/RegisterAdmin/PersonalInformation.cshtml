@@ -11,7 +11,7 @@
 
       @if (errorHasOccurred)
       {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email) })" />
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail) })" />
       }
 
       <div class="nhsuk-u-margin-bottom-8">

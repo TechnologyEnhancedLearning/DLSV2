@@ -184,7 +184,7 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = centreId,
-                Email = "wrong@email",
+                PrimaryEmail = "wrong@email",
             };
             var data = new RegistrationData(centreId);
             controller.TempData.Set(data);
@@ -195,7 +195,7 @@
 
             // Then
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
-            controller.ModelState[nameof(PersonalInformationViewModel.Email)].ValidationState.Should()
+            controller.ModelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
                 .Be(ModelValidationState.Invalid);
             result.Should().BeViewResult().WithDefaultViewName();
         }
@@ -211,7 +211,7 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = centreId,
-                Email = email,
+                PrimaryEmail = email,
             };
             var data = new RegistrationData(centreId);
             controller.TempData.Set(data);
@@ -224,7 +224,7 @@
             // Then
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustHaveHappened(1, Times.Exactly);
-            controller.ModelState[nameof(PersonalInformationViewModel.Email)].ValidationState.Should()
+            controller.ModelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
                 .Be(ModelValidationState.Invalid);
             result.Should().BeViewResult().WithDefaultViewName();
         }
@@ -240,7 +240,7 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = centreId,
-                Email = email,
+                PrimaryEmail = email,
             };
             var data = new RegistrationData(centreId);
             controller.TempData.Set(data);

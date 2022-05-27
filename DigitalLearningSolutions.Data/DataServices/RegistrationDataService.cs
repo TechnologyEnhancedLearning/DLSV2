@@ -29,10 +29,12 @@
 
         public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
         {
-            // TODO HEEDLS-886: this method previously returned error codes as well as candidate numbers.
+            // TODO HEEDLS-900: this method previously returned error codes as well as candidate numbers.
             // any code that calls it and handled those errors on the basis of the codes needs to be updated
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
+
+            var currentTime = DateTime.UtcNow;
 
             var userValues = new
             {
@@ -43,7 +45,7 @@
                 delegateRegistrationModel.Active,
                 PasswordHash = "temp",
                 ProfessionalRegistrationNumber = (string?)null,
-                DetailsLastChecked = DateTime.UtcNow,
+                DetailsLastChecked = currentTime,
             };
 
             var userId = connection.QuerySingle<int>(
@@ -107,7 +109,7 @@
             {
                 userId,
                 CentreId = delegateRegistrationModel.Centre,
-                DateRegistered = DateTime.UtcNow,
+                DateRegistered = currentTime,
                 candidateNumber,
                 delegateRegistrationModel.Answer1,
                 delegateRegistrationModel.Answer2,
@@ -119,7 +121,7 @@
                 delegateRegistrationModel.Active,
                 delegateRegistrationModel.IsExternalRegistered,
                 delegateRegistrationModel.IsSelfRegistered,
-                CentreSpecificDetailsLastChecked = DateTime.UtcNow,
+                CentreSpecificDetailsLastChecked = currentTime,
             };
 
             connection.Execute(

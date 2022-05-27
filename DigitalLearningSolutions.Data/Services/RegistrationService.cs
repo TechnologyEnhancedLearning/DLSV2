@@ -273,7 +273,7 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 var error = e.Error;
                 logger.LogError(
-                    $"Could not create account for delegate on registration. Failure: {error.Name}."
+                    $"Could not create account for delegate on registration. Failure: {error.Name}"
                 );
                 throw new DelegateCreationFailedException(error);
             }
@@ -281,7 +281,7 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 var error = DelegateCreationError.UnexpectedError;
                 logger.LogError(
-                    $"Could not create account for delegate on registration. Failure: {error.Name}."
+                    $"Could not create account for delegate on registration. Failure: {error.Name}"
                 );
                 throw new DelegateCreationFailedException(error);
             }

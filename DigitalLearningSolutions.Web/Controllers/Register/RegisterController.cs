@@ -311,16 +311,16 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private void ValidateEmailAddresses(PersonalInformationViewModel model)
         {
-            if (model.Email == null || !model.Centre.HasValue)
+            if (model.PrimaryEmail == null || !model.Centre.HasValue)
             {
                 return;
             }
 
-            if (userService.EmailIsInUse(model.Email))
+            if (userService.EmailIsInUse(model.PrimaryEmail))
             {
                 ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.Email),
-                    "A user with this primary email address is already registered; if this is you, please log in at this centre via the My Account page."
+                    nameof(PersonalInformationViewModel.PrimaryEmail),
+                    "A user with this primary email address is already registered; if this is you, please log in at this centre via the My Account page"
                 );
             }
 
@@ -328,7 +328,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.SecondaryEmail),
-                    "A user with this email address is already registered at this centre; if this is you, please log in at this centre via the My Account page."
+                    "A user with this email address is already registered at this centre; if this is you, please log in at this centre via the My Account page"
                 );
             }
         }
