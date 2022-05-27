@@ -101,7 +101,7 @@
 
         [Test]
         public void
-            AttemptLogin_returns_invalid_password_when_user_account_password_is_incorrect_and_delegate_old_passwords_null_returns_incorrect_password()
+            AttemptLogin_returns_invalid_password_when_user_account_password_is_incorrect_and_delegate_old_passwords_null()
         {
             // Given
             var userEntity = new UserEntity(
