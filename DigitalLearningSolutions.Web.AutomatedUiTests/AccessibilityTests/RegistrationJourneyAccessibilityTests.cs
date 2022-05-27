@@ -23,7 +23,7 @@
             Driver.SelectDropdownItemValue("Centre", "101");
             Driver.FillTextInput("FirstName", "Test");
             Driver.FillTextInput("LastName", "User");
-            Driver.FillTextInput("Email", "candidate@test.com");
+            Driver.FillTextInput("PrimaryEmail", "candidate@test.com");
             Driver.SubmitForm();
 
             var learnerInformationResult = new AxeBuilder(Driver).Analyze();
