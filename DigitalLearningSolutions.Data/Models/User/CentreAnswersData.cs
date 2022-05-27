@@ -29,6 +29,7 @@
         }
 
         public int CentreId { get; set; }
+        // TODO HEEDLS-887 Remove JobGroupId because it was moved to MyAccountDetailsData
         public int JobGroupId { get; set; }
         public string? CentreEmail { get; set; }
         public string? Answer1 { get; set; }

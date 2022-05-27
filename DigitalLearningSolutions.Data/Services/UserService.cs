@@ -232,6 +232,7 @@ namespace DigitalLearningSolutions.Data.Services
             if (delegateUsers.Count != 0)
             {
                 var delegateId = myAccountDetailsData.DelegateId!.Value;
+                // TODO HEEDLS-887 Remove this call once groupsService.SynchroniseUserChangesWithGroups is refactored
                 var oldDelegateUserDetails = userDataService.GetDelegateUserById(delegateId);
 
                 userDataService.UpdateDelegateUserCentrePrompts(
