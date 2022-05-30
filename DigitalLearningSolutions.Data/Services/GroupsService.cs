@@ -38,8 +38,8 @@
 
         void SynchroniseUserChangesWithGroups(
             DelegateUser delegateAccountWithOldDetails,
-            AccountDetailsData newDelegateDetails,
-            CentreAnswersData newCentreAnswers
+            AccountDetailsData a,
+            RegistrationFieldAnswers newDelegateDetails
         );
 
         void EnrolDelegateOnGroupCourses(
@@ -161,13 +161,13 @@
 
         public void SynchroniseUserChangesWithGroups(
             DelegateUser delegateAccountWithOldDetails,
-            AccountDetailsData newDelegateDetails,
-            CentreAnswersData newCentreAnswers
+            AccountDetailsData accountDetailsData,
+            RegistrationFieldAnswers registrationFieldAnswers
         )
         {
             var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldChanges(
                 delegateAccountWithOldDetails.GetCentreAnswersData(),
-                newCentreAnswers,
+                registrationFieldAnswers,
                 jobGroupsDataService,
                 centreRegistrationPromptsService
             );
@@ -204,7 +204,7 @@
 
                     EnrolDelegateOnGroupCourses(
                         delegateAccountWithOldDetails,
-                        newDelegateDetails,
+                        accountDetailsData,
                         groupToAddDelegateTo.GroupId
                     );
                 }
@@ -266,7 +266,11 @@
                 delegateUser.Id,
                 delegateUser.FirstName!,
                 delegateUser.LastName,
-                delegateUser.EmailAddress!
+                delegateUser.EmailAddress!,
+                delegateUser.JobGroupId,
+                delegateUser.ProfessionalRegistrationNumber,
+                delegateUser.HasBeenPromptedForPrn,
+                delegateUser.ProfileImage
             );
 
             EnrolDelegateOnGroupCourses(

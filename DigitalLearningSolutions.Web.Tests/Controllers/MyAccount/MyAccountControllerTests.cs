@@ -70,7 +70,7 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int?>._))
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._))
                 .MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
         }
@@ -112,7 +112,7 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int?>._))
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._))
                 .MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
             myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Answer1)].ValidationState.Should().Be
@@ -132,12 +132,13 @@
                 logger
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
+            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
-                        A<int>._,
                         A<MyAccountDetailsData>._,
-                        A<CentreAnswersData>._
+                        A<DelegateDetailsData>._,
+                        A<string?>._,
+                        A<int?>._
                     )
                 )
                 .DoesNothing();
@@ -155,12 +156,13 @@
             var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).MustHaveHappened();
+            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).MustHaveHappened();
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
-                        A<int>._,
                         A<MyAccountDetailsData>._,
-                        A<CentreAnswersData>._
+                        A<DelegateDetailsData>._,
+                        A<string?>._,
+                        A<int?>._
                     )
                 )
                 .MustHaveHappened();
@@ -187,12 +189,13 @@
                 .WithMockUser(true, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
+            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
-                        A<int>._,
                         A<MyAccountDetailsData>._,
-                        A<CentreAnswersData>._
+                        A<DelegateDetailsData>._,
+                        A<string?>._,
+                        A<int?>._
                     )
                 )
                 .DoesNothing();
@@ -228,12 +231,13 @@
                 .WithMockUser(true, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
+            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
-                        A<int>._,
                         A<MyAccountDetailsData>._,
-                        A<CentreAnswersData>._
+                        A<DelegateDetailsData>._,
+                        A<string?>._,
+                        A<int?>._
                     )
                 )
                 .DoesNothing();
@@ -299,7 +303,7 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int?>._))
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._))
                 .MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
             myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.ProfileImageFile)].ValidationState

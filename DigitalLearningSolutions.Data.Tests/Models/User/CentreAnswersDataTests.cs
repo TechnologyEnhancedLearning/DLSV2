@@ -8,10 +8,9 @@
 
     public class CentreAnswersDataTests
     {
-        private readonly CentreAnswersData testAnswers = new CentreAnswersData(
+        private readonly RegistrationFieldAnswers testAnswers = new RegistrationFieldAnswers(
             1,
             2,
-            null,
             "answer 1",
             "answer 2",
             "answer 3",

@@ -6,20 +6,18 @@
 
     public static class AccountDetailsDataHelper
     {
-        public static (MyAccountDetailsData, CentreAnswersData) MapToUpdateAccountData(
+        public static (MyAccountDetailsData, DelegateDetailsData?) MapToUpdateAccountData(
             MyAccountEditDetailsFormData formData,
-            int? userAdminId,
-            int? userDelegateId,
-            int centreId
+            int userId,
+            int? userDelegateId
         )
         {
             var accountDetailsData = new MyAccountDetailsData(
-                userAdminId,
-                userDelegateId,
+                userId,
                 formData.FirstName!,
                 formData.LastName!,
                 formData.Email!,
-                formData.JobGroupId,
+                formData.JobGroupId!.Value,
                 formData.HasProfessionalRegistrationNumber == true
                     ? formData.ProfessionalRegistrationNumber
                     : null,
@@ -27,21 +25,19 @@
                 formData.ProfileImage
             );
 
-            var centreAnswersData = new CentreAnswersData(
-                    centreId,
-                    formData.JobGroupId!.Value,
-                    formData.CentreEmail,
+            var delegateDetailsData = userDelegateId != null ? new DelegateDetailsData(
+                    userDelegateId.Value,
                     formData.Answer1,
                     formData.Answer2,
                     formData.Answer3,
                     formData.Answer4,
                     formData.Answer5,
                     formData.Answer6
-                );
-            return (accountDetailsData, centreAnswersData);
+                ) : null;
+            return (accountDetailsData, delegateDetailsData);
         }
 
-        public static (EditDelegateDetailsData, CentreAnswersData) MapToUpdateAccountData(
+        public static (EditDelegateDetailsData, RegistrationFieldAnswers) MapToUpdateAccountData(
             EditDelegateFormData formData,
             int userDelegateId,
             int centreId
@@ -59,10 +55,9 @@
                 formData.HasProfessionalRegistrationNumber.HasValue
             );
 
-            var centreAnswersData = new CentreAnswersData(
+            var centreAnswersData = new RegistrationFieldAnswers(
                 centreId,
                 formData.JobGroupId!.Value,
-                formData.CentreEmail,
                 formData.Answer1,
                 formData.Answer2,
                 formData.Answer3,

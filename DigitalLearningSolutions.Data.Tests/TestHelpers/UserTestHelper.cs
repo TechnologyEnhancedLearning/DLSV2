@@ -329,8 +329,7 @@
         }
 
         public static MyAccountDetailsData GetDefaultAccountDetailsData(
-            int? adminId = null,
-            int? delegateId = null,
+            int userId = 2,
             string firstName = "firstname",
             string surname = "lastname",
             string email = "email@email.com",
@@ -339,8 +338,7 @@
         )
         {
             return new MyAccountDetailsData(
-                adminId,
-                delegateId,
+                userId,
                 firstName,
                 surname,
                 email,
@@ -351,7 +349,7 @@
             );
         }
 
-        public static CentreAnswersData GetDefaultCentreAnswersData(
+        public static RegistrationFieldAnswers GetDefaultCentreAnswersData(
             int centreId = 1,
             int jobGroupId = 1,
             string? centreEmail = null,
@@ -363,7 +361,7 @@
             string? answer6 = null
         )
         {
-            return new CentreAnswersData(centreId, jobGroupId, centreEmail, answer1, answer2, answer3, answer4, answer5, answer6);
+            return new RegistrationFieldAnswers(centreId, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6);
         }
 
         public static void GivenDelegateUserIsInDatabase(DelegateUser user, SqlConnection sqlConnection)

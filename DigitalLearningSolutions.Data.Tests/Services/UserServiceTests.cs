@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
@@ -54,25 +55,6 @@
                 clockService,
                 configuration
             );
-        }
-
-        [Test]
-        public void GetUsersByUsername_Returns_admin_user_and_delegate_users()
-        {
-            // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._))
-                .Returns(expectedAdminUser);
-            A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._))
-                .Returns(new List<DelegateUser> { expectedDelegateUser });
-
-            // When
-            var (returnedAdminUser, returnedDelegateUsers) = userService.GetUsersByUsername("Username");
-
-            // Then
-            returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
-            returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUser);
         }
 
         [Test]
@@ -209,370 +191,163 @@
         }
 
         [Test]
-        public void UpdateUserDetailsAndCentreSpecificDetails_with_null_delegate_only_updates_admin()
+        public void UpdateUserDetailsAndCentreSpecificDetails_with_null_delegate_details_only_updates_user()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var firstName = "TestFirstName";
-            var lastName = "TestLastName";
-            var email = "test@email.com";
-            var professionalRegNumber = "test-1234";
-            var accountDetailsData =
-                new MyAccountDetailsData(
-                    adminUser.Id,
-                    null,
-                    firstName,
-                    lastName,
-                    email,
-                    1,
-                    professionalRegNumber,
-                    true,
-                    null
-                );
-            var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null, null);
-
-            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._)).Returns(new List<DelegateAccount>());
-
-            A.CallTo(
-                    () => userDataService.UpdateUser(
-                        A<string>._,
-                        A<string>._,
-                        A<string>._,
-                        null,
-                        A<string>._,
-                        A<bool>._,
-                        A<int>._,
-                        A<DateTime>._,
-                        A<int>._
-                    )
-                )
-                .DoesNothing();
-
+            var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
+            var now = DateTime.Now;
+            A.CallTo(() => clockService.UtcNow).Returns(now);
+            
             // When
-            userService.UpdateUserDetailsAndCentreSpecificDetails(adminUser.Id, accountDetailsData, centreAnswersData);
+            userService.UpdateUserDetailsAndCentreSpecificDetails(accountDetailsData, null, null, null);
 
             // Then
             A.CallTo(
                     () => userDataService.UpdateUser(
-                        A<string>._,
-                        A<string>._,
-                        A<string>._,
-                        null,
-                        A<string>._,
-                        A<bool>._,
-                        A<int>._,
-                        A<DateTime>._,
-                        A<int>._
+                        accountDetailsData.FirstName,
+                        accountDetailsData.Surname,
+                        accountDetailsData.Email,
+                        accountDetailsData.ProfileImage,
+                        accountDetailsData.ProfessionalRegistrationNumber,
+                        accountDetailsData.HasBeenPromptedForPrn,
+                        accountDetailsData.JobGroupId,
+                        now,
+                        accountDetailsData.UserId
                     )
                 )
                 .MustHaveHappened();
+            A.CallTo(() => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._))
+                .MustNotHaveHappened();
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).MustNotHaveHappened();
         }
 
         [Test]
-        public void UpdateUserDetailsAndCentreSpecificDetails_with_null_admin_only_updates_delegate()
+        public void UpdateUserDetailsAndCentreSpecificDetails_with_non_null_delegate_details_updates_delegate_details()
         {
             // Given
+            const string answer1 = "answer1";
+            const string answer2 = "answer2";
+            const string answer3 = "answer3";
+            const string answer4 = "answer4";
+            const string answer5 = "answer5";
+            const string answer6 = "answer6";
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
-            var firstName = "TestFirstName";
-            var lastName = "TestLastName";
-            var email = "test@email.com";
-            var professionalRegNumber = "123-number";
-            var accountDetailsData =
-                new MyAccountDetailsData(
-                    null,
-                    delegateUser.Id,
-                    firstName,
-                    lastName,
-                    email,
-                    1,
-                    professionalRegNumber,
-                    true,
-                    null
-                );
-            var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null, null);
+            var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
+            var delegateDetailsData = new DelegateDetailsData(delegateAccount.Id, answer1, answer2, answer3, answer4, answer5, answer6);
+
+            var now = DateTime.Now;
+            A.CallTo(() => clockService.UtcNow).Returns(now);
 
             A.CallTo(() => userDataService.GetDelegateUserById(delegateAccount.Id)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._))
-                .Returns(new List<DelegateAccount>{delegateAccount});
-            A.CallTo(
-                    () => userDataService.UpdateUser(
-                        A<string>._,
-                        A<string>._,
-                        A<string>._,
-                        null,
-                        A<string>._,
-                        A<bool>._,
-                        A<int>._,
-                        A<DateTime>._,
-                        A<int>._
-                    )
-                )
-                .DoesNothing();
-            A.CallTo(
-                () => groupsService.SynchroniseUserChangesWithGroups(
-                    A<DelegateUser>._,
-                    A<MyAccountDetailsData>._,
-                    A<CentreAnswersData>._
-                )
-            ).DoesNothing();
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
-                UserTestHelper.GetDefaultAdminUser().Id,
                 accountDetailsData,
-                centreAnswersData
-            );
-
-            // Then
-            A.CallTo(
-                    () => userDataService.UpdateUser(
-                        A<string>._,
-                        A<string>._,
-                        A<string>._,
-                        null,
-                        A<string>._,
-                        A<bool>._,
-                        A<int>._,
-                        A<DateTime>._,
-                        A<int>._
-                    )
-                )
-                .MustHaveHappened();
-            A.CallTo(
-                    () => userDataService.UpdateDelegateUserCentrePrompts(
-                        2,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        A<DateTime>._
-                    )
-                )
-                .MustHaveHappened();
-            A.CallTo(
-                () => groupsService.SynchroniseUserChangesWithGroups(
-                    delegateUser,
-                    accountDetailsData,
-                    centreAnswersData
-                )
-            ).MustHaveHappened();
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).MustNotHaveHappened();
-        }
-
-        [Test]
-        public void UpdateUserDetailsAndCentreSpecificDetails_with_both_admin_and_delegate_updates_both()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var adminUser = UserTestHelper.GetDefaultAdminAccount();
-            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
-            var firstName = "TestFirstName";
-            var lastName = "TestLastName";
-            var email = "test@email.com";
-            var professionalRegNumber = "test-1234";
-            var accountDetailsData =
-                new MyAccountDetailsData(
-                    adminUser.Id,
-                    delegateAccount.Id,
-                    firstName,
-                    lastName,
-                    email,
-                    1,
-                    professionalRegNumber,
-                    true,
-                    null
-                );
-            var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null, null);
-
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateAccount.Id)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(A<int>._))
-                .Returns(new List<DelegateAccount>{delegateAccount});
-            A.CallTo(
-                    () => userDataService.UpdateUser(
-                        A<string>._,
-                        A<string>._,
-                        A<string>._,
-                        null,
-                        A<string>._,
-                        A<bool>._,
-                        A<int>._,
-                        A<DateTime>._,
-                        A<int>._
-                    )
-                )
-                .DoesNothing();
-            A.CallTo(
-                () => groupsService.SynchroniseUserChangesWithGroups(
-                    A<DelegateUser>._,
-                    A<MyAccountDetailsData>._,
-                    A<CentreAnswersData>._
-                )
-            ).DoesNothing();
-
-            // When
-            userService.UpdateUserDetailsAndCentreSpecificDetails(adminUser.Id, accountDetailsData, centreAnswersData);
-
-            // Then
-            A.CallTo(
-                    () => userDataService.UpdateUser(
-                        A<string>._,
-                        A<string>._,
-                        A<string>._,
-                        null,
-                        A<string>._,
-                        A<bool>._,
-                        A<int>._,
-                        A<DateTime>._,
-                        A<int>._
-                    )
-                )
-                .MustHaveHappened();
-            A.CallTo(
-                    () => userDataService.UpdateDelegateUserCentrePrompts(
-                        2,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        A<DateTime>._
-                    )
-                )
-                .MustHaveHappened();
-            A.CallTo(
-                () => groupsService.SynchroniseUserChangesWithGroups(
-                    delegateUser,
-                    accountDetailsData,
-                    centreAnswersData
-                )
-            ).MustHaveHappened();
-        }
-
-        [Test]
-        public void NewEmailAddressIsValid_returns_true_with_unchanged_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: email);
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: email);
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
-
-            // When
-            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.Id);
-
-            // Then
-            result.Should().BeTrue();
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustNotHaveHappened();
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).MustNotHaveHappened();
-        }
-
-        [Test]
-        public void NewEmailAddressIsValid_returns_true_with_same_admin_at_different_centre_with_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            const string oldEmail = "oldemail@test.com";
-            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: oldEmail);
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: oldEmail);
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns(new List<DelegateUser>());
-
-            // When
-            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.Id);
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void NewEmailAddressIsValid_returns_true_with_same_delegate_at_different_centre_with_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            const string oldEmail = "oldemail@test.com";
-            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: oldEmail);
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: oldEmail);
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
-                (new List<DelegateUser> { delegateUser });
-            A.CallTo(() => userDataService.GetUserIdFromUsername(oldEmail)).Returns(adminUser.Id);
-
-            // When
-            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.Id);
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void NewEmailAddressIsValid_returns_true_for_admin_only_with_unchanged_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: email);
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-
-            // When
-            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, null, adminUser.Id);
-
-            // Then
-            result.Should().BeTrue();
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).MustNotHaveHappened();
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustNotHaveHappened();
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).MustNotHaveHappened();
-        }
-
-        [Test]
-        public void NewEmailAddressIsValid_returns_true_for_delegate_only_with_unchanged_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: email);
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
-
-            // When
-            var result = userService.NewEmailAddressIsValid(
-                email,
+                delegateDetailsData,
                 null,
-                delegateUser.Id,
-                UserTestHelper.GetDefaultAdminUser().Id
+                null
             );
 
             // Then
-            result.Should().BeTrue();
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).MustNotHaveHappened();
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustNotHaveHappened();
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).MustNotHaveHappened();
+            A.CallTo(
+                    () => userDataService.UpdateUser(
+                        accountDetailsData.FirstName,
+                        accountDetailsData.Surname,
+                        accountDetailsData.Email,
+                        accountDetailsData.ProfileImage,
+                        accountDetailsData.ProfessionalRegistrationNumber,
+                        accountDetailsData.HasBeenPromptedForPrn,
+                        accountDetailsData.JobGroupId,
+                        now,
+                        accountDetailsData.UserId
+                    )
+                )
+                .MustHaveHappened();
+            A.CallTo(
+                    () => userDataService.UpdateDelegateUserCentrePrompts(
+                        delegateAccount.Id,
+                        answer1,
+                        answer2,
+                        answer3,
+                        answer4,
+                        answer5,
+                        answer6,
+                        now
+                    )
+                )
+                .MustHaveHappened();
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    delegateUser,
+                    accountDetailsData,
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        rfa => rfa.JobGroupId == accountDetailsData.JobGroupId &&
+                               rfa.Answer1 == answer1 &&
+                               rfa.Answer2 == answer2 &&
+                               rfa.Answer3 == answer3 &&
+                               rfa.Answer4 == answer4 &&
+                               rfa.Answer5 == answer5 &&
+                               rfa.Answer6 == answer6
+                    )
+                )
+            ).MustHaveHappened();
+            A.CallTo(() => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._))
+                .MustNotHaveHappened();
         }
 
         [Test]
-        public void NewEmailAddressIsValid_returns_true_with_unchanged_email_with_different_case()
+        public void UpdateUserDetailsAndCentreSpecificDetails_with_non_null_centre_id_updates_centre_email()
         {
             // Given
-            const string email = "email@test.com";
-            const string capsEmail = "Email@test.com";
-            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: email);
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: capsEmail);
-            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
+            var user = UserTestHelper.GetDefaultUserAccount();
+            const int centreId = 7;
+            const string centreEmail = "test@email.com";
+            var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
+            var now = DateTime.Now;
+            A.CallTo(() => clockService.UtcNow).Returns(now);
 
             // When
-            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.Id);
+            userService.UpdateUserDetailsAndCentreSpecificDetails(accountDetailsData, null, centreEmail, centreId);
 
             // Then
-            result.Should().BeTrue();
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustNotHaveHappened();
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).MustNotHaveHappened();
+            A.CallTo(
+                    () => userDataService.UpdateUser(
+                        accountDetailsData.FirstName,
+                        accountDetailsData.Surname,
+                        accountDetailsData.Email,
+                        accountDetailsData.ProfileImage,
+                        accountDetailsData.ProfessionalRegistrationNumber,
+                        accountDetailsData.HasBeenPromptedForPrn,
+                        accountDetailsData.JobGroupId,
+                        now,
+                        accountDetailsData.UserId
+                    )
+                )
+                .MustHaveHappened();
+            A.CallTo(() => userDataService.SetCentreEmail(user.Id, centreId, centreEmail, A<IDbTransaction?>._))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        public void NewEmailAddressIsValid_returns_negation_of_data_service_method(
+            bool dataServiceReturn,
+            bool expectedValue
+        )
+        {
+            // Given
+            const int userId = 2;
+            const string email = "email@test.com";
+            A.CallTo(() => userDataService.EmailIsInUseByOtherUser(userId, email, A<IDbTransaction?>._))
+                .Returns(dataServiceReturn);
+
+            // When
+            var result = userService.NewEmailAddressIsValid(email, userId);
+
+            // Then
+            result.Should().Be(expectedValue);
         }
 
         [Test]
@@ -793,10 +568,9 @@
                 null,
                 true
             );
-            var centreAnswersData = new CentreAnswersData(
+            var centreAnswersData = new RegistrationFieldAnswers(
                 delegateUser.CentreId,
                 delegateUser.JobGroupId,
-                null,
                 delegateUser.Answer1,
                 delegateUser.Answer2,
                 delegateUser.Answer3,
@@ -839,10 +613,9 @@
                 null,
                 true
             );
-            var centreAnswersData = new CentreAnswersData(
+            var centreAnswersData = new RegistrationFieldAnswers(
                 delegateUser.CentreId,
                 delegateUser.JobGroupId,
-                null,
                 delegateUser.Answer1,
                 delegateUser.Answer2,
                 delegateUser.Answer3,
@@ -886,10 +659,9 @@
                 null,
                 true
             );
-            var centreAnswersData = new CentreAnswersData(
+            var centreAnswersData = new RegistrationFieldAnswers(
                 delegateUser.CentreId,
                 delegateUser.JobGroupId,
-                null,
                 delegateUser.Answer1,
                 delegateUser.Answer2,
                 delegateUser.Answer3,
@@ -934,10 +706,9 @@
                 prn,
                 true
             );
-            var centreAnswersData = new CentreAnswersData(
+            var centreAnswersData = new RegistrationFieldAnswers(
                 delegateUser.CentreId,
                 delegateUser.JobGroupId,
-                null,
                 delegateUser.Answer1,
                 delegateUser.Answer2,
                 delegateUser.Answer3,
@@ -980,10 +751,9 @@
                 prn,
                 true
             );
-            var centreAnswersData = new CentreAnswersData(
+            var centreAnswersData = new RegistrationFieldAnswers(
                 delegateUser.CentreId,
                 delegateUser.JobGroupId,
-                null,
                 delegateUser.Answer1,
                 delegateUser.Answer2,
                 delegateUser.Answer3,

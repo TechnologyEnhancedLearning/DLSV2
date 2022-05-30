@@ -75,7 +75,8 @@
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
-            if (!userService.NewEmailAddressIsValid(formData.Email!, null, delegateId, User.GetUserId()!.Value))
+            // TODO HEEDLS-887 Fix this so that it is bassing the correct User ID, that of the delegate not the logged in admin
+            if (!userService.NewEmailAddressIsValid(formData.Email!, User.GetUserId()!.Value))
             {
                 ModelState.AddModelError(
                     nameof(EditDetailsFormData.Email),

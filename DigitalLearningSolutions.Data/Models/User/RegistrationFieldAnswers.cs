@@ -3,12 +3,11 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
 
-    public class CentreAnswersData
+    public class RegistrationFieldAnswers
     {
-        public CentreAnswersData(
+        public RegistrationFieldAnswers(
             int centreId,
             int jobGroupId,
-            string? centreEmail,
             string? answer1,
             string? answer2,
             string? answer3,
@@ -19,7 +18,6 @@
         {
             CentreId = centreId;
             JobGroupId = jobGroupId;
-            CentreEmail = centreEmail;
             Answer1 = answer1;
             Answer2 = answer2;
             Answer3 = answer3;
@@ -28,10 +26,19 @@
             Answer6 = answer6;
         }
 
+        public RegistrationFieldAnswers(DelegateDetailsData delegateDetailsData, int jobGroupId)
+        {
+            Answer1 = delegateDetailsData.Answer1;
+            Answer2 = delegateDetailsData.Answer2;
+            Answer3 = delegateDetailsData.Answer3;
+            Answer4 = delegateDetailsData.Answer4;
+            Answer5 = delegateDetailsData.Answer5;
+            Answer6 = delegateDetailsData.Answer6;
+            JobGroupId = jobGroupId;
+        }
+
         public int CentreId { get; set; }
-        // TODO HEEDLS-887 Remove JobGroupId because it was moved to MyAccountDetailsData
         public int JobGroupId { get; set; }
-        public string? CentreEmail { get; set; }
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }
         public string? Answer3 { get; set; }

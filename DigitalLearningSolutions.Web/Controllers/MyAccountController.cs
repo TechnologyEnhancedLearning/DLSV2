@@ -125,9 +125,8 @@
             DlsSubApplication dlsSubApplication
         )
         {
-            var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
-            var userId = User.GetUserId();
+            var userId = User.GetUserId()!.Value;
 
             if (userDelegateId.HasValue)
             {
@@ -156,8 +155,6 @@
 
             if (!userService.NewEmailAddressIsValid(
                     formData.Email!,
-                    userAdminId,
-                    userDelegateId,
                     userId
                 ))
             {
@@ -170,8 +167,6 @@
 
             if (!string.IsNullOrWhiteSpace(formData.CentreEmail) && !userService.NewEmailAddressIsValid(
                     formData.CentreEmail,
-                    userAdminId,
-                    userDelegateId,
                     userId
                 ))
             {
@@ -182,16 +177,16 @@
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
-            var (accountDetailsData, centreAnswersData) = AccountDetailsDataHelper.MapToUpdateAccountData(
+            var (accountDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToUpdateAccountData(
                 formData,
-                userAdminId,
-                userDelegateId,
-                User.GetCentreId()
+                userId,
+                userDelegateId
             );
             userService.UpdateUserDetailsAndCentreSpecificDetails(
-                userId!.Value,
                 accountDetailsData,
-                centreAnswersData
+                delegateDetailsData,
+                formData.CentreEmail,
+                User.GetCentreId()
             );
 
             return this.RedirectToReturnUrl(formData.ReturnUrl, logger) ?? RedirectToAction(

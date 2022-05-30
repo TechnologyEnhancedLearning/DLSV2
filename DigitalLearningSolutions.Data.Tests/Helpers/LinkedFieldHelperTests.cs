@@ -33,8 +33,8 @@
         [Test]
         [TestCaseSource(nameof(GetTestItems))]
         public void Changed_answer_maps_to_linked_field_correctly(
-            CentreAnswersData oldAnswers,
-            CentreAnswersData newAnswers,
+            RegistrationFieldAnswers oldAnswers,
+            RegistrationFieldAnswers newAnswers,
             string expectedLinkedFieldName,
             int expectedLinkedFieldNumber,
             string expectedOldValue,
