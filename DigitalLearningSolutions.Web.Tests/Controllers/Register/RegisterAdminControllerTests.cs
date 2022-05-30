@@ -20,26 +20,32 @@
     public class RegisterAdminControllerTests
     {
         private ICentresDataService centresDataService = null!;
+        private ICentresService centresService = null!;
         private RegisterAdminController controller = null!;
         private ICryptoService cryptoService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             centresDataService = A.Fake<ICentresDataService>();
+            centresService = A.Fake<ICentresService>();
             cryptoService = A.Fake<ICryptoService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             controller = new RegisterAdminController(
                     centresDataService,
+                    centresService,
                     cryptoService,
                     jobGroupsDataService,
                     registrationService,
-                    userDataService
+                    userDataService,
+                    userService
                 )
                 .WithDefaultContext()
                 .WithMockTempData();

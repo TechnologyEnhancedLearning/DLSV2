@@ -18,24 +18,30 @@
     public class RegisterAdminController : Controller
     {
         private readonly ICentresDataService centresDataService;
+        private readonly ICentresService centresService;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
+            ICentresService centresService,
             ICryptoService cryptoService,
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
-            IUserDataService userDataService
+            IUserDataService userDataService,
+            IUserService userService
         )
         {
             this.centresDataService = centresDataService;
+            this.centresService = centresService;
             this.cryptoService = cryptoService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.userDataService = userDataService;
+            this.userService = userService;
         }
 
         public IActionResult Index(int? centreId = null)
@@ -69,7 +75,7 @@
             var model = new PersonalInformationViewModel(data);
             SetCentreName(model);
 
-            ValidateEmailAddress(model.PrimaryEmail, model.Centre!.Value);
+            RegistrationEmailValidator.ValidateEmailAddresses(model, ModelState, userService, centresService);
 
             return View(model);
         }
@@ -80,7 +86,7 @@
         {
             var data = TempData.Peek<RegistrationData>()!;
 
-            ValidateEmailAddress(model.PrimaryEmail, model.Centre!.Value);
+            RegistrationEmailValidator.ValidateEmailAddresses(model, ModelState, userService, centresService);
 
             if (!ModelState.IsValid)
             {
@@ -221,41 +227,10 @@
             return adminUser == null;
         }
 
-        private bool DoesEmailMatchCentre(string email, int centreId)
-        {
-            var autoRegisterManagerEmail =
-                centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
-            return email.Equals(autoRegisterManagerEmail);
-        }
-
         private bool CanProceedWithRegistration(RegistrationData data)
         {
             return data.Centre.HasValue && data.Email != null && IsRegisterAdminAllowed(data.Centre.Value) &&
-                   DoesEmailMatchCentre(data.Email, data.Centre.Value) && IsEmailUnique(data.Email);
-        }
-
-        private void ValidateEmailAddress(string? email, int centreId)
-        {
-            if (email == null)
-            {
-                return;
-            }
-
-            if (!DoesEmailMatchCentre(email, centreId))
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.PrimaryEmail),
-                    "This email address does not match the one held by the centre"
-                );
-            }
-
-            if (!IsEmailUnique(email))
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.PrimaryEmail),
-                    "An admin user with this email address is already registered"
-                );
-            }
+                centresService.DoesEmailMatchCentre(data.Email, data.Centre.Value) && IsEmailUnique(data.Email);
         }
 
         private void SetCentreName(PersonalInformationViewModel model)

@@ -13,6 +13,7 @@
         IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
         IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
         IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
+        bool DoesEmailMatchCentre(string email, int centreId);
     }
 
     public class CentresService : ICentresService
@@ -56,6 +57,13 @@
         public IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap()
         {
             return centresDataService.GetAllCentreSummariesForMap();
+        }
+
+        public bool DoesEmailMatchCentre(string email, int centreId)
+        {
+            var autoRegisterManagerEmail =
+                centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
+            return email.Equals(autoRegisterManagerEmail);
         }
     }
 }
