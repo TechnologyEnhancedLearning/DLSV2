@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { parse as parseDate, isValid as isValidDate } from 'date-fns';
 import * as _ from 'lodash';
 import { ISearchableElement } from './searchSortFilterAndPaginate';
 
@@ -101,8 +101,20 @@ function getElementText(searchableElement: ISearchableElement, elementName: stri
 }
 
 function parseDateAndTime(dateString: string): Date {
-  const dateAndTime = moment(dateString, 'DD/MM/YYYY hh:mm:ss').toDate();
-  return dateAndTime.toString() === 'Invalid Date' ? new Date(0) : dateAndTime;
+  const possibleFormats = [
+    'dd/MM/yyyy HH:mm',
+    'dd/MM/yyyy',
+  ];
+
+  for (let i = 0; i < possibleFormats.length; i += 1) {
+    const dateAndTime = parseDate(dateString, possibleFormats[i], new Date());
+
+    if (isValidDate(dateAndTime)) {
+      return dateAndTime;
+    }
+  }
+
+  return new Date(0);
 }
 
 function parseNonNegativeIntOrNotApplicable(value: string): number {

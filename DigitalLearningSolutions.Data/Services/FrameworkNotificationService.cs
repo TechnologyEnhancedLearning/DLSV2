@@ -146,10 +146,10 @@
             dlsUrlBuilder.Path += "LearningPortal/Current";
             return dlsUrlBuilder.Uri.ToString();
         }
-        public string GetSelfAssessmentUrl(int selfAssessmentId)
+        public string GetSelfAssessmentUrl(int selfAssessmentId, bool overview = true)
         {
             var dlsUrlBuilder = GetDLSUriBuilder();
-            dlsUrlBuilder.Path += $"LearningPortal/SelfAssessment/{selfAssessmentId}/Overview";
+            dlsUrlBuilder.Path += $"LearningPortal/SelfAssessment/{selfAssessmentId}" + (overview? "/overview" : "");
             return dlsUrlBuilder.Uri.ToString();
         }
         public string GetSupervisorReviewUrl()
@@ -222,7 +222,7 @@
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
             var competency = selfAssessmentDataService.GetCompetencyByCandidateAssessmentResultId(resultId, candidateAssessmentId, adminId);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
-            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
+            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID, false);
             var commentString = supervisorDelegate.SupervisorName + ((bool)competency.AssessmentQuestions.First().SignedOff ? " confirmed your self assessment " : " did not confirm your self assessment ") + (competency.AssessmentQuestions.First().SupervisorComments != null ? "and left the following review comment: " + competency.AssessmentQuestions.First().SupervisorComments : "but did not leave a review comment.");
             string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Reviewed {competency.Vocabulary} - Digital Learning Solutions";
             var builder = new BodyBuilder();
@@ -238,7 +238,7 @@
         {
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
-            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
+            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID, false);
             var completeByString = completeByDate == null ? $"Your {delegateSelfAssessment.SupervisorRoleTitle} did not specify a date by which the self assessment should be completed." : $"Your {delegateSelfAssessment.SupervisorRoleTitle} indicated that this self assessment should be completed by {completeByDate.Value.ToShortDateString()}.";
             var supervisorReviewString = delegateSelfAssessment.SupervisorResultsReview | delegateSelfAssessment.SupervisorSelfAssessmentReview ? $"You will be able to request review for your self assessments against this profile from your {delegateSelfAssessment.SupervisorRoleTitle}." : "";
             string emailSubjectLine = $"You have been enrolled on the profile assessment {delegateSelfAssessment.RoleName} by {supervisorDelegate.SupervisorName} - Digital Learning Solutions";

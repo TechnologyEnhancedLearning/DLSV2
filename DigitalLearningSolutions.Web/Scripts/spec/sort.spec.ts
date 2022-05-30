@@ -26,7 +26,8 @@ describe('getSortValue', () => {
   ${'courses-count'}    | ${'7'}            | ${'CoursesCount'}                    | ${7}
   ${'faq-id'}           | ${'86'}           | ${'FaqId'}                           | ${86}
   ${'faq-weighting'}    | ${'100'}          | ${'Weighting'}                       | ${100}
-  `('should correctly sort $fieldName by $sortBy',
+  `(
+    'should correctly sort $fieldName by $sortBy',
     ({
       fieldName, fieldValue, sortBy, expectedSortValue,
     }) => {
@@ -52,7 +53,8 @@ describe('getSortValue', () => {
 
       // Then
       expect(actualValue).toEqual(expectedSortValue);
-    });
+    },
+  );
 });
 
 describe('sortSearchableElements current', () => {
@@ -67,23 +69,23 @@ describe('sortSearchableElements current', () => {
         <div id="searchable-elements">
           <div class="searchable-element" id="course-b">
             <span name="name" class="searchable-element-title">B: Course</span>
-            <p name="started-date">31-1-2010</p>
-            <p name="accessed-date">22-2-2010</p>
-            <p name="complete-by-date">22-3-2010</p>
+            <p name="started-date">31/01/2010</p>
+            <p name="accessed-date">22/02/2010</p>
+            <p name="complete-by-date">22/03/2010</p>
             <p name="diagnostic-score">123</p>
             <p name="passed-sections">4/6</p>
           </div>
           <div class="searchable-element" id="course-c">
             <span name="name" class="searchable-element-title">c: Course</span>
-            <p name="started-date">1-2-2010</p>
-            <p name="accessed-date">22-2-2011</p>
-            <p name="complete-by-date">22-3-2011</p>
+            <p name="started-date">01/02/2010</p>
+            <p name="accessed-date">22/02/2011</p>
+            <p name="complete-by-date">22/03/2011</p>
             <p name="diagnostic-score">0</p>
           </div>
           <div class="searchable-element" id="course-a">
             <span name="name" class="searchable-element-title">A: course</span>
-            <p name="started-date">22-1-2001</p>
-            <p name="accessed-date">23-2-2011</p>
+            <p name="started-date">22/01/2001</p>
+            <p name="accessed-date">23/02/2011</p>
             <p name="passed-sections">0/6</p>
           </div>
         </div>
@@ -135,25 +137,25 @@ describe('sortSearchableElements completed', () => {
         <div id="searchable-elements">
           <div class="searchable-element" id="course-a">
             <span name="name" class="searchable-element-title">a: Course</span>
-            <p name="started-date">31-1-2010</p>
-            <p name="accessed-date">22-2-2010</p>
-            <p name="completed-date">22-3-2010</p>
+            <p name="started-date">31/01/2010</p>
+            <p name="accessed-date">22/02/2010</p>
+            <p name="completed-date">22/03/2010 15:59</p>
             <p name="diagnostic-score">123</p>
             <p name="passed-sections">4/6</p>
           </div>
           <div class="searchable-element" id="course-b">
             <span name="name" class="searchable-element-title">B: Course</span>
-            <p name="started-date">1-2-2010</p>
-            <p name="accessed-date">22-2-2011</p>
-            <p name="completed-date">22-3-2011</p>
+            <p name="started-date">01/02/2010</p>
+            <p name="accessed-date">22/02/2011</p>
+            <p name="completed-date">22/03/2011 10:01</p>
             <p name="diagnostic-score">0</p>
           </div>
           <div class="searchable-element" id="course-c">
             <span name="name" class="searchable-element-title">c: course</span>
-            <p name="started-date">22-1-2001</p>
-            <p name="accessed-date">23-2-2011</p>
-            <p name="completed-date">22-2-2011</p>
-            <p name="evaluated-date">24-2-2011</p>
+            <p name="started-date">22/01/2001</p>
+            <p name="accessed-date">23/02/2011</p>
+            <p name="completed-date">22/03/2011 10:00</p>
+            <p name="evaluated-date">24/02/2011</p>
             <p name="passed-sections">0/6</p>
           </div>
         </div>

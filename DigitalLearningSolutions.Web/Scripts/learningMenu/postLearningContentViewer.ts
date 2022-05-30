@@ -1,5 +1,12 @@
 import { setupFullscreen } from './fullscreen';
 
+// So Typescript knows window has closeMpe property
+declare global {
+  interface Window {
+    closeMpe: () => void;
+  }
+}
+
 function postLearningCloseMpe(): void {
   // Extract the current domain, customisationId and sectionId out of the URL
   const matches = window.location.href.match(/^(.*)\/LearningMenu\/(\d+)\/(\d+)\/PostLearning\/Content#?$/);
@@ -11,6 +18,5 @@ function postLearningCloseMpe(): void {
   window.location.href = `${matches[1]}/LearningMenu/${matches[2]}/${matches[3]}/PostLearning`;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(window as any).closeMpe = postLearningCloseMpe;
+window.closeMpe = postLearningCloseMpe;
 setupFullscreen();

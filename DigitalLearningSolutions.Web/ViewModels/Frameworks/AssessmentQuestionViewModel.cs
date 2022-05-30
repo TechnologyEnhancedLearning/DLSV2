@@ -11,6 +11,7 @@
         public string? Name { get; set; }
         public AssessmentQuestionDetail AssessmentQuestionDetail { get; set; }
         public SelectList? InputTypeSelectList { get; set; }
+        public string SupervisorName { get; set; }
         public string VocabSingular()
         {
             return FrameworkVocabularyHelper.VocabularySingular(DetailFramework.FrameworkConfig);

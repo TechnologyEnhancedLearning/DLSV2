@@ -2271,7 +2271,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             return connection.Query<Comment>(
                 @$"SELECT
                         {FrameworksCommentColumns},
-                        ReplyToFrameworkCommentID,
+                        ReplyToFrameworkCommentID
                     FROM FrameworkComments
                     WHERE Archived Is NULL AND ReplyToFrameworkCommentID = @commentId
                     ORDER BY AddedDate ASC",

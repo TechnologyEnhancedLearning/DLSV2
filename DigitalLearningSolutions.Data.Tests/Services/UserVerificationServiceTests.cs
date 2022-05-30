@@ -190,6 +190,38 @@
         }
 
         [Test]
+        public void VerifyUserEntity_returns_successful_result_when_delegate_passwords_are_null()
+        {
+            // Given
+            const string password = "password";
+            const string hashedPassword = "hashedpassword";
+            var delegateAccounts = Builder<DelegateAccount>.CreateListOfSize(5)
+                .All()
+                .With(da => da.OldPassword = null)
+                .Build();
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(passwordHash: hashedPassword),
+                new List<AdminAccount>(),
+                delegateAccounts
+            );
+            A.CallTo(() => cryptoService.VerifyHashedPassword(hashedPassword, password)).Returns(true);
+
+            // When
+            var result = userVerificationService.VerifyUserEntity(password, userEntity);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.UserAccountPassedVerification.Should().BeTrue();
+                result.FailedVerificationDelegateAccountIds.Should().BeEmpty();
+                result.DelegateAccountsWithNoPassword.Should()
+                    .BeEquivalentTo(delegateAccounts.Select(da => da.Id));
+                result.PasswordMatchesAllAccountPasswords.Should().BeTrue();
+                result.PasswordMatchesAtLeastOneAccountPassword.Should().BeTrue();
+            }
+        }
+
+        [Test]
         public void VerifyUserEntity_returns_partially_successful_result_when_password_matches_some_delegate_accounts()
         {
             // Given

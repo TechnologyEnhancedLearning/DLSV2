@@ -96,5 +96,13 @@
         {
             return PascalRegex.Replace(pascalCaseString, " ");
         }
+
+        public static string Ellipsis(string text, int length)
+        {
+            if ((text ?? "").Trim().Length < length)
+                return text;
+
+            return string.Format("{0}...", text.Trim().Substring(0, length));
+        }
     }
 }

@@ -15,7 +15,8 @@ beforeAll(() => {
 });
 
 describe('closeMpe', () => {
-  it('should redirect to diagnostic assessment with no checked tutorials',
+  it(
+    'should redirect to diagnostic assessment with no checked tutorials',
     () => {
       // Given
       window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/Diagnostic/Content';
@@ -25,9 +26,11 @@ describe('closeMpe', () => {
 
       // Then
       expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/Diagnostic');
-    });
+    },
+  );
 
-  it('should redirect to diagnostic assessment with no checked tutorials after entering fullscreen',
+  it(
+    'should redirect to diagnostic assessment with no checked tutorials after entering fullscreen',
     () => {
       // Given
       window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/Diagnostic/Content#';
@@ -37,9 +40,11 @@ describe('closeMpe', () => {
 
       // Then
       expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/Diagnostic');
-    });
+    },
+  );
 
-  it('should redirect to diagnostic assessment with one checked tutorial',
+  it(
+    'should redirect to diagnostic assessment with one checked tutorial',
     () => {
       // Given
       window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/Diagnostic/Content?checkedTutorials=1234';
@@ -49,9 +54,11 @@ describe('closeMpe', () => {
 
       // Then
       expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/Diagnostic');
-    });
+    },
+  );
 
-  it('should redirect to diagnostic assessment with one checked tutorial after entering fullscreen',
+  it(
+    'should redirect to diagnostic assessment with one checked tutorial after entering fullscreen',
     () => {
       // Given
       window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/Diagnostic/Content?checkedTutorials=1234#';
@@ -61,9 +68,11 @@ describe('closeMpe', () => {
 
       // Then
       expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/Diagnostic');
-    });
+    },
+  );
 
-  it('should redirect to diagnostic assessment with multiple checked tutorials',
+  it(
+    'should redirect to diagnostic assessment with multiple checked tutorials',
     () => {
       // Given
       window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/Diagnostic/Content?checkedTutorials=123&checkedTutorials=456';
@@ -73,9 +82,11 @@ describe('closeMpe', () => {
 
       // Then
       expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/Diagnostic');
-    });
+    },
+  );
 
-  it('should redirect to diagnostic assessment with multiple checked tutorials after entering fullscreen',
+  it(
+    'should redirect to diagnostic assessment with multiple checked tutorials after entering fullscreen',
     () => {
       // Given
       window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/Diagnostic/Content?checkedTutorials=123&checkedTutorials=456#';
@@ -85,9 +96,11 @@ describe('closeMpe', () => {
 
       // Then
       expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/Diagnostic');
-    });
+    },
+  );
 
-  it('should do nothing on unexpected page',
+  it(
+    'should do nothing on unexpected page',
     () => {
       // Given
       const url = 'https://localhost:44363/LearningMenu/123/456';
@@ -98,5 +111,6 @@ describe('closeMpe', () => {
 
       // Then
       expect(window.location.href).toEqual(url);
-    });
+    },
+  );
 });

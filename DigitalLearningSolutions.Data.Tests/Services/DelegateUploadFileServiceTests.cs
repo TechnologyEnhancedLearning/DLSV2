@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Data.Tests.Services
+﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
     using System.Collections.Generic;
@@ -258,7 +258,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         [Test]
         public void ProcessDelegateTable_has_invalid_PRN_characters_error_for_PRN_with_invalid_characters()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "^%�PRN");
+            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "^%£PRN");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnCharacters);
         }
 
@@ -484,7 +484,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void ProcessDelegateTable_update_does_not_update_delegate_PRN_if_HasPRN_is_empty()
+        public void ProcessDelegateTable_update_resets_delegate_PRN_if_HasPRN_is_empty()
         {
             // Given
             const string delegateId = "DELEGATE";
@@ -506,8 +506,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () =>
-                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
-            ).MustNotHaveHappened();
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, null, false)
+            ).MustHaveHappenedOnceExactly();
             result.ProcessedCount.Should().Be(1);
             result.UpdatedCount.Should().Be(1);
         }
@@ -783,7 +783,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             const string prn = "PRN1234";
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: true, prn: prn);
             var table = CreateTableFromData(new[] { row });
-            
+
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(() => registrationService.CreateAccountAndReturnCandidateNumber(A<DelegateRegistrationModel>._))
                 .Returns(candidateNumber);
@@ -1111,6 +1111,10 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     A<string>._,
                     A<string>._
                 )
+            ).DoesNothing();
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
             ).DoesNothing();
         }
 
