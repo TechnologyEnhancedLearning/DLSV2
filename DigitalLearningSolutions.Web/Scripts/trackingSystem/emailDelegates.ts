@@ -27,17 +27,21 @@ function setUpSelectAndDeselectButtons(): void {
 
   selectAllForm.addEventListener('submit', (e) => e.preventDefault());
 
-  selectAllButton.addEventListener('click',
+  selectAllButton.addEventListener(
+    'click',
     () => {
       Checkboxes.default.selectAll(checkboxSelector);
       alertResultCount();
-    });
+    },
+  );
 
-  deselectAllButton.addEventListener('click',
+  deselectAllButton.addEventListener(
+    'click',
     () => {
       Checkboxes.default.deselectAll(checkboxSelector);
       alertResultCount();
-    });
+    },
+  );
 }
 
 function getModifiedResultCountMessageForScreenReader(

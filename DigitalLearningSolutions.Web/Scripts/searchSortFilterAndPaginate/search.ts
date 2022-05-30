@@ -10,7 +10,7 @@ export function setUpSearch(onSearchUpdated: VoidFunction): void {
       if (event.key === 'Enter') {
         event.preventDefault();
       }
-    }
+    },
   );
 }
 

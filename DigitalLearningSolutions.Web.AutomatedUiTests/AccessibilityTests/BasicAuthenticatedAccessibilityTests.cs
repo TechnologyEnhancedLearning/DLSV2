@@ -8,11 +8,13 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
     {
         public BasicAuthenticatedAccessibilityTests(AuthenticatedAccessibilityTestsFixture<Startup> fixture) : base(
             fixture
-        ) { }
+        )
+        { }
 
         [Theory]
         [InlineData("/MyAccount", "My account")]
         [InlineData("/MyAccount/EditDetails", "Edit details")]
+        [InlineData("/FindYourCentre", "Find your centre")]
         [InlineData("/Signposting/LaunchLearningResource/3", "View resource \"Test image resource\"")]
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData(

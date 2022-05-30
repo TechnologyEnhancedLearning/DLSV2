@@ -15,9 +15,11 @@ exportCurrentLink.addEventListener('click', () => {
 });
 
 // eslint-disable-next-line no-new
-new SearchSortFilterAndPaginate('TrackingSystem/Delegates/All/AllDelegateItems',
+new SearchSortFilterAndPaginate(
+  'TrackingSystem/Delegates/All/AllDelegateItems',
   true,
   true,
   true,
   'DelegateFilter',
-  ['title', 'email', 'candidate-number']);
+  ['title', 'email', 'candidate-number'],
+);

@@ -20,9 +20,9 @@
   <div class="nhsuk-grid-column-three-quarters">
     <h1 id="page-heading" class="nhsuk-heading-xl">Centre reports</h1>
 
-    <span class="nhsuk-body-l">View reports for <span class="nhsuk-u-font-weight-bold">@Model.ReportsFilterModel.CourseCategoryName</span> courses.</span>
-
     @if (Model.HasActivity) {
+      <span class="nhsuk-body-l">View reports for <span class="nhsuk-u-font-weight-bold">@Model.ReportsFilterModel.CourseCategoryName</span> courses.</span>
+
       <partial name="_FilterDisplayCard.cshtml" model="@Model.ReportsFilterModel" />
 
       <h2 class="nhsuk-heading-m">Usage stats</h2>
@@ -43,29 +43,19 @@
          role="button">
         Download usage data
       </a>
-    } else {
-      var place =
-        Model.ReportsFilterModel.CourseCategoryName == "All"
-          ? "at this centre"
-          : $"for the course category {Model.ReportsFilterModel.CourseCategoryName}";
-      <p class="nhsuk-body-l">
-        There has not yet been any activity @place.
-      </p>
-    }
 
-    <hr />
-    <h2 class="nhsuk-heading-m">Evaluation summary</h2>
-    <p>Summary of evaluation responses collected from delegates on completion of learning activities.</p>
+      <hr />
+      <h2 class="nhsuk-heading-m">Evaluation summary</h2>
+      <p>Summary of evaluation responses collected from delegates on completion of learning activities.</p>
 
-    <ul class="nhsuk-card-group">
-      @foreach (var evaluationSummary in Model.EvaluationSummaryBreakdown) {
-        <li class="nhsuk-card-group__item">
-          <partial name="_EvaluationSummaryCard.cshtml" model="evaluationSummary" />
-        </li>
-      }
-    </ul>
+      <ul class="nhsuk-card-group">
+        @foreach (var evaluationSummary in Model.EvaluationSummaryBreakdown) {
+          <li class="nhsuk-card-group__item">
+            <partial name="_EvaluationSummaryCard.cshtml" model="evaluationSummary" />
+          </li>
+        }
+      </ul>
 
-    @if (Model.HasActivity) {
       <a class="nhsuk-button"
          asp-controller="Reports"
          asp-action="DownloadEvaluationSummaries"
@@ -73,6 +63,11 @@
          role="button">
         Download evaluation summary
       </a>
+    } else {
+      var place = Model.Category == "All" ? "at this centre" : $"for course category {Model.Category}";
+      <p class="nhsuk-body-l" id="no-activity-message">
+        There has not yet been any activity @place.
+      </p>
     }
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">

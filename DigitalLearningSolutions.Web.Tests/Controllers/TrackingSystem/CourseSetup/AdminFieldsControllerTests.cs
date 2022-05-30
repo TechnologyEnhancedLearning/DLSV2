@@ -562,7 +562,7 @@
             const string action = "save";
 
             A.CallTo(() => courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(A<int>._))
-                .Returns(new [] { 1, 0, 0 });
+                .Returns(new[] { 1, 0, 0 });
 
             // When
             var result = controller.AddAdminField(100, model, action);
@@ -591,7 +591,7 @@
             using (new AssertionScope())
             {
                 result.As<ViewResult>().Model.Should().BeOfType<AddAdminFieldViewModel>();
-                AssertModelStateErrorIsExpected(result, "Each response must be unique");
+                AssertModelStateErrorIsExpected(result, "That response is already in the list of options");
             }
         }
 
@@ -612,7 +612,7 @@
             using (new AssertionScope())
             {
                 result.As<ViewResult>().Model.Should().BeOfType<EditAdminFieldViewModel>();
-                AssertModelStateErrorIsExpected(result, "Each response must be unique");
+                AssertModelStateErrorIsExpected(result, "That response is already in the list of options");
             }
         }
 
@@ -629,7 +629,7 @@
             using (new AssertionScope())
             {
                 result.As<ViewResult>().Model.Should().BeOfType<AddBulkAdminFieldAnswersViewModel>();
-                AssertModelStateErrorIsExpected(result, "Each response must be unique");
+                AssertModelStateErrorIsExpected(result, "The list of responses contains duplicate options");
             }
         }
 
@@ -646,7 +646,7 @@
             using (new AssertionScope())
             {
                 result.As<ViewResult>().Model.Should().BeOfType<BulkAdminFieldAnswersViewModel>();
-                AssertModelStateErrorIsExpected(result, "Each response must be unique");
+                AssertModelStateErrorIsExpected(result, "The list of responses contains duplicate options");
             }
         }
 
