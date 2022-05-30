@@ -86,6 +86,7 @@
             return new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntity, singleCentreToLogUserInto.Value);
         }
 
+        // If there are no accounts this will also return null, as there is no single centre to log into
         private static int? GetCentreIdIfLoggingUserIntoSingleCentre(UserEntity userEntity, string username)
         {
             // Determine if there is only a single account
