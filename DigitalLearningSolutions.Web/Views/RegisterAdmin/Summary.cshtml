@@ -54,7 +54,7 @@
       </div>
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Email
+          Primary email
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.Email
@@ -62,6 +62,19 @@
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="PersonalInformation">
             Change<span class="nhsuk-u-visually-hidden"> email address</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre email
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.SecondaryEmail
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="PersonalInformation">
+            Change<span class="nhsuk-u-visually-hidden"> centre email address</span>
           </a>
         </dd>
       </div>

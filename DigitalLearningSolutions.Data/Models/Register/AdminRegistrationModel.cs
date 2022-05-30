@@ -7,7 +7,7 @@
         public AdminRegistrationModel(
             string firstName,
             string lastName,
-            string email,
+            string primaryEmail,
             int centre,
             string? passwordHash,
             bool active,
@@ -22,8 +22,9 @@
             bool isContentCreator,
             bool isCmsAdmin,
             bool isCmsManager,
-            byte[]? profileImage = null
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
+            byte[]? profileImage = null,
+            string? secondaryEmail = null
+        ) : base(firstName, lastName, primaryEmail, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
             CategoryId = categoryId;
             IsCentreAdmin = isCentreAdmin;
