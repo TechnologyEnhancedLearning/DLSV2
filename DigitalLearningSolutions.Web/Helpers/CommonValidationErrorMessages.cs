@@ -6,9 +6,9 @@
         public const string TooLongFirstName = "First name must be 250 characters or fewer";
         public const string TooLongLastName = "Last name must be 250 characters or fewer";
         public const string TooLongAlias = "Alias must be 250 characters or fewer";
-        public const string TooLongEmail = "Email address must be 255 characters or fewer";
-        public const string InvalidEmail = "Enter an email address in the correct format, like name@example.com";
-        public const string WhitespaceInEmail = "Email address must not contain any whitespace characters";
+        public const string TooLongEmail = "Email must be 255 characters or fewer";
+        public const string InvalidEmail = "Enter an email in the correct format, like name@example.com";
+        public const string WhitespaceInEmail = "Email must not contain any whitespace characters";
 
         public const string PasswordRegex = @"(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Za-z]).*";
         public const string PasswordInvalidCharacters = "Password must contain at least 1 letter, 1 number and 1 symbol";

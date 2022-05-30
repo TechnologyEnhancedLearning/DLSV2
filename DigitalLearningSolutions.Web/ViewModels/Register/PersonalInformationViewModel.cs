@@ -39,7 +39,7 @@
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]
         public string? LastName { get; set; }
 
-        [Required(ErrorMessage = "Enter an email address")]
+        [Required(ErrorMessage = "Enter an email")]
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]

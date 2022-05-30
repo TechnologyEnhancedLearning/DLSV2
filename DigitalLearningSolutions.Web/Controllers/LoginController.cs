@@ -64,7 +64,7 @@
                 case LoginAttemptResult.InvalidUsername:
                     ModelState.AddModelError(
                         "Username",
-                        "A user with this email address or user ID could not be found"
+                        "A user with this email or user ID could not be found"
                     );
                     return View("Index", model);
                 case LoginAttemptResult.InvalidPassword:
