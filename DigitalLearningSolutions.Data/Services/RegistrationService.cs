@@ -206,7 +206,7 @@ namespace DigitalLearningSolutions.Data.Services
         {
             using var transaction = new TransactionScope();
 
-            CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
+            var CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
 
             // TODO HEEDLS-900 these user IDs are placeholders and should be updated
             registrationDataService.RegisterAdmin(registrationModel, 0);
@@ -313,35 +313,43 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.ProfessionalRegistrationNumber
             );
 
-            var candidateNumberOrErrorCode =
-                registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
-            var failureIfAny = DelegateCreationError.FromStoredProcedureErrorCode(candidateNumberOrErrorCode);
-            if (failureIfAny != null)
+            try
             {
-                logger.LogError(
-                    $"Delegate account could not be created (error code: {candidateNumberOrErrorCode}) with email address: {registrationModel.PrimaryEmail}"
+                var candidateNumber = registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+                passwordDataService.SetPasswordByCandidateNumber(
+                    candidateNumber,
+                    delegateRegistrationModel.PasswordHash!
                 );
 
-                throw new DelegateCreationFailedException(failureIfAny);
+                // We know this will give us a non-null user.
+                // If the delegate hadn't successfully been added we would have errored out of this method earlier.
+                var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
+                    candidateNumber,
+                    delegateRegistrationModel.Centre
+                )!;
+
+                userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                    delegateUser.Id,
+                    registrationModel.ProfessionalRegistrationNumber,
+                    true
+                );
             }
-
-            passwordDataService.SetPasswordByCandidateNumber(
-                candidateNumberOrErrorCode,
-                delegateRegistrationModel.PasswordHash!
-            );
-
-            // We know this will give us a non-null user.
-            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
-            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
-                candidateNumberOrErrorCode,
-                delegateRegistrationModel.Centre
-            )!;
-
-            userDataService.UpdateDelegateProfessionalRegistrationNumber(
-                delegateUser.Id,
-                registrationModel.ProfessionalRegistrationNumber,
-                true
-            );
+            catch (DelegateCreationFailedException e)
+            {
+                var error = e.Error;
+                logger.LogError(
+                    $"Delegate account could not be created for admin with email address: {registrationModel.PrimaryEmail}. Failure: {error.Name}."
+                );
+                throw new DelegateCreationFailedException(error);
+            }
+            catch
+            {
+                var error = DelegateCreationError.UnexpectedError;
+                logger.LogError(
+                    $"Could not create delegate account for admin. Failure: {error.Name}."
+                );
+                throw new DelegateCreationFailedException(error);
+            }
         }
 
         private Email GenerateApprovalEmail(

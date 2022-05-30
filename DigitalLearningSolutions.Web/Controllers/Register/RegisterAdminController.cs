@@ -3,6 +3,8 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -190,13 +192,32 @@
                 return new StatusCodeResult(500);
             }
 
-            var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
-            registrationService.RegisterCentreManager(
-                registrationModel,
-                data.JobGroup!.Value
-            );
+            try
+            {
+                var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
+                registrationService.RegisterCentreManager(
+                    registrationModel,
+                    data.JobGroup!.Value
+                );
 
-            return RedirectToAction("Confirmation");
+                return RedirectToAction("Confirmation");
+            }
+            catch (DelegateCreationFailedException e)
+            {
+                var error = e.Error;
+
+                if (error.Equals(DelegateCreationError.UnexpectedError))
+                {
+                    return new StatusCodeResult(500);
+                }
+
+                if (error.Equals(DelegateCreationError.EmailAlreadyInUse))
+                {
+                    return RedirectToAction("Index");
+                }
+
+                return new StatusCodeResult(500);
+            }
         }
 
         [HttpGet]
