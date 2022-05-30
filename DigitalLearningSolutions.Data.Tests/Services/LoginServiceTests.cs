@@ -85,7 +85,7 @@
             );
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
-                .Returns(new UserEntityVerificationResult(true, new[] { 2 }, new[] { 3 }));
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new[] { 3 }));
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -94,6 +94,37 @@
             using (new AssertionScope())
             {
                 result.LoginAttemptResult.Should().Be(LoginAttemptResult.AccountsHaveMismatchedPasswords);
+                result.UserEntity.Should().BeNull();
+                result.CentreToLogInto.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void
+            AttemptLogin_returns_invalid_password_when_user_account_password_is_incorrect_and_delegate_old_passwords_null()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                {
+                    UserTestHelper.GetDefaultDelegateAccount(),
+                    UserTestHelper.GetDefaultDelegateAccount(3, centreId: 101),
+                }
+            );
+            A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
+                .Returns(new UserEntityVerificationResult(false, new[] { 2, 3 }, new List<int>(), new List<int>()));
+            A.CallTo(() => userService.UpdateFailedLoginCount(userEntity.UserAccount)).DoesNothing();
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidPassword);
                 result.UserEntity.Should().BeNull();
                 result.CentreToLogInto.Should().BeNull();
             }
@@ -123,7 +154,7 @@
             );
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
-                .Returns(new UserEntityVerificationResult(false, new List<int>(), new[] { 2, 3 }));
+                .Returns(new UserEntityVerificationResult(false, new List<int>(), new List<int>(), new[] { 2, 3 }));
             A.CallTo(() => userService.UpdateFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -162,7 +193,7 @@
             );
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
-                .Returns(new UserEntityVerificationResult(true, new[] { 2 }, new List<int>()));
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -193,7 +224,7 @@
             );
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
-                .Returns(new UserEntityVerificationResult(true, new[] { 2 }, new List<int>()));
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -221,7 +252,7 @@
             );
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
-                .Returns(new UserEntityVerificationResult(true, new[] { 2 }, new List<int>()));
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -248,7 +279,7 @@
             );
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
-                .Returns(new UserEntityVerificationResult(true, new[] { 2 }, new List<int>()));
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -275,7 +306,7 @@
             );
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
-                .Returns(new UserEntityVerificationResult(true, new[] { 2 }, new List<int>()));
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -302,7 +333,7 @@
             );
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
-                .Returns(new UserEntityVerificationResult(true, new[] { 2 }, new List<int>()));
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
