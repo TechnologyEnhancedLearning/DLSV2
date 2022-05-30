@@ -24,23 +24,8 @@
   </div>
 </div>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l nhsuk-u-font-weight-bold">
-    Delegate:
-  </div>
-  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
-    @Model.Name
-  </div>
-</div>
-
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l nhsuk-u-font-weight-bold">
-    Activity:
-  </div>
-  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
-    @Model.CourseName
-  </div>
-</div>
+<vc:field-name-value-display display-name="Delegate" field-value="@Model.Name" />
+<vc:field-name-value-display display-name="Activity" field-value="@Model.CourseName" />
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">

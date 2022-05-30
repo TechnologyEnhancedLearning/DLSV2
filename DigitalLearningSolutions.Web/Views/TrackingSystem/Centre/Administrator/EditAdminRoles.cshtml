@@ -9,21 +9,12 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
-        <div class="nhsuk-u-font-weight-bold">
-          Name:
-        </div>
-      </div>
-      <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
-        <input type="hidden" asp-for="FullName" />
-        @Model.FullName
-      </div>
-    </div>
+    <vc:field-name-value-display display-name="User" field-value="@Model.FullName" />
 
     <h2 class="nhsuk-heading-l nhsuk-u-margin-top-4">User roles</h2>
 
-    @if (Model.NotAllRolesDisplayed) {
+    @if (Model.NotAllRolesDisplayed)
+    {
       <div class="nhsuk-warning-callout nhsuk-u-margin-bottom-4">
         <h3 class="nhsuk-warning-callout__label">
           <span role="text">
@@ -44,7 +35,7 @@
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditAdminRoles">
       <input type="hidden" asp-for="ReturnPageQuery" />
-
+      <input type="hidden" asp-for="FullName" />
       <vc:checkboxes label="Please select all the roles this user has."
                      populate-with-current-values="true"
                      checkboxes="@Model.Checkboxes"

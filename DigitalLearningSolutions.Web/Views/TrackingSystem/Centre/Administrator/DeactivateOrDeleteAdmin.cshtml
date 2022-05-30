@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 @model DeactivateAdminViewModel
 
 @{
@@ -15,16 +16,7 @@
   </div>
 </div>
 
-<div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-3">
-  <div class="nhsuk-grid-column-one-quarter nhsuk-heading-s">
-    <div class="nhsuk-u-font-weight-bold">
-      User
-    </div>
-  </div>
-  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-s nhsuk-u-font-weight-normal word-break">
-    @Model.FullName (@Model.EmailAddress)
-  </div>
-</div>
+<vc:field-name-value-display display-name="User" field-value="@DisplayStringHelper.GetNameWithEmailForDisplay(Model.FullName, Model.EmailAddress)" />
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
@@ -40,7 +32,7 @@
       <input type="hidden" asp-for="ReturnPageQuery" />
       <button class="nhsuk-button delete-button nhsuk-button--secondary" type="submit">Deactivate account</button>
     </form>
-    
+
     <vc:cancel-link-with-return-page-query asp-controller="Administrator" asp-action="Index" return-page-query="@Model.ReturnPageQuery" />
   </div>
 </div>

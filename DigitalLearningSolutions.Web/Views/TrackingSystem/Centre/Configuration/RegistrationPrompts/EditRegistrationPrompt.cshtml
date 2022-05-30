@@ -24,17 +24,7 @@
 
   <input type="hidden" asp-for="OptionsString" />
 
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
-      <div class="nhsuk-u-font-weight-bold">
-        Prompt:
-      </div>
-    </div>
-    <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal">
-      <input type="hidden" asp-for="Prompt" />
-      @Model.Prompt
-    </div>
-  </div>
+  <vc:field-name-value-display display-name="Prompt" field-value="@Model.Prompt" />
 
   <div class="nhsuk-grid-row nhsuk-u-padding-bottom-4">
     <div class="nhsuk-grid-column-one-half">
@@ -51,9 +41,12 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      @if (string.IsNullOrEmpty(Model.OptionsString)) {
+      @if (string.IsNullOrEmpty(Model.OptionsString))
+      {
         <partial name="_NoConfiguredAnswers" />
-      } else {
+      }
+      else
+      {
         <partial name="_RegistrationPromptAnswerTable" model="Model" />
       }
     </div>

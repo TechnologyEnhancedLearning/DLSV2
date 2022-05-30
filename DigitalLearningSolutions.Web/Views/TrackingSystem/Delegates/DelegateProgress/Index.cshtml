@@ -38,16 +38,10 @@
 
     <partial name="_DelegateDetails" model="Model" />
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
-        Course
-      </div>
-      <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold word-break">
-        @Model.CourseName
-      </div>
-    </div>
+    <vc:field-name-value-display display-name="Course" field-value="@Model.CourseName" />
 
-    @if (!Model.IsCourseActive) {
+    @if (!Model.IsCourseActive)
+    {
       <partial name="~/Views/TrackingSystem/Shared/_InactiveCourseInset.cshtml" />
     }
 
@@ -58,7 +52,8 @@
       <p class="nhsuk-body-l">Overall diagnostic score: <strong>@(Model.DiagnosticScore.HasValue ? $"{Model.DiagnosticScore}%" : "N/A")</strong></p>
     </div>
 
-    @foreach (var section in Model.Sections) {
+    @foreach (var section in Model.Sections)
+    {
       <partial name="_SectionProgress" model="section" />
     }
   </div>

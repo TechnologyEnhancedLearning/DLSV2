@@ -28,14 +28,7 @@
 
     <h1 class="nhsuk-heading-xl word-break">Edit completed date for @Model.CourseName</h1>
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
-        Delegate
-      </div>
-      <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold word-break">
-        @Model.DelegateName
-      </div>
-    </div>
+    <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
       <input type="hidden" asp-for="DelegateId" />
