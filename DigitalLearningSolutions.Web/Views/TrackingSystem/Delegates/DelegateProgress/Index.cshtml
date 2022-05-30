@@ -40,8 +40,7 @@
 
     <vc:field-name-value-display display-name="Course" field-value="@Model.CourseName" />
 
-    @if (!Model.IsCourseActive)
-    {
+    @if (!Model.IsCourseActive) {
       <partial name="~/Views/TrackingSystem/Shared/_InactiveCourseInset.cshtml" />
     }
 
@@ -52,8 +51,7 @@
       <p class="nhsuk-body-l">Overall diagnostic score: <strong>@(Model.DiagnosticScore.HasValue ? $"{Model.DiagnosticScore}%" : "N/A")</strong></p>
     </div>
 
-    @foreach (var section in Model.Sections)
-    {
+    @foreach (var section in Model.Sections) {
       <partial name="_SectionProgress" model="section" />
     }
   </div>

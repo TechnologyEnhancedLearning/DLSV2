@@ -20,12 +20,9 @@
 
       <button name="action" class="nhsuk-button" type="submit" value="@CourseSetupController.SaveAction">Next</button>
     </form>
-    @if (Model.Index == 0)
-    {
+    @if (Model.Index == 0) {
       <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseContent" link-text="Go back" />
-    }
-    else
-    {
+    } else {
       <vc:back-link asp-controller="CourseSetup" asp-action="SetSectionContent" asp-all-route-data="@backLinkRouteData" link-text="Go back" />
     }
   </div>
