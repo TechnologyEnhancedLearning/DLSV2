@@ -17,7 +17,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             List<(int id, string name)> jobGroups,
-            string? returnUrl
+            string? returnUrl,
+            bool isCheckDetailRedirect
         )
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
@@ -44,6 +45,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
                 );
             ReturnUrl = returnUrl;
             IsSelfRegistrationOrEdit = true;
+            IsCheckDetailRedirect = isCheckDetailRedirect;
         }
 
         protected MyAccountEditDetailsFormData(MyAccountEditDetailsFormData formData)
@@ -65,6 +67,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
             ReturnUrl = formData.ReturnUrl;
             IsSelfRegistrationOrEdit = true;
+            IsCheckDetailRedirect = formData.IsCheckDetailRedirect;
         }
 
         [Required(ErrorMessage = "Enter your current password")]
@@ -79,5 +82,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public bool IsDelegateUser { get; set; }
 
         public string? ReturnUrl { get; set; }
+
+        public bool IsCheckDetailRedirect { get; set; }
     }
 }

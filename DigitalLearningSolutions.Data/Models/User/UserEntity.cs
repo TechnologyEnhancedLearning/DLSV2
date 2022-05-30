@@ -21,7 +21,8 @@
         public IEnumerable<AdminAccount> AdminAccounts { get; set; }
         public IEnumerable<DelegateAccount> DelegateAccounts { get; set; }
 
-        public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold && AdminAccounts.Any();
+        private bool AllAdminAccountsInactive => AdminAccounts.All(a => !a.Active);
+        public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold && AdminAccounts.Any() && !AllAdminAccountsInactive;
 
         public bool IsSingleCentreAccount()
         {

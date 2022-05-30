@@ -75,7 +75,8 @@
                 userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == singleCentreToLogUserInto.Value);
 
             var centreIsActive = adminAccountToLogInto?.CentreActive ?? delegateAccountToLogInto?.CentreActive ?? false;
-            var accountAtCentreIsActive = adminAccountToLogInto?.Active ?? delegateAccountToLogInto?.Active ?? false;
+            var accountAtCentreIsActive = (adminAccountToLogInto?.Active == null || adminAccountToLogInto.Active) &&
+                                          (delegateAccountToLogInto?.Active == null || delegateAccountToLogInto.Active);
 
             if (!centreIsActive || !accountAtCentreIsActive || delegateAccountToLogInto is { Approved: false })
             {
@@ -85,6 +86,7 @@
             return new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntity, singleCentreToLogUserInto.Value);
         }
 
+        // If there are no accounts this will also return null, as there is no single centre to log into
         private static int? GetCentreIdIfLoggingUserIntoSingleCentre(UserEntity userEntity, string username)
         {
             // Determine if there is only a single account

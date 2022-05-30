@@ -7,6 +7,7 @@
     {
         public UserEntityVerificationResult(
             bool userAccountPassed,
+            IEnumerable<int> nullPasswordDelegateIds,
             IEnumerable<int> passedDelegateIds,
             IEnumerable<int> failedDelegateIds
         )
@@ -14,9 +15,11 @@
             UserAccountPassedVerification = userAccountPassed;
             PassedVerificationDelegateAccountIds = passedDelegateIds;
             FailedVerificationDelegateAccountIds = failedDelegateIds;
+            DelegateAccountsWithNoPassword = nullPasswordDelegateIds;
         }
 
         public bool UserAccountPassedVerification { get; set; }
+        public IEnumerable<int> DelegateAccountsWithNoPassword { get; set; }
         public IEnumerable<int> PassedVerificationDelegateAccountIds { get; set; }
         public IEnumerable<int> FailedVerificationDelegateAccountIds { get; set; }
 

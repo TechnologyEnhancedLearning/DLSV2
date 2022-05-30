@@ -94,7 +94,7 @@
 
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        [Authorize(Policy = CustomPolicies.UserOnly)]
+        [Authorize(Policy = CustomPolicies.BasicUser)]
         public IActionResult ChooseACentre(string? returnUrl)
         {
             // TODO HEEDLS-912: sort out ChooseACentre page
@@ -103,7 +103,7 @@
         }
 
         [HttpGet]
-        [Authorize(Policy = CustomPolicies.UserOnly)]
+        [Authorize(Policy = CustomPolicies.BasicUser)]
         public async Task<IActionResult> ChooseCentre(int centreId, string? returnUrl)
         {
             // TODO HEEDLS-912: sort out ChooseACentre page
@@ -144,14 +144,19 @@
                 return this.RedirectToReturnUrl(returnUrl, logger) ?? RedirectToAction("Index", "Home");
             }
 
+            const bool isCheckDetailsRedirect = true;
             if (returnUrl == null)
             {
-                return RedirectToAction("EditDetails", "MyAccount");
+                return RedirectToAction("EditDetails", "MyAccount", new { isCheckDetailsRedirect });
             }
 
             var dlsSubAppSection = returnUrl.Split('/')[1];
             DlsSubApplication.TryGetFromUrlSegment(dlsSubAppSection, out var dlsSubApplication);
-            return RedirectToAction("EditDetails", "MyAccount", new { returnUrl, dlsSubApplication });
+            return RedirectToAction(
+                "EditDetails",
+                "MyAccount",
+                new { returnUrl, dlsSubApplication, isCheckDetailsRedirect }
+            );
         }
 
         private async Task CentrelessLogInAsync(UserEntity userEntity, bool rememberMe)

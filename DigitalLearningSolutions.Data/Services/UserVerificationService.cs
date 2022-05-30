@@ -64,11 +64,15 @@
         public UserEntityVerificationResult VerifyUserEntity(string password, UserEntity userEntity)
         {
             var userAccountPassed = cryptoService.VerifyHashedPassword(userEntity.UserAccount.PasswordHash, password);
-            var passedDelegateIds = userEntity.DelegateAccounts
-                .Where(d => d.OldPassword == null || cryptoService.VerifyHashedPassword(d.OldPassword, password))
+            var nullDelegateIds = userEntity.DelegateAccounts
+                .Where(d => d.OldPassword == null)
                 .Select(d => d.Id).ToList();
-            var failedDelegateIds = userEntity.DelegateAccounts.Select(d => d.Id).Except(passedDelegateIds);
-            return new UserEntityVerificationResult(userAccountPassed, passedDelegateIds, failedDelegateIds);
+            var passedDelegateIds = userEntity.DelegateAccounts
+                .Where(d => cryptoService.VerifyHashedPassword(d.OldPassword, password))
+                .Select(d => d.Id).ToList();
+            var failedDelegateIds = userEntity.DelegateAccounts.Select(d => d.Id)
+                .Except(nullDelegateIds.Concat(passedDelegateIds));
+            return new UserEntityVerificationResult(userAccountPassed, nullDelegateIds, passedDelegateIds, failedDelegateIds);
         }
 
         public List<DelegateUser> GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
