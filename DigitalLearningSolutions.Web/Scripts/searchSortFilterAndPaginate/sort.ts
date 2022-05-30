@@ -44,7 +44,7 @@ export function getSortValue(
     case 'LastAccessed':
       return parseDateAndTime(getElementText(searchableElement, 'accessed-date'));
     case 'LastUpdated':
-      return parseDateAndTime(getElementText(searchableElement, 'last-updated-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'last-accessed'));
     case 'CompleteByDate':
       return parseDateAndTime(getElementText(searchableElement, 'complete-by-date'));
     case 'Completed':
