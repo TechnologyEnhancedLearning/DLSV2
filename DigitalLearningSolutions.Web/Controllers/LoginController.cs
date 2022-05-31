@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
@@ -97,8 +96,13 @@
         [Authorize(Policy = CustomPolicies.BasicUser)]
         public IActionResult ChooseACentre(string? returnUrl)
         {
-            // TODO HEEDLS-912: sort out ChooseACentre page
-            var model = new ChooseACentreViewModel(new List<ChooseACentreAccount>());
+            var userEntity = userService.GetUserById(User.GetUserId()!.Value);
+            var chooseACentreAccounts = loginService.GetChooseACentreAccounts(userEntity);
+            var model = new ChooseACentreViewModel(
+                chooseACentreAccounts.OrderByDescending(account => account.IsAdmin)
+                    .ThenBy(account => account.CentreName).ToList()
+            );
+
             return View("ChooseACentre", model);
         }
 

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
@@ -9,6 +10,8 @@
     public interface ILoginService
     {
         LoginResult AttemptLogin(string username, string password);
+
+        IEnumerable<ChooseACentreAccount> GetChooseACentreAccounts(UserEntity? userEntity);
     }
 
     public class LoginService : ILoginService
@@ -57,6 +60,45 @@
             return userEntity.IsLocked
                 ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity)
                 : DetermineDestinationForSuccessfulLogin(userEntity, username);
+        }
+
+        public IEnumerable<ChooseACentreAccount> GetChooseACentreAccounts(UserEntity? userEntity)
+        {
+            var adminAccounts = userEntity!.AdminAccounts.Where(aa => aa.Active);
+
+            var chooseACentreAccounts = userEntity.DelegateAccounts.Select(
+                account =>
+                {
+                    var isAdmin = adminAccounts.Any(aa => aa.CentreId == account.CentreId);
+
+                    return new ChooseACentreAccount(
+                        account.CentreId,
+                        account.CentreName,
+                        account.CentreActive,
+                        isAdmin,
+                        true,
+                        account.Approved,
+                        account.Active
+                    );
+                }
+            ).ToList();
+
+            var adminOnlyAccounts = adminAccounts.Where(
+                aa => chooseACentreAccounts.All(account => account.CentreId != aa.CentreId)
+            );
+
+            chooseACentreAccounts.AddRange(
+                adminOnlyAccounts.Select(
+                    account => new ChooseACentreAccount(
+                        account.CentreId,
+                        account.CentreName,
+                        account.CentreActive,
+                        true
+                    )
+                )
+            );
+
+            return chooseACentreAccounts;
         }
 
         private LoginResult DetermineDestinationForSuccessfulLogin(UserEntity userEntity, string username)
