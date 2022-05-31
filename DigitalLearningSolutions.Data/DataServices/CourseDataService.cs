@@ -161,9 +161,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                 pr.LoginCount,
                 pr.Duration AS LearningTime,
                 pr.DiagnosticScore,
-                LTRIM(RTRIM(pr.Answer1)),
-                LTRIM(RTRIM(pr.Answer2)),
-                LTRIM(RTRIM(pr.Answer3)),
+                LTRIM(RTRIM(pr.Answer1)) AS Answer1,
+                LTRIM(RTRIM(pr.Answer2)) AS Answer2,
+                LTRIM(RTRIM(pr.Answer3)) AS Answer3,
                 {DelegateAllAttemptsQuery},
                 {DelegateAttemptsPassedQuery},
                 pr.FirstSubmittedTime AS Enrolled,
@@ -376,7 +376,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public IEnumerable<DelegateCourseInfo> GetDelegateCourseInfosForCourse(int customisationId, int centreId)
         {
-            return connection.Query<DelegateCourseInfo>(
+           return connection.Query<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE cu.CentreID = @centreId
                         AND ca.CentreID = @centreId
