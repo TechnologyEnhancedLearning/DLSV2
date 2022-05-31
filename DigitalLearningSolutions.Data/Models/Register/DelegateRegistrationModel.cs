@@ -81,7 +81,6 @@
             welcomeEmailDate
         ) { }
 
-        public string? SecondaryEmail { get; set; }
 
         public string? Answer1 { get; set; }
 

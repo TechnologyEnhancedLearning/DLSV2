@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -20,13 +21,15 @@
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
         private IUserDataService userDataService = null!;
+        private IClockService clockService = null!;
 
         [SetUp]
         public void SetUp()
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
             userDataService = new UserDataService(connection);
-            service = new RegistrationDataService(connection, userDataService);
+            clockService = new ClockService();
+            service = new RegistrationDataService(connection, userDataService, clockService);
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }
 
@@ -142,7 +145,8 @@
         {
             var newConnection = ServiceTestHelper.GetDatabaseConnection();
             var newUserDataService = new UserDataService(newConnection);
-            var newService = new RegistrationDataService(newConnection, newUserDataService);
+            var newClockService = new ClockService();
+            var newService = new RegistrationDataService(newConnection, newUserDataService, newClockService);
 
             void Action() => newService.RegisterNewUserAndDelegateAccount(model);
             return Action;

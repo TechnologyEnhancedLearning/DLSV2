@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Services;
 
     public interface IRegistrationDataService
     {
@@ -20,11 +21,13 @@
     {
         private readonly IDbConnection connection;
         private readonly IUserDataService userDataService;
+        private readonly IClockService clockService;
 
-        public RegistrationDataService(IDbConnection connection, IUserDataService userDataService)
+        public RegistrationDataService(IDbConnection connection, IUserDataService userDataService, IClockService clockService)
         {
             this.connection = connection;
             this.userDataService = userDataService;
+            this.clockService = clockService;
         }
 
         public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
@@ -34,7 +37,7 @@
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
 
-            var currentTime = DateTime.UtcNow;
+            var currentTime = clockService.UtcNow;
 
             var userValues = new
             {

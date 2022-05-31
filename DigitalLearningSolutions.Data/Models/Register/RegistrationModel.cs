@@ -29,6 +29,8 @@
 
         public string PrimaryEmail { get; set; }
 
+        public string? SecondaryEmail { get; set; }
+
         public int Centre { get; set; }
 
         public string? PasswordHash { get; set; }
