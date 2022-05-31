@@ -59,7 +59,7 @@
             await passwordDataService.SetPasswordByUserIdAsync(existingUser.Id, newPasswordHash);
 
             // Then
-            userDataService.GetUserAccountById(existingUser.Id)?.PasswordHash.Should()
+            userDataService.GetUserAccountById(existingUser.Id)!.PasswordHash.Should()
                 .Be(PasswordHashNotYetInDb);
         }
 
@@ -77,7 +77,7 @@
             await passwordDataService.SetPasswordByUserIdAsync(-1, newPasswordHash);
 
             // Then
-            userDataService.GetAdminUserById(existingUser.Id)?.Password.Should()
+            userDataService.GetUserAccountById(existingUser.Id)!.PasswordHash.Should()
                 .Be(existingUserPassword);
         }
 

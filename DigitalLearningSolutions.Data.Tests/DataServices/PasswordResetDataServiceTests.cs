@@ -132,7 +132,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Then
             var userAfterRemoval = userDataService.GetUserAccountById(user.Id);
             userAfterRemoval.Should().NotBeNull();
-            userAfterRemoval?.ResetPasswordId.Should().BeNull();
+            userAfterRemoval!.ResetPasswordId.Should().BeNull();
         }
 
         [Test]
