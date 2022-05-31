@@ -141,6 +141,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
                 AND can.CandidateId = ca.CandidateId) AS AttemptsPassed";
 
+        private readonly IDbConnection connection;
+        private readonly ILogger<CourseDataService> logger;
+
         private readonly string selectDelegateCourseInfoQuery =
             @$"SELECT
                 cu.CustomisationID AS CustomisationId,
@@ -190,9 +193,6 @@ namespace DigitalLearningSolutions.Data.DataServices
             LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = pr.SupervisorAdminId
             LEFT OUTER JOIN AdminUsers auEnrolledBy ON auEnrolledBy.AdminID = pr.EnrolledByAdminID
             INNER JOIN Candidates AS ca ON ca.CandidateID = pr.CandidateID";
-
-        private readonly IDbConnection connection;
-        private readonly ILogger<CourseDataService> logger;
 
         public CourseDataService(IDbConnection connection, ILogger<CourseDataService> logger)
         {
@@ -376,7 +376,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public IEnumerable<DelegateCourseInfo> GetDelegateCourseInfosForCourse(int customisationId, int centreId)
         {
-           return connection.Query<DelegateCourseInfo>(
+            return connection.Query<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE cu.CentreID = @centreId
                         AND ca.CentreID = @centreId
