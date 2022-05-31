@@ -1,6 +1,5 @@
 namespace DigitalLearningSolutions.Data.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
@@ -189,27 +188,13 @@ namespace DigitalLearningSolutions.Data.Services
             return candidateNumber;
         }
 
-        private void ValidateRegistrationEmail(DelegateRegistrationModel model)
-        {
-            var emails = (IEnumerable<string>)new[] { model.PrimaryEmail, model.SecondaryEmail }.Where(e => e != null);
-            if (userDataService.AnyEmailsInSetAreAlreadyInUse(emails))
-            {
-                var error = DelegateCreationError.EmailAlreadyInUse;
-                logger.LogError(
-                    $"Could not create account for delegate on registration. Failure: {error.Name}."
-                );
-                throw new DelegateCreationFailedException(error);
-            }
-        }
-
         public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
         {
             using var transaction = new TransactionScope();
 
-            var CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
+            var userId = CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
 
-            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
-            registrationDataService.RegisterAdmin(registrationModel, 0);
+            registrationDataService.RegisterAdmin(registrationModel, userId);
 
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
@@ -258,8 +243,8 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateUser.ProfileImage
             );
 
-            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
-            registrationDataService.RegisterAdmin(adminRegistrationModel, 0);
+            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
+            registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
         }
 
         public string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
@@ -267,7 +252,9 @@ namespace DigitalLearningSolutions.Data.Services
             try
             {
                 ValidateRegistrationEmail(delegateRegistrationModel);
-                return registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+                var candidateNumber =
+                    registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+                return candidateNumber;
             }
             catch (DelegateCreationFailedException e)
             {
@@ -287,6 +274,19 @@ namespace DigitalLearningSolutions.Data.Services
             }
         }
 
+        private void ValidateRegistrationEmail(DelegateRegistrationModel model)
+        {
+            var emails = (IEnumerable<string>)new[] { model.PrimaryEmail, model.SecondaryEmail }.Where(e => e != null);
+            if (userDataService.AnyEmailsInSetAreAlreadyInUse(emails))
+            {
+                var error = DelegateCreationError.EmailAlreadyInUse;
+                logger.LogError(
+                    $"Could not create account for delegate on registration. Failure: {error.Name}."
+                );
+                throw new DelegateCreationFailedException(error);
+            }
+        }
+
         private IEnumerable<int> GetPendingSupervisorDelegateIdsMatchingDelegate(
             DelegateRegistrationModel delegateRegistrationModel
         )
@@ -299,7 +299,7 @@ namespace DigitalLearningSolutions.Data.Services
                 ).Select(record => record.ID);
         }
 
-        private void CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel, int jobGroupId)
+        private int CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel, int jobGroupId)
         {
             var delegateRegistrationModel = new DelegateRegistrationModel(
                 registrationModel.FirstName,
@@ -315,7 +315,8 @@ namespace DigitalLearningSolutions.Data.Services
 
             try
             {
-                var candidateNumber = registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+                var candidateNumber =
+                    registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
                 passwordDataService.SetPasswordByCandidateNumber(
                     candidateNumber,
                     delegateRegistrationModel.PasswordHash!
@@ -333,6 +334,8 @@ namespace DigitalLearningSolutions.Data.Services
                     registrationModel.ProfessionalRegistrationNumber,
                     true
                 );
+
+                return userDataService.GetUserIdFromDelegateId(delegateUser.Id);
             }
             catch (DelegateCreationFailedException e)
             {

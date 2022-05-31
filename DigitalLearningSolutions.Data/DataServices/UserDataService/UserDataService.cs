@@ -124,6 +124,8 @@
 
         int? GetUserIdFromUsername(string username);
 
+        int GetUserIdFromDelegateId(int delegateId);
+
         UserAccount? GetUserAccountById(int userId);
 
         UserAccount? GetUserAccountByEmailAddress(string emailAddress);
@@ -194,6 +196,26 @@
             }
 
             return userIds.SingleOrDefault();
+        }
+
+        public int GetUserIdFromDelegateId(int delegateId)
+        {
+            var userId = connection.QuerySingle<int?>(
+                @"SELECT DISTINCT u.ID
+                    FROM Users AS u
+                    LEFT JOIN DelegateAccounts AS da ON da.UserID = u.ID
+                    WHERE da.ID = @delegateId",
+                new { delegateId }
+            );
+
+            if (userId == null)
+            {
+                throw new Exception(
+                    "No UserID found for Delegate with DelegateID: " + delegateId
+                );
+            }
+
+            return userId.Value;
         }
 
         public UserAccount? GetUserAccountById(int userId)
