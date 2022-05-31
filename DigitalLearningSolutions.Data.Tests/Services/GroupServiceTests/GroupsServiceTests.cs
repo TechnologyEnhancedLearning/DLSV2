@@ -4,8 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -50,6 +50,7 @@
         private ILogger<IGroupsService> logger = null!;
         private IProgressDataService progressDataService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -63,11 +64,14 @@
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             logger = A.Fake<ILogger<IGroupsService>>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>(x => x.Strict());
+            userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
                 JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
             );
             A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
+            A.CallTo(() => userDataService.GetDelegateUserById(reusableDelegateDetails.Id))
+                .Returns(reusableDelegateDetails);
 
             DatabaseModificationsDoNothing();
 
@@ -80,7 +84,8 @@
                 progressDataService,
                 configuration,
                 centreRegistrationPromptsService,
-                logger
+                logger,
+                userDataService
             );
         }
 
@@ -811,7 +816,11 @@
 
             if (centreRegistrationPrompts != null)
             {
-                A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(A<int>._))
+                A.CallTo(
+                        () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
+                            A<int>._
+                        )
+                    )
                     .Returns(centreRegistrationPrompts);
             }
 
@@ -848,9 +857,10 @@
                 if (!isJobGroup)
                 {
                     A.CallTo(
-                            () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
-                                groupGenerationDetails.CentreId
-                            )
+                            () => centreRegistrationPromptsService
+                                .GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
+                                    groupGenerationDetails.CentreId
+                                )
                         )
                         .MustHaveHappenedOnceExactly();
                     A.CallTo(() => groupsDataService.GetGroupsForCentre(groupGenerationDetails.CentreId))

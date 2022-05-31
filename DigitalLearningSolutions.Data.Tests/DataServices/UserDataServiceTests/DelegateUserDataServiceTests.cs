@@ -139,7 +139,17 @@
                 const int jobGroupId = 1;
 
                 // When
-                userDataService.UpdateUser(firstName, lastName, email, null, professionalRegNumber, true, jobGroupId, 61188);
+                userDataService.UpdateUser(
+                    firstName,
+                    lastName,
+                    email,
+                    null,
+                    professionalRegNumber,
+                    true,
+                    jobGroupId,
+                    DateTime.Now,
+                    61188
+                );
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
 
                 // Then
@@ -353,7 +363,6 @@
         }
 
         [Test]
-
         public void GetDelegatesNotRegisteredForGroupByGroupId_returns_expected_number_of_delegates()
         {
             // When

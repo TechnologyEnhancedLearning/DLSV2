@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
@@ -51,6 +52,7 @@
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
             int jobGroupId,
+            DateTime detailsLastChecked,
             int userId
         );
 
@@ -90,7 +92,8 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6
+            string? answer6,
+            DateTime detailsLastChecked
         );
 
         int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
@@ -130,9 +133,11 @@
         void SetCentreEmail(
             int userId,
             int centreId,
-            string email,
+            string? email,
             IDbTransaction? transaction = null
         );
+
+        string? GetCentreEmail(int userId, int centreId);
     }
 
     public partial class UserDataService : IUserDataService
@@ -167,7 +172,7 @@
         public UserAccount? GetUserAccountById(int userId)
         {
             return connection.Query<UserAccount>(
-                @"SELECT u.ID, 
+                @"SELECT u.ID,
                         u.PrimaryEmail,
                         u.PasswordHash,
                         u.FirstName,

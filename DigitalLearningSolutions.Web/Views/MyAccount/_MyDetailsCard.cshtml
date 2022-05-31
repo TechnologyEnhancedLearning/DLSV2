@@ -8,40 +8,36 @@
     </h2>
     <div class="nhsuk-card__description">
       <dl class="nhsuk-summary-list details-list-with-button">
-        <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             First name
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.FirstName" />
         </div>
 
-        <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             Last name
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.Surname" />
         </div>
 
-        <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            Email address
+            Primary email address
           </dt>
-          <partial name="_SummaryFieldValue" model="@Model.User" />
+          <partial name="_SummaryFieldValue" model="@Model.PrimaryEmail" />
         </div>
 
         @if (Model.DelegateNumber != null) {
-          <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
             <dt class="nhsuk-summary-list__key">
               Job group
             </dt>
             <partial name="_SummaryFieldValue" model="@Model.JobGroup" />
           </div>
 
-          foreach (var customField in Model.DelegateRegistrationPrompts) {
-            <partial name="../Shared/_CustomPromptSummaryListRow" model="@customField" />
-          }
-
-          <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
             <dt class="nhsuk-summary-list__key">
               Professional Registration Number
             </dt>
@@ -49,7 +45,7 @@
           </div>
         }
 
-        <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key profile-picture__label">
             Profile picture (optional)
           </dt>
@@ -62,13 +58,6 @@
           </dd>
         </div>
       </dl>
-
-      <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="MyAccount" asp-action="EditDetails" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
-        Edit details
-      </a>
-      <a class="nhsuk-button nhsuk-button--secondary" asp-controller="ChangePassword" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
-        Change password
-      </a>
     </div>
   </div>
 </div>

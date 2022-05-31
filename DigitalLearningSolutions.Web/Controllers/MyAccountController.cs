@@ -60,7 +60,13 @@
                     delegateUser
                 );
 
-            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts, dlsSubApplication);
+            var model = new MyAccountViewModel(
+                adminUser,
+                delegateUser,
+                userService.GetCentreEmail(User.GetUserId()!.Value, User.GetCentreId()),
+                customPrompts,
+                dlsSubApplication
+            );
 
             return View(model);
         }
@@ -86,6 +92,7 @@
                 adminUser,
                 delegateUser,
                 jobGroups,
+                userService.GetCentreEmail(User.GetUserId()!.Value, User.GetCentreId()),
                 customPrompts,
                 dlsSubApplication,
                 returnUrl,
@@ -118,8 +125,8 @@
             DlsSubApplication dlsSubApplication
         )
         {
-            var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
+            var userId = User.GetUserId()!.Value;
 
             if (userDelegateId.HasValue)
             {
@@ -131,15 +138,6 @@
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.ProfileImageFile),
                     "Preview your new profile picture before saving"
-                );
-            }
-
-            if (formData.Password != null &&
-                !userService.IsPasswordValid(userAdminId, userDelegateId, formData.Password))
-            {
-                ModelState.AddModelError(
-                    nameof(MyAccountEditDetailsFormData.Password),
-                    CommonValidationErrorMessages.IncorrectPassword
                 );
             }
 
@@ -155,22 +153,41 @@
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
-            if (!userService.NewEmailAddressIsValid(formData.Email!, userAdminId, userDelegateId, User.GetCentreId()))
+            if (!userService.NewEmailAddressIsValid(
+                    formData.Email!,
+                    userId
+                ))
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
-                    "A user with this email address is already registered at this centre"
+                    CommonValidationErrorMessages.EmailAlreadyInUse
                 );
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
-            var (accountDetailsData, centreAnswersData) = AccountDetailsDataHelper.MapToUpdateAccountData(
+            if (!string.IsNullOrWhiteSpace(formData.CentreEmail) && !userService.NewEmailAddressIsValid(
+                    formData.CentreEmail,
+                    userId
+                ))
+            {
+                ModelState.AddModelError(
+                    nameof(MyAccountEditDetailsFormData.CentreEmail),
+                    CommonValidationErrorMessages.EmailAlreadyInUse
+                );
+                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
+            }
+
+            var (accountDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToUpdateAccountData(
                 formData,
-                userAdminId,
-                userDelegateId,
+                userId,
+                userDelegateId
+            );
+            userService.UpdateUserDetailsAndCentreSpecificDetails(
+                accountDetailsData,
+                delegateDetailsData,
+                formData.CentreEmail,
                 User.GetCentreId()
             );
-            userService.UpdateUserAccountDetailsForAllVerifiedUsers(accountDetailsData, centreAnswersData);
 
             return this.RedirectToReturnUrl(formData.ReturnUrl, logger) ?? RedirectToAction(
                 "Index",

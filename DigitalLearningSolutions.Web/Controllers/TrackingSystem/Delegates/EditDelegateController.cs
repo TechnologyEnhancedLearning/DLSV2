@@ -75,11 +75,12 @@
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
-            if (!userService.NewEmailAddressIsValid(formData.Email!, null, delegateId, centreId))
+            // TODO HEEDLS-951 Fix this so that it is passing the correct User ID, that of the delegate not the logged in admin
+            if (!userService.NewEmailAddressIsValid(formData.Email!, User.GetUserId()!.Value))
             {
                 ModelState.AddModelError(
                     nameof(EditDetailsFormData.Email),
-                    "A user with this email address is already registered at this centre"
+                    CommonValidationErrorMessages.EmailAlreadyInUse
                 );
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }

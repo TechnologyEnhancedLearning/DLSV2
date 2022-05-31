@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
@@ -12,14 +13,16 @@
         public void SetCentreEmail(
             int userId,
             int centreId,
-            string email,
+            string? email,
             IDbTransaction? transaction = null
         )
         {
+            var transactionShouldBeClosed = false;
             if (transaction == null)
             {
                 connection.EnsureOpen();
                 transaction = connection.BeginTransaction();
+                transactionShouldBeClosed = true;
             }
 
             if (EmailIsInUseByOtherUser(userId, email, transaction))
@@ -52,7 +55,7 @@
                         END",
                 new { userId, centreId },
                 transaction
-                );
+            );
 
             if (detailsAlreadyExist)
             {
@@ -61,7 +64,8 @@
                     SET Email = @email
                     WHERE userID = @userId AND centreID = @centreId",
                     userCentreDetailsValues,
-                    transaction);
+                    transaction
+                );
             }
             else
             {
@@ -82,6 +86,11 @@
                     transaction
                 );
             }
+
+            if (transactionShouldBeClosed)
+            {
+                transaction.Commit();
+            }
         }
 
         public bool EmailIsInUseByOtherUser(int userId, string email, IDbTransaction? transaction = null)
@@ -95,7 +104,8 @@
                         ELSE 0
                         END",
                 new { email, userId },
-                transaction);
+                transaction
+            );
         }
 
         public bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails, IDbTransaction? transaction = null)
@@ -110,6 +120,16 @@
                 new { emails },
                 transaction
             );
+        }
+
+        public string? GetCentreEmail(int userId, int centreId)
+        {
+            return connection.Query<string?>(
+                @"SELECT Email
+                    FROM UserCentreDetails
+                    WHERE UserID = @userId AND CentreID = @centreId",
+                new { userId, centreId }
+            ).SingleOrDefault();
         }
     }
 }

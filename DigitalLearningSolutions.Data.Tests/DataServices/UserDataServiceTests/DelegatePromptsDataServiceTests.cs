@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.UserDataServiceTests
 {
+    using System;
     using System.Transactions;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -29,7 +30,8 @@
                     answer3,
                     answer4,
                     answer5,
-                    answer6
+                    answer6,
+                    DateTime.Now
                 );
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
 

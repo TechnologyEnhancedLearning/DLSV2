@@ -14,7 +14,23 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.HasProfessionalRegistrationNumber), nameof(Model.ProfessionalRegistrationNumber), nameof(Model.Password), nameof(Model.JobGroupId), nameof(Model.Answer1), nameof(Model.Answer2), nameof(Model.Answer3), nameof(Model.Answer4), nameof(Model.Answer5), nameof(Model.Answer6) })" />
+      var orderOfPropertyNames = new[] {
+        nameof(Model.FirstName),
+        nameof(Model.LastName),
+        nameof(Model.Email),
+        nameof(Model.JobGroupId),
+        nameof(Model.HasProfessionalRegistrationNumber),
+        nameof(Model.ProfessionalRegistrationNumber),
+        nameof(Model.CentreEmail),
+        nameof(Model.Answer1),
+        nameof(Model.Answer2),
+        nameof(Model.Answer3),
+        nameof(Model.Answer4),
+        nameof(Model.Answer5),
+        nameof(Model.Answer6),
+      };
+
+      <vc:error-summary order-of-property-names="@orderOfPropertyNames" />
     }
 
     <h1 class="nhsuk-heading-xl" id="app-page-heading">Edit details</h1>
@@ -34,36 +50,77 @@
   <input type="hidden" asp-for="IsCheckDetailRedirect" />
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="@nameof(Model.FirstName)"
-                     label="First name"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="false"
-                     autocomplete="given-name"
-                     hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+      <vc:text-input
+        asp-for="@nameof(Model.FirstName)"
+        label="First name"
+        populate-with-current-value="true"
+        type="text"
+        spell-check="false"
+        autocomplete="given-name"
+        hint-text=""
+        css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input asp-for="@nameof(Model.LastName)"
-                     label="Last name"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="false"
-                     autocomplete="family-name"
-                     hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+      <vc:text-input
+        asp-for="@nameof(Model.LastName)"
+        label="Last name"
+        populate-with-current-value="true"
+        type="text"
+        spell-check="false"
+        autocomplete="family-name"
+        hint-text=""
+        css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input asp-for="@nameof(Model.Email)"
-                     label="Email address"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="false"
-                     autocomplete="email"
-                     hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+      @{ var primaryEmailHintText = @"This will be used for logging into the system.
+                                    All communications will be sent to this email by default."; }
+      <vc:text-input
+        asp-for="@nameof(Model.Email)"
+        label="Primary email address"
+        populate-with-current-value="true"
+        type="text"
+        spell-check="false"
+        autocomplete="email"
+        hint-text="@primaryEmailHintText"
+        css-class="nhsuk-u-width-one-half" />
 
-      @if (Model.IsDelegateUser) {
-        <partial name="_EditRegistrationNumber" model="@Model" />
-      }
+      <vc:select-list
+        asp-for="@nameof(Model.JobGroupId)"
+        label="Job group"
+        value="@Model.JobGroupId.ToString()"
+        hint-text=""
+        deselectable="false"
+        css-class="nhsuk-u-width-one-half"
+        default-option="Select a job group"
+        select-list-options="@Model.JobGroups" />
+
+      <partial name="_EditRegistrationNumber" model="@Model" />
+
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-half">
+          @{ var profilePictureHintText = @"To change your profile picture, select a new image and click the Preview button to preview it.
+                                      To remove your profile picture click the remove button.
+                                      Changes will not be made until the Save button below is clicked."; }
+          <input type="hidden" asp-for="ProfileImage" />
+          <vc:file-input
+            asp-for="@nameof(Model.ProfileImageFile)"
+            label="Profile picture (optional)"
+            hint-text="@profilePictureHintText"
+            css-class="nhsuk-u-width-full" />
+        </div>
+        <div class="nhsuk-grid-column-one-half">
+          @if (Model.ProfileImage != null) {
+            <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.ProfileImage)" alt="Profile Picture" />
+          } else {
+            <img class="profile-picture__image" src="@Url.Content("~/images/avatar.png")" alt="Default Profile Picture" />
+          }
+        </div>
+      </div>
+
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-half">
+          <button name="action" class="nhsuk-button" value="previewImage">Preview</button>
+          <button name="action" class="nhsuk-button nhsuk-button--secondary" value="removeImage">Remove</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -71,14 +128,18 @@
     <input type="hidden" asp-for="IsDelegateUser" />
     <div class="nhsuk-grid-row divider">
       <div class="nhsuk-grid-column-full">
-        <vc:select-list asp-for="@nameof(Model.JobGroupId)"
-                        label="Job group"
-                        value="@Model.JobGroupId.ToString()"
-                        hint-text=""
-                        deselectable="false"
-                        css-class="nhsuk-u-width-one-half"
-                        default-option="Select a job group"
-                        select-list-options="@Model.JobGroups" />
+
+        @{ var centreEmailHintText = @"If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address.
+                                     Your primary email address will still be used for logging in and notifications for managing your account."; }
+        <vc:text-input
+          asp-for="@nameof(Model.CentreEmail)"
+          label="Centre email (optional)"
+          populate-with-current-value="true"
+          type="text"
+          spell-check="false"
+          autocomplete="email"
+          hint-text="@centreEmailHintText"
+          css-class="nhsuk-u-width-one-half" />
 
         @foreach (var customField in Model.DelegateRegistrationPrompts) {
           @if (customField.Options.Any()) {
@@ -106,43 +167,7 @@
   }
 
   <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-one-half">
-      @{ var hintText = @"To change your profile picture, select a new image and click the Preview button to preview it.
-                                  To remove your profile picture click the remove button.
-                                  Changes will not be made until the Save button below is clicked."; }
-      <input type="hidden" asp-for="ProfileImage" />
-      <vc:file-input asp-for="@nameof(Model.ProfileImageFile)"
-                     label="Profile picture (optional)"
-                     hint-text="@hintText"
-                     css-class="nhsuk-u-width-full" />
-    </div>
-    <div class="nhsuk-grid-column-one-half">
-      @if (Model.ProfileImage != null) {
-        <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.ProfileImage)" alt="Profile Picture" />
-      } else {
-        <img class="profile-picture__image" src="@Url.Content("~/images/avatar.png")" alt="Default Profile Picture" />
-      }
-    </div>
-  </div>
-
-  <div class="nhsuk-grid-row divider">
-    <div class="nhsuk-grid-column-one-half">
-      <button name="action" class="nhsuk-button" value="previewImage">Preview</button>
-      <button name="action" class="nhsuk-button nhsuk-button--secondary" value="removeImage">Remove</button>
-    </div>
-  </div>
-
-  <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="@nameof(Model.Password)"
-                     label="Confirm password to save changes:"
-                     populate-with-current-value="false"
-                     type="password"
-                     spell-check="false"
-                     autocomplete=""
-                     hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
-
       <button name="action" class="nhsuk-button" value="save">Save</button>
     </div>
   </div>

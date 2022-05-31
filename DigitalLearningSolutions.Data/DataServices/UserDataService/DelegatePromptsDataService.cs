@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
+    using System;
     using System.Linq;
     using Dapper;
 
@@ -12,7 +13,8 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6
+            string? answer6,
+            DateTime detailsLastChecked
         )
         {
             connection.Execute(
@@ -23,9 +25,10 @@
                             Answer3 = @answer3,
                             Answer4 = @answer4,
                             Answer5 = @answer5,
-                            Answer6 = @answer6
+                            Answer6 = @answer6,
+                            CentreSpecificDetailsLastChecked = @detailsLastChecked
                         WHERE ID = @id",
-                new { answer1, answer2, answer3, answer4, answer5, answer6, id }
+                new { answer1, answer2, answer3, answer4, answer5, answer6, id, detailsLastChecked }
             );
         }
 

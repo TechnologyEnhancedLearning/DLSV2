@@ -21,6 +21,11 @@
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? Email { get; set; }
 
+        [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
+        [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
+        [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
+        public string? CentreEmail { get; set; }
+
         public int? JobGroupId { get; set; }
 
         public string? Answer1 { get; set; }

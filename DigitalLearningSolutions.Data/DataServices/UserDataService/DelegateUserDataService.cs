@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
@@ -106,6 +107,7 @@
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
             int jobGroupId,
+            DateTime detailsLastChecked,
             int userId
         )
         {
@@ -118,7 +120,8 @@
                             ProfileImage = @profileImage,
                             ProfessionalRegistrationNumber = @professionalRegNumber,
                             HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
-                            JobGroupId = @jobGroupId
+                            JobGroupId = @jobGroupId,
+                            DetailsLastChecked = @detailsLastChecked
                         WHERE ID = @userId",
                 new
                 {
@@ -130,6 +133,7 @@
                     professionalRegNumber,
                     hasBeenPromptedForPrn,
                     jobGroupId,
+                    detailsLastChecked,
                 }
             );
         }
