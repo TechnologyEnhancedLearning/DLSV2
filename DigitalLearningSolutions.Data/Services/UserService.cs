@@ -39,8 +39,6 @@ namespace DigitalLearningSolutions.Data.Services
 
         bool NewEmailAddressIsValid(string emailAddress, int userId);
 
-        UserAccountSet GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password);
-
         bool IsPasswordValid(int? adminId, int? delegateId, string password);
 
         bool IsDelegateEmailValidForCentre(string email, int centreId);
@@ -226,7 +224,7 @@ namespace DigitalLearningSolutions.Data.Services
             return !userDataService.EmailIsInUseByOtherUser(userId, emailAddress);
         }
 
-        public UserAccountSet GetVerifiedLinkedUsersAccounts(
+        private UserAccountSet GetVerifiedLinkedUsersAccounts(
             int? adminId,
             int? delegateId,
             string password
@@ -325,7 +323,7 @@ namespace DigitalLearningSolutions.Data.Services
         )
         {
             var delegateUser = userDataService.GetDelegateUserById(editDelegateDetailsData.DelegateId);
-            var (adminUser, delegateUsers) = GetUsersByEmailAddress(delegateUser!.EmailAddress);
+            var (adminUser, _) = GetUsersByEmailAddress(delegateUser!.EmailAddress);
 
             if (adminUser != null)
             {

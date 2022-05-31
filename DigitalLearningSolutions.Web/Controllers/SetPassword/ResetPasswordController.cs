@@ -2,7 +2,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
@@ -13,18 +12,12 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
     public class ResetPasswordController : Controller
     {
         private readonly IPasswordResetService passwordResetService;
-        private readonly IPasswordService passwordService;
-        private readonly IUserService userService;
 
         public ResetPasswordController(
-            IPasswordResetService passwordResetService,
-            IPasswordService passwordService,
-            IUserService userService
+            IPasswordResetService passwordResetService
         )
         {
             this.passwordResetService = passwordResetService;
-            this.passwordService = passwordService;
-            this.userService = userService;
         }
 
         [HttpGet]

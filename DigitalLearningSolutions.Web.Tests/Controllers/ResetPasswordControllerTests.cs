@@ -18,22 +18,18 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
     {
         private ResetPasswordController authenticatedController = null!;
         private IPasswordResetService passwordResetService = null!;
-        private IPasswordService passwordService = null!;
-        private IUserService userService = null!;
         private ResetPasswordController unauthenticatedController = null!;
 
         [SetUp]
         public void SetUp()
         {
             passwordResetService = A.Fake<IPasswordResetService>();
-            passwordService = A.Fake<IPasswordService>();
-            userService = A.Fake<IUserService>();
 
-            unauthenticatedController = new ResetPasswordController(passwordResetService, passwordService, userService)
+            unauthenticatedController = new ResetPasswordController(passwordResetService)
                 .WithDefaultContext()
                 .WithMockTempData()
                 .WithMockUser(false);
-            authenticatedController = new ResetPasswordController(passwordResetService, passwordService, userService)
+            authenticatedController = new ResetPasswordController(passwordResetService)
                 .WithDefaultContext()
                 .WithMockTempData()
                 .WithMockUser(true);
