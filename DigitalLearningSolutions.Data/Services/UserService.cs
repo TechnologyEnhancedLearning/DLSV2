@@ -34,7 +34,7 @@ namespace DigitalLearningSolutions.Data.Services
             MyAccountDetailsData myAccountDetailsData,
             DelegateDetailsData? delegateDetailsData,
             string? centreEmail,
-            int? centreId
+            int centreId
         );
 
         bool NewEmailAddressIsValid(string emailAddress, int userId);
@@ -173,7 +173,7 @@ namespace DigitalLearningSolutions.Data.Services
             MyAccountDetailsData myAccountDetailsData,
             DelegateDetailsData? delegateDetailsData,
             string? centreEmail,
-            int? centreId
+            int centreId
         )
         {
             var detailsLastChecked = clockService.UtcNow;
@@ -190,14 +190,11 @@ namespace DigitalLearningSolutions.Data.Services
                 myAccountDetailsData.UserId
             );
 
-            if (centreId != null)
-            {
-                userDataService.SetCentreEmail(
-                    myAccountDetailsData.UserId,
-                    centreId.Value,
-                    centreEmail
-                );
-            }
+            userDataService.SetCentreEmail(
+                myAccountDetailsData.UserId,
+                centreId,
+                centreEmail
+            );
 
             if (delegateDetailsData != null)
             {

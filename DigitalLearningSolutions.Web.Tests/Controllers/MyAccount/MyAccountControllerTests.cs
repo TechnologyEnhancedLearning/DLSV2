@@ -138,7 +138,7 @@
                         A<MyAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string?>._,
-                        A<int?>._
+                        A<int>._
                     )
                 )
                 .DoesNothing();
@@ -162,7 +162,7 @@
                         A<MyAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string?>._,
-                        A<int?>._
+                        A<int>._
                     )
                 )
                 .MustHaveHappened();
@@ -195,7 +195,7 @@
                         A<MyAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string?>._,
-                        A<int?>._
+                        A<int>._
                     )
                 )
                 .DoesNothing();
@@ -237,7 +237,7 @@
                         A<MyAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string?>._,
-                        A<int?>._
+                        A<int>._
                     )
                 )
                 .DoesNothing();

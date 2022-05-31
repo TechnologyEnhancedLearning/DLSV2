@@ -191,15 +191,18 @@
         }
 
         [Test]
-        public void UpdateUserDetailsAndCentreSpecificDetails_with_null_delegate_details_only_updates_user()
+        public void
+            UpdateUserDetailsAndCentreSpecificDetails_with_null_delegate_details_only_updates_user_and_centre_email()
         {
             // Given
+            const int centreId = 1;
+            const string centreEmail = "test@email.com";
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var now = DateTime.Now;
             A.CallTo(() => clockService.UtcNow).Returns(now);
-            
+
             // When
-            userService.UpdateUserDetailsAndCentreSpecificDetails(accountDetailsData, null, null, null);
+            userService.UpdateUserDetailsAndCentreSpecificDetails(accountDetailsData, null, centreEmail, centreId);
 
             // Then
             A.CallTo(
@@ -216,8 +219,15 @@
                     )
                 )
                 .MustHaveHappened();
-            A.CallTo(() => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._))
-                .MustNotHaveHappened();
+            A.CallTo(
+                    () => userDataService.SetCentreEmail(
+                        accountDetailsData.UserId,
+                        centreId,
+                        centreEmail,
+                        A<IDbTransaction?>._
+                    )
+                )
+                .MustHaveHappened();
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).MustNotHaveHappened();
         }
 
@@ -233,7 +243,15 @@
             const string answer6 = "answer6";
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
-            var delegateDetailsData = new DelegateDetailsData(delegateAccount.Id, answer1, answer2, answer3, answer4, answer5, answer6);
+            var delegateDetailsData = new DelegateDetailsData(
+                delegateAccount.Id,
+                answer1,
+                answer2,
+                answer3,
+                answer4,
+                answer5,
+                answer6
+            );
 
             var now = DateTime.Now;
             A.CallTo(() => clockService.UtcNow).Returns(now);
@@ -243,7 +261,7 @@
                 accountDetailsData,
                 delegateDetailsData,
                 null,
-                null
+                1
             );
 
             // Then
@@ -289,41 +307,6 @@
                     )
                 )
             ).MustHaveHappened();
-            A.CallTo(() => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._))
-                .MustNotHaveHappened();
-        }
-
-        [Test]
-        public void UpdateUserDetailsAndCentreSpecificDetails_with_non_null_centre_id_updates_centre_email()
-        {
-            // Given
-            var user = UserTestHelper.GetDefaultUserAccount();
-            const int centreId = 7;
-            const string centreEmail = "test@email.com";
-            var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
-            var now = DateTime.Now;
-            A.CallTo(() => clockService.UtcNow).Returns(now);
-
-            // When
-            userService.UpdateUserDetailsAndCentreSpecificDetails(accountDetailsData, null, centreEmail, centreId);
-
-            // Then
-            A.CallTo(
-                    () => userDataService.UpdateUser(
-                        accountDetailsData.FirstName,
-                        accountDetailsData.Surname,
-                        accountDetailsData.Email,
-                        accountDetailsData.ProfileImage,
-                        accountDetailsData.ProfessionalRegistrationNumber,
-                        accountDetailsData.HasBeenPromptedForPrn,
-                        accountDetailsData.JobGroupId,
-                        now,
-                        accountDetailsData.UserId
-                    )
-                )
-                .MustHaveHappened();
-            A.CallTo(() => userDataService.SetCentreEmail(user.Id, centreId, centreEmail, A<IDbTransaction?>._))
-                .MustHaveHappened();
         }
 
         [Test]
