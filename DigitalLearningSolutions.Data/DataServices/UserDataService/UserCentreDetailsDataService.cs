@@ -24,6 +24,15 @@
 
             if (EmailIsInUseByOtherUser(userId, email, transaction))
             {
+                // It's possible that another user could take this email
+                // in the milliseconds between when we do this check and when we save this user's email.
+                // We decided our user base (~500,000 in May 2022) was small enough that this isn't likely to happen.
+                // This also goes for updating a user's primary email.
+                //
+                // If this proves to be a problem, we can protect ourselves by doing this:
+                // - Also check that no other user is using the email after we update UserCentreDetails.
+                // - Wrap the update query, along with both checks, in a transaction.
+                // - Roll the transaction back if the second check fails.
                 throw new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse);
             }
 
