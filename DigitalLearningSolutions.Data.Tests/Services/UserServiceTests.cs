@@ -231,15 +231,12 @@
             const string answer4 = "answer4";
             const string answer5 = "answer5";
             const string answer6 = "answer6";
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var delegateDetailsData = new DelegateDetailsData(delegateAccount.Id, answer1, answer2, answer3, answer4, answer5, answer6);
 
             var now = DateTime.Now;
             A.CallTo(() => clockService.UtcNow).Returns(now);
-
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateAccount.Id)).Returns(delegateUser);
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -279,7 +276,7 @@
                 .MustHaveHappened();
             A.CallTo(
                 () => groupsService.SynchroniseUserChangesWithGroups(
-                    delegateUser,
+                    delegateDetailsData.DelegateId,
                     accountDetailsData,
                     A<RegistrationFieldAnswers>.That.Matches(
                         rfa => rfa.JobGroupId == accountDetailsData.JobGroupId &&

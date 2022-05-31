@@ -35,7 +35,7 @@
             return new UserReference(Id, UserType.DelegateUser);
         }
 
-        public RegistrationFieldAnswers GetCentreAnswersData()
+        public RegistrationFieldAnswers GetRegistrationFieldAnswers()
         {
             return new RegistrationFieldAnswers(
                 CentreId,

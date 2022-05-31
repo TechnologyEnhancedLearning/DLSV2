@@ -169,7 +169,6 @@ namespace DigitalLearningSolutions.Data.Services
             return (adminUserWithActiveCentre, delegateUsersWithActiveCentres);
         }
 
-        // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
         public void UpdateUserDetailsAndCentreSpecificDetails(
             MyAccountDetailsData myAccountDetailsData,
             DelegateDetailsData? delegateDetailsData,
@@ -202,9 +201,6 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (delegateDetailsData != null)
             {
-                // TODO HEEDLS-887 Remove this call once groupsService.SynchroniseUserChangesWithGroups is refactored
-                var oldDelegateUserDetails = userDataService.GetDelegateUserById(delegateDetailsData.DelegateId);
-
                 userDataService.UpdateDelegateUserCentrePrompts(
                     delegateDetailsData.DelegateId,
                     delegateDetailsData.Answer1,
@@ -217,7 +213,7 @@ namespace DigitalLearningSolutions.Data.Services
                 );
 
                 groupsService.SynchroniseUserChangesWithGroups(
-                    oldDelegateUserDetails!,
+                    delegateDetailsData.DelegateId,
                     myAccountDetailsData,
                     new RegistrationFieldAnswers(delegateDetailsData, myAccountDetailsData.JobGroupId)
                 );
@@ -362,7 +358,7 @@ namespace DigitalLearningSolutions.Data.Services
             );
 
             groupsService.SynchroniseUserChangesWithGroups(
-                delegateUser,
+                delegateUser.Id,
                 editDelegateDetailsData,
                 registrationFieldAnswers
             );

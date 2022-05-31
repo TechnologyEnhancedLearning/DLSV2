@@ -349,10 +349,9 @@
             );
         }
 
-        public static RegistrationFieldAnswers GetDefaultCentreAnswersData(
+        public static RegistrationFieldAnswers GetDefaultRegistrationFieldAnswers(
             int centreId = 1,
             int jobGroupId = 1,
-            string? centreEmail = null,
             string? answer1 = null,
             string? answer2 = null,
             string? answer3 = null,
