@@ -413,5 +413,35 @@
                 }
             );
         }
+
+        public static async Task<UserAccount> GetUserWithMultipleDelegateAccountsAsync(this DbConnection connection)
+        {
+            var userId = await connection.QuerySingleOrDefaultAsync<int>(
+                @"SELECT TOP(1) UserID
+                    FROM DelegateAccounts
+                    GROUP BY UserID
+                    HAVING COUNT(*) > 1"
+            );
+
+            var user = await connection.QuerySingleOrDefaultAsync<UserAccount>(
+                @"SELECT *
+                    FROM Users
+                    Where ID = @userId",
+                new { userId }
+            );
+
+            return user;
+        }
+
+        public static async Task SetDelegateAccountOldPasswordsForUserAsync(
+            this DbConnection connection,
+            UserAccount user
+        )
+        {
+            await connection.ExecuteAsync(
+                @"UPDATE DelegateAccounts SET OldPassword = @oldPassword WHERE UserID = @userId;",
+                new { oldPassword = "old password", userId = user.Id }
+            );
+        }
     }
 }

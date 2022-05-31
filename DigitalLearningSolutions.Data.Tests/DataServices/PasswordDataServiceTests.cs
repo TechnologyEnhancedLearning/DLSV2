@@ -87,14 +87,26 @@
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var existingDelegateAccount = UserTestHelper.GetDefaultDelegateAccount();
+            var userWithMultipleDelegateAccounts = await connection.GetUserWithMultipleDelegateAccountsAsync();
+            await connection.SetDelegateAccountOldPasswordsForUserAsync(userWithMultipleDelegateAccounts);
+
+            foreach (var delegateAccount in userDataService.GetDelegateAccountsByUserId(
+                userWithMultipleDelegateAccounts.Id
+            ))
+            {
+                delegateAccount.OldPassword.Should().NotBe(null);
+            }
 
             // When
-            await passwordDataService.SetOldPasswordsToNullByUserIdAsync(existingDelegateAccount.UserId);
+            await passwordDataService.SetOldPasswordsToNullByUserIdAsync(userWithMultipleDelegateAccounts.Id);
 
             // Then
-            userDataService.GetDelegateAccountsByUserId(existingDelegateAccount.UserId).First().OldPassword.Should()
-                .Be(null);
+            foreach (var delegateAccount in userDataService.GetDelegateAccountsByUserId(
+                userWithMultipleDelegateAccounts.Id
+            ))
+            {
+                delegateAccount.OldPassword.Should().Be(null);
+            }
         }
     }
 }
