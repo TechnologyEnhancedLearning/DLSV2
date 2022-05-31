@@ -155,6 +155,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             );
 
             // Then
+            A.CallTo(
+                    () => passwordResetService.GetValidPasswordResetEntityAsync(
+                        "email",
+                        "hash",
+                        ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => passwordResetService.ResetPasswordAsync(passwordReset, "testPass-9"))
                 .MustHaveHappenedOnceExactly();
 
