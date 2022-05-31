@@ -110,6 +110,7 @@
             }
         }
 
+        [NoCaching]
         [Route("AllCourseDelegates/{customisationId:int}")]
         public IActionResult AllCourseDelegates(int customisationId)
         {

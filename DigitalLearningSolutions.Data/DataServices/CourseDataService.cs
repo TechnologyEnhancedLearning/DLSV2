@@ -141,6 +141,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
                 AND can.CandidateId = ca.CandidateId) AS AttemptsPassed";
 
+        private readonly IDbConnection connection;
+        private readonly ILogger<CourseDataService> logger;
+
         private readonly string selectDelegateCourseInfoQuery =
             @$"SELECT
                 cu.CustomisationID AS CustomisationId,
@@ -161,9 +164,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                 pr.LoginCount,
                 pr.Duration AS LearningTime,
                 pr.DiagnosticScore,
-                LTRIM(RTRIM(pr.Answer1)),
-                LTRIM(RTRIM(pr.Answer2)),
-                LTRIM(RTRIM(pr.Answer3)),
+                LTRIM(RTRIM(pr.Answer1)) AS Answer1,
+                LTRIM(RTRIM(pr.Answer2)) AS Answer2,
+                LTRIM(RTRIM(pr.Answer3)) AS Answer3,
                 {DelegateAllAttemptsQuery},
                 {DelegateAttemptsPassedQuery},
                 pr.FirstSubmittedTime AS Enrolled,
@@ -190,9 +193,6 @@ namespace DigitalLearningSolutions.Data.DataServices
             LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = pr.SupervisorAdminId
             LEFT OUTER JOIN AdminUsers auEnrolledBy ON auEnrolledBy.AdminID = pr.EnrolledByAdminID
             INNER JOIN Candidates AS ca ON ca.CandidateID = pr.CandidateID";
-
-        private readonly IDbConnection connection;
-        private readonly ILogger<CourseDataService> logger;
 
         public CourseDataService(IDbConnection connection, ILogger<CourseDataService> logger)
         {
