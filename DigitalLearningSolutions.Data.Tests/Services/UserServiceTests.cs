@@ -1097,6 +1097,27 @@
             result.Should().BeFalse();
         }
 
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void EmailIsInUse_returns_whether_email_is_in_use(bool isEmailInUse)
+        {
+            // Given
+            var email = "fake";
+            A.CallTo(
+                () => userDataService.AnyEmailsInSetAreAlreadyInUse(
+                    A<IEnumerable<string>>.That.IsSameSequenceAs(new[] { email }),
+                    null
+                )
+            ).Returns(isEmailInUse);
+
+            // When
+            var result = userService.EmailIsInUse(email);
+
+            // Then
+            result.Should().Be(isEmailInUse);
+        }
+
         private void AssertAdminPermissionsCalledCorrectly(
             int adminId,
             AdminRoles adminRoles,

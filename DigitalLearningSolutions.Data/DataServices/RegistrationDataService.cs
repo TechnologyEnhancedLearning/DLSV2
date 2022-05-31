@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Services;
 
     public interface IRegistrationDataService
     {
@@ -20,18 +21,23 @@
     {
         private readonly IDbConnection connection;
         private readonly IUserDataService userDataService;
+        private readonly IClockService clockService;
 
-        public RegistrationDataService(IDbConnection connection)
+        public RegistrationDataService(IDbConnection connection, IUserDataService userDataService, IClockService clockService)
         {
             this.connection = connection;
+            this.userDataService = userDataService;
+            this.clockService = clockService;
         }
 
         public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
         {
-            // TODO HEEDLS-886: this method previously returned error codes as well as candidate numbers.
+            // TODO HEEDLS-900: this method previously returned error codes as well as candidate numbers.
             // any code that calls it and handled those errors on the basis of the codes needs to be updated
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
+
+            var currentTime = clockService.UtcNow;
 
             var userValues = new
             {
@@ -42,6 +48,7 @@
                 delegateRegistrationModel.Active,
                 PasswordHash = "temp",
                 ProfessionalRegistrationNumber = (string?)null,
+                DetailsLastChecked = currentTime,
             };
 
             var userId = connection.QuerySingle<int>(
@@ -53,7 +60,8 @@
                         LastName,
                         JobGroupID,
                         ProfessionalRegistrationNumber,
-                        Active
+                        Active,
+                        DetailsLastChecked
                     )
                     OUTPUT Inserted.ID
                     VALUES
@@ -64,7 +72,8 @@
                         @lastName,
                         @jobGroup,
                         @professionalRegistrationNumber,
-                        @active
+                        @active,
+                        @detailsLastChecked
                     )",
                 userValues,
                 transaction
@@ -103,7 +112,7 @@
             {
                 userId,
                 CentreId = delegateRegistrationModel.Centre,
-                DateRegistered = DateTime.UtcNow,
+                DateRegistered = currentTime,
                 candidateNumber,
                 delegateRegistrationModel.Answer1,
                 delegateRegistrationModel.Answer2,
@@ -115,7 +124,7 @@
                 delegateRegistrationModel.Active,
                 delegateRegistrationModel.IsExternalRegistered,
                 delegateRegistrationModel.IsSelfRegistered,
-                DetailsLastChecked = DateTime.UtcNow,
+                CentreSpecificDetailsLastChecked = currentTime,
             };
 
             connection.Execute(
@@ -153,12 +162,13 @@
                         @active,
                         @isExternalRegistered,
                         @isSelfRegistered,
-                        @detailsLastChecked
+                        @centreSpecificDetailsLastChecked
                     )",
                 candidateValues,
                 transaction
             );
 
+            //throw new Exception();
             transaction.Commit();
 
             // TODO HEEDLS-874 deal with group assignment
@@ -194,7 +204,7 @@
                 importOnly = registrationModel.ImportOnly,
                 isTrainer = registrationModel.IsTrainer,
                 isSupervisor = registrationModel.IsSupervisor,
-                isNominatedSupervisor = registrationModel.IsNominatedSupervisor
+                isNominatedSupervisor = registrationModel.IsNominatedSupervisor,
             };
 
             var adminUserId = connection.QuerySingle<int>(

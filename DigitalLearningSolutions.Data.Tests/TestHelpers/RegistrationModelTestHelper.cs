@@ -108,13 +108,15 @@
             DateTime? notifyDate = null,
             bool active = true,
             bool approved = false,
-            string? professionalRegistrationNumber = "PRN1234"
+            string? professionalRegistrationNumber = "PRN1234",
+            string? secondaryEmail = "testuser@weekends.com"
         )
         {
             return new DelegateRegistrationModel(
                 firstName,
                 lastName,
                 email,
+                secondaryEmail,
                 centre,
                 jobGroup,
                 passwordHash,

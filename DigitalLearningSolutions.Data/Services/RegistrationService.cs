@@ -191,7 +191,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         private void ValidateRegistrationEmail(DelegateRegistrationModel model)
         {
-            if (userDataService.AnyEmailsInSetAreAlreadyInUse(new[] { model.PrimaryEmail, model.SecondaryEmail }))
+            var emails = (IEnumerable<string>)new[] { model.PrimaryEmail, model.SecondaryEmail }.Where(e => e != null);
+            if (userDataService.AnyEmailsInSetAreAlreadyInUse(emails))
             {
                 var error = DelegateCreationError.EmailAlreadyInUse;
                 logger.LogError(
@@ -272,7 +273,7 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 var error = e.Error;
                 logger.LogError(
-                    $"Could not create account for delegate on registration. Failure: {error.Name}."
+                    $"Could not create account for delegate on registration. Failure: {error.Name}"
                 );
                 throw new DelegateCreationFailedException(error);
             }
@@ -280,7 +281,7 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 var error = DelegateCreationError.UnexpectedError;
                 logger.LogError(
-                    $"Could not create account for delegate on registration. Failure: {error.Name}."
+                    $"Could not create account for delegate on registration. Failure: {error.Name}"
                 );
                 throw new DelegateCreationFailedException(error);
             }

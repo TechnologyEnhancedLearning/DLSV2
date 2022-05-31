@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -20,13 +21,15 @@
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
         private IUserDataService userDataService = null!;
+        private IClockService clockService = null!;
 
         [SetUp]
         public void SetUp()
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
-            service = new RegistrationDataService(connection);
             userDataService = new UserDataService(connection);
+            clockService = new ClockService();
+            service = new RegistrationDataService(connection, userDataService, clockService);
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }
 
@@ -69,31 +72,36 @@
                         firstName: "Xavier",
                         lastName: "Quondam",
                         centre: 3,
-                        email: "fake1"
+                        email: "fake1",
+                        secondaryEmail: "XQfake1"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                         firstName: "Xavier",
                         lastName: "Quondam",
                         centre: 3,
-                        email: "fake2"
+                        email: "fake2",
+                        secondaryEmail: "XQfake2"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                         firstName: "Xavier",
                         lastName: "Quondam",
                         centre: 3,
-                        email: "fake3"
+                        email: "fake3",
+                        secondaryEmail: "XQfake3"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                         firstName: "Xavier",
                         lastName: "Quondam",
                         centre: 3,
-                        email: "fake4"
+                        email: "fake4",
+                        secondaryEmail: "XQfake4"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                         firstName: "Xavier",
                         lastName: "Quondam",
                         centre: 3,
-                        email: "fake5"
+                        email: "fake5",
+                        secondaryEmail: "XQfake5"
                     ),
                 };
                 var actions = models.Select(GetRegistrationAction).ToArray();
@@ -127,6 +135,7 @@
             // if the test is failing, check the cleanup is working correctly.
             finally
             {
+                connection.Execute("DELETE FROM UserCentreDetails WHERE Email LIKE 'XQfake%'");
                 connection.Execute("DELETE FROM DelegateAccounts WHERE CandidateNumber LIKE 'XQ%'");
                 connection.Execute("DELETE FROM Users WHERE FirstName = 'Xavier' AND LastName = 'Quondam'");
             }
@@ -135,7 +144,9 @@
         private Action GetRegistrationAction(DelegateRegistrationModel model)
         {
             var newConnection = ServiceTestHelper.GetDatabaseConnection();
-            var newService = new RegistrationDataService(newConnection);
+            var newUserDataService = new UserDataService(newConnection);
+            var newClockService = new ClockService();
+            var newService = new RegistrationDataService(newConnection, newUserDataService, newClockService);
 
             void Action() => newService.RegisterNewUserAndDelegateAccount(model);
             return Action;

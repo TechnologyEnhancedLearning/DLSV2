@@ -108,7 +108,7 @@
             );
         }
 
-        public bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails, IDbTransaction? transaction = null)
+        public bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string> emails, IDbTransaction? transaction = null)
         {
             return connection.QueryFirst<bool>(
                 @"SELECT CASE

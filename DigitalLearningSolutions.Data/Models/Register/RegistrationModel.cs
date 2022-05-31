@@ -16,7 +16,6 @@
             FirstName = firstName;
             LastName = lastName;
             PrimaryEmail = email;
-            SecondaryEmail = null;
             Centre = centre;
             PasswordHash = passwordHash;
             Active = active;
