@@ -100,23 +100,24 @@
             var chooseACentreAccounts = loginService.GetChooseACentreAccounts(userEntity);
             var model = new ChooseACentreViewModel(
                 chooseACentreAccounts.OrderByDescending(account => account.IsAdmin)
-                    .ThenBy(account => account.CentreName).ToList()
+                    .ThenBy(account => account.CentreName).ToList(),
+                returnUrl
             );
 
             return View("ChooseACentre", model);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize(Policy = CustomPolicies.BasicUser)]
         public async Task<IActionResult> ChooseCentre(int centreId, string? returnUrl)
         {
-            // TODO HEEDLS-912: sort out ChooseACentre page
-            var rememberMe = true;
+            var rememberMe = (await HttpContext.AuthenticateAsync()).Properties.IsPersistent;
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
-            var firstAdminAccountCentreId = userEntity!.AdminAccounts.FirstOrDefault()?.CentreId;
-            var firstDelegateAccountCentreId = userEntity.DelegateAccounts.FirstOrDefault()?.CentreId;
-            var tempCentreIdToLogInto = (firstAdminAccountCentreId ?? firstDelegateAccountCentreId)!.Value;
-            return await LogIntoCentreAsync(userEntity!, rememberMe, returnUrl, tempCentreIdToLogInto);
+
+            await HttpContext.SignOutAsync();
+            HttpContext.Response.Cookies.Delete("ASP.NET_SessionId");
+
+            return await LogIntoCentreAsync(userEntity!, rememberMe, returnUrl, centreId);
         }
 
         private async Task<IActionResult> LogIntoCentreAsync(

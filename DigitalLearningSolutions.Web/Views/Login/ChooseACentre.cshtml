@@ -66,6 +66,7 @@
               @if (centreRow.ActionButton == "Choose") {
                 <form method="POST" asp-action="ChooseCentre">
                   <input type="hidden" name="centreId" value="@centreRow.CentreId" />
+                  <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
                   <button type="submit" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0">
                     Choose <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
                   </button>
