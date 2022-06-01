@@ -204,11 +204,11 @@
                 result.Should().NotBeNull();
                 var expectedLoginTime = new DateTime(2010, 9, 22, 6, 52, 9, 540);
                 result!.SessionId.Should().Be(1);
-                result!.CandidateId.Should().Be(1);
-                result!.CustomisationId.Should().Be(100);
-                result!.LoginTime.Should().Be(expectedLoginTime);
-                result!.Duration.Should().Be(51);
-                result!.Active.Should().BeFalse();
+                result.CandidateId.Should().Be(1);
+                result.CustomisationId.Should().Be(100);
+                result.LoginTime.Should().Be(expectedLoginTime);
+                result.Duration.Should().Be(51);
+                result.Active.Should().BeFalse();
             }
         }
 
