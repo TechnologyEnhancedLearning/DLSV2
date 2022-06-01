@@ -328,10 +328,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
         }
 
-        private IEnumerable<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsFromModel(
-            LearnerInformationViewModel model,
-            int centreId
-        )
+        private IEnumerable<EditDelegateRegistrationPromptViewModel>
+            GetEditDelegateRegistrationPromptViewModelsFromModel(
+                LearnerInformationViewModel model,
+                int centreId
+            )
         {
             return promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
                 centreId,
@@ -344,7 +345,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             );
         }
 
-        private IEnumerable<DelegateRegistrationPrompt> GetDelegateRegistrationPromptsFromData(DelegateRegistrationData data)
+        private IEnumerable<DelegateRegistrationPrompt> GetDelegateRegistrationPromptsFromData(
+            DelegateRegistrationData data
+        )
         {
             return promptsService.GetDelegateRegistrationPromptsForCentre(
                 data.Centre!.Value,
@@ -371,7 +374,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             DelegateRegistrationData data
         )
         {
-            model.DelegateRegistrationPrompts = GetEditDelegateRegistrationPromptViewModelsFromModel(model, data.Centre!.Value);
+            model.DelegateRegistrationPrompts =
+                GetEditDelegateRegistrationPromptViewModelsFromModel(model, data.Centre!.Value);
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
                 model.JobGroup
