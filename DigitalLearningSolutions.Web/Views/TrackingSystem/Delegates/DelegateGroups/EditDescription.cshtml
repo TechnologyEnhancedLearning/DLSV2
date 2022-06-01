@@ -29,6 +29,7 @@
 
       <button class="nhsuk-button" type="submit" value="save">Save</button>
       <input type="hidden" asp-for="GroupName" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
     </form>
     <vc:cancel-link-with-return-page-query asp-controller="DelegateGroups" asp-action="Index" return-page-query="@Model.ReturnPageQuery" />
   </div>
