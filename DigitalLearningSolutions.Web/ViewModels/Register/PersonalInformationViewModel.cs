@@ -17,6 +17,7 @@
             LastName = data.LastName;
             Centre = data.Centre;
             PrimaryEmail = data.Email;
+            SecondaryEmail = data.SecondaryEmail;
         }
 
         public PersonalInformationViewModel(DelegateRegistrationData data) : this((RegistrationData)data)
