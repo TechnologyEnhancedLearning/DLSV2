@@ -61,7 +61,7 @@
                     clockService
                 ).WithDefaultContext()
                 .WithMockHttpContextSession()
-                .WithMockUser(true, CentreId, adminId: null, delegateId: CandidateId, userId: null)
+                .WithMockUser(true, CentreId, adminId: null, delegateId: CandidateId)
                 .WithMockTempData()
                 .WithMockServices();
 
