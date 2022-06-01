@@ -5,7 +5,7 @@
         public RegistrationModel(
             string firstName,
             string lastName,
-            string email,
+            string primaryEmail,
             string? secondaryEmail,
             int centre,
             string? passwordHash,
@@ -16,7 +16,7 @@
         {
             FirstName = firstName;
             LastName = lastName;
-            PrimaryEmail = email;
+            PrimaryEmail = primaryEmail;
             SecondaryEmail = secondaryEmail;
             Centre = centre;
             PasswordHash = passwordHash;

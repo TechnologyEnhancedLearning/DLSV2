@@ -20,8 +20,7 @@
 
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        // TODO: 900 Change this to PrimaryEmail?
-        public string? Email { get; set; }
+        public string? PrimaryEmail { get; set; }
         public string? SecondaryEmail { get; set; }
         public int? Centre { get; set; }
 
@@ -34,7 +33,7 @@
         public virtual void SetPersonalInformation(PersonalInformationViewModel model)
         {
             Centre = model.Centre;
-            Email = model.PrimaryEmail;
+            PrimaryEmail = model.PrimaryEmail;
             SecondaryEmail = model.SecondaryEmail;
             FirstName = model.FirstName;
             LastName = model.LastName;

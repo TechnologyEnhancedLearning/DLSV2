@@ -8,7 +8,7 @@
         public DelegateRegistrationModel(
             string firstName,
             string lastName,
-            string email,
+            string primaryEmail,
             string? secondaryEmail,
             int centre,
             int jobGroup,
@@ -25,7 +25,7 @@
             bool approved = false,
             string? aliasId = null,
             DateTime? notifyDate = null
-        ) : base(firstName, lastName, email, secondaryEmail, centre, passwordHash, active, approved, professionalRegistrationNumber)
+        ) : base(firstName, lastName, primaryEmail, secondaryEmail, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
             Answer1 = answer1;
             Answer2 = answer2;
@@ -42,7 +42,7 @@
         public DelegateRegistrationModel(
             string firstName,
             string lastName,
-            string email,
+            string primaryEmail,
             string? secondaryEmail,
             int centre,
             int jobGroup,
@@ -50,7 +50,7 @@
             bool active,
             bool approved,
             string? professionalRegistrationNumber
-        ) : base(firstName, lastName, email, secondaryEmail, centre, passwordHash, active, approved, professionalRegistrationNumber)
+        ) : base(firstName, lastName, primaryEmail, secondaryEmail, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
             JobGroup = jobGroup;
         }

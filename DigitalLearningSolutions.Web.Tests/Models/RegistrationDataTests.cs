@@ -9,7 +9,7 @@
     {
         private const string FirstName = "Test";
         private const string LastName = "User";
-        private const string Email = "test@email.com";
+        private const string PrimaryEmail = "test@email.com";
         private const int CentreId = 5;
         private const int JobGroupId = 10;
 
@@ -22,7 +22,7 @@
                 FirstName = FirstName,
                 LastName = LastName,
                 Centre = CentreId,
-                PrimaryEmail = Email
+                PrimaryEmail = PrimaryEmail
             };
             var data = new RegistrationData();
 
@@ -32,7 +32,7 @@
             // Then
             data.FirstName.Should().Be(FirstName);
             data.LastName.Should().Be(LastName);
-            data.Email.Should().Be(Email);
+            data.PrimaryEmail.Should().Be(PrimaryEmail);
             data.Centre.Should().Be(CentreId);
         }
 

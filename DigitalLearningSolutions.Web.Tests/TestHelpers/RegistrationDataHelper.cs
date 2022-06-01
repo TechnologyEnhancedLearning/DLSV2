@@ -7,7 +7,7 @@
     {
         private const string FirstName = "Test";
         private const string LastName = "User";
-        private const string Email = "test@email.com";
+        private const string PrimaryEmail = "test@email.com";
         private const int CentreId = 5;
         private const int JobGroupId = 10;
         private const string PasswordHash = "password hash";
@@ -22,7 +22,7 @@
             {
                 FirstName = FirstName,
                 LastName = LastName,
-                Email = Email,
+                PrimaryEmail = PrimaryEmail,
                 Centre = CentreId,
                 JobGroup = JobGroupId,
                 PasswordHash = PasswordHash,
@@ -39,7 +39,7 @@
             {
                 FirstName = FirstName,
                 LastName = LastName,
-                Email = Email,
+                PrimaryEmail = PrimaryEmail,
                 Centre = CentreId,
                 JobGroup = JobGroupId,
                 PasswordHash = PasswordHash
@@ -49,7 +49,7 @@
         public static DelegateRegistrationData GetDefaultDelegateRegistrationData(
             string? firstName = "Test",
             string? lastName = "Name",
-            string? email = "test@email.com",
+            string? primaryEmail = "test@email.com",
             int? centre = 2,
             int? jobGroup = 1,
             string? passwordHash = "hash",
@@ -68,7 +68,7 @@
                 Id = Guid.NewGuid(),
                 FirstName = firstName,
                 LastName = lastName,
-                Email = email,
+                PrimaryEmail = primaryEmail,
                 Centre = centre,
                 JobGroup = jobGroup,
                 PasswordHash = passwordHash,
@@ -86,7 +86,7 @@
         public static DelegateRegistrationByCentreData GetDefaultDelegateRegistrationByCentreData(
             string? firstName = "Test",
             string? lastName = "Name",
-            string? email = "test@email.com",
+            string? primaryEmail = "test@email.com",
             int? centre = 2,
             int? jobGroup = 1,
             string? passwordHash = "hash",
@@ -107,7 +107,7 @@
                 Id = Guid.NewGuid(),
                 FirstName = firstName,
                 LastName = lastName,
-                Email = email,
+                PrimaryEmail = primaryEmail,
                 Centre = centre,
                 JobGroup = jobGroup,
                 PasswordHash = passwordHash,

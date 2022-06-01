@@ -171,7 +171,7 @@
             // Given
             const string firstName = "Test";
             const string lastName = "User";
-            const string email = "test@email.com";
+            const string primaryEmail = "test@email.com";
             const string alias = "testuser";
 
             controller.TempData.Set(new DelegateRegistrationByCentreData());
@@ -179,7 +179,7 @@
             {
                 FirstName = firstName,
                 LastName = lastName,
-                PrimaryEmail = email,
+                PrimaryEmail = primaryEmail,
                 Alias = alias,
                 Centre = 1,
             };
@@ -193,7 +193,7 @@
             var data = controller.TempData.Peek<DelegateRegistrationByCentreData>()!;
             data.FirstName.Should().Be(firstName);
             data.LastName.Should().Be(lastName);
-            data.Email.Should().Be(email);
+            data.PrimaryEmail.Should().Be(primaryEmail);
             data.Alias.Should().Be(alias);
         }
 
@@ -318,7 +318,7 @@
             const string sampleDelegateNumber = "CR7";
             var data = new DelegateRegistrationByCentreData
             {
-                FirstName = "Test", LastName = "User", Email = "test@mail.com", Centre = 5, JobGroup = 0,
+                FirstName = "Test", LastName = "User", PrimaryEmail = "test@mail.com", Centre = 5, JobGroup = 0,
                 WelcomeEmailDate = new DateTime(2200, 7, 7),
             };
             controller.TempData.Set(data);
@@ -371,7 +371,7 @@
                                 d =>
                                     d.FirstName == data.FirstName &&
                                     d.LastName == data.LastName &&
-                                    d.PrimaryEmail == data.Email &&
+                                    d.PrimaryEmail == data.PrimaryEmail &&
                                     d.Centre == data.Centre &&
                                     d.JobGroup == data.JobGroup &&
                                     d.PasswordHash == data.PasswordHash &&

@@ -11,7 +11,7 @@
             return new AdminRegistrationModel(
                 data.FirstName!,
                 data.LastName!,
-                data.Email!,
+                data.PrimaryEmail!,
                 data.SecondaryEmail,
                 data.Centre!.Value,
                 data.PasswordHash!,
@@ -38,7 +38,7 @@
             return new DelegateRegistrationModel(
                 data.FirstName!,
                 data.LastName!,
-                data.Email!,
+                data.PrimaryEmail!,
                 data.SecondaryEmail,
                 data.Centre!.Value,
                 data.JobGroup!.Value,
@@ -63,7 +63,7 @@
             return new DelegateRegistrationModel(
                 data.FirstName!,
                 data.LastName!,
-                data.Email!,
+                data.PrimaryEmail!,
                 data.SecondaryEmail,
                 data.Centre!.Value,
                 data.JobGroup!.Value,

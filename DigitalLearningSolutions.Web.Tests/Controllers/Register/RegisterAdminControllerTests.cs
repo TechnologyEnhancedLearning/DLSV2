@@ -326,7 +326,7 @@
             {
                 Terms = true,
             };
-            var data = new RegistrationData { Centre = DefaultCentreId, Email = userEmail };
+            var data = new RegistrationData { Centre = DefaultCentreId, PrimaryEmail = userEmail };
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("My centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
@@ -343,15 +343,14 @@
         public void SummaryPost_with_email_already_in_use_fails_validation()
         {
             // Given
-            const string email = "right@email";
             var model = new SummaryViewModel
             {
                 Terms = true,
             };
-            var data = new RegistrationData { Centre = DefaultCentreId, Email = email };
+            var data = new RegistrationData { Centre = DefaultCentreId, PrimaryEmail = DefaultPrimaryEmail };
             controller.TempData.Set(data);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)).Returns((false, email));
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(new AdminUser());
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)).Returns((false, DefaultPrimaryEmail));
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(DefaultPrimaryEmail)).Returns(new AdminUser());
 
             // When
             var result = controller.Summary(model);
@@ -383,7 +382,7 @@
                 Centre = DefaultCentreId,
                 JobGroup = jobGroupId,
                 PasswordHash = "hash",
-                Email = primaryEmail,
+                PrimaryEmail = primaryEmail,
                 SecondaryEmail = secondaryEmail,
                 ProfessionalRegistrationNumber = professionalRegistrationNumber,
                 HasProfessionalRegistrationNumber = true,
@@ -412,7 +411,7 @@
                             a =>
                                 a.FirstName == data.FirstName &&
                                 a.LastName == data.LastName &&
-                                a.PrimaryEmail == data.Email! &&
+                                a.PrimaryEmail == data.PrimaryEmail! &&
                                 a.SecondaryEmail == data.SecondaryEmail &&
                                 a.Centre == data.Centre!.Value &&
                                 a.PasswordHash == data.PasswordHash! &&

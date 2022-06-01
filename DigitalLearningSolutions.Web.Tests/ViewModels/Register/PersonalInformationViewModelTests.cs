@@ -19,7 +19,7 @@
             // Then
             result.FirstName.Should().Be(data.FirstName);
             result.LastName.Should().Be(data.LastName);
-            result.PrimaryEmail.Should().Be(data.Email);
+            result.PrimaryEmail.Should().Be(data.PrimaryEmail);
             result.Centre.Should().Be(data.Centre);
         }
 
@@ -35,7 +35,7 @@
             // Then
             result.FirstName.Should().Be(data.FirstName);
             result.LastName.Should().Be(data.LastName);
-            result.PrimaryEmail.Should().Be(data.Email);
+            result.PrimaryEmail.Should().Be(data.PrimaryEmail);
             result.Centre.Should().Be(data.Centre);
             result.IsCentreSpecificRegistration.Should().Be(data.IsCentreSpecificRegistration);
         }

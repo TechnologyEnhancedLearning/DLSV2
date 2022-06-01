@@ -211,7 +211,7 @@
                                 d =>
                                     d.FirstName == data.FirstName &&
                                     d.LastName == data.LastName &&
-                                    d.PrimaryEmail == data.Email &&
+                                    d.PrimaryEmail == data.PrimaryEmail &&
                                     d.Centre == data.Centre &&
                                     d.JobGroup == data.JobGroup &&
                                     d.PasswordHash == data.PasswordHash &&
