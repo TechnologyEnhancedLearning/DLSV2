@@ -12,8 +12,7 @@
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="PersonalInformation">
 
-      @if (errorHasOccurred)
-      {
+      @if (errorHasOccurred) {
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail), nameof(Model.SecondaryEmail) })" />
       }
 
@@ -66,7 +65,9 @@
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 
-    <p class="nhsuk-u-font-size-24">
+    <vc:cancel-link asp-controller="Home" asp-action="Index" />
+
+    <p class="nhsuk-u-font-size-24 nhsuk-u-margin-top-7">
       Alternatively, if you already have an account but would like to register at this centre as well, please log in.
     </p>
     @*TODO: Add return url once the internal registration journey is made*@
@@ -77,7 +78,5 @@
        asp-route-returnUrl="">
       Log in
     </a>
-
-    <vc:cancel-link asp-controller="Home" asp-action="Index" />
   </div>
 </div>

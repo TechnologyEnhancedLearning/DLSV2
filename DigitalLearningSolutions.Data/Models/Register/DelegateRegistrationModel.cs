@@ -25,9 +25,8 @@
             bool approved = false,
             string? aliasId = null,
             DateTime? notifyDate = null
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
+        ) : base(firstName, lastName, email, secondaryEmail, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
-            SecondaryEmail = secondaryEmail;
             Answer1 = answer1;
             Answer2 = answer2;
             Answer3 = answer3;
@@ -44,13 +43,14 @@
             string firstName,
             string lastName,
             string email,
+            string? secondaryEmail,
             int centre,
             int jobGroup,
             string? passwordHash,
             bool active,
             bool approved,
             string? professionalRegistrationNumber
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
+        ) : base(firstName, lastName, email, secondaryEmail, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
             JobGroup = jobGroup;
         }

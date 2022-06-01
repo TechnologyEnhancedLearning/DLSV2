@@ -20,6 +20,7 @@
 
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        // TODO: 900 Change this to PrimaryEmail?
         public string? Email { get; set; }
         public string? SecondaryEmail { get; set; }
         public int? Centre { get; set; }

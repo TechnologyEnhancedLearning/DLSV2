@@ -6,6 +6,7 @@
             string firstName,
             string lastName,
             string email,
+            string? secondaryEmail,
             int centre,
             string? passwordHash,
             bool active,
@@ -16,6 +17,7 @@
             FirstName = firstName;
             LastName = lastName;
             PrimaryEmail = email;
+            SecondaryEmail = secondaryEmail;
             Centre = centre;
             PasswordHash = passwordHash;
             Active = active;

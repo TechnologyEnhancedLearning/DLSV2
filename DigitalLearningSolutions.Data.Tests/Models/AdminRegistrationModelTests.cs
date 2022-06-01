@@ -53,6 +53,7 @@
                 "Test",
                 "Name",
                 "test@email.com",
+                null,
                 1,
                 null,
                 true,

@@ -251,7 +251,8 @@
         private bool CanProceedWithRegistration(RegistrationData data)
         {
             return data.Centre.HasValue && data.Email != null && IsRegisterAdminAllowed(data.Centre.Value) &&
-                centresService.DoesEmailMatchCentre(data.Email, data.Centre.Value) && IsEmailUnique(data.Email);
+                   centresService.DoesEmailMatchCentre(data.SecondaryEmail ?? data.Email, data.Centre.Value) &&
+                   IsEmailUnique(data.Email) && (data.SecondaryEmail == null || IsEmailUnique(data.SecondaryEmail));
         }
 
         private void SetCentreName(PersonalInformationViewModel model)

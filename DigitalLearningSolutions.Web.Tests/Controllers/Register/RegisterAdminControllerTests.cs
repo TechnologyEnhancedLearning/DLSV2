@@ -19,6 +19,9 @@
 
     public class RegisterAdminControllerTests
     {
+        private const int DefaultCentreId = 7;
+        private const string DefaultPrimaryEmail = "primary@email.com";
+        private const string DefaultSecondaryEmail = "centre@email.com";
         private ICentresDataService centresDataService = null!;
         private ICentresService centresService = null!;
         private RegisterAdminController controller = null!;
@@ -65,14 +68,13 @@
         public void IndexGet_with_invalid_centreId_param_shows_notfound_error()
         {
             // Given
-            const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(null);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns(null);
 
             // When
-            var result = controller.Index(centreId);
+            var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
             result.Should().BeNotFoundResult();
         }
 
@@ -80,18 +82,19 @@
         public void IndexGet_with_centre_autoregistered_true_shows_AccessDenied_error()
         {
             // Given
-            const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("My centre");
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((true, "email@email"));
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).Returns(new List<AdminUser>());
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("My centre");
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .Returns((true, "email@email"));
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).Returns(new List<AdminUser>());
 
             // When
-            var result = controller.Index(centreId);
+            var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -100,18 +103,18 @@
         public void IndexGet_with_centre_autoregisteremail_null_shows_AccessDenied_error()
         {
             // Given
-            const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, null));
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).Returns(new List<AdminUser>());
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)).Returns((false, null));
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).Returns(new List<AdminUser>());
 
             // When
-            var result = controller.Index(centreId);
+            var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -120,18 +123,19 @@
         public void IndexGet_with_centre_autoregisteremail_empty_shows_AccessDenied_error()
         {
             // Given
-            const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, string.Empty));
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).Returns(new List<AdminUser>());
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .Returns((false, string.Empty));
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).Returns(new List<AdminUser>());
 
             // When
-            var result = controller.Index(centreId);
+            var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -140,21 +144,22 @@
         public void IndexGet_with_centre_with_active_centre_manager_shows_AccessDenied_error()
         {
             // Given
-            const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, "email@email"));
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .Returns((false, "email@email"));
 
-            var centreManagerAdmin = new AdminUser { CentreId = centreId, IsCentreManager = true };
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId))
+            var centreManagerAdmin = new AdminUser { CentreId = DefaultCentreId, IsCentreManager = true };
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId))
                 .Returns(new List<AdminUser> { centreManagerAdmin });
 
             // When
-            var result = controller.Index(centreId);
+            var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -163,45 +168,60 @@
         public void IndexGet_with_allowed_admin_registration_sets_data_correctly()
         {
             // Given
-            const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, "email@email"));
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).Returns(new List<AdminUser>());
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .Returns((false, "email@email"));
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).Returns(new List<AdminUser>());
 
             // When
-            var result = controller.Index(centreId);
+            var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
             var data = controller.TempData.Peek<RegistrationData>()!;
-            data.Centre.Should().Be(centreId);
+            data.Centre.Should().Be(DefaultCentreId);
             result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
         }
 
         [Test]
-        public void PersonalInformationPost_with_wrong_autoregisteremail_for_centre_fails_validation()
+        public void PersonalInformationPost_with_wrong_primary_autoregisteremail_for_centre_fails_validation()
         {
             // Given
-            const int centreId = 7;
-            var model = new PersonalInformationViewModel
-            {
-                FirstName = "Test",
-                LastName = "User",
-                Centre = centreId,
-                PrimaryEmail = "wrong@email",
-            };
-            var data = new RegistrationData(centreId);
-            controller.TempData.Set(data);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, "right@email"));
+            var model = GetDefaultPersonalInformationViewModelAndSetTempData(null);
+            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(false);
+            A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultPrimaryEmail, DefaultCentreId)).Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultPrimaryEmail, DefaultCentreId))
+                .MustHaveHappenedOnceExactly();
             controller.ModelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
+                .Be(ModelValidationState.Invalid);
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public void PersonalInformationPost_with_wrong_secondary_autoregisteremail_for_centre_fails_validation()
+        {
+            // Given
+            var model = GetDefaultPersonalInformationViewModelAndSetTempData();
+
+            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(false);
+            A.CallTo(() => userService.EmailIsInUse(DefaultSecondaryEmail)).Returns(false);
+            A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultSecondaryEmail, DefaultCentreId)).Returns(false);
+
+            // When
+            var result = controller.PersonalInformation(model);
+
+            // Then
+            A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultSecondaryEmail, DefaultCentreId))
+                .MustHaveHappenedOnceExactly();
+            controller.ModelState[nameof(PersonalInformationViewModel.SecondaryEmail)].ValidationState.Should()
                 .Be(ModelValidationState.Invalid);
             result.Should().BeViewResult().WithDefaultViewName();
         }
@@ -210,55 +230,83 @@
         public void PersonalInformationPost_with_email_already_in_use_fails_validation()
         {
             // Given
-            const int centreId = 7;
-            const string email = "right@email";
-            var model = new PersonalInformationViewModel
-            {
-                FirstName = "Test",
-                LastName = "User",
-                Centre = centreId,
-                PrimaryEmail = email,
-            };
-            var data = new RegistrationData(centreId);
-            controller.TempData.Set(data);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(new AdminUser());
+            var model = GetDefaultPersonalInformationViewModelAndSetTempData();
+
+            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(true);
+            A.CallTo(() => userService.EmailIsInUse(DefaultSecondaryEmail)).Returns(true);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(true);
+            A.CallTo(() => userService.EmailIsInUse(DefaultSecondaryEmail)).Returns(true);
             controller.ModelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
+                .Be(ModelValidationState.Invalid);
+            controller.ModelState[nameof(PersonalInformationViewModel.SecondaryEmail)].ValidationState.Should()
                 .Be(ModelValidationState.Invalid);
             result.Should().BeViewResult().WithDefaultViewName();
         }
 
         [Test]
-        public void PersonalInformationPost_with_correct_unique_email_is_allowed()
+        public void PersonalInformationPost_with_correct_unique_emails_are_allowed()
         {
             // Given
-            const int centreId = 7;
-            const string email = "right@email";
-            var model = new PersonalInformationViewModel
-            {
-                FirstName = "Test",
-                LastName = "User",
-                Centre = centreId,
-                PrimaryEmail = email,
-            };
-            var data = new RegistrationData(centreId);
-            controller.TempData.Set(data);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+            var model = GetDefaultPersonalInformationViewModelAndSetTempData();
+
+            A.CallTo(
+                () => centresService.DoesEmailMatchCentre(
+                    DefaultSecondaryEmail,
+                    DefaultCentreId
+                )
+            ).Returns(true);
+            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(false);
+            A.CallTo(() => userService.EmailIsInUse(DefaultSecondaryEmail)).Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultSecondaryEmail, DefaultCentreId))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => centresService.DoesEmailMatchCentre(
+                    DefaultSecondaryEmail,
+                    DefaultCentreId
+                )
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.EmailIsInUse(DefaultSecondaryEmail)).MustHaveHappenedOnceExactly();
+            result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
+        }
+
+        [Test]
+        public void PersonalInformationPost_with_correct_unique_primary_email_only_is_allowed()
+        {
+            // Given
+            var model = GetDefaultPersonalInformationViewModelAndSetTempData(null);
+
+            A.CallTo(
+                () => centresService.DoesEmailMatchCentre(
+                    DefaultPrimaryEmail,
+                    DefaultCentreId
+                )
+            ).Returns(true);
+            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(false);
+
+            // When
+            var result = controller.PersonalInformation(model);
+
+            // Then
+            A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultPrimaryEmail, DefaultCentreId))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => centresService.DoesEmailMatchCentre(
+                    DefaultPrimaryEmail,
+                    DefaultCentreId
+                )
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
 
@@ -274,15 +322,14 @@
         )
         {
             // Given
-            const int centreId = 7;
             var model = new SummaryViewModel
             {
                 Terms = true,
             };
-            var data = new RegistrationData { Centre = centreId, Email = userEmail };
+            var data = new RegistrationData { Centre = DefaultCentreId, Email = userEmail };
             controller.TempData.Set(data);
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("My centre");
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId))
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("My centre");
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((autoRegistered, autoRegisterManagerEmail));
 
             // When
@@ -296,15 +343,14 @@
         public void SummaryPost_with_email_already_in_use_fails_validation()
         {
             // Given
-            const int centreId = 7;
             const string email = "right@email";
             var model = new SummaryViewModel
             {
                 Terms = true,
             };
-            var data = new RegistrationData { Centre = centreId, Email = email };
+            var data = new RegistrationData { Centre = DefaultCentreId, Email = email };
             controller.TempData.Set(data);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)).Returns((false, email));
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(new AdminUser());
 
             // When
@@ -315,12 +361,16 @@
         }
 
         [Test]
-        public void SummaryPost_with_valid_information_registers_expected_admin()
+        [TestCase("primary@email", null)]
+        [TestCase("primary@email", "secondary@email")]
+        public void SummaryPost_with_valid_information_registers_expected_admin(
+            string primaryEmail,
+            string? secondaryEmail
+        )
         {
             // Given
-            const int centreId = 7;
             const int jobGroupId = 1;
-            const string email = "right@email";
+            var centreEmailOrPrimaryIfNull = secondaryEmail ?? primaryEmail;
             const string professionalRegistrationNumber = "PRN1234";
             var model = new SummaryViewModel
             {
@@ -330,16 +380,25 @@
             {
                 FirstName = "First",
                 LastName = "Name",
-                Centre = centreId,
+                Centre = DefaultCentreId,
                 JobGroup = jobGroupId,
                 PasswordHash = "hash",
-                Email = email,
+                Email = primaryEmail,
+                SecondaryEmail = secondaryEmail,
                 ProfessionalRegistrationNumber = professionalRegistrationNumber,
                 HasProfessionalRegistrationNumber = true,
             };
             controller.TempData.Set(data);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .Returns((false, centreEmailOrPrimaryIfNull));
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(primaryEmail)).Returns(null);
+            if (secondaryEmail != null)
+            {
+                A.CallTo(() => userDataService.GetAdminUserByEmailAddress(secondaryEmail)).Returns(null);
+            }
+
+            A.CallTo(() => centresService.DoesEmailMatchCentre(centreEmailOrPrimaryIfNull, DefaultCentreId))
+                .Returns(true);
             A.CallTo(() => registrationService.RegisterCentreManager(A<AdminRegistrationModel>._, A<int>._))
                 .DoesNothing();
 
@@ -354,6 +413,7 @@
                                 a.FirstName == data.FirstName &&
                                 a.LastName == data.LastName &&
                                 a.PrimaryEmail == data.Email! &&
+                                a.SecondaryEmail == data.SecondaryEmail &&
                                 a.Centre == data.Centre!.Value &&
                                 a.PasswordHash == data.PasswordHash! &&
                                 a.Active &&
@@ -372,6 +432,25 @@
                 )
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
+        }
+
+        private PersonalInformationViewModel GetDefaultPersonalInformationViewModelAndSetTempData(
+            string? secondaryEmail = DefaultSecondaryEmail
+        )
+        {
+            var model = new PersonalInformationViewModel
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Centre = DefaultCentreId,
+                PrimaryEmail = DefaultPrimaryEmail,
+                SecondaryEmail = secondaryEmail,
+            };
+
+            var data = new RegistrationData(DefaultCentreId);
+            controller.TempData.Set(data);
+
+            return model;
         }
     }
 }

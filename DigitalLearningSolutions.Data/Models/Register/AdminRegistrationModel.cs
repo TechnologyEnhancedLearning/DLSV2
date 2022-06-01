@@ -8,6 +8,7 @@
             string firstName,
             string lastName,
             string primaryEmail,
+            string? secondaryEmail,
             int centre,
             string? passwordHash,
             bool active,
@@ -22,9 +23,18 @@
             bool isContentCreator,
             bool isCmsAdmin,
             bool isCmsManager,
-            byte[]? profileImage = null,
-            string? secondaryEmail = null
-        ) : base(firstName, lastName, primaryEmail, centre, passwordHash, active, approved, professionalRegistrationNumber)
+            byte[]? profileImage = null
+        ) : base(
+            firstName,
+            lastName,
+            primaryEmail,
+            secondaryEmail,
+            centre,
+            passwordHash,
+            active,
+            approved,
+            professionalRegistrationNumber
+        )
         {
             CategoryId = categoryId;
             IsCentreAdmin = isCentreAdmin;

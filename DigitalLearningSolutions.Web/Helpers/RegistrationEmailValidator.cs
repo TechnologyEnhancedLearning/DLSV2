@@ -13,26 +13,26 @@
             ICentresService? centresService = null
         )
         {
-            if (model.Email == null || !model.Centre.HasValue)
+            if (model.PrimaryEmail == null || !model.Centre.HasValue)
             {
                 return;
             }
 
-            if (userService.EmailIsInUse(model.Email))
+            if (userService.EmailIsInUse(model.PrimaryEmail))
             {
                 modelState.AddModelError(
-                    nameof(PersonalInformationViewModel.Email),
+                    nameof(PersonalInformationViewModel.PrimaryEmail),
                     "A user with this primary email address is already registered; " +
                     "if this is you, please log in at this centre via the My Account page"
                 );
             }
-            else if (centresService != null && model.Centre != null && !centresService.DoesEmailMatchCentre(
-                model.SecondaryEmail ?? model.Email,
+            else if (centresService != null && model.Centre != null && model.SecondaryEmail == null && !centresService.DoesEmailMatchCentre(
+                model.PrimaryEmail,
                 model.Centre.Value
             ))
             {
                 modelState.AddModelError(
-                    nameof(PersonalInformationViewModel.Email),
+                    nameof(PersonalInformationViewModel.PrimaryEmail),
                     "This email address does not match the one held by the centre"
                 );
             }
@@ -43,6 +43,16 @@
                     nameof(PersonalInformationViewModel.SecondaryEmail),
                     "A user with this email address is already registered at this centre; " +
                     "if this is you, please log in at this centre via the My Account page"
+                );
+            }
+            else if (centresService != null && model.Centre != null && model.SecondaryEmail != null && !centresService.DoesEmailMatchCentre(
+                model.SecondaryEmail,
+                model.Centre.Value
+            ))
+            {
+                modelState.AddModelError(
+                    nameof(PersonalInformationViewModel.SecondaryEmail),
+                    "This email address does not match the one held by the centre"
                 );
             }
         }

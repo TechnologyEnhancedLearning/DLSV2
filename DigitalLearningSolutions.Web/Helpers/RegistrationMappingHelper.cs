@@ -12,6 +12,7 @@
                 data.FirstName!,
                 data.LastName!,
                 data.Email!,
+                data.SecondaryEmail,
                 data.Centre!.Value,
                 data.PasswordHash!,
                 true,
@@ -26,8 +27,7 @@
                 false,
                 false,
                 false,
-                null,
-                data.SecondaryEmail
+                null
             );
         }
 
