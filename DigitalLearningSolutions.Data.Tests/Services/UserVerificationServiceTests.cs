@@ -502,5 +502,55 @@
             // Then
             Assert.AreEqual(associatedDelegateUsers, returnedDelegates);
         }
+
+        [Test]
+        public void IsPasswordValid_Returns_true_when_password_and_user_id_match()
+        {
+            // Given
+            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
+            var user = UserTestHelper.GetDefaultUserAccount();
+
+            // When
+            var isPasswordValid = userVerificationService.IsPasswordValid(user.PasswordHash, user.Id);
+
+            // Then
+            isPasswordValid.Should().BeTrue();
+        }
+
+        [Test]
+        public void IsPasswordValid_Returns_false_when_password_and_user_id_do_not_match()
+        {
+            // Given
+            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(false);
+            var user = UserTestHelper.GetDefaultUserAccount();
+
+            // When
+            var isPasswordValid = userVerificationService.IsPasswordValid(user.PasswordHash, user.Id);
+
+            // Then
+            isPasswordValid.Should().BeFalse();
+        }
+
+        [Test]
+        public void IsPasswordValid_Returns_false_when_password_is_null()
+        {
+            // When
+            var isPasswordValid = userVerificationService.IsPasswordValid(null, 1);
+
+            // Then
+            isPasswordValid.Should().BeFalse();
+            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void IsPasswordValid_Returns_false_when_user_id_is_null()
+        {
+            // When
+            var isPasswordValid = userVerificationService.IsPasswordValid("password", null);
+
+            // Then
+            isPasswordValid.Should().BeFalse();
+            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).MustNotHaveHappened();
+        }
     }
 }

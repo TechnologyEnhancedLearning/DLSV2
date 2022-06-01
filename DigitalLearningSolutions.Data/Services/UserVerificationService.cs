@@ -23,6 +23,8 @@
             string password
         );
 
+        bool IsPasswordValid(string? password, int? userId);
+
         /// <summary>
         ///     Gets a single verified admin associated with a set of delegate users.
         ///     This method should only be called with a set of delegate users with the same email address.
@@ -115,6 +117,18 @@
                                       password
                                   );
             return isSuitableAdmin ? adminUserAssociatedWithDelegates : null;
+        }
+
+        public bool IsPasswordValid(string? password, int? userId)
+        {
+            if (string.IsNullOrEmpty(password) || userId == null)
+            {
+                return false;
+            }
+
+            var user = userDataService.GetUserAccountById((int)userId);
+
+            return user != null && cryptoService.VerifyHashedPassword(user.PasswordHash, password);
         }
     }
 }

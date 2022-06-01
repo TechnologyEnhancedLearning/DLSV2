@@ -126,9 +126,13 @@
 
         UserAccount? GetUserAccountById(int userId);
 
+        UserAccount? GetUserAccountByEmailAddress(string emailAddress);
+
         IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId);
 
         IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId);
+
+        DelegateAccount? GetDelegateAccountById(int id);
 
         void SetCentreEmail(
             int userId,
@@ -143,6 +147,29 @@
     public partial class UserDataService : IUserDataService
     {
         private readonly IDbConnection connection;
+
+        private const string BaseSelectUserQuery =
+            @"SELECT
+                u.ID,
+                u.PrimaryEmail,
+                u.PasswordHash,
+                u.FirstName,
+                u.LastName,
+                u.JobGroupID,
+                jg.JobGroupName,
+                u.ProfessionalRegistrationNumber,
+                u.ProfileImage,
+                u.Active,
+                u.ResetPasswordID,
+                u.TermsAgreed,
+                u.FailedLoginCount,
+                u.HasBeenPromptedForPrn,
+                u.LearningHubAuthId,
+                u.HasDismissedLhLoginWarning,
+                u.EmailVerified,
+                u.DetailsLastChecked
+            FROM Users AS u
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
 
         public UserDataService(IDbConnection connection)
         {
@@ -172,28 +199,16 @@
         public UserAccount? GetUserAccountById(int userId)
         {
             return connection.Query<UserAccount>(
-                @"SELECT u.ID,
-                        u.PrimaryEmail,
-                        u.PasswordHash,
-                        u.FirstName,
-                        u.LastName,
-                        u.JobGroupID,
-                        jg.JobGroupName,
-                        u.ProfessionalRegistrationNumber,
-                        u.ProfileImage,
-                        u.Active,
-                        u.ResetPasswordID,
-                        u.TermsAgreed,
-                        u.FailedLoginCount,
-                        u.HasBeenPromptedForPrn,
-                        u.LearningHubAuthId,
-                        u.HasDismissedLhLoginWarning,
-                        u.EmailVerified,
-                        u.DetailsLastChecked
-                    FROM Users AS u
-                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
-                    WHERE u.ID = @userId",
+                @$"{BaseSelectUserQuery} WHERE u.ID = @userId",
                 new { userId }
+            ).SingleOrDefault();
+        }
+
+        public UserAccount? GetUserAccountByEmailAddress(string emailAddress)
+        {
+            return connection.Query<UserAccount>(
+                @$"{BaseSelectUserQuery} WHERE u.PrimaryEmail = @emailAddress",
+                new { emailAddress }
             ).SingleOrDefault();
         }
 

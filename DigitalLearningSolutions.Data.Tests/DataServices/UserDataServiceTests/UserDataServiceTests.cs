@@ -46,5 +46,15 @@
             // Then
             result.Should().BeEquivalentTo(UserTestHelper.GetDefaultUserAccount());
         }
+
+        [Test]
+        public void GetUserAccountByEmailAddress_returns_expected_user_account()
+        {
+            // When
+            var result = userDataService.GetUserAccountByEmailAddress("test@gmail.com");
+
+            // Then
+            result.Should().BeEquivalentTo(UserTestHelper.GetDefaultUserAccount());
+        }
     }
 }

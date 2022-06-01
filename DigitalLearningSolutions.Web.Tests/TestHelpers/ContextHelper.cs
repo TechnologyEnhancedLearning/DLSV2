@@ -44,7 +44,8 @@
             string? emailAddress = EmailAddress,
             bool isCentreAdmin = IsCentreAdmin,
             bool isFrameworkDeveloper = IsFrameworkDeveloper,
-            int adminCategoryId = AdminCategoryId)
+            int adminCategoryId = AdminCategoryId
+        )
         {
             context.HttpContext.WithMockUser(
                 isAuthenticated,

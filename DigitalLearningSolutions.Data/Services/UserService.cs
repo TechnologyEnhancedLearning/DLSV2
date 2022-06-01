@@ -39,8 +39,6 @@ namespace DigitalLearningSolutions.Data.Services
 
         bool NewEmailAddressIsValid(string emailAddress, int userId);
 
-        UserAccountSet GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password);
-
         bool IsPasswordValid(int? adminId, int? delegateId, string password);
 
         bool IsDelegateEmailValidForCentre(string email, int centreId);
@@ -48,6 +46,8 @@ namespace DigitalLearningSolutions.Data.Services
         bool EmailIsInUse(string email);
 
         void ResetFailedLoginCount(UserAccount userAccount);
+
+        void ResetFailedLoginCountByUserId(int userId);
 
         void UpdateFailedLoginCount(UserAccount userAccount);
 
@@ -79,6 +79,8 @@ namespace DigitalLearningSolutions.Data.Services
         UserEntity? GetUserById(int userId);
 
         UserEntity? GetUserByUsername(string username);
+
+        UserAccount? GetUserByEmailAddress(string emailAddress);
 
         string? GetCentreEmail(int userId, int centreId);
 
@@ -224,7 +226,7 @@ namespace DigitalLearningSolutions.Data.Services
             return !userDataService.EmailIsInUseByOtherUser(userId, emailAddress);
         }
 
-        public UserAccountSet GetVerifiedLinkedUsersAccounts(
+        private UserAccountSet GetVerifiedLinkedUsersAccounts(
             int? adminId,
             int? delegateId,
             string password
@@ -272,8 +274,13 @@ namespace DigitalLearningSolutions.Data.Services
         {
             if (userAccount.FailedLoginCount != 0)
             {
-                userDataService.UpdateUserFailedLoginCount(userAccount.Id, 0);
+                ResetFailedLoginCountByUserId(userAccount.Id);
             }
+        }
+
+        public void ResetFailedLoginCountByUserId(int userId)
+        {
+            userDataService.UpdateUserFailedLoginCount(userId, 0);
         }
 
         public void UpdateFailedLoginCount(UserAccount userAccount)
@@ -323,7 +330,7 @@ namespace DigitalLearningSolutions.Data.Services
         )
         {
             var delegateUser = userDataService.GetDelegateUserById(editDelegateDetailsData.DelegateId);
-            var (adminUser, delegateUsers) = GetUsersByEmailAddress(delegateUser!.EmailAddress);
+            var (adminUser, _) = GetUsersByEmailAddress(delegateUser!.EmailAddress);
 
             if (adminUser != null)
             {
@@ -437,6 +444,11 @@ namespace DigitalLearningSolutions.Data.Services
             var userId = userDataService.GetUserIdFromUsername(username);
 
             return userId == null ? null : GetUserById(userId.Value);
+        }
+
+        public UserAccount? GetUserByEmailAddress(string emailAddress)
+        {
+            return userDataService.GetUserAccountByEmailAddress(emailAddress);
         }
 
         public DelegateUser? GetDelegateUserById(int delegateId)
