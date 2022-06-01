@@ -2,6 +2,7 @@
 {
     using System.Data;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models;
 
     public interface ISessionDataService
     {
@@ -14,6 +15,10 @@
         int StartAdminSession(int adminId);
 
         bool HasAdminGotSessions(int adminId);
+
+        Session? GetSessionById(int sessionId);
+
+        void AddTutorialTimeToSessionDuration(int sessionId, int tutorialTime);
     }
 
     public class SessionDataService : ISessionDataService
@@ -71,6 +76,29 @@
             return connection.ExecuteScalar<bool>(
                 "SELECT 1 WHERE EXISTS (SELECT AdminSessionId FROM AdminSessions WHERE AdminID = @adminId)",
                 new { adminId }
+            );
+        }
+
+        public Session? GetSessionById(int sessionId)
+        {
+            return connection.QueryFirstOrDefault<Session>(
+                @"SELECT SessionID,
+                        CandidateID,
+                        CustomisationID,
+                        LoginTime,
+                        Duration,
+                        Active
+                    FROM Sessions WHERE SessionID = @sessionId",
+                new { sessionId }
+            );
+        }
+
+        public void AddTutorialTimeToSessionDuration(int sessionId, int tutorialTime)
+        {
+            connection.Query(
+                @"UPDATE Sessions SET Duration = Duration + @tutorialTime
+                   WHERE [SessionID] = @sessionId",
+                new { sessionId, tutorialTime }
             );
         }
     }

@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     internal class SessionDataServiceTests
@@ -186,6 +187,45 @@
 
             // Then
             result.Should().BeFalse();
+        }
+
+        [Test]
+        public void GetSessionBySessionId_gets_session_correctly()
+        {
+            // Given
+            const int sessionId = 1;
+
+            // When
+            var result = sessionDataService.GetSessionById(sessionId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                var expectedLoginTime = new DateTime(2010, 9, 22, 6, 52, 9, 540);
+                result!.SessionId.Should().Be(1);
+                result!.CandidateId.Should().Be(1);
+                result!.CustomisationId.Should().Be(100);
+                result!.LoginTime.Should().Be(expectedLoginTime);
+                result!.Duration.Should().Be(51);
+                result!.Active.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void AddTutorialTimeToSessionDuration_should_add_input_time_correctly_to_correct_record()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int sessionId = 1;
+
+            // When
+            sessionDataService.AddTutorialTimeToSessionDuration(1, 12);
+
+            // Then
+            var result = sessionDataService.GetSessionById(sessionId);
+            result!.Duration.Should().Be(63);
         }
     }
 }
