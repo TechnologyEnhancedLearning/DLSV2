@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Logout
 {
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
@@ -23,28 +24,31 @@
 
             authenticationService =
                 (IAuthenticationService)controller.HttpContext.RequestServices.GetService(
-                    typeof(IAuthenticationService));
+                    typeof(IAuthenticationService)
+                );
         }
 
         [Test]
-        public void Logout_should_redirect_user_to_home_page()
+        public async Task Logout_should_redirect_user_to_home_page()
         {
             // When
-            var result = controller.Index();
+            var result = await controller.Index();
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("Home").WithActionName("Index");
         }
 
         [Test]
-        public void Logout_should_call_SignOutAsync()
+        public async Task Logout_should_call_SignOutAsync()
         {
             // When
-            controller.Index();
+            await controller.Index();
 
             // Then
-            A.CallTo(() =>
-                    authenticationService.SignOutAsync(A<HttpContext>._, A<string>._, A<AuthenticationProperties>._))
+            A.CallTo(
+                    () =>
+                        authenticationService.SignOutAsync(A<HttpContext>._, A<string>._, A<AuthenticationProperties>._)
+                )
                 .MustHaveHappened();
         }
     }

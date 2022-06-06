@@ -114,8 +114,7 @@
             var rememberMe = (await HttpContext.AuthenticateAsync()).Properties.IsPersistent;
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
 
-            await HttpContext.SignOutAsync();
-            HttpContext.Response.Cookies.Delete("ASP.NET_SessionId");
+            await HttpContext.Logout();
 
             return await LogIntoCentreAsync(userEntity!, rememberMe, returnUrl, centreId);
         }
