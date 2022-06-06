@@ -5,7 +5,7 @@
 
     public class ForgotPasswordViewModel
     {
-        [Required(ErrorMessage = "Enter your email address")]
+        [Required(ErrorMessage = "Enter your email")]
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         public string EmailAddress { get; set; }

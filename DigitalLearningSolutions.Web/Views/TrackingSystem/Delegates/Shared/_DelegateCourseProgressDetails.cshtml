@@ -3,7 +3,7 @@
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 @model DelegateCourseInfoViewModel
 
-<dl class="nhsuk-summary-list details-list-with-button">
+<dl class="nhsuk-summary-list details-list-with-button word-break">
   @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
@@ -73,7 +73,7 @@
     <dt class="nhsuk-summary-list__key">
       Last access
     </dt>
-    <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-updated-date">
+    <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-accessed">
       @Model.LastAccessed
     </dd>
     <dd class="nhsuk-summary-list__actions"></dd>

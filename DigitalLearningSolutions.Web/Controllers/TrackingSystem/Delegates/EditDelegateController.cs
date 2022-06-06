@@ -68,7 +68,7 @@
             {
                 ModelState.AddModelError(
                     nameof(EditDelegateFormData.AliasId),
-                    "A user with this alias ID is already registered at this centre"
+                    "A user with this alias is already registered at this centre"
                 );
             }
 
@@ -87,7 +87,7 @@
             {
                 ModelState.AddModelError(
                     nameof(EditDetailsFormData.Email),
-                    "A user with this email address is already registered at this centre"
+                    "A user with this email is already registered at this centre"
                 );
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }

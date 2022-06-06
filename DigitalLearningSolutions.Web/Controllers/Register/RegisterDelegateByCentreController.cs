@@ -293,7 +293,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
-                    "A user with this email address is already registered at this centre"
+                    "A user with this email is already registered at this centre"
                 );
             }
 

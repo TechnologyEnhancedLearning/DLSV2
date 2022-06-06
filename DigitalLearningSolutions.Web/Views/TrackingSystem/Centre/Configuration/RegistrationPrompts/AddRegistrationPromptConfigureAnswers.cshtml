@@ -1,7 +1,5 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
+﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts
-@using Microsoft.Extensions.Configuration
 @model RegistrationPromptAnswersViewModel
 
 @{
@@ -38,7 +36,7 @@
                        spell-check="true"
                        autocomplete=""
                        hint-text=""
-                       css-class="nhsuk-u-width-one-half nhsuk-u-font-weight-bold" />
+                       css-class="nhsuk-u-width-one-half" />
         <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.AddPromptAction">Add</button>
       </div>
 

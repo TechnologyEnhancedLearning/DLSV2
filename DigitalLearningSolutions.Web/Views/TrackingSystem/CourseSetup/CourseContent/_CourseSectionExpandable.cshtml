@@ -2,7 +2,7 @@
 @model CourseSectionViewModel
 
 @if (Model.Tutorials.Any(t => t.DiagnosticEnabled || t.LearningEnabled)) {
-  <div class="nhsuk-panel">
+  <div class="nhsuk-panel word-break">
     <details class="nhsuk-details nhsuk-expander">
       <summary class="nhsuk-details__summary">
         <span class="nhsuk-details__summary-text">
@@ -45,7 +45,7 @@
     </details>
   </div>
 } else if (Model.PostLearningAssessment) {
-  <div class="nhsuk-panel">
+  <div class="nhsuk-panel word-break">
     <details class="nhsuk-details nhsuk-expander">
       <summary class="nhsuk-details__summary">
         <span class="nhsuk-details__summary-text">
