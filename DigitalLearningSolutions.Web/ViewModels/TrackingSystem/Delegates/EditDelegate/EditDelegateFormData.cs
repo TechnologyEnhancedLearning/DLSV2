@@ -9,7 +9,7 @@
 
     public class EditDelegateFormData : EditDetailsFormData, IEditProfessionalRegistrationNumbers, IValidatableObject
     {
-        public EditDelegateFormData() {}
+        public EditDelegateFormData() { }
 
         public EditDelegateFormData(DelegateUser delegateUser, IEnumerable<(int id, string name)> jobGroups)
         {
@@ -26,8 +26,6 @@
             Answer4 = delegateUser.Answer4;
             Answer5 = delegateUser.Answer5;
             Answer6 = delegateUser.Answer6;
-
-            AliasId = delegateUser.AliasId;
 
             ProfessionalRegistrationNumber = delegateUser.ProfessionalRegistrationNumber;
             HasProfessionalRegistrationNumber =
@@ -50,13 +48,9 @@
             Answer4 = formData.Answer4;
             Answer5 = formData.Answer5;
             Answer6 = formData.Answer6;
-            AliasId = formData.AliasId;
             ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
             HasProfessionalRegistrationNumber = formData.HasProfessionalRegistrationNumber;
             IsSelfRegistrationOrEdit = false;
         }
-
-        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]
-        public string? AliasId { get; set; }
     }
 }

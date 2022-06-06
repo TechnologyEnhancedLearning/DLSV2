@@ -48,7 +48,6 @@
                 formData.FirstName!,
                 formData.LastName!,
                 formData.Email!,
-                formData.AliasId,
                 formData.HasProfessionalRegistrationNumber == true
                     ? formData.ProfessionalRegistrationNumber
                     : null,

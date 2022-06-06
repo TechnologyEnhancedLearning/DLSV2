@@ -557,7 +557,6 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId,
                 null,
                 true
             );
@@ -602,7 +601,6 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId,
                 null,
                 true
             );
@@ -648,7 +646,6 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId,
                 null,
                 true
             );
@@ -695,7 +692,6 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId,
                 prn,
                 true
             );
@@ -740,7 +736,6 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId,
                 prn,
                 true
             );
