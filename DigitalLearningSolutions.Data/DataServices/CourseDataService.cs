@@ -378,7 +378,13 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             return connection.Query<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
-                    WHERE cu.CentreID = @centreId
+                    WHERE (cu.CentreID = @centreId OR
+                            (cu.AllCentres = 1 AND
+                                EXISTS (SELECT CentreApplicationID
+                                        FROM CentreApplications
+                                        WHERE ApplicationID = cu.ApplicationID AND
+                                            CentreID = @centreID AND
+                                            Active = 1)))
                         AND ca.CentreID = @centreId
                         AND pr.CustomisationID = @customisationId",
                 new { customisationId, centreId }
