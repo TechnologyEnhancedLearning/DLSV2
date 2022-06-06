@@ -39,9 +39,9 @@
 
           @if (Model.Options.Count > 0) {
             <div class="nhsuk-radios nhsuk-u-margin-bottom-4">
-              @foreach (var radio in Model.Radios) {
+              @foreach (var (radio, index) in Model.Radios.Select((r, i) => (r, i))) {
                 var isBlankOption = radio.Value == string.Empty;
-                var radioId = isBlankOption ? blankRadioId : radio.Value;
+                var radioId = $"{(isBlankOption ? blankRadioId : radio.Value)}-{index}";
                 <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3 @(isBlankOption ? "nhsuk-u-margin-top-6" : "")">
                   <input class="nhsuk-radios__input"
                          id="@radioId"
