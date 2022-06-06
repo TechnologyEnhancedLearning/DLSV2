@@ -89,14 +89,14 @@
         public static T WithMockUser<T>(
             this T controller,
             bool isAuthenticated,
-            int centreId = CentreId,
+            int? centreId = CentreId,
             int? adminId = AdminId,
             int? delegateId = DelegateId,
             int? userId = UserId,
             string? emailAddress = EmailAddress,
             bool isCentreAdmin = IsCentreAdmin,
             bool isFrameworkDeveloper = IsFrameworkDeveloper,
-            int adminCategoryId = AdminCategoryId
+            int? adminCategoryId = AdminCategoryId
         ) where T : Controller
         {
             controller.HttpContext.WithMockUser(

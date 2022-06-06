@@ -12,20 +12,22 @@
             int centreIdToLogInto
         )
         {
-            var adminAccount = userEntity.AdminAccounts.SingleOrDefault(aa => aa.CentreId == centreIdToLogInto);
-            var delegateAccount = userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == centreIdToLogInto);
+            var adminAccount = userEntity.AdminAccounts.SingleOrDefault(
+                aa => aa.CentreId == centreIdToLogInto && aa.Active
+            );
+            var delegateAccount = userEntity.DelegateAccounts.SingleOrDefault(
+                da => da.CentreId == centreIdToLogInto && da.Approved && da.Active
+            );
 
             var basicClaims = GetClaimsForCentrelessSignIn(userEntity.UserAccount);
 
             var adminClaims = GetAdminSpecificClaimsForSignIn(adminAccount);
             var delegateClaims = GetDelegateSpecificClaimsForSignIn(delegateAccount);
 
+            var userCentreClaims = GetClaimsForUserCentre(adminAccount, delegateAccount);
+
             var claims = new List<Claim>
             {
-                new Claim(
-                    CustomClaimTypes.UserCentreId,
-                    adminAccount?.CentreId.ToString() ?? delegateAccount?.CentreId.ToString()
-                ),
                 new Claim(CustomClaimTypes.UserCentreManager, adminAccount?.IsCentreManager.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserCentreAdmin, adminAccount?.IsCentreAdmin.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserUserAdmin, adminAccount?.IsSuperAdmin.ToString() ?? "False"),
@@ -47,10 +49,6 @@
                     adminAccount?.IsFrameworkDeveloper.ToString() ?? "False"
                 ),
                 new Claim(
-                    CustomClaimTypes.UserCentreName,
-                    adminAccount?.CentreName ?? delegateAccount?.CentreName
-                ),
-                new Claim(
                     CustomClaimTypes.IsFrameworkContributor,
                     adminAccount?.IsFrameworkContributor.ToString() ?? "False"
                 ),
@@ -67,8 +65,9 @@
                     adminAccount?.IsLocalWorkforceManager.ToString() ?? "False"
                 ),
             };
-            
-            return basicClaims.Concat(adminClaims).Concat(delegateClaims).Concat(claims).ToList();
+
+            return basicClaims.Concat(userCentreClaims).Concat(adminClaims).Concat(delegateClaims).Concat(claims)
+                .ToList();
         }
 
         public static List<Claim> GetClaimsForCentrelessSignIn(
@@ -84,6 +83,26 @@
             };
 
             return claims;
+        }
+
+        private static IEnumerable<Claim> GetClaimsForUserCentre(
+            AdminAccount? adminAccount,
+            DelegateAccount? delegateAccount
+        )
+        {
+            return adminAccount == null && delegateAccount == null
+                ? new List<Claim>()
+                : new List<Claim>
+                {
+                    new Claim(
+                        CustomClaimTypes.UserCentreId,
+                        adminAccount?.CentreId.ToString() ?? delegateAccount.CentreId.ToString()
+                    ),
+                    new Claim(
+                        CustomClaimTypes.UserCentreName,
+                        adminAccount?.CentreName ?? delegateAccount.CentreName
+                    ),
+                };
         }
 
         private static IEnumerable<Claim> GetDelegateSpecificClaimsForSignIn(

@@ -37,14 +37,14 @@
         public static ActionExecutingContext WithMockUser(
             this ActionExecutingContext context,
             bool isAuthenticated,
-            int centreId = CentreId,
+            int? centreId = CentreId,
             int? adminId = AdminId,
             int? delegateId = DelegateId,
             int? userId = UserId,
             string? emailAddress = EmailAddress,
             bool isCentreAdmin = IsCentreAdmin,
             bool isFrameworkDeveloper = IsFrameworkDeveloper,
-            int adminCategoryId = AdminCategoryId
+            int? adminCategoryId = AdminCategoryId
         )
         {
             context.HttpContext.WithMockUser(
@@ -65,14 +65,14 @@
         public static HttpContext WithMockUser(
             this HttpContext context,
             bool isAuthenticated,
-            int centreId = CentreId,
+            int? centreId = CentreId,
             int? adminId = AdminId,
             int? delegateId = DelegateId,
             int? userId = UserId,
             string? emailAddress = EmailAddress,
             bool isCentreAdmin = IsCentreAdmin,
             bool isFrameworkDeveloper = IsFrameworkDeveloper,
-            int adminCategoryId = AdminCategoryId
+            int? adminCategoryId = AdminCategoryId
         )
         {
             var authenticationType = isAuthenticated ? "mock" : string.Empty;
@@ -82,15 +82,15 @@
                 new ClaimsIdentity(
                     new[]
                     {
-                        new Claim(CustomClaimTypes.UserCentreId, centreId.ToString()),
+                        new Claim(CustomClaimTypes.UserCentreId, centreId?.ToString() ?? "False"),
                         new Claim(CustomClaimTypes.UserAdminId, adminId?.ToString() ?? "False"),
                         new Claim(CustomClaimTypes.LearnCandidateId, delegateId?.ToString() ?? "False"),
                         new Claim(CustomClaimTypes.LearnUserAuthenticated, delegateId != null ? "True" : "False"),
                         new Claim(ClaimTypes.Email, emailAddress ?? string.Empty),
                         new Claim(CustomClaimTypes.UserCentreAdmin, isCentreAdmin.ToString()),
                         new Claim(CustomClaimTypes.IsFrameworkDeveloper, isFrameworkDeveloper.ToString()),
-                        new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId.ToString()),
-                        new Claim(CustomClaimTypes.UserId, userId.ToString() ?? "False"),
+                        new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId?.ToString() ?? "False"),
+                        new Claim(CustomClaimTypes.UserId, userId?.ToString() ?? "False"),
                     },
                     authenticationType
                 )

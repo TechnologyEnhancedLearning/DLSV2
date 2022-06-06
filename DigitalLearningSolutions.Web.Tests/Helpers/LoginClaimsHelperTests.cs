@@ -1,11 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
     using System.Collections.Generic;
-    using System.Security.Claims;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Models;
     using FluentAssertions;
     using NUnit.Framework;
 
@@ -40,7 +38,7 @@
             // Given
             var userEntity = new UserEntity(
                 UserTestHelper.GetDefaultUserAccount(),
-                new List<AdminAccount>{UserTestHelper.GetDefaultAdminAccount()},
+                new List<AdminAccount> { UserTestHelper.GetDefaultAdminAccount() },
                 new List<DelegateAccount>()
             );
 
@@ -68,6 +66,63 @@
             // Then
             claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserAdminId);
             claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.AdminCategoryId);
+        }
+
+        [Test]
+        public void Inactive_admin_user_does_not_have_user_admin_id_or_user_centre_id_or_user_centre_name()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount> { UserTestHelper.GetDefaultAdminAccount(active: false) },
+                new List<DelegateAccount>()
+            );
+
+            // When
+            var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 2);
+
+            // Then
+            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserAdminId);
+            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserCentreId);
+            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserCentreName);
+        }
+
+        [Test]
+        public void Inactive_delegate_user_does_not_have_learn_candidate_id_or_user_centre_id_or_user_centre_name()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>(),
+                new List<DelegateAccount> { UserTestHelper.GetDefaultDelegateAccount(active: false) }
+            );
+
+            // When
+            var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 2);
+
+            // Then
+            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.LearnCandidateId);
+            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserCentreId);
+            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserCentreName);
+        }
+
+        [Test]
+        public void Unapproved_delegate_user_does_not_have_learn_candidate_id_or_user_centre_id_or_user_centre_name()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>(),
+                new List<DelegateAccount> { UserTestHelper.GetDefaultDelegateAccount(approved: false) }
+            );
+
+            // When
+            var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 2);
+
+            // Then
+            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.LearnCandidateId);
+            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserCentreId);
+            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserCentreName);
         }
     }
 }

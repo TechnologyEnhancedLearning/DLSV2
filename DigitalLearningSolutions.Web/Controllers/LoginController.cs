@@ -111,8 +111,17 @@
         [Authorize(Policy = CustomPolicies.BasicUser)]
         public async Task<IActionResult> ChooseCentre(int centreId, string? returnUrl)
         {
-            var rememberMe = (await HttpContext.AuthenticateAsync()).Properties.IsPersistent;
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
+            var adminAccount = userEntity?.AdminAccounts.FirstOrDefault(account => account.CentreId == centreId);
+            var delegateAccount = userEntity?.DelegateAccounts.FirstOrDefault(account => account.CentreId == centreId);
+            var isCentreActive = adminAccount?.CentreActive ?? delegateAccount?.CentreActive ?? false;
+
+            if (!isCentreActive)
+            {
+                return RedirectToAction("AccessDenied", "LearningSolutions");
+            }
+
+            var rememberMe = (await HttpContext.AuthenticateAsync()).Properties.IsPersistent;
 
             await HttpContext.Logout();
 
@@ -135,7 +144,10 @@
                 IssuedUtc = DateTime.UtcNow,
             };
 
-            var adminAccount = userEntity!.AdminAccounts.SingleOrDefault(aa => aa.CentreId == centreIdToLogInto);
+            var adminAccount = userEntity!.AdminAccounts.SingleOrDefault(
+                aa => aa.CentreId == centreIdToLogInto && aa.Active
+            );
+
             if (adminAccount != null)
             {
                 sessionService.StartAdminSession(adminAccount.Id);
