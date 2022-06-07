@@ -9,41 +9,42 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Http;
 
-    public class MyAccountEditDetailsFormData : EditDetailsFormData, IEditProfessionalRegistrationNumbers, IValidatableObject
+    public class MyAccountEditDetailsFormData : EditDetailsFormData, IEditProfessionalRegistrationNumbers,
+        IValidatableObject
     {
         public MyAccountEditDetailsFormData() { }
 
         protected MyAccountEditDetailsFormData(
-            AdminUser? adminUser,
-            DelegateUser? delegateUser,
+            UserAccount userAccount,
+            DelegateAccount? delegateAccount,
             List<(int id, string name)> jobGroups,
             string? centreEmail,
             string? returnUrl,
             bool isCheckDetailRedirect
         )
         {
-            FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
-            LastName = adminUser?.LastName ?? delegateUser?.LastName;
-            Email = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
+            FirstName = userAccount.FirstName;
+            LastName = userAccount.LastName;
+            Email = userAccount.PrimaryEmail;
             CentreEmail = centreEmail;
-            ProfileImage = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
+            ProfileImage = userAccount.ProfileImage;
 
-            IsDelegateUser = delegateUser != null;
-            JobGroupId = jobGroups.Where(jg => jg.name == delegateUser?.JobGroupName).Select(jg => jg.id)
+            IsDelegateUser = delegateAccount != null;
+            JobGroupId = jobGroups.Where(jg => jg.name == userAccount.JobGroupName).Select(jg => jg.id)
                 .SingleOrDefault();
 
-            Answer1 = delegateUser?.Answer1;
-            Answer2 = delegateUser?.Answer2;
-            Answer3 = delegateUser?.Answer3;
-            Answer4 = delegateUser?.Answer4;
-            Answer5 = delegateUser?.Answer5;
-            Answer6 = delegateUser?.Answer6;
+            Answer1 = delegateAccount?.Answer1;
+            Answer2 = delegateAccount?.Answer2;
+            Answer3 = delegateAccount?.Answer3;
+            Answer4 = delegateAccount?.Answer4;
+            Answer5 = delegateAccount?.Answer5;
+            Answer6 = delegateAccount?.Answer6;
 
-            ProfessionalRegistrationNumber = delegateUser?.ProfessionalRegistrationNumber;
+            ProfessionalRegistrationNumber = userAccount.ProfessionalRegistrationNumber;
             HasProfessionalRegistrationNumber =
                 ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(
-                    delegateUser?.HasBeenPromptedForPrn,
-                    delegateUser?.ProfessionalRegistrationNumber
+                    userAccount.HasBeenPromptedForPrn,
+                    userAccount.ProfessionalRegistrationNumber
                 );
             ReturnUrl = returnUrl;
             IsSelfRegistrationOrEdit = true;

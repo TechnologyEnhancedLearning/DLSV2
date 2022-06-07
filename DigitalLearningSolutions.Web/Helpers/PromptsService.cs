@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -18,6 +19,23 @@
             centreRegistrationPromptsService = registrationPromptsService;
         }
 
+        public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
+            DelegateAccount? delegateAccount,
+            int centreId
+        )
+        {
+            return GetEditDelegateRegistrationPromptViewModelsForCentre(
+                centreId,
+                delegateAccount?.Answer1,
+                delegateAccount?.Answer2,
+                delegateAccount?.Answer3,
+                delegateAccount?.Answer4,
+                delegateAccount?.Answer5,
+                delegateAccount?.Answer6
+            );
+        }
+
+        [Obsolete]
         public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
             DelegateUser? delegateUser,
             int centreId

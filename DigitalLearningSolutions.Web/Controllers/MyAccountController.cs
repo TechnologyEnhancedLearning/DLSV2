@@ -50,19 +50,23 @@
         [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
-            var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetCandidateId();
-            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var centreId = User.GetCentreId();
+            var userEntity = userService.GetUserById(User.GetUserId()!.Value)!;
+            var adminAccount =
+                userEntity.AdminAccounts.SingleOrDefault(adminAccount => adminAccount.CentreId == centreId);
+            var delegateAccount =
+                userEntity.DelegateAccounts.SingleOrDefault(delegateAccount => delegateAccount.CentreId == centreId);
 
             var customPrompts =
                 centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
-                    User.GetCentreId(),
-                    delegateUser
+                    centreId,
+                    delegateAccount
                 );
 
             var model = new MyAccountViewModel(
-                adminUser,
-                delegateUser,
+                userEntity.UserAccount,
+                delegateAccount,
+                adminAccount?.CentreName ?? delegateAccount?.CentreName,
                 userService.GetCentreEmail(User.GetUserId()!.Value, User.GetCentreId()),
                 customPrompts,
                 dlsSubApplication
@@ -80,17 +84,18 @@
             bool isCheckDetailsRedirect = false
         )
         {
-            var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetCandidateId();
-            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var centreId = User.GetCentreId();
+            var userEntity = userService.GetUserById(User.GetUserId()!.Value)!;
+            var delegateAccount =
+                userEntity.DelegateAccounts.SingleOrDefault(delegateAccount => delegateAccount.CentreId == centreId);
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateAccount, centreId);
 
             var model = new MyAccountEditDetailsViewModel(
-                adminUser,
-                delegateUser,
+                userEntity.UserAccount,
+                delegateAccount,
                 jobGroups,
                 userService.GetCentreEmail(User.GetUserId()!.Value, User.GetCentreId()),
                 customPrompts,
