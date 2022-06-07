@@ -1,6 +1,10 @@
 ﻿@using DigitalLearningSolutions.Data.Models.Supervisor
 @using DigitalLearningSolutions.Web.Extensions
 @model SupervisorDelegateDetail
+@{
+    bool IsSupervisor = (bool)(ViewData["isSupervisor"] ?? false);   
+}
+
 <dl class="nhsuk-summary-list">
   <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
@@ -12,7 +16,7 @@
   <dd class="nhsuk-summary-list__actions">
   </dd>
   </div>
-  @if (Model.DelegateIsSupervisor)
+  @if (IsSupervisor)
   {
     <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
