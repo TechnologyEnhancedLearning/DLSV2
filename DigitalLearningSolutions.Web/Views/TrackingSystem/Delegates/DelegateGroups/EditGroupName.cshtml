@@ -1,11 +1,9 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 @model EditGroupNameViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = $"{(errorHasOccurred ? "Error:" : "")} Edit group name";
+  ViewData["Title"] = $"{(errorHasOccurred ? "Error: " : "")}Edit group name";
 }
 
 <div class="nhsuk-grid-row">

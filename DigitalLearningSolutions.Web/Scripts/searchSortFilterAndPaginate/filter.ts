@@ -235,8 +235,12 @@ function updateAppliedFilters(existingFilterString: string, possibleFilters: IAp
   const appliedFilterContainer = getAppliedFilterContainer();
   const listOfFilters = existingFilterString.split(filterSeparator);
   appliedFilterContainer.textContent = '';
+
   listOfFilters.forEach(
-    (filter) => appliedFilterContainer.appendChild(getMatchingFilterTag(possibleFilters, filter)),
+    (filter) => {
+      appliedFilterContainer.appendChild(getMatchingFilterTag(possibleFilters, filter));
+      appliedFilterContainer.appendChild(document.createTextNode(' '));
+    },
   );
 }
 

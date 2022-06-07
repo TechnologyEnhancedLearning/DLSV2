@@ -1,5 +1,4 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.TopCourses
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model TopCoursesViewModel
 
 @{
@@ -12,7 +11,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Top courses</h1>
+    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
     <table role="table" class="nhsuk-table-responsive">
       <thead role="rowgroup" class="nhsuk-table__head">

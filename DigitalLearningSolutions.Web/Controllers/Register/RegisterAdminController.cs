@@ -245,7 +245,7 @@
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.PrimaryEmail),
-                    "This email address does not match the one held by the centre"
+                    "This email does not match the one held by the centre"
                 );
             }
 
@@ -253,7 +253,7 @@
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.PrimaryEmail),
-                    "An admin user with this email address is already registered"
+                    "An admin user with this email is already registered"
                 );
             }
         }
