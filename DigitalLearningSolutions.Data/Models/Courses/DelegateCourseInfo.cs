@@ -28,8 +28,8 @@
             LearningTime = delegateCourseInfo.LearningTime;
             DiagnosticScore = delegateCourseInfo.DiagnosticScore;
             Answer1 = delegateCourseInfo.Answer1;
-            Answer2 = delegateCourseInfo.Answer1;
-            Answer3 = delegateCourseInfo.Answer1;
+            Answer2 = delegateCourseInfo.Answer2;
+            Answer3 = delegateCourseInfo.Answer3;
             AllAttempts = delegateCourseInfo.AllAttempts;
             AttemptsPassed = delegateCourseInfo.AttemptsPassed;
             Enrolled = delegateCourseInfo.Enrolled;
