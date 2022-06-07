@@ -97,7 +97,7 @@
         {
             connection.Query(
                 @"UPDATE Sessions SET Duration = Duration + @tutorialTime
-                   WHERE [SessionID] = @sessionId",
+                   WHERE SessionID = @sessionId",
                 new { sessionId, tutorialTime }
             );
         }

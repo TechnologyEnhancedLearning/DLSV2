@@ -6,7 +6,7 @@
 
     public interface IStoreAspProgressService
     {
-        public (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
+        (TrackerEndpointResponse? validationResponse, DetailedCourseProgress? progress)
             GetProgressAndValidateCommonInputsForStoreAspSessionEndpoints(
                 int? progressId,
                 int? version,
