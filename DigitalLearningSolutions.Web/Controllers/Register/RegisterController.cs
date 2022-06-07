@@ -31,6 +31,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserService userService;
 
+        private const string duplicateEmailError =
+            "A user with this email address is already registered; if this is you, please log in at this centre via the My Account page";
+
         public RegisterController(
             ICentresDataService centresDataService,
             IJobGroupsDataService jobGroupsDataService,
@@ -315,7 +318,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.PrimaryEmail),
-                    "A user with this email address is already registered; if this is you, please log in at this centre via the My Account page"
+                    duplicateEmailError
                 );
             }
 
@@ -323,7 +326,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.SecondaryEmail),
-                    "A user with this email address is already registered; if this is you, please log in at this centre via the My Account page"
+                    duplicateEmailError
                 );
             }
         }
