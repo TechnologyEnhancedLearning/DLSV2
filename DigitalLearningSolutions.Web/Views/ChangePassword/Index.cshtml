@@ -1,11 +1,9 @@
-﻿@using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.MyAccount
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @model ChangePasswordViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Change Your Password" : "Change Your Password";
+  ViewData["Title"] = errorHasOccurred ? "Error: Change your Password" : "Change your Password";
   var routeParamsForIndexLink = new Dictionary<string, string?> {
     { "dlsSubApplication", Model.DlsSubApplication.UrlSegment },
   };
