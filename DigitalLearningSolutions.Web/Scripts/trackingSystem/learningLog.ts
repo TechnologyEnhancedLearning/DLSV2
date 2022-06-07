@@ -3,7 +3,9 @@ import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/sear
 const progressId = (<HTMLSpanElement>document.getElementById('progress-id')).innerText.trim();
 
 // eslint-disable-next-line no-new
-new SearchSortFilterAndPaginate(`TrackingSystem/Delegates/ViewDelegate/DelegateProgress/${progressId}/AllLearningLogEntries`,
+new SearchSortFilterAndPaginate(
+  `TrackingSystem/Delegates/ViewDelegate/DelegateProgress/${progressId}/AllLearningLogEntries`,
   false,
   false,
-  false);
+  false,
+);

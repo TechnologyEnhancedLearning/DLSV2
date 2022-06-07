@@ -55,10 +55,10 @@
             courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
 
-            A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);
-            A.CallTo(
-                () => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._, A<int?>._)
-            ).Returns(applicationOptions);
+            A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(A<int>._, A<int?>._))
+                .Returns(details);
+            A.CallTo(() => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._, A<int?>._))
+                .Returns(applicationOptions);
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
@@ -84,7 +84,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).MustHaveHappened();
+                A.CallTo(() => courseService.GetCentreCourseDetailsWithAllCentreCourses(A<int>._, A<int?>._)).MustHaveHappened();
                 A.CallTo(
                     () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                         A<IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>>._,

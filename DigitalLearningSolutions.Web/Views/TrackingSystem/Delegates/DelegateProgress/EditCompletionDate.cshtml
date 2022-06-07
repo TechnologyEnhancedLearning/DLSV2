@@ -4,34 +4,20 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Edit Completed Date" : "Edit Completed Date";
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit completed date" : "Edit completed date";
 
   var routeParamsForBackLink = new Dictionary<string, string?>();
 
-  string cancelLinkController;
-
   if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-    routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
-    routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
-    routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());
-    cancelLinkController = "DelegateProgress";
+    routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
-    cancelLinkController = "ViewDelegate";
   }
+
   var exampleDate = DateTime.Today;
   var hintTextLines = new List<string> {
     $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the completed date",
   };
-
-}
-
-@section NavBreadcrumbs {
-  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesProgressBreadcrumbs.cshtml" model="(Model.CustomisationId, Model.ProgressId)" />
-  } else {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateProgressBreadcrumbs.cshtml" model="(Model.DelegateId, Model.ProgressId)" />
-  }
 }
 
 <div class="nhsuk-grid-row">
@@ -42,21 +28,15 @@
 
     <h1 class="nhsuk-heading-xl word-break">Edit completed date for @Model.CourseName</h1>
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
-        Delegate
-      </div>
-      <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold word-break">
-        @Model.DelegateName
-      </div>
-    </div>
+    <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
       <input type="hidden" asp-for="DelegateId" />
       <input type="hidden" asp-for="ProgressId" />
       <input type="hidden" asp-for="DelegateName" />
       <input type="hidden" asp-for="CourseName" />
-      <input type="hidden" asp-for="ReturnPage" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
+      <input type="hidden" asp-for="CustomisationId" />
       <vc:date-input id="completion-date"
                      label="Completed date"
                      day-id="Day"
@@ -68,6 +48,10 @@
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    <vc:cancel-link asp-controller="@cancelLinkController" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+      <vc:cancel-link-with-return-page-query asp-controller="CourseDelegates" asp-action="Index" return-page-query="@Model.ReturnPageQuery!.Value" route-data="@routeParamsForBackLink" />
+    } else {
+      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    }
   </div>
 </div>

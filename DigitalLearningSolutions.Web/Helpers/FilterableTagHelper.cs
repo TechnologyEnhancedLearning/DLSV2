@@ -103,7 +103,7 @@
         {
             var tags = new List<SearchableTagViewModel>();
 
-            if (courseDelegate.Active)
+            if (courseDelegate.IsDelegateActive)
             {
                 tags.Add(new SearchableTagViewModel(CourseDelegateAccountStatusFilterOptions.Active));
             }
@@ -112,7 +112,7 @@
                 tags.Add(new SearchableTagViewModel(CourseDelegateAccountStatusFilterOptions.Inactive));
             }
 
-            if (courseDelegate.Locked)
+            if (courseDelegate.IsProgressLocked)
             {
                 tags.Add(new SearchableTagViewModel(CourseDelegateProgressLockedFilterOptions.Locked));
             }
@@ -128,6 +128,15 @@
             else
             {
                 tags.Add(new SearchableTagViewModel(CourseDelegateProgressRemovedFilterOptions.NotRemoved, true));
+            }
+
+            if (courseDelegate.HasCompleted)
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateCompletionFilterOptions.Complete));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateCompletionFilterOptions.Incomplete));
             }
 
             return tags;

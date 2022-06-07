@@ -2,21 +2,26 @@
 @model IBaseSearchablePageViewModel
 
 <form method="get" role="search">
-  @if (Model.FilterEnabled)
-  {
+  @if (Model.FilterEnabled) {
     <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
   }
-  @foreach (var (key, value) in Model.RouteData)
-  {
+  @foreach (var (key, value) in Model.RouteData) {
     <input type="hidden" name="@key" value="@value" />
   }
   <input type="hidden" name="sortBy" value="@Model.SortBy" />
   <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
   <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
   <div class="search-box-container" id="search">
-    <label class="nhsuk-u-visually-hidden" for="search-field">@Model.SearchLabel</label>
-    <input class="search-box" id="search-field" name="searchString" type="search" placeholder="Search" autocomplete="off" value="@Model.SearchString">
-    <button class="nhsuk-search__submit non-js-only" type="submit" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
+    <label class="nhsuk-u-visually-hidden" for="search-field">
+      @Model.SearchLabel
+    </label>
+
+    <input class="search-box nhsuk-input" id="search-field" name="searchString" type="search" placeholder="Search" autocomplete="off" value="@Model.SearchString" />
+
+    <button class="nhsuk-button search-submit"
+            type="submit"
+            asp-action="@ViewContext.RouteData.Values["action"].ToString()"
+            asp-route-page="1">
       <svg class="nhsuk-icon nhsuk-icon__search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <path d="M19.71 18.29l-4.11-4.1a7 7 0 1 0-1.41 1.41l4.1 4.11a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42zM5 10a5 5 0 1 1 5 5 5 5 0 0 1-5-5z"></path>
       </svg>

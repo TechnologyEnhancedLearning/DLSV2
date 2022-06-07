@@ -24,18 +24,21 @@
     public class AllDelegatesController : Controller
     {
         private const string DelegateFilterCookieName = "DelegateFilter";
-        private readonly PromptsService promptsService;
+        private readonly IDelegateDownloadFileService delegateDownloadFileService;
         private readonly IJobGroupsDataService jobGroupsDataService;
-        private readonly IUserDataService userDataService;
+        private readonly PromptsService promptsService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly IUserDataService userDataService;
 
         public AllDelegatesController(
+            IDelegateDownloadFileService delegateDownloadFileService,
             IUserDataService userDataService,
             PromptsService promptsService,
             IJobGroupsDataService jobGroupsDataService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
+            this.delegateDownloadFileService = delegateDownloadFileService;
             this.userDataService = userDataService;
             this.promptsService = promptsService;
             this.jobGroupsDataService = jobGroupsDataService;
@@ -114,6 +117,31 @@
             var model = new AllDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts);
 
             return View(model);
+        }
+
+        [Route("Export")]
+        public IActionResult Export(
+            string? searchString = null,
+            string? sortBy = null,
+            string sortDirection = GenericSortingHelper.Ascending,
+            string? existingFilterString = null
+        )
+        {
+            var centreId = User.GetCentreId();
+            var content = delegateDownloadFileService.GetAllDelegatesFileForCentre(
+                centreId,
+                searchString,
+                sortBy,
+                sortDirection,
+                existingFilterString
+            );
+
+            const string fileName = "Digital Learning Solutions Delegates.xlsx";
+            return File(
+                content,
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
+            );
         }
     }
 }

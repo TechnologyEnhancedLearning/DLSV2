@@ -57,7 +57,7 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{BaseGetSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId)
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.CandidateID = @candidateId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
             ).FirstOrDefault();
@@ -70,7 +70,7 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{BaseGetSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId)
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.CandidateID = @candidateId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
             );
@@ -83,7 +83,7 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)",
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
             );
         }
@@ -95,7 +95,7 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId)
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.CandidateID = @candidateId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sd.SupervisorAdminID IS NOT NULL)
                         AND (coalesce(sasr.ResultsReview, 1) = 1)",
                 new { selfAssessmentId, candidateId }
@@ -107,27 +107,23 @@
             int candidateId
         )
         {
-            const string selectQuery =
-                @"SELECT
-                    0 AS ID,
+            return connection.Query<SelfAssessmentSupervisor>(
+                @"SELECT DISTINCT
                     sd.ID AS SupervisorDelegateID,
                     sd.SupervisorAdminID,
                     sd.SupervisorEmail,
                     sd.NotificationSent,
-                    au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END) AS SupervisorName,
-                    'Supervisor' AS RoleName
+                    au.Forename + ' ' + au.Surname AS SupervisorName,
+                    (CASE WHEN au.Supervisor = 1 THEN 'Supervisor'
+			             WHEN au.NominatedSupervisor = 1 THEN 'Nominated supervisor'
+		            END) AS RoleName
                 FROM SupervisorDelegates AS sd
                 INNER JOIN CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId
                 INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
-                INNER JOIN AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID";
-
-            return connection.Query<SelfAssessmentSupervisor>(
-                @$"{selectQuery}
-                    WHERE (sd.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.CandidateID = @candidateId)
-                    EXCEPT
-                    {selectQuery}
-                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
-                    GROUP BY sd.ID, SupervisorAdminID, SupervisorEmail, sd.NotificationSent, au.Forename + ' ' + au.Surname, au.Active",
+                INNER JOIN AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID AND au.Active = 1 
+                WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.CandidateID = @candidateId)
+		            AND (au.Supervisor = 1 OR au.NominatedSupervisor = 1) AND (au.Active = 1)
+		            AND (ca.SelfAssessmentID <> @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
             );
         }
@@ -150,7 +146,7 @@
         {
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
-                    WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
+                    WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
                         AND (sd.SupervisorAdminID IS NOT NULL) AND (coalesce(sasr.SelfAssessmentReview, 1) = 1)
                         AND (cas.ID NOT IN (SELECT CandidateAssessmentSupervisorID FROM CandidateAssessmentSupervisorVerifications WHERE Verified IS NULL))",
                 new { selfAssessmentId, candidateId }
@@ -236,9 +232,9 @@
                         IsFrameworkDeveloper
                     FROM AdminUsers
                     WHERE (
-                        (Supervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId)
+                        (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId)
                         OR
-                        (Supervisor = 1) AND (Active = 1) AND (CategoryID = (SELECT CategoryID FROM SelfAssessments WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)
+                        (Supervisor = 1 OR NominatedSupervisor = 1) AND (Active = 1) AND (CategoryID = (SELECT CategoryID FROM SelfAssessments WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)
                     )
                         AND AdminID NOT IN (
                             SELECT sd.SupervisorAdminID
@@ -250,6 +246,8 @@
                             WHERE (ca.SelfAssessmentID = @selfAssessmentId)
                                 AND (ca.CandidateID = @candidateId)
                                 AND (sd.SupervisorAdminID = AdminUsers.AdminID)
+                                AND (cas.Removed IS NULL)
+                                AND (sd.Removed IS NULL)
                          ) ",
                 new { centreId, selfAssessmentId, candidateId }
             );

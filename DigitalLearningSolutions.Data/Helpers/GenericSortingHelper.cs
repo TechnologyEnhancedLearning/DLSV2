@@ -121,6 +121,9 @@
 
         public static readonly (string DisplayText, string PropertyName) InProgress =
             ("In Progress", nameof(CourseStatistics.InProgressCount));
+
+        public static readonly (string DisplayText, string PropertyName) Completed =
+            ("Completed", nameof(CourseStatistics.CompletedCount));
     }
 
     public class CourseDelegatesSortByOption : Enumeration
@@ -135,7 +138,7 @@
         public static readonly CourseDelegatesSortByOption LastUpdatedDate = new CourseDelegatesSortByOption(
             2,
             nameof(LastUpdatedDate),
-            "Last updated date",
+            "Last access",
             nameof(CourseDelegate.LastUpdated)
         );
 
@@ -150,7 +153,7 @@
             4,
             nameof(CompleteByDate),
             "Complete by date",
-            nameof(CourseDelegate.CompleteByDate)
+            nameof(CourseDelegate.CompleteBy)
         );
 
         public static readonly CourseDelegatesSortByOption CompletedDate = new CourseDelegatesSortByOption(
@@ -222,5 +225,20 @@
 
         public static readonly (string DisplayText, string PropertyName) AssessmentScore =
             ("Assessment score", nameof(LearningLogEntry.AssessmentScore));
+    }
+
+    public static class BrandCoursesSortByOption
+    {
+        public static readonly (string DisplayText, string PropertyName) Title =
+            ("Title", nameof(ApplicationWithSections.ApplicationName));
+
+        public static readonly (string DisplayText, string PropertyName) Popularity =
+            ("Popularity", nameof(ApplicationWithSections.PopularityRating));
+
+        public static readonly (string DisplayText, string PropertyName) Length =
+            ("Length", nameof(ApplicationWithSections.TotalMins));
+
+        public static readonly (string DisplayText, string PropertyName) CreatedDate =
+            ("Created Date", nameof(ApplicationWithSections.CreatedDate));
     }
 }

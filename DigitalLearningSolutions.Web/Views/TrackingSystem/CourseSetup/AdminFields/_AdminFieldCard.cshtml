@@ -16,7 +16,7 @@
           @if (Model.Options.Count == 0) {
             <p>This is a free text field. Admins can input any text.</p>
           } else {
-            <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-0">Answers to choose from:</p>
+            <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-0">Responses to choose from:</p>
             <ul>
               @foreach (var answer in Model.Options) {
                 <li class="word-break">@answer</li>

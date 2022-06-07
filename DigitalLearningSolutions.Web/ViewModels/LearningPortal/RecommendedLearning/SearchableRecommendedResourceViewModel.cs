@@ -1,13 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.RecommendedLearning
 {
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class SearchableRecommendedResourceViewModel
     {
         public SearchableRecommendedResourceViewModel(
             RecommendedResource recommendedResource,
             int selfAssessmentId,
-            int returnPage
+            ReturnPageQuery returnPageQuery
         )
         {
             SelfAssessmentId = selfAssessmentId;
@@ -15,14 +17,14 @@
             LearningHubReferenceId = recommendedResource.LearningHubReferenceId;
             ResourceName = recommendedResource.ResourceName;
             ResourceDescription = recommendedResource.ResourceDescription;
-            ResourceType = recommendedResource.ResourceType;
+            ResourceType = DisplayStringHelper.AddSpacesToPascalCaseString(recommendedResource.ResourceType);
             CatalogueName = recommendedResource.CatalogueName;
             ResourceLink = recommendedResource.ResourceLink;
             IsInActionPlan = recommendedResource.IsInActionPlan;
             IsCompleted = recommendedResource.IsCompleted;
             LearningLogItemId = recommendedResource.LearningLogId;
             RecommendationScore = recommendedResource.RecommendationScore;
-            ReturnPage = returnPage;
+            ReturnPageQuery = returnPageQuery;
         }
 
         public int SelfAssessmentId { get; set; }
@@ -49,7 +51,7 @@
 
         public decimal RecommendationScore { get; set; }
 
-        public int ReturnPage { get; set; }
+        public ReturnPageQuery ReturnPageQuery { get; set; }
 
         public string Rating => RecommendationScore >= 100 ? "Essential" :
             RecommendationScore >= 40 ? "Recommended" : "Optional";

@@ -6,6 +6,7 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Progress;
     using Microsoft.Extensions.Logging;
 
     public interface IProgressDataService
@@ -44,6 +45,33 @@
         IEnumerable<DetailedSectionProgress> GetSectionProgressDataForProgressEntry(int progressId);
 
         IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection(int progressId, int sectionId);
+
+        void UpdateCourseAdminFieldForDelegate(
+            int progressId,
+            int promptNumber,
+            string? answer
+        );
+
+        void UpdateProgressDetailsForStoreAspProgressV2(
+            int progressId,
+            int customisationVersion,
+            DateTime submittedTime,
+            string progressText
+        );
+
+        void UpdateAspProgressTutTime(
+            int tutorialId,
+            int progressId,
+            int tutTime
+        );
+
+        void UpdateAspProgressTutStat(
+            int tutorialId,
+            int progressId,
+            int tutStat
+        );
+
+        int GetCompletionStatusForProgress(int progressId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -356,6 +384,87 @@
                         AND (t.ArchivedDate IS NULL)
                     ORDER BY t.TutorialID",
                 new { progressId, sectionId }
+            );
+        }
+
+        public void UpdateCourseAdminFieldForDelegate(
+            int progressId,
+            int promptNumber,
+            string? answer
+        )
+        {
+            connection.Execute(
+                $@"UPDATE Progress
+                        SET Answer{promptNumber} = @answer
+                        WHERE ProgressID = @progressId",
+                new { progressId, promptNumber, answer }
+            );
+        }
+
+        public void UpdateProgressDetailsForStoreAspProgressV2(
+            int progressId,
+            int customisationVersion,
+            DateTime submittedTime,
+            string progressText
+        )
+        {
+            connection.Execute(
+                @"UPDATE Progress
+                    SET
+                        CustomisationVersion = @customisationVersion,
+                        SubmittedTime = @submittedTime,
+                        ProgressText = @progressText,
+                        DiagnosticScore =
+                            (SELECT CASE WHEN SUM(t.DiagAssessOutOf) > 0
+                                THEN CAST((SUM(ap.DiagHigh) * 1.0) / (SUM(t.DiagAssessOutOf) * 1.0) * 100 AS Int)
+                                ELSE 0 END AS DiagPercent
+                            FROM aspProgress AS ap
+                            INNER JOIN Progress AS p ON ap.ProgressID = p.ProgressID
+                            INNER JOIN Customisations AS c ON p.CustomisationID = c.CustomisationID
+                            INNER JOIN CustomisationTutorials AS ct ON ap.TutorialID = ct.TutorialID AND c.CustomisationID = ct.CustomisationID
+                            INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
+                            WHERE ap.ProgressID = @progressId AND ct.DiagStatus = 1)
+                    WHERE (ProgressID = @progressId)",
+                new { progressId, customisationVersion, submittedTime, progressText }
+            );
+        }
+
+        public void UpdateAspProgressTutTime(
+            int tutorialId,
+            int progressId,
+            int tutTime
+        )
+        {
+            connection.Execute(
+                @"UPDATE aspProgress
+                    SET TutTime = TutTime + @tutTime
+                    WHERE (TutorialID = @tutorialId) AND (ProgressID = @progressId)",
+                new { tutorialId, progressId, tutTime }
+            );
+        }
+
+        public void UpdateAspProgressTutStat(
+            int tutorialId,
+            int progressId,
+            int tutStat
+        )
+        {
+            connection.Execute(
+                @"UPDATE aspProgress
+                    SET TutStat = @tutStat
+                    WHERE (TutorialID = @tutorialId)
+                      AND (ProgressID = @progressId)
+                      AND (TutStat < @tutStat)",
+                new { tutorialId, progressId, tutStat }
+            );
+        }
+
+        public int GetCompletionStatusForProgress(int progressId)
+        {
+            return connection.QuerySingle<int>(
+                "GetAndReturnCompletionStatusByProgID",
+                new { progressId },
+                commandType: CommandType.StoredProcedure
             );
         }
     }

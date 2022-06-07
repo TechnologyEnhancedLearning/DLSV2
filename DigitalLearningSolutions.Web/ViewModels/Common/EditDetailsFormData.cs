@@ -15,7 +15,7 @@
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]
         public string? LastName { get; set; }
 
-        [Required(ErrorMessage = "Enter your email address")]
+        [Required(ErrorMessage = "Enter your email")]
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
@@ -38,6 +38,8 @@
         public string? ProfessionalRegistrationNumber { get; set; }
 
         public bool? HasProfessionalRegistrationNumber { get; set; }
+
+        public bool IsSelfRegistrationOrEdit { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

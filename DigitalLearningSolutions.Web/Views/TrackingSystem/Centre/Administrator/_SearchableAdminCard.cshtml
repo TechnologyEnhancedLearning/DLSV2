@@ -47,10 +47,11 @@
       } else {
         <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
            role="button"
+           data-return-page-enabled="true"
            asp-controller="Administrator"
            asp-action="EditAdminRoles"
            asp-route-adminId="@Model.Id"
-           asp-route-returnPage="@Model.Page">
+           asp-route-returnPageQuery="@Model.ReturnPageQuery">
           Manage roles
         </a>
       }
@@ -58,10 +59,11 @@
         <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
            role="button"
            aria-label="Deactivate admin account"
+           data-return-page-enabled="true"
            asp-controller="Administrator"
            asp-action="DeactivateOrDeleteAdmin"
            asp-route-adminId="@Model.Id"
-           asp-route-returnPage="@Model.Page">
+           asp-route-returnPageQuery="@Model.ReturnPageQuery">
           Deactivate admin account
         </a>
       }

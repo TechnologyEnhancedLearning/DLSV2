@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.ViewModels.FindYourCentre
+﻿namespace DigitalLearningSolutions.Web.ViewModels.FindYourCentre
 {
     using DigitalLearningSolutions.Data.Extensions;
     using Microsoft.Extensions.Configuration;
@@ -10,11 +10,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.FindYourCentre
         public FindYourCentreViewModel(IConfiguration config)
         {
             Url = $"{config.GetCurrentSystemBaseUrl()}/findyourcentre?nonav=true";
-        }
-
-        public FindYourCentreViewModel(string centreId, IConfiguration config)
-        {
-            Url = $"{config.GetCurrentSystemBaseUrl()}/findyourcentre?nonav=true&centreid={centreId}";
         }
     }
 }

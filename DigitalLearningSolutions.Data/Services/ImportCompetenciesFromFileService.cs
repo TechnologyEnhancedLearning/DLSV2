@@ -37,6 +37,10 @@ namespace DigitalLearningSolutions.Data.Services
         {
             var workbook = new XLWorkbook(file.OpenReadStream());
             var worksheet = workbook.Worksheet(1);
+            if (worksheet.Tables.Count() == 0)
+            {
+                throw new InvalidHeadersException();
+            }
             var table = worksheet.Tables.Table(0);
             if (!ValidateHeaders(table))
             {
@@ -71,7 +75,7 @@ namespace DigitalLearningSolutions.Data.Services
             int? frameworkCompetencyGroupId = null;
             if (competencyRow.CompetencyGroupName != null)
             {
-                var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyRow.CompetencyGroupName, adminUserId);
+                var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyRow.CompetencyGroupName, null, adminUserId);
                 if (newCompetencyGroupId > 0)
                 {
                     frameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminUserId);

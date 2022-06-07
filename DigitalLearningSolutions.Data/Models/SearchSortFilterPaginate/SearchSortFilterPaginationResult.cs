@@ -24,11 +24,19 @@
             int totalPages,
             int itemsPerPage,
             int matchingSearchResults,
+            bool javascriptPaginationShouldBeEnabled,
             string? searchString,
             string? sortBy,
             string? sortDirection,
             string? filterString
-        ) : base(itemsToDisplay, page, totalPages, itemsPerPage, matchingSearchResults)
+        ) : base(
+            itemsToDisplay,
+            page,
+            totalPages,
+            itemsPerPage,
+            matchingSearchResults,
+            javascriptPaginationShouldBeEnabled
+        )
         {
             SearchString = searchString;
             SortBy = sortBy;
@@ -43,5 +51,10 @@
         public string? SortDirection { get; set; }
 
         public string? FilterString { get; set; }
+
+        public new ReturnPageQuery GetReturnPageQuery(string? itemIdToReturnTo = null)
+        {
+            return new ReturnPageQuery(Page, itemIdToReturnTo, ItemsPerPage, SearchString, SortBy, SortDirection);
+        }
     }
 }

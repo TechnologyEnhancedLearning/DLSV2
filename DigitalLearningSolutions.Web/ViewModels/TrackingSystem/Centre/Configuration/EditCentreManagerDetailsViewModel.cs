@@ -24,10 +24,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configur
         [MaxLength(250, ErrorMessage = "Last name must be 250 characters or fewer")]
         public string? LastName { get; set; }
 
-        [Required(ErrorMessage = "Enter an email address")]
-        [MaxLength(250, ErrorMessage = "Email address must be 250 characters or fewer")]
-        [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
-        [NoWhitespace("Email address must not contain any whitespace characters")]
+        [Required(ErrorMessage = "Enter an email")]
+        [MaxLength(250, ErrorMessage = "Email must be 250 characters or fewer")]
+        [EmailAddress(ErrorMessage = "Enter an email in the correct format, like name@example.com")]
+        [NoWhitespace("Email must not contain any whitespace characters")]
         public string? Email { get; set; }
 
         [MaxLength(250, ErrorMessage = "Telephone number must be 250 characters or fewer")]

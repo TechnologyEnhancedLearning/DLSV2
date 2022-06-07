@@ -1,11 +1,9 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword
 @model SetDelegatePasswordViewModel
 
 @{
-  ViewData["Title"] = "Set delegate user password";
   var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Set delegate user password" : "Set delegate user password";
 }
 
 <div class="nhsuk-grid-row">
@@ -16,20 +14,13 @@
 
     <h1 class="nhsuk-heading-xl">Set delegate user password</h1>
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l nhsuk-u-font-weight-bold">
-        User:
-      </div>
-      <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
-        @Model.Name
-      </div>
-    </div>
+    <vc:field-name-value-display display-name="User" field-value="@Model.Name" />
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index">
       <input type="hidden" asp-for="Name" />
       <input type="hidden" asp-for="DelegateId" />
       <input type="hidden" asp-for="IsFromViewDelegatePage" />
-      <input type="hidden" asp-for="ReturnPage" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
       <vc:text-input asp-for="@nameof(Model.Password)"
                      label="Password"
                      populate-with-current-value="false"
@@ -46,8 +37,7 @@
       var routeData = new Dictionary<string, string> { { "delegateId", Model.DelegateId.ToString() } };
       <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeData" />
     } else {
-      var routeData = new Dictionary<string, string> { { "page", Model.ReturnPage.ToString() } };
-      <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@routeData" />
+      <vc:cancel-link-with-return-page-query asp-controller="AllDelegates" asp-action="Index" return-page-query="@Model.ReturnPageQuery!.Value" />
     }
 
   </div>

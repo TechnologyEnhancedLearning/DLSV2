@@ -1,7 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.LearningContent;
     using Microsoft.AspNetCore.Mvc;
@@ -11,37 +16,90 @@
     [SetSelectedTab(nameof(NavMenuTab.Welcome))]
     public class LearningContentController : Controller
     {
-        private const string ItSkillsPathwayBrand = "ITSkillsPathway";
-        private const string ItSkillsPathwayTitle = "IT Skills Pathway";
-        private const string ReasonableAdjustmentFlagBrand = "ReasonableAdjustmentFlag";
-        private const string ReasonableAdjustmentFlagTitle = "Reasonable Adjustment Flag";
+        private const string BrandCoursesFilterCookieName = "BrandCoursesFilter";
+        private readonly IBrandsService brandsService;
+        private readonly ICourseService courseService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly ITutorialService tutorialService;
 
-        private const string TerminologyAndClassificationsDeliveryServiceBrand =
-            "TerminologyandClassificationsDeliveryService";
-
-        private const string TerminologyAndClassificationsDeliveryServiceTitle =
-            "Terminology and Classifications Delivery Service";
-
-        public IActionResult ItSkillsPathway()
+        public LearningContentController(
+            IBrandsService brandsService,
+            ITutorialService tutorialService,
+            ICourseService courseService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
+        )
         {
-            var model = new LearningContentViewModel(ItSkillsPathwayBrand, ItSkillsPathwayTitle);
-            return View("Index", model);
+            this.brandsService = brandsService;
+            this.tutorialService = tutorialService;
+            this.courseService = courseService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
-        public IActionResult ReasonableAdjustmentFlag()
+        [Route("Home/LearningContent/{brandId:int}/{page=1:int}")]
+        public IActionResult Index(
+            int brandId,
+            int page = 1,
+            string? sortBy = null,
+            string sortDirection = GenericSortingHelper.Ascending,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
+            bool clearFilters = false
+        )
         {
-            var model = new LearningContentViewModel(ReasonableAdjustmentFlagBrand, ReasonableAdjustmentFlagTitle);
-            return View("Index", model);
-        }
+            var brand = brandsService.GetPublicBrandById(brandId);
+            if (brand == null)
+            {
+                return NotFound();
+            }
 
-        public IActionResult TerminologyAndClassificationsDeliveryService()
-        {
-            var model = new LearningContentViewModel(
-                TerminologyAndClassificationsDeliveryServiceBrand,
-                TerminologyAndClassificationsDeliveryServiceTitle,
-                true
+            sortBy ??= DefaultSortByOptions.Name.PropertyName;
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
+                clearFilters,
+                Request,
+                BrandCoursesFilterCookieName
             );
-            return View("Index", model);
+
+            var tutorials = tutorialService.GetPublicTutorialSummariesForBrand(brandId);
+            var applications = courseService.GetApplicationsThatHaveSectionsByBrandId(brandId).ToList();
+
+            var categories = applications.Select(x => x.CategoryName).Distinct().OrderBy(x => x).ToList();
+            var topics = applications.Select(x => x.CourseTopic).Distinct().OrderBy(x => x).ToList();
+            var availableFilters = LearningContentViewModelFilterOptions
+                .GetFilterOptions(categories, topics).ToList();
+
+            var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
+                null,
+                new SortOptions(sortBy, sortDirection),
+                new FilterOptions(
+                    existingFilterString,
+                    availableFilters
+                ),
+                new PaginationOptions(page)
+            );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                applications,
+                searchSortPaginationOptions
+            );
+
+            var model = new LearningContentViewModel(result, availableFilters, brand, tutorials);
+
+            Response.UpdateFilterCookie(BrandCoursesFilterCookieName, result.FilterString);
+
+            return View(model);
+        }
+
+        [NoCaching]
+        [Route("Home/LearningContent/{brandId:int}/AllBrandCourses")]
+        public IActionResult AllBrandCourses(int brandId)
+        {
+            var applications = courseService.GetApplicationsThatHaveSectionsByBrandId(brandId).ToList();
+
+            var model = new AllBrandCoursesViewModel(applications);
+
+            return View(model);
         }
     }
 }

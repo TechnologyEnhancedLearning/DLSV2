@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class AllRecommendedLearningItemsViewModel
     {
@@ -10,7 +11,11 @@
         {
             RecommendedResources =
                 resources.OrderByDescending(r => r.RecommendationScore).Select(
-                    r => new SearchableRecommendedResourceViewModel(r, selfAssessmentId, 1)
+                    r => new SearchableRecommendedResourceViewModel(
+                        r,
+                        selfAssessmentId,
+                        new ReturnPageQuery(1, $"{r.LearningHubReferenceId}-card")
+                    )
                 );
         }
 

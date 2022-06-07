@@ -1,6 +1,4 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 @model RemoveGroupDelegateViewModel
 
 @{
@@ -12,8 +10,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
+    @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@new []{ nameof(Model.ConfirmRemovalFromGroup) }" />
     }
 
@@ -27,22 +24,14 @@
   </div>
 </div>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l nhsuk-u-font-weight-bold">
-    Group name:
-  </div>
-  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
-    @Model.GroupName
-  </div>
-</div>
+<vc:field-name-value-display display-name="Group name" field-value="@Model.GroupName" />
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveGroupDelegate">
       <div class="nhsuk-form-group @confirmFormErrorClass">
         <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.ConfirmRemovalFromGroup))-error">
-          @if (confirmError)
-          {
+          @if (confirmError) {
             <span class="nhsuk-error-message" id="@(nameof(Model.ConfirmRemovalFromGroup))-error">
               <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState[nameof(Model.ConfirmRemovalFromGroup)].Errors[0].ErrorMessage
             </span>
@@ -58,8 +47,7 @@
         </fieldset>
       </div>
 
-      @if (Model.RemoveStartedEnrolmentsEnabled)
-      {
+      @if (Model.RemoveStartedEnrolmentsEnabled) {
         <div class="nhsuk-form-group">
           <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.RemoveStartedEnrolments))-error">
             <div class="nhsuk-checkboxes">
@@ -80,14 +68,15 @@
       <input type="hidden" asp-for="GroupName" />
       <input type="hidden" asp-for="DelegateName" />
       <input type="hidden" asp-for="RemoveStartedEnrolmentsEnabled" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
       <button class="nhsuk-button delete-button nhsuk-button--secondary" type="submit">Remove delegate</button>
     </form>
 
     @{
       var routeData = new Dictionary<string, string> {
-        { "groupId", Model.GroupId.ToString() }
+        { "groupId", Model.GroupId.ToString() },
       };
     }
-    <vc:cancel-link asp-controller="GroupDelegates" asp-action="Index" asp-all-route-data="@routeData" />
+    <vc:cancel-link-with-return-page-query asp-controller="GroupDelegates" asp-action="Index" route-data="@routeData" return-page-query="@Model.ReturnPageQuery" />
   </div>
 </div>

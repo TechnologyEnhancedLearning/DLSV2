@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@using DigitalLearningSolutions.Web.Helpers
 @model SelfAssessmentCompetencyViewModel
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -8,8 +9,8 @@
 }
 @section breadcrumbs {
 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.Assessment.Id">@(Model.Assessment.Name) introduction</a></li>
-<li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">@(Model.VocabPlural()) menu</a></li>
-<li class="nhsuk-breadcrumb__item">@Model.Competency.Vocabulary @Model.CompetencyNumber</li>
+<li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">@(Model.VocabPlural()) home</a></li>
+<li class="nhsuk-breadcrumb__item">@DisplayStringHelper.Ellipsis(Model.Competency?.Name, 30)</li>
 }
 @section mobilebacklink
 {
@@ -68,9 +69,9 @@
         }
         else
         {
-            <nhs-form-group nhs-validation-for="Competency.AssessmentQuestions[1].Result">
-              <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
-            </nhs-form-group>
+          <nhs-form-group nhs-validation-for="Competency.AssessmentQuestions[1].Result">
+            <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
+          </nhs-form-group>
         }
         @if (question.value.SignedOff != null && question.value.SignedOff == true)
         {

@@ -1,13 +1,8 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 @model SummaryViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Summary" : "Register Delegate - Summary";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
 }
 
 @section NavMenuItems {
@@ -56,7 +51,7 @@
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="PersonalInformation">
-            Change<span class="nhsuk-u-visually-hidden"> email address</span>
+            Change<span class="nhsuk-u-visually-hidden"> email</span>
           </a>
         </dd>
       </div>
@@ -83,6 +78,17 @@
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="LearnerInformation">
             Change<span class="nhsuk-u-visually-hidden"> job group</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Professional registration number
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="LearnerInformation">
+            Change<span class="nhsuk-u-visually-hidden"> professional registration number</span>
           </a>
         </dd>
       </div>

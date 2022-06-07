@@ -1,16 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class EditCompleteByDateFormData : IValidatableObject
     {
         public EditCompleteByDateFormData() { }
 
-        protected EditCompleteByDateFormData(DelegateCourseInfo info, int? returnPage)
+        protected EditCompleteByDateFormData(DelegateCourseInfo info, ReturnPageQuery? returnPageQuery)
         {
             DelegateId = info.DelegateId;
             Day = info.CompleteBy?.Day;
@@ -21,7 +21,7 @@
             DelegateName = info.DelegateFirstName == null
                 ? info.DelegateLastName
                 : $"{info.DelegateFirstName} {info.DelegateLastName}";
-            ReturnPage = returnPage;
+            ReturnPageQuery = returnPageQuery;
         }
 
         protected EditCompleteByDateFormData(EditCompleteByDateFormData formData)
@@ -33,7 +33,7 @@
             CourseName = formData.CourseName;
             CustomisationId = formData.CustomisationId;
             DelegateName = formData.DelegateName;
-            ReturnPage = formData.ReturnPage;
+            ReturnPageQuery = formData.ReturnPageQuery;
         }
 
         public int? Day { get; set; }
@@ -43,11 +43,11 @@
         public string? DelegateName { get; set; }
         public int CustomisationId { get; set; }
         public string? CourseName { get; set; }
-        public int? ReturnPage { get; set; }
+        public ReturnPageQuery? ReturnPageQuery { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            return DateValidator.ValidateDate(Day, Month, Year, "complete by date", false)
+            return DateValidator.ValidateDate(Day, Month, Year, "complete by date")
                 .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
         }
     }

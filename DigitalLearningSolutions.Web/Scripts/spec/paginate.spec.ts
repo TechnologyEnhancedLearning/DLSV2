@@ -126,7 +126,7 @@ function createCourseCards() {
           <option value="10" selected>10</option>
           <option value="11">11</option>
         </select>
-        <span id="page-indicator"></span>
+        <span class="page-indicator" id="page-indicator"></span>
         <div id="searchable-elements">
           <div class="searchable-element" id="course-a">
             <span name="name" class="searchable-element-title">a: Course</span>

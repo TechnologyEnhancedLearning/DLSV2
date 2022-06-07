@@ -12,6 +12,9 @@
 
     <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-4" />
     <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+    <partial name="SearchablePage/_TopPagination" model="Model" />
+    <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
+
     <table role="table" class="nhsuk-table-responsive">
       <caption class="nhsuk-table__caption nhsuk-u-visually-hidden">Frameworks you are working on</caption>
       <thead role="rowgroup" class="nhsuk-table__head">
@@ -76,9 +79,9 @@
       }
       </tbody>
     </table>
-    @if (Model.TotalPages > 1) {
-      <partial name="SearchablePage/_Pagination" model="Model" />
-    }
+
+    <partial name="SearchablePage/_BottomPagination" model="Model" />
+
   </form>
 }
 @if (Model.IsFrameworkDeveloper) {

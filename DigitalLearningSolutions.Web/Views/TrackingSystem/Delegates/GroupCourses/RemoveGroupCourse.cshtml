@@ -16,7 +16,7 @@
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm), nameof(Model.DeleteStartedEnrolments) })" />
     }
 
-    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-8">Are you sure you would like to remove the course @Model.CourseName from this group?</h1>
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-8 word-break">Are you sure you would like to remove the course @Model.CourseName from this group?</h1>
   </div>
 </div>
 
@@ -26,14 +26,7 @@
   </div>
 </div>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l nhsuk-u-font-weight-bold">
-    Group name:
-  </div>
-  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
-    @Model.GroupName
-  </div>
-</div>
+<vc:field-name-value-display display-name="Group name" field-value="@Model.GroupName" />
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
@@ -44,6 +37,7 @@
       <input type="hidden" asp-for="GroupCourseId" />
       <input type="hidden" asp-for="CourseName" />
       <input type="hidden" asp-for="GroupName" />
+      <input type="hidden" asp-for="ReturnPageQuery"/>
 
       <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
                           label="I am sure that I wish to remove @Model.CourseName course from this group."
@@ -56,6 +50,6 @@
       <button class="nhsuk-button delete-button" type="submit">Remove course</button>
     </form>
 
-    <vc:cancel-link asp-controller="GroupCourses" asp-action="Index" asp-all-route-data="@cancelLinkRouteData" />
+    <vc:cancel-link-with-return-page-query asp-controller="GroupCourses" asp-action="Index" route-data="@cancelLinkRouteData" return-page-query="@Model.ReturnPageQuery" />
   </div>
 </div>

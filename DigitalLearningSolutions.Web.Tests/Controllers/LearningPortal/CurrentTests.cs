@@ -19,8 +19,8 @@
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
-    using CurrentCourseHelper = DigitalLearningSolutions.Web.Tests.TestHelpers.CurrentCourseHelper;
-    using SelfAssessmentHelper = DigitalLearningSolutions.Web.Tests.TestHelpers.SelfAssessmentHelper;
+    using CurrentCourseHelper = TestHelpers.CurrentCourseHelper;
+    using SelfAssessmentHelper = TestHelpers.SelfAssessmentHelper;
 
     public partial class LearningPortalControllerTests
     {
@@ -64,7 +64,7 @@
             // Then
             var expectedModel = new CurrentPageViewModel(
                 new SearchSortFilterPaginationResult<CurrentLearningItem>(
-                    new PaginationResult<CurrentLearningItem>(allItems, 1, 1, 10, 6),
+                    new PaginationResult<CurrentLearningItem>(allItems, 1, 1, 10, 6, true),
                     null,
                     "LastAccessed",
                     "Descending",
@@ -150,7 +150,7 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.SetCurrentCourseCompleteByDate(currentCourse.Id);
+            var result = controller.SetCurrentCourseCompleteByDate(currentCourse.Id, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             result.Should()
@@ -171,7 +171,7 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.SetCurrentCourseCompleteByDate(3);
+            var result = controller.SetCurrentCourseCompleteByDate(3, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             result.Should()
@@ -277,10 +277,10 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.RemoveCurrentCourseConfirmation(customisationId);
+            var result = controller.RemoveCurrentCourseConfirmation(customisationId, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
-            var expectedModel = new CurrentCourseViewModel(currentCourse);
+            var expectedModel = new CurrentCourseViewModel(currentCourse, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
@@ -296,7 +296,7 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.RemoveCurrentCourseConfirmation(3);
+            var result = controller.RemoveCurrentCourseConfirmation(3, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
 
             // Then
             result.Should()

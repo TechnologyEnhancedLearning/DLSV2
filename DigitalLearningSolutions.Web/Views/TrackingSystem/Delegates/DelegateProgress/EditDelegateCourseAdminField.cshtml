@@ -1,0 +1,81 @@
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@model EditDelegateCourseAdminFieldViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var pageTitle = $"Edit {Model.PromptText} field for {Model.CourseName}";
+  ViewData["Title"] = errorHasOccurred ? $"Error: {pageTitle}" : pageTitle;
+
+  const string blankRadioId = "leave-blank";
+
+  var routeParamsForBackLink = new Dictionary<string, string?>();
+
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+    routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
+  } else {
+    routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
+  }
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.Answer)}" />
+    }
+
+    <h1 class="nhsuk-heading-xl word-break">@pageTitle</h1>
+
+    <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-half">
+
+        <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
+          <input type="hidden" asp-for="DelegateId" />
+          <input type="hidden" asp-for="ProgressId" />
+          <input type="hidden" asp-for="CustomisationId" />
+          <input type="hidden" asp-for="ReturnPageQuery" />
+
+          @if (Model.Options.Count > 0) {
+            <div class="nhsuk-radios nhsuk-u-margin-bottom-4">
+              @foreach (var (radio, index) in Model.Radios.Select((r, i) => (r, i))) {
+                var isBlankOption = radio.Value == string.Empty;
+                var radioId = $"{(isBlankOption ? blankRadioId : radio.Value)}-{index}";
+                <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3 @(isBlankOption ? "nhsuk-u-margin-top-6" : "")">
+                  <input class="nhsuk-radios__input"
+                         id="@radioId"
+                         name="@nameof(Model.Answer)"
+                         type="radio"
+                         value="@radio.Value"
+                         aria-describedby="@radioId-item-hint"
+                         @(radio.Selected ? "checked" : string.Empty) />
+                  <label class="nhsuk-label nhsuk-radios__label" for="@radioId">
+                    @radio.Label
+                  </label>
+                </div>
+              }
+            </div>
+          } else {
+            <vc:text-input asp-for="@nameof(Model.Answer)"
+                           label="Answer"
+                           populate-with-current-value="true"
+                           type="text"
+                           spell-check="true"
+                           autocomplete=""
+                           hint-text="Answer must be 100 characters or fewer."
+                           css-class="nhsuk-u-width-full" />
+          }
+
+          <button class="nhsuk-button" type="submit">Save</button>
+        </form>
+      </div>
+    </div>
+
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+      <vc:cancel-link-with-return-page-query asp-controller="CourseDelegates" asp-action="Index" route-data="@routeParamsForBackLink" return-page-query="@Model.ReturnPageQuery!.Value" />
+    } else {
+      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
+    }
+  </div>
+</div>

@@ -1,6 +1,4 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.SystemNotifications
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.SystemNotifications
 @model SystemNotificationsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">
@@ -11,7 +9,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl" id="app-page-heading">New system notifications</h1>
+    <h1 class="nhsuk-heading-xl" id="app-page-heading">@ViewData["Title"]</h1>
 
     <vc:action-link asp-controller="Dashboard"
                     asp-action="Index"
@@ -43,14 +41,12 @@
 
       <form asp-action="AcknowledgeNotification"
             asp-controller="SystemNotifications"
-            asp-all-route-data="@(new Dictionary<string, string> {{ "page", Model.Page.ToString() }})">
+            asp-all-route-data="@(new Dictionary<string, string> { { "page", Model.Page.ToString() } })">
         <input type="hidden" value="@Model.UnacknowledgedNotification.SystemNotificationId" name="systemNotificationId" />
         <button class="nhsuk-button" type="submit">Acknowledge</button>
       </form>
 
-      @if (Model.TotalPages > 1) {
-        <partial name="PaginatedPage/_Pagination" model="Model" />
-      }
+      <partial name="PaginatedPage/_Pagination" model="Model" />
     }
 
   </div>

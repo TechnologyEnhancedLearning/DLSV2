@@ -58,7 +58,7 @@
             int competencyGroupId = 1,
             string competencyGroup = "competencyGroup",
             string? vocabulary = "Capability",
-            List<AssessmentQuestion> assessmentQuestions = null
+            List<AssessmentQuestion>? assessmentQuestions = null
         )
         {
             return new Competency

@@ -24,6 +24,9 @@
         private const string LearningHubSsoByteLengthKey = "ByteLength";
         private const string LearningHubSsoSecretKey = "SecretKey";
 
+        private const string JavascriptSearchSortFilterPaginateItemLimitKey =
+            "JavascriptSearchSortFilterPaginateItemLimit";
+
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName];
@@ -97,6 +100,11 @@
         public static string GetMapsApiKey(this IConfiguration config)
         {
             return config[MapsApiKey];
+        }
+
+        public static int GetJavascriptSearchSortFilterPaginateItemLimit(this IConfiguration config)
+        {
+            return int.Parse(config[JavascriptSearchSortFilterPaginateItemLimitKey]);
         }
     }
 }

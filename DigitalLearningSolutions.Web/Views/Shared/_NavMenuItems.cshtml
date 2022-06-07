@@ -2,7 +2,7 @@
 @using DigitalLearningSolutions.Data.Extensions
 @using DigitalLearningSolutions.Web.Extensions
 @using Microsoft.Extensions.Configuration
-@inject IConfiguration configuration
+@inject IConfiguration Configuration
 
 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Welcome)">
   <a class="nhsuk-header__navigation-link" asp-controller="Home" asp-action="Index">
@@ -16,7 +16,7 @@
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-@if (configuration.IsPricingPageEnabled()) {
+@if (Configuration.IsPricingPageEnabled()) {
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Pricing)">
     <a class="nhsuk-header__navigation-link" asp-controller="Pricing" asp-action="Index">
       Pricing

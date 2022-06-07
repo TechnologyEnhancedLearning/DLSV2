@@ -4,8 +4,10 @@ import {
   setUpFilter, filterSearchableElements, IAppliedFilterTag,
 } from './filter';
 import { getQuery, search, setUpSearch } from './search';
-import { setUpSort, sortSearchableElements } from './sort';
-import { paginateResults, setUpPagination } from './paginate';
+import {
+  setUpSort, sortSearchableElements, getSortBy, getSortDirection,
+} from './sort';
+import { paginateResults, setUpPagination, getItemsPerPageValue } from './paginate';
 import getPathForEndpoint from '../common';
 
 export interface ISearchableElement {
@@ -36,6 +38,10 @@ export class SearchSortFilterAndPaginate {
 
   private areaToHide: HTMLElement;
 
+  private readonly functionToRunAfterDisplayingData: VoidFunction;
+
+  private readonly idConsideredTopForScrolling: string;
+
   // Route provided should be a relative path with no leading /
   constructor(
     route: string,
@@ -45,16 +51,21 @@ export class SearchSortFilterAndPaginate {
     filterCookieName = '',
     searchableElementClassSuffixes = ['title'],
     queryParameterToRetain = '',
+    functionToRunAfterDisplayingData: VoidFunction = defaultVoidFunction,
+    idConsideredTopForScrolling = '',
   ) {
     this.spinnerContainer = document.getElementById('loading-spinner-container') as HTMLElement;
     this.spinner = document.getElementById('dynamic-loading-spinner') as HTMLElement;
-    this.areaToHide = document.getElementById('area-to-hide-while-loading') as HTMLElement;
+    this.areaToHide = document.getElementById('js-styling-hidden-area-while-loading') as HTMLElement;
+    this.functionToRunAfterDisplayingData = functionToRunAfterDisplayingData;
+
     this.startLoadingSpinner();
     this.queryParameterToRetain = queryParameterToRetain;
     this.page = paginationEnabled ? this.getPageNumber() : 1;
     this.searchEnabled = searchEnabled;
     this.paginationEnabled = paginationEnabled;
     this.filterEnabled = filterEnabled;
+    this.idConsideredTopForScrolling = idConsideredTopForScrolling;
 
     SearchSortFilterAndPaginate.getSearchableElements(route, searchableElementClassSuffixes)
       .then((searchableData) => {
@@ -69,7 +80,7 @@ export class SearchSortFilterAndPaginate {
           setUpSearch(() => this.onSearchUpdated(searchableData));
         }
 
-        setUpSort(() => this.searchSortAndPaginate(searchableData));
+        setUpSort(() => this.onSortUpdated(searchableData));
 
         if (paginationEnabled) {
           setUpPagination(
@@ -79,15 +90,21 @@ export class SearchSortFilterAndPaginate {
           );
           this.updateSearchableElementLinks(searchableData);
         }
-        this.searchSortAndPaginate(searchableData, false);
+        this.searchSortAndPaginate(searchableData);
         this.stopLoadingSpinner();
+        SearchSortFilterAndPaginate.scrollToLastItemViewed();
       });
   }
 
   private onFilterUpdated(searchableData: ISearchableData): void {
     this.updatePageNumberIfPaginated(1, searchableData);
     this.searchSortAndPaginate(searchableData);
-    SearchSortFilterAndPaginate.scrollToTop();
+    this.scrollToTop();
+  }
+
+  private onSortUpdated(searchableData: ISearchableData): void {
+    this.updatePageNumberIfPaginated(1, searchableData);
+    this.searchSortAndPaginate(searchableData);
   }
 
   private onSearchUpdated(searchableData: ISearchableData): void {
@@ -103,16 +120,18 @@ export class SearchSortFilterAndPaginate {
   private onNextPagePressed(searchableData: ISearchableData): void {
     this.updatePageNumberIfPaginated(this.page + 1, searchableData);
     this.searchSortAndPaginate(searchableData);
-    SearchSortFilterAndPaginate.scrollToTop();
+    this.scrollToTop();
   }
 
   private onPreviousPagePressed(searchableData: ISearchableData): void {
     this.updatePageNumberIfPaginated(this.page - 1, searchableData);
     this.searchSortAndPaginate(searchableData);
-    SearchSortFilterAndPaginate.scrollToTop();
+    this.scrollToTop();
   }
 
-  private searchSortAndPaginate(searchableData: ISearchableData, updateResultCount = true): void {
+  private searchSortAndPaginate(
+    searchableData: ISearchableData,
+  ): void {
     const searchedElements = this.searchEnabled
       ? search(searchableData.searchableElements)
       : searchableData.searchableElements;
@@ -123,15 +142,18 @@ export class SearchSortFilterAndPaginate {
 
     const sortedUniqueElements = _.uniqBy(sortedElements, 'parentIndex');
 
-    if (updateResultCount) {
-      const resultCount = sortedUniqueElements.length;
-      SearchSortFilterAndPaginate.updateResultCount(resultCount);
-    }
+    const resultCount = sortedUniqueElements.length;
 
     const paginatedElements = this.paginationEnabled
       ? paginateResults(sortedUniqueElements, this.page)
       : sortedUniqueElements;
-    SearchSortFilterAndPaginate.displaySearchableElements(paginatedElements);
+
+    // We keep both updates here (plus the one in paginateResults). This allows pages where
+    // there is only a results count, or only a page number to continue to work
+    SearchSortFilterAndPaginate.updateResultCount(resultCount);
+    this.updateResultCountAndPageNumber(resultCount);
+
+    this.displaySearchableElementsAndRunPostDisplayFunction(paginatedElements);
   }
 
   static getSearchableElements(route: string, searchableElementClassSuffixes: string[]):
@@ -191,6 +213,13 @@ export class SearchSortFilterAndPaginate {
     return element.getAttribute('data-filter-value')?.trim() ?? '';
   }
 
+  private displaySearchableElementsAndRunPostDisplayFunction(
+    searchableElements: ISearchableElement[],
+  ) : void {
+    SearchSortFilterAndPaginate.displaySearchableElements(searchableElements);
+    this.functionToRunAfterDisplayingData();
+  }
+
   static displaySearchableElements(searchableElements: ISearchableElement[]): void {
     const searchableElementsContainer = document.getElementById('searchable-elements');
     if (!searchableElementsContainer) {
@@ -204,21 +233,47 @@ export class SearchSortFilterAndPaginate {
     Details();
   }
 
-  static updateResultCount(count: number): void {
-    const resultCount = <HTMLSpanElement>document.getElementById('results-count');
+  updateResultCountAndPageNumber(count: number): void {
+    const element = <HTMLSpanElement>document.getElementById('result-count-and-page-number');
+    if (element) {
+      const oldMessage = element.innerHTML;
 
-    if (resultCount === null) {
-      return;
+      const newResultCountMessage = count === 1 ? '1 matching result.' : `${count.toString()} matching results.`;
+
+      element.hidden = false;
+      element.setAttribute('aria-hidden', 'false');
+
+      const itemsPerPage = getItemsPerPageValue();
+      const totalPages = Math.ceil(count / itemsPerPage);
+
+      const newPageMessage = `Page ${this.page} of ${totalPages}.`;
+
+      const newMessage = `${newResultCountMessage} ${newPageMessage}`;
+
+      if (newMessage === oldMessage) {
+        // Screen reader does not announce the message if it has not changed
+        element.innerHTML = `${newMessage}&nbsp;`;
+      } else {
+        element.innerHTML = newMessage;
+      }
     }
+  }
 
-    resultCount.hidden = false;
-    resultCount.setAttribute('aria-hidden', 'false');
-    const newResultCountMessage = this.getNewResultCountMessage(
-      count,
-      resultCount,
-    );
+  static updateResultCount(count: number): void {
+    const resultCounts = <HTMLSpanElement[]>Array.from(document.getElementsByClassName('results-count'));
 
-    resultCount.innerHTML = newResultCountMessage;
+    resultCounts.forEach((resultCount) => {
+      const element = resultCount;
+
+      element.hidden = false;
+      element.setAttribute('aria-hidden', 'false');
+      const newResultCountMessage = this.getNewResultCountMessage(
+        count,
+        resultCount,
+      );
+
+      element.innerHTML = newResultCountMessage;
+    });
   }
 
   static getNewResultCountMessage(
@@ -230,14 +285,18 @@ export class SearchSortFilterAndPaginate {
 
     if (newResultCountMessage === oldResultCountMessage) {
       // Screen reader does not announce the message if it has not changed
-      return `${newResultCountMessage}&nbsp`;
+      return `${newResultCountMessage}&nbsp;`;
     }
 
     return newResultCountMessage;
   }
 
-  private static scrollToTop(): void {
-    window.scrollTo(0, 0);
+  private scrollToTop(): void {
+    if (this.idConsideredTopForScrolling !== '') {
+      document.getElementById(this.idConsideredTopForScrolling)?.scrollIntoView();
+    } else {
+      window.scrollTo(0, 0);
+    }
   }
 
   private updatePageNumberIfPaginated(
@@ -249,12 +308,12 @@ export class SearchSortFilterAndPaginate {
     }
 
     this.page = pageNumber;
-    this.ensurePageNumberSetInUrl();
+    this.ensurePageNumberSetInUrl(false);
     this.updateSearchableElementLinks(searchableData);
   }
 
   private getPageNumber(): number {
-    this.ensurePageNumberSetInUrl();
+    this.ensurePageNumberSetInUrl(true);
     const currentPath = window.location.pathname;
     const urlParts = currentPath.split('/');
     return parseInt(urlParts[urlParts.length - 1], 10);
@@ -262,7 +321,7 @@ export class SearchSortFilterAndPaginate {
 
   /* Guarantees the last element of the path is a number
    * with any query parameters necessary and no trailing slashes */
-  private ensurePageNumberSetInUrl(): void {
+  private ensurePageNumberSetInUrl(preserveUrlFragment: boolean): void {
     const currentPath = window.location.pathname;
     const urlParts = currentPath.split('/');
     if (urlParts[urlParts.length - 1] === '') {
@@ -278,43 +337,48 @@ export class SearchSortFilterAndPaginate {
 
     const pageNumber = this.page ?? currentPageNumber;
     const queryParametersToRetain = this.getQueryParametersForUpdatedURL();
-    const newUrl = `${urlParts.join('/')}/${pageNumber}${queryParametersToRetain}`;
+
+    const returnId = preserveUrlFragment ? window.location.hash : '';
+    const newUrl = `${urlParts.join('/')}/${pageNumber}${queryParametersToRetain}${returnId}`;
     window.history.replaceState({}, '', newUrl);
   }
 
   private getQueryParametersForUpdatedURL(): string {
     const currentQueryParameters = window.location.search.replace('?', '');
-    if (currentQueryParameters.length === 0 || this.queryParameterToRetain === '') {
-      return '';
-    }
-
     const separatedParameters = currentQueryParameters.split('&');
     const keptQueryParameters: string[] = [];
     separatedParameters.forEach((param) => {
       const paramName = param.split('=')[0];
-      if (paramName.toUpperCase() === this.queryParameterToRetain.toUpperCase()) {
+      if (paramName.toUpperCase() === this.queryParameterToRetain.toUpperCase() && paramName !== '') {
         keptQueryParameters.push(param);
       }
     });
 
-    return keptQueryParameters.length > 0 ? `?${keptQueryParameters.join('&')}` : '';
+    const baseQuery = `?${SearchSortFilterAndPaginate.getBaseQueryParameters()}`;
+    return keptQueryParameters.length > 0 ? `${baseQuery}&${keptQueryParameters.join('&')}` : baseQuery;
+  }
+
+  private static getBaseQueryParameters(): string {
+    const searchString = getQuery();
+    const sortBy = getSortBy();
+    const sortDirection = getSortDirection();
+    const itemsPerPage = getItemsPerPageValue().toString();
+    return `searchString=${searchString}&sortBy=${sortBy}&sortDirection=${sortDirection}&itemsPerPage=${itemsPerPage}`;
   }
 
   private updateSearchableElementLinks(searchableData: ISearchableData): void {
-    const searchBoxContent = getQuery();
-    const setReturnPage = !this.searchEnabled
-      || (searchBoxContent != null && searchBoxContent.length === 0);
-
     _.forEach(searchableData.searchableElements, (searchableElement) => {
       _.forEach(searchableElement.element.getElementsByTagName('a'), (anchor: HTMLAnchorElement) => {
-        const params = new URLSearchParams(anchor.search);
-        if (setReturnPage) {
-          params.set('returnPage', this.page.toString());
-        } else {
-          params.delete('returnPage');
+        const shouldUpdate = anchor.getAttribute('data-return-page-enabled');
+        if (shouldUpdate?.toLowerCase() === 'true') {
+          const params = new URLSearchParams(anchor.search);
+          const pageQueryPart = `pageNumber=${this.page.toString()}`;
+          const jsScrollItemPart = `itemIdToScrollToOnReturn=${searchableElement.element.id}`;
+          const returnPageQuery = `${pageQueryPart}&${SearchSortFilterAndPaginate.getBaseQueryParameters()}&${jsScrollItemPart}`;
+          params.set('returnPageQuery', returnPageQuery);
+          // eslint-disable-next-line no-param-reassign
+          anchor.search = params.toString();
         }
-        // eslint-disable-next-line no-param-reassign
-        anchor.search = params.toString();
       });
     });
   }
@@ -331,4 +395,13 @@ export class SearchSortFilterAndPaginate {
       this.areaToHide.style.display = 'inline';
     }
   }
+
+  private static scrollToLastItemViewed(): void {
+    const id = window.location.hash.split('#')[1];
+    document.getElementById(id)?.scrollIntoView();
+  }
+}
+
+function defaultVoidFunction(): void {
+  return undefined;
 }

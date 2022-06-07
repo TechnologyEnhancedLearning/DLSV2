@@ -298,6 +298,39 @@ ul.no-bullets {
   }
 }
 
+.hee-secondary-nav--tabs {
+  ul {
+    display: table;
+    list-style-type: none;
+    border-bottom: 1px solid $color_nhsuk-grey-1;
+    table-layout: fixed;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    padding: 0;
+
+    li {
+      margin-bottom: 0;
+
+      a {
+        display: block;
+        padding: 1rem;
+        text-decoration: none;
+      }
+
+      &.active {
+        border-bottom: 3px solid $color_nhsuk-blue;
+        font-weight: bold;
+        background-color: white;
+      }
+
+      &:hover {
+        background-color: aliceblue;
+      }
+    }
+  }
+}
+
 .nhsuk-error-message.error-message--margin-bottom-1 {
   margin-bottom: nhsuk-spacing(1);
 }

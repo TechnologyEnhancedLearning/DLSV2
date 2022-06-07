@@ -4,8 +4,6 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class CourseDelegateAccountStatusFilterOptions
     {
@@ -13,13 +11,13 @@
 
         public static readonly FilterOptionModel Active = new FilterOptionModel(
             "Active",
-            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.Active), "true"),
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.IsDelegateActive), "true"),
             FilterStatus.Success
         );
 
         public static readonly FilterOptionModel Inactive = new FilterOptionModel(
             "Inactive",
-            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.Active), "false"),
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.IsDelegateActive), "false"),
             FilterStatus.Warning
         );
     }
@@ -30,13 +28,13 @@
 
         public static readonly FilterOptionModel Locked = new FilterOptionModel(
             "Locked",
-            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.Locked), "true"),
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.IsProgressLocked), "true"),
             FilterStatus.Warning
         );
 
         public static readonly FilterOptionModel NotLocked = new FilterOptionModel(
             "Not locked",
-            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.Locked), "false"),
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.IsProgressLocked), "false"),
             FilterStatus.Default
         );
     }
@@ -56,5 +54,19 @@
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.Removed), "false"),
             FilterStatus.Default
         );
+    }
+
+    public static class CourseDelegateCompletionFilterOptions
+    {
+        private const string Group = "CompletionStatus";
+
+        public static readonly FilterOptionModel Complete = new FilterOptionModel(
+            "Complete",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.HasCompleted), "true"),
+            FilterStatus.Success);
+        public static readonly FilterOptionModel Incomplete = new FilterOptionModel(
+            "Incomplete",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseDelegate.HasCompleted), "false"),
+            FilterStatus.Default);
     }
 }

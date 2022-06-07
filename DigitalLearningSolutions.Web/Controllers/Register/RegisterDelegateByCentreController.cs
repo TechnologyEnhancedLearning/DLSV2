@@ -33,13 +33,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [Route("/TrackingSystem/Delegates/Register/{action}")]
     public class RegisterDelegateByCentreController : Controller
     {
-        private readonly PromptsService promptsService;
+        private readonly IConfiguration config;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
-        private readonly IConfiguration config;
 
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
@@ -108,7 +108,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            var model = new LearnerInformationViewModel(data);
+            var model = new LearnerInformationViewModel(data, false);
 
             PopulateLearnerInformationExtraFields(model, data);
 
@@ -132,6 +132,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 model.Answer5,
                 model.Answer6,
                 ModelState
+            );
+
+            ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
+                ModelState,
+                model.HasProfessionalRegistrationNumber,
+                model.ProfessionalRegistrationNumber
             );
 
             if (!ModelState.IsValid)
@@ -287,7 +293,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
-                    "A user with this email address is already registered at this centre"
+                    "A user with this email is already registered at this centre"
                 );
             }
 

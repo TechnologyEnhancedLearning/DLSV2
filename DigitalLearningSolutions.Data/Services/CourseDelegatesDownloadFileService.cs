@@ -54,18 +54,18 @@
         private const string AdminFieldThree = "Admin field 3";
 
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
-        private readonly ICourseDelegatesDataService courseDelegatesDataService;
+        private readonly ICourseDataService courseDataService;
         private readonly ICourseService courseService;
         private readonly ICentreRegistrationPromptsService registrationPromptsService;
 
         public CourseDelegatesDownloadFileService(
-            ICourseDelegatesDataService courseDelegatesDataService,
+            ICourseDataService courseDataService,
             ICourseAdminFieldsService courseAdminFieldsService,
             ICentreRegistrationPromptsService registrationPromptsService,
             ICourseService courseService
         )
         {
-            this.courseDelegatesDataService = courseDelegatesDataService;
+            this.courseDataService = courseDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.registrationPromptsService = registrationPromptsService;
             this.courseService = courseService;
@@ -134,7 +134,7 @@
 
             var customRegistrationPrompts = registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
-            var courseDelegates = courseDelegatesDataService.GetDelegatesOnCourseForExport(customisationId, centreId)
+            var courseDelegates = courseDataService.GetDelegatesOnCourseForExport(customisationId, centreId)
                 .ToList();
 
             var filteredCourseDelegates =
@@ -153,6 +153,12 @@
             foreach (var courseDelegate in sortedCourseDelegates)
             {
                 AddDelegateToDataTable(dataTable, courseDelegate, customRegistrationPrompts, adminFields);
+            }
+
+            if (dataTable.Rows.Count == 0)
+            {
+                var row = dataTable.NewRow();
+                dataTable.Rows.Add(row);
             }
 
             ClosedXmlHelper.AddSheetToWorkbook(
@@ -177,6 +183,9 @@
         {
             var sheet = workbook.Worksheets.Add("Course Delegates");
 
+            // Set sheet to have outlining expand buttons at the top of the expanded section.
+            sheet.Outline.SummaryVLocation = XLOutlineSummaryVLocation.Top;
+
             var customRegistrationPrompts =
                 registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
@@ -199,10 +208,13 @@
                 AddCourseToSheet(sheet, centreId, course, customRegistrationPrompts);
             }
 
-            sheet.Columns(2, sheet.LastColumnUsed().RangeAddress.FirstAddress.ColumnNumber).AdjustToContents();
-            headerTable.Resize(1, 1, sheet.LastRowUsed().RowNumber(), sheet.LastColumnUsed().ColumnNumber());
+            sheet.Columns(1, sheet.LastColumnUsed().RangeAddress.FirstAddress.ColumnNumber).AdjustToContents();
 
-            sheet.CollapseRows();
+            if (GetNextEmptyRowNumber(sheet) > 2)
+            {
+                headerTable.Resize(1, 1, sheet.LastRowUsed().RowNumber(), sheet.LastColumnUsed().ColumnNumber());
+                sheet.CollapseRows();
+            }
 
             FormatWorksheetColumns(workbook, emptyTable);
         }
@@ -216,7 +228,7 @@
             string sortDirection
         )
         {
-            var details = courseService.GetCentreCourseDetails(centreId, adminCategoryId);
+            var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, adminCategoryId);
             var searchedCourses = GenericSearchHelper.SearchItems(details.Courses, searchString);
             var filteredCourses = FilteringHelper.FilterItems(searchedCourses.AsQueryable(), filterString);
             var sortedCourses = GenericSortingHelper.SortAllItems(
@@ -240,7 +252,7 @@
 
             var sortedCourseDelegates =
                 GenericSortingHelper.SortAllItems(
-                    courseDelegatesDataService.GetDelegatesOnCourseForExport(course.CustomisationId, centreId)
+                    courseDataService.GetDelegatesOnCourseForExport(course.CustomisationId, centreId)
                         .AsQueryable(),
                     nameof(CourseDelegateForExport.FullNameForSearchingSorting),
                     GenericSortingHelper.Ascending
@@ -256,8 +268,11 @@
             }
 
             var insertedDataRange = sheet.Cell(GetNextEmptyRowNumber(sheet), 1).InsertData(dataTable.Rows);
-            sheet.Rows(insertedDataRange.FirstRow().RowNumber(), insertedDataRange.LastRow().RowNumber())
-                .Group(true);
+            if (dataTable.Rows.Count > 0)
+            {
+                sheet.Rows(insertedDataRange.FirstRow().RowNumber(), insertedDataRange.LastRow().RowNumber())
+                    .Group(true);
+            }
         }
 
         private static int GetNextEmptyRowNumber(IXLWorksheet sheet)
@@ -368,9 +383,9 @@
 
             SetCommonRowValues(dataTable, courseDelegate, registrationRegistrationPrompts, row);
 
-            row[AdminFieldOne] = courseDelegate.CourseAnswer1;
-            row[AdminFieldTwo] = courseDelegate.CourseAnswer2;
-            row[AdminFieldThree] = courseDelegate.CourseAnswer3;
+            row[AdminFieldOne] = courseDelegate.Answer1;
+            row[AdminFieldTwo] = courseDelegate.Answer2;
+            row[AdminFieldThree] = courseDelegate.Answer3;
 
             dataTable.Rows.Add(row);
         }
@@ -382,9 +397,9 @@
             DataRow row
         )
         {
-            row[LastName] = courseDelegate.LastName;
-            row[FirstName] = courseDelegate.FirstName;
-            row[Email] = courseDelegate.EmailAddress;
+            row[LastName] = courseDelegate.DelegateLastName;
+            row[FirstName] = courseDelegate.DelegateFirstName;
+            row[Email] = courseDelegate.DelegateEmail;
 
             foreach (var prompt in registrationRegistrationPrompts.CustomPrompts)
             {
@@ -403,16 +418,16 @@
             row[DelegateId] = courseDelegate.CandidateNumber;
             row[Enrolled] = courseDelegate.Enrolled.Date;
             row[LastAccessed] = courseDelegate.LastUpdated.Date;
-            row[CompleteBy] = courseDelegate.CompleteByDate?.Date;
+            row[CompleteBy] = courseDelegate.CompleteBy?.Date;
             row[CompletedDate] = courseDelegate.Completed?.Date;
             row[Logins] = courseDelegate.LoginCount;
             row[TimeMinutes] = courseDelegate.Duration;
             row[DiagnosticScore] = courseDelegate.DiagnosticScore;
             row[AssessmentsPassed] = courseDelegate.AttemptsPassed;
             row[PassRate] = courseDelegate.PassRate;
-            row[Active] = courseDelegate.Active;
+            row[Active] = courseDelegate.IsDelegateActive;
             row[RemovedDate] = courseDelegate.RemovedDate?.Date;
-            row[Locked] = courseDelegate.Locked;
+            row[Locked] = courseDelegate.IsProgressLocked;
         }
 
         private static void FormatWorksheetColumns(IXLWorkbook workbook, DataTable dataTable)
@@ -420,25 +435,19 @@
             var dateColumns = new[] { Enrolled, LastAccessed, CompleteBy, CompletedDate, RemovedDate };
             foreach (var columnName in dateColumns)
             {
-                var columnNumber = dataTable.Columns.IndexOf(columnName) + 1;
-                workbook.Worksheet(1).Column(columnNumber).CellsUsed(c => c.Address.RowNumber != 1)
-                    .SetDataType(XLDataType.DateTime);
+                ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.DateTime);
             }
 
             var numberColumns = new[] { Logins, TimeMinutes, DiagnosticScore, AssessmentsPassed, PassRate };
             foreach (var columnName in numberColumns)
             {
-                var columnNumber = dataTable.Columns.IndexOf(columnName) + 1;
-                workbook.Worksheet(1).Column(columnNumber).CellsUsed(c => c.Address.RowNumber != 1)
-                    .SetDataType(XLDataType.Number);
+                ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.Number);
             }
 
             var boolColumns = new[] { Active, Locked };
             foreach (var columnName in boolColumns)
             {
-                var columnNumber = dataTable.Columns.IndexOf(columnName) + 1;
-                workbook.Worksheet(1).Column(columnNumber).CellsUsed(c => c.Address.RowNumber != 1)
-                    .SetDataType(XLDataType.Boolean);
+                ClosedXmlHelper.FormatWorksheetColumn(workbook, dataTable, columnName, XLDataType.Boolean);
             }
         }
     }

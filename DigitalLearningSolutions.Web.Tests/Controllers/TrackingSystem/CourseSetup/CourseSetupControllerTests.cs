@@ -107,7 +107,11 @@
             config = A.Fake<IConfiguration>();
 
             A.CallTo(
-                () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)
+                () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
+                    A<int>._,
+                    A<int>._,
+                    false
+                )
             ).Returns(courses);
 
             A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);
@@ -376,7 +380,7 @@
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
-            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true) });
+            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true, null, null) });
 
             // When
             var result = controller.SetCourseContent(model);
@@ -402,7 +406,7 @@
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
-            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true) });
+            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true, null, null) });
 
             // When
             var result = controller.SetCourseContent(model);
@@ -481,7 +485,7 @@
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(A<int>._)
-            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true) });
+            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true, null, null) });
 
             // When
             var result = controller.SetSectionContent(model, "save");
@@ -510,7 +514,7 @@
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
-            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true) });
+            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true, null, null) });
 
             // When
             var result = controller.SetSectionContent(model, "save");
@@ -531,7 +535,7 @@
             var applicationName = application.ApplicationName;
             var customisationName = GetSetCourseDetailsViewModel().CustomisationName;
 
-            var tutorial = new Tutorial(1, "Tutorial name", true, true);
+            var tutorial = new Tutorial(1, "Tutorial name", true, true, null, null);
             var section = new Section(1, "Section name");
             var sectionModel = new SetSectionContentViewModel(
                 section,

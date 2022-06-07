@@ -62,13 +62,19 @@
             switch (loginResult.LoginAttemptResult)
             {
                 case LoginAttemptResult.InvalidUsername:
-                    ModelState.AddModelError("Username", "A user with this email address or user ID could not be found");
+                    ModelState.AddModelError(
+                        "Username",
+                        "A user with this email or user ID could not be found"
+                    );
                     return View("Index", model);
                 case LoginAttemptResult.InvalidPassword:
                     ModelState.AddModelError("Password", "The password you have entered is incorrect");
                     return View("Index", model);
                 case LoginAttemptResult.AccountLocked:
-                    return RedirectToAction("AccountLocked", new { failedCount = loginResult.Accounts.AdminAccount!.FailedLoginCount + 1 });
+                    return RedirectToAction(
+                        "AccountLocked",
+                        new { failedCount = loginResult.Accounts.AdminAccount!.FailedLoginCount }
+                    );
                 case LoginAttemptResult.AccountNotApproved:
                     return View("AccountNotApproved");
                 case LoginAttemptResult.InactiveCentre:
@@ -175,15 +181,6 @@
                 IsPersistent = rememberMe,
                 IssuedUtc = DateTime.UtcNow
             };
-
-
-            /* Course progress doesn't get updated if the auth token expires by the end of the tutorials. 
-               Some tutorials are longer than the default auth token lifetime, so we set the auth expiry to 8 hours.
-               See HEEDLS-637 for more details */
-            if (!rememberMe)
-            {
-                authProperties.ExpiresUtc = DateTime.UtcNow.AddHours(8);
-            }
 
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
 

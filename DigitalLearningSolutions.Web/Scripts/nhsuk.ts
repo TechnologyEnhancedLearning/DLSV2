@@ -12,7 +12,8 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 // Initialize components
-document.addEventListener('DOMContentLoaded',
+document.addEventListener(
+  'DOMContentLoaded',
   () => {
     Details();
     Header();
@@ -20,4 +21,5 @@ document.addEventListener('DOMContentLoaded',
     Radios();
     Checkboxes();
     Card();
-  });
+  },
+);

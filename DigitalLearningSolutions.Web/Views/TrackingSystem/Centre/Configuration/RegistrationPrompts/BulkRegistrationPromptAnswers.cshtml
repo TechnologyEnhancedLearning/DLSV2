@@ -1,11 +1,9 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts
 @model BulkRegistrationPromptAnswersViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Configure answers in bulk" : "Configure answers in bulk";
+  ViewData["Title"] = errorHasOccurred ? "Error: Configure responses in bulk" : "Configure responses in bulk";
 }
 
 <div class="nhsuk-grid-row">
@@ -14,7 +12,7 @@
       <vc:error-summary order-of-property-names="@new []{ nameof(BulkRegistrationPromptAnswersViewModel.OptionsString) }" />
     }
 
-    <h1 class="nhsuk-heading-xl">Configure answers in bulk</h1>
+    <h1 class="nhsuk-heading-xl">Configure responses in bulk</h1>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="@(Model.IsAddPromptJourney ? "AddRegistrationPromptBulkPost" : "EditRegistrationPromptBulkPost")">
 

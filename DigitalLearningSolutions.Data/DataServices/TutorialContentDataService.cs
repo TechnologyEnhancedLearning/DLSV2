@@ -41,6 +41,8 @@ namespace DigitalLearningSolutions.Data.DataServices
             int customisationId,
             bool isPostLearning
         );
+
+        IEnumerable<TutorialSummary> GetPublicTutorialSummariesByBrandId(int brandId);
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -327,7 +329,9 @@ namespace DigitalLearningSolutions.Data.DataServices
             return connection.Query<Tutorial>(
                 @"SELECT
                         tu.TutorialID,
-                        tu.TutorialName
+                        tu.TutorialName,
+                        tu.OverrideTutorialMins,
+                        tu.AverageTutMins
                     FROM dbo.Tutorials AS tu
                     WHERE tu.SectionID = @sectionId
                     AND tu.ArchivedDate IS NULL",
@@ -417,6 +421,29 @@ namespace DigitalLearningSolutions.Data.DataServices
                     AND tu.ArchivedDate IS NULL
                     AND (@isPostLearning = 1 OR (ct.DiagStatus = 1 AND tu.DiagAssessOutOf > 0))",
                 new { sectionId, customisationId, isPostLearning }
+            );
+        }
+
+        public IEnumerable<TutorialSummary> GetPublicTutorialSummariesByBrandId(int brandId)
+        {
+            return connection.Query<TutorialSummary>(
+                @"SELECT
+                        TutorialID,
+                        TutorialName,
+                        Objectives,
+                        TutorialPath,
+                        SupportingMatsPath
+                    FROM Tutorials
+                    WHERE SectionID IN (
+                        SELECT SectionID
+                        FROM Sections
+                        WHERE ApplicationID IN (
+                            SELECT ApplicationID
+                            FROM Applications
+                            WHERE BrandID = @brandId)
+                            )
+                    AND AllowPreview = 1",
+                new { brandId }
             );
         }
     }

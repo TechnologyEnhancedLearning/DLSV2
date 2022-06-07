@@ -34,6 +34,7 @@
                 1,
                 1,
                 0,
+                true,
                 null,
                 string.Empty,
                 string.Empty,
@@ -61,7 +62,7 @@
 
         public override bool NoDataFound => !SuperviseDelegateDetailViewModels.Any() && NoSearchOrFilter;
 
-        [Required(ErrorMessage = "Enter an email address")]
+        [Required(ErrorMessage = "Enter an email")]
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]

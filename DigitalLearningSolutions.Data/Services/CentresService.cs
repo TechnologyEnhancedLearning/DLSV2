@@ -9,10 +9,10 @@
     public interface ICentresService
     {
         IEnumerable<CentreRanking> GetCentresForCentreRankingPage(int centreId, int numberOfDays, int? regionId);
-
         int? GetCentreRankForCentre(int centreId);
-
         IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
+        IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
+        IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
     }
 
     public class CentresService : ICentresService
@@ -46,6 +46,16 @@
         public IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin()
         {
             return centresDataService.GetAllCentreSummariesForSuperAdmin();
+        }
+
+        public IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre()
+        {
+            return centresDataService.GetAllCentreSummariesForFindCentre();
+        }
+
+        public IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap()
+        {
+            return centresDataService.GetAllCentreSummariesForMap();
         }
     }
 }

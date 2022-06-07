@@ -27,6 +27,7 @@
             ItemsPerPage = paginationResult.ItemsPerPage;
             MatchingSearchResults = paginationResult.MatchingSearchResults;
             TotalPages = paginationResult.TotalPages;
+            JavascriptSearchSortFilterPaginateEnabled = paginationResult.JavascriptSearchSortFilterPaginateEnabled;
         }
 
         public int MatchingSearchResults { get; set; }
@@ -36,6 +37,8 @@
         public int TotalPages { get; set; }
 
         public int ItemsPerPage { get; set; }
+
+        public bool JavascriptSearchSortFilterPaginateEnabled { get; set; }
 
         public IEnumerable<SelectListItem> ItemsPerPageSelectListItems =>
             SelectListHelper.MapOptionsToSelectListItems(ItemsPerPageOptions);

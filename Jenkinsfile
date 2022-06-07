@@ -23,15 +23,19 @@ pipeline {
         stage('TS Build') {
             steps {
                 dir("DigitalLearningSolutions.Web/") {
-                    bat "npm ci"
-                    bat "npm run build"
+                    nodejs(nodeJSInstallationName: 'NodeJS-16') {
+                        bat "yarn install --frozen-lockfile"
+                        bat "yarn build"
+                    }
                 }
             }
         }
         stage('TS Lint') {
             steps {
                 dir ("DigitalLearningSolutions.Web/") {
-                    bat "npm run lint"
+                    nodejs(nodeJSInstallationName: 'NodeJS-16') {
+                        bat "yarn lint"
+                    }
                 }
             }
         }
@@ -64,7 +68,9 @@ pipeline {
         stage('TS Tests') {
             steps {
                 dir ("DigitalLearningSolutions.Web/") {
-                    bat "npm test"
+                    nodejs(nodeJSInstallationName: 'NodeJS-16') {
+                        bat "yarn test"
+                    }
                 }
             }
         }
@@ -74,7 +80,9 @@ pipeline {
             }
             steps {
                 withCredentials([string(credentialsId: 'deploy-test-password', variable: 'PASSWORD')]) {
-                    bat "dotnet publish DigitalLearningSolutions.Web/DigitalLearningSolutions.Web.csproj /p:PublishProfile=DigitalLearningSolutions.Web/Properties/PublishProfiles/PublishToTest.pubxml /p:Password=$PASSWORD /p:AllowUntrustedCertificate=True"
+                    nodejs(nodeJSInstallationName: 'NodeJS-16') {
+                        bat "dotnet publish DigitalLearningSolutions.Web/DigitalLearningSolutions.Web.csproj /p:PublishProfile=DigitalLearningSolutions.Web/Properties/PublishProfiles/PublishToTest.pubxml /p:Password=$PASSWORD /p:AllowUntrustedCertificate=True"
+                    }
                 }
             }
         }
@@ -84,7 +92,9 @@ pipeline {
             }
             steps {
                 withCredentials([string(credentialsId: 'ftp-password', variable: 'PASSWORD')]) {
-                    bat "DeployToUAT.bat \"Frida.Tveit:$PASSWORD\" 40.69.40.103"
+                    nodejs(nodeJSInstallationName: 'NodeJS-16') {
+                        bat "DeployToUAT.bat \"Frida.Tveit:$PASSWORD\" 40.69.40.103"
+                    }
                 }
                 sendSlackMessageToTeamChannel(":tada: Successfully deployed to UAT", "good")
                 sendSlackNotificationToChannel("@kevin.whittaker", ":tada: Successfully deployed to UAT", "good")

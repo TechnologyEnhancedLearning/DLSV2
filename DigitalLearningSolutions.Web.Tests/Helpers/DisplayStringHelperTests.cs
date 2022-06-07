@@ -284,40 +284,6 @@
         }
 
         [Test]
-        public void GetPrnDisplayString_returns_the_prn_when_the_delegate_has_been_prompted_and_has_provided_a_prn()
-        {
-            // Given
-            const string? prn = "12345";
-
-            // When
-            var result = DisplayStringHelper.GetPrnDisplayString(true, prn);
-
-            // Then
-            result.Should().Be(prn);
-        }
-
-        [Test]
-        public void
-            GetPrnDisplayString_returns_Not_professionally_registered_when_the_delegate_has_been_prompted_and_has_not_provided_a_prn()
-        {
-            // When
-            var result = DisplayStringHelper.GetPrnDisplayString(true, null);
-
-            // Then
-            result.Should().Be("Not professionally registered");
-        }
-
-        [Test]
-        public void GetPrnDisplayString_returns_Not_yet_provided_when_the_delegate_has_not_been_prompted_for_a_prn()
-        {
-            // When
-            var result = DisplayStringHelper.GetPrnDisplayString(false, null);
-
-            // Then
-            result.Should().Be("Not yet provided");
-        }
-
-        [Test]
         [TestCase(null, "")]
         [TestCase("", "")]
         [TestCase("some@fake.email", " (some@fake.email)")]
@@ -325,6 +291,55 @@
         {
             // When
             var result = DisplayStringHelper.GetEmailDisplayString(email);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        [TestCase(0, "0m")]
+        [TestCase(59, "59m")]
+        [TestCase(60, "1h 0m")]
+        [TestCase(89, "1h 29m")]
+        [TestCase(2332, "38h 52m")]
+        public void GetTimeStringFromMinutes_returns_expected_result(int minutes, string expectedResult)
+        {
+            // When
+            var result = DisplayStringHelper.GetTimeStringFromMinutes(minutes);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        [TestCase(0, "0 minutes")]
+        [TestCase(59, "59 minutes")]
+        [TestCase(60, "1 hours 0 minutes")]
+        [TestCase(89, "1 hours 29 minutes")]
+        [TestCase(2332, "38 hours 52 minutes")]
+        public void GetTimeStringForScreenReaderFromMinutes_returns_expected_result(int minutes, string expectedResult)
+        {
+            // When
+            var result = DisplayStringHelper.GetTimeStringForScreenReaderFromMinutes(minutes);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        [TestCase("", "")]
+        [TestCase("NicePascalCaseString", "Nice Pascal Case String")]
+        [TestCase("ASlightlyMoreAwkwardOne", "A Slightly More Awkward One")]
+        [TestCase("XMLFile", "XML File")]
+        [TestCase("AnXMLFile", "An XML File")]
+        [TestCase("An Already Separated String", "An Already Separated String")]
+        [TestCase("A Partially SeparatedString", "A Partially Separated String")]
+        [TestCase("IDRecord", "ID Record")]
+        [TestCase("ID", "ID")]
+        public void AddSpacesToPascalCaseString_returns_expected_result(string input, string expectedResult)
+        {
+            // When
+            var result = DisplayStringHelper.AddSpacesToPascalCaseString(input);
 
             // Then
             result.Should().Be(expectedResult);

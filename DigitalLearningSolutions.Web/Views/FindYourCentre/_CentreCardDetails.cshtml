@@ -1,0 +1,94 @@
+﻿@using DigitalLearningSolutions.Data.Models.Centres
+@model CentreSummaryForFindYourCentre
+
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Region
+    </dt>
+    <dd class="nhsuk-summary-list__value" data-filter-value="@Model.RegionFilter">
+      @Model.RegionName
+    </dd>
+  </div>
+
+  @if (Model.Telephone != null) {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Phone Number
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.Telephone
+      </dd>
+    </div>
+  }
+
+  @if (Model.Email != null) {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Email
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        <a href="@Model.EmailHref" target="_blank">@Model.Email</a>
+      </dd>
+    </div>
+  }
+
+  @if (Model.WebUrl != null) {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Website
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @if (Model.IsValidUrl(Model.WebUrl)) {
+          <a href="@Model.WebsiteHref" target="_blank">@Model.WebUrl</a>
+        } else {
+          @Model.WebUrl
+        }
+      </dd>
+    </div>
+  }
+
+  @if (Model.Hours != null) {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Hours
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.Hours
+      </dd>
+    </div>
+  }
+
+  @if (Model.TrainingLocations != null) {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Training Venues
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.TrainingLocations
+      </dd>
+    </div>
+  }
+
+  @if (Model.TrustsCovered != null) {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Organisations
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.TrustsCovered
+      </dd>
+    </div>
+  }
+
+  @if (Model.GeneralInfo != null) {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        General Info
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.GeneralInfo
+      </dd>
+    </div>
+  }
+</dl>

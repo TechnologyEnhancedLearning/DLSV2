@@ -117,7 +117,7 @@ describe('updateResultCount', () => {
       <html>
       <head></head>
       <body>
-        <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+        <span hidden aria-hidden="true" aria-live="polite" class="results-count">0 matching results</span>
       </body>
       </html>
     `).window.document;
@@ -126,9 +126,11 @@ describe('updateResultCount', () => {
     SearchSortFilterAndPaginate.updateResultCount(0);
 
     // Then
-    const resultCountElements = document.getElementById('results-count');
-    expect(resultCountElements?.hidden).toBeFalsy();
-    expect(resultCountElements?.getAttribute('aria-hidden')).toBe('false');
+    const resultCountElements = <HTMLSpanElement[]>Array.from(document.getElementsByClassName('results-count'));
+    resultCountElements.forEach((element) => {
+      expect(element?.hidden).toBeFalsy();
+      expect(element?.getAttribute('aria-hidden')).toBe('false');
+    });
   });
 
   it('should show the correct result count', () => {
@@ -137,7 +139,7 @@ describe('updateResultCount', () => {
       <html>
       <head></head>
       <body>
-        <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+        <span hidden aria-hidden="true" aria-live="polite" class="results-count">0 matching results</span>
       </body>
       </html>
     `).window.document;
@@ -146,8 +148,10 @@ describe('updateResultCount', () => {
     SearchSortFilterAndPaginate.updateResultCount(5);
 
     // Then
-    const resultCountElements = document.getElementById('results-count');
-    expect(resultCountElements?.textContent).toBe('5 matching results');
+    const resultCountElements = <HTMLSpanElement[]>Array.from(document.getElementsByClassName('results-count'));
+    resultCountElements.forEach((element) => {
+      expect(element?.textContent).toBe('5 matching results');
+    });
   });
 });
 
@@ -156,7 +160,7 @@ function createCourseCards() {
       <html>
       <head></head>
       <body>
-        <span id="page-indicator"></span>
+        <span class="page-indicator"></span>
         <div id="searchable-elements">
           <div class="searchable-element" id="course-a">
             <span name="name" class="searchable-element-title">a: Course</span>

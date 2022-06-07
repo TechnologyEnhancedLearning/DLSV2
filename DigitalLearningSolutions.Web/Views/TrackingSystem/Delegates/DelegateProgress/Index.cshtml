@@ -1,17 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @model DelegateProgressViewModel
 
 @{
   ViewData["Title"] = "Delegate progress";
-  var routeParamsForBackLink = new Dictionary<string, string?>();
-
-  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-    routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
-    routeParamsForBackLink.Add("page", Model.Page.ToString());
-  } else {
-    routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
-  }
 }
 
 @section NavBreadcrumbs {
@@ -22,20 +14,31 @@
   }
 }
 
+<link rel="stylesheet" href="@Url.Content("~/css/shared/headingButtons.css")" asp-append-version="true">
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-half">
+        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+      </div>
+      <div class="nhsuk-grid-column-one-half heading-button-group">
+        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button" href="@Model.ProgressDownloadUrl">
+          Download
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary heading-button"
+           role="button"
+           asp-action="LearningLog"
+           asp-route-accessedVia="@Model.AccessedVia"
+           asp-route-progressId="@Model.ProgressId">
+          View learning log
+        </a>
+      </div>
+    </div>
 
     <partial name="_DelegateDetails" model="Model" />
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
-        Course
-      </div>
-      <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold">
-        @Model.CourseName
-      </div>
-    </div>
+    <vc:field-name-value-display display-name="Course" field-value="@Model.CourseName" />
 
     @if (!Model.IsCourseActive) {
       <partial name="~/Views/TrackingSystem/Shared/_InactiveCourseInset.cshtml" />
@@ -43,24 +46,13 @@
 
     <partial name="_DelegateProgressSummary" model="Model" />
 
-    <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" role="button"
-       asp-action="DetailedProgress"
-       asp-route-progressId="@Model.ProgressId"
-       asp-route-accessedVia="@Model.AccessedVia">
-      View detailed progress
-    </a>
-    <a class="nhsuk-button nhsuk-button--secondary"
-       role="button"
-       asp-action="LearningLog"
-       asp-route-accessedVia="@Model.AccessedVia"
-       asp-route-progressId="@Model.ProgressId">
-      View learning log
-    </a>
+    <div class="nhsuk-inset-text">
+      <span class="nhsuk-u-visually-hidden">Information: </span>
+      <p class="nhsuk-body-l">Overall diagnostic score: <strong>@(Model.DiagnosticScore.HasValue ? $"{Model.DiagnosticScore}%" : "N/A")</strong></p>
+    </div>
 
-    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-      <vc:back-link asp-controller="CourseDelegates" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
-    } else {
-      <vc:back-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    @foreach (var section in Model.Sections) {
+      <partial name="_SectionProgress" model="section" />
     }
   </div>
 </div>

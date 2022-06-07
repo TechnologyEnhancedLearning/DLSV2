@@ -9,11 +9,15 @@ const checkboxSelector = '.delegate-checkbox';
 
 // eslint-disable-next-line no-new
 new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter');
+
 setUpSelectAndDeselectButtons();
 
 function alertResultCount(): void {
-  const resultCount = document.getElementById('results-count') as HTMLSpanElement;
-  resultCount.innerHTML = getModifiedResultCountMessageForScreenReader(resultCount);
+  const resultCounts = <HTMLSpanElement[]>Array.from(document.getElementsByClassName('results-count'));
+  resultCounts.forEach((resultCount) => {
+    const element = resultCount;
+    element.innerHTML = getModifiedResultCountMessageForScreenReader(resultCount);
+  });
 }
 
 function setUpSelectAndDeselectButtons(): void {
@@ -23,17 +27,21 @@ function setUpSelectAndDeselectButtons(): void {
 
   selectAllForm.addEventListener('submit', (e) => e.preventDefault());
 
-  selectAllButton.addEventListener('click',
+  selectAllButton.addEventListener(
+    'click',
     () => {
       Checkboxes.default.selectAll(checkboxSelector);
       alertResultCount();
-    });
+    },
+  );
 
-  deselectAllButton.addEventListener('click',
+  deselectAllButton.addEventListener(
+    'click',
     () => {
       Checkboxes.default.deselectAll(checkboxSelector);
       alertResultCount();
-    });
+    },
+  );
 }
 
 function getModifiedResultCountMessageForScreenReader(

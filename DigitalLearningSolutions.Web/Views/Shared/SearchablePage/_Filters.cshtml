@@ -4,7 +4,7 @@
 <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Filter by</label>
 <div class="filter-container">
   <input type="hidden" id="existing-filter-string" name="existingFilterString" value="@Model.ExistingFilterString" />
-  <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown-selector"
+  <select class="nhsuk-select filter-dropdown-selector"
           id="filter-selector"
           name="filterCategorySelector"
           aria-label="Select filter category">
@@ -26,7 +26,7 @@
             <input type="hidden" name="@key" value="@value" />
           }
           <div class="filter-value-container">
-            <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown"
+            <select class="nhsuk-select filter-dropdown"
                     name="newFilterToAdd"
                     id="@filter.FilterProperty"
                     aria-label="@filter.FilterName filter">
@@ -35,7 +35,7 @@
                 <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>
               }
             </select>
-            <button class="nhsuk-search__submit filter-submit filter-submit__dropdown" type="submit" id="@filter.FilterProperty-submit">
+            <button class="nhsuk-button filter-submit filter-submit__dropdown" type="submit" id="@filter.FilterProperty-submit">
               Add filter
             </button>
           </div>

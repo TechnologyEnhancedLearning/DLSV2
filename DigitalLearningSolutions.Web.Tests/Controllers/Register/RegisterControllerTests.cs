@@ -176,7 +176,6 @@
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
-                        A<string?>._,
                         A<int>._
                     )
                 )
@@ -215,7 +214,6 @@
                             ),
                             IpAddress,
                             false,
-                            null,
                             SupervisorDelegateId
                         )
                 )
@@ -241,7 +239,6 @@
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
-                            null,
                             SupervisorDelegateId
                         )
                 )
@@ -267,7 +264,6 @@
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
-                            null,
                             SupervisorDelegateId
                         )
                 )
@@ -293,7 +289,6 @@
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
-                            null,
                             SupervisorDelegateId
                         )
                 )
@@ -312,7 +307,6 @@
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
-                        A<string?>._,
                         A<int>._
                     )
                 )
@@ -341,7 +335,6 @@
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
-                        A<string?>._,
                         A<int>._
                     )
                 )

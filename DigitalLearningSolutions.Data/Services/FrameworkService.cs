@@ -116,7 +116,7 @@
         //INSERT DATA
         BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
 
-        int InsertCompetencyGroup(string groupName, int adminId);
+        int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId);
 
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
@@ -190,6 +190,7 @@
             int frameworkCompetencyGroupId,
             int competencyGroupId,
             string name,
+            string? description,
             int adminId
         );
 
@@ -478,7 +479,7 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             return GetBrandedFrameworkByFrameworkId(frameworkId, adminId);
         }
 
-        public int InsertCompetencyGroup(string groupName, int adminId)
+        public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId)
         {
             if ((groupName.Length == 0) | (adminId < 1))
             {
@@ -498,9 +499,9 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             }
 
             var numberOfAffectedRows = connection.Execute(
-                @"INSERT INTO CompetencyGroups ([Name], UpdatedByAdminID)
-                    VALUES (@groupName, @adminId)",
-                new { groupName, adminId }
+                @"INSERT INTO CompetencyGroups ([Name], [Description], UpdatedByAdminID)
+                    VALUES (@groupName, @groupDescription, @adminId)",
+                new { groupName, groupDescription, adminId }
             );
             if (numberOfAffectedRows < 1)
             {
@@ -913,7 +914,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
         public CompetencyGroupBase? GetCompetencyGroupBaseById(int Id)
         {
             return connection.QueryFirstOrDefault<CompetencyGroupBase>(
-                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name
+                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, cg.Description
                     FROM   FrameworkCompetencyGroups AS fcg
                         INNER JOIN CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID
                     WHERE (fcg.ID = @Id)",
@@ -936,6 +937,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             int frameworkCompetencyGroupId,
             int competencyGroupId,
             string name,
+            string? description,
             int adminId
         )
         {
@@ -955,13 +957,13 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             );
             if (usedElsewhere > 0)
             {
-                var newCompetencyGroupId = InsertCompetencyGroup(name, adminId);
+                var newCompetencyGroupId = InsertCompetencyGroup(name, description, adminId);
                 if (newCompetencyGroupId > 0)
                 {
                     var numberOfAffectedRows = connection.Execute(
                         @"UPDATE FrameworkCompetencyGroups
-                    SET CompetencyGroupID = @newCompetencyGroupId, UpdatedByAdminID = @adminId
-                    WHERE ID = @frameworkCompetencyGroupId",
+                            SET CompetencyGroupID = @newCompetencyGroupId, UpdatedByAdminID = @adminId
+                            WHERE ID = @frameworkCompetencyGroupId",
                         new { newCompetencyGroupId, adminId, frameworkCompetencyGroupId }
                     );
                     if (numberOfAffectedRows < 1)
@@ -976,9 +978,9 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             else
             {
                 var numberOfAffectedRows = connection.Execute(
-                    @"UPDATE CompetencyGroups SET Name = @name, UpdatedByAdminID = @adminId
+                    @"UPDATE CompetencyGroups SET Name = @name, UpdatedByAdminID = @adminId, Description = @description
                     WHERE ID = @competencyGroupId",
-                    new { name, adminId, competencyGroupId }
+                    new { name, adminId, competencyGroupId, description }
                 );
                 if (numberOfAffectedRows < 1)
                 {
@@ -1519,8 +1521,17 @@ WHERE (FrameworkID = @frameworkId)",
                       VALUES (@question, @assessmentQuestionInputTypeId, @maxValueDescription, @minValueDescription, @scoringInstructions, @minValue, @maxValue, @includeComments, @adminId, @commentsPrompt, @commentsHint)",
                 new
                 {
-                    question, assessmentQuestionInputTypeId, maxValueDescription, minValueDescription,
-                    scoringInstructions, minValue, maxValue, includeComments, adminId, commentsPrompt, commentsHint,
+                    question,
+                    assessmentQuestionInputTypeId,
+                    maxValueDescription,
+                    minValueDescription,
+                    scoringInstructions,
+                    minValue,
+                    maxValue,
+                    includeComments,
+                    adminId,
+                    commentsPrompt,
+                    commentsHint,
                 }
             );
             if (id < 1)
@@ -1607,8 +1618,18 @@ WHERE (FrameworkID = @frameworkId)",
                     WHERE ID = @id",
                 new
                 {
-                    id, question, assessmentQuestionInputTypeId, maxValueDescription, minValueDescription,
-                    scoringInstructions, minValue, maxValue, includeComments, adminId, commentsPrompt, commentsHint,
+                    id,
+                    question,
+                    assessmentQuestionInputTypeId,
+                    maxValueDescription,
+                    minValueDescription,
+                    scoringInstructions,
+                    minValue,
+                    maxValue,
+                    includeComments,
+                    adminId,
+                    commentsPrompt,
+                    commentsHint,
                 }
             );
             if (numberOfAffectedRows < 1)
@@ -1811,7 +1832,7 @@ WHERE (FrameworkID = @frameworkId)",
                         fc.AdminID,
                         fc.CanModify,
                         fc.UserEmail,
-                        fc.Active AS UserActive,
+                        au.Active AS UserActive,
                         CASE WHEN fc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole,
                         f.FrameworkName,
                         (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1 FROM AdminUsers AS au1 WHERE (AdminID = @invitedByAdminId)) AS InvitedByName,
@@ -2250,7 +2271,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             return connection.Query<Comment>(
                 @$"SELECT
                         {FrameworksCommentColumns},
-                        ReplyToFrameworkCommentID,
+                        ReplyToFrameworkCommentID
                     FROM FrameworkComments
                     WHERE Archived Is NULL AND ReplyToFrameworkCommentID = @commentId
                     ORDER BY AddedDate ASC",

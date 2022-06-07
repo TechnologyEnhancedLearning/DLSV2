@@ -26,7 +26,8 @@ describe('getSortValue', () => {
   ${'courses-count'}    | ${'7'}            | ${'CoursesCount'}                    | ${7}
   ${'faq-id'}           | ${'86'}           | ${'FaqId'}                           | ${86}
   ${'faq-weighting'}    | ${'100'}          | ${'Weighting'}                       | ${100}
-  `('should correctly sort $fieldName by $sortBy',
+  `(
+    'should correctly sort $fieldName by $sortBy',
     ({
       fieldName, fieldValue, sortBy, expectedSortValue,
     }) => {
@@ -52,7 +53,8 @@ describe('getSortValue', () => {
 
       // Then
       expect(actualValue).toEqual(expectedSortValue);
-    });
+    },
+  );
 });
 
 describe('sortSearchableElements current', () => {
@@ -67,23 +69,23 @@ describe('sortSearchableElements current', () => {
         <div id="searchable-elements">
           <div class="searchable-element" id="course-b">
             <span name="name" class="searchable-element-title">B: Course</span>
-            <p name="started-date">31-1-2010</p>
-            <p name="accessed-date">22-2-2010</p>
-            <p name="complete-by-date">22-3-2010</p>
+            <p name="started-date">31/01/2010</p>
+            <p name="accessed-date">22/02/2010</p>
+            <p name="complete-by-date">22/03/2010</p>
             <p name="diagnostic-score">123</p>
             <p name="passed-sections">4/6</p>
           </div>
           <div class="searchable-element" id="course-c">
             <span name="name" class="searchable-element-title">c: Course</span>
-            <p name="started-date">1-2-2010</p>
-            <p name="accessed-date">22-2-2011</p>
-            <p name="complete-by-date">22-3-2011</p>
+            <p name="started-date">01/02/2010</p>
+            <p name="accessed-date">22/02/2011</p>
+            <p name="complete-by-date">22/03/2011</p>
             <p name="diagnostic-score">0</p>
           </div>
           <div class="searchable-element" id="course-a">
             <span name="name" class="searchable-element-title">A: course</span>
-            <p name="started-date">22-1-2001</p>
-            <p name="accessed-date">23-2-2011</p>
+            <p name="started-date">22/01/2001</p>
+            <p name="accessed-date">23/02/2011</p>
             <p name="passed-sections">0/6</p>
           </div>
         </div>
@@ -135,25 +137,25 @@ describe('sortSearchableElements completed', () => {
         <div id="searchable-elements">
           <div class="searchable-element" id="course-a">
             <span name="name" class="searchable-element-title">a: Course</span>
-            <p name="started-date">31-1-2010</p>
-            <p name="accessed-date">22-2-2010</p>
-            <p name="completed-date">22-3-2010</p>
+            <p name="started-date">31/01/2010</p>
+            <p name="accessed-date">22/02/2010</p>
+            <p name="completed-date">22/03/2010 15:59</p>
             <p name="diagnostic-score">123</p>
             <p name="passed-sections">4/6</p>
           </div>
           <div class="searchable-element" id="course-b">
             <span name="name" class="searchable-element-title">B: Course</span>
-            <p name="started-date">1-2-2010</p>
-            <p name="accessed-date">22-2-2011</p>
-            <p name="completed-date">22-3-2011</p>
+            <p name="started-date">01/02/2010</p>
+            <p name="accessed-date">22/02/2011</p>
+            <p name="completed-date">22/03/2011 10:01</p>
             <p name="diagnostic-score">0</p>
           </div>
           <div class="searchable-element" id="course-c">
             <span name="name" class="searchable-element-title">c: course</span>
-            <p name="started-date">22-1-2001</p>
-            <p name="accessed-date">23-2-2011</p>
-            <p name="completed-date">22-2-2011</p>
-            <p name="evaluated-date">24-2-2011</p>
+            <p name="started-date">22/01/2001</p>
+            <p name="accessed-date">23/02/2011</p>
+            <p name="completed-date">22/03/2011 10:00</p>
+            <p name="evaluated-date">24/02/2011</p>
             <p name="passed-sections">0/6</p>
           </div>
         </div>
@@ -330,6 +332,65 @@ describe('sortSearchableElements delegates groups', () => {
   ${'DelegateCount'}  | ${'Descending'} | ${'delegate-c'} | ${'delegate-a'} | ${'delegate-b'}
   ${'CoursesCount'}   | ${'Ascending'}  | ${'delegate-b'} | ${'delegate-c'} | ${'delegate-a'}
   ${'CoursesCount'}   | ${'Descending'} | ${'delegate-a'} | ${'delegate-c'} | ${'delegate-b'}
+  `('should correctly sort the cards $sortDirection by $sortBy', ({
+    sortBy, sortDirection, firstId, secondId, thirdId,
+  }) => {
+    // When
+    setSortBy(sortBy);
+    setSortDirection(sortDirection);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
+
+    // Then
+    expect(newSearchableElements?.length).toEqual(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
+  });
+});
+
+describe('sortSearchableElements delegate learning log', () => {
+  beforeEach(() => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+      <input type="text" id="select-sort-by" />
+      <input type="text" id="select-sort-direction"/>
+        <div id="searchable-elements">
+            <div class="searchable-element" id="log-entry-b">
+              <span name="name" class="searchable-element-title">b: Log entry</span>
+              <p name="when">01/01/2022 10:01:01</p>
+              <p name="learning-time">0</p>
+              <p name="assessment-score">N/A</p>
+            </div>
+            <div class="searchable-element" id="log-entry-c">
+              <span name="name" class="searchable-element-title">c: Log entry</span>
+              <p name="when">01/01/2022 10:00:10</p>
+              <p name="learning-time">10</p>
+              <p name="assessment-score">50</p>
+            </div>
+            <div class="searchable-element" id="log-entry-a">
+              <span name="name" class="searchable-element-title">a: Log entry</span>
+              <p name="when">01/01/2022 10:00:01</p>
+              <p name="learning-time">2</p>
+              <p name="assessment-score">100</p>
+            </div>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+  });
+
+  it.each`
+  sortBy               | sortDirection   | firstId          | secondId         | thirdId
+  ${'When'}            | ${'Ascending'}  | ${'log-entry-a'} | ${'log-entry-c'} | ${'log-entry-b'}
+  ${'When'}            | ${'Descending'} | ${'log-entry-b'} | ${'log-entry-c'} | ${'log-entry-a'}
+  ${'LearningTime'}    | ${'Ascending'}  | ${'log-entry-b'} | ${'log-entry-a'} | ${'log-entry-c'}
+  ${'LearningTime'}    | ${'Descending'} | ${'log-entry-c'} | ${'log-entry-a'} | ${'log-entry-b'}
+  ${'AssessmentScore'} | ${'Ascending'}  | ${'log-entry-b'} | ${'log-entry-c'} | ${'log-entry-a'}
+  ${'AssessmentScore'} | ${'Descending'} | ${'log-entry-a'} | ${'log-entry-c'} | ${'log-entry-b'}
   `('should correctly sort the cards $sortDirection by $sortBy', ({
     sortBy, sortDirection, firstId, secondId, thirdId,
   }) => {

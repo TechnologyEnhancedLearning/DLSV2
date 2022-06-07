@@ -17,11 +17,13 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <vc:loading-spinner page-has-side-nav-menu="false" />
-    <div id="area-to-hide-while-loading">
+    @if (Model.CourseDetails.JavascriptSearchSortFilterPaginateEnabled) {
+      <vc:loading-spinner page-has-side-nav-menu="true" />
+    }
+    <div id="@(Model.CourseDetails.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-three-quarters">
-          <h1 id="page-heading" class="nhsuk-heading-xl">Course delegates</h1>
+          <h1 id="page-heading" class="nhsuk-heading-xl">@ViewData["Title"]</h1>
         </div>
         <div class="nhsuk-grid-column-one-quarter heading-button-group">
           <a class="nhsuk-button nhsuk-button--secondary heading-button"
@@ -56,12 +58,12 @@
             <div class="nhsuk-grid-column-full nhsuk-form-group">
               <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Choose course</label>
               <div class="course-dropdown-container">
-                <select id="selected-customisation-Id" class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown course-dropdown"
+                <select id="selected-customisation-Id" class="nhsuk-select course-dropdown"
                         asp-for="CustomisationId"
                         asp-items="Model.Courses"
                         aria-label="Choose course">
                 </select>
-                <button class="nhsuk-search__submit course-submit" type="submit">
+                <button class="nhsuk-button course-submit" type="submit">
                   Select
                 </button>
               </div>
@@ -69,7 +71,7 @@
           </form>
         </div>
 
-        <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSortAndFilter" model="Model.CourseDetails" />
+        <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model.CourseDetails" />
 
         <div class="nhsuk-grid-row">
           <div class="nhsuk-grid-column-full">
@@ -79,6 +81,8 @@
               </p>
             } else {
               <partial name="SearchablePage/_SearchResultsCount" model="Model.CourseDetails" />
+              <partial name="SearchablePage/_TopPagination" model="Model.CourseDetails" />
+              <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model.CourseDetails" />
 
               <div id="searchable-elements">
                 @foreach (var delegateUser in Model.CourseDetails.Delegates) {
@@ -87,7 +91,7 @@
               </div>
             }
             @if (Model.CourseDetails.TotalPages > 1) {
-              <partial name="SearchablePage/_Pagination" model="Model.CourseDetails" />
+              <partial name="SearchablePage/_BottomPagination" model="Model.CourseDetails" />
             }
           </div>
         </div>

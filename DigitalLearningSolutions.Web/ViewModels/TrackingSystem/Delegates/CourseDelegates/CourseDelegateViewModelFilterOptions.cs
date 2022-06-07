@@ -28,6 +28,12 @@
             CourseDelegateProgressRemovedFilterOptions.NotRemoved,
         };
 
+        public static readonly IEnumerable<FilterOptionModel> CompletionStatusOptions = new[]
+        {
+            CourseDelegateCompletionFilterOptions.Complete,
+            CourseDelegateCompletionFilterOptions.Incomplete,
+        };
+
         public static List<FilterModel> GetAllCourseDelegatesFilterViewModels(IEnumerable<CourseAdminField> adminFields)
         {
             var filters = new List<FilterModel>
@@ -35,6 +41,7 @@
                 new FilterModel("ActiveStatus", "Active Status", ActiveStatusOptions),
                 new FilterModel("LockedStatus", "Locked Status", LockedStatusOptions),
                 new FilterModel("RemovedStatus", "Removed Status", RemovedStatusOptions),
+                new FilterModel("CompletionStatus", "Completion Status", CompletionStatusOptions)
             };
             filters.AddRange(
                 adminFields.Select(
@@ -46,26 +53,6 @@
                 )
             );
             return filters;
-        }
-
-        public static Dictionary<int, string> GetAdminFieldFilters(
-            IEnumerable<DelegateCourseAdminField> adminFields,
-            IEnumerable<CourseAdminField> fieldsWithOptions
-        )
-        {
-            var fieldsWithOptionsIds = fieldsWithOptions.Select(c => c.PromptNumber);
-            return adminFields
-                .Select(
-                    adminField => new KeyValuePair<int, string>(
-                        adminField.PromptNumber,
-                        FilteringHelper.GetFilterValueForAdminField(
-                            adminField.PromptNumber,
-                            adminField.Answer,
-                            adminField.Prompt,
-                            fieldsWithOptionsIds.Contains(adminField.PromptNumber)
-                        )
-                    )
-                ).ToDictionary(x => x.Key, x => x.Value);
         }
     }
 }

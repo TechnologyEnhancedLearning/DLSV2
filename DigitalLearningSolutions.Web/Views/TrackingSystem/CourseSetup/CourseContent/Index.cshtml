@@ -1,12 +1,12 @@
-﻿@inject IConfiguration Configuration
+﻿@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
-@using Microsoft.Extensions.Configuration
 @model CourseContentViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseContent.css")" asp-append-version="true">
 
 @{
   ViewData["Title"] = "Course content";
+  var backLinkData = Html.GetRouteValues();
 }
 
 @section NavBreadcrumbs {
@@ -16,16 +16,9 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
 
-    <h1 class="nhsuk-heading-xl">Course content</h1>
+    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter">
-        <p class="nhsuk-lede-text">Course:</p>
-      </div>
-      <div class="nhsuk-grid-column-three-quarters">
-        <p class="nhsuk-lede-text nhsuk-u-font-weight-bold word-break">@Model.CourseName</p>
-      </div>
-    </div>
+    <vc:field-name-value-display display-name="Course" field-value="@Model.CourseName" />
 
     @if (Model.CourseHasContent) {
       @foreach (var section in Model.Sections) {
@@ -35,5 +28,8 @@
       <p>No course content enabled.</p>
     }
 
+    <div class="nhsuk-u-margin-top-7">
+      <vc:back-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@backLinkData" link-text="Go back" />
+    </div>
   </div>
 </div>

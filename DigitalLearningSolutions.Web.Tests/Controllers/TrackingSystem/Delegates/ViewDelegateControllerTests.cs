@@ -1,15 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -17,11 +13,10 @@
 
     internal class ViewDelegateControllerTests
     {
-        private ICourseDataService courseDataService = null!;
+        private IConfiguration config = null!;
         private ICourseService courseService = null!;
         private IUserDataService userDataService = null!;
         private ViewDelegateController viewDelegateController = null!;
-        private IConfiguration config = null!;
 
         [SetUp]
         public void SetUp()
@@ -32,7 +27,6 @@
 
             userDataService = A.Fake<IUserDataService>();
             courseService = A.Fake<ICourseService>();
-            courseDataService = A.Fake<ICourseDataService>();
             config = A.Fake<IConfiguration>();
 
             viewDelegateController = new ViewDelegateController(
@@ -40,7 +34,6 @@
                     centreCustomPromptsHelper,
                     courseService,
                     passwordResetService,
-                    courseDataService,
                     config
                 )
                 .WithDefaultContext()
@@ -59,158 +52,6 @@
 
             // Then
             result.Should().BeRedirectToActionResult();
-        }
-
-        [Test]
-        public void Removal_confirmation_page_displays_for_valid_delegate_and_course()
-        {
-            // Given
-            A.CallTo(() => userDataService.GetDelegateUserCardById(1))
-                .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
-
-            A.CallTo(() => courseDataService.GetCourseNameAndApplication(1))
-                .Returns(new CourseNameInfo());
-
-            A.CallTo(() => courseService.DelegateHasCurrentProgress(1, 1))
-                .Returns(true);
-
-            // When
-            var result = viewDelegateController.ConfirmRemoveFromCourse(
-                1,
-                1,
-                DelegateAccessRoute.ViewDelegate,
-                1
-            );
-
-            // Then
-            result.Should().BeViewResult();
-        }
-
-        [Test]
-        public void Removal_confirmation_page_returns_not_found_result_for_delegate_with_no_active_progress()
-        {
-            // Given
-            A.CallTo(() => userDataService.GetDelegateUserCardById(1))
-                .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
-
-            A.CallTo(() => courseDataService.GetCourseNameAndApplication(1))
-                .Returns(new CourseNameInfo());
-
-            A.CallTo(() => courseService.DelegateHasCurrentProgress(1, 1))
-                .Returns(false);
-
-            // When
-            var result = viewDelegateController.ConfirmRemoveFromCourse(
-                1,
-                1,
-                DelegateAccessRoute.ViewDelegate,
-                1
-            );
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void Delegate_removal_for_delegate_with_no_active_progress_returns_not_found_result()
-        {
-            // Given
-            A.CallTo(() => userDataService.GetDelegateUserCardById(1))
-                .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
-
-            A.CallTo(() => courseDataService.GetCourseNameAndApplication(1))
-                .Returns(new CourseNameInfo());
-
-            A.CallTo(() => courseService.DelegateHasCurrentProgress(1, 1))
-                .Returns(false);
-
-            var model = new RemoveFromCourseViewModel
-            {
-                Confirm = true,
-                AccessedVia = DelegateAccessRoute.ViewDelegate,
-            };
-
-            // When
-            var result = viewDelegateController.ExecuteRemoveFromCourse(
-                1,
-                1,
-                model
-            );
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void Delegate_removal_for_valid_delegate_returns_redirect_to_action_view_delegate()
-        {
-            // Given
-            var delegateId = 1;
-
-            A.CallTo(() => userDataService.GetDelegateUserCardById(1))
-                .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
-
-            A.CallTo(() => courseDataService.GetCourseNameAndApplication(1))
-                .Returns(new CourseNameInfo());
-
-            A.CallTo(() => courseService.DelegateHasCurrentProgress(1, 1))
-                .Returns(true);
-
-            var model = new RemoveFromCourseViewModel
-            {
-                Confirm = true,
-                AccessedVia = DelegateAccessRoute.ViewDelegate,
-            };
-
-            // When
-            var result = viewDelegateController.ExecuteRemoveFromCourse(
-                delegateId,
-                1,
-                model
-            );
-
-            // Then
-            result.Should()
-                .BeRedirectToActionResult()
-                .WithActionName("Index")
-                .WithControllerName("ViewDelegate")
-                .WithRouteValue("delegateId", delegateId);
-        }
-
-        [Test]
-        public void Delegate_removal_for_valid_delegate_returns_redirect_to_action_delegate_courses()
-        {
-            // Given
-            var customisationId = 1;
-
-            A.CallTo(() => userDataService.GetDelegateUserCardById(1))
-                .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
-
-            A.CallTo(() => courseDataService.GetCourseNameAndApplication(1))
-                .Returns(new CourseNameInfo());
-
-            A.CallTo(() => courseService.DelegateHasCurrentProgress(1, 1))
-                .Returns(true);
-
-            var model = new RemoveFromCourseViewModel
-            {
-                Confirm = true,
-                AccessedVia = DelegateAccessRoute.CourseDelegates,
-            };
-
-            // When
-            var result = viewDelegateController.ExecuteRemoveFromCourse(
-                1,
-                customisationId,
-                model
-            );
-
-            // Then
-            result.Should()
-                .BeRedirectToActionResult()
-                .WithActionName("Index")
-                .WithControllerName("CourseDelegates")
-                .WithRouteValue("customisationId", customisationId);
         }
 
         [Test]
@@ -248,7 +89,7 @@
         {
             //Given
             A.CallTo(() => userDataService.GetDelegateUserCardById(10))
-                .Returns(new DelegateUserCard() { CentreId = 1 });
+                .Returns(new DelegateUserCard { CentreId = 1 });
 
             // When
             var result = viewDelegateController.ReactivateDelegate(2);

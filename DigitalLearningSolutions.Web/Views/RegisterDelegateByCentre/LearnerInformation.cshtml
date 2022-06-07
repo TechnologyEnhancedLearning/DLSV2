@@ -1,14 +1,9 @@
-@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.ViewModels.Register
-@using Microsoft.Extensions.Configuration
 @model LearnerInformationViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Learner information" : "Register Delegate - Learner information";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
 }
 
 @section NavMenuItems {
@@ -18,7 +13,16 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.JobGroup), nameof(Model.Answer1), nameof(Model.Answer2), nameof(Model.Answer3), nameof(Model.Answer4), nameof(Model.Answer5), nameof(Model.Answer6) })" />
+      <vc:error-summary order-of-property-names="@(new[] {
+                                                   nameof(Model.JobGroup),
+                                                   nameof(Model.HasProfessionalRegistrationNumber),
+                                                   nameof(Model.ProfessionalRegistrationNumber),
+                                                   nameof(Model.Answer1),
+                                                   nameof(Model.Answer2),
+                                                   nameof(Model.Answer3),
+                                                   nameof(Model.Answer4),
+                                                   nameof(Model.Answer5),
+                                                   nameof(Model.Answer6) })" />
     }
 
     <h1 class="nhsuk-heading-xl">Learner information</h1>
@@ -33,6 +37,8 @@
                       css-class="nhsuk-u-width-one-half"
                       default-option="Select a job group"
                       select-list-options="@Model.JobGroupOptions" />
+
+      <partial name="_EditRegistrationNumber" model="@Model" />
 
       @foreach (var customField in Model.DelegateRegistrationPrompts) {
         if (customField.Options.Any()) {

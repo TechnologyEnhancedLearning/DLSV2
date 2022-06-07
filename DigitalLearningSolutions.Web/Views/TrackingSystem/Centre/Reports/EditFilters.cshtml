@@ -1,12 +1,10 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
-@using Microsoft.Extensions.Configuration
 @model EditFiltersViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = "Edit report filters";
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit report filters" : "Edit report filters";
   var reportIntervalValue = (int)Model.ReportInterval;
 }
 
@@ -52,7 +50,7 @@
                            end-year-id="@nameof(Model.EndYear)"
                            end-date-checkbox-id="@nameof(Model.EndDate)"
                            end-date-checkbox-label="End date"
-                           hint-text="The reporting in your centre starts on @Model.DataStart.ToString(DateHelper.StandardDateFormat). Please select any date range between that date and now."
+                           hint-text="The reporting in your centre starts on @Model.DataStart?.ToString(DateHelper.StandardDateFormat). Please select any date range between that date and now."
                            end-date-checkbox-hint-text="Check this box to specify an end date. If left unchecked will display data until today." />
 
       <vc:select-list asp-for="@nameof(Model.ReportInterval)"

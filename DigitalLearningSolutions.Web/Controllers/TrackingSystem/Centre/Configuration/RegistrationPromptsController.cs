@@ -1,10 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -276,11 +276,11 @@
             }
 
             if (centreRegistrationPromptsService.AddCentreRegistrationPrompt(
-                    User.GetCentreId(),
-                    data.SelectPromptViewModel.CustomPromptId!.Value,
-                    data.SelectPromptViewModel.Mandatory,
-                    data.ConfigureAnswersViewModel.OptionsString
-                ))
+                User.GetCentreId(),
+                data.SelectPromptViewModel.CustomPromptId!.Value,
+                data.SelectPromptViewModel.Mandatory,
+                data.ConfigureAnswersViewModel.OptionsString
+            ))
             {
                 TempData.Clear();
                 return RedirectToAction("Index");
@@ -342,7 +342,7 @@
 
             if (model.OptionsStringContainsDuplicates())
             {
-                ModelState.AddModelError("", "The list of answers contains duplicate options");
+                ModelState.AddModelError("", "The list of responses contains duplicate options");
                 return View("EditRegistrationPrompt", model);
             }
 
@@ -412,7 +412,7 @@
 
             if (model.OptionsStringContainsDuplicates())
             {
-                ModelState.AddModelError("", "The list of answers contains duplicate options");
+                ModelState.AddModelError("", "The list of responses contains duplicate options");
                 return View("AddRegistrationPromptConfigureAnswers", model);
             }
 
@@ -474,8 +474,8 @@
 
             ModelState.AddModelError(
                 nameof(RegistrationPromptAnswersViewModel.Answer),
-                "The complete list of answers must be 4000 characters or fewer " +
-                $"({remainingLengthShownToUser} character{remainingLengthPluralitySuffix} remaining for the new answer, " +
+                "The complete list of responses must be 4000 characters or fewer " +
+                $"({remainingLengthShownToUser} character{remainingLengthPluralitySuffix} remaining for the new response, " +
                 $"{answerLength} character{answerLengthPluralitySuffix} {verb} entered)"
             );
         }
@@ -506,13 +506,19 @@
             TempData.Set(data);
         }
 
+        private bool IsOptionsListUnique(List<string> optionsList)
+        {
+            var lowerCaseOptionsList = optionsList.Select(str => str.ToLower()).ToList();
+            return lowerCaseOptionsList.Count() == lowerCaseOptionsList.Distinct().Count();
+        }
+
         private void ValidateBulkOptionsString(string? optionsString)
         {
             if (optionsString != null && optionsString.Length > 4000)
             {
                 ModelState.AddModelError(
                     nameof(BulkRegistrationPromptAnswersViewModel.OptionsString),
-                    "The complete list of answers must be 4000 characters or fewer"
+                    "The complete list of responses must be 4000 characters or fewer"
                 );
             }
 
@@ -521,7 +527,15 @@
             {
                 ModelState.AddModelError(
                     nameof(BulkRegistrationPromptAnswersViewModel.OptionsString),
-                    "Each answer must be 100 characters or fewer"
+                    "Each response must be 100 characters or fewer"
+                );
+            }
+
+            if (!IsOptionsListUnique(optionsList))
+            {
+                ModelState.AddModelError(
+                    nameof(BulkRegistrationPromptAnswersViewModel.OptionsString),
+                    "The list of responses contains duplicate options"
                 );
             }
         }

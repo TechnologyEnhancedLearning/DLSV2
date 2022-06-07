@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
+    using DigitalLearningSolutions.Data.ModelBinders;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -136,6 +137,7 @@ namespace DigitalLearningSolutions.Web
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                         options.ModelBinderProviders.Insert(0, new EnumerationQueryStringModelBinderProvider());
                         options.ModelBinderProviders.Insert(0, new DlsSubApplicationModelBinderProvider());
+                        options.ModelBinderProviders.Insert(0, new ReturnPageQueryModelBinderProvider());
                     }
                 );
 
@@ -219,6 +221,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ITutorialService, TutorialService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
+            services.AddScoped<IBrandsService, BrandsService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -230,7 +233,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
             services.AddScoped<ICourseDataService, CourseDataService>();
-            services.AddScoped<ICourseDelegatesDataService, CourseDelegatesDataService>();
             services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
             services.AddScoped<IEmailDataService, EmailDataService>();
@@ -258,6 +260,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ITutorialContentDataService, TutorialContentDataService>();
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICandidateAssessmentDownloadFileService, CandidateAssessmentDownloadFileService>();
+            services.AddScoped<IBrandsDataService, BrandsDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)

@@ -44,6 +44,7 @@
         [Route("{page:int=1}")]
         public IActionResult Index(
             int? customisationId = null,
+            string? searchString = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
             string? existingFilterString = null,
@@ -78,7 +79,7 @@
                 );
 
                 var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
-                    null,
+                    new SearchOptions(searchString),
                     new SortOptions(sortBy, sortDirection),
                     new FilterOptions(
                         newFilterString,
@@ -109,6 +110,7 @@
             }
         }
 
+        [NoCaching]
         [Route("AllCourseDelegates/{customisationId:int}")]
         public IActionResult AllCourseDelegates(int customisationId)
         {

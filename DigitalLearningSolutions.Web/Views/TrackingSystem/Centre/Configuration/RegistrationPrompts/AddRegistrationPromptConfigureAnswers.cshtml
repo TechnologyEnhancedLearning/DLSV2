@@ -1,7 +1,5 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
+﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts
-@using Microsoft.Extensions.Configuration
 @model RegistrationPromptAnswersViewModel
 
 @{
@@ -15,7 +13,7 @@
       <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}" />
     }
 
-    <h1 class="nhsuk-heading-xl">Configure answers</h1>
+    <h1 class="nhsuk-heading-xl">Configure responses</h1>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="AddRegistrationPromptConfigureAnswers">
       <div class="hidden-submit">
@@ -32,18 +30,18 @@
 
       <div class="divider">
         <vc:text-input asp-for="Answer"
-                       label="Add a new answer?"
+                       label="Add a new response?"
                        populate-with-current-value="true"
                        type="text"
                        spell-check="true"
                        autocomplete=""
                        hint-text=""
-                       css-class="nhsuk-u-width-one-half nhsuk-u-font-weight-bold" />
+                       css-class="nhsuk-u-width-one-half" />
         <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.AddPromptAction">Add</button>
       </div>
 
       <div class="divider">
-        <p class="nhsuk-label">Want to edit answers in bulk?</p>
+        <p class="nhsuk-label">Want to edit responses in bulk?</p>
         <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.BulkAction">Bulk edit</button>
       </div>
 

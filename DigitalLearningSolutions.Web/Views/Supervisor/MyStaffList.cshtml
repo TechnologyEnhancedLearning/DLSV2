@@ -1,21 +1,24 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
-
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor
 @model MyStaffListViewModel;
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = errorHasOccurred ? "Error: My Staff List" : "My Staff List";
-    ViewData["Application"] = "Supervisor";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: My Staff List" : "My Staff List";
+  ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
+
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a></li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a>
+        </li>
         <li class="nhsuk-breadcrumb__item">My Staff</li>
       </ol>
     </div>
@@ -25,17 +28,17 @@
   </nav>
 }
 
-<vc:loading-spinner page-has-side-nav-menu="false" />
-<div id="area-to-hide-while-loading">
-  @if (errorHasOccurred)
-  {
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+  <vc:loading-spinner page-has-side-nav-menu="false" />
+}
+<div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
+  @if (errorHasOccurred) {
     <vc:error-summary order-of-property-names="@(new[] { nameof(Model.DelegateEmail) })" />
   }
   <h1>My Staff</h1>
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      @if (Model.SuperviseDelegateDetailViewModels.Any() | Model.SearchString != null)
-      {
+      @if (Model.SuperviseDelegateDetailViewModels.Any() | (Model.SearchString != null)) {
         <form method="get" role="search" asp-action="Index" asp-route-page="@Model.Page">
           <div class="nhsuk-grid-row">
             <partial name="SearchablePage/_Search" model="Model" />
@@ -43,37 +46,31 @@
           <div class="nhsuk-grid-row">
             <div class="nhsuk-grid-column-full">
               <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-              <input type="hidden" id="select-sort-by" value="Name" />
+              <partial name="SearchablePage/_TopPagination" model="Model" />
+              <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
+
+              <input type="hidden" id="select-sort-by" value="SearchableName" />
               <input type="hidden" id="select-sort-direction" value="Ascending" />
-              @if (@Model.SuperviseDelegateDetailViewModels.Any())
-              {
+              @if (Model.SuperviseDelegateDetailViewModels.Any()) {
                 <div id="searchable-elements">
-                  @foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetailViewModels)
-                  {
+                  @foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetailViewModels) {
                     <partial name="Shared/_StaffMemberCard" model="supervisorDelegateDetail" />
                   }
                 </div>
-                if (Model.TotalPages > 1)
-                {
-                  <partial name="SearchablePage/_Pagination" model="Model" />
-                }
-              }
-              else
-              {
+
+                <partial name="SearchablePage/_BottomPagination" model="Model" />
+              } else {
                 <p>Please change your search criteria and try again.</p>
               }
             </div>
           </div>
         </form>
-      }
-      else if(!errorHasOccurred)
-      {
+      } else if (!errorHasOccurred) {
         <p>You are not supervising any staff, yet.</p>
       }
     </div>
   </div>
-  @if (!Model.IsNominatedSupervisor)
-  {
+  @if (!Model.IsNominatedSupervisor) {
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
         <form method="post">
@@ -111,6 +108,8 @@
     </div>
   }
 </div>
+
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
 @section scripts {
   <script src="@Url.Content("~/js/supervisor/staffList.js")" asp-append-version="true"></script>
-}
+}}

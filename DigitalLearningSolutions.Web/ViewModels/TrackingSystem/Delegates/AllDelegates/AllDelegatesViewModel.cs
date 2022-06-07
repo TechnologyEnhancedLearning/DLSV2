@@ -22,13 +22,19 @@
             "Search delegates"
         )
         {
-            var promptsWithOptions = centreRegistrationPrompts.Where(registrationPrompt => registrationPrompt.Options.Count > 0);
-            var returnPage = string.IsNullOrWhiteSpace(SearchString) ? Page : 1;
+            var promptsWithOptions =
+                centreRegistrationPrompts.Where(registrationPrompt => registrationPrompt.Options.Count > 0);
             Delegates = result.ItemsToDisplay.Select(
                 delegateUser =>
                 {
-                    var delegateRegistrationPrompts = PromptsService.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
-                    return new SearchableDelegateViewModel(delegateUser, delegateRegistrationPrompts, promptsWithOptions, returnPage);
+                    var delegateRegistrationPrompts =
+                        PromptsService.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
+                    return new SearchableDelegateViewModel(
+                        delegateUser,
+                        delegateRegistrationPrompts,
+                        promptsWithOptions,
+                        result.GetReturnPageQuery($"{delegateUser.Id}-card")
+                    );
                 }
             );
         }

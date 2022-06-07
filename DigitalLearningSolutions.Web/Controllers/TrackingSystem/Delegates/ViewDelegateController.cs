@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
@@ -23,19 +22,17 @@
     [Route("TrackingSystem/Delegates/{delegateId:int}/View")]
     public class ViewDelegateController : Controller
     {
-        private readonly PromptsService promptsService;
-        private readonly ICourseDataService courseDataService;
+        private readonly IConfiguration config;
         private readonly ICourseService courseService;
         private readonly IPasswordResetService passwordResetService;
+        private readonly PromptsService promptsService;
         private readonly IUserDataService userDataService;
-        private readonly IConfiguration config;
 
         public ViewDelegateController(
             IUserDataService userDataService,
             PromptsService promptsService,
             ICourseService courseService,
             IPasswordResetService passwordResetService,
-            ICourseDataService courseDataService,
             IConfiguration config
         )
         {
@@ -43,7 +40,6 @@
             this.promptsService = promptsService;
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
-            this.courseDataService = courseDataService;
             this.config = config;
         }
 
@@ -87,75 +83,6 @@
             userDataService.DeactivateDelegateUser(delegateId);
 
             return RedirectToAction("Index", new { delegateId });
-        }
-
-        [HttpGet]
-        [Route("{customisationId:int}/{accessedVia}/Remove")]
-        [ServiceFilter(typeof(VerifyDelegateAccessedViaValidRoute))]
-        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
-        public IActionResult ConfirmRemoveFromCourse(
-            int delegateId,
-            int customisationId,
-            DelegateAccessRoute accessedVia,
-            int? returnPage
-        )
-        {
-            if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
-            {
-                return new NotFoundResult();
-            }
-
-            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
-            var course = courseDataService.GetCourseNameAndApplication(customisationId);
-
-            var model = new RemoveFromCourseViewModel(
-                delegateId,
-                DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
-                    delegateUser!.FirstName,
-                    delegateUser.LastName
-                ),
-                customisationId,
-                course!.CourseName,
-                false,
-                accessedVia,
-                returnPage
-            );
-
-            return View("ConfirmRemoveFromCourse", model);
-        }
-
-        [HttpPost]
-        [Route("{customisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
-        public IActionResult ExecuteRemoveFromCourse(
-            int delegateId,
-            int customisationId,
-            RemoveFromCourseViewModel model
-        )
-        {
-            if (!ModelState.IsValid)
-            {
-                return View("ConfirmRemoveFromCourse", model);
-            }
-
-            if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
-            {
-                return new NotFoundResult();
-            }
-
-            courseService.RemoveDelegateFromCourse(
-                delegateId,
-                customisationId,
-                RemovalMethod.RemovedByAdmin
-            );
-
-            return model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)
-                ? RedirectToAction(
-                    "Index",
-                    "CourseDelegates",
-                    new { customisationId, page = model.ReturnPage.ToString() }
-                )
-                : RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
 
         [HttpPost]

@@ -1,6 +1,4 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 @model AddGroupDelegateViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/selectDelegate.css")" asp-append-version="true">
@@ -12,8 +10,10 @@
   };
 }
 
-<vc:loading-spinner page-has-side-nav-menu="false" />
-<div class="nhsuk-grid-row" id="area-to-hide-while-loading">
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
+  <vc:loading-spinner page-has-side-nav-menu="false" />
+}
+<div class="nhsuk-grid-row" id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
   <div class="nhsuk-grid-column-full">
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
@@ -30,6 +30,8 @@
       </p>
     } else {
       <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+      <partial name="SearchablePage/_TopPagination" model="Model" />
+      <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
       <div id="searchable-elements">
         @foreach (var delegateModel in Model.Delegates) {
@@ -39,9 +41,8 @@
         }
       </div>
     }
-    @if (Model.TotalPages > 1) {
-      <partial name="SearchablePage/_Pagination" model="Model" />
-    }
+
+    <partial name="SearchablePage/_BottomPagination" model="Model" />
 
     <div class="nhsuk-u-padding-top-4">
       <vc:cancel-link asp-controller="GroupDelegates" asp-action="Index" asp-all-route-data="@routeParamsForGroupDelegates" />
@@ -50,6 +51,8 @@
   </div>
 </div>
 
+@if (Model.JavascriptSearchSortFilterPaginateEnabled) {
 @section scripts {
   <script src="@Url.Content("~/js/trackingSystem/addGroupDelegate.js")" asp-append-version="true"></script>
+}
 }

@@ -8,6 +8,7 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
+    using Microsoft.Extensions.Logging;
 
     public interface IUserService
     {
@@ -18,6 +19,8 @@ namespace DigitalLearningSolutions.Data.Services
         (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
 
         DelegateUser? GetDelegateUserById(int delegateId);
+
+        AdminUser? GetAdminUserByEmailAddress(string emailAddress);
 
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
 
@@ -73,22 +76,26 @@ namespace DigitalLearningSolutions.Data.Services
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
 
         void DeactivateOrDeleteAdmin(int adminId);
+
+        DelegateUserCard? GetDelegateUserCardById(int delegateId);
     }
 
     public class UserService : IUserService
     {
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
         private readonly IGroupsService groupsService;
+        private readonly ILogger<IUserService> logger;
+        private readonly ISessionDataService sessionDataService;
         private readonly IUserDataService userDataService;
         private readonly IUserVerificationService userVerificationService;
-        private readonly ISessionDataService sessionDataService;
 
         public UserService(
             IUserDataService userDataService,
             IGroupsService groupsService,
             IUserVerificationService userVerificationService,
             ICentreContractAdminUsageService centreContractAdminUsageService,
-            ISessionDataService sessionDataService
+            ISessionDataService sessionDataService,
+            ILogger<IUserService> logger
         )
         {
             this.userDataService = userDataService;
@@ -96,12 +103,13 @@ namespace DigitalLearningSolutions.Data.Services
             this.userVerificationService = userVerificationService;
             this.centreContractAdminUsageService = centreContractAdminUsageService;
             this.sessionDataService = sessionDataService;
+            this.logger = logger;
         }
 
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
         {
             var adminUser = userDataService.GetAdminUserByUsername(username);
-            List<DelegateUser> delegateUsers = userDataService.GetDelegateUsersByUsername(username);
+            var delegateUsers = userDataService.GetDelegateUsersByUsername(username);
 
             return (adminUser, delegateUsers);
         }
@@ -138,9 +146,18 @@ namespace DigitalLearningSolutions.Data.Services
             return (adminUser, delegateUser);
         }
 
+        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
+        {
+            return string.IsNullOrWhiteSpace(emailAddress)
+                ? null
+                : userDataService.GetAdminUserByEmailAddress(emailAddress);
+        }
+
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
         {
-            return userDataService.GetDelegateUsersByEmailAddress(emailAddress);
+            return string.IsNullOrWhiteSpace(emailAddress)
+                ? new List<DelegateUser>()
+                : userDataService.GetDelegateUsersByEmailAddress(emailAddress);
         }
 
         public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
@@ -437,8 +454,24 @@ namespace DigitalLearningSolutions.Data.Services
             }
             else
             {
-                userDataService.DeleteAdminUser(adminId);
+                try
+                {
+                    userDataService.DeleteAdminUser(adminId);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(
+                        ex,
+                        $"Error attempting to delete admin {adminId} with no sessions, deactivating them instead."
+                    );
+                    userDataService.DeactivateAdmin(adminId);
+                }
             }
+        }
+
+        public DelegateUserCard? GetDelegateUserCardById(int delegateId)
+        {
+            return userDataService.GetDelegateUserCardById(delegateId);
         }
 
         public DelegateUser? GetDelegateUserById(int delegateId)
