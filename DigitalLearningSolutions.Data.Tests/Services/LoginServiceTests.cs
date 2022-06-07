@@ -347,5 +347,133 @@
                 result.CentreToLogInto.Should().BeNull();
             }
         }
+
+        [Test]
+        public void GetChooseACentreAccounts_combines_admin_and_delegate_accounts_by_centre()
+        {
+            // Given
+            var adminAccountWithDelegate =
+                UserTestHelper.GetDefaultAdminAccount(centreId: 1, centreName: "admin+delegate");
+            var delegateAccountWithAdmin =
+                UserTestHelper.GetDefaultDelegateAccount(centreId: 1, centreName: "admin+delegate");
+            var adminAccountInactiveCentre = UserTestHelper.GetDefaultAdminAccount(
+                centreId: 2,
+                centreName: "admin inactive centre",
+                centreActive: false
+            );
+            var delegateAccountInactive = UserTestHelper.GetDefaultDelegateAccount(
+                centreId: 3,
+                centreName: "inactive delegate",
+                active: false
+            );
+            var delegateAccountUnapproved = UserTestHelper.GetDefaultDelegateAccount(
+                centreId: 4,
+                centreName: "unapproved delegate",
+                approved: false
+            );
+            var adminAccountWithUnapprovedDelegate = UserTestHelper.GetDefaultAdminAccount(
+                centreId: 5,
+                centreName: "admin+unapproved delegate"
+            );
+            var delegateAccountUnapprovedWithAdmin = UserTestHelper.GetDefaultDelegateAccount(
+                centreId: 5,
+                centreName: "admin+unapproved delegate",
+                approved: false
+            );
+
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>
+                {
+                    adminAccountWithDelegate,
+                    adminAccountInactiveCentre,
+                    adminAccountWithUnapprovedDelegate,
+                },
+                new List<DelegateAccount>
+                {
+                    delegateAccountWithAdmin,
+                    delegateAccountInactive,
+                    delegateAccountUnapproved,
+                    delegateAccountUnapprovedWithAdmin,
+                }
+            );
+
+            // When
+            var result = loginService.GetChooseACentreAccounts(userEntity);
+
+            // Then
+            result.Should().BeEquivalentTo(
+                new List<ChooseACentreAccount>
+                {
+                    new ChooseACentreAccount(1, "admin+delegate", true, true, true, true, true),
+                    new ChooseACentreAccount(2, "admin inactive centre", false, true),
+                    new ChooseACentreAccount(3, "inactive delegate", true, false, true, true),
+                    new ChooseACentreAccount(4, "unapproved delegate", true, false, true, false, true),
+                    new ChooseACentreAccount(5, "admin+unapproved delegate", true, true, true, false, true),
+                }
+            );
+        }
+
+        [Test]
+        public void GetChooseACentreAccounts_omits_inactive_admin_accounts()
+        {
+            // Given
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount(
+                centreId: 1,
+                centreName: "inactive admin",
+                active: false
+            );
+            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount(centreId: 2, centreName: "delegate");
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount> { adminAccount },
+                new List<DelegateAccount> { delegateAccount }
+            );
+
+            // When
+            var result = loginService.GetChooseACentreAccounts(userEntity);
+
+            // Then
+            result.Should().BeEquivalentTo(
+                new List<ChooseACentreAccount>
+                {
+                    new ChooseACentreAccount(2, "delegate", true, false, true, true, true),
+                }
+            );
+        }
+
+        [Test]
+        public void GetChooseACentreAccounts_returns_empty_list_when_only_inactive_admin_accounts_exist()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount> { UserTestHelper.GetDefaultAdminAccount(active: false) },
+                new List<DelegateAccount>()
+            );
+
+            // When
+            var result = loginService.GetChooseACentreAccounts(userEntity);
+
+            // Then
+            result.Should().HaveCount(0);
+        }
+
+        [Test]
+        public void GetChooseACentreAccounts_returns_empty_list_when_no_admin_or_delegate_accounts()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>()
+            );
+
+            // When
+            var result = loginService.GetChooseACentreAccounts(userEntity);
+
+            // Then
+            result.Should().HaveCount(0);
+        }
     }
 }
