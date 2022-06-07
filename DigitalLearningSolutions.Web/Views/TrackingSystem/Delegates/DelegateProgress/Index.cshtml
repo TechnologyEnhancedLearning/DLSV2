@@ -38,14 +38,7 @@
 
     <partial name="_DelegateDetails" model="Model" />
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
-        Course
-      </div>
-      <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold">
-        @Model.CourseName
-      </div>
-    </div>
+    <vc:field-name-value-display display-name="Course" field-value="@Model.CourseName" />
 
     @if (!Model.IsCourseActive) {
       <partial name="~/Views/TrackingSystem/Shared/_InactiveCourseInset.cshtml" />
