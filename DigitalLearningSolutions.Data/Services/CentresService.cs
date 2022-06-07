@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -63,7 +64,7 @@
         {
             var autoRegisterManagerEmail =
                 centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
-            return email.Equals(autoRegisterManagerEmail);
+            return string.Equals(email, autoRegisterManagerEmail, StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }

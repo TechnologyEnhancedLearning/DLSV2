@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
@@ -253,25 +254,25 @@ namespace DigitalLearningSolutions.Data.Services
             try
             {
                 ValidateRegistrationEmail(delegateRegistrationModel);
-                var candidateNumber =
-                    registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
-                return candidateNumber;
+                return registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
             }
-            catch (DelegateCreationFailedException e)
+            catch (DelegateCreationFailedException exception)
             {
-                var error = e.Error;
-                logger.LogError(
-                    $"Could not create account for delegate on registration. Failure: {error.Name}"
-                );
-                throw new DelegateCreationFailedException(error);
+                var error = exception.Error;
+                var errorMessage = $"Could not create account for delegate on registration. Failure: {error.Name}";
+
+                logger.LogError(exception, errorMessage);
+
+                throw new DelegateCreationFailedException(errorMessage, exception, error);
             }
-            catch
+            catch (Exception exception)
             {
                 var error = DelegateCreationError.UnexpectedError;
-                logger.LogError(
-                    $"Could not create account for delegate on registration. Failure: {error.Name}"
-                );
-                throw new DelegateCreationFailedException(error);
+                var errorMessage = $"Could not create account for delegate on registration. Failure: {error.Name}";
+
+                logger.LogError(exception, errorMessage);
+
+                throw new DelegateCreationFailedException(errorMessage, exception, error);
             }
         }
 

@@ -201,10 +201,7 @@
         public int GetUserIdFromDelegateId(int delegateId)
         {
             var userId = connection.QuerySingle<int?>(
-                @"SELECT DISTINCT u.ID
-                    FROM Users AS u
-                    LEFT JOIN DelegateAccounts AS da ON da.UserID = u.ID
-                    WHERE da.ID = @delegateId",
+                @"SELECT UserID FROM DelegateAccounts WHERE ID = @delegateId",
                 new { delegateId }
             );
 
