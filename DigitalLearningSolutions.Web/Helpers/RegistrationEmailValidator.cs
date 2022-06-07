@@ -27,10 +27,12 @@
             }
 
             var isRegisterAdminJourney = centresService != null;
-            var primaryEmailIsValid = !modelState.HasError(nameof(PersonalInformationViewModel.PrimaryEmail));
-            var secondaryEmailIsValid = !modelState.HasError(nameof(PersonalInformationViewModel.SecondaryEmail));
+            var primaryEmailIsValid = !modelState.HasError(nameof(PersonalInformationViewModel.PrimaryEmail)) &&
+                                      model.PrimaryEmail != null;
+            var secondaryEmailIsValid = !modelState.HasError(nameof(PersonalInformationViewModel.SecondaryEmail)) &&
+                                        model.SecondaryEmail != null;
 
-            if (primaryEmailIsValid && model.PrimaryEmail != null)
+            if (primaryEmailIsValid)
             {
                 if (userService.EmailIsInUse(model.PrimaryEmail!))
                 {
@@ -53,14 +55,14 @@
 
             if (secondaryEmailIsValid)
             {
-                if (model.SecondaryEmail != null && userService.EmailIsInUse(model.SecondaryEmail))
+                if (userService.EmailIsInUse(model.SecondaryEmail))
                 {
                     modelState.AddModelError(
                         nameof(PersonalInformationViewModel.SecondaryEmail),
                         EmailInUseErrorMessage
                     );
                 }
-                else if (isRegisterAdminJourney && model.SecondaryEmail != null && !centresService.DoesEmailMatchCentre(
+                else if (isRegisterAdminJourney && !centresService.DoesEmailMatchCentre(
                     model.SecondaryEmail,
                     model.Centre.Value
                 ))
