@@ -14,6 +14,7 @@
         public const int CentreId = 2;
         public const int AdminId = 7;
         public const int DelegateId = 2;
+        public const int UserId = 2;
         public const string EmailAddress = "email";
         public const bool IsCentreAdmin = false;
         public const bool IsFrameworkDeveloper = false;
@@ -39,16 +40,19 @@
             int centreId = CentreId,
             int? adminId = AdminId,
             int? delegateId = DelegateId,
+            int? userId = UserId,
             string? emailAddress = EmailAddress,
             bool isCentreAdmin = IsCentreAdmin,
             bool isFrameworkDeveloper = IsFrameworkDeveloper,
-            int adminCategoryId = AdminCategoryId)
+            int adminCategoryId = AdminCategoryId
+        )
         {
             context.HttpContext.WithMockUser(
                 isAuthenticated,
                 centreId,
                 adminId,
                 delegateId,
+                userId,
                 emailAddress,
                 isCentreAdmin,
                 isFrameworkDeveloper,
@@ -64,6 +68,7 @@
             int centreId = CentreId,
             int? adminId = AdminId,
             int? delegateId = DelegateId,
+            int? userId = UserId,
             string? emailAddress = EmailAddress,
             bool isCentreAdmin = IsCentreAdmin,
             bool isFrameworkDeveloper = IsFrameworkDeveloper,
@@ -85,6 +90,7 @@
                         new Claim(CustomClaimTypes.UserCentreAdmin, isCentreAdmin.ToString()),
                         new Claim(CustomClaimTypes.IsFrameworkDeveloper, isFrameworkDeveloper.ToString()),
                         new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId.ToString()),
+                        new Claim(CustomClaimTypes.UserId, userId.ToString() ?? "False"),
                     },
                     authenticationType
                 )

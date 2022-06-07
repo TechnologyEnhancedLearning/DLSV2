@@ -1,12 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.IntegrationTests.TestHelpers
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Data.Models.User;
 
-    public class TestUserDataModel : DelegateLoginDetails
+    public class TestUserDataModel : DelegateAccount
     {
-        public int? LearningHubAuthId { get; set; }
-
         public IDictionary<string, string> SessionData { get; set; }
     }
 }

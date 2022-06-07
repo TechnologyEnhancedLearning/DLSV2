@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Models
 {
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -8,20 +7,19 @@
     {
         public LoginResult(
             LoginAttemptResult result,
-            AdminUser? adminUser = null,
-            List<DelegateUser>? delegateUsers = null,
-            List<CentreUserDetails>? availableCentres = null
+            UserEntity? userEntity = null,
+            int? centreToLogInto = null
         )
         {
             LoginAttemptResult = result;
-            Accounts = new UserAccountSet(adminUser, delegateUsers);
-            AvailableCentres = availableCentres ?? new List<CentreUserDetails>();
+            UserEntity = userEntity;
+            CentreToLogInto = centreToLogInto;
         }
 
         public LoginAttemptResult LoginAttemptResult { get; set; }
 
-        public UserAccountSet Accounts { get; set; }
+        public int? CentreToLogInto { get; set; }
 
-        public List<CentreUserDetails> AvailableCentres { get; set; }
+        public UserEntity? UserEntity { get; set; }
     }
 }

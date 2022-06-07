@@ -21,6 +21,7 @@
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Email { get; set; }
+        public string? SecondaryEmail { get; set; }
         public int? Centre { get; set; }
 
         public int? JobGroup { get; set; }
@@ -32,7 +33,8 @@
         public virtual void SetPersonalInformation(PersonalInformationViewModel model)
         {
             Centre = model.Centre;
-            Email = model.Email;
+            Email = model.PrimaryEmail;
+            SecondaryEmail = model.SecondaryEmail;
             FirstName = model.FirstName;
             LastName = model.LastName;
         }

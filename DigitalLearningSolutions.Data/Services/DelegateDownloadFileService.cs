@@ -247,7 +247,7 @@
             row[JobGroup] = delegateRecord.JobGroupName;
             row[RegisteredDate] = delegateRecord.DateRegistered?.Date;
 
-            var delegateAnswers = delegateRecord.GetCentreAnswersData();
+            var delegateAnswers = delegateRecord.GetRegistrationFieldAnswers();
 
             foreach (var prompt in registrationPrompts.CustomPrompts)
             {

@@ -6,6 +6,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public partial class UserDataServiceTests
@@ -31,32 +32,6 @@
 
             // When
             var returnedAdminUser = userDataService.GetAdminUserById(11);
-
-            // Then
-            returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
-        }
-
-        [Test]
-        public void GetAdminUserByUsername_Returns_admin_user()
-        {
-            // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
-
-            // When
-            var returnedAdminUser = userDataService.GetAdminUserByUsername("Username");
-
-            // Then
-            returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
-        }
-
-        [Test]
-        public void GetAdminUserByUsername_Returns_admin_user_category_name_all()
-        {
-            // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultCategoryNameAllAdminUser();
-
-            // When
-            var returnedAdminUser = userDataService.GetAdminUserByUsername("ebtnaxrbatnexr");
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
@@ -182,13 +157,13 @@
         }
 
         [Test]
-        public void UpdateAdminUserFailedLoginCount_updates_user()
+        public void UpdateUserFailedLoginCount_updates_user()
         {
             using var transaction = new TransactionScope();
             try
             {
                 // When
-                userDataService.UpdateAdminUserFailedLoginCount(7, 3);
+                userDataService.UpdateUserFailedLoginCount(2, 3);
                 var updatedUser = userDataService.GetAdminUserById(7)!;
 
                 // Then
@@ -222,18 +197,32 @@
         }
 
         [Test]
-        public void DeleteAdmin_deletes_admin_record()
+        public void DeleteAdminAccount_deletes_admin_record()
         {
             // Given
             const int adminId = 25;
             using var transaction = new TransactionScope();
 
             // When
-            userDataService.DeleteAdminUser(adminId);
+            userDataService.DeleteAdminAccount(adminId);
             var result = userDataService.GetAdminUserById(adminId);
 
             // Then
             result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetAdminAccountsByUserId_returns_expected_accounts()
+        {
+            // When
+            var result = userDataService.GetAdminAccountsByUserId(2).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(1);
+                result.Single().Should().BeEquivalentTo(UserTestHelper.GetDefaultAdminAccount());
+            }
         }
     }
 }

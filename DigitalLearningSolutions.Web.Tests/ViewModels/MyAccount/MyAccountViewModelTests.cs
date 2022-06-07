@@ -28,6 +28,7 @@
             var returnedModel = new MyAccountViewModel(
                 adminUser,
                 delegateUser,
+                null,
                 customPrompts,
                 DlsSubApplication.Default
             );
@@ -40,7 +41,7 @@
                 returnedModel.Surname.Should().BeEquivalentTo(adminUser.LastName);
                 returnedModel.ProfilePicture.Should().BeEquivalentTo(adminUser.ProfileImage);
                 returnedModel.DelegateNumber.Should().BeEquivalentTo(delegateUser.CandidateNumber);
-                returnedModel.User.Should().BeEquivalentTo(adminUser.EmailAddress);
+                returnedModel.PrimaryEmail.Should().BeEquivalentTo(adminUser.EmailAddress);
                 returnedModel.JobGroup.Should().BeEquivalentTo(delegateUser.JobGroupName);
                 returnedModel.DelegateRegistrationPrompts.Should().NotBeNullOrEmpty();
             }
@@ -53,7 +54,7 @@
             var adminUser = UserTestHelper.GetDefaultAdminUser();
 
             // When
-            var returnedModel = new MyAccountViewModel(adminUser, null, null, DlsSubApplication.Default);
+            var returnedModel = new MyAccountViewModel(adminUser, null, null, null, DlsSubApplication.Default);
 
             // Then
             using (new AssertionScope())
@@ -63,7 +64,7 @@
                 returnedModel.Surname.Should().BeEquivalentTo(adminUser.LastName);
                 returnedModel.ProfilePicture.Should().BeEquivalentTo(adminUser.ProfileImage);
                 returnedModel.DelegateNumber.Should().BeNull();
-                returnedModel.User.Should().BeEquivalentTo(adminUser.EmailAddress);
+                returnedModel.PrimaryEmail.Should().BeEquivalentTo(adminUser.EmailAddress);
                 returnedModel.JobGroup.Should().BeNull();
                 returnedModel.DelegateRegistrationPrompts.Should().BeEmpty();
             }
@@ -82,7 +83,13 @@
             );
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
+            var returnedModel = new MyAccountViewModel(
+                null,
+                delegateUser,
+                null,
+                customPrompts,
+                DlsSubApplication.Default
+            );
 
             // Then
             using (new AssertionScope())
@@ -92,7 +99,7 @@
                 returnedModel.Surname.Should().BeEquivalentTo(delegateUser.LastName);
                 returnedModel.ProfilePicture.Should().BeEquivalentTo(delegateUser.ProfileImage);
                 returnedModel.DelegateNumber.Should().BeEquivalentTo(delegateUser.CandidateNumber);
-                returnedModel.User.Should().BeEquivalentTo(delegateUser.EmailAddress);
+                returnedModel.PrimaryEmail.Should().BeEquivalentTo(delegateUser.EmailAddress);
                 returnedModel.JobGroup.Should().BeEquivalentTo(delegateUser.JobGroupName);
                 returnedModel.DelegateRegistrationPrompts.Should().NotBeNullOrEmpty();
             }
@@ -112,7 +119,13 @@
             );
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
+            var returnedModel = new MyAccountViewModel(
+                null,
+                delegateUser,
+                null,
+                customPrompts,
+                DlsSubApplication.Default
+            );
 
             // Then
             using (new AssertionScope())
@@ -141,11 +154,17 @@
                 professionalRegistrationNumber: null
             );
             var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
-                new List<CentreRegistrationPromptWithAnswer>{}
+                new List<CentreRegistrationPromptWithAnswer> { }
             );
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
+            var returnedModel = new MyAccountViewModel(
+                null,
+                delegateUser,
+                null,
+                customPrompts,
+                DlsSubApplication.Default
+            );
 
             // Then
             using (new AssertionScope())
@@ -171,7 +190,13 @@
             );
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
+            var returnedModel = new MyAccountViewModel(
+                null,
+                delegateUser,
+                null,
+                customPrompts,
+                DlsSubApplication.Default
+            );
 
             // Then
             using (new AssertionScope())
@@ -197,7 +222,13 @@
             );
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
+            var returnedModel = new MyAccountViewModel(
+                null,
+                delegateUser,
+                null,
+                customPrompts,
+                DlsSubApplication.Default
+            );
 
             // Then
             using (new AssertionScope())

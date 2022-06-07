@@ -77,7 +77,7 @@
             );
 
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var categoryId = User.GetAdminCategoryId();
 
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
@@ -115,7 +115,7 @@
         public IActionResult AllCourseStatistics()
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var categoryId = User.GetAdminCategoryId();
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
             var model = new AllCourseStatisticsViewModel(details, config);
@@ -150,7 +150,7 @@
         public IActionResult SelectCourseAllCourses()
         {
             var centreId = User.GetCentreId();
-            var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
+            var adminCategoryFilter = User.GetAdminCategoryId();
 
             var applications = courseService
                 .GetApplicationOptionsAlphabeticalListForCentre(centreId, adminCategoryFilter);
@@ -184,7 +184,7 @@
             }
 
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var categoryId = User.GetAdminCategoryId();
 
             var selectedApplication =
                 courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId)
@@ -405,7 +405,7 @@
         )
         {
             var centreId = User.GetCentreId();
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter()!;
+            var categoryIdFilter = User.GetAdminCategoryId()!;
 
             var applications = courseService
                 .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter).ToList();

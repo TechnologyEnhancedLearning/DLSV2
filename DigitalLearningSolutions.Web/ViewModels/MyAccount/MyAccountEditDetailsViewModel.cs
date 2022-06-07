@@ -14,9 +14,12 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             List<(int id, string name)> jobGroups,
+            string? centreEmail,
             List<EditDelegateRegistrationPromptViewModel> editDelegateRegistrationPromptViewModels,
-            DlsSubApplication dlsSubApplication
-        ) : base(adminUser, delegateUser, jobGroups)
+            DlsSubApplication dlsSubApplication,
+            string? returnUrl,
+            bool isCheckDetailRedirect
+        ) : base(adminUser, delegateUser, jobGroups, centreEmail, returnUrl, isCheckDetailRedirect)
         {
             DlsSubApplication = dlsSubApplication;
             JobGroups = SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(

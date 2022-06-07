@@ -70,8 +70,12 @@ namespace DigitalLearningSolutions.Web
                 options =>
                 {
                     options.AddPolicy(
-                        CustomPolicies.UserOnly,
-                        policy => CustomPolicies.ConfigurePolicyUserOnly(policy)
+                        CustomPolicies.BasicUser,
+                        policy => CustomPolicies.ConfigurePolicyBasicUser(policy)
+                    );
+                    options.AddPolicy(
+                        CustomPolicies.UserDelegateOnly,
+                        policy => CustomPolicies.ConfigurePolicyUserDelegateOnly(policy)
                     );
                     options.AddPolicy(
                         CustomPolicies.UserCentreAdmin,
@@ -283,7 +287,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationByCentreData>>();
             services.AddScoped<RedirectEmptySessionData<AddRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<EditRegistrationPromptData>>();
-            services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
+            services.AddScoped<RedirectEmptySessionData<List<ChooseACentreAccount>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
             services.AddScoped<RedirectEmptySessionData<BulkUploadResult>>();

@@ -140,7 +140,7 @@
             userService.UpdateAdminUserPermissions(
                 adminId,
                 model.GetAdminRoles(),
-                model.LearningCategory
+                AdminCategoryHelper.AdminCategoryToCategoryId(model.LearningCategory)
             );
 
             return RedirectToAction(
@@ -156,7 +156,8 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult UnlockAccount(int adminId)
         {
-            userDataService.UpdateAdminUserFailedLoginCount(adminId, 0);
+            // TODO HEEDLS-920 - this needs to be userId for the admin
+            userDataService.UpdateUserFailedLoginCount(adminId, 0);
 
             return RedirectToAction("Index");
         }

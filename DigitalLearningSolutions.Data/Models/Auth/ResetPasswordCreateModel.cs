@@ -5,17 +5,15 @@ namespace DigitalLearningSolutions.Data.Models.Auth
 
     public class ResetPasswordCreateModel
     {
-        public ResetPasswordCreateModel(DateTime createTime, string hash, int userId, UserType userType)
+        public ResetPasswordCreateModel(DateTime createTime, string hash, int userId)
         {
             CreateTime = createTime;
             Hash = hash;
             UserId = userId;
-            UserType = userType;
         }
 
         public readonly DateTime CreateTime;
         public readonly string Hash;
         public readonly int UserId;
-        public readonly UserType UserType;
     }
 }

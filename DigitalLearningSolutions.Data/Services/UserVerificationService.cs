@@ -13,13 +13,26 @@
             List<DelegateUser> unverifiedDelegateUsers
         );
 
-        List<DelegateUser> GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(AdminUser? adminUser, string password);
+        UserEntityVerificationResult VerifyUserEntity(
+            string password,
+            UserEntity userEntity
+        );
+
+        List<DelegateUser> GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
+            AdminUser? adminUser,
+            string password
+        );
+
+        bool IsPasswordValid(string? password, int? userId);
 
         /// <summary>
-        /// Gets a single verified admin associated with a set of delegate users.
-        /// This method should only be called with a set of delegate users with the same email address.
+        ///     Gets a single verified admin associated with a set of delegate users.
+        ///     This method should only be called with a set of delegate users with the same email address.
         /// </summary>
-        AdminUser? GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(List<DelegateUser> delegateUsers, string password);
+        AdminUser? GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
+            List<DelegateUser> delegateUsers,
+            string password
+        );
     }
 
     public class UserVerificationService : IUserVerificationService
@@ -48,6 +61,20 @@
                     .ToList();
 
             return new UserAccountSet(verifiedAdminUser, verifiedDelegateUsers);
+        }
+
+        public UserEntityVerificationResult VerifyUserEntity(string password, UserEntity userEntity)
+        {
+            var userAccountPassed = cryptoService.VerifyHashedPassword(userEntity.UserAccount.PasswordHash, password);
+            var nullDelegateIds = userEntity.DelegateAccounts
+                .Where(d => d.OldPassword == null)
+                .Select(d => d.Id).ToList();
+            var passedDelegateIds = userEntity.DelegateAccounts
+                .Where(d => cryptoService.VerifyHashedPassword(d.OldPassword, password))
+                .Select(d => d.Id).ToList();
+            var failedDelegateIds = userEntity.DelegateAccounts.Select(d => d.Id)
+                .Except(nullDelegateIds.Concat(passedDelegateIds));
+            return new UserEntityVerificationResult(userAccountPassed, nullDelegateIds, passedDelegateIds, failedDelegateIds);
         }
 
         public List<DelegateUser> GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
@@ -90,6 +117,18 @@
                                       password
                                   );
             return isSuitableAdmin ? adminUserAssociatedWithDelegates : null;
+        }
+
+        public bool IsPasswordValid(string? password, int? userId)
+        {
+            if (string.IsNullOrEmpty(password) || userId == null)
+            {
+                return false;
+            }
+
+            var user = userDataService.GetUserAccountById((int)userId);
+
+            return user != null && cryptoService.VerifyHashedPassword(user.PasswordHash, password);
         }
     }
 }
