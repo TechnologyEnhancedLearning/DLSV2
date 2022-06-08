@@ -57,7 +57,15 @@
                 transaction
             );
 
-            if (detailsAlreadyExist)
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                connection.Execute(
+                    @"DELETE FROM UserCentreDetails WHERE userID = @userId AND centreID = @centreId",
+                    new { userId, centreId },
+                    transaction
+                );
+            }
+            else if (detailsAlreadyExist)
             {
                 connection.Execute(
                     @"UPDATE UserCentreDetails
