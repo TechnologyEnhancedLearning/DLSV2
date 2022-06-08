@@ -167,7 +167,6 @@
                 transaction
             );
 
-            //throw new Exception();
             transaction.Commit();
 
             // TODO HEEDLS-874 deal with group assignment

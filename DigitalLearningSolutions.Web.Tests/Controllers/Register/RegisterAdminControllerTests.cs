@@ -187,7 +187,33 @@
         }
 
         [Test]
-        public void PersonalInformationPost_with_wrong_primary_autoregisteremail_for_centre_fails_validation()
+        public void PersonalInformationPost_with_null_centreId_results_in_status_code_500()
+        {
+            // Given
+            int? centreId = null;
+            var model = new PersonalInformationViewModel
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Centre = centreId,
+                PrimaryEmail = DefaultPrimaryEmail,
+                SecondaryEmail = DefaultSecondaryEmail,
+            };
+
+            var data = new RegistrationData(centreId);
+            controller.TempData.Set(data);
+            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(false);
+
+            // When
+            var result = controller.PersonalInformation(model);
+
+            // Then
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
+        }
+
+        [Test]
+        public void
+            PersonalInformationPost_fails_validation_when_primary_email_does_not_match_centre_and_secondary_is_null()
         {
             // Given
             var model = GetDefaultPersonalInformationViewModelAndSetTempData(null);
@@ -206,19 +232,23 @@
         }
 
         [Test]
-        public void PersonalInformationPost_with_wrong_secondary_autoregisteremail_for_centre_fails_validation()
+        public void
+            PersonalInformationPost_sets_validation_error_on_secondary_email_when_neither_primary_nor_secondary_email_match_centre()
         {
             // Given
             var model = GetDefaultPersonalInformationViewModelAndSetTempData();
 
             A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(false);
             A.CallTo(() => userService.EmailIsInUse(DefaultSecondaryEmail)).Returns(false);
+            A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultPrimaryEmail, DefaultCentreId)).Returns(false);
             A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultSecondaryEmail, DefaultCentreId)).Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
+            A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultPrimaryEmail, DefaultCentreId))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultSecondaryEmail, DefaultCentreId))
                 .MustHaveHappenedOnceExactly();
             controller.ModelState[nameof(PersonalInformationViewModel.SecondaryEmail)].ValidationState.Should()
@@ -249,17 +279,29 @@
         }
 
         [Test]
-        public void PersonalInformationPost_with_correct_unique_emails_are_allowed()
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        public void
+            PersonalInformationPost_with_unique_emails_and_a_correct_AutoRegisterManagerEmail_submits_successfully(
+                bool primaryEmailMatchesCentre,
+                bool secondaryEmailMatchesCentre
+            )
         {
             // Given
             var model = GetDefaultPersonalInformationViewModelAndSetTempData();
 
             A.CallTo(
                 () => centresService.DoesEmailMatchCentre(
+                    DefaultPrimaryEmail,
+                    DefaultCentreId
+                )
+            ).Returns(primaryEmailMatchesCentre);
+            A.CallTo(
+                () => centresService.DoesEmailMatchCentre(
                     DefaultSecondaryEmail,
                     DefaultCentreId
                 )
-            ).Returns(true);
+            ).Returns(secondaryEmailMatchesCentre);
             A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(false);
             A.CallTo(() => userService.EmailIsInUse(DefaultSecondaryEmail)).Returns(false);
 
@@ -267,14 +309,10 @@
             var result = controller.PersonalInformation(model);
 
             // Then
+            A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultPrimaryEmail, DefaultCentreId))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultSecondaryEmail, DefaultCentreId))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => centresService.DoesEmailMatchCentre(
-                    DefaultSecondaryEmail,
-                    DefaultCentreId
-                )
-            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userService.EmailIsInUse(DefaultSecondaryEmail)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");

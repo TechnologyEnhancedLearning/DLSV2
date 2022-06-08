@@ -271,7 +271,9 @@
         private bool CanProceedWithRegistration(RegistrationData data)
         {
             return data.Centre.HasValue && data.PrimaryEmail != null && IsRegisterAdminAllowed(data.Centre.Value) &&
-                   centresService.DoesEmailMatchCentre(data.SecondaryEmail ?? data.PrimaryEmail, data.Centre.Value) &&
+                   (data.SecondaryEmail != null &&
+                    centresService.DoesEmailMatchCentre(data.SecondaryEmail, data.Centre.Value) ||
+                    centresService.DoesEmailMatchCentre(data.PrimaryEmail, data.Centre.Value)) &&
                    IsEmailUnique(data.PrimaryEmail) &&
                    (data.SecondaryEmail == null || IsEmailUnique(data.SecondaryEmail));
         }
