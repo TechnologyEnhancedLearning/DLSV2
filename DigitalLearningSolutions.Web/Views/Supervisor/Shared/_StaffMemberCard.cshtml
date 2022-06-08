@@ -68,7 +68,7 @@
       }
       else
       {
-        <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
+        <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" view-data="@(new ViewDataDictionary(ViewData){{"isSupervisor", Model.IsUserSupervisor}})" />
       }
       </div>
       <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small"
@@ -91,5 +91,15 @@
         asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
       View self assessments (@Model.SupervisorDelegateDetail.CandidateAssessmentCount)
     </a>
+  }
+  else if (Model.SupervisorDelegateDetail.AddedByDelegate)
+  {
+        <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
+           aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
+           asp-controller="Supervisor"
+           asp-action="ConfirmSupervise"
+           asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+          Confirm
+        </a>
   }
   </div>
