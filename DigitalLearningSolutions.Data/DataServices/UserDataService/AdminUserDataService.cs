@@ -143,7 +143,7 @@
                     isContentManager,
                     importOnly,
                     categoryId,
-                    adminId
+                    adminId,
                 }
             );
         }
@@ -151,12 +151,12 @@
         public void UpdateAdminUserFailedLoginCount(int adminId, int updatedCount)
         {
             connection.Execute(
-                    @"UPDATE AdminUsers
+                @"UPDATE AdminUsers
                         SET
                             FailedLoginCount = @updatedCount
                         WHERE AdminID = @adminId",
-                    new { adminId, updatedCount}
-                );
+                new { adminId, updatedCount }
+            );
         }
 
         public void DeactivateAdmin(int adminId)
@@ -165,6 +165,17 @@
                 @"UPDATE AdminUsers
                         SET
                             Active = 0
+                        WHERE AdminID = @adminId",
+                new { adminId }
+            );
+        }
+
+        public void ActivateAdmin(int adminId)
+        {
+            connection.Execute(
+                @"UPDATE AdminUsers
+                        SET
+                            Active = 1
                         WHERE AdminID = @adminId",
                 new { adminId }
             );

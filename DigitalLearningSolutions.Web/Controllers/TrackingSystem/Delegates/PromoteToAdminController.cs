@@ -51,9 +51,9 @@
         public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreId();
-            var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
 
-            if (delegateUser.IsAdmin || !delegateUser.IsPasswordSet)
+            if (delegateUser!.IsAdmin || !delegateUser.IsPasswordSet)
             {
                 return NotFound();
             }

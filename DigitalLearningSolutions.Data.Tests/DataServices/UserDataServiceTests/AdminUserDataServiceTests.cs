@@ -222,6 +222,21 @@
         }
 
         [Test]
+        public void ActivateAdminUser_updates_user()
+        {
+            using var transaction = new TransactionScope();
+            // Given
+            const int adminId = 8;
+
+            // When
+            userDataService.ActivateAdmin(adminId);
+            var updatedAdminUser = userDataService.GetAdminUserById(adminId)!;
+
+            // Then
+            updatedAdminUser.Active.Should().Be(true);
+        }
+
+        [Test]
         public void DeleteAdmin_deletes_admin_record()
         {
             // Given
