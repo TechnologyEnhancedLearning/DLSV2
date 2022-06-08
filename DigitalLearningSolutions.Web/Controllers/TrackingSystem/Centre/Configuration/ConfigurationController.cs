@@ -25,7 +25,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
         private readonly ILogger<ConfigurationController> logger;
         private readonly IMapsApiHelper mapsApiHelper;
         private readonly IImageResizeService imageResizeService;
-        private ICertificateService certificateService;
+        private readonly ICertificateService certificateService;
 
         public ConfigurationController(
             ICentresDataService centresDataService,
@@ -184,8 +184,15 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
                 return NotFound();
             }
 
-            var model = new PreviewCertificateViewModel(certificateInfo);
+            var model = new PreviewCertificateViewModel(certificateInfo, centreId);
             return View(model);
+        }
+
+        [HttpPost("CertificateDownload")]
+        public IActionResult CertificateDownload(int centreId)
+        {
+            // TODO Call PDF Generation service
+            return NotFound();
         }
 
         private IActionResult EditCentreDetailsPostSave(EditCentreDetailsViewModel model)

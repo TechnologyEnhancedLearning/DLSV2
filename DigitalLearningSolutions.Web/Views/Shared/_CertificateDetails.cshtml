@@ -1,0 +1,72 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
+@model PreviewCertificateViewModel
+
+<div class="row">
+  <div class="col">
+    <div class="card card-default">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <div class="p-4 float-right">
+              @if (Model.CentreLogo != null) {
+                <img id="Logo" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Image" />
+              } else {
+                <img id="Logo" src="~/images/itspCertificateLogo.png" alt="Organisation Logo" />
+              }
+            </div>
+          </div>
+        </div>
+        <div class="text-center style1">
+          <div class="clearfix"></div>
+          <p class="style4">&nbsp;</p>
+          <p class="style4">&nbsp;</p>
+          <p class="style3">This is to certify that </p>
+        </div>
+        <div class="text-center style4">
+          <p class="style2">
+            @Model.DelegateName
+          </p>
+        </div>
+        <div class="text-center style4">
+          <p>&nbsp;</p>
+          <p class="style3">has completed</p>
+          <p class="style2">
+            @Model.CourseName
+          </p>
+          <p class="style3">
+            @Model.CertificateModifier
+          </p>
+          <p class="style2">
+          </p>
+        </div>
+        <div class="text-center ">
+          <p class="style4">&nbsp;</p>
+          <p class="style3">
+            on
+            @Model.CompletionDate.ToString("dddd, dd MMMM yyyy")
+          </p>
+          <p class="style4">&nbsp;</p>
+          <p class="style4">
+            @if (Model.SignatureImage != null) {
+              <img src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Manager Signature Image" />
+            }
+          </p>
+          <p class="style4">&nbsp;</p>
+          <p class="style4 nhsuk-u-font-size-16">
+            @Model.CentreContactName, Digital Learning Solutions Centre Manager
+          </p>
+
+          <p class="style4 nhsuk-u-font-size-16">
+            @Model.CentreName
+          </p>
+          <p class="style4">&nbsp;</p>
+          <p class="style4">&nbsp;</p>
+          <p class="style4">&nbsp;</p>
+          <p class="style4">&nbsp;</p>
+          <p class="style7">This certificate does not signify completion of BCS qualifications or MOST exams.</p>
+          <p class="style4">&nbsp;</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

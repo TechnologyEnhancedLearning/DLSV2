@@ -18,19 +18,8 @@
 <body>
 <div class="maincontentcontainer">
   <div class="container">
-    <div class="row no-print">
-      <div class="col">
-        <form asp-controller="Configuration" asp-action="CertificateDownload">
-          <input type="hidden" asp-for="CentreId"/>
-          <button class="nhsuk-button nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-3 float-right">Download PDF</button>
-        </form>
-      </div>
-    </div>
     <partial name="_CertificateDetails" model="Model" />
   </div>
 </div>
-<script>
-  window.print();
-</script>
 </body>
 </html>
