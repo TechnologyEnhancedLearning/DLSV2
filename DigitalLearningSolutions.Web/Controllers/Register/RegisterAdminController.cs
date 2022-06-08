@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -225,7 +226,7 @@
         {
             var autoRegisterManagerEmail =
                 centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
-            return email.Equals(autoRegisterManagerEmail);
+            return email.Equals(autoRegisterManagerEmail, StringComparison.CurrentCultureIgnoreCase);
         }
 
         private bool CanProceedWithRegistration(RegistrationData data)
