@@ -1,6 +1,4 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.Common
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
 @model DisplayPromptsViewModel
 
 @{
@@ -25,7 +23,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Manage delegate registration prompts</h1>
+    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
     <div class="@(canAddNewPrompt ? "nhsuk-u-margin-bottom-3" : "nhsuk-u-margin-bottom-7")">
       @foreach (var customField in Model.CustomFields) {

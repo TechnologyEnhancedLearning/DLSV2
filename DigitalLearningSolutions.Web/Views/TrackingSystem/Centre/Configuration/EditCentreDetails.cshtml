@@ -1,13 +1,11 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
 @model EditCentreDetailsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/centreConfiguration.css")" asp-append-version="true">
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Edit Centre Details" : "Edit Centre Details";
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit centre details" : "Edit centre details";
   const string hintText = @"To change your {0}, select a new image and click the Preview button to preview it.
                     To remove your {0} click the remove button.
                     Changes will not be made until the Save button below is clicked.";

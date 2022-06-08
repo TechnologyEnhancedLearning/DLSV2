@@ -44,7 +44,7 @@ export function getSortValue(
     case 'LastAccessed':
       return parseDateAndTime(getElementText(searchableElement, 'accessed-date'));
     case 'LastUpdated':
-      return parseDateAndTime(getElementText(searchableElement, 'last-updated-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'last-accessed'));
     case 'CompleteByDate':
       return parseDateAndTime(getElementText(searchableElement, 'complete-by-date'));
     case 'Completed':
@@ -102,8 +102,9 @@ function getElementText(searchableElement: ISearchableElement, elementName: stri
 
 function parseDateAndTime(dateString: string): Date {
   const possibleFormats = [
-    'dd/MM/yyyy HH:mm',
     'dd/MM/yyyy',
+    'dd/MM/yyyy HH:mm',
+    'dd/MM/yyyy HH:mm:ss',
   ];
 
   for (let i = 0; i < possibleFormats.length; i += 1) {

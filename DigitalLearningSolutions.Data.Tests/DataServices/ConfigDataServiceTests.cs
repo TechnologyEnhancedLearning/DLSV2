@@ -20,10 +20,10 @@
         public void Get_config_value_returns_the_expected_value()
         {
             // When
-            var result = configDataService.GetConfigValue(ConfigDataService.MailFromAddress);
+            var result = configDataService.GetConfigValue(ConfigDataService.TrackingSystemBaseUrl);
 
             // Then
-            result.Should().Be("noreply@itskills.nhs.uk");
+            result.Should().Be("https://www.dls.nhs.uk/tracking/");
         }
     }
 }

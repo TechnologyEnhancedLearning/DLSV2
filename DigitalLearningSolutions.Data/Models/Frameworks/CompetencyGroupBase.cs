@@ -10,7 +10,6 @@
         [Required]
         public string Name { get; set; }
 
-        [StringLength(maximumLength: 1000)]
         public string? Description { get; set; }
     }
 }

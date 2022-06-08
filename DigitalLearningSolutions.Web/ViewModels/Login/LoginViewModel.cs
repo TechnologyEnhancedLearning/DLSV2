@@ -19,7 +19,7 @@
             ReturnUrl = returnUrl;
         }
 
-        [Required(ErrorMessage = "Enter your email address or user ID")]
+        [Required(ErrorMessage = "Enter your email or user ID")]
         [MaxLength(255, ErrorMessage = "Email or delegate ID must be 255 characters or fewer")]
         public string? Username { get; set; }
 

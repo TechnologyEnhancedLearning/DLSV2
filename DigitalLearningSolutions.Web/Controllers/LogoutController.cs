@@ -5,7 +5,7 @@
 
     public class LogoutController : Controller
     {
-        [HttpGet]
+        [HttpPost]
         public IActionResult Index()
         {
             HttpContext.SignOutAsync();

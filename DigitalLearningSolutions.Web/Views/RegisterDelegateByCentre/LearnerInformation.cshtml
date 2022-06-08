@@ -1,14 +1,9 @@
-@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.ViewModels.Register
-@using Microsoft.Extensions.Configuration
 @model LearnerInformationViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Learner information" : "Register Delegate - Learner information";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
 }
 
 @section NavMenuItems {
