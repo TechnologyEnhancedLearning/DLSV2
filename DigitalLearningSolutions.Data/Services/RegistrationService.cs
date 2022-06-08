@@ -340,21 +340,24 @@ namespace DigitalLearningSolutions.Data.Services
 
                 return userDataService.GetUserIdFromDelegateId(delegateUser.Id);
             }
-            catch (DelegateCreationFailedException e)
+            catch (DelegateCreationFailedException exception)
             {
-                var error = e.Error;
-                logger.LogError(
-                    $"Delegate account could not be created for admin with email address: {registrationModel.PrimaryEmail}. Failure: {error.Name}."
-                );
-                throw new DelegateCreationFailedException(error);
+                var error = exception.Error;
+                var errorMessage = "Delegate account could not be created for admin with email address: " +
+                                   $"{registrationModel.PrimaryEmail}. Failure: {error.Name}.";
+
+                logger.LogError(exception, errorMessage);
+
+                throw new DelegateCreationFailedException(errorMessage, exception, error);
             }
-            catch
+            catch (Exception exception)
             {
                 var error = DelegateCreationError.UnexpectedError;
-                logger.LogError(
-                    $"Could not create delegate account for admin. Failure: {error.Name}."
-                );
-                throw new DelegateCreationFailedException(error);
+                var errorMessage = $"Could not create delegate account for admin. Failure: {error.Name}.";
+
+                logger.LogError(exception, errorMessage);
+
+                throw new DelegateCreationFailedException(errorMessage, exception, error);
             }
         }
 

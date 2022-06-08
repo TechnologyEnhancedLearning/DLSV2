@@ -27,13 +27,13 @@
     {
         private const string IpAddress = "1.1.1.1";
         private const int SupervisorDelegateId = 1;
-
-        private PromptsService promptsService = null!;
         private ICentresDataService centresDataService = null!;
         private RegisterController controller = null!;
         private ICryptoService cryptoService = null!;
         private IFeatureManager featureManager = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+
+        private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
@@ -212,6 +212,7 @@
                                     d.FirstName == data.FirstName &&
                                     d.LastName == data.LastName &&
                                     d.PrimaryEmail == data.PrimaryEmail &&
+                                    d.SecondaryEmail == data.SecondaryEmail &&
                                     d.Centre == data.Centre &&
                                     d.JobGroup == data.JobGroup &&
                                     d.PasswordHash == data.PasswordHash &&

@@ -1,13 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
-    using System;
     using System.Data;
-    using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
 
     public interface IRegistrationDataService
@@ -19,11 +16,15 @@
 
     public class RegistrationDataService : IRegistrationDataService
     {
+        private readonly IClockService clockService;
         private readonly IDbConnection connection;
         private readonly IUserDataService userDataService;
-        private readonly IClockService clockService;
 
-        public RegistrationDataService(IDbConnection connection, IUserDataService userDataService, IClockService clockService)
+        public RegistrationDataService(
+            IDbConnection connection,
+            IUserDataService userDataService,
+            IClockService clockService
+        )
         {
             this.connection = connection;
             this.userDataService = userDataService;
@@ -32,8 +33,6 @@
 
         public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
         {
-            // TODO HEEDLS-900: this method previously returned error codes as well as candidate numbers.
-            // any code that calls it and handled those errors on the basis of the codes needs to be updated
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
 

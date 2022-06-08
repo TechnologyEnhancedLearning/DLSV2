@@ -148,8 +148,6 @@
 
     public partial class UserDataService : IUserDataService
     {
-        private readonly IDbConnection connection;
-
         private const string BaseSelectUserQuery =
             @"SELECT
                 u.ID,
@@ -172,6 +170,8 @@
                 u.DetailsLastChecked
             FROM Users AS u
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+
+        private readonly IDbConnection connection;
 
         public UserDataService(IDbConnection connection)
         {
@@ -208,7 +208,7 @@
             if (userId == null)
             {
                 throw new Exception(
-                    "No UserID found for Delegate with DelegateID: " + delegateId
+                    "No Delegate found with DelegateID: " + delegateId
                 );
             }
 

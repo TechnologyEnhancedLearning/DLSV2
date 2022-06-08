@@ -115,10 +115,13 @@
         }
 
         [Test]
-        public void DoesEmailMatchCentre_calls_dataService_and_returns_true_if_email_matches()
+        [TestCase("centre@email")]
+        [TestCase("CENTRE@EMAIL")]
+        public void DoesEmailMatchCentre_calls_dataService_and_returns_true_if_email_matches_case_insensitively(
+            string centreEmail
+        )
         {
             // Given
-            const string centreEmail = "centre@email";
             const int centreId = 1;
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((true, centreEmail));
 

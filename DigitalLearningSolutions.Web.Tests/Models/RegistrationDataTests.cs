@@ -10,6 +10,7 @@
         private const string FirstName = "Test";
         private const string LastName = "User";
         private const string PrimaryEmail = "test@email.com";
+        private const string SecondaryEmail = "centre@email.com";
         private const int CentreId = 5;
         private const int JobGroupId = 10;
 
@@ -22,7 +23,8 @@
                 FirstName = FirstName,
                 LastName = LastName,
                 Centre = CentreId,
-                PrimaryEmail = PrimaryEmail
+                PrimaryEmail = PrimaryEmail,
+                SecondaryEmail = SecondaryEmail,
             };
             var data = new RegistrationData();
 
@@ -33,6 +35,7 @@
             data.FirstName.Should().Be(FirstName);
             data.LastName.Should().Be(LastName);
             data.PrimaryEmail.Should().Be(PrimaryEmail);
+            data.SecondaryEmail.Should().Be(SecondaryEmail);
             data.Centre.Should().Be(CentreId);
         }
 
@@ -42,7 +45,7 @@
             // Given
             var model = new LearnerInformationViewModel
             {
-                JobGroup = JobGroupId
+                JobGroup = JobGroupId,
             };
             var data = new RegistrationData();
 

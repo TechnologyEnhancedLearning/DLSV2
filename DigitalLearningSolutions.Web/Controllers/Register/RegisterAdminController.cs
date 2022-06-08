@@ -77,7 +77,17 @@
             var model = new PersonalInformationViewModel(data);
             SetCentreName(model);
 
-            RegistrationEmailValidator.ValidateEmailAddresses(model, ModelState, userService, centresService);
+            if (!model.Centre.HasValue)
+            {
+                return new StatusCodeResult(500);
+            }
+
+            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
+                model,
+                ModelState,
+                userService,
+                centresService
+            );
 
             return View(model);
         }
@@ -88,7 +98,17 @@
         {
             var data = TempData.Peek<RegistrationData>()!;
 
-            RegistrationEmailValidator.ValidateEmailAddresses(model, ModelState, userService, centresService);
+            if (!model.Centre.HasValue)
+            {
+                return new StatusCodeResult(500);
+            }
+
+            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
+                model,
+                ModelState,
+                userService,
+                centresService
+            );
 
             if (!ModelState.IsValid)
             {
@@ -252,7 +272,8 @@
         {
             return data.Centre.HasValue && data.PrimaryEmail != null && IsRegisterAdminAllowed(data.Centre.Value) &&
                    centresService.DoesEmailMatchCentre(data.SecondaryEmail ?? data.PrimaryEmail, data.Centre.Value) &&
-                   IsEmailUnique(data.PrimaryEmail) && (data.SecondaryEmail == null || IsEmailUnique(data.SecondaryEmail));
+                   IsEmailUnique(data.PrimaryEmail) &&
+                   (data.SecondaryEmail == null || IsEmailUnique(data.SecondaryEmail));
         }
 
         private void SetCentreName(PersonalInformationViewModel model)

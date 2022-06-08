@@ -239,8 +239,8 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(true);
-            A.CallTo(() => userService.EmailIsInUse(DefaultSecondaryEmail)).Returns(true);
+            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.EmailIsInUse(DefaultSecondaryEmail)).MustHaveHappenedOnceExactly();
             controller.ModelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
                 .Be(ModelValidationState.Invalid);
             controller.ModelState[nameof(PersonalInformationViewModel.SecondaryEmail)].ValidationState.Should()
@@ -349,7 +349,8 @@
             };
             var data = new RegistrationData { Centre = DefaultCentreId, PrimaryEmail = DefaultPrimaryEmail };
             controller.TempData.Set(data);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)).Returns((false, DefaultPrimaryEmail));
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .Returns((false, DefaultPrimaryEmail));
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(DefaultPrimaryEmail)).Returns(new AdminUser());
 
             // When
