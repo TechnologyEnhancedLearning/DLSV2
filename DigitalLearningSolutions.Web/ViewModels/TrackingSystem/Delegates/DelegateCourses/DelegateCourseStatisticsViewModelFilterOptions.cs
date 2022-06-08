@@ -29,13 +29,8 @@
             IEnumerable<string> topics
         )
         {
-            return new[]
+            var filterOptions = new[]
             {
-                new FilterModel(
-                    nameof(CourseStatistics.CategoryName),
-                    "Category",
-                    GetCategoryOptions(categories)
-                ),
                 new FilterModel(
                     nameof(CourseStatistics.CourseTopic),
                     "Topic",
@@ -48,6 +43,16 @@
                     CourseHasAdminFieldOptions
                 ),
             };
+
+            return categories.Any()
+                ? filterOptions.Prepend(
+                    new FilterModel(
+                        nameof(CourseStatistics.CategoryName),
+                        "Category",
+                        GetCategoryOptions(categories)
+                    )
+                )
+                : filterOptions;
         }
 
         private static IEnumerable<FilterOptionModel> GetCategoryOptions(IEnumerable<string> categories)

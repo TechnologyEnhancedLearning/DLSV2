@@ -82,7 +82,7 @@
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
             var availableFilters = CourseStatisticsViewModelFilterOptions
-                .GetFilterOptions(details.Categories, details.Topics).ToList();
+                .GetFilterOptions(categoryId.HasValue ? new string[] { } : details.Categories, details.Topics).ToList();
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
