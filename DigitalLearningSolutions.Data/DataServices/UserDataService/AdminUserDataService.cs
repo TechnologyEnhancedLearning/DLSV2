@@ -173,10 +173,9 @@
         public void ActivateAdmin(int adminId)
         {
             connection.Execute(
-                @"UPDATE AdminUsers
-                        SET
-                            Active = 1
-                        WHERE AdminID = @adminId",
+                @"UPDATE AdminUsers SET
+                        Active = 1
+                    WHERE AdminID = @adminId",
                 new { adminId }
             );
         }

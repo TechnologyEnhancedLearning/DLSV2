@@ -41,9 +41,9 @@
         public void SetPasswordByAdminId(int adminId, string passwordHash)
         {
             connection.Query(
-                @"UPDATE AdminUsers
-                        SET Password = @passwordHash
-                        WHERE AdminID = @adminID",
+                @"UPDATE AdminUsers SET
+                        Password = @passwordHash
+                    WHERE AdminID = @adminID",
                 new { passwordHash, adminId }
             );
         }

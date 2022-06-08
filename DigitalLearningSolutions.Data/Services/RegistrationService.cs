@@ -170,7 +170,6 @@ namespace DigitalLearningSolutions.Data.Services
                     adminUser.Id
                 );
                 passwordDataService.SetPasswordByAdminId(adminUser.Id, delegateUser.Password);
-                // Set various roles - TODO do we want to force IsCentreManager to false like we do when registering?
                 userDataService.UpdateAdminUserPermissions(
                     adminUser.Id,
                     adminRoles.IsCentreAdmin,
