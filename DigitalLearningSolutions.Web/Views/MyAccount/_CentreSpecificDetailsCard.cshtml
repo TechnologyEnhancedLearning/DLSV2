@@ -2,7 +2,7 @@
 @model MyAccountViewModel
 
 <div class="nhsuk-card">
-  <div class="nhsuk-card__content nhsuk-u-padding-bottom-0">
+  <div class="nhsuk-card__content nhsuk-u-padding-bottom-2">
     <h2 class="nhsuk-card__heading">
       Centre-specific details
     </h2>
@@ -23,7 +23,10 @@
             <dd class="nhsuk-summary-list__value">
               <div class="centre-email__row">
                 @Model.PrimaryEmail
-                <strong class="nhsuk-tag nhsuk-tag--blue">Primary email</strong>
+                <div>
+                  <strong class="nhsuk-tag nhsuk-tag--blue">Primary email</strong>
+                  <span class="nhsuk-u-visually-hidden">The centre email defaults to the primary email</span>
+                </div>
               </div>
             </dd>
           } else {
