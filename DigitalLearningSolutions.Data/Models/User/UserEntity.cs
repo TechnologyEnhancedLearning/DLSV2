@@ -17,12 +17,44 @@
             DelegateAccounts = delegateAccounts;
         }
 
-        public UserAccount UserAccount { get; set; }
-        public IEnumerable<AdminAccount> AdminAccounts { get; set; }
-        public IEnumerable<DelegateAccount> DelegateAccounts { get; set; }
+        public UserAccount UserAccount { get; }
+        public IEnumerable<AdminAccount> AdminAccounts { get; }
+        public IEnumerable<DelegateAccount> DelegateAccounts { get; }
 
         private bool AllAdminAccountsInactive => AdminAccounts.All(a => !a.Active);
-        public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold && AdminAccounts.Any() && !AllAdminAccountsInactive;
+
+        public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold &&
+                                AdminAccounts.Any() && !AllAdminAccountsInactive;
+
+        public IDictionary<int, UserCentreAccounts> CentreAccounts
+        {
+            get
+            {
+                var centreAccounts = DelegateAccounts.Select(
+                    delegateAccount => new UserCentreAccounts(
+                        delegateAccount.CentreId,
+                        AdminAccounts.FirstOrDefault(adminAccount => adminAccount.CentreId == delegateAccount.CentreId),
+                        delegateAccount
+                    )
+                ).ToList();
+
+                var adminOnlyAccounts = AdminAccounts.Where(
+                    aa => centreAccounts.All(account => account.CentreId != aa.CentreId)
+                );
+
+                centreAccounts.AddRange(
+                    adminOnlyAccounts.Select(account => new UserCentreAccounts(account.CentreId, account))
+                );
+
+                return centreAccounts.ToDictionary(accounts => accounts.CentreId);
+            }
+        }
+
+        public UserCentreAccounts? GetCentreAccounts(int centreId)
+        {
+            CentreAccounts.TryGetValue(centreId, out var centreAccounts);
+            return centreAccounts;
+        }
 
         public bool IsSingleCentreAccount()
         {

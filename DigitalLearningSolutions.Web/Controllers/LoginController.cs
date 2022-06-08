@@ -112,11 +112,9 @@
         public async Task<IActionResult> ChooseCentre(int centreId, string? returnUrl)
         {
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
-            var adminAccount = userEntity?.AdminAccounts.FirstOrDefault(account => account.CentreId == centreId);
-            var delegateAccount = userEntity?.DelegateAccounts.FirstOrDefault(account => account.CentreId == centreId);
-            var isCentreActive = adminAccount?.CentreActive ?? delegateAccount?.CentreActive ?? false;
+            var centreAccounts = userEntity?.GetCentreAccounts(centreId);
 
-            if (!isCentreActive)
+            if (centreAccounts?.IsCentreActive != true)
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
@@ -144,11 +142,9 @@
                 IssuedUtc = DateTime.UtcNow,
             };
 
-            var adminAccount = userEntity!.AdminAccounts.SingleOrDefault(
-                aa => aa.CentreId == centreIdToLogInto && aa.Active
-            );
+            var adminAccount = userEntity!.GetCentreAccounts(centreIdToLogInto)?.AdminAccount;
 
-            if (adminAccount != null)
+            if (adminAccount?.Active == true)
             {
                 sessionService.StartAdminSession(adminAccount.Id);
             }

@@ -64,41 +64,19 @@
 
         public IEnumerable<ChooseACentreAccount> GetChooseACentreAccounts(UserEntity? userEntity)
         {
-            var adminAccounts = userEntity!.AdminAccounts.Where(aa => aa.Active);
-
-            var chooseACentreAccounts = userEntity.DelegateAccounts.Select(
-                account =>
-                {
-                    var isAdmin = adminAccounts.Any(aa => aa.CentreId == account.CentreId);
-
-                    return new ChooseACentreAccount(
-                        account.CentreId,
-                        account.CentreName,
-                        account.CentreActive,
-                        isAdmin,
-                        true,
-                        account.Approved,
-                        account.Active
-                    );
-                }
-            ).ToList();
-
-            var adminOnlyAccounts = adminAccounts.Where(
-                aa => chooseACentreAccounts.All(account => account.CentreId != aa.CentreId)
-            );
-
-            chooseACentreAccounts.AddRange(
-                adminOnlyAccounts.Select(
-                    account => new ChooseACentreAccount(
-                        account.CentreId,
-                        account.CentreName,
-                        account.CentreActive,
-                        true
-                    )
+            return userEntity!.CentreAccounts.Values.Where(
+                centreAccounts => centreAccounts.AdminAccount?.Active == true || centreAccounts.DelegateAccount != null
+            ).Select(
+                centreAccounts => new ChooseACentreAccount(
+                    centreAccounts.CentreId,
+                    centreAccounts.CentreName!,
+                    centreAccounts.IsCentreActive,
+                    centreAccounts.AdminAccount?.Active == true,
+                    centreAccounts.DelegateAccount != null,
+                    centreAccounts.DelegateAccount?.Approved ?? false,
+                    centreAccounts.DelegateAccount?.Active ?? false
                 )
             );
-
-            return chooseACentreAccounts;
         }
 
         private LoginResult DetermineDestinationForSuccessfulLogin(UserEntity userEntity, string username)
@@ -111,16 +89,14 @@
                 return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity);
             }
 
-            var adminAccountToLogInto =
-                userEntity.AdminAccounts.SingleOrDefault(aa => aa.CentreId == singleCentreToLogUserInto.Value);
-            var delegateAccountToLogInto =
-                userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == singleCentreToLogUserInto.Value);
+            var accountsToLogInto = userEntity.GetCentreAccounts(singleCentreToLogUserInto.Value);
 
-            var centreIsActive = adminAccountToLogInto?.CentreActive ?? delegateAccountToLogInto?.CentreActive ?? false;
-            var accountAtCentreIsActive = (adminAccountToLogInto?.Active == null || adminAccountToLogInto.Active) &&
-                                          (delegateAccountToLogInto?.Active == null || delegateAccountToLogInto.Active);
-
-            if (!centreIsActive || !accountAtCentreIsActive || delegateAccountToLogInto is { Approved: false })
+            if (
+                accountsToLogInto == null ||
+                accountsToLogInto.IsCentreActive == false ||
+                accountsToLogInto.IsActive == false ||
+                accountsToLogInto.DelegateAccount?.Approved == false
+            )
             {
                 return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity);
             }
@@ -134,9 +110,7 @@
             // Determine if there is only a single account
             if (userEntity.IsSingleCentreAccount())
             {
-                var adminCentreId = userEntity.AdminAccounts.SingleOrDefault()?.CentreId;
-                var delegateCentreId = userEntity.DelegateAccounts.SingleOrDefault()?.CentreId;
-                return adminCentreId ?? delegateCentreId;
+                return userEntity.CentreAccounts.Count == 0 ? null as int? : userEntity.CentreAccounts.Keys.First();
             }
 
             // Determine if we are logging in via candidate number.
