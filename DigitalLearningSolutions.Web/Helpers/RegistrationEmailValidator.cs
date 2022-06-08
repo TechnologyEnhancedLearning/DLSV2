@@ -67,7 +67,7 @@
                     );
                 }
                 else if (isRegisterAdminJourney && model.SecondaryEmail == null &&
-                         primaryEmailMatchesCentre! == false)
+                         primaryEmailMatchesCentre == false)
                 {
                     modelState.AddModelError(
                         nameof(PersonalInformationViewModel.PrimaryEmail),
@@ -85,8 +85,8 @@
                         DuplicateEmailErrorMessage
                     );
                 }
-                else if (isRegisterAdminJourney && secondaryEmailMatchesCentre! == false &&
-                         primaryEmailMatchesCentre! == false)
+                else if (isRegisterAdminJourney && secondaryEmailMatchesCentre == false &&
+                         primaryEmailMatchesCentre == false)
                 {
                     modelState.AddModelError(
                         nameof(PersonalInformationViewModel.SecondaryEmail),

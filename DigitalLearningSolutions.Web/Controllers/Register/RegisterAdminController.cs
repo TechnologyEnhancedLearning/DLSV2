@@ -77,11 +77,6 @@
             var model = new PersonalInformationViewModel(data);
             SetCentreName(model);
 
-            if (!model.Centre.HasValue)
-            {
-                return new StatusCodeResult(500);
-            }
-
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 ModelState,
@@ -97,11 +92,6 @@
         public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
             var data = TempData.Peek<RegistrationData>()!;
-
-            if (!model.Centre.HasValue)
-            {
-                return new StatusCodeResult(500);
-            }
 
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,

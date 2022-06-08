@@ -207,9 +207,7 @@
 
             if (userId == null)
             {
-                throw new Exception(
-                    "No Delegate found with DelegateID: " + delegateId
-                );
+                throw new UserAccountNotFoundException("No Delegate found with DelegateID: " + delegateId);
             }
 
             return userId.Value;
