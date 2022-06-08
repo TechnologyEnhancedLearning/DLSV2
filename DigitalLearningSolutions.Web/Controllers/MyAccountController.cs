@@ -158,6 +158,7 @@
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
+            var emailsValid = true;
             if (!userService.NewEmailAddressIsValid(
                     formData.Email!,
                     userId
@@ -167,7 +168,7 @@
                     nameof(MyAccountEditDetailsFormData.Email),
                     CommonValidationErrorMessages.EmailAlreadyInUse
                 );
-                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
+                emailsValid = false;
             }
 
             if (!string.IsNullOrWhiteSpace(formData.CentreEmail) && !userService.NewEmailAddressIsValid(
@@ -179,6 +180,11 @@
                     nameof(MyAccountEditDetailsFormData.CentreEmail),
                     CommonValidationErrorMessages.EmailAlreadyInUse
                 );
+                emailsValid = false;
+            }
+
+            if (!emailsValid)
+            {
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
