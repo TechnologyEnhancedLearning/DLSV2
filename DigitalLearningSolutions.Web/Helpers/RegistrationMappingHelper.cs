@@ -54,6 +54,23 @@
             );
         }
 
+        public static InternalDelegateRegistrationModel
+            MapInternalDelegateRegistrationModelRegistrationToInternalDelegateRegistrationModel(
+                InternalDelegateRegistrationData data
+            )
+        {
+            return new InternalDelegateRegistrationModel(
+                data.Centre!.Value,
+                data.SecondaryEmail,
+                data.Answer1,
+                data.Answer2,
+                data.Answer3,
+                data.Answer4,
+                data.Answer5,
+                data.Answer6
+            );
+        }
+
         public static DelegateRegistrationModel MapCentreRegistrationToDelegateRegistrationModel(
             DelegateRegistrationByCentreData data
         )

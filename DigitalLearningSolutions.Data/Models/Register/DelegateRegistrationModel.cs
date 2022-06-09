@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public class DelegateRegistrationModel : RegistrationModel
     {
@@ -81,6 +82,33 @@
             welcomeEmailDate
         ) { }
 
+        public DelegateRegistrationModel(
+            UserAccount userAccount,
+            InternalDelegateRegistrationModel internalDelegateRegistrationModel,
+            bool approved = false,
+            bool isSelfRegistered = true
+
+        ) : base(
+            userAccount.FirstName,
+            userAccount.LastName,
+            userAccount.PrimaryEmail,
+            internalDelegateRegistrationModel.Centre,
+            userAccount.PasswordHash,
+            true,
+            approved,
+            userAccount.ProfessionalRegistrationNumber
+        )
+        {
+            SecondaryEmail = internalDelegateRegistrationModel.SecondaryEmail;
+            Answer1 = internalDelegateRegistrationModel.Answer1;
+            Answer2 = internalDelegateRegistrationModel.Answer2;
+            Answer3 = internalDelegateRegistrationModel.Answer3;
+            Answer4 = internalDelegateRegistrationModel.Answer4;
+            Answer5 = internalDelegateRegistrationModel.Answer5;
+            Answer6 = internalDelegateRegistrationModel.Answer6;
+            JobGroup = userAccount.JobGroupId;
+            IsSelfRegistered = isSelfRegistered;
+        }
 
         public string? Answer1 { get; set; }
 

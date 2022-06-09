@@ -6,7 +6,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class LearnerInformationViewModel : IEditProfessionalRegistrationNumbers
+    public class LearnerInformationViewModel : InternalLearnerInformationViewModel, IEditProfessionalRegistrationNumbers
     {
         public LearnerInformationViewModel() { }
 
@@ -35,21 +35,6 @@
 
         [Required(ErrorMessage = "Select a job group")]
         public int? JobGroup { get; set; }
-
-        public string? Answer1 { get; set; }
-
-        public string? Answer2 { get; set; }
-
-        public string? Answer3 { get; set; }
-
-        public string? Answer4 { get; set; }
-
-        public string? Answer5 { get; set; }
-
-        public string? Answer6 { get; set; }
-
-        public IEnumerable<EditDelegateRegistrationPromptViewModel> DelegateRegistrationPrompts { get; set; } =
-            new List<EditDelegateRegistrationPromptViewModel>();
 
         public IEnumerable<SelectListItem> JobGroupOptions { get; set; } = new List<SelectListItem>();
         public string? ProfessionalRegistrationNumber { get; set; }

@@ -12,7 +12,7 @@
 
     public interface IRegistrationDataService
     {
-        string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel);
+        string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel, int? userId = null);
 
         int RegisterAdmin(AdminRegistrationModel registrationModel, int userId);
     }
@@ -30,7 +30,7 @@
             this.clockService = clockService;
         }
 
-        public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
+        public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel, int? userId = null)
         {
             // TODO HEEDLS-900: this method previously returned error codes as well as candidate numbers.
             // any code that calls it and handled those errors on the basis of the codes needs to be updated
@@ -39,20 +39,23 @@
 
             var currentTime = clockService.UtcNow;
 
-            var userValues = new
+            int userIdToUse;
+            if (userId == null)
             {
-                delegateRegistrationModel.FirstName,
-                delegateRegistrationModel.LastName,
-                delegateRegistrationModel.PrimaryEmail,
-                delegateRegistrationModel.JobGroup,
-                delegateRegistrationModel.Active,
-                PasswordHash = "temp",
-                ProfessionalRegistrationNumber = (string?)null,
-                DetailsLastChecked = currentTime,
-            };
+                var userValues = new
+                {
+                    delegateRegistrationModel.FirstName,
+                    delegateRegistrationModel.LastName,
+                    delegateRegistrationModel.PrimaryEmail,
+                    delegateRegistrationModel.JobGroup,
+                    delegateRegistrationModel.Active,
+                    PasswordHash = "temp",
+                    ProfessionalRegistrationNumber = (string?)null,
+                    DetailsLastChecked = currentTime,
+                };
 
-            var userId = connection.QuerySingle<int>(
-                @"INSERT INTO Users
+                userIdToUse = connection.QuerySingle<int>(
+                    @"INSERT INTO Users
                     (
                         PrimaryEmail,
                         PasswordHash,
@@ -75,14 +78,19 @@
                         @active,
                         @detailsLastChecked
                     )",
-                userValues,
-                transaction
-            );
-
+                    userValues,
+                    transaction
+                );
+            }
+            else
+            {
+                userIdToUse = userId.Value;
+            }
+            
             if (!string.IsNullOrWhiteSpace(delegateRegistrationModel.SecondaryEmail))
             {
                 userDataService.SetCentreEmail(
-                    userId,
+                    userIdToUse,
                     delegateRegistrationModel.Centre,
                     delegateRegistrationModel.SecondaryEmail,
                     transaction
@@ -95,22 +103,22 @@
             // this SQL is reproduced mostly verbatim from the uspSaveNewCandidate_V10 procedure in the legacy codebase.
             var candidateNumber = connection.QueryFirst<string>(
                 @"DECLARE @_MaxCandidateNumber AS integer
-		        SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
-								FROM      DelegateAccounts WITH (TABLOCKX, HOLDLOCK)
-								WHERE     (LEFT(CandidateNumber, 2) = @initials)
-								ORDER BY nCandidateNumber DESC)
-		        IF @_MaxCandidateNumber IS Null
-			        BEGIN
-			        SET @_MaxCandidateNumber = 0
-			        END
-		        SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
+                SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
+                                FROM      DelegateAccounts WITH (TABLOCKX, HOLDLOCK)
+                                WHERE     (LEFT(CandidateNumber, 2) = @initials)
+                                ORDER BY nCandidateNumber DESC)
+                IF @_MaxCandidateNumber IS Null
+                    BEGIN
+                    SET @_MaxCandidateNumber = 0
+                    END
+                SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
                 new { initials },
                 transaction
             );
 
             var candidateValues = new
             {
-                userId,
+                userId = userIdToUse,
                 CentreId = delegateRegistrationModel.Centre,
                 DateRegistered = currentTime,
                 candidateNumber,
