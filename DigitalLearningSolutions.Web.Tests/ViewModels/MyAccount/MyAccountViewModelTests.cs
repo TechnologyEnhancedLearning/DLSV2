@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.MyAccount
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -23,13 +24,14 @@
                     PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
                 }
             );
+            var centreEmail = "centre@gmail.com";
 
             // When
             var returnedModel = new MyAccountViewModel(
                 userAccount,
                 delegateAccount,
                 delegateAccount.CentreName,
-                null,
+                centreEmail,
                 customPrompts,
                 DlsSubApplication.Default
             );
@@ -45,6 +47,10 @@
                 returnedModel.PrimaryEmail.Should().BeEquivalentTo(userAccount.PrimaryEmail);
                 returnedModel.JobGroup.Should().BeEquivalentTo(userAccount.JobGroupName);
                 returnedModel.DelegateRegistrationPrompts.Should().NotBeNullOrEmpty();
+                returnedModel.CentreEmail.Should().BeEquivalentTo(centreEmail);
+                returnedModel.DateRegistered.Should().BeEquivalentTo(
+                    delegateAccount.DateRegistered.ToString(DateHelper.StandardDateFormat)
+                );
             }
         }
 
@@ -54,13 +60,14 @@
             // Given
             var userAccount = UserTestHelper.GetDefaultUserAccount();
             var centreName = UserTestHelper.GetDefaultAdminUser().CentreName;
+            var centreEmail = "centre@gmail.com";
 
             // When
             var returnedModel = new MyAccountViewModel(
                 userAccount,
                 null,
                 centreName,
-                null,
+                centreEmail,
                 null,
                 DlsSubApplication.Default
             );
@@ -76,6 +83,8 @@
                 returnedModel.PrimaryEmail.Should().BeEquivalentTo(userAccount.PrimaryEmail);
                 returnedModel.JobGroup.Should().BeEquivalentTo(userAccount.JobGroupName);
                 returnedModel.DelegateRegistrationPrompts.Should().BeEmpty();
+                returnedModel.CentreEmail.Should().BeEquivalentTo(centreEmail);
+                returnedModel.DateRegistered.Should().BeNull();
             }
         }
 
@@ -84,12 +93,12 @@
         {
             // Given
             var userAccount = UserTestHelper.GetDefaultUserAccount();
-            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
+            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount(answer1: "1", answer2: "2");
             var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
                 new List<CentreRegistrationPromptWithAnswer>
                 {
-                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
-                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1, answer: "1"),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2, answer: "2"),
                 }
             );
 
@@ -116,7 +125,7 @@
                 returnedModel.DelegateRegistrationPrompts[1].PromptNumber.Should().Be(2);
                 returnedModel.DelegateRegistrationPrompts[1].Prompt.Should()
                     .BeEquivalentTo(customPrompts.CustomPrompts[1].PromptText);
-                returnedModel.DelegateRegistrationPrompts[1].Answer.Should().BeEquivalentTo(delegateAccount.Answer1);
+                returnedModel.DelegateRegistrationPrompts[1].Answer.Should().BeEquivalentTo(delegateAccount.Answer2);
                 returnedModel.DelegateRegistrationPrompts[1].Mandatory.Should().BeFalse();
             }
         }
@@ -137,7 +146,7 @@
             var returnedModel = new MyAccountViewModel(
                 userAccount,
                 null,
-                null,
+                UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
                 DlsSubApplication.Default
@@ -170,7 +179,7 @@
             var returnedModel = new MyAccountViewModel(
                 userAccount,
                 null,
-                null,
+                UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
                 DlsSubApplication.Default
@@ -203,7 +212,7 @@
             var returnedModel = new MyAccountViewModel(
                 userAccount,
                 null,
-                null,
+                UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
                 DlsSubApplication.Default

@@ -108,7 +108,7 @@
         {
             // TODO HEEDLS-912: sort out ChooseACentre page
             var rememberMe = true;
-            var userEntity = userService.GetUserById(User.GetUserId()!.Value);
+            var userEntity = userService.GetUserById(User.GetUserIdKnownNotNull());
             var firstAdminAccountCentreId = userEntity!.AdminAccounts.FirstOrDefault()?.CentreId;
             var firstDelegateAccountCentreId = userEntity.DelegateAccounts.FirstOrDefault()?.CentreId;
             var tempCentreIdToLogInto = (firstAdminAccountCentreId ?? firstDelegateAccountCentreId)!.Value;

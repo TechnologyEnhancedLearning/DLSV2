@@ -18,10 +18,11 @@
         public IEnumerable<CentreRegistrationPrompt>
             GetCentreRegistrationPromptsThatHaveOptionsByCentreId(int centreId);
 
-        public CentreRegistrationPromptsWithAnswers? GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
-            int centreId,
-            DelegateAccount? delegateAccount
-        );
+        public CentreRegistrationPromptsWithAnswers?
+            GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
+                int centreId,
+                DelegateAccount? delegateAccount
+            );
 
         public List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
             GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
@@ -72,10 +73,11 @@
             return GetCentreRegistrationPromptsByCentreId(centreId).CustomPrompts.Where(cp => cp.Options.Any());
         }
 
-        public CentreRegistrationPromptsWithAnswers? GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
-            int centreId,
-            DelegateAccount? delegateAccount
-        )
+        public CentreRegistrationPromptsWithAnswers?
+            GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
+                int centreId,
+                DelegateAccount? delegateAccount
+            )
         {
             if (delegateAccount == null)
             {
@@ -355,7 +357,7 @@
             return list;
         }
 
-        [Obsolete]
+        [Obsolete("Use the method that takes a DelegateAccount instead of a DelegateUser as parameter")]
         private static List<CentreRegistrationPromptWithAnswer>
             PopulateCentreRegistrationPromptWithAnswerListFromResult(
                 CentreRegistrationPromptsResult? result,

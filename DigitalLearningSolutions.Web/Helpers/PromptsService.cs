@@ -35,7 +35,7 @@
             );
         }
 
-        [Obsolete]
+        [Obsolete("Use the method that takes a DelegateAccount instead of a DelegateUser as parameter")]
         public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
             DelegateUser? delegateUser,
             int centreId

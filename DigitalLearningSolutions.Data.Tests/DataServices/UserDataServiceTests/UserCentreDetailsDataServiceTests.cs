@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.UserDataServiceTests
 {
-    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Transactions;
     using Dapper;
     using FluentAssertions;
@@ -27,7 +27,7 @@
             connection.Execute(
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
                     VALUES (8, 374, 'sample@admin.email'), (225773, 101, 'sample@delegate.email')"
-                );
+            );
 
             // When
             var result = userDataService.AnyEmailsInSetAreAlreadyInUse(emails);
@@ -41,7 +41,10 @@
         [TestCase("test@gmail.com", true)]
         [TestCase("sample@admin.email", false)]
         [TestCase("sample@delegate.email", true)]
-        public void EmailIsInUseByOtherUser_returns_true_if_email_is_in_use_by_other_user(string email, bool expectedResult)
+        public void EmailIsInUseByOtherUser_returns_true_if_email_is_in_use_by_other_user(
+            string email,
+            bool expectedResult
+        )
         {
             using var transaction = new TransactionScope();
 
@@ -56,6 +59,33 @@
 
             // Then
             result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        [TestCase(true, null)]
+        [TestCase(true, "new@admin.email")]
+        [TestCase(false, null)]
+        [TestCase(false, "new@admin.email")]
+        public void SetCentreEmail_sets_email_if_not_empty(bool detailsExist, string? email)
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            if (detailsExist)
+            {
+                connection.Execute(
+                    @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                        VALUES (8, 374, 'sample@admin.email')"
+                );
+            }
+
+            // When
+            userDataService.SetCentreEmail(8, 374, email);
+            var result = connection.Query<string?>(@"SELECT Email FROM UserCentreDetails WHERE UserID = 8")
+                .SingleOrDefault();
+
+            // Then
+            result.Should().BeEquivalentTo(email);
         }
     }
 }

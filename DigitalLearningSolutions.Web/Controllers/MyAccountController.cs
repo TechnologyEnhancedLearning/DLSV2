@@ -51,14 +51,15 @@
         public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
             var centreId = User.GetCentreId();
-            var userEntity = userService.GetUserById(User.GetUserId()!.Value)!;
+            var userId = User.GetUserIdKnownNotNull();
+            var userEntity = userService.GetUserById(userId)!;
             var adminAccount =
-                userEntity.AdminAccounts.SingleOrDefault(adminAccount => adminAccount.CentreId == centreId);
+                userEntity.AdminAccounts.SingleOrDefault(aa => aa.CentreId == centreId);
             var delegateAccount =
-                userEntity.DelegateAccounts.SingleOrDefault(delegateAccount => delegateAccount.CentreId == centreId);
+                userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == centreId);
 
             var customPrompts =
-                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
                     centreId,
                     delegateAccount
                 );
@@ -66,8 +67,8 @@
             var model = new MyAccountViewModel(
                 userEntity.UserAccount,
                 delegateAccount,
-                adminAccount?.CentreName ?? delegateAccount?.CentreName,
-                userService.GetCentreEmail(User.GetUserId()!.Value, User.GetCentreId()),
+                (adminAccount?.CentreName ?? delegateAccount?.CentreName)!,
+                userService.GetCentreEmail(userId, User.GetCentreId()),
                 customPrompts,
                 dlsSubApplication
             );
@@ -85,9 +86,10 @@
         )
         {
             var centreId = User.GetCentreId();
-            var userEntity = userService.GetUserById(User.GetUserId()!.Value)!;
+            var userId = User.GetUserIdKnownNotNull();
+            var userEntity = userService.GetUserById(userId)!;
             var delegateAccount =
-                userEntity.DelegateAccounts.SingleOrDefault(delegateAccount => delegateAccount.CentreId == centreId);
+                userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == centreId);
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
@@ -97,7 +99,7 @@
                 userEntity.UserAccount,
                 delegateAccount,
                 jobGroups,
-                userService.GetCentreEmail(User.GetUserId()!.Value, User.GetCentreId()),
+                userService.GetCentreEmail(userId, User.GetCentreId()),
                 customPrompts,
                 dlsSubApplication,
                 returnUrl,
@@ -131,7 +133,7 @@
         )
         {
             var userDelegateId = User.GetCandidateId();
-            var userId = User.GetUserId()!.Value;
+            var userId = User.GetUserIdKnownNotNull();
 
             if (userDelegateId.HasValue)
             {
@@ -149,8 +151,7 @@
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
                 ModelState,
                 formData.HasProfessionalRegistrationNumber,
-                formData.ProfessionalRegistrationNumber,
-                userDelegateId.HasValue
+                formData.ProfessionalRegistrationNumber
             );
 
             if (!ModelState.IsValid)

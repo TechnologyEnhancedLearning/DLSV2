@@ -26,13 +26,17 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             FirstName = userAccount.FirstName;
             LastName = userAccount.LastName;
             Email = userAccount.PrimaryEmail;
-            CentreEmail = centreEmail;
             ProfileImage = userAccount.ProfileImage;
-
-            IsDelegateUser = delegateAccount != null;
+            ProfessionalRegistrationNumber = userAccount.ProfessionalRegistrationNumber;
+            HasProfessionalRegistrationNumber =
+                ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(
+                    userAccount.HasBeenPromptedForPrn,
+                    userAccount.ProfessionalRegistrationNumber
+                );
             JobGroupId = jobGroups.Where(jg => jg.name == userAccount.JobGroupName).Select(jg => jg.id)
                 .SingleOrDefault();
 
+            IsDelegateUser = delegateAccount != null;
             Answer1 = delegateAccount?.Answer1;
             Answer2 = delegateAccount?.Answer2;
             Answer3 = delegateAccount?.Answer3;
@@ -40,12 +44,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer5 = delegateAccount?.Answer5;
             Answer6 = delegateAccount?.Answer6;
 
-            ProfessionalRegistrationNumber = userAccount.ProfessionalRegistrationNumber;
-            HasProfessionalRegistrationNumber =
-                ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(
-                    userAccount.HasBeenPromptedForPrn,
-                    userAccount.ProfessionalRegistrationNumber
-                );
+            CentreEmail = centreEmail;
             ReturnUrl = returnUrl;
             IsSelfRegistrationOrEdit = true;
             IsCheckDetailRedirect = isCheckDetailRedirect;

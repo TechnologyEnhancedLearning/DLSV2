@@ -57,25 +57,22 @@
                 transaction
             );
 
-            if (string.IsNullOrWhiteSpace(email))
+            if (detailsAlreadyExist)
             {
                 connection.Execute(
-                    @"DELETE FROM UserCentreDetails WHERE userID = @userId AND centreID = @centreId",
-                    new { userId, centreId },
-                    transaction
-                );
-            }
-            else if (detailsAlreadyExist)
-            {
-                connection.Execute(
-                    @"UPDATE UserCentreDetails
-                    SET Email = @email
-                    WHERE userID = @userId AND centreID = @centreId",
+                    string.IsNullOrWhiteSpace(email)
+                        ? @"UPDATE UserCentreDetails
+                        SET Email = @email,
+                            EmailVerified = null
+                        WHERE userID = @userId AND centreID = @centreId"
+                        : @"UPDATE UserCentreDetails
+                        SET Email = @email
+                        WHERE userID = @userId AND centreID = @centreId",
                     userCentreDetailsValues,
                     transaction
                 );
             }
-            else
+            else if (!string.IsNullOrWhiteSpace(email))
             {
                 connection.Execute(
                     @"INSERT INTO UserCentreDetails

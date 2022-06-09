@@ -13,7 +13,7 @@
         public MyAccountViewModel(
             UserAccount userAccount,
             DelegateAccount? delegateAccount,
-            string? centreName,
+            string centreName,
             string? centreEmail,
             CentreRegistrationPromptsWithAnswers? customPrompts,
             DlsSubApplication dlsSubApplication
@@ -51,21 +51,21 @@
             DlsSubApplication = dlsSubApplication;
         }
 
-        public string? Centre { get; set; }
+        public string Centre { get; set; }
 
-        public string? PrimaryEmail { get; set; }
+        public string PrimaryEmail { get; set; }
 
         public string? DelegateNumber { get; set; }
 
-        public string? FirstName { get; set; }
+        public string FirstName { get; set; }
 
-        public string? Surname { get; set; }
+        public string Surname { get; set; }
 
         public byte[]? ProfilePicture { get; set; }
 
         public string? JobGroup { get; set; }
 
-        public string? ProfessionalRegistrationNumber { get; set; }
+        public string ProfessionalRegistrationNumber { get; set; }
 
         public string? CentreEmail { get; set; }
 

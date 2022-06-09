@@ -95,7 +95,7 @@
 
         [Test]
         public void
-            GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser_Returns_Populated_CentreRegistrationPrompts()
+            GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount_Returns_Populated_CentreRegistrationPrompts()
         {
             // Given
             var answer1 = "Answer 1";
@@ -125,7 +125,7 @@
 
             // When
             var result =
-                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
                     29,
                     delegateAccount
                 );

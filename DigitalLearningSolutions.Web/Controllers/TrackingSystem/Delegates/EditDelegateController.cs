@@ -76,7 +76,7 @@
             }
 
             // TODO HEEDLS-951 Fix this so that it is passing the correct User ID, that of the delegate not the logged in admin
-            if (!userService.NewEmailAddressIsValid(formData.Email!, User.GetUserId()!.Value))
+            if (!userService.NewEmailAddressIsValid(formData.Email!, User.GetUserIdKnownNotNull()))
             {
                 ModelState.AddModelError(
                     nameof(EditDetailsFormData.Email),
