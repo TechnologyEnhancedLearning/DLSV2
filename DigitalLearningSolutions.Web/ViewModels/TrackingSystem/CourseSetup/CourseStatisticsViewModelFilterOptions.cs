@@ -53,6 +53,8 @@
                 ),
             };
 
+            categories = categories.ToList();
+
             return categories.Any()
                 ? filterOptions.Prepend(
                     new FilterModel(

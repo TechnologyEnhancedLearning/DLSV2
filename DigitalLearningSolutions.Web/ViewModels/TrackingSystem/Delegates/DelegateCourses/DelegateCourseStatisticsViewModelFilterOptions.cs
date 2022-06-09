@@ -7,8 +7,6 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class DelegateCourseStatisticsViewModelFilterOptions
     {
@@ -43,6 +41,8 @@
                     CourseHasAdminFieldOptions
                 ),
             };
+
+            categories = categories.ToList();
 
             return categories.Any()
                 ? filterOptions.Prepend(
