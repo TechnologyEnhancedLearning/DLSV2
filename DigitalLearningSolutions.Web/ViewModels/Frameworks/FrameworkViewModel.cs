@@ -16,6 +16,8 @@
         public IEnumerable<FrameworkCompetency>? FrameworkCompetencies { get; set; }
         public IEnumerable<AssessmentQuestion>? FrameworkDefaultQuestions { get; set; }
         public IEnumerable<CommentReplies>? CommentReplies { get; set; }
+        public IEnumerable<Flag> Flags { get; set;
+        }
         [BindProperty]
         [StringLength(255000, MinimumLength = 3)]
         [Required]

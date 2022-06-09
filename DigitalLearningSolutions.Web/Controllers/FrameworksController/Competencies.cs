@@ -103,12 +103,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 frameworkCompetency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
             }
             var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, adminId);
+            var competencyFlags = frameworkService.GetCompetencyFlagsByFrameworkIdAndCompetencyId(frameworkId, frameworkCompetency?.CompetencyID);
             if (detailFramework == null || frameworkCompetency == null) return StatusCode(404);
             var model = new FrameworkCompetencyViewModel()
             {
                 DetailFramework = detailFramework,
                 FrameworkCompetencyGroupId = frameworkCompetencyGroupId,
                 FrameworkCompetency = frameworkCompetency,
+                CompetencyFlags = competencyFlags
             };
             return View("Developer/Competency", model);
         }
@@ -116,7 +118,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}/{frameworkCompetencyId}")]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}")]
         [Route("/Frameworks/{frameworkId}/Competency/")]
-        public IActionResult AddEditFrameworkCompetency(int frameworkId, FrameworkCompetency frameworkCompetency, int? frameworkCompetencyGroupId, int frameworkCompetencyId = 0)
+        public IActionResult AddEditFrameworkCompetency(int frameworkId, FrameworkCompetency frameworkCompetency, int? frameworkCompetencyGroupId, int frameworkCompetencyId = 0, int[] selectedFlagIds = null)
         {
             if (!ModelState.IsValid)
             {
@@ -139,6 +141,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (frameworkCompetency.Id > 0)
             {
                 frameworkService.UpdateFrameworkCompetency(frameworkCompetencyId, frameworkCompetency.Name, frameworkCompetency.Description, adminId);
+                frameworkService.UpdateCompetencyFlags(frameworkId, frameworkCompetency.CompetencyID, selectedFlagIds);
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId, frameworkCompetencyId }) + "#fc-" + frameworkCompetencyId.ToString());
             }
             var newCompetencyId = frameworkService.InsertCompetency(frameworkCompetency.Name, frameworkCompetency.Description, adminId);

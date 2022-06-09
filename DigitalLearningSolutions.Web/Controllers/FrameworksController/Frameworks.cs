@@ -533,10 +533,12 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminId();
             var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var flags = frameworkService.GetFlagsByFrameworkId(frameworkId);
             var routeData = new Dictionary<string, string> { { "frameworkId", detailFramework?.ID.ToString() } };
             var model = new FrameworkViewModel()
             {
-                DetailFramework = detailFramework
+                DetailFramework = detailFramework,
+                Flags = flags
             };
             switch (tabname)
             {

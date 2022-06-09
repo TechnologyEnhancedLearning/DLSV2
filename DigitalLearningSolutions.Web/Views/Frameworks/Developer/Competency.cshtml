@@ -58,7 +58,22 @@
         </label>
         <textarea class="nhsuk-input html-editor" asp-for="FrameworkCompetency.Description" id="competency-description" name="Description" type="text" aria-describedby="competency-description-label"></textarea>
       </div>
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label nhsuk-u-margin-bottom-2" id="competency-description-label" for="competency-description">
+          @Model.VocabSingular() tags
+        </label>
+        @foreach (var flag in Model.CompetencyFlags)
+        {
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" name="selectedFlagIds" type="checkbox" value="@flag.FlagId" @(flag.Selected ? "checked" : string.Empty) />
+            <label class="nhsuk-label nhsuk-checkboxes__label">
+              @flag.FlagName
+            </label>
+          </div>
+        }
+      </div>
       <input name="Id" type="hidden" asp-for="FrameworkCompetency.Id" />
+      <input name="CompetencyID" type="hidden" asp-for="FrameworkCompetency.CompetencyID" />
       <input name="Ordering" type="hidden" asp-for="FrameworkCompetency.Ordering" />
 
       <button class="nhsuk-button" type="submit">
