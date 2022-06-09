@@ -6,6 +6,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public partial class UserDataServiceTests
@@ -222,18 +223,23 @@
         }
 
         [Test]
-        public void ActivateAdminUser_updates_user()
+        public void ReactivateAdminUser_activates_user_and_resets_admin_permissions()
         {
             using var transaction = new TransactionScope();
             // Given
-            const int adminId = 8;
+            const int adminId = 16;
 
             // When
-            userDataService.ActivateAdmin(adminId);
+            userDataService.ReactivateAdmin(adminId);
             var updatedAdminUser = userDataService.GetAdminUserById(adminId)!;
 
             // Then
-            updatedAdminUser.Active.Should().Be(true);
+            using (new AssertionScope())
+            {
+                updatedAdminUser.Active.Should().Be(true);
+                updatedAdminUser.IsCentreManager.Should().Be(false);
+                updatedAdminUser.IsUserAdmin.Should().Be(false);
+            }
         }
 
         [Test]

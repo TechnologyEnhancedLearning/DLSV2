@@ -115,7 +115,7 @@
 
         void DeactivateAdmin(int adminId);
 
-        void ActivateAdmin(int adminId);
+        void ReactivateAdmin(int adminId);
 
         void ActivateDelegateUser(int delegateId);
 

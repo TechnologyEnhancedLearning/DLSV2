@@ -721,7 +721,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.ActivateAdmin(adminUser.Id)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => userDataService.ReactivateAdmin(adminUser.Id)).MustHaveHappenedOnceExactly();
                 A.CallTo(
                     () => userDataService.UpdateAdminUser(
                         delegateUser.FirstName!,
@@ -814,7 +814,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
         private void UpdateToExistingAdminAccountMustNotHaveHappened()
         {
-            A.CallTo(() => userDataService.ActivateAdmin(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.ReactivateAdmin(A<int>._)).MustNotHaveHappened();
             A.CallTo(
                 () => userDataService.UpdateAdminUser(
                     A<string>._,

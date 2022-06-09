@@ -161,7 +161,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (adminUser?.Active is false && adminUser.CentreId == delegateUser.CentreId)
             {
-                userDataService.ActivateAdmin(adminUser.Id);
+                userDataService.ReactivateAdmin(adminUser.Id);
                 userDataService.UpdateAdminUser(
                     delegateUser.FirstName,
                     delegateUser.LastName,
