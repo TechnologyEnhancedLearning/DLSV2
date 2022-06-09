@@ -17,7 +17,7 @@
             bool active = true,
             bool approved = true,
             string? professionalRegistrationNumber = "PRN1234",
-            int categoryId = 0,
+            int? categoryId = null,
             bool isCentreAdmin = true,
             bool isCentreManager = true,
             bool isSupervisor = false,
@@ -58,7 +58,7 @@
             bool active = true,
             bool approved = true,
             string? professionalRegistrationNumber = "PRN1234",
-            int categoryId = 0,
+            int? categoryId = null,
             bool isCentreAdmin = true,
             bool isCentreManager = true,
             bool isSupervisor = true,
@@ -108,13 +108,15 @@
             DateTime? notifyDate = null,
             bool active = true,
             bool approved = false,
-            string? professionalRegistrationNumber = "PRN1234"
+            string? professionalRegistrationNumber = "PRN1234",
+            string? secondaryEmail = "testuser@weekends.com"
         )
         {
             return new DelegateRegistrationModel(
                 firstName,
                 lastName,
                 email,
+                secondaryEmail,
                 centre,
                 jobGroup,
                 passwordHash,

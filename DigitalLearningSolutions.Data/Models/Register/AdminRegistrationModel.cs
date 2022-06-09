@@ -13,7 +13,7 @@
             bool active,
             bool approved,
             string? professionalRegistrationNumber,
-            int categoryId,
+            int? categoryId,
             bool isCentreAdmin,
             bool isCentreManager,
             bool isSupervisor,
@@ -65,7 +65,7 @@
 
         public bool IsContentCreator { get; set; }
 
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
 
         public byte[]? ProfileImage { get; set; }
 

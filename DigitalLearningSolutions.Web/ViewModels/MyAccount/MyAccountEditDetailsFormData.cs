@@ -16,12 +16,16 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         protected MyAccountEditDetailsFormData(
             AdminUser? adminUser,
             DelegateUser? delegateUser,
-            List<(int id, string name)> jobGroups
+            List<(int id, string name)> jobGroups,
+            string? centreEmail,
+            string? returnUrl,
+            bool isCheckDetailRedirect
         )
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             LastName = adminUser?.LastName ?? delegateUser?.LastName;
             Email = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
+            CentreEmail = centreEmail;
             ProfileImage = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
 
             IsDelegateUser = delegateUser != null;
@@ -41,7 +45,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
                     delegateUser?.HasBeenPromptedForPrn,
                     delegateUser?.ProfessionalRegistrationNumber
                 );
+            ReturnUrl = returnUrl;
             IsSelfRegistrationOrEdit = true;
+            IsCheckDetailRedirect = isCheckDetailRedirect;
         }
 
         protected MyAccountEditDetailsFormData(MyAccountEditDetailsFormData formData)
@@ -49,6 +55,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             FirstName = formData.FirstName;
             LastName = formData.LastName;
             Email = formData.Email;
+            CentreEmail = formData.CentreEmail;
             ProfileImageFile = formData.ProfileImageFile;
             ProfileImage = formData.ProfileImage;
             IsDelegateUser = formData.IsDelegateUser;
@@ -61,12 +68,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer6 = formData.Answer6;
             HasProfessionalRegistrationNumber = formData.HasProfessionalRegistrationNumber;
             ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
+            ReturnUrl = formData.ReturnUrl;
             IsSelfRegistrationOrEdit = true;
+            IsCheckDetailRedirect = formData.IsCheckDetailRedirect;
         }
-
-        [Required(ErrorMessage = "Enter your current password")]
-        [DataType(DataType.Password)]
-        public string? Password { get; set; }
 
         public byte[]? ProfileImage { get; set; }
 
@@ -74,5 +79,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public IFormFile? ProfileImageFile { get; set; }
 
         public bool IsDelegateUser { get; set; }
+
+        public string? ReturnUrl { get; set; }
+
+        public bool IsCheckDetailRedirect { get; set; }
     }
 }

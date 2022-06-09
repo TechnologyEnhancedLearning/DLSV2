@@ -70,7 +70,7 @@
             var model = new PersonalInformationViewModel(data);
             SetCentreName(model);
 
-            ValidateEmailAddress(model.Email, model.Centre!.Value);
+            ValidateEmailAddress(model.PrimaryEmail, model.Centre!.Value);
 
             return View(model);
         }
@@ -81,7 +81,7 @@
         {
             var data = TempData.Peek<RegistrationData>()!;
 
-            ValidateEmailAddress(model.Email, model.Centre!.Value);
+            ValidateEmailAddress(model.PrimaryEmail, model.Centre!.Value);
 
             if (!ModelState.IsValid)
             {
@@ -245,7 +245,7 @@
             if (!DoesEmailMatchCentre(email, centreId))
             {
                 ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.Email),
+                    nameof(PersonalInformationViewModel.PrimaryEmail),
                     "This email does not match the one held by the centre"
                 );
             }
@@ -253,7 +253,7 @@
             if (!IsEmailUnique(email))
             {
                 ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.Email),
+                    nameof(PersonalInformationViewModel.PrimaryEmail),
                     "An admin user with this email is already registered"
                 );
             }

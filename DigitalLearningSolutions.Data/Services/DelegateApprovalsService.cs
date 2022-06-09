@@ -112,7 +112,7 @@
                 );
             }
 
-            userDataService.RemoveDelegateUser(delegateId);
+            userDataService.RemoveDelegateAccount(delegateId);
             SendRejectionEmail(delegateUser);
         }
 

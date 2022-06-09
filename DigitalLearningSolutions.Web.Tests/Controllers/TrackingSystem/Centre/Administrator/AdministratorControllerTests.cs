@@ -92,7 +92,7 @@
         {
             // Given
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(UserTestHelper.GetDefaultAdminUser());
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(A<int>._, A<int>._)).DoesNothing();
+            A.CallTo(() => userDataService.UpdateUserFailedLoginCount(A<int>._, A<int>._)).DoesNothing();
 
             // When
             var result = administratorController.UnlockAccount(1);
@@ -100,7 +100,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(1, 0)).MustHaveHappened();
+                A.CallTo(() => userDataService.UpdateUserFailedLoginCount(1, 0)).MustHaveHappened();
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
             }
         }

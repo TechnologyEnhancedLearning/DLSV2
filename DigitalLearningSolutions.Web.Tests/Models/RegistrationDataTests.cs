@@ -22,7 +22,7 @@
                 FirstName = FirstName,
                 LastName = LastName,
                 Centre = CentreId,
-                Email = Email
+                PrimaryEmail = Email
             };
             var data = new RegistrationData();
 

@@ -24,7 +24,7 @@
                 FirstName = FirstName,
                 LastName = LastName,
                 Centre = CentreId,
-                Email = Email,
+                PrimaryEmail = Email,
                 Alias = Alias
             };
             var data = new DelegateRegistrationByCentreData();

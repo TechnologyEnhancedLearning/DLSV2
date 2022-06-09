@@ -71,17 +71,17 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = duplicateUser.CentreId,
-                Email = duplicateUser.EmailAddress,
+                PrimaryEmail = duplicateUser.EmailAddress,
                 Alias = "testUser",
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
                 .Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
                 .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
@@ -97,17 +97,17 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = duplicateUser.CentreId + 1,
-                Email = duplicateUser.EmailAddress,
+                PrimaryEmail = duplicateUser.EmailAddress,
                 Alias = "testUser",
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
                 .Returns(true);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
@@ -123,7 +123,7 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = duplicateUser.CentreId,
-                Email = "unique@email",
+                PrimaryEmail = "unique@email",
                 Alias = duplicateAlias,
             };
             A.CallTo(() => userDataService.GetAllDelegateUsersByUsername(duplicateAlias))
@@ -149,10 +149,10 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = duplicateUser.CentreId + 1,
-                Email = duplicateUser.EmailAddress,
+                PrimaryEmail = duplicateUser.EmailAddress,
                 Alias = duplicateAlias,
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
                 .Returns(true);
             A.CallTo(() => userDataService.GetAllDelegateUsersByUsername(duplicateAlias))
                 .Returns(new List<DelegateUser> { duplicateUser });
@@ -179,11 +179,11 @@
             {
                 FirstName = firstName,
                 LastName = lastName,
-                Email = email,
+                PrimaryEmail = email,
                 Alias = alias,
                 Centre = 1,
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
                 .Returns(true);
 
             // When
@@ -371,7 +371,7 @@
                                 d =>
                                     d.FirstName == data.FirstName &&
                                     d.LastName == data.LastName &&
-                                    d.Email == data.Email &&
+                                    d.PrimaryEmail == data.Email &&
                                     d.Centre == data.Centre &&
                                     d.JobGroup == data.JobGroup &&
                                     d.PasswordHash == data.PasswordHash &&

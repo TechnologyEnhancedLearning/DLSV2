@@ -55,7 +55,7 @@
                 return false;
             }
 
-            var categoryId = user.GetAdminCourseCategoryFilter();
+            var categoryId = user.GetAdminCategoryId();
 
             if (details.CourseCategoryId != categoryId && categoryId != null)
             {

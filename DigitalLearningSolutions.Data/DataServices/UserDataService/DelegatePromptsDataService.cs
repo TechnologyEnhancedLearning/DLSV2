@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
+    using System;
     using System.Linq;
     using Dapper;
 
@@ -7,27 +8,27 @@
     {
         public void UpdateDelegateUserCentrePrompts(
             int id,
-            int jobGroupId,
             string? answer1,
             string? answer2,
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6
+            string? answer6,
+            DateTime detailsLastChecked
         )
         {
             connection.Execute(
-                @"UPDATE Candidates
+                @"UPDATE DelegateAccounts
                         SET
-                            JobGroupId = @jobGroupId,
                             Answer1 = @answer1,
                             Answer2 = @answer2,
                             Answer3 = @answer3,
                             Answer4 = @answer4,
                             Answer5 = @answer5,
-                            Answer6 = @answer6
-                        WHERE CandidateID = @id",
-                new { jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6, id }
+                            Answer6 = @answer6,
+                            CentreSpecificDetailsLastChecked = @detailsLastChecked
+                        WHERE ID = @id",
+                new { answer1, answer2, answer3, answer4, answer5, answer6, id, detailsLastChecked }
             );
         }
 

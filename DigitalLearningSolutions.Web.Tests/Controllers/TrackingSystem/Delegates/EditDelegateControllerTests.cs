@@ -74,8 +74,7 @@
                 Email = email,
                 HasProfessionalRegistrationNumber = false,
             };
-            A.CallTo(() => userService.NewEmailAddressIsValid(email, null, DelegateId, A<int>._)).Returns(false);
-            A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
+            A.CallTo(() => userService.NewEmailAddressIsValid(email, 2)).Returns(false);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -86,34 +85,7 @@
                 result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
                 AssertModelStateErrorIsExpected(
                     result,
-                    "A user with this email is already registered at this centre"
-                );
-            }
-        }
-
-        [Test]
-        public void Index_post_returns_view_with_model_error_with_duplicate_alias()
-        {
-            // Given
-            const string alias = "alias";
-            var formData = new EditDelegateFormData
-            {
-                JobGroupId = 1,
-                AliasId = alias,
-            };
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
-            A.CallTo(() => userService.NewAliasIsValid(alias, DelegateId, A<int>._)).Returns(false);
-
-            // When
-            var result = controller.Index(formData, DelegateId);
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
-                AssertModelStateErrorIsExpected(
-                    result,
-                    "A user with this alias is already registered at this centre"
+                    "This email is already in use"
                 );
             }
         }
@@ -128,8 +100,7 @@
                 HasProfessionalRegistrationNumber = true,
                 ProfessionalRegistrationNumber = "!&^£%&*^!%£",
             };
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
-            A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, 2)).Returns(true);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -154,8 +125,7 @@
                 JobGroupId = 1,
                 HasProfessionalRegistrationNumber = false,
             };
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
-            A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._)).Returns(true);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -166,7 +136,7 @@
                 A.CallTo(
                     () => userService.UpdateUserAccountDetailsViaDelegateAccount(
                         A<EditDelegateDetailsData>._,
-                        A<CentreAnswersData>._
+                        A<RegistrationFieldAnswers>._
                     )
                 ).MustHaveHappened();
                 result.Should().BeRedirectToActionResult().WithControllerName("ViewDelegate").WithActionName("Index");

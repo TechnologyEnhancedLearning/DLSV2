@@ -60,7 +60,8 @@
 
         private string GetUserEmail()
         {
-            var userEmail = User.GetUserEmail();
+            // TODO HEEDLS-899 This will have been broken by changes to the claims since it will be expecting centre specific emails
+            var userEmail = User.GetUserPrimaryEmail();
             if (userEmail == null)
             {
                 return "";

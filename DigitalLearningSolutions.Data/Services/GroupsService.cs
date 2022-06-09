@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
@@ -37,9 +38,9 @@
         );
 
         void SynchroniseUserChangesWithGroups(
-            DelegateUser delegateAccountWithOldDetails,
-            AccountDetailsData newDelegateDetails,
-            CentreAnswersData newCentreAnswers
+            int delegateId,
+            AccountDetailsData accountDetailsData,
+            RegistrationFieldAnswers newDelegateDetails
         );
 
         void EnrolDelegateOnGroupCourses(
@@ -108,6 +109,7 @@
         private readonly ILogger<IGroupsService> logger;
         private readonly IProgressDataService progressDataService;
         private readonly ITutorialContentDataService tutorialContentDataService;
+        private readonly IUserDataService userDataService;
 
         public GroupsService(
             IGroupsDataService groupsDataService,
@@ -118,7 +120,8 @@
             IProgressDataService progressDataService,
             IConfiguration configuration,
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
-            ILogger<IGroupsService> logger
+            ILogger<IGroupsService> logger,
+            IUserDataService userDataService
         )
         {
             this.groupsDataService = groupsDataService;
@@ -130,6 +133,7 @@
             this.configuration = configuration;
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.logger = logger;
+            this.userDataService = userDataService;
         }
 
         public int AddDelegateGroup(
@@ -160,14 +164,16 @@
         }
 
         public void SynchroniseUserChangesWithGroups(
-            DelegateUser delegateAccountWithOldDetails,
-            AccountDetailsData newDelegateDetails,
-            CentreAnswersData newCentreAnswers
+            int delegateId,
+            AccountDetailsData accountDetailsData,
+            RegistrationFieldAnswers registrationFieldAnswers
         )
         {
+            var delegateAccountWithOldDetails = userDataService.GetDelegateUserById(delegateId)!;
+
             var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldChanges(
-                delegateAccountWithOldDetails.GetCentreAnswersData(),
-                newCentreAnswers,
+                delegateAccountWithOldDetails.GetRegistrationFieldAnswers(),
+                registrationFieldAnswers,
                 jobGroupsDataService,
                 centreRegistrationPromptsService
             );
@@ -204,7 +210,7 @@
 
                     EnrolDelegateOnGroupCourses(
                         delegateAccountWithOldDetails,
-                        newDelegateDetails,
+                        accountDetailsData,
                         groupToAddDelegateTo.GroupId
                     );
                 }
@@ -266,7 +272,11 @@
                 delegateUser.Id,
                 delegateUser.FirstName!,
                 delegateUser.LastName,
-                delegateUser.EmailAddress!
+                delegateUser.EmailAddress!,
+                delegateUser.JobGroupId,
+                delegateUser.ProfessionalRegistrationNumber,
+                delegateUser.HasBeenPromptedForPrn,
+                delegateUser.ProfileImage
             );
 
             EnrolDelegateOnGroupCourses(

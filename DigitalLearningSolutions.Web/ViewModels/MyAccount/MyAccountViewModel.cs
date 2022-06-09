@@ -13,18 +13,20 @@
         public MyAccountViewModel(
             AdminUser? adminUser,
             DelegateUser? delegateUser,
+            string? centreEmail,
             CentreRegistrationPromptsWithAnswers? customPrompts,
             DlsSubApplication dlsSubApplication
         )
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             Surname = adminUser?.LastName ?? delegateUser?.LastName;
-            User = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
+            PrimaryEmail = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
             ProfilePicture = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
             Centre = adminUser?.CentreName ?? delegateUser?.CentreName;
             DelegateNumber = delegateUser?.CandidateNumber;
-            AliasId = delegateUser?.AliasId;
             JobGroup = delegateUser?.JobGroupName;
+            CentreEmail = centreEmail;
+            DateRegistered = delegateUser?.DateRegistered?.ToString(DateHelper.StandardDateFormat);
             ProfessionalRegistrationNumber = delegateUser == null
                 ? null
                 : PrnStringHelper.GetPrnDisplayString(
@@ -52,11 +54,9 @@
 
         public string? Centre { get; set; }
 
-        public string? User { get; set; }
+        public string? PrimaryEmail { get; set; }
 
         public string? DelegateNumber { get; set; }
-
-        public string? AliasId { get; set; }
 
         public string? FirstName { get; set; }
 
@@ -67,6 +67,10 @@
         public string? JobGroup { get; set; }
 
         public string? ProfessionalRegistrationNumber { get; set; }
+
+        public string? CentreEmail { get; set; }
+
+        public string? DateRegistered { get; set; }
 
         public List<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
 

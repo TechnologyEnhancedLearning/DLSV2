@@ -284,15 +284,15 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private void ValidatePersonalInformation(PersonalInformationViewModel model)
         {
-            if (model.Email == null)
+            if (model.PrimaryEmail == null)
             {
                 return;
             }
 
-            if (!userService.IsDelegateEmailValidForCentre(model.Email, model.Centre!.Value))
+            if (!userService.IsDelegateEmailValidForCentre(model.PrimaryEmail, model.Centre!.Value))
             {
                 ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.Email),
+                    nameof(PersonalInformationViewModel.PrimaryEmail),
                     "A user with this email is already registered at this centre"
                 );
             }
@@ -302,6 +302,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return;
             }
 
+            // TODO HEEDLS-887 Check this behaviour is correct
             var duplicateUsers = userDataService.GetAllDelegateUsersByUsername(model.Alias)
                 .Where(u => u.CentreId == model.Centre);
 

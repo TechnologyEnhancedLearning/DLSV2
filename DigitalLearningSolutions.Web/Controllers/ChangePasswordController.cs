@@ -17,16 +17,19 @@
     [TypeFilter(typeof(ValidateAllowedDlsSubApplication))]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
-    [Authorize]
+    [Authorize(Policy = CustomPolicies.BasicUser)]
     public class ChangePasswordController : Controller
     {
         private readonly IPasswordService passwordService;
-        private readonly IUserService userService;
+        private readonly IUserVerificationService userVerificationService;
 
-        public ChangePasswordController(IPasswordService passwordService, IUserService userService)
+        public ChangePasswordController(
+            IPasswordService passwordService,
+            IUserVerificationService userVerificationService
+        )
         {
             this.passwordService = passwordService;
-            this.userService = userService;
+            this.userVerificationService = userVerificationService;
         }
 
         [HttpGet]
@@ -39,14 +42,10 @@
         [HttpPost]
         public async Task<IActionResult> Index(ChangePasswordFormData formData, DlsSubApplication dlsSubApplication)
         {
-            var adminId = User.GetAdminId();
-            var delegateId = User.GetCandidateId();
+            var userId = User.GetUserId();
+            var password = formData.CurrentPassword;
 
-            var verifiedLinkedUsersAccounts = string.IsNullOrEmpty(formData.CurrentPassword)
-                ? new UserAccountSet()
-                : userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, formData.CurrentPassword!);
-
-            if (!verifiedLinkedUsersAccounts.Any())
+            if (!userVerificationService.IsPasswordValid(password, userId))
             {
                 ModelState.AddModelError(
                     nameof(ChangePasswordFormData.CurrentPassword),
@@ -62,7 +61,7 @@
 
             var newPassword = formData.Password!;
 
-            await passwordService.ChangePasswordAsync(verifiedLinkedUsersAccounts.GetUserRefs(), newPassword);
+            await passwordService.ChangePasswordAsync(userId!.Value, newPassword);
 
             return View("Success", dlsSubApplication);
         }

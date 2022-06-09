@@ -19,6 +19,7 @@
         public const int CentreId = 2;
         public const int AdminId = 7;
         public const int DelegateId = 2;
+        public const int UserId = 2;
         public const string EmailAddress = "email";
         public const bool IsCentreAdmin = false;
         public const bool IsFrameworkDeveloper = false;
@@ -91,6 +92,7 @@
             int centreId = CentreId,
             int? adminId = AdminId,
             int? delegateId = DelegateId,
+            int? userId = UserId,
             string? emailAddress = EmailAddress,
             bool isCentreAdmin = IsCentreAdmin,
             bool isFrameworkDeveloper = IsFrameworkDeveloper,
@@ -102,6 +104,7 @@
                 centreId,
                 adminId,
                 delegateId,
+                userId,
                 emailAddress,
                 isCentreAdmin,
                 isFrameworkDeveloper,
@@ -177,6 +180,13 @@
         public static T WithMockHttpContextSession<T>(this T controller) where T : Controller
         {
             controller.HttpContext.Session = new MockHttpContextSession();
+
+            return controller;
+        }
+
+        public static T WithMockUrlHelper<T>(this T controller, IUrlHelper urlHelper) where T : Controller
+        {
+            controller.Url = urlHelper;
 
             return controller;
         }

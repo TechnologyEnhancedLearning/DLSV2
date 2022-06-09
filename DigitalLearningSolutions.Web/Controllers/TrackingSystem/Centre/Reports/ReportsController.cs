@@ -36,7 +36,7 @@
         public IActionResult Index()
         {
             var centreId = User.GetCentreId();
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var categoryIdFilter = User.GetAdminCategoryId();
 
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
@@ -73,7 +73,7 @@
         public IEnumerable<ActivityDataRowModel> GetGraphData()
         {
             var centreId = User.GetCentreId();
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var categoryIdFilter = User.GetAdminCategoryId();
 
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
@@ -88,7 +88,7 @@
         public IActionResult EditFilters()
         {
             var centreId = User.GetCentreId();
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var categoryIdFilter = User.GetAdminCategoryId();
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
             var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
@@ -108,7 +108,7 @@
         [Route("EditFilters")]
         public IActionResult EditFilters(EditFiltersViewModel model)
         {
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var categoryIdFilter = User.GetAdminCategoryId();
             if (!ModelState.IsValid)
             {
                 var centreId = User.GetCentreId();
@@ -145,7 +145,7 @@
         )
         {
             var centreId = User.GetCentreId();
-            var adminCategoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var adminCategoryIdFilter = User.GetAdminCategoryId();
 
             var dateRange =
                 activityService.GetValidatedUsageStatsDateRange(startDate, endDate, centreId);
@@ -187,7 +187,7 @@
         )
         {
             var centreId = User.GetCentreId();
-            var adminCategoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var adminCategoryIdFilter = User.GetAdminCategoryId();
 
             var dateRange =
                 activityService.GetValidatedUsageStatsDateRange(startDate, endDate, centreId);

@@ -15,7 +15,7 @@
         {
             FirstName = firstName;
             LastName = lastName;
-            Email = email;
+            PrimaryEmail = email;
             Centre = centre;
             PasswordHash = passwordHash;
             Active = active;
@@ -27,7 +27,9 @@
 
         public string LastName { get; set; }
 
-        public string Email { get; set; }
+        public string PrimaryEmail { get; set; }
+
+        public string? SecondaryEmail { get; set; }
 
         public int Centre { get; set; }
 

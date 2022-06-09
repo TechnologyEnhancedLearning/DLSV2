@@ -69,31 +69,40 @@
         }
 
         [Test]
-        public void PersonalInformationPost_with_existing_user_for_centre_fails_validation()
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        [TestCase(true, true)]
+        public void PersonalInformationPost_with_invalid_emails_fails_validation(bool primaryInUse, bool secondaryInUse)
         {
             // Given
+            controller.TempData.Set(new DelegateRegistrationData());
             var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
             var model = new PersonalInformationViewModel
             {
                 FirstName = "Test",
                 LastName = "User",
                 Centre = duplicateUser.CentreId,
-                Email = duplicateUser.EmailAddress,
+                PrimaryEmail = duplicateUser.EmailAddress,
+                SecondaryEmail = "centre email",
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
-                .Returns(false);
+            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
+                .Returns(primaryInUse);
+            A.CallTo(() => userService.EmailIsInUse(model.SecondaryEmail!))
+                .Returns(secondaryInUse);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
+                .MustHaveHappened();
+            A.CallTo(() => userService.EmailIsInUse(model.SecondaryEmail!))
                 .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
 
         [Test]
-        public void PersonalInformationPost_with_existing_user_for_different_centre_is_allowed()
+        public void PersonalInformationPost_with_valid_emails_is_allowed()
         {
             // Given
             controller.TempData.Set(new DelegateRegistrationData());
@@ -103,16 +112,21 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = duplicateUser.CentreId + 1,
-                Email = duplicateUser.EmailAddress,
+                PrimaryEmail = duplicateUser.EmailAddress,
+                SecondaryEmail = "centre email",
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
-                .Returns(true);
+            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
+                .Returns(false);
+            A.CallTo(() => userService.EmailIsInUse(model.SecondaryEmail!))
+                .Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
+                .MustHaveHappened();
+            A.CallTo(() => userService.EmailIsInUse(model.SecondaryEmail!))
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
@@ -172,7 +186,7 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.RegisterDelegate(
+                    () => registrationService.CreateDelegateAccountForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
@@ -192,12 +206,12 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.RegisterDelegate(
+                        registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>.That.Matches(
                                 d =>
                                     d.FirstName == data.FirstName &&
                                     d.LastName == data.LastName &&
-                                    d.Email == data.Email &&
+                                    d.PrimaryEmail == data.Email &&
                                     d.Centre == data.Centre &&
                                     d.JobGroup == data.JobGroup &&
                                     d.PasswordHash == data.PasswordHash &&
@@ -235,7 +249,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.RegisterDelegate(
+                        registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
@@ -260,7 +274,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.RegisterDelegate(
+                        registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
@@ -285,7 +299,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.RegisterDelegate(
+                        registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
@@ -303,7 +317,7 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.RegisterDelegate(
+                    () => registrationService.CreateDelegateAccountForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
@@ -331,7 +345,7 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.RegisterDelegate(
+                    () => registrationService.CreateDelegateAccountForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,

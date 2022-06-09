@@ -23,7 +23,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
 
-    [Authorize(Policy = CustomPolicies.UserOnly)]
+    [Authorize(Policy = CustomPolicies.UserDelegateOnly)]
     [ServiceFilter(typeof(VerifyDelegateUserCanAccessSelfAssessment))]
     public class RecommendedLearningController : Controller
     {

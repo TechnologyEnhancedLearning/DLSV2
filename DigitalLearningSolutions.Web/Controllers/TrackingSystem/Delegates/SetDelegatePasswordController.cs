@@ -40,11 +40,6 @@
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
-            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
-            {
-                return View("NoEmail");
-            }
-
             var model = new SetDelegatePasswordViewModel(
                 DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName),
                 delegateId,
@@ -68,14 +63,9 @@
                 return View(model);
             }
 
-            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+            var delegateAccount = userDataService.GetDelegateAccountById(delegateId)!;
 
-            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
-            {
-                return View("NoEmail");
-            }
-
-            await passwordService.ChangePasswordAsync(delegateUser!.EmailAddress!, model.Password!);
+            await passwordService.ChangePasswordAsync(delegateAccount.UserId, model.Password!);
 
             return View("Confirmation");
         }
