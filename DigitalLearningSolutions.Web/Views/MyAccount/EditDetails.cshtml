@@ -5,7 +5,7 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Edit Details" : "Edit Details";
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit details" : "Edit details";
   var routeParamsForIndexLink = new Dictionary<string, string?> {
     { "dlsSubApplication", Model.DlsSubApplication.UrlSegment },
   };
