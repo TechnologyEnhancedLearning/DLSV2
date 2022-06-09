@@ -20,14 +20,6 @@
             ProfileImage = profileImage;
         }
 
-        public MyAccountDetailsData(
-            string firstName,
-            string surname,
-            string email
-        ) : base(firstName, surname, email)
-        {
-        }
-
         public int UserId { get; set; }
         public byte[]? ProfileImage { get; set; }
         public int JobGroupId { get; set; }

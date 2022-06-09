@@ -6,6 +6,7 @@
 
     public static class AccountDetailsDataHelper
     {
+        // TODO: 900 - make these into wrapper methods around a private method
         public static (MyAccountDetailsData, DelegateDetailsData?) MapToUpdateAccountData(
             MyAccountEditDetailsFormData formData,
             int userId,
@@ -25,7 +26,8 @@
                 formData.ProfileImage
             );
 
-            var delegateDetailsData = userDelegateId != null ? new DelegateDetailsData(
+            var delegateDetailsData = userDelegateId != null
+                ? new DelegateDetailsData(
                     userDelegateId.Value,
                     formData.Answer1,
                     formData.Answer2,
@@ -33,30 +35,33 @@
                     formData.Answer4,
                     formData.Answer5,
                     formData.Answer6
-                ) : null;
+                )
+                : null;
             return (accountDetailsData, delegateDetailsData);
         }
 
-        public static (EditDelegateDetailsData, RegistrationFieldAnswers) MapToUpdateAccountData(
+        public static (MyAccountDetailsData, DelegateDetailsData) MapToUpdateAccountData(
             EditDelegateFormData formData,
+            int userId,
             int userDelegateId,
-            int centreId
+            byte[]? profileImage
         )
         {
-            var accountDetailsData = new EditDelegateDetailsData(
-                userDelegateId,
+            var accountDetailsData = new MyAccountDetailsData(
+                userId,
                 formData.FirstName!,
                 formData.LastName!,
                 formData.Email!,
+                formData.JobGroupId!.Value,
                 formData.HasProfessionalRegistrationNumber == true
                     ? formData.ProfessionalRegistrationNumber
                     : null,
-                formData.HasProfessionalRegistrationNumber.HasValue
+                formData.HasProfessionalRegistrationNumber.HasValue,
+                profileImage
             );
 
-            var centreAnswersData = new RegistrationFieldAnswers(
-                centreId,
-                formData.JobGroupId!.Value,
+            var delegateDetailsData = new DelegateDetailsData(
+                userDelegateId,
                 formData.Answer1,
                 formData.Answer2,
                 formData.Answer3,
@@ -64,7 +69,7 @@
                 formData.Answer5,
                 formData.Answer6
             );
-            return (accountDetailsData, centreAnswersData);
+            return (accountDetailsData, delegateDetailsData);
         }
     }
 }

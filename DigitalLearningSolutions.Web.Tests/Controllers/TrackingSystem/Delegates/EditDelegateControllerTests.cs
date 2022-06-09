@@ -19,9 +19,9 @@
     public class EditDelegateControllerTests
     {
         private const int DelegateId = 1;
-        private PromptsService promptsService = null!;
         private EditDelegateController controller = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private PromptsService promptsService = null!;
         private IUserService userService = null!;
 
         [SetUp]
@@ -134,9 +134,11 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => userService.UpdateUserAccountDetailsViaDelegateAccount(
-                        A<EditDelegateDetailsData>._,
-                        A<RegistrationFieldAnswers>._
+                    () => userService.UpdateUserDetailsAndCentreSpecificDetails(
+                        A<MyAccountDetailsData>._,
+                        A<DelegateDetailsData>._,
+                        A<string>._,
+                        A<int>._
                     )
                 ).MustHaveHappened();
                 result.Should().BeRedirectToActionResult().WithControllerName("ViewDelegate").WithActionName("Index");

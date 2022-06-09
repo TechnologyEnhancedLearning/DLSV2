@@ -22,8 +22,8 @@
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     public class EditDelegateController : Controller
     {
-        private readonly PromptsService promptsService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly PromptsService promptsService;
         private readonly IUserService userService;
 
         public EditDelegateController(
@@ -75,8 +75,9 @@
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
-            // TODO HEEDLS-951 Fix this so that it is passing the correct User ID, that of the delegate not the logged in admin
-            if (!userService.NewEmailAddressIsValid(formData.Email!, User.GetUserId()!.Value))
+            var delegateUser = userService.GetDelegateById(delegateId);
+
+            if (!userService.NewEmailAddressIsValid(formData.Email!, delegateUser!.UserAccount.Id))
             {
                 ModelState.AddModelError(
                     nameof(EditDetailsFormData.Email),
@@ -85,12 +86,19 @@
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
-            var (accountDetailsData, centreAnswersData) = AccountDetailsDataHelper.MapToUpdateAccountData(
+            // TODO: 951 - rename MyAccountDetailsData to something that covers both cases
+            var (editDelegateDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToUpdateAccountData(
                 formData,
+                delegateUser.UserAccount.Id,
                 delegateId,
-                User.GetCentreId()
+                delegateUser.UserAccount.ProfileImage
             );
-            userService.UpdateUserAccountDetailsViaDelegateAccount(accountDetailsData, centreAnswersData);
+            userService.UpdateUserDetailsAndCentreSpecificDetails(
+                editDelegateDetailsData,
+                delegateDetailsData,
+                formData.CentreEmail,
+                centreId
+            );
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }

@@ -12,12 +12,15 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using Delegate = DigitalLearningSolutions.Data.Models.User.Delegate;
 
     public interface IUserService
     {
         (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress);
 
         (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
+
+        Delegate? GetDelegateById(int id);
 
         DelegateUser? GetDelegateUserById(int delegateId);
 
@@ -57,11 +60,6 @@ namespace DigitalLearningSolutions.Data.Services
             int adminId,
             AdminRoles adminRoles,
             int? categoryId
-        );
-
-        void UpdateUserAccountDetailsViaDelegateAccount(
-            EditDelegateDetailsData editDelegateDetailsData,
-            RegistrationFieldAnswers registrationFieldAnswers
         );
 
         IEnumerable<AdminUser> GetSupervisorsAtCentre(int centreId);
@@ -226,30 +224,6 @@ namespace DigitalLearningSolutions.Data.Services
             return !userDataService.EmailIsInUseByOtherUser(userId, emailAddress);
         }
 
-        private UserAccountSet GetVerifiedLinkedUsersAccounts(
-            int? adminId,
-            int? delegateId,
-            string password
-        )
-        {
-            var (loggedInAdminUser, loggedInDelegateUser) = GetUsersById(adminId, delegateId);
-
-            var signedInEmailIfAny = loggedInAdminUser?.EmailAddress ?? loggedInDelegateUser?.EmailAddress;
-
-            if (string.IsNullOrWhiteSpace(signedInEmailIfAny))
-            {
-                var loggedInDelegateUsers = loggedInDelegateUser != null
-                    ? new List<DelegateUser> { loggedInDelegateUser }
-                    : new List<DelegateUser>();
-
-                return userVerificationService.VerifyUsers(password, loggedInAdminUser, loggedInDelegateUsers);
-            }
-
-            var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
-
-            return userVerificationService.VerifyUsers(password, adminUser, delegateUsers);
-        }
-
         public bool IsPasswordValid(int? adminId, int? delegateId, string password)
         {
             var verifiedLinkedUsersAccounts = GetVerifiedLinkedUsersAccounts(adminId, delegateId, password);
@@ -320,58 +294,6 @@ namespace DigitalLearningSolutions.Data.Services
                 adminRoles.IsContentManager,
                 adminRoles.ImportOnly,
                 categoryId
-            );
-        }
-
-        // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
-        public void UpdateUserAccountDetailsViaDelegateAccount(
-            EditDelegateDetailsData editDelegateDetailsData,
-            RegistrationFieldAnswers registrationFieldAnswers
-        )
-        {
-            var delegateUser = userDataService.GetDelegateUserById(editDelegateDetailsData.DelegateId);
-            var (adminUser, _) = GetUsersByEmailAddress(delegateUser!.EmailAddress);
-
-            if (adminUser != null)
-            {
-                userDataService.UpdateAdminUser(
-                    editDelegateDetailsData.FirstName,
-                    editDelegateDetailsData.Surname,
-                    editDelegateDetailsData.Email,
-                    adminUser.ProfileImage,
-                    adminUser.Id
-                );
-            }
-
-            userDataService.UpdateUserDetails(
-                editDelegateDetailsData.FirstName,
-                editDelegateDetailsData.Surname,
-                editDelegateDetailsData.Email,
-                registrationFieldAnswers.JobGroupId,
-                1 // TODO HEEDLS-887 This needs correcting to the correct UserId for the delegate record.
-            );
-
-            userDataService.UpdateDelegateAccount(
-                editDelegateDetailsData.DelegateId,
-                delegateUser.Active,
-                registrationFieldAnswers.Answer1,
-                registrationFieldAnswers.Answer2,
-                registrationFieldAnswers.Answer3,
-                registrationFieldAnswers.Answer4,
-                registrationFieldAnswers.Answer5,
-                registrationFieldAnswers.Answer6
-            );
-
-            userDataService.UpdateDelegateProfessionalRegistrationNumber(
-                delegateUser.Id,
-                editDelegateDetailsData.ProfessionalRegistrationNumber,
-                editDelegateDetailsData.HasBeenPromptedForPrn
-            );
-
-            groupsService.SynchroniseUserChangesWithGroups(
-                delegateUser.Id,
-                editDelegateDetailsData,
-                registrationFieldAnswers
             );
         }
 
@@ -451,6 +373,11 @@ namespace DigitalLearningSolutions.Data.Services
             return userDataService.GetUserAccountByEmailAddress(emailAddress);
         }
 
+        public Delegate? GetDelegateById(int id)
+        {
+            return userDataService.GetDelegateById(id);
+        }
+
         public DelegateUser? GetDelegateUserById(int delegateId)
         {
             return userDataService.GetDelegateUserById(delegateId);
@@ -481,6 +408,30 @@ namespace DigitalLearningSolutions.Data.Services
         public string? GetCentreEmail(int userId, int centreId)
         {
             return userDataService.GetCentreEmail(userId, centreId);
+        }
+
+        private UserAccountSet GetVerifiedLinkedUsersAccounts(
+            int? adminId,
+            int? delegateId,
+            string password
+        )
+        {
+            var (loggedInAdminUser, loggedInDelegateUser) = GetUsersById(adminId, delegateId);
+
+            var signedInEmailIfAny = loggedInAdminUser?.EmailAddress ?? loggedInDelegateUser?.EmailAddress;
+
+            if (string.IsNullOrWhiteSpace(signedInEmailIfAny))
+            {
+                var loggedInDelegateUsers = loggedInDelegateUser != null
+                    ? new List<DelegateUser> { loggedInDelegateUser }
+                    : new List<DelegateUser>();
+
+                return userVerificationService.VerifyUsers(password, loggedInAdminUser, loggedInDelegateUsers);
+            }
+
+            var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
+
+            return userVerificationService.VerifyUsers(password, adminUser, delegateUsers);
         }
 
         private bool NewUserRolesExceedAvailableSpots(

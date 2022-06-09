@@ -6,6 +6,7 @@
     using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.User;
+    using Delegate = DigitalLearningSolutions.Data.Models.User.Delegate;
 
     public partial class UserDataService
     {
@@ -64,6 +65,73 @@
                 da.CentreSpecificDetailsLastChecked
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreId";
+
+        // TODO: 951 - Write test
+        public Delegate? GetDelegateById(int id)
+        {
+            var sql = @"SELECT
+                da.ID,
+                da.Active,
+                da.CentreID,
+                ce.CentreName,
+                ce.Active AS CentreActive,
+                da.DateRegistered,
+                da.CandidateNumber,
+                da.Answer1,
+                da.Answer2,
+                da.Answer3,
+                da.Answer4,
+                da.Answer5,
+                da.Answer6,
+                da.Approved,
+                da.ExternalReg,
+                da.SelfReg,
+                da.OldPassword,
+                da.UserID,
+                da.CentreSpecificDetailsLastChecked,
+                u.ID,
+                u.PrimaryEmail,
+                u.PasswordHash,
+                u.FirstName,
+                u.LastName,
+                u.JobGroupID,
+                jg.JobGroupName,
+                u.ProfessionalRegistrationNumber,
+                u.ProfileImage,
+                u.Active,
+                u.ResetPasswordID,
+                u.TermsAgreed,
+                u.FailedLoginCount,
+                u.HasBeenPromptedForPrn,
+                u.LearningHubAuthID,
+                u.HasDismissedLhLoginWarning,
+                u.EmailVerified,
+                u.DetailsLastChecked,
+                ucd.ID,
+                ucd.CentreID,
+                ucd.Email,
+                ucd.EmailVerified
+            FROM DelegateAccounts AS da
+            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
+            INNER JOIN Users AS u ON u.ID = da.UserID
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
+                AND ucd.CentreId = da.CentreID
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
+            WHERE da.ID = @id";
+
+            var delegateUser = connection.Query<Delegate, DelegateAccount, UserAccount, UserCentreDetails, Delegate>(
+                sql,
+                (delegateUser, delegateAccount, userAccount, userCentreDetails) =>
+                {
+                    delegateUser.DelegateAccount = delegateAccount;
+                    delegateUser.UserAccount = userAccount;
+                    delegateUser.UserCentreDetails = userCentreDetails;
+                    return delegateUser;
+                }
+            ).FirstOrDefault();
+
+            return delegateUser;
+        }
 
         public DelegateUser? GetDelegateUserById(int id)
         {

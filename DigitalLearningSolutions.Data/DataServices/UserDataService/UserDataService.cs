@@ -7,6 +7,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
+    using Delegate = DigitalLearningSolutions.Data.Models.User.Delegate;
 
     public interface IUserDataService
     {
@@ -33,6 +34,9 @@
         );
 
         void UpdateUserFailedLoginCount(int userId, int updatedCount);
+
+        // TODO: 951 Write test
+        Delegate? GetDelegateById(int id);
 
         DelegateUser? GetDelegateUserById(int id);
 
@@ -146,8 +150,6 @@
 
     public partial class UserDataService : IUserDataService
     {
-        private readonly IDbConnection connection;
-
         private const string BaseSelectUserQuery =
             @"SELECT
                 u.ID,
@@ -170,6 +172,8 @@
                 u.DetailsLastChecked
             FROM Users AS u
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+
+        private readonly IDbConnection connection;
 
         public UserDataService(IDbConnection connection)
         {
