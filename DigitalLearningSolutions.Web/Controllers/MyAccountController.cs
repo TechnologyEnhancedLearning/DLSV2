@@ -68,7 +68,7 @@
                 userEntity.UserAccount,
                 delegateAccount,
                 (adminAccount?.CentreName ?? delegateAccount?.CentreName)!,
-                userService.GetCentreEmail(userId, User.GetCentreId()),
+                userService.GetCentreEmail(userId, centreId),
                 customPrompts,
                 dlsSubApplication
             );
@@ -99,7 +99,7 @@
                 userEntity.UserAccount,
                 delegateAccount,
                 jobGroups,
-                userService.GetCentreEmail(userId, User.GetCentreId()),
+                userService.GetCentreEmail(userId, centreId),
                 customPrompts,
                 dlsSubApplication,
                 returnUrl,

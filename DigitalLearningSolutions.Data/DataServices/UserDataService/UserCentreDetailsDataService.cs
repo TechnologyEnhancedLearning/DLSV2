@@ -62,8 +62,8 @@
                 connection.Execute(
                     string.IsNullOrWhiteSpace(email)
                         ? @"UPDATE UserCentreDetails
-                        SET Email = @email,
-                            EmailVerified = null
+                        SET Email = NULL,
+                            EmailVerified = NULL
                         WHERE userID = @userId AND centreID = @centreId"
                         : @"UPDATE UserCentreDetails
                         SET Email = @email
