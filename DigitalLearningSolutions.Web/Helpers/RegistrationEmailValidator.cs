@@ -48,14 +48,7 @@
                 !modelState.HasError(nameof(PersonalInformationViewModel.SecondaryEmail)) &&
                 model.SecondaryEmail != null;
 
-            var primaryEmailMatchesCentre = centresService?.DoesEmailMatchCentre(
-                model.PrimaryEmail!,
-                model.Centre!.Value
-            );
-            var secondaryEmailMatchesCentre = centresService?.DoesEmailMatchCentre(
-                model.SecondaryEmail!,
-                model.Centre!.Value
-            );
+            bool? primaryEmailMatchesCentre = null;
 
             if (primaryEmailIsValidAndNotNull)
             {
@@ -66,13 +59,20 @@
                         DuplicateEmailErrorMessage
                     );
                 }
-                else if (isRegisterAdminJourney && model.SecondaryEmail == null &&
-                         primaryEmailMatchesCentre == false)
+                else if (isRegisterAdminJourney)
                 {
-                    modelState.AddModelError(
-                        nameof(PersonalInformationViewModel.PrimaryEmail),
-                        WrongEmailForCentreErrorMessage
+                    primaryEmailMatchesCentre = centresService?.DoesEmailMatchCentre(
+                        model.PrimaryEmail!,
+                        model.Centre!.Value
                     );
+
+                    if (primaryEmailMatchesCentre == false && model.SecondaryEmail == null)
+                    {
+                        modelState.AddModelError(
+                            nameof(PersonalInformationViewModel.PrimaryEmail),
+                            WrongEmailForCentreErrorMessage
+                        );
+                    }
                 }
             }
 
@@ -85,13 +85,20 @@
                         DuplicateEmailErrorMessage
                     );
                 }
-                else if (isRegisterAdminJourney && secondaryEmailMatchesCentre == false &&
-                         primaryEmailMatchesCentre == false)
+                else if (isRegisterAdminJourney && primaryEmailMatchesCentre == false)
                 {
-                    modelState.AddModelError(
-                        nameof(PersonalInformationViewModel.SecondaryEmail),
-                        WrongEmailForCentreErrorMessage
+                    var secondaryEmailMatchesCentre = centresService?.DoesEmailMatchCentre(
+                        model.SecondaryEmail!,
+                        model.Centre!.Value
                     );
+
+                    if (secondaryEmailMatchesCentre == false)
+                    {
+                        modelState.AddModelError(
+                            nameof(PersonalInformationViewModel.SecondaryEmail),
+                            WrongEmailForCentreErrorMessage
+                        );
+                    }
                 }
             }
         }
