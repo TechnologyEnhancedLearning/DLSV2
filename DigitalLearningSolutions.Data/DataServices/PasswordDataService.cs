@@ -11,7 +11,11 @@
     public interface IPasswordDataService
     {
         void SetPasswordByCandidateNumber(string candidateNumber, string passwordHash);
+
+        void SetPasswordByAdminId(int adminId, string passwordHash);
+
         Task SetPasswordByEmailAsync(string email, string passwordHash);
+
         Task SetPasswordForUsersAsync(IEnumerable<UserReference> users, string passwordHash);
     }
 
@@ -31,6 +35,16 @@
                         SET Password = @passwordHash
                         WHERE CandidateNumber = @candidateNumber",
                 new { passwordHash, candidateNumber }
+            );
+        }
+
+        public void SetPasswordByAdminId(int adminId, string passwordHash)
+        {
+            connection.Query(
+                @"UPDATE AdminUsers SET
+                        Password = @passwordHash
+                    WHERE AdminID = @adminID",
+                new { passwordHash, adminId }
             );
         }
 
