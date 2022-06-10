@@ -278,7 +278,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         private void ValidateRegistrationEmail(DelegateRegistrationModel model)
         {
-            var emails = (IEnumerable<string>)new[] { model.PrimaryEmail, model.SecondaryEmail }.Where(e => e != null);
+            var emails = (IEnumerable<string>)new[] { model.PrimaryEmail, model.CentreSpecificEmail }.Where(e => e != null);
             if (userDataService.AnyEmailsInSetAreAlreadyInUse(emails))
             {
                 var error = DelegateCreationError.EmailAlreadyInUse;
@@ -307,7 +307,7 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.FirstName,
                 registrationModel.LastName,
                 registrationModel.PrimaryEmail,
-                registrationModel.SecondaryEmail,
+                registrationModel.CentreSpecificEmail,
                 registrationModel.Centre,
                 jobGroupId,
                 registrationModel.PasswordHash!,

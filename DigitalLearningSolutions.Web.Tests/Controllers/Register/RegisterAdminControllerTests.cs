@@ -20,7 +20,7 @@
     {
         private const int DefaultCentreId = 7;
         private const string DefaultPrimaryEmail = "primary@email.com";
-        private const string DefaultSecondaryEmail = "centre@email.com";
+        private const string DefaultCentreSpecificEmail = "centre@email.com";
         private ICentresDataService centresDataService = null!;
         private ICentresService centresService = null!;
         private RegisterAdminController controller = null!;
@@ -252,15 +252,15 @@
 
         [Test]
         [TestCase("primary@email", null)]
-        [TestCase("primary@email", "secondary@email")]
+        [TestCase("primary@email", "centre@email")]
         public void SummaryPost_with_valid_information_registers_expected_admin(
             string primaryEmail,
-            string? secondaryEmail
+            string? centreSpecificEmail
         )
         {
             // Given
             const int jobGroupId = 1;
-            var centreEmailOrPrimaryIfNull = secondaryEmail ?? primaryEmail;
+            var centreEmailOrPrimaryIfNull = centreSpecificEmail ?? primaryEmail;
             const string professionalRegistrationNumber = "PRN1234";
             var model = new SummaryViewModel
             {
@@ -274,7 +274,7 @@
                 JobGroup = jobGroupId,
                 PasswordHash = "hash",
                 PrimaryEmail = primaryEmail,
-                SecondaryEmail = secondaryEmail,
+                CentreSpecificEmail = centreSpecificEmail,
                 ProfessionalRegistrationNumber = professionalRegistrationNumber,
                 HasProfessionalRegistrationNumber = true,
             };
@@ -282,9 +282,9 @@
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, centreEmailOrPrimaryIfNull));
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(primaryEmail)).Returns(null);
-            if (secondaryEmail != null)
+            if (centreSpecificEmail != null)
             {
-                A.CallTo(() => userDataService.GetAdminUserByEmailAddress(secondaryEmail)).Returns(null);
+                A.CallTo(() => userDataService.GetAdminUserByEmailAddress(centreSpecificEmail)).Returns(null);
             }
 
             A.CallTo(() => centresService.DoesEmailMatchCentre(centreEmailOrPrimaryIfNull, DefaultCentreId))
@@ -303,7 +303,7 @@
                                 a.FirstName == data.FirstName &&
                                 a.LastName == data.LastName &&
                                 a.PrimaryEmail == data.PrimaryEmail! &&
-                                a.SecondaryEmail == data.SecondaryEmail &&
+                                a.CentreSpecificEmail == data.CentreSpecificEmail &&
                                 a.Centre == data.Centre!.Value &&
                                 a.PasswordHash == data.PasswordHash! &&
                                 a.Active &&
@@ -325,7 +325,7 @@
         }
 
         private PersonalInformationViewModel GetDefaultPersonalInformationViewModelAndSetTempData(
-            string? secondaryEmail = DefaultSecondaryEmail
+            string? centreSpecificEmail = DefaultCentreSpecificEmail
         )
         {
             var model = new PersonalInformationViewModel
@@ -334,7 +334,7 @@
                 LastName = "User",
                 Centre = DefaultCentreId,
                 PrimaryEmail = DefaultPrimaryEmail,
-                SecondaryEmail = secondaryEmail,
+                CentreSpecificEmail = centreSpecificEmail,
             };
 
             var data = new RegistrationData(DefaultCentreId);

@@ -262,11 +262,11 @@
         private bool CanProceedWithRegistration(RegistrationData data)
         {
             return data.Centre.HasValue && data.PrimaryEmail != null && IsRegisterAdminAllowed(data.Centre.Value) &&
-                   (data.SecondaryEmail != null &&
-                    centresService.DoesEmailMatchCentre(data.SecondaryEmail, data.Centre.Value) ||
+                   (data.CentreSpecificEmail != null &&
+                    centresService.DoesEmailMatchCentre(data.CentreSpecificEmail, data.Centre.Value) ||
                     centresService.DoesEmailMatchCentre(data.PrimaryEmail, data.Centre.Value)) &&
                    IsEmailUnique(data.PrimaryEmail) &&
-                   (data.SecondaryEmail == null || IsEmailUnique(data.SecondaryEmail));
+                   (data.CentreSpecificEmail == null || IsEmailUnique(data.CentreSpecificEmail));
         }
 
         private void SetCentreName(PersonalInformationViewModel model)

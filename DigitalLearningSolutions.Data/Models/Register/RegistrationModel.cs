@@ -6,7 +6,7 @@
             string firstName,
             string lastName,
             string primaryEmail,
-            string? secondaryEmail,
+            string? centreSpecificEmail,
             int centre,
             string? passwordHash,
             bool active,
@@ -17,7 +17,7 @@
             FirstName = firstName;
             LastName = lastName;
             PrimaryEmail = primaryEmail;
-            SecondaryEmail = secondaryEmail;
+            CentreSpecificEmail = centreSpecificEmail;
             Centre = centre;
             PasswordHash = passwordHash;
             Active = active;
@@ -31,7 +31,7 @@
 
         public string PrimaryEmail { get; set; }
 
-        public string? SecondaryEmail { get; set; }
+        public string? CentreSpecificEmail { get; set; }
 
         public int Centre { get; set; }
 

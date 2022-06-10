@@ -78,7 +78,7 @@
                 LastName = "User",
                 Centre = 7,
                 PrimaryEmail = "primary@email",
-                SecondaryEmail = "centre@email",
+                CentreSpecificEmail = "centre@email",
             };
             controller.ModelState.AddModelError(nameof(PersonalInformationViewModel.PrimaryEmail), "error message");
 
@@ -171,7 +171,7 @@
                                     d.FirstName == data.FirstName &&
                                     d.LastName == data.LastName &&
                                     d.PrimaryEmail == data.PrimaryEmail &&
-                                    d.SecondaryEmail == data.SecondaryEmail &&
+                                    d.CentreSpecificEmail == data.CentreSpecificEmail &&
                                     d.Centre == data.Centre &&
                                     d.JobGroup == data.JobGroup &&
                                     d.PasswordHash == data.PasswordHash &&

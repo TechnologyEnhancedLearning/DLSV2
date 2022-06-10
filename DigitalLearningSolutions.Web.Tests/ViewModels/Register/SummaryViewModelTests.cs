@@ -20,7 +20,7 @@
             result.FirstName.Should().Be(data.FirstName);
             result.LastName.Should().Be(data.LastName);
             result.PrimaryEmail.Should().Be(data.PrimaryEmail);
-            result.SecondaryEmail.Should().Be(data.SecondaryEmail);
+            result.CentreSpecificEmail.Should().Be(data.CentreSpecificEmail);
         }
 
         [Test]
@@ -36,7 +36,7 @@
             result.FirstName.Should().Be(data.FirstName);
             result.LastName.Should().Be(data.LastName);
             result.PrimaryEmail.Should().Be(data.PrimaryEmail);
-            result.SecondaryEmail.Should().Be(data.SecondaryEmail);
+            result.CentreSpecificEmail.Should().Be(data.CentreSpecificEmail);
         }
     }
 }

@@ -8,7 +8,7 @@
         private const string FirstName = "Test";
         private const string LastName = "User";
         private const string PrimaryEmail = "test@email.com";
-        private const string SecondaryEmail = "centre@email.com";
+        private const string CentreSpecificEmail = "centre@email.com";
         private const int CentreId = 5;
         private const int JobGroupId = 10;
         private const string PasswordHash = "password hash";
@@ -24,7 +24,7 @@
                 FirstName = FirstName,
                 LastName = LastName,
                 PrimaryEmail = PrimaryEmail,
-                SecondaryEmail = SecondaryEmail,
+                CentreSpecificEmail = CentreSpecificEmail,
                 Centre = CentreId,
                 JobGroup = JobGroupId,
                 PasswordHash = PasswordHash,
@@ -42,7 +42,7 @@
                 FirstName = FirstName,
                 LastName = LastName,
                 PrimaryEmail = PrimaryEmail,
-                SecondaryEmail = SecondaryEmail,
+                CentreSpecificEmail = CentreSpecificEmail,
                 Centre = CentreId,
                 JobGroup = JobGroupId,
                 PasswordHash = PasswordHash,
@@ -53,7 +53,7 @@
             string? firstName = "Test",
             string? lastName = "Name",
             string? primaryEmail = "test@email.com",
-            string? secondaryEmail = "centre@email.com",
+            string? centreSpecificEmail = "centre@email.com",
             int? centre = 2,
             int? jobGroup = 1,
             string? passwordHash = "hash",
@@ -73,7 +73,7 @@
                 FirstName = firstName,
                 LastName = lastName,
                 PrimaryEmail = primaryEmail,
-                SecondaryEmail = secondaryEmail,
+                CentreSpecificEmail = centreSpecificEmail,
                 Centre = centre,
                 JobGroup = jobGroup,
                 PasswordHash = passwordHash,

@@ -46,9 +46,9 @@
             var primaryEmailIsValidAndNotNull =
                 !modelState.HasError(nameof(PersonalInformationViewModel.PrimaryEmail)) &&
                 model.PrimaryEmail != null;
-            var secondaryEmailIsValidAndNotNull =
-                !modelState.HasError(nameof(PersonalInformationViewModel.SecondaryEmail)) &&
-                model.SecondaryEmail != null;
+            var centreSpecificEmailIsValidAndNotNull =
+                !modelState.HasError(nameof(PersonalInformationViewModel.CentreSpecificEmail)) &&
+                model.CentreSpecificEmail != null;
 
             var autoRegisterManagerEmail = isRegisterAdminJourney
                 ? centresDataService!.GetCentreAutoRegisterValues(model.Centre!.Value)
@@ -66,7 +66,7 @@
                 }
                 else if (isRegisterAdminJourney)
                 {
-                    if (EmailsDoNotMatch(model.PrimaryEmail, autoRegisterManagerEmail!) && model.SecondaryEmail == null)
+                    if (EmailsDoNotMatch(model.PrimaryEmail, autoRegisterManagerEmail!) && model.CentreSpecificEmail == null)
                     {
                         modelState.AddModelError(
                             nameof(PersonalInformationViewModel.PrimaryEmail),
@@ -76,20 +76,20 @@
                 }
             }
 
-            if (secondaryEmailIsValidAndNotNull)
+            if (centreSpecificEmailIsValidAndNotNull)
             {
-                if (userService.EmailIsInUse(model.SecondaryEmail))
+                if (userService.EmailIsInUse(model.CentreSpecificEmail))
                 {
                     modelState.AddModelError(
-                        nameof(PersonalInformationViewModel.SecondaryEmail),
+                        nameof(PersonalInformationViewModel.CentreSpecificEmail),
                         DuplicateEmailErrorMessage
                     );
                 }
                 else if (isRegisterAdminJourney && EmailsDoNotMatch(model.PrimaryEmail!, autoRegisterManagerEmail!) &&
-                         EmailsDoNotMatch(model.SecondaryEmail, autoRegisterManagerEmail))
+                         EmailsDoNotMatch(model.CentreSpecificEmail, autoRegisterManagerEmail))
                 {
                     modelState.AddModelError(
-                        nameof(PersonalInformationViewModel.SecondaryEmail),
+                        nameof(PersonalInformationViewModel.CentreSpecificEmail),
                         WrongEmailForCentreErrorMessage
                     );
                 }

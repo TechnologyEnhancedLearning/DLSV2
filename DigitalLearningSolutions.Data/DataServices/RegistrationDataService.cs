@@ -78,12 +78,12 @@
                 transaction
             );
 
-            if (!string.IsNullOrWhiteSpace(delegateRegistrationModel.SecondaryEmail))
+            if (!string.IsNullOrWhiteSpace(delegateRegistrationModel.CentreSpecificEmail))
             {
                 userDataService.SetCentreEmail(
                     userId,
                     delegateRegistrationModel.Centre,
-                    delegateRegistrationModel.SecondaryEmail,
+                    delegateRegistrationModel.CentreSpecificEmail,
                     transaction
                 );
             }
@@ -179,12 +179,12 @@
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
 
-            if (!string.IsNullOrWhiteSpace(registrationModel.SecondaryEmail))
+            if (!string.IsNullOrWhiteSpace(registrationModel.CentreSpecificEmail))
             {
                 userDataService.SetCentreEmail(
                     userId,
                     registrationModel.Centre,
-                    registrationModel.SecondaryEmail,
+                    registrationModel.CentreSpecificEmail,
                     transaction
                 );
             }
