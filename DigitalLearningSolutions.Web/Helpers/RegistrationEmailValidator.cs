@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using System;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -50,7 +51,7 @@
                 model.SecondaryEmail != null;
 
             var autoRegisterManagerEmail = isRegisterAdminJourney
-                ? centresDataService?.GetCentreAutoRegisterValues(model.Centre!.Value)
+                ? centresDataService!.GetCentreAutoRegisterValues(model.Centre!.Value)
                     .autoRegisterManagerEmail
                 : null;
 
@@ -65,7 +66,7 @@
                 }
                 else if (isRegisterAdminJourney)
                 {
-                    if (model.PrimaryEmail != autoRegisterManagerEmail && model.SecondaryEmail == null)
+                    if (EmailsDoNotMatch(model.PrimaryEmail, autoRegisterManagerEmail!) && model.SecondaryEmail == null)
                     {
                         modelState.AddModelError(
                             nameof(PersonalInformationViewModel.PrimaryEmail),
@@ -84,8 +85,8 @@
                         DuplicateEmailErrorMessage
                     );
                 }
-                else if (isRegisterAdminJourney && model.PrimaryEmail != autoRegisterManagerEmail &&
-                         model.SecondaryEmail != autoRegisterManagerEmail)
+                else if (isRegisterAdminJourney && EmailsDoNotMatch(model.PrimaryEmail!, autoRegisterManagerEmail!) &&
+                         EmailsDoNotMatch(model.SecondaryEmail, autoRegisterManagerEmail))
                 {
                     modelState.AddModelError(
                         nameof(PersonalInformationViewModel.SecondaryEmail),
@@ -93,6 +94,11 @@
                     );
                 }
             }
+        }
+
+        private static bool EmailsDoNotMatch(string email, string autoRegisterManagerEmail)
+        {
+            return !string.Equals(email, autoRegisterManagerEmail, StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }
