@@ -10,6 +10,11 @@
             return id == 0 ? null : id;
         }
 
+        public static int GetUserIdKnownNotNull(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserId);
+        }
+
         public static int? GetAdminId(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);

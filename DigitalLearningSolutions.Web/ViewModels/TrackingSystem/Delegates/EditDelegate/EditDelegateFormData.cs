@@ -56,7 +56,7 @@
             IsSelfRegistrationOrEdit = false;
         }
 
-        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]
+        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongAlias)]
         public string? AliasId { get; set; }
     }
 }

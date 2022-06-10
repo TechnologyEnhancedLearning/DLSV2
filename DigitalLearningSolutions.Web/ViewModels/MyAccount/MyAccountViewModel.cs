@@ -11,28 +11,27 @@
     public class MyAccountViewModel
     {
         public MyAccountViewModel(
-            AdminUser? adminUser,
-            DelegateUser? delegateUser,
+            UserAccount userAccount,
+            DelegateAccount? delegateAccount,
+            string centreName,
             string? centreEmail,
             CentreRegistrationPromptsWithAnswers? customPrompts,
             DlsSubApplication dlsSubApplication
         )
         {
-            FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
-            Surname = adminUser?.LastName ?? delegateUser?.LastName;
-            PrimaryEmail = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
-            ProfilePicture = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
-            Centre = adminUser?.CentreName ?? delegateUser?.CentreName;
-            DelegateNumber = delegateUser?.CandidateNumber;
-            JobGroup = delegateUser?.JobGroupName;
+            FirstName = userAccount.FirstName;
+            Surname = userAccount.LastName;
+            PrimaryEmail = userAccount.PrimaryEmail;
+            ProfilePicture = userAccount.ProfileImage;
+            Centre = centreName;
+            DelegateNumber = delegateAccount?.CandidateNumber;
+            JobGroup = userAccount.JobGroupName;
             CentreEmail = centreEmail;
-            DateRegistered = delegateUser?.DateRegistered?.ToString(DateHelper.StandardDateFormat);
-            ProfessionalRegistrationNumber = delegateUser == null
-                ? null
-                : PrnStringHelper.GetPrnDisplayString(
-                    delegateUser.HasBeenPromptedForPrn,
-                    delegateUser.ProfessionalRegistrationNumber
-                );
+            DateRegistered = delegateAccount?.DateRegistered.ToString(DateHelper.StandardDateFormat);
+            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
+                userAccount.HasBeenPromptedForPrn,
+                userAccount.ProfessionalRegistrationNumber
+            );
 
             DelegateRegistrationPrompts = new List<DelegateRegistrationPrompt>();
             if (customPrompts != null)
@@ -52,21 +51,21 @@
             DlsSubApplication = dlsSubApplication;
         }
 
-        public string? Centre { get; set; }
+        public string Centre { get; set; }
 
-        public string? PrimaryEmail { get; set; }
+        public string PrimaryEmail { get; set; }
 
         public string? DelegateNumber { get; set; }
 
-        public string? FirstName { get; set; }
+        public string FirstName { get; set; }
 
-        public string? Surname { get; set; }
+        public string Surname { get; set; }
 
         public byte[]? ProfilePicture { get; set; }
 
-        public string? JobGroup { get; set; }
+        public string JobGroup { get; set; }
 
-        public string? ProfessionalRegistrationNumber { get; set; }
+        public string ProfessionalRegistrationNumber { get; set; }
 
         public string? CentreEmail { get; set; }
 

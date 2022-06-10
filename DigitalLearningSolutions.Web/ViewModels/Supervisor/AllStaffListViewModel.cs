@@ -13,7 +13,8 @@
 
         public AllStaffListViewModel(
             IEnumerable<SupervisorDelegateDetail> supervisorDelegates,
-            CentreRegistrationPrompts centreRegistrationPrompts
+            CentreRegistrationPrompts centreRegistrationPrompts,
+            bool isSupervisor
         )
         {
             SupervisorDelegateDetailViewModels =
@@ -24,7 +25,8 @@
                             1,
                             $"{supervisor.ID}-card",
                             PaginationOptions.DefaultItemsPerPage
-                        )
+                        ) ,
+                        isSupervisor
                     )
                 );
             CentreRegistrationPrompts = centreRegistrationPrompts;
