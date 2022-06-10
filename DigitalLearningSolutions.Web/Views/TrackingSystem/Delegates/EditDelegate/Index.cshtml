@@ -16,7 +16,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.HasProfessionalRegistrationNumber), nameof(Model.ProfessionalRegistrationNumber), nameof(Model.JobGroupId), nameof(Model.Answer1), nameof(Model.Answer2), nameof(Model.Answer3), nameof(Model.Answer4), nameof(Model.Answer5), nameof(Model.Answer6) })" />
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.CentreEmail), nameof(Model.HasProfessionalRegistrationNumber), nameof(Model.ProfessionalRegistrationNumber), nameof(Model.JobGroupId), nameof(Model.Answer1), nameof(Model.Answer2), nameof(Model.Answer3), nameof(Model.Answer4), nameof(Model.Answer5), nameof(Model.Answer6) })" />
     }
 
     <h1 class="nhsuk-heading-xl">Edit delegate details</h1>
@@ -42,7 +42,7 @@
                        hint-text=""
                        css-class="nhsuk-u-width-one-half" />
 
-        <vc:text-input asp-for="@nameof(Model.Email)"
+        <vc:text-input asp-for="@nameof(Model.CentreEmail)"
                        label="Email address"
                        populate-with-current-value="true"
                        type="text"

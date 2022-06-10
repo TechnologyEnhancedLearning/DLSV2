@@ -35,6 +35,22 @@
         }
 
         public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
+            Delegate? delegateUser,
+            int centreId
+        )
+        {
+            return GetEditDelegateRegistrationPromptViewModelsForCentre(
+                centreId,
+                delegateUser?.DelegateAccount.Answer1,
+                delegateUser?.DelegateAccount.Answer2,
+                delegateUser?.DelegateAccount.Answer3,
+                delegateUser?.DelegateAccount.Answer4,
+                delegateUser?.DelegateAccount.Answer5,
+                delegateUser?.DelegateAccount.Answer6
+            );
+        }
+
+        public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
             MyAccountEditDetailsFormData formData,
             int centreId
         )

@@ -11,27 +11,27 @@
     {
         public EditDelegateFormData() { }
 
-        public EditDelegateFormData(DelegateUser delegateUser, IEnumerable<(int id, string name)> jobGroups)
+        public EditDelegateFormData(Delegate delegateUser, IEnumerable<(int id, string name)> jobGroups)
         {
-            FirstName = delegateUser.FirstName;
-            LastName = delegateUser.LastName;
-            Email = delegateUser.EmailAddress;
+            FirstName = delegateUser.UserAccount.FirstName;
+            LastName = delegateUser.UserAccount.LastName;
+            CentreEmail = delegateUser.UserCentreDetails.Email ?? delegateUser.UserAccount.PrimaryEmail;
 
-            JobGroupId = jobGroups.Where(jg => jg.name == delegateUser.JobGroupName).Select(jg => jg.id)
+            JobGroupId = jobGroups.Where(jg => jg.name == delegateUser.UserAccount.JobGroupName).Select(jg => jg.id)
                 .SingleOrDefault();
 
-            Answer1 = delegateUser.Answer1;
-            Answer2 = delegateUser.Answer2;
-            Answer3 = delegateUser.Answer3;
-            Answer4 = delegateUser.Answer4;
-            Answer5 = delegateUser.Answer5;
-            Answer6 = delegateUser.Answer6;
+            Answer1 = delegateUser.DelegateAccount.Answer1;
+            Answer2 = delegateUser.DelegateAccount.Answer2;
+            Answer3 = delegateUser.DelegateAccount.Answer3;
+            Answer4 = delegateUser.DelegateAccount.Answer4;
+            Answer5 = delegateUser.DelegateAccount.Answer5;
+            Answer6 = delegateUser.DelegateAccount.Answer6;
 
-            ProfessionalRegistrationNumber = delegateUser.ProfessionalRegistrationNumber;
+            ProfessionalRegistrationNumber = delegateUser.UserAccount.ProfessionalRegistrationNumber;
             HasProfessionalRegistrationNumber =
                 ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(
-                    delegateUser.HasBeenPromptedForPrn,
-                    delegateUser.ProfessionalRegistrationNumber
+                    delegateUser.UserAccount.HasBeenPromptedForPrn,
+                    delegateUser.UserAccount.ProfessionalRegistrationNumber
                 );
             IsSelfRegistrationOrEdit = false;
         }

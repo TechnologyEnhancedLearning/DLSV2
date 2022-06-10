@@ -41,9 +41,9 @@
         public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreId();
-            var delegateUser = userService.GetUsersById(null, delegateId).delegateUser;
+            var delegateUser = userService.GetDelegateById(delegateId);
 
-            if (delegateUser == null || delegateUser.CentreId != centreId)
+            if (delegateUser == null || delegateUser.DelegateAccount.CentreId != centreId)
             {
                 return NotFound();
             }
@@ -76,6 +76,11 @@
             }
 
             var delegateUser = userService.GetDelegateById(delegateId);
+
+            if (formData.CentreEmail == delegateUser!.UserAccount.PrimaryEmail)
+            {
+                formData.CentreEmail = null;
+            }
 
             if (!userService.NewEmailAddressIsValid(formData.Email!, delegateUser!.UserAccount.Id))
             {
