@@ -240,6 +240,7 @@
         );
 
         //Delete data
+        void RemoveCustomFlag(int flagId);
         void RemoveCollaboratorFromFramework(int frameworkId, int id);
 
         void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
@@ -822,6 +823,16 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             connection.Execute(
                 @"DELETE FROM  FrameworkCollaborators WHERE (FrameworkID = @frameworkId) AND (ID = @id);UPDATE AdminUsers SET IsFrameworkContributor = 0 WHERE AdminID = @adminId AND AdminID NOT IN (SELECT DISTINCT AdminID FROM FrameworkCollaborators);",
                 new { frameworkId, id, adminId }
+            );
+        }
+
+        public void RemoveCustomFlag(int flagId)
+        {
+            connection.Execute(
+                @"DELETE FROM CompetencyFlags WHERE FlagID = @flagId", new { flagId}
+            );
+            connection.Execute(
+                @"DELETE FROM Flags WHERE ID = @flagId", new { flagId }
             );
         }
 

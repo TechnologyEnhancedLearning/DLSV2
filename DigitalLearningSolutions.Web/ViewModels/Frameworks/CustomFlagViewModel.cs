@@ -11,11 +11,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public int Id { get; set; }
 
         [Required]
-        [StringLength(200)]
+        [StringLength(30)]
         public string FlagName { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(30)]
         public string FlagGroup { get; set; }
 
         [Required]

@@ -10,8 +10,8 @@
             Create.Table("Flags")
                 .WithColumn("ID").AsInt32().NotNullable().PrimaryKey().Identity()
                 .WithColumn("FrameworkID").AsInt32().NotNullable().ForeignKey("Frameworks", "ID")
-                .WithColumn("FlagName").AsString(200).NotNullable()
-                .WithColumn("FlagGroup").AsString(100).Nullable()
+                .WithColumn("FlagName").AsString(30).NotNullable()
+                .WithColumn("FlagGroup").AsString(30).Nullable()
                 .WithColumn("FlagTagClass").AsString(100).NotNullable();
 
             Create.Table("CompetencyFlags")

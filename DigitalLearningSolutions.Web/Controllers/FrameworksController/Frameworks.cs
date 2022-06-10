@@ -19,6 +19,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
+    using System.Net;
 
     public partial class FrameworksController
     {
@@ -496,11 +497,32 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/CustomFlags", model);
         }
 
-        [Route("/Frameworks/Flags/{actionname:regex(Delete)}/{frameworkId}/{flagId}")]
-        public IActionResult RemoveFrameworkFlag(int flagId, int frameworkId, string actionname)
+        [HttpGet]
+        [Route("/Frameworks/Flags/Delete/{frameworkId}/{flagId}")]
+        public IActionResult RemoveFrameworkFlag(int flagId, int frameworkId)
         {
-            //TODO: implement delete
-            return RedirectToAction("EditFrameworkFlags", "Frameworks", new { frameworkId, actionname });
+            var flag = frameworkService.GetFlagsByFrameworkId(frameworkId, flagId).FirstOrDefault();
+            if(flag == null)
+            {
+                return StatusCode((int)HttpStatusCode.NotFound);
+            }
+
+            var model = new RemoveCustomFlagConfirmationViewModel()
+            {
+                FlagId = flagId,
+                FlagName = flag.FlagName,
+                FrameworkId = frameworkId
+            };
+            return View("Developer/RemoveCustomFlagConfirmation", model);
+
+        }
+
+        [HttpPost]
+        [Route("/Frameworks/Flags/Delete/{frameworkId}/{flagId}")]
+        public IActionResult RemoveFrameworkFlag(RemoveCustomFlagConfirmationViewModel model)
+        {
+            frameworkService.RemoveCustomFlag(model.FlagId);
+            return RedirectToAction("EditFrameworkFlags", "Frameworks", new { model.FrameworkId });
         }
 
         [HttpPost]
@@ -517,7 +539,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 {
                     frameworkService.AddCustomFlagToFramework(frameworkId, model.FlagName, model.FlagGroup, model.FlagTagClass);
                 }
-                return RedirectToAction("EditFrameworkFlags", "Frameworks", new { frameworkId, actionname });
+                return RedirectToAction("EditFrameworkFlags", "Frameworks", new { frameworkId });
             }
             return View("Developer/EditCustomFlag", model);            
         }
