@@ -484,6 +484,63 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             TempData.Set(sessionNewFramework);
             return View("Developer/Summary", sessionNewFramework.DetailFramework);
         }
+
+        [Route("/Frameworks/Flags/{frameworkId}/")]
+        public IActionResult EditFrameworkFlags(int frameworkId, bool error = false)
+        {
+            var flags = frameworkService.GetFlagsByFrameworkId(frameworkId, null);
+            var model = new CustomFlagsViewModel()
+            {
+                Flags = flags
+            };
+            return View("Developer/CustomFlags", model);
+        }
+
+        [Route("/Frameworks/Flags/{actionname:regex(Delete)}/{frameworkId}/{flagId}")]
+        public IActionResult RemoveFrameworkFlag(int flagId, int frameworkId, string actionname)
+        {
+            //TODO: implement delete
+            return RedirectToAction("EditFrameworkFlags", "Frameworks", new { frameworkId, actionname });
+        }
+
+        [HttpPost]
+        [Route("/Frameworks/Flags/{actionname}/{frameworkId}/{flagId}")]
+        public IActionResult EditFrameworkFlag(CustomFlagViewModel model, int frameworkId, string actionname, int flagId)
+        {
+            if (ModelState.IsValid)
+            {
+                if (actionname == "Edit")
+                {
+                    frameworkService.UpdateFrameworkCustomFlag(frameworkId, model.Id, model.FlagName, model.FlagGroup, model.FlagTagClass);
+                }
+                else
+                {
+                    frameworkService.AddCustomFlagToFramework(frameworkId, model.FlagName, model.FlagGroup, model.FlagTagClass);
+                }
+                return RedirectToAction("EditFrameworkFlags", "Frameworks", new { frameworkId, actionname });
+            }
+            return View("Developer/EditCustomFlag", model);            
+        }
+
+        [HttpGet]
+        [Route("/Frameworks/Flags/{actionname:regex(Edit|New)}/{frameworkId}/{flagId}")]
+        public IActionResult EditFrameworkFlag(int frameworkId, string actionname, int flagId)
+        {
+            var model = new CustomFlagViewModel();
+            if (actionname == "Edit")
+            {
+                var flag = frameworkService.GetFlagsByFrameworkId(frameworkId, (int?)flagId).FirstOrDefault();
+                model = new CustomFlagViewModel()
+                {
+                    Id = flag.FlagId,
+                    FlagGroup = flag.FlagGroup,
+                    FlagName = flag.FlagName,
+                    FlagTagClass = flag.FlagTagClass
+                };
+            }
+            return View("Developer/EditCustomFlag", model);
+        }
+
         [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
         public IActionResult AddCollaborators(string actionname, int frameworkId, bool error = false)
         {
@@ -533,7 +590,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminId();
             var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
-            var flags = frameworkService.GetFlagsByFrameworkId(frameworkId);
+            var flags = frameworkService.GetFlagsByFrameworkId(frameworkId, null);
             var routeData = new Dictionary<string, string> { { "frameworkId", detailFramework?.ID.ToString() } };
             var model = new FrameworkViewModel()
             {

@@ -194,45 +194,55 @@
       Flags
     </dt>
     <dd class="nhsuk-summary-list__value">
-
-      <table role="presentation" class="nhsuk-table-responsive">
-        <thead role="rowgroup" class="nhsuk-table__head nhsuk-u-visually-hidden">
-          <tr role="row" class="nhsuk-u-visually-hidden">
-            <th role="columnheader" class="nhsuk-u-font-size-16" scope="col">
-              Name
-            </th>
-
-          </tr>
-        </thead>
-        <tbody class="nhsuk-table__body">
-          @foreach (var flag in Model.Flags)
-          {
-            <tr role="row" class="nhsuk-table__row collaborator-row">
-              <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                <span class="nhsuk-table-responsive__heading">Class </span>
-                <span class="framework-collaborator-role">
-                  <strong class="nhsuk-tag @flag.FlagTagClass">
-                    @flag.FlagName
-                  </strong>
-                </span>
-              </td>
+      @if (Model.Flags.Any())
+      {
+        <table role="presentation" class="nhsuk-table-responsive">
+          <thead role="rowgroup" class="nhsuk-table__head nhsuk-u-visually-hidden">
+            <tr role="row" class="nhsuk-u-visually-hidden">
+              <th role="columnheader" class="nhsuk-u-font-size-16" scope="col">
+                Name
+              </th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody class="nhsuk-table__body">
+            @foreach (var flag in Model.Flags)
+            {
+              <tr role="row" class="nhsuk-table__row collaborator-row">
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                  <span class="nhsuk-table-responsive__heading">Class </span>
+                  <span class="framework-collaborator-role">
+                    <strong class="nhsuk-tag @flag.FlagTagClass">
+                      @flag.FlagName
+                    </strong>
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+      else
+      {
+        <span>No flags have been added to this framework. Flags added here can be attached to competencies in your framework to allow them to be easily categorised and identified by learners.</span>
+      }
     </dd>
     @if (Model.DetailFramework.UserRole > 1)
     {
       <dd class="nhsuk-summary-list__actions">
-
-        <a asp-action="AddFlags" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
-          Edit<span class="nhsuk-u-visually-hidden"> flags</span>
-        </a>
+        @if (Model.Flags.Any())
+        {
+          <a asp-action="EditFrameworkFlags" asp-route-frameworkId="@Model.DetailFramework.ID">
+            Edit<span class="nhsuk-u-visually-hidden"> flags</span>
+          </a>
+        }
+        else
+        {
+          <a asp-action="EditFrameworkFlags" asp-route-frameworkId="@Model.DetailFramework.ID">
+            Add<span class="nhsuk-u-visually-hidden"> flags</span>
+          </a>
+        }
 
       </dd>
     }
-
-
   </div>
-
 </dl>

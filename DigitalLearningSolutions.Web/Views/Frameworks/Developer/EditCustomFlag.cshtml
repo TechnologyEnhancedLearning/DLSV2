@@ -1,0 +1,64 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@model CustomFlagViewModel
+@{
+  var addOrEdit = Model.Id == 0 ? "Add" : "Edit";
+  var frameworkId = ViewContext.RouteData.Values["frameworkId"];
+  ViewData["Title"] = "Framework Custom Flags";
+  ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@frameworkId" asp-route-tabname="Details">Framework Details</a></li>
+        <li class="nhsuk-breadcrumb__item">@addOrEdit Custom Flags</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@frameworkId" asp-route-tabname="Details">Back to framework detail</a></p>
+    </div>
+  </nav>
+}
+<h1>@addOrEdit custom flag</h1>
+<form method="post">
+  @if (!ViewData.ModelState.IsValid)
+  {
+    <partial name="_ErrorSummary" />
+  }
+  <nhs-form-group nhs-validation-for="FlagName">
+    <label class="nhsuk-label" id="flag-name-label" for="flag-name">Name</label>
+    <span nhs-validation-for="FlagName"></span>
+    <input class="nhsuk-input nhsuk-input--width-30" asp-for="FlagName" id="flag-name" name="FlagName" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="flag-name-label">
+  </nhs-form-group>
+  <nhs-form-group nhs-validation-for="FlagGroup">
+    <label class="nhsuk-label" id="flag-group-label" for="flag-group">Group</label>
+    <span nhs-validation-for="FlagGroup"></span>
+    <input class="nhsuk-input nhsuk-input--width-30" asp-for="FlagGroup" id="flag-group" name="FlagGroup" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="flag-group-label">
+  </nhs-form-group>
+  <nhs-form-group nhs-validation-for="FlagTagClass">
+    <div class="nhsuk-hint" id="framework-name-hint">
+      Tag colour
+    </div>
+    <select class="nhsuk-select" asp-for="FlagTagClass" name="FlagTagClass">
+      @foreach (var tagColor in Model.TagColors)
+      {
+        var selected = tagColor.Key == Model.FlagTagClass ? @"selected=""selected""" : "";
+        <!option value="@tagColor.Key" @selected>@tagColor.Value</!option>
+      }
+    </select>
+    <span nhs-validation-for="FlagTagClass"></span>
+  </nhs-form-group>
+  <button class="nhsuk-button nhsuk-u-margin-top-3" type="submit">Submit</button>
+  <div class="nhsuk-back-link nhsuk-u-margin-left-1">
+    <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-route-frameworkId="@frameworkId" asp-route-tabname="Details">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+    </svg>
+    Cancel
+    </a>
+  </div>
+  <input type="hidden" asp-for="@Model.Id" />
+</form>
