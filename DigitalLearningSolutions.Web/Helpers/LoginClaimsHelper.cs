@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
 
     public static class LoginClaimsHelper
@@ -12,33 +13,23 @@
             int centreIdToLogInto
         )
         {
-            var adminAccount = userEntity.AdminAccounts.SingleOrDefault(
-                aa => aa.CentreId == centreIdToLogInto && aa.Active
-            );
-            var delegateAccount = userEntity.DelegateAccounts.SingleOrDefault(
-                da => da.CentreId == centreIdToLogInto && da.Approved && da.Active
-            );
+            var centreAccounts = userEntity.GetCentreAccounts(centreIdToLogInto)!;
+            var userCentreClaims = GetClaimsForUserCentre(centreAccounts);
+
+            var adminAccount = centreAccounts.ActiveAdminAccount;
+            var delegateAccount = centreAccounts.ActiveApprovedDelegateAccount;
 
             var basicClaims = GetClaimsForCentrelessSignIn(userEntity.UserAccount);
-
             var adminClaims = GetAdminSpecificClaimsForSignIn(adminAccount);
             var delegateClaims = GetDelegateSpecificClaimsForSignIn(delegateAccount);
-
-            var userCentreClaims = GetClaimsForUserCentre(adminAccount, delegateAccount);
 
             var claims = new List<Claim>
             {
                 new Claim(CustomClaimTypes.UserCentreManager, adminAccount?.IsCentreManager.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserCentreAdmin, adminAccount?.IsCentreAdmin.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserUserAdmin, adminAccount?.IsSuperAdmin.ToString() ?? "False"),
-                new Claim(
-                    CustomClaimTypes.UserContentCreator,
-                    adminAccount?.IsContentCreator.ToString() ?? "False"
-                ),
-                new Claim(
-                    CustomClaimTypes.UserAuthenticatedCm,
-                    adminAccount?.IsContentManager.ToString() ?? "False"
-                ),
+                new Claim(CustomClaimTypes.UserContentCreator, adminAccount?.IsContentCreator.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserAuthenticatedCm, adminAccount?.IsContentManager.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserPublishToAll, adminAccount?.PublishToAll.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserCentreReports, adminAccount?.IsReportsViewer.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.LearnUserAuthenticated, (delegateAccount != null).ToString()),
@@ -52,10 +43,7 @@
                     CustomClaimTypes.IsFrameworkContributor,
                     adminAccount?.IsFrameworkContributor.ToString() ?? "False"
                 ),
-                new Claim(
-                    CustomClaimTypes.IsWorkforceManager,
-                    adminAccount?.IsWorkforceManager.ToString() ?? "False"
-                ),
+                new Claim(CustomClaimTypes.IsWorkforceManager, adminAccount?.IsWorkforceManager.ToString() ?? "False"),
                 new Claim(
                     CustomClaimTypes.IsWorkforceContributor,
                     adminAccount?.IsWorkforceContributor.ToString() ?? "False"
@@ -85,24 +73,20 @@
             return claims;
         }
 
-        private static IEnumerable<Claim> GetClaimsForUserCentre(
-            AdminAccount? adminAccount,
-            DelegateAccount? delegateAccount
-        )
+        private static IEnumerable<Claim> GetClaimsForUserCentre(UserCentreAccounts centreAccounts)
         {
-            return adminAccount == null && delegateAccount == null
-                ? new List<Claim>()
-                : new List<Claim>
-                {
-                    new Claim(
-                        CustomClaimTypes.UserCentreId,
-                        adminAccount?.CentreId.ToString() ?? delegateAccount.CentreId.ToString()
-                    ),
-                    new Claim(
-                        CustomClaimTypes.UserCentreName,
-                        adminAccount?.CentreName ?? delegateAccount.CentreName
-                    ),
-                };
+            if (!centreAccounts.CanLogInToCentre)
+            {
+                throw new LoginWithNoValidAccountException(
+                    $"No active admin account or active, approved delegate account at centre {centreAccounts.CentreId}"
+                );
+            }
+
+            return new List<Claim>
+            {
+                new Claim(CustomClaimTypes.UserCentreId, centreAccounts.CentreId.ToString()),
+                new Claim(CustomClaimTypes.UserCentreName, centreAccounts.CentreName),
+            };
         }
 
         private static IEnumerable<Claim> GetDelegateSpecificClaimsForSignIn(

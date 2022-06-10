@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
@@ -476,17 +477,19 @@
         [TestCase(true, false, true)]
         [TestCase(false, true, true)]
         [TestCase(true, true, true)]
-        [TestCase(true, false, false)]
+        [TestCase(true, false, false, true)]
         [TestCase(false, true, false)]
         [TestCase(true, true, false)]
         public async Task ChooseCentre_should_start_an_admin_session_when_necessary(
             bool withAdminAccount,
             bool withDelegateAccount,
-            bool isAdminAccountActive
+            bool isAdminAccountActive,
+            bool shouldThrowException = false
         )
         {
             // Given
             const int centreId = 2;
+            var threwException = false;
             var userEntity = GetUserEntity(
                 withAdminAccount,
                 withDelegateAccount,
@@ -497,17 +500,33 @@
             GivenAUserEntityWithAdminAndDelegateAccounts(userEntity);
 
             // When
-            await controllerWithAuthenticatedUser.ChooseCentre(centreId, null);
+            try
+            {
+                await controllerWithAuthenticatedUser.ChooseCentre(centreId, null);
+            }
+            catch (Exception e)
+            {
+                threwException = true;
+            }
 
             // Then
-            if (withAdminAccount && isAdminAccountActive)
+            if (shouldThrowException)
             {
-                A.CallTo(() => sessionService.StartAdminSession(userEntity.AdminAccounts.First().Id))
-                    .MustHaveHappened();
+                threwException.Should().BeTrue();
             }
             else
             {
-                A.CallTo(() => sessionService.StartAdminSession(A<int>._)).MustNotHaveHappened();
+                threwException.Should().BeFalse();
+
+                if (withAdminAccount && isAdminAccountActive)
+                {
+                    A.CallTo(() => sessionService.StartAdminSession(userEntity.AdminAccounts.First().Id))
+                        .MustHaveHappened();
+                }
+                else
+                {
+                    A.CallTo(() => sessionService.StartAdminSession(A<int>._)).MustNotHaveHappened();
+                }
             }
         }
 

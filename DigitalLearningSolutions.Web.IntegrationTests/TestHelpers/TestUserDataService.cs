@@ -38,6 +38,7 @@
                 CentreId = 1,
                 CandidateNumber = "TST1",
                 CentreName = "TestCenter 101",
+                CentreActive = true,
                 Approved = true,
                 Active = true,
                 SessionData = new Dictionary<string, string>
@@ -52,6 +53,7 @@
                 CentreId = 1,
                 CandidateNumber = "TST2",
                 CentreName = "TestCenter 1",
+                CentreActive = true,
                 Approved = true,
                 Active = true,
                 SessionData = new Dictionary<string, string>

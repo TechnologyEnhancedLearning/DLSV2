@@ -56,17 +56,6 @@
             return centreAccounts;
         }
 
-        public bool IsSingleCentreAccount()
-        {
-            if (AdminAccounts.Count() > 1 || DelegateAccounts.Count() > 1)
-            {
-                return false;
-            }
-
-            var adminCentreId = AdminAccounts.SingleOrDefault()?.CentreId;
-            var delegateCentreId = DelegateAccounts.SingleOrDefault()?.CentreId;
-
-            return adminCentreId == null || delegateCentreId == null || adminCentreId == delegateCentreId;
-        }
+        public bool IsSingleCentreAccount => CentreAccounts.Count == 1;
     }
 }

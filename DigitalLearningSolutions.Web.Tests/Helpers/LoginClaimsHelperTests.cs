@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers;
@@ -69,7 +70,7 @@
         }
 
         [Test]
-        public void Inactive_admin_user_does_not_have_user_admin_id_or_user_centre_id_or_user_centre_name()
+        public void Exception_is_thrown_when_inactive_admin_user_tries_to_get_claims_for_centre()
         {
             // Given
             var userEntity = new UserEntity(
@@ -78,17 +79,14 @@
                 new List<DelegateAccount>()
             );
 
-            // When
-            var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 2);
-
             // Then
-            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserAdminId);
-            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserCentreId);
-            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserCentreName);
+            Assert.Throws<LoginWithNoValidAccountException>(
+                () => LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 2)
+            );
         }
 
         [Test]
-        public void Inactive_delegate_user_does_not_have_learn_candidate_id_or_user_centre_id_or_user_centre_name()
+        public void Exception_is_thrown_when_inactive_delegate_user_tries_to_get_claims_for_centre()
         {
             // Given
             var userEntity = new UserEntity(
@@ -97,17 +95,14 @@
                 new List<DelegateAccount> { UserTestHelper.GetDefaultDelegateAccount(active: false) }
             );
 
-            // When
-            var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 2);
-
             // Then
-            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.LearnCandidateId);
-            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserCentreId);
-            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserCentreName);
+            Assert.Throws<LoginWithNoValidAccountException>(
+                () => LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 2)
+            );
         }
 
         [Test]
-        public void Unapproved_delegate_user_does_not_have_learn_candidate_id_or_user_centre_id_or_user_centre_name()
+        public void Exception_is_thrown_when_unapproved_delegate_user_tries_to_get_claims_for_centre()
         {
             // Given
             var userEntity = new UserEntity(
@@ -116,13 +111,10 @@
                 new List<DelegateAccount> { UserTestHelper.GetDefaultDelegateAccount(approved: false) }
             );
 
-            // When
-            var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 2);
-
             // Then
-            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.LearnCandidateId);
-            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserCentreId);
-            claims.Should().NotContain(claim => claim.Type == CustomClaimTypes.UserCentreName);
+            Assert.Throws<LoginWithNoValidAccountException>(
+                () => LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 2)
+            );
         }
     }
 }

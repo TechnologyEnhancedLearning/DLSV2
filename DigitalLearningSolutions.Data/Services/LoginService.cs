@@ -84,33 +84,21 @@
             userService.ResetFailedLoginCount(userEntity.UserAccount);
 
             var singleCentreToLogUserInto = GetCentreIdIfLoggingUserIntoSingleCentre(userEntity, username);
-            if (singleCentreToLogUserInto == null)
-            {
-                return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity);
-            }
 
-            var accountsToLogInto = userEntity.GetCentreAccounts(singleCentreToLogUserInto.Value);
-
-            if (
-                accountsToLogInto == null ||
-                accountsToLogInto.IsCentreActive == false ||
-                accountsToLogInto.IsActive == false ||
-                accountsToLogInto.DelegateAccount?.Approved == false
-            )
-            {
-                return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity);
-            }
-
-            return new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntity, singleCentreToLogUserInto.Value);
+            return singleCentreToLogUserInto == null
+                ? new LoginResult(LoginAttemptResult.ChooseACentre, userEntity)
+                : new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntity, singleCentreToLogUserInto);
         }
 
         // If there are no accounts this will also return null, as there is no single centre to log into
         private static int? GetCentreIdIfLoggingUserIntoSingleCentre(UserEntity userEntity, string username)
         {
             // Determine if there is only a single account
-            if (userEntity.IsSingleCentreAccount())
+            if (userEntity.IsSingleCentreAccount)
             {
-                return userEntity.CentreAccounts.Count == 0 ? null as int? : userEntity.CentreAccounts.Keys.First();
+                var accountsToLogInto = userEntity.CentreAccounts.Values.First();
+
+                return accountsToLogInto.CanLogDirectlyInToCentre ? accountsToLogInto.CentreId : null as int?;
             }
 
             // Determine if we are logging in via candidate number.
