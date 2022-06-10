@@ -4,12 +4,13 @@
 
     public class InternalDelegateRegistrationData
     {
-        public InternalDelegateRegistrationData() {}
+        public InternalDelegateRegistrationData() { }
 
-        public InternalDelegateRegistrationData(int? centreId, int? supervisorDelegateId = null)
+        public InternalDelegateRegistrationData(int? centreId, int? supervisorDelegateId = null, string? email = null)
         {
             IsCentreSpecificRegistration = centreId.HasValue;
             SupervisorDelegateId = supervisorDelegateId;
+            Email = email;
         }
 
         public bool IsCentreSpecificRegistration { get; set; }
@@ -22,6 +23,9 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
+
+        // TODO HEEDLS-899 Sort out supervisor delegate stuff
+        public string? Email { get; set; }
 
         public virtual void SetPersonalInformation(InternalPersonalInformationViewModel model)
         {

@@ -20,9 +20,7 @@
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.Register))]
-    [Route("RegisterAtNewCentre")]
-    [Authorize(Policy = CustomPolicies.BasicUser)]
-    public class InternalDelegateRegistrationController : Controller
+    public class RegisterAtNewCentreController : Controller
     {
         private readonly ICentresDataService centresDataService;
         private readonly IFeatureManager featureManager;
@@ -31,7 +29,7 @@
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserService userService;
 
-        public InternalDelegateRegistrationController(
+        public RegisterAtNewCentreController(
             ICentresDataService centresDataService,
             IFeatureManager featureManager,
             PromptsService promptsService,
@@ -50,11 +48,17 @@
 
         public IActionResult Index(int? centreId = null, string? inviteId = null)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Register", new { centreId, inviteId });
+            }
+
             if (!CheckCentreIdValid(centreId))
             {
                 return NotFound();
             }
 
+            // TODO HEEDLS-899 sort out supervisor delegate stuff, this is just copied from the external registration
             var supervisorDelegateRecord = centreId.HasValue && !string.IsNullOrEmpty(inviteId) &&
                                            Guid.TryParse(inviteId, out var inviteHash)
                 ? supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(inviteHash)
@@ -65,13 +69,20 @@
                 supervisorDelegateRecord = null;
             }
 
-            TempData.Set(new InternalDelegateRegistrationData(centreId, supervisorDelegateRecord?.ID));
+            TempData.Set(
+                new InternalDelegateRegistrationData(
+                    centreId,
+                    supervisorDelegateRecord?.ID,
+                    supervisorDelegateRecord?.DelegateEmail
+                )
+            );
 
             return RedirectToAction("PersonalInformation");
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         [HttpGet]
+        [Authorize(Policy = CustomPolicies.BasicUser)]
+        [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult PersonalInformation()
         {
             var data = TempData.Peek<InternalDelegateRegistrationData>()!;
@@ -86,8 +97,9 @@
             return View(model);
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         [HttpPost]
+        [Authorize(Policy = CustomPolicies.BasicUser)]
+        [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult PersonalInformation(InternalPersonalInformationViewModel model)
         {
             ValidateEmailAddress(model);
@@ -126,8 +138,9 @@
             return RedirectToAction("LearnerInformation");
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         [HttpGet]
+        [Authorize(Policy = CustomPolicies.BasicUser)]
+        [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult LearnerInformation()
         {
             var data = TempData.Peek<InternalDelegateRegistrationData>()!;
@@ -142,8 +155,9 @@
             return View(model);
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         [HttpPost]
+        [Authorize(Policy = CustomPolicies.BasicUser)]
+        [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult LearnerInformation(InternalLearnerInformationViewModel model)
         {
             var data = TempData.Peek<InternalDelegateRegistrationData>()!;
@@ -176,9 +190,10 @@
             return RedirectToAction("Summary");
         }
 
-        [NoCaching]
-        [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         [HttpGet]
+        [NoCaching]
+        [Authorize(Policy = CustomPolicies.BasicUser)]
+        [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult Summary()
         {
             var data = TempData.Peek<InternalDelegateRegistrationData>()!;
@@ -198,9 +213,10 @@
             return View(viewModel);
         }
 
-        [NoCaching]
-        [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         [HttpPost]
+        [NoCaching]
+        [Authorize(Policy = CustomPolicies.BasicUser)]
+        [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public async Task<IActionResult> Summary(InternalSummaryViewModel model)
         {
             var data = TempData.Peek<InternalDelegateRegistrationData>()!;
@@ -218,7 +234,7 @@
 
             try
             {
-                var (candidateNumber, approved) =
+                var (candidateNumber, approved, userHasAdminAccountAtCentre) =
                     registrationService.CreateDelegateAccountForExistingUser(
                         RegistrationMappingHelper
                             .MapInternalDelegateRegistrationModelRegistrationToInternalDelegateRegistrationModel(data),
@@ -228,9 +244,10 @@
                     );
 
                 TempData.Clear();
-                //TempData.Add("candidateNumber", candidateNumber);
-                //TempData.Add("approved", approved);
-                //TempData.Add("centreId", centreId);
+                TempData.Add("candidateNumber", candidateNumber);
+                TempData.Add("approved", approved);
+                TempData.Add("userHasAdminAccountAtCentre", userHasAdminAccountAtCentre);
+                TempData.Add("centreId", data.Centre);
                 return RedirectToAction("Confirmation");
             }
             catch (DelegateCreationFailedException e)
@@ -252,23 +269,32 @@
         }
 
         [HttpGet]
+        [Authorize(Policy = CustomPolicies.BasicUser)]
         public IActionResult Confirmation()
         {
             var candidateNumber = (string?)TempData.Peek("candidateNumber");
             var approvedNullable = (bool?)TempData.Peek("approved");
             var centreIdNullable = (int?)TempData.Peek("centreId");
+            var hasAdminAccountNullable = (bool?)TempData.Peek("userHasAdminAccountAtCentre");
             TempData.Clear();
 
-            if (candidateNumber == null || approvedNullable == null || centreIdNullable == null)
+            if (candidateNumber == null || approvedNullable == null || centreIdNullable == null ||
+                hasAdminAccountNullable == null)
             {
                 return RedirectToAction("Index");
             }
 
+            var hasAdminAccount = (bool)hasAdminAccountNullable;
             var approved = (bool)approvedNullable;
             var centreId = (int)centreIdNullable;
 
             var centreIdForContactInformation = approved ? null : (int?)centreId;
-            var viewModel = new ConfirmationViewModel(candidateNumber, approved, centreIdForContactInformation);
+            var viewModel = new InternalConfirmationViewModel(
+                candidateNumber,
+                approved,
+                hasAdminAccount,
+                centreIdForContactInformation
+            );
             return View(viewModel);
         }
 
