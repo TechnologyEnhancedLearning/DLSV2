@@ -21,7 +21,8 @@
         private const string DefaultErrorMessage = "error message";
 
         private const string WrongEmailForCentreErrorMessage =
-            "This email address does not match the one held by the centre";
+            "This email address does not match the one held by the centre; " +
+            "either your primary email or centre email must match the one held by the centre";
 
         private const string DuplicateEmailErrorMessage =
             "A user with this email address is already registered; if this is you, " +
