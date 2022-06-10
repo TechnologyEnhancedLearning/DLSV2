@@ -11,8 +11,8 @@
         public static AdminRegistrationModel GetDefaultCentreManagerRegistrationModel(
             string firstName = "Test",
             string lastName = "User",
-            string email = "testuser@email.com",
-            string secondaryEmail = "centre@email.com",
+            string primaryEmail = "testuser@email.com",
+            string centreSpecificEmail = "centre@email.com",
             int centre = Centre,
             string? passwordHash = PasswordHash,
             bool active = true,
@@ -32,8 +32,8 @@
             return new AdminRegistrationModel(
                 firstName,
                 lastName,
-                email,
-                secondaryEmail,
+                primaryEmail,
+                centreSpecificEmail,
                 centre,
                 passwordHash,
                 active,
@@ -54,8 +54,8 @@
         public static AdminRegistrationModel GetDefaultAdminRegistrationModel(
             string firstName = "Test",
             string lastName = "User",
-            string email = "testuser@email.com",
-            string secondaryEmail = "centre@email.com",
+            string primaryEmail = "testuser@email.com",
+            string centreSpecificEmail = "centre@email.com",
             int centre = Centre,
             string? passwordHash = PasswordHash,
             bool active = true,
@@ -75,8 +75,8 @@
             return new AdminRegistrationModel(
                 firstName,
                 lastName,
-                email,
-                secondaryEmail,
+                primaryEmail,
+                centreSpecificEmail,
                 centre,
                 passwordHash,
                 active,
@@ -97,7 +97,7 @@
         public static DelegateRegistrationModel GetDefaultDelegateRegistrationModel(
             string firstName = "Test",
             string lastName = "User",
-            string email = "testuser@email.com",
+            string primaryEmail = "testuser@email.com",
             int centre = Centre,
             int jobGroup = 1,
             string? passwordHash = PasswordHash,
@@ -113,14 +113,14 @@
             bool active = true,
             bool approved = false,
             string? professionalRegistrationNumber = "PRN1234",
-            string? secondaryEmail = "testuser@weekends.com"
+            string? centreSpecificEmail = "testuser@weekends.com"
         )
         {
             return new DelegateRegistrationModel(
                 firstName,
                 lastName,
-                email,
-                secondaryEmail,
+                primaryEmail,
+                centreSpecificEmail,
                 centre,
                 jobGroup,
                 passwordHash,

@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-    using System;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -10,7 +9,8 @@
     public static class RegistrationEmailValidator
     {
         private const string WrongEmailForCentreErrorMessage =
-            "This email address does not match the one held by the centre";
+            "This email address does not match the one held by the centre; " +
+            "either your primary email or centre email must match the one held by the centre";
 
         private const string DuplicateEmailErrorMessage =
             "A user with this email address is already registered; if this is you, " +
@@ -66,7 +66,8 @@
                 }
                 else if (isRegisterAdminJourney)
                 {
-                    if (EmailsDoNotMatch(model.PrimaryEmail, autoRegisterManagerEmail!) && model.CentreSpecificEmail == null)
+                    if (!StringHelper.StringsMatchCaseInsensitive(model.PrimaryEmail, autoRegisterManagerEmail!) &&
+                        model.CentreSpecificEmail == null)
                     {
                         modelState.AddModelError(
                             nameof(PersonalInformationViewModel.PrimaryEmail),
@@ -85,8 +86,9 @@
                         DuplicateEmailErrorMessage
                     );
                 }
-                else if (isRegisterAdminJourney && EmailsDoNotMatch(model.PrimaryEmail!, autoRegisterManagerEmail!) &&
-                         EmailsDoNotMatch(model.CentreSpecificEmail, autoRegisterManagerEmail))
+                else if (isRegisterAdminJourney &&
+                         !StringHelper.StringsMatchCaseInsensitive(model.PrimaryEmail!, autoRegisterManagerEmail!) &&
+                         !StringHelper.StringsMatchCaseInsensitive(model.CentreSpecificEmail, autoRegisterManagerEmail))
                 {
                     modelState.AddModelError(
                         nameof(PersonalInformationViewModel.CentreSpecificEmail),
@@ -94,11 +96,6 @@
                     );
                 }
             }
-        }
-
-        private static bool EmailsDoNotMatch(string email, string autoRegisterManagerEmail)
-        {
-            return !string.Equals(email, autoRegisterManagerEmail, StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }

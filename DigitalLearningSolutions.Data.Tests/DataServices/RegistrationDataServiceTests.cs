@@ -17,11 +17,11 @@
 
     public class RegistrationDataServiceTests
     {
+        private IClockService clockService = null!;
         private SqlConnection connection = null!;
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
         private IUserDataService userDataService = null!;
-        private IClockService clockService = null!;
 
         [SetUp]
         public void SetUp()
@@ -69,39 +69,39 @@
                 var models = new[]
                 {
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        firstName: "Xavier",
-                        lastName: "Quondam",
+                        "Xavier",
+                        "Quondam",
                         centre: 3,
-                        email: "fake1",
-                        secondaryEmail: "XQfake1"
+                        primaryEmail: "fake1",
+                        centreSpecificEmail: "XQfake1"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        firstName: "Xavier",
-                        lastName: "Quondam",
+                        "Xavier",
+                        "Quondam",
                         centre: 3,
-                        email: "fake2",
-                        secondaryEmail: "XQfake2"
+                        primaryEmail: "fake2",
+                        centreSpecificEmail: "XQfake2"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        firstName: "Xavier",
-                        lastName: "Quondam",
+                        "Xavier",
+                        "Quondam",
                         centre: 3,
-                        email: "fake3",
-                        secondaryEmail: "XQfake3"
+                        primaryEmail: "fake3",
+                        centreSpecificEmail: "XQfake3"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        firstName: "Xavier",
-                        lastName: "Quondam",
+                        "Xavier",
+                        "Quondam",
                         centre: 3,
-                        email: "fake4",
-                        secondaryEmail: "XQfake4"
+                        primaryEmail: "fake4",
+                        centreSpecificEmail: "XQfake4"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        firstName: "Xavier",
-                        lastName: "Quondam",
+                        "Xavier",
+                        "Quondam",
                         centre: 3,
-                        email: "fake5",
-                        secondaryEmail: "XQfake5"
+                        primaryEmail: "fake5",
+                        centreSpecificEmail: "XQfake5"
                     ),
                 };
                 var actions = models.Select(GetRegistrationAction).ToArray();
@@ -148,7 +148,11 @@
             var newClockService = new ClockService();
             var newService = new RegistrationDataService(newConnection, newUserDataService, newClockService);
 
-            void Action() => newService.RegisterNewUserAndDelegateAccount(model);
+            void Action()
+            {
+                newService.RegisterNewUserAndDelegateAccount(model);
+            }
+
             return Action;
         }
 
