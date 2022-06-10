@@ -31,7 +31,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserService userService;
 
-        private const string duplicateEmailError =
+        private const string DuplicateEmailError =
             "A user with this email address is already registered; if this is you, please log in at this centre via the My Account page";
 
         public RegisterController(
@@ -318,15 +318,15 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.PrimaryEmail),
-                    duplicateEmailError
+                    DuplicateEmailError
                 );
             }
 
-            if (model.SecondaryEmail != null && userService.EmailIsInUse(model.SecondaryEmail))
+            if (model.CentreSpecificEmail != null && userService.EmailIsInUse(model.CentreSpecificEmail))
             {
                 ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.SecondaryEmail),
-                    duplicateEmailError
+                    nameof(PersonalInformationViewModel.CentreSpecificEmail),
+                    DuplicateEmailError
                 );
             }
         }

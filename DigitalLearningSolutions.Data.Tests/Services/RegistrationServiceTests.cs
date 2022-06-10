@@ -30,16 +30,16 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private const string OldSystemBaseUrl = "oldUrl";
 
         private ICentresDataService centresDataService = null!;
+        private IClockService clockService = null!;
         private IConfiguration config = null!;
         private IEmailService emailService = null!;
-        private IUserService userService = null!;
         private IPasswordDataService passwordDataService = null!;
         private IPasswordResetService passwordResetService = null!;
         private IRegistrationDataService registrationDataService = null!;
         private IRegistrationService registrationService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
-        private IClockService clockService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -573,7 +573,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     model.PrimaryEmail,
                     NewCandidateNumber,
                     baseUrl,
-                    model.NotifyDate.Value,
+                    model.NotifyDate!.Value,
                     "RegisterDelegateByCentre_Refactor"
                 )
             ).MustHaveHappened(1, Times.Exactly);
@@ -745,6 +745,179 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     0
                 )
             ).MustHaveHappened();
+        }
+
+        [Test]
+        public void CreateDelegateAccountForExistingUser_with_approved_IP_registers_delegate_as_approved()
+        {
+            // Given
+            const int userId = 2;
+            const string clientIp = ApprovedIpPrefix + ".100";
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+            var currentTime = DateTime.Now;
+            A.CallTo(() => clockService.UtcNow).Returns(currentTime);
+
+            // When
+            var (_, approved, _) = registrationService.CreateDelegateAccountForExistingUser(
+                model,
+                userId,
+                clientIp,
+                false
+            );
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                            A<DelegateRegistrationModel>.That.Matches(d => d.Approved),
+                            userId,
+                            currentTime,
+                            null
+                        )
+                )
+                .MustHaveHappened();
+            approved.Should().BeTrue();
+        }
+
+        [Test]
+        public void CreateDelegateAccountForExistingUser_on_localhost_registers_delegate_as_approved()
+        {
+            // Given
+            const int userId = 2;
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+            var currentTime = DateTime.Now;
+            A.CallTo(() => clockService.UtcNow).Returns(currentTime);
+
+            // When
+            var (_, approved, _) = registrationService.CreateDelegateAccountForExistingUser(
+                model,
+                userId,
+                "::1",
+                false
+            );
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                            A<DelegateRegistrationModel>.That.Matches(d => d.Approved),
+                            userId,
+                            currentTime,
+                            null
+                        )
+                )
+                .MustHaveHappened();
+            approved.Should().BeTrue();
+        }
+
+        [Test]
+        public void CreateDelegateAccountForExistingUser_with_unapproved_IP_registers_delegate_as_unapproved()
+        {
+            // Given
+            const int userId = 2;
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+            var currentTime = DateTime.Now;
+            A.CallTo(() => clockService.UtcNow).Returns(currentTime);
+
+            // When
+            var (_, approved, _) = registrationService.CreateDelegateAccountForExistingUser(
+                model,
+                userId,
+                "987.654.321.100",
+                false
+            );
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                            A<DelegateRegistrationModel>.That.Matches(d => !d.Approved),
+                            userId,
+                            currentTime,
+                            null
+                        )
+                )
+                .MustHaveHappened();
+            approved.Should().BeFalse();
+        }
+
+        [Test]
+        public void CreateDelegateAccountForExistingUser_sends_approval_email_with_old_site_approval_link()
+        {
+            // Given
+            const int userId = 2;
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+
+            // When
+            registrationService.CreateDelegateAccountForExistingUser(
+                model,
+                userId,
+                string.Empty,
+                false
+            );
+
+            // Then
+            A.CallTo(
+                () =>
+                    emailService.SendEmail(
+                        A<Email>.That.Matches(
+                            e =>
+                                e.To[0] == ApproverEmail &&
+                                e.Cc.IsNullOrEmpty() &&
+                                e.Bcc.IsNullOrEmpty() &&
+                                e.Subject == "Digital Learning Solutions Registration Requires Approval" &&
+                                e.Body.TextBody.Contains(OldSystemBaseUrl + "/tracking/approvedelegates")
+                        )
+                    )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void CreateDelegateAccountForExistingUser_sends_approval_email_with_refactored_tracking_system_link()
+        {
+            // Given
+            const int userId = 2;
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+
+            // When
+            registrationService.CreateDelegateAccountForExistingUser(
+                model,
+                userId,
+                string.Empty,
+                true
+            );
+
+            // Then
+            A.CallTo(
+                () =>
+                    emailService.SendEmail(
+                        A<Email>.That.Matches(
+                            e =>
+                                e.To[0] == ApproverEmail &&
+                                e.Cc.IsNullOrEmpty() &&
+                                e.Bcc.IsNullOrEmpty() &&
+                                e.Subject == "Digital Learning Solutions Registration Requires Approval" &&
+                                e.Body.TextBody.Contains(RefactoredSystemBaseUrl + "/TrackingSystem/Delegates/Approve")
+                        )
+                    )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void CreateDelegateAccountForExistingUser_approved_does_not_send_email()
+        {
+            // Given
+            const int userId = 2;
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+
+            // When
+            registrationService.CreateDelegateAccountForExistingUser(model, userId, "123.456.789.100", false);
+
+            // Then
+            A.CallTo(
+                () =>
+                    emailService.SendEmail(A<Email>._)
+            ).MustNotHaveHappened();
         }
 
         private void GivenNoPendingSupervisorDelegateRecordsForEmail()

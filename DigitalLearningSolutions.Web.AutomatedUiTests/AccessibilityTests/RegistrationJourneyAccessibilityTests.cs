@@ -130,6 +130,31 @@
             summaryResult.Violations.Should().BeEmpty();
         }
 
+        [Fact]
+        public void Register_at_new_centre_journey_has_no_accessibility_errors()
+        {
+            // given
+            var registerUrl = "/RegisterAtNewCentre";
+            Driver.LogUserInAsAdminAndDelegate(BaseUrl);
+
+            // when
+            Driver.Navigate().GoToUrl(BaseUrl + registerUrl);
+            var registerResult = new AxeBuilder(Driver).Analyze();
+            Driver.SelectDropdownItemValue("Centre", "2");
+            Driver.SubmitForm();
+
+            var learnerInformationResult = new AxeBuilder(Driver).Analyze();
+            Driver.SubmitForm();
+            Driver.LogOutUser(BaseUrl);
+
+            var summaryResult = new AxeBuilder(Driver).Analyze();
+
+            // then
+            registerResult.Violations.Should().BeEmpty();
+            learnerInformationResult.Violations.Should().BeEmpty();
+            summaryResult.Violations.Should().BeEmpty();
+        }
+
         private static void CheckWelcomeEmailViolations(AxeResult welcomeEmailResult)
         {
             // Expect an axe violation caused by having an aria-expanded attribute on an input

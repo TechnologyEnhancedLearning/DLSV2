@@ -306,10 +306,10 @@
 
         private void ValidateEmailAddress(InternalPersonalInformationViewModel model)
         {
-            if (model.SecondaryEmail != null && userService.EmailIsInUse(model.SecondaryEmail))
+            if (model.CentreSpecificEmail != null && userService.EmailIsInUse(model.CentreSpecificEmail))
             {
                 ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.SecondaryEmail),
+                    nameof(PersonalInformationViewModel.CentreSpecificEmail),
                     "This email is already in use by another user"
                 );
             }

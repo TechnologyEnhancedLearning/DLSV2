@@ -4,7 +4,7 @@
     {
         public InternalDelegateRegistrationModel(
             int centre,
-            string? secondaryEmail,
+            string? centreSpecificEmail,
             string? answer1,
             string? answer2,
             string? answer3,
@@ -14,7 +14,7 @@
         )
         {
             Centre = centre;
-            SecondaryEmail = secondaryEmail;
+            CentreSpecificEmail = centreSpecificEmail;
             Answer1 = answer1;
             Answer2 = answer2;
             Answer3 = answer3;
@@ -23,7 +23,7 @@
             Answer6 = answer6;
         }
 
-        public string? SecondaryEmail { get; set; }
+        public string? CentreSpecificEmail { get; set; }
 
         public int Centre { get; set; }
 

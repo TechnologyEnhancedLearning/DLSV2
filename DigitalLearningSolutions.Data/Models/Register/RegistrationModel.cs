@@ -29,7 +29,7 @@
 
         public string PrimaryEmail { get; set; }
 
-        public string? SecondaryEmail { get; set; }
+        public string? CentreSpecificEmail { get; set; }
 
         public int Centre { get; set; }
 

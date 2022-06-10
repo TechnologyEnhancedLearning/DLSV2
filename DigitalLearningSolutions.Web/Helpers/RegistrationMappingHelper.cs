@@ -37,7 +37,7 @@
                 data.FirstName!,
                 data.LastName!,
                 data.Email!,
-                data.SecondaryEmail,
+                data.CentreSpecificEmail,
                 data.Centre!.Value,
                 data.JobGroup!.Value,
                 data.PasswordHash!,
@@ -61,7 +61,7 @@
         {
             return new InternalDelegateRegistrationModel(
                 data.Centre!.Value,
-                data.SecondaryEmail,
+                data.CentreSpecificEmail,
                 data.Answer1,
                 data.Answer2,
                 data.Answer3,
@@ -79,7 +79,7 @@
                 data.FirstName!,
                 data.LastName!,
                 data.Email!,
-                data.SecondaryEmail,
+                data.CentreSpecificEmail,
                 data.Centre!.Value,
                 data.JobGroup!.Value,
                 data.PasswordHash,

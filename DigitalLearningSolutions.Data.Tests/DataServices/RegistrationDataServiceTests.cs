@@ -17,11 +17,11 @@
 
     public class RegistrationDataServiceTests
     {
+        private IClockService clockService = null!;
         private SqlConnection connection = null!;
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
         private IUserDataService userDataService = null!;
-        private IClockService clockService = null!;
 
         [SetUp]
         public void SetUp()
@@ -69,39 +69,39 @@
                 var models = new[]
                 {
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        firstName: "Xavier",
-                        lastName: "Quondam",
+                        "Xavier",
+                        "Quondam",
                         centre: 3,
                         email: "fake1",
-                        secondaryEmail: "XQfake1"
+                        centreSpecificEmail: "XQfake1"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        firstName: "Xavier",
-                        lastName: "Quondam",
+                        "Xavier",
+                        "Quondam",
                         centre: 3,
                         email: "fake2",
-                        secondaryEmail: "XQfake2"
+                        centreSpecificEmail: "XQfake2"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        firstName: "Xavier",
-                        lastName: "Quondam",
+                        "Xavier",
+                        "Quondam",
                         centre: 3,
                         email: "fake3",
-                        secondaryEmail: "XQfake3"
+                        centreSpecificEmail: "XQfake3"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        firstName: "Xavier",
-                        lastName: "Quondam",
+                        "Xavier",
+                        "Quondam",
                         centre: 3,
                         email: "fake4",
-                        secondaryEmail: "XQfake4"
+                        centreSpecificEmail: "XQfake4"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        firstName: "Xavier",
-                        lastName: "Quondam",
+                        "Xavier",
+                        "Quondam",
                         centre: 3,
                         email: "fake5",
-                        secondaryEmail: "XQfake5"
+                        centreSpecificEmail: "XQfake5"
                     ),
                 };
                 var actions = models.Select(GetRegistrationAction).ToArray();
@@ -148,8 +148,95 @@
             var newClockService = new ClockService();
             var newService = new RegistrationDataService(newConnection, newUserDataService, newClockService);
 
-            void Action() => newService.RegisterNewUserAndDelegateAccount(model);
+            void Action()
+            {
+                newService.RegisterNewUserAndDelegateAccount(model);
+            }
+
             return Action;
+        }
+
+        [Test]
+        public async Task
+            RegisterDelegateAccountAndCentreDetailForExistingUser_sets_all_fields_correctly_on_registration()
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var delegateRegistrationModel =
+                RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                    "forename",
+                    "surname",
+                    "test@gmail.com",
+                    3
+                );
+            var currentTime = DateTime.Now;
+            const int userId = 2;
+
+            // When
+            var (delegateId, candidateNumber) =
+                service.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                    delegateRegistrationModel,
+                    userId,
+                    currentTime
+                );
+            var user = await connection.GetDelegateUserByCandidateNumberAsync(candidateNumber);
+
+            // Then
+            using (new AssertionScope())
+            {
+                user.Id.Should().Be(delegateId);
+                user.FirstName.Should().Be(delegateRegistrationModel.FirstName);
+                user.LastName.Should().Be(delegateRegistrationModel.LastName);
+                user.EmailAddress.Should().Be(delegateRegistrationModel.PrimaryEmail);
+                user.CentreId.Should().Be(delegateRegistrationModel.Centre);
+                user.Answer1.Should().Be(delegateRegistrationModel.Answer1);
+                user.Answer2.Should().Be(delegateRegistrationModel.Answer2);
+                user.Answer3.Should().Be(delegateRegistrationModel.Answer3);
+                user.Answer4.Should().Be(delegateRegistrationModel.Answer4);
+                user.Answer5.Should().Be(delegateRegistrationModel.Answer5);
+                user.Answer6.Should().Be(delegateRegistrationModel.Answer6);
+                user.DateRegistered.Should().BeCloseTo(currentTime, 100);
+                candidateNumber.Should().Be("FS352");
+                user.CandidateNumber.Should().Be("FS352");
+            }
+        }
+
+        [Test]
+        public async Task
+            RegisterDelegateAccountAndCentreDetailForExistingUser_does_not_create_UserCentreDetails_with_null_centre_specific_email()
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var delegateRegistrationModel =
+                RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                    "forename",
+                    "surname",
+                    "test@gmail.com",
+                    3,
+                    centreSpecificEmail: null
+                );
+            var currentTime = DateTime.Now;
+            const int userId = 2;
+
+            // When
+            var (delegateId, candidateNumber) =
+                service.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                    delegateRegistrationModel,
+                    userId,
+                    currentTime
+                );
+            var userCentreDetailsCount = connection.QuerySingle<int>(
+                "SELECT COUNT(*) FROM UserCentreDetails WHERE CentreID = 3 AND UserID = 2"
+            );
+            var user = await connection.GetDelegateUserByCandidateNumberAsync(candidateNumber);
+
+            // Then
+            user.Id.Should().Be(delegateId);
+            userCentreDetailsCount.Should().Be(0);
+            candidateNumber.Should().Be("FS352");
+            user.CandidateNumber.Should().Be("FS352");
         }
 
         [Test]

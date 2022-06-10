@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
@@ -23,17 +24,15 @@
     using Microsoft.FeatureManagement;
     using NUnit.Framework;
 
-    public class RegisterControllerTests
+    public class RegisterAtNewCentreControllerTests
     {
         private const string IpAddress = "1.1.1.1";
         private const int SupervisorDelegateId = 1;
+        private ICentresDataService centresDataService = null!;
+        private RegisterAtNewCentreController controller = null!;
+        private IFeatureManager featureManager = null!;
 
         private PromptsService promptsService = null!;
-        private ICentresDataService centresDataService = null!;
-        private RegisterController controller = null!;
-        private ICryptoService cryptoService = null!;
-        private IFeatureManager featureManager = null!;
-        private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
@@ -43,8 +42,6 @@
         public void Setup()
         {
             centresDataService = A.Fake<ICentresDataService>();
-            cryptoService = A.Fake<ICryptoService>();
-            jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userService = A.Fake<IUserService>();
             promptsService = A.Fake<PromptsService>();
@@ -52,50 +49,44 @@
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
             request = A.Fake<HttpRequest>();
 
-            controller = new RegisterController(
+            controller = new RegisterAtNewCentreController(
                     centresDataService,
-                    jobGroupsDataService,
-                    registrationService,
-                    cryptoService,
-                    userService,
-                    promptsService,
                     featureManager,
-                    supervisorDelegateService
+                    promptsService,
+                    registrationService,
+                    supervisorDelegateService,
+                    userService
                 )
                 .WithDefaultContext()
                 .WithMockRequestContext(request)
                 .WithMockServices()
-                .WithMockTempData();
+                .WithMockTempData()
+                .WithMockUser(true);
         }
 
         [Test]
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        [TestCase(true, true)]
-        public void PersonalInformationPost_with_invalid_emails_fails_validation(bool primaryInUse, bool secondaryInUse)
+        public void PersonalInformationPost_with_invalid_emails_fails_validation()
         {
             // Given
-            controller.TempData.Set(new DelegateRegistrationData());
-            var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
-            var model = new PersonalInformationViewModel
+            const int centreId = 3;
+            controller.TempData.Set(new InternalDelegateRegistrationData());
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
+            var model = new InternalPersonalInformationViewModel
             {
-                FirstName = "Test",
-                LastName = "User",
-                Centre = duplicateUser.CentreId,
-                PrimaryEmail = duplicateUser.EmailAddress,
+                Centre = centreId,
                 CentreSpecificEmail = "centre email",
             };
-            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
-                .Returns(primaryInUse);
             A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
-                .Returns(secondaryInUse);
+                .Returns(true);
+            A.CallTo(() => userService.GetUserById(userAccount.Id)).Returns(
+                new UserEntity(userAccount, new List<AdminAccount>(), new[] { delegateAccount })
+            );
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
-                .MustHaveHappened();
             A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
                 .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
@@ -105,18 +96,13 @@
         public void PersonalInformationPost_with_valid_emails_is_allowed()
         {
             // Given
-            controller.TempData.Set(new DelegateRegistrationData());
+            controller.TempData.Set(new InternalDelegateRegistrationData());
             var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
-            var model = new PersonalInformationViewModel
+            var model = new InternalPersonalInformationViewModel
             {
-                FirstName = "Test",
-                LastName = "User",
                 Centre = duplicateUser.CentreId + 1,
-                PrimaryEmail = duplicateUser.EmailAddress,
                 CentreSpecificEmail = "centre email",
             };
-            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
-                .Returns(false);
             A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
                 .Returns(false);
 
@@ -124,8 +110,6 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
-                .MustHaveHappened();
             A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
@@ -158,7 +142,7 @@
 
             // Then
             A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
-            var data = controller.TempData.Peek<DelegateRegistrationData>()!;
+            var data = controller.TempData.Peek<InternalDelegateRegistrationData>()!;
             data.Centre.Should().Be(centreId);
             data.IsCentreSpecificRegistration.Should().BeTrue();
             result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
@@ -172,7 +156,7 @@
 
             // Then
             A.CallTo(() => centresDataService.GetCentreName(A<int>._)).MustNotHaveHappened();
-            var data = controller.TempData.Peek<DelegateRegistrationData>()!;
+            var data = controller.TempData.Peek<InternalDelegateRegistrationData>()!;
             data.Centre.Should().BeNull();
             data.IsCentreSpecificRegistration.Should().BeFalse();
             result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
@@ -183,7 +167,7 @@
         {
             // Given
             const string candidateNumber = "TN1";
-            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
+            var data = RegistrationDataHelper.GetDefaultInternalDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
                     () => registrationService.CreateDelegateAccountForNewUser(
@@ -201,34 +185,26 @@
             );
 
             // When
-            var result = await controller.Summary(new SummaryViewModel());
+            var result = await controller.Summary(new InternalSummaryViewModel());
 
             // Then
             A.CallTo(
                     () =>
-                        registrationService.CreateDelegateAccountForNewUser(
-                            A<DelegateRegistrationModel>.That.Matches(
+                        registrationService.CreateDelegateAccountForExistingUser(
+                            A<InternalDelegateRegistrationModel>.That.Matches(
                                 d =>
-                                    d.FirstName == data.FirstName &&
-                                    d.LastName == data.LastName &&
-                                    d.PrimaryEmail == data.Email &&
                                     d.Centre == data.Centre &&
-                                    d.JobGroup == data.JobGroup &&
-                                    d.PasswordHash == data.PasswordHash &&
                                     d.Answer1 == data.Answer1 &&
                                     d.Answer2 == data.Answer2 &&
                                     d.Answer3 == data.Answer3 &&
                                     d.Answer4 == data.Answer4 &&
                                     d.Answer5 == data.Answer5 &&
-                                    d.Answer6 == data.Answer6 &&
-                                    d.Active &&
-                                    d.IsSelfRegistered &&
-                                    d.NotifyDate != null &&
-                                    d.AliasId == null
+                                    d.Answer6 == data.Answer6
                             ),
+                            ControllerContextHelper.UserId,
                             IpAddress,
                             false,
-                            SupervisorDelegateId
+                            null
                         )
                 )
                 .MustHaveHappened();
@@ -239,12 +215,12 @@
         public async Task Summary_post_returns_redirect_to_index_view_with_missing_centre()
         {
             // Given
-            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData(centre: null);
+            var data = RegistrationDataHelper.GetDefaultInternalDelegateRegistrationData(centre: null);
             controller.TempData.Set(data);
             controller.ModelState.AddModelError("", "");
 
             // When
-            var result = await controller.Summary(new SummaryViewModel());
+            var result = await controller.Summary(new InternalSummaryViewModel());
 
             // Then
             A.CallTo(
@@ -258,70 +234,21 @@
                 )
                 .MustNotHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
-        }
-
-        [Test]
-        public async Task Summary_post_returns_redirect_to_index_view_with_missing_job_group()
-        {
-            // Given
-            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData(jobGroup: null);
-            controller.TempData.Set(data);
-            controller.ModelState.AddModelError("", "");
-
-            // When
-            var result = await controller.Summary(new SummaryViewModel());
-
-            // Then
-            A.CallTo(
-                    () =>
-                        registrationService.CreateDelegateAccountForNewUser(
-                            A<DelegateRegistrationModel>._,
-                            IpAddress,
-                            false,
-                            SupervisorDelegateId
-                        )
-                )
-                .MustNotHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
-        }
-
-        [Test]
-        public async Task Summary_post_returns_default_view_with_invalid_model()
-        {
-            // Given
-            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
-            controller.TempData.Set(data);
-            controller.ModelState.AddModelError("", "");
-
-            // When
-            var result = await controller.Summary(new SummaryViewModel());
-
-            // Then
-            A.CallTo(
-                    () =>
-                        registrationService.CreateDelegateAccountForNewUser(
-                            A<DelegateRegistrationModel>._,
-                            IpAddress,
-                            false,
-                            SupervisorDelegateId
-                        )
-                )
-                .MustNotHaveHappened();
-            result.Should().BeViewResult().WithDefaultViewName();
         }
 
         [Test]
         public async Task Summary_post_returns_500_error_with_unexpected_register_error()
         {
             // Given
-            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
+            var data = RegistrationDataHelper.GetDefaultInternalDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.CreateDelegateAccountForNewUser(
-                        A<DelegateRegistrationModel>._,
+                    () => registrationService.CreateDelegateAccountForExistingUser(
+                        A<InternalDelegateRegistrationModel>._,
+                        A<int>._,
                         A<string>._,
                         A<bool>._,
-                        A<int>._
+                        A<int?>._
                     )
                 )
                 .Throws(new DelegateCreationFailedException(DelegateCreationError.UnexpectedError));
@@ -332,7 +259,7 @@
             );
 
             // When
-            var result = await controller.Summary(new SummaryViewModel());
+            var result = await controller.Summary(new InternalSummaryViewModel());
 
             // Then
             result.Should().BeStatusCodeResult().WithStatusCode(500);
@@ -342,14 +269,15 @@
         public async Task Summary_post_returns_redirect_to_index_with_email_in_use_register_error()
         {
             // Given
-            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
+            var data = RegistrationDataHelper.GetDefaultInternalDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.CreateDelegateAccountForNewUser(
-                        A<DelegateRegistrationModel>._,
+                    () => registrationService.CreateDelegateAccountForExistingUser(
+                        A<InternalDelegateRegistrationModel>._,
+                        A<int>._,
                         A<string>._,
                         A<bool>._,
-                        A<int>._
+                        A<int?>._
                     )
                 )
                 .Throws(new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse));
@@ -360,7 +288,7 @@
             );
 
             // When
-            var result = await controller.Summary(new SummaryViewModel());
+            var result = await controller.Summary(new InternalSummaryViewModel());
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");

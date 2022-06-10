@@ -10,10 +10,10 @@
 
         public InternalSummaryViewModel(InternalDelegateRegistrationData data)
         {
-            SecondaryEmail = data.SecondaryEmail;
+            CentreSpecificEmail = data.CentreSpecificEmail;
         }
 
-        public string? SecondaryEmail { get; set; }
+        public string? CentreSpecificEmail { get; set; }
         public string? Centre { get; set; }
 
         public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; } =

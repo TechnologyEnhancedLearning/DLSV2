@@ -66,7 +66,7 @@
             );
 
             transaction.Commit();
-            
+
             return candidateNumber;
         }
 
@@ -79,7 +79,7 @@
         {
             // TODO HEEDLS-900: this method previously returned error codes as well as candidate numbers.
             // any code that calls it and handled those errors on the basis of the codes needs to be updated
-            
+
             var transactionShouldBeClosed = false;
             if (transaction == null)
             {
@@ -90,7 +90,7 @@
 
             RegisterCentreDetailForExistingUser(
                 delegateRegistrationModel.Centre,
-                delegateRegistrationModel.SecondaryEmail,
+                delegateRegistrationModel.CentreSpecificEmail,
                 userId,
                 transaction
             );
@@ -108,7 +108,7 @@
             {
                 transaction.Commit();
             }
-            
+
             return (delegateId, candidateNumber);
         }
 
@@ -119,7 +119,7 @@
 
             RegisterCentreDetailForExistingUser(
                 registrationModel.Centre,
-                registrationModel.SecondaryEmail,
+                registrationModel.CentreSpecificEmail,
                 userId,
                 transaction
             );
@@ -239,17 +239,17 @@
 
         private void RegisterCentreDetailForExistingUser(
             int centreId,
-            string? secondaryEmail,
+            string? centreSpecificEmail,
             int userId,
             IDbTransaction transaction
         )
         {
-            if (!string.IsNullOrWhiteSpace(secondaryEmail))
+            if (!string.IsNullOrWhiteSpace(centreSpecificEmail))
             {
                 userDataService.SetCentreEmail(
                     userId,
                     centreId,
-                    secondaryEmail,
+                    centreSpecificEmail,
                     transaction
                 );
             }
@@ -262,8 +262,8 @@
             IDbTransaction transaction
         )
         {
-            var initials = delegateRegistrationModel.FirstName.Substring(0, 1) +
-                           delegateRegistrationModel.LastName.Substring(0, 1);
+            var initials = (delegateRegistrationModel.FirstName.Substring(0, 1) +
+                            delegateRegistrationModel.LastName.Substring(0, 1)).ToUpper();
 
             // this SQL is reproduced mostly verbatim from the uspSaveNewCandidate_V10 procedure in the legacy codebase.
             var candidateNumber = connection.QueryFirst<string>(
@@ -300,7 +300,7 @@
                 CentreSpecificDetailsLastChecked = currentTime,
             };
 
-            var delegateId = connection.Execute(
+            var delegateId = connection.QuerySingle<int>(
                 @"INSERT INTO DelegateAccounts
                     (
                         UserID,

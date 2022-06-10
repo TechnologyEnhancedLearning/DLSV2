@@ -10,7 +10,7 @@
             string firstName,
             string lastName,
             string email,
-            string? secondaryEmail,
+            string? centreSpecificEmail,
             int centre,
             int jobGroup,
             string? passwordHash,
@@ -28,7 +28,7 @@
             DateTime? notifyDate = null
         ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
-            SecondaryEmail = secondaryEmail;
+            CentreSpecificEmail = centreSpecificEmail;
             Answer1 = answer1;
             Answer2 = answer2;
             Answer3 = answer3;
@@ -99,7 +99,7 @@
             userAccount.ProfessionalRegistrationNumber
         )
         {
-            SecondaryEmail = internalDelegateRegistrationModel.SecondaryEmail;
+            CentreSpecificEmail = internalDelegateRegistrationModel.CentreSpecificEmail;
             Answer1 = internalDelegateRegistrationModel.Answer1;
             Answer2 = internalDelegateRegistrationModel.Answer2;
             Answer3 = internalDelegateRegistrationModel.Answer3;

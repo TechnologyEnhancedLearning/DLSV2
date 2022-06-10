@@ -1,22 +1,29 @@
 ﻿namespace DigitalLearningSolutions.Web.Models
 {
+    using System;
     using DigitalLearningSolutions.Web.ViewModels.Register;
 
     public class InternalDelegateRegistrationData
     {
-        public InternalDelegateRegistrationData() { }
+        public InternalDelegateRegistrationData()
+        {
+            Id = Guid.NewGuid();
+        }
 
         public InternalDelegateRegistrationData(int? centreId, int? supervisorDelegateId = null, string? email = null)
         {
+            Id = Guid.NewGuid();
+            Centre = centreId;
             IsCentreSpecificRegistration = centreId.HasValue;
             SupervisorDelegateId = supervisorDelegateId;
             Email = email;
         }
 
+        public Guid Id { get; set; }
         public bool IsCentreSpecificRegistration { get; set; }
         public int? SupervisorDelegateId { get; set; }
         public int? Centre { get; set; }
-        public string? SecondaryEmail { get; set; }
+        public string? CentreSpecificEmail { get; set; }
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }
         public string? Answer3 { get; set; }
@@ -30,7 +37,7 @@
         public virtual void SetPersonalInformation(InternalPersonalInformationViewModel model)
         {
             Centre = model.Centre;
-            SecondaryEmail = model.SecondaryEmail;
+            CentreSpecificEmail = model.CentreSpecificEmail;
         }
 
         public void SetLearnerInformation(InternalLearnerInformationViewModel model)

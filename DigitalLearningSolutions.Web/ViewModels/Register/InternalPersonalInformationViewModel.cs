@@ -13,14 +13,14 @@
 
         public InternalPersonalInformationViewModel(InternalDelegateRegistrationData data)
         {
-            SecondaryEmail = data.SecondaryEmail;
+            CentreSpecificEmail = data.CentreSpecificEmail;
             Centre = data.Centre;
         }
 
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
-        public string? SecondaryEmail { get; set; }
+        public string? CentreSpecificEmail { get; set; }
 
         [Required(ErrorMessage = "Select a centre")]
         public int? Centre { get; set; }

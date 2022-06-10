@@ -325,7 +325,7 @@ namespace DigitalLearningSolutions.Data.Services
         {
             try
             {
-                ValidateCentreEmail(delegateRegistrationModel.SecondaryEmail);
+                ValidateCentreEmail(delegateRegistrationModel.CentreSpecificEmail);
                 var currentTime = clockService.UtcNow;
                 return registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
                     delegateRegistrationModel,
@@ -353,7 +353,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         private void ValidateRegistrationEmail(RegistrationModel model)
         {
-            var emails = (IEnumerable<string>)new[] { model.PrimaryEmail, model.SecondaryEmail }.Where(e => e != null);
+            var emails = (IEnumerable<string>)new[] { model.PrimaryEmail, model.CentreSpecificEmail }.Where(e => e != null);
             if (userDataService.AnyEmailsInSetAreAlreadyInUse(emails))
             {
                 var error = DelegateCreationError.EmailAlreadyInUse;
