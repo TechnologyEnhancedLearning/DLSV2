@@ -180,8 +180,8 @@
             connection.Execute(
                 @"UPDATE AdminUsers SET
                         Active = 1,
-						IsCentreManager = 0,
-						UserAdmin = 0
+                        IsCentreManager = 0,
+                        UserAdmin = 0
                     WHERE AdminID = @adminId",
                 new { adminId }
             );

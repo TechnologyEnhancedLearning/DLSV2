@@ -159,7 +159,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
 
-            if (adminUser?.Active is false && adminUser.CentreId == delegateUser.CentreId)
+            if (adminUser?.Active == false && adminUser.CentreId == delegateUser.CentreId)
             {
                 userDataService.ReactivateAdmin(adminUser.Id);
                 userDataService.UpdateAdminUser(

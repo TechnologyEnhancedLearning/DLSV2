@@ -228,17 +228,22 @@
             using var transaction = new TransactionScope();
             // Given
             const int adminId = 16;
+            connection.SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(adminId);
 
             // When
+            var deactivatedAdmin = userDataService.GetAdminUserById(adminId)!;
             userDataService.ReactivateAdmin(adminId);
-            var updatedAdminUser = userDataService.GetAdminUserById(adminId)!;
+            var reactivatedAdmin = userDataService.GetAdminUserById(adminId)!;
 
             // Then
             using (new AssertionScope())
             {
-                updatedAdminUser.Active.Should().Be(true);
-                updatedAdminUser.IsCentreManager.Should().Be(false);
-                updatedAdminUser.IsUserAdmin.Should().Be(false);
+                deactivatedAdmin.Active.Should().Be(false);
+                deactivatedAdmin.IsCentreManager.Should().Be(true);
+                deactivatedAdmin.IsUserAdmin.Should().Be(true);
+                reactivatedAdmin.Active.Should().Be(true);
+                reactivatedAdmin.IsCentreManager.Should().Be(false);
+                reactivatedAdmin.IsUserAdmin.Should().Be(false);
             }
         }
 

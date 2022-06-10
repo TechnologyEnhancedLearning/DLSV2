@@ -214,6 +214,18 @@
             return new CentreAnswersData(centreId, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6);
         }
 
+        public static void SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(this DbConnection connection, int adminId)
+        {
+            connection.Execute(
+                @"UPDATE AdminUsers SET
+                        Active = 0,
+                        IsCentreManager = 1,
+                        UserAdmin = 1
+                    WHERE AdminID = @adminId",
+                new { adminId }
+            );
+        }
+
         public static void GivenDelegateUserIsInDatabase(DelegateUser user, SqlConnection sqlConnection)
         {
             sqlConnection.Execute(
