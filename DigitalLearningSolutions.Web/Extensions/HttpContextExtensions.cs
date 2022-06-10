@@ -1,10 +1,10 @@
-﻿namespace DigitalLearningSolutions.Web.Helpers
+﻿namespace DigitalLearningSolutions.Web.Extensions
 {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
 
-    public static class LogoutHelper
+    public static class HttpContextExtensions
     {
         public static async Task Logout(this HttpContext httpContext)
         {

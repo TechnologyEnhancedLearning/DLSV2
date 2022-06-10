@@ -99,7 +99,7 @@
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
             var chooseACentreAccounts = loginService.GetChooseACentreAccounts(userEntity);
             var model = new ChooseACentreViewModel(
-                chooseACentreAccounts.OrderByDescending(account => account.IsAdmin)
+                chooseACentreAccounts.OrderByDescending(account => account.IsActiveAdmin)
                     .ThenBy(account => account.CentreName).ToList(),
                 returnUrl
             );

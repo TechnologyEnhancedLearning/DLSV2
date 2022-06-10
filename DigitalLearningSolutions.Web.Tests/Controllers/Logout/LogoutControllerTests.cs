@@ -11,8 +11,8 @@
 
     internal class LogoutControllerTests
     {
-        private IAuthenticationService authenticationService;
-        private LogoutController controller;
+        private IAuthenticationService authenticationService = null!;
+        private LogoutController controller = null!;
 
         [SetUp]
         public void SetUp()

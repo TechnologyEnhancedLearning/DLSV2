@@ -14,15 +14,16 @@
   <div class="nhsuk-grid-column-full">
 
     <h1 id="page-heading" class="nhsuk-heading-xl">Choose a centre</h1>
-    <p class="nhsuk-body-l">
-      Please choose the centre you would like to sign in to.
-    </p>
 
-    @if (Model.CentreUserDetails.Any(centreRow => centreRow.IsDelegateUnapproved)) {
-      <vc:inset-text css-class="" text="You have an unapproved delegate account. You will receive an email at the address you registered with when your registration has been approved." />
-    }
+    @if (Model.CentreUserDetails.Count > 0) {
+      <p class="nhsuk-body-l">
+        Please choose the centre you would like to sign in to.
+      </p>
 
-    @if (Model.CentreUserDetails.Count > 1) {
+      @if (Model.CentreUserDetails.Any(centreRow => centreRow.IsDelegateUnapproved)) {
+        <vc:inset-text css-class="" text="You have an unapproved delegate account. You will receive an email at the address you registered with when your registration has been approved." />
+      }
+
       <table role="table" class="nhsuk-table-responsive">
         <thead role="rowgroup" class="nhsuk-table__head">
         <tr role="row">
@@ -54,7 +55,7 @@
             <td role="cell" class="nhsuk-table__cell choose-centre-td">
               <span class="nhsuk-table-responsive__heading">Roles: </span>
               <div class="centre-role-tags">
-                @if (centreRow.IsAdmin) {
+                @if (centreRow.IsActiveAdmin) {
                   <strong class="nhsuk-tag nhsuk-tag--blue centre-role-tag">Admin</strong>
                 }
                 @if (centreRow.IsDelegate) {

@@ -1,8 +1,8 @@
-namespace DigitalLearningSolutions.Web.Controllers
+﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Web.Extensions;
     using Microsoft.AspNetCore.Mvc;
-    using DigitalLearningSolutions.Web.Helpers;
 
     public class LogoutController : Controller
     {

@@ -4,11 +4,25 @@
 
     public class ChooseACentreAccount
     {
+        private const string ActiveLabel = "Active";
+        private const string InactiveLabel = "Inactive";
+        private const string UnapprovedLabel = "Unapproved";
+        private const string DelegateInactiveLabel = "Delegate inactive";
+        private const string DelegateUnapprovedLabel = "Delegate unapproved";
+        private const string CentreInactiveLabel = "Centre inactive";
+
+        private const string ActiveColor = "green";
+        private const string InactiveColor = "red";
+        private const string UnapprovedOrCentreInactiveColour = "grey";
+
+        private const string ChooseCentreButtonLabel = "Choose";
+        private const string ReactivateAccountButtonLabel = "Reactivate";
+
         public ChooseACentreAccount(
             int centreId,
             string centreName,
             bool isCentreActive = false,
-            bool isAdmin = false,
+            bool isActiveAdmin = false,
             bool isDelegate = false,
             bool isDelegateApproved = false,
             bool isDelegateActive = false
@@ -17,7 +31,7 @@
             CentreId = centreId;
             CentreName = centreName;
             IsCentreInactive = !isCentreActive;
-            IsAdmin = isAdmin;
+            IsActiveAdmin = isActiveAdmin;
             IsDelegate = isDelegate;
             IsDelegateApproved = isDelegateApproved;
             IsDelegateInactive = IsDelegate && !isDelegateActive;
@@ -25,7 +39,7 @@
 
         public int CentreId { get; }
         public string CentreName { get; }
-        public bool IsAdmin { get; }
+        public bool IsActiveAdmin { get; }
         public bool IsDelegate { get; }
         private bool IsCentreInactive { get; }
         private bool IsDelegateApproved { get; }
@@ -37,26 +51,26 @@
         {
             get
             {
-                string label = "Active";
+                var label = ActiveLabel;
 
                 if (IsCentreInactive)
                 {
-                    label = "Centre inactive";
+                    label = CentreInactiveLabel;
                 }
                 else if (IsDelegateInactive)
                 {
-                    label = IsAdmin ? "Delegate inactive" : "Inactive";
+                    label = IsActiveAdmin ? DelegateInactiveLabel : InactiveLabel;
                 }
                 else if (IsDelegateUnapproved)
                 {
-                    label = IsAdmin ? "Delegate unapproved" : "Unapproved";
+                    label = IsActiveAdmin ? DelegateUnapprovedLabel : UnapprovedLabel;
                 }
 
-                var colour = label == "Active"
-                    ? "green"
-                    : label == "Delegate inactive" || label == "Inactive"
-                        ? "red"
-                        : "grey";
+                var colour = label == ActiveLabel
+                    ? ActiveColor
+                    : label == DelegateInactiveLabel || label == InactiveLabel
+                        ? InactiveColor
+                        : UnapprovedOrCentreInactiveColour;
 
                 return new Dictionary<string, string>
                 {
@@ -75,10 +89,10 @@
                     return null;
                 }
 
-                return IsAdmin || (IsDelegateApproved && IsDelegateActive)
-                    ? "Choose"
+                return IsActiveAdmin || (IsDelegateApproved && IsDelegateActive)
+                    ? ChooseCentreButtonLabel
                     : IsDelegateInactive
-                        ? "Reactivate"
+                        ? ReactivateAccountButtonLabel
                         : null;
             }
         }
