@@ -81,7 +81,7 @@
                 model,
                 ModelState,
                 userService,
-                centresService
+                centresDataService
             );
 
             return View(model);
@@ -97,7 +97,7 @@
                 model,
                 ModelState,
                 userService,
-                centresService
+                centresDataService
             );
 
             if (!ModelState.IsValid)

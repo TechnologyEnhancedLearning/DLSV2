@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -27,10 +28,10 @@
             PersonalInformationViewModel model,
             ModelStateDictionary modelState,
             IUserService userService,
-            ICentresService centresService
+            ICentresDataService centresDataService
         )
         {
-            ValidateEmailAddresses(true, model, modelState, userService, centresService);
+            ValidateEmailAddresses(true, model, modelState, userService, centresDataService);
         }
 
         private static void ValidateEmailAddresses(
@@ -38,7 +39,7 @@
             PersonalInformationViewModel model,
             ModelStateDictionary modelState,
             IUserService userService,
-            ICentresService? centresService = null
+            ICentresDataService? centresDataService = null
         )
         {
             var primaryEmailIsValidAndNotNull =
@@ -48,7 +49,10 @@
                 !modelState.HasError(nameof(PersonalInformationViewModel.SecondaryEmail)) &&
                 model.SecondaryEmail != null;
 
-            bool? primaryEmailMatchesCentre = null;
+            var autoRegisterManagerEmail = isRegisterAdminJourney
+                ? centresDataService?.GetCentreAutoRegisterValues(model.Centre!.Value)
+                    .autoRegisterManagerEmail
+                : null;
 
             if (primaryEmailIsValidAndNotNull)
             {
@@ -61,12 +65,7 @@
                 }
                 else if (isRegisterAdminJourney)
                 {
-                    primaryEmailMatchesCentre = centresService?.DoesEmailMatchCentre(
-                        model.PrimaryEmail!,
-                        model.Centre!.Value
-                    );
-
-                    if (primaryEmailMatchesCentre == false && model.SecondaryEmail == null)
+                    if (model.PrimaryEmail != autoRegisterManagerEmail && model.SecondaryEmail == null)
                     {
                         modelState.AddModelError(
                             nameof(PersonalInformationViewModel.PrimaryEmail),
@@ -85,20 +84,13 @@
                         DuplicateEmailErrorMessage
                     );
                 }
-                else if (isRegisterAdminJourney && primaryEmailMatchesCentre == false)
+                else if (isRegisterAdminJourney && model.PrimaryEmail != autoRegisterManagerEmail &&
+                         model.SecondaryEmail != autoRegisterManagerEmail)
                 {
-                    var secondaryEmailMatchesCentre = centresService?.DoesEmailMatchCentre(
-                        model.SecondaryEmail!,
-                        model.Centre!.Value
+                    modelState.AddModelError(
+                        nameof(PersonalInformationViewModel.SecondaryEmail),
+                        WrongEmailForCentreErrorMessage
                     );
-
-                    if (secondaryEmailMatchesCentre == false)
-                    {
-                        modelState.AddModelError(
-                            nameof(PersonalInformationViewModel.SecondaryEmail),
-                            WrongEmailForCentreErrorMessage
-                        );
-                    }
                 }
             }
         }
