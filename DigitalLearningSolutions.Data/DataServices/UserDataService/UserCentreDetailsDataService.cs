@@ -60,14 +60,19 @@
             if (detailsAlreadyExist)
             {
                 connection.Execute(
-                    @"UPDATE UserCentreDetails
-                    SET Email = @email
-                    WHERE userID = @userId AND centreID = @centreId",
+                    string.IsNullOrWhiteSpace(email)
+                        ? @"UPDATE UserCentreDetails
+                        SET Email = NULL,
+                            EmailVerified = NULL
+                        WHERE userID = @userId AND centreID = @centreId"
+                        : @"UPDATE UserCentreDetails
+                        SET Email = @email
+                        WHERE userID = @userId AND centreID = @centreId",
                     userCentreDetailsValues,
                     transaction
                 );
             }
-            else
+            else if (!string.IsNullOrWhiteSpace(email))
             {
                 connection.Execute(
                     @"INSERT INTO UserCentreDetails

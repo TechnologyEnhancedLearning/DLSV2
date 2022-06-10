@@ -48,12 +48,8 @@
             result.Should().BeTrue();
         }
 
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        public void ValidateProfessionalRegistrationNumber_does_not_set_errors_when_not_delegate_or_has_no_prn(
-            bool isDelegate,
-            bool hasPrn
-        )
+        [Test]
+        public void ValidateProfessionalRegistrationNumber_does_not_set_errors_when_has_no_prn()
         {
             // Given
             var state = new ModelStateDictionary();
@@ -61,9 +57,8 @@
             // When
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
                 state,
-                hasPrn,
-                null,
-                isDelegate
+                false,
+                null
             );
 
             // Then
