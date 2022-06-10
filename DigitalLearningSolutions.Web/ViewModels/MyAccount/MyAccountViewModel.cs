@@ -63,7 +63,7 @@
 
         public byte[]? ProfilePicture { get; set; }
 
-        public string? JobGroup { get; set; }
+        public string JobGroup { get; set; }
 
         public string ProfessionalRegistrationNumber { get; set; }
 
