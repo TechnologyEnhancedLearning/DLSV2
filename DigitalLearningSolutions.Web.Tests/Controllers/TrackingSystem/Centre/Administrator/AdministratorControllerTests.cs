@@ -91,18 +91,17 @@
         public void UnlockAccount_unlocks_account_and_returns_to_page()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(adminUser);
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount();
             A.CallTo(() => userService.ResetFailedLoginCountByUserId(A<int>._)).DoesNothing();
-            A.CallTo(() => userDataService.GetUserIdByAdminId(adminUser.Id)).Returns(1);
+            A.CallTo(() => userDataService.GetUserIdByAdminId(adminAccount.Id)).Returns(adminAccount.UserId);
 
             // When
-            var result = administratorController.UnlockAccount(adminUser.Id);
+            var result = administratorController.UnlockAccount(adminAccount.Id);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userService.ResetFailedLoginCountByUserId(1)).MustHaveHappened();
+                A.CallTo(() => userService.ResetFailedLoginCountByUserId(adminAccount.UserId)).MustHaveHappened();
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
             }
         }
