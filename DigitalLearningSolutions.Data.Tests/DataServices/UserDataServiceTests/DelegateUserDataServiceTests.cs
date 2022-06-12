@@ -13,6 +13,19 @@
     public partial class UserDataServiceTests
     {
         [Test]
+        public void GetDelegateById_returns_delegate()
+        {
+            // Given
+            var expectedDelegate = UserTestHelper.GetDefaultDelegate();
+
+            // When
+            var returnedDelegateUser = userDataService.GetDelegateById(2);
+
+            // Then
+            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegate);
+        }
+
+        [Test]
         public void GetDelegateUserById_Returns_delegate_users()
         {
             // Given

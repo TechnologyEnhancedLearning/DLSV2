@@ -15,6 +15,6 @@
 
         public DelegateAccount DelegateAccount { get; set; }
         public UserAccount UserAccount { get; set; }
-        public UserCentreDetails UserCentreDetails { get; set; }
+        public UserCentreDetails? UserCentreDetails { get; set; }
     }
 }

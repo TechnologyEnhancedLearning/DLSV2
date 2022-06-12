@@ -117,6 +117,21 @@
         }
 
         [Test]
+        public void GetDelegateById_returns_user_from_data_service()
+        {
+            // Given
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegate();
+            A.CallTo(() => userDataService.GetDelegateById(expectedDelegateUser.DelegateAccount.Id))
+                .Returns(expectedDelegateUser);
+
+            // When
+            var returnedDelegateUser = userService.GetDelegateById(expectedDelegateUser.DelegateAccount.Id);
+
+            // Then
+            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUser);
+        }
+
+        [Test]
         public void GetDelegateUserById_returns_user_from_data_service()
         {
             // Given
