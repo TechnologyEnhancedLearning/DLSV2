@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -46,14 +47,22 @@
         public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreId();
-            var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
+
+            var delegateUser = userDataService.GetDelegateById(delegateId)!;
+
+            if (delegateUser == null)
+            {
+                return NotFound();
+            }
+
+            var delegateUserCard = new DelegateUserCard(delegateUser);
             var categoryIdFilter = User.GetAdminCategoryId();
 
-            var customFields = promptsService.GetDelegateRegistrationPromptsForCentre(centreId, delegateUser);
+            var customFields = promptsService.GetDelegateRegistrationPromptsForCentre(centreId, delegateUserCard);
             var delegateCourses =
                 courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryIdFilter);
 
-            var model = new ViewDelegateViewModel(delegateUser, customFields, delegateCourses);
+            var model = new ViewDelegateViewModel(delegateUserCard, customFields, delegateCourses);
 
             return View(model);
         }
