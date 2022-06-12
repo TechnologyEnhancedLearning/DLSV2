@@ -6,38 +6,29 @@
 
     public static class AccountDetailsDataHelper
     {
-        // TODO: 951 - make these into wrapper methods around a private method
         public static (MyAccountDetailsData, DelegateDetailsData?) MapToUpdateAccountData(
             MyAccountEditDetailsFormData formData,
             int userId,
             int? userDelegateId
         )
         {
-            var accountDetailsData = new MyAccountDetailsData(
+            return MapToUpdateAccountData(
                 userId,
                 formData.FirstName!,
                 formData.LastName!,
                 formData.Email!,
                 formData.JobGroupId!.Value,
-                formData.HasProfessionalRegistrationNumber == true
-                    ? formData.ProfessionalRegistrationNumber
-                    : null,
                 formData.HasProfessionalRegistrationNumber.HasValue,
-                formData.ProfileImage
+                formData.ProfessionalRegistrationNumber,
+                userDelegateId,
+                formData.ProfileImage,
+                formData.Answer1,
+                formData.Answer2,
+                formData.Answer3,
+                formData.Answer4,
+                formData.Answer5,
+                formData.Answer6
             );
-
-            var delegateDetailsData = userDelegateId != null
-                ? new DelegateDetailsData(
-                    userDelegateId.Value,
-                    formData.Answer1,
-                    formData.Answer2,
-                    formData.Answer3,
-                    formData.Answer4,
-                    formData.Answer5,
-                    formData.Answer6
-                )
-                : null;
-            return (accountDetailsData, delegateDetailsData);
         }
 
         public static (MyAccountDetailsData, DelegateDetailsData) MapToUpdateAccountData(
@@ -47,27 +38,64 @@
             byte[]? profileImage
         )
         {
-            var accountDetailsData = new MyAccountDetailsData(
+            return MapToUpdateAccountData(
                 userId,
                 formData.FirstName!,
                 formData.LastName!,
                 formData.Email!,
                 formData.JobGroupId!.Value,
-                formData.HasProfessionalRegistrationNumber == true
-                    ? formData.ProfessionalRegistrationNumber
-                    : null,
                 formData.HasProfessionalRegistrationNumber.HasValue,
-                profileImage
-            );
-
-            var delegateDetailsData = new DelegateDetailsData(
+                formData.ProfessionalRegistrationNumber,
                 userDelegateId,
+                profileImage,
                 formData.Answer1,
                 formData.Answer2,
                 formData.Answer3,
                 formData.Answer4,
                 formData.Answer5,
                 formData.Answer6
+            );
+        }
+
+        private static (MyAccountDetailsData, DelegateDetailsData) MapToUpdateAccountData(
+            int userId,
+            string? firstName,
+            string? lastName,
+            string? email,
+            int? jobGroupId,
+            bool hasProfessionalRegistrationNumber,
+            string? professionalRegistrationNumber,
+            int? userDelegateId,
+            byte[]? profileImage,
+            string? answer1,
+            string? answer2,
+            string? answer3,
+            string? answer4,
+            string? answer5,
+            string? answer6
+        )
+        {
+            var accountDetailsData = new MyAccountDetailsData(
+                userId,
+                firstName!,
+                lastName!,
+                email!,
+                jobGroupId!.Value,
+                hasProfessionalRegistrationNumber
+                    ? professionalRegistrationNumber
+                    : null,
+                hasProfessionalRegistrationNumber,
+                profileImage
+            );
+
+            var delegateDetailsData = new DelegateDetailsData(
+                userDelegateId.Value,
+                answer1,
+                answer2,
+                answer3,
+                answer4,
+                answer5,
+                answer6
             );
             return (accountDetailsData, delegateDetailsData);
         }

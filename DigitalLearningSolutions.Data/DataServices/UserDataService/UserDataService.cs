@@ -35,7 +35,6 @@
 
         void UpdateUserFailedLoginCount(int userId, int updatedCount);
 
-        // TODO: 951 Write test
         Delegate? GetDelegateById(int id);
 
         DelegateUser? GetDelegateUserById(int id);
