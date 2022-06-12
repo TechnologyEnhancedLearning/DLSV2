@@ -34,7 +34,7 @@ namespace DigitalLearningSolutions.Data.Services
         );
 
         void UpdateUserDetailsAndCentreSpecificDetails(
-            MyAccountDetailsData myAccountDetailsData,
+            EditAccountDetailsData editAccountDetailsData,
             DelegateDetailsData? delegateDetailsData,
             string? centreEmail,
             int centreId
@@ -172,7 +172,7 @@ namespace DigitalLearningSolutions.Data.Services
         }
 
         public void UpdateUserDetailsAndCentreSpecificDetails(
-            MyAccountDetailsData myAccountDetailsData,
+            EditAccountDetailsData editAccountDetailsData,
             DelegateDetailsData? delegateDetailsData,
             string? centreEmail,
             int centreId
@@ -184,8 +184,8 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 groupsService.SynchroniseUserChangesWithGroups(
                     delegateDetailsData.DelegateId,
-                    myAccountDetailsData,
-                    new RegistrationFieldAnswers(delegateDetailsData, myAccountDetailsData.JobGroupId)
+                    editAccountDetailsData,
+                    new RegistrationFieldAnswers(delegateDetailsData, editAccountDetailsData.JobGroupId)
                 );
 
                 userDataService.UpdateDelegateUserCentrePrompts(
@@ -201,19 +201,19 @@ namespace DigitalLearningSolutions.Data.Services
             }
 
             userDataService.UpdateUser(
-                myAccountDetailsData.FirstName,
-                myAccountDetailsData.Surname,
-                myAccountDetailsData.Email,
-                myAccountDetailsData.ProfileImage,
-                myAccountDetailsData.ProfessionalRegistrationNumber,
-                myAccountDetailsData.HasBeenPromptedForPrn,
-                myAccountDetailsData.JobGroupId,
+                editAccountDetailsData.FirstName,
+                editAccountDetailsData.Surname,
+                editAccountDetailsData.Email,
+                editAccountDetailsData.ProfileImage,
+                editAccountDetailsData.ProfessionalRegistrationNumber,
+                editAccountDetailsData.HasBeenPromptedForPrn,
+                editAccountDetailsData.JobGroupId,
                 detailsLastChecked,
-                myAccountDetailsData.UserId
+                editAccountDetailsData.UserId
             );
 
             userDataService.SetCentreEmail(
-                myAccountDetailsData.UserId,
+                editAccountDetailsData.UserId,
                 centreId,
                 centreEmail
             );

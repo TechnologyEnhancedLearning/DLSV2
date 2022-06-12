@@ -6,13 +6,13 @@
 
     public static class AccountDetailsDataHelper
     {
-        public static (MyAccountDetailsData, DelegateDetailsData?) MapToUpdateAccountData(
+        public static (EditAccountDetailsData, DelegateDetailsData?) MapToEditAccountDetailsData(
             MyAccountEditDetailsFormData formData,
             int userId,
             int? userDelegateId
         )
         {
-            return MapToUpdateAccountData(
+            return MapToEditAccountDetailsData(
                 userId,
                 formData.FirstName!,
                 formData.LastName!,
@@ -31,14 +31,14 @@
             );
         }
 
-        public static (MyAccountDetailsData, DelegateDetailsData) MapToUpdateAccountData(
+        public static (EditAccountDetailsData, DelegateDetailsData) MapToEditAccountDetailsData(
             EditDelegateFormData formData,
             int userId,
             int userDelegateId,
             byte[]? profileImage
         )
         {
-            return MapToUpdateAccountData(
+            return MapToEditAccountDetailsData(
                 userId,
                 formData.FirstName!,
                 formData.LastName!,
@@ -57,7 +57,7 @@
             );
         }
 
-        private static (MyAccountDetailsData, DelegateDetailsData) MapToUpdateAccountData(
+        private static (EditAccountDetailsData, DelegateDetailsData) MapToEditAccountDetailsData(
             int userId,
             string? firstName,
             string? lastName,
@@ -75,7 +75,7 @@
             string? answer6
         )
         {
-            var accountDetailsData = new MyAccountDetailsData(
+            var accountDetailsData = new EditAccountDetailsData(
                 userId,
                 firstName!,
                 lastName!,

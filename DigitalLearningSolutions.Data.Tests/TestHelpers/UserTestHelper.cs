@@ -434,7 +434,7 @@
             return users.Single();
         }
 
-        public static MyAccountDetailsData GetDefaultAccountDetailsData(
+        public static EditAccountDetailsData GetDefaultAccountDetailsData(
             int userId = 2,
             string firstName = "firstname",
             string surname = "lastname",
@@ -443,7 +443,7 @@
             byte[]? profileImage = null
         )
         {
-            return new MyAccountDetailsData(
+            return new EditAccountDetailsData(
                 userId,
                 firstName,
                 surname,

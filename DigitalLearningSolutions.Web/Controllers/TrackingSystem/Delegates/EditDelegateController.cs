@@ -91,8 +91,7 @@
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
-            // TODO: 951 - rename MyAccountDetailsData to something that covers both cases
-            var (editDelegateDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToUpdateAccountData(
+            var (editDelegateDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToEditAccountDetailsData(
                 formData,
                 delegateUser.UserAccount.Id,
                 delegateId,

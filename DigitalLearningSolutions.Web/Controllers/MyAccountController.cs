@@ -177,7 +177,7 @@
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
-            var (accountDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToUpdateAccountData(
+            var (accountDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToEditAccountDetailsData(
                 formData,
                 userId,
                 userDelegateId

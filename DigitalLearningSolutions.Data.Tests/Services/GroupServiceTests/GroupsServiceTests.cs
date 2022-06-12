@@ -35,7 +35,7 @@
         private readonly GroupDelegate reusableGroupDelegate =
             GroupTestHelper.GetDefaultGroupDelegate(firstName: "newFirst", lastName: "newLast");
 
-        private readonly MyAccountDetailsData reusableMyAccountDetailsData =
+        private readonly EditAccountDetailsData reusableEditAccountDetailsData =
             UserTestHelper.GetDefaultAccountDetailsData();
 
         private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();

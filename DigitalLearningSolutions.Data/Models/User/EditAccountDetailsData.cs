@@ -1,22 +1,28 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
-    public class EditDelegateDetailsData : AccountDetailsData
+    public class EditAccountDetailsData : AccountDetailsData
     {
-        public EditDelegateDetailsData(
-            int delegateId,
+        public EditAccountDetailsData(
+            int userId,
             string firstName,
             string surname,
             string email,
+            int jobGroupId,
             string? professionalRegNumber,
-            bool hasBeenPromptedForPrn
+            bool hasBeenPromptedForPrn,
+            byte[]? profileImage
         ) : base(firstName, surname, email)
         {
-            DelegateId = delegateId;
+            UserId = userId;
+            JobGroupId = jobGroupId;
             ProfessionalRegistrationNumber = professionalRegNumber;
             HasBeenPromptedForPrn = hasBeenPromptedForPrn;
+            ProfileImage = profileImage;
         }
 
-        public int DelegateId { get; set; }
+        public int UserId { get; set; }
+        public byte[]? ProfileImage { get; set; }
+        public int JobGroupId { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
         public bool HasBeenPromptedForPrn { get; set; }
     }

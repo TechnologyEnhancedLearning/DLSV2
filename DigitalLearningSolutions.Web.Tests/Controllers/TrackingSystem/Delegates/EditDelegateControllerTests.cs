@@ -135,7 +135,7 @@
             {
                 A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
-                        A<MyAccountDetailsData>._,
+                        A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string>._,
                         A<int>._
