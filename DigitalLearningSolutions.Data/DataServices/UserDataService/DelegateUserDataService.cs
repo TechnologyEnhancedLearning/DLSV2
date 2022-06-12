@@ -67,6 +67,7 @@
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreId";
 
         // TODO: 951 - Figure out dapper
+        // TODO: 951 - Handle null case
         public Delegate? GetDelegateById(int id)
         {
             var sql = $@"SELECT

@@ -180,6 +180,26 @@ namespace DigitalLearningSolutions.Data.Services
         {
             var detailsLastChecked = clockService.UtcNow;
 
+            if (delegateDetailsData != null)
+            {
+                groupsService.SynchroniseUserChangesWithGroups(
+                    delegateDetailsData.DelegateId,
+                    myAccountDetailsData,
+                    new RegistrationFieldAnswers(delegateDetailsData, myAccountDetailsData.JobGroupId)
+                );
+
+                userDataService.UpdateDelegateUserCentrePrompts(
+                    delegateDetailsData.DelegateId,
+                    delegateDetailsData.Answer1,
+                    delegateDetailsData.Answer2,
+                    delegateDetailsData.Answer3,
+                    delegateDetailsData.Answer4,
+                    delegateDetailsData.Answer5,
+                    delegateDetailsData.Answer6,
+                    detailsLastChecked
+                );
+            }
+
             userDataService.UpdateUser(
                 myAccountDetailsData.FirstName,
                 myAccountDetailsData.Surname,
@@ -197,26 +217,6 @@ namespace DigitalLearningSolutions.Data.Services
                 centreId,
                 centreEmail
             );
-
-            if (delegateDetailsData != null)
-            {
-                userDataService.UpdateDelegateUserCentrePrompts(
-                    delegateDetailsData.DelegateId,
-                    delegateDetailsData.Answer1,
-                    delegateDetailsData.Answer2,
-                    delegateDetailsData.Answer3,
-                    delegateDetailsData.Answer4,
-                    delegateDetailsData.Answer5,
-                    delegateDetailsData.Answer6,
-                    detailsLastChecked
-                );
-
-                groupsService.SynchroniseUserChangesWithGroups(
-                    delegateDetailsData.DelegateId,
-                    myAccountDetailsData,
-                    new RegistrationFieldAnswers(delegateDetailsData, myAccountDetailsData.JobGroupId)
-                );
-            }
         }
 
         public bool NewEmailAddressIsValid(string emailAddress, int userId)
