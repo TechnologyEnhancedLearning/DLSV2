@@ -22,17 +22,14 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [SetSelectedTab(nameof(NavMenuTab.Register))]
     public class RegisterController : Controller
     {
-        private readonly PromptsService promptsService;
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly IFeatureManager featureManager;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserService userService;
-
-        private const string DuplicateEmailError =
-            "A user with this email address is already registered; if this is you, please log in at this centre via the My Account page";
 
         public RegisterController(
             ICentresDataService centresDataService,
@@ -97,7 +94,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             // Check this email and centre combination doesn't already exist in case we were redirected
             // back here by the user trying to submit the final page of the form
-            ValidateEmailAddresses(model);
+            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, ModelState, userService);
 
             return View(model);
         }
@@ -106,7 +103,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
-            ValidateEmailAddresses(model);
+            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, ModelState, userService);
 
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
@@ -310,25 +307,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             return centreId == null
                    || centresDataService.GetCentreName(centreId.Value) != null;
-        }
-
-        private void ValidateEmailAddresses(PersonalInformationViewModel model)
-        {
-            if (model.PrimaryEmail != null && userService.EmailIsInUse(model.PrimaryEmail))
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.PrimaryEmail),
-                    DuplicateEmailError
-                );
-            }
-
-            if (model.CentreSpecificEmail != null && userService.EmailIsInUse(model.CentreSpecificEmail))
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                    DuplicateEmailError
-                );
-            }
         }
 
         private IEnumerable<EditDelegateRegistrationPromptViewModel>

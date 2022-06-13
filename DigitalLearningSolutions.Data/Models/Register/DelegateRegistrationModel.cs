@@ -9,7 +9,7 @@
         public DelegateRegistrationModel(
             string firstName,
             string lastName,
-            string email,
+            string primaryEmail,
             string? centreSpecificEmail,
             int centre,
             int jobGroup,
@@ -26,9 +26,8 @@
             bool approved = false,
             string? aliasId = null,
             DateTime? notifyDate = null
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
+        ) : base(firstName, lastName, primaryEmail, centreSpecificEmail, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
-            CentreSpecificEmail = centreSpecificEmail;
             Answer1 = answer1;
             Answer2 = answer2;
             Answer3 = answer3;
@@ -44,14 +43,15 @@
         public DelegateRegistrationModel(
             string firstName,
             string lastName,
-            string email,
+            string primaryEmail,
+            string? centreSpecificEmail,
             int centre,
             int jobGroup,
             string? passwordHash,
             bool active,
             bool approved,
             string? professionalRegistrationNumber
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
+        ) : base(firstName, lastName, primaryEmail, centreSpecificEmail, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
             JobGroup = jobGroup;
         }
@@ -92,6 +92,7 @@
             userAccount.FirstName,
             userAccount.LastName,
             userAccount.PrimaryEmail,
+            internalDelegateRegistrationModel.CentreSpecificEmail,
             internalDelegateRegistrationModel.Centre,
             userAccount.PasswordHash,
             true,
@@ -99,7 +100,6 @@
             userAccount.ProfessionalRegistrationNumber
         )
         {
-            CentreSpecificEmail = internalDelegateRegistrationModel.CentreSpecificEmail;
             Answer1 = internalDelegateRegistrationModel.Answer1;
             Answer2 = internalDelegateRegistrationModel.Answer2;
             Answer3 = internalDelegateRegistrationModel.Answer3;

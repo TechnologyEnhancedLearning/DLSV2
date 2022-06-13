@@ -131,7 +131,6 @@
                 promptsService,
                 logger
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
-            A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -148,6 +147,7 @@
                 LastName = "User",
                 Email = Email,
                 JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
             };
             var parameterName = typeof(MyAccountController).GetMethod("Index")?.GetParameters()
                 .SingleOrDefault(p => p.ParameterType == typeof(DlsSubApplication))?.Name;
@@ -188,7 +188,6 @@
                 ).WithDefaultContext()
                 .WithMockUser(true, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
-            A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -206,6 +205,7 @@
                 LastName = "User",
                 Email = Email,
                 JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
                 ReturnUrl = returnUrl,
             };
 
@@ -230,7 +230,6 @@
                 ).WithDefaultContext()
                 .WithMockUser(true, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
-            A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -248,6 +247,7 @@
                 LastName = "User",
                 Email = Email,
                 JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
                 ReturnUrl = "/TrackingSystem/Centre/Dashboard",
             };
             var parameterName = typeof(MyAccountController).GetMethod("Index")?.GetParameters()

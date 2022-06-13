@@ -1,12 +1,10 @@
-﻿@using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.MyAccount
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @model NotificationPreferencesViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/notificationPreferences.css")" asp-append-version="true">
 
 @{
-  ViewData["Title"] = "Notification Preferences";
+  ViewData["Title"] = "Notification preferences";
   var routeParamsForIndexLink = new Dictionary<string, string?> {
     { "dlsSubApplication", Model.DlsSubApplication.UrlSegment },
   };

@@ -49,6 +49,7 @@
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
+            var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
             var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
                 supervisor =>
                 {
@@ -61,7 +62,8 @@
                             searchString,
                             sortBy,
                             sortDirection
-                        )
+                        ),
+                        isSupervisor
                     );
                 }
             );
@@ -153,6 +155,17 @@
             }
         }
 
+        public IActionResult ConfirmSupervise(int supervisorDelegateId)
+        {
+            var adminId = GetAdminID();
+            if (supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, 0, adminId))
+            {
+                frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, adminId, 0);
+            }
+
+            return RedirectToAction("MyStaffList");
+        }
+
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {
@@ -205,7 +218,8 @@
                     return supervisor;
                 }
             );
-            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts);
+            var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
+            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts, isSupervisor);
             return View("AllStaffList", model);
         }
 
@@ -363,11 +377,9 @@
             {
                 DelegateSelfAssessment = delegateSelfAssessment,
                 SupervisorDelegate = supervisorDelegate,
-                SupervisorName = supervisorDelegate.SupervisorName,
                 Competency = competency,
                 ResultSupervisorVerificationId = assessmentQuestion.SelfAssessmentResultSupervisorVerificationId,
                 SupervisorComments = assessmentQuestion.SupervisorComments,
-                Verified = assessmentQuestion.Verified,
                 SignedOff = assessmentQuestion.SignedOff != null ? (bool)assessmentQuestion.SignedOff : false
             };
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;

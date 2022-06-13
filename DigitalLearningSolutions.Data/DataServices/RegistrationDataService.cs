@@ -41,8 +41,6 @@
 
         public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
         {
-            // TODO HEEDLS-900: this method previously returned error codes as well as candidate numbers.
-            // any code that calls it and handled those errors on the basis of the codes needs to be updated
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
 
@@ -337,6 +335,7 @@
                 candidateValues,
                 transaction
             );
+
             return (delegateId, candidateNumber);
         }
     }

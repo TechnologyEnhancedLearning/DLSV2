@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -27,13 +26,13 @@
     {
         private const string IpAddress = "1.1.1.1";
         private const int SupervisorDelegateId = 1;
-
-        private PromptsService promptsService = null!;
         private ICentresDataService centresDataService = null!;
         private RegisterController controller = null!;
         private ICryptoService cryptoService = null!;
         private IFeatureManager featureManager = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+
+        private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
@@ -69,66 +68,26 @@
         }
 
         [Test]
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        [TestCase(true, true)]
-        public void PersonalInformationPost_with_invalid_emails_fails_validation(bool primaryInUse, bool secondaryInUse)
+        public void PersonalInformationPost_does_not_continue_to_next_page_with_invalid_model()
         {
             // Given
             controller.TempData.Set(new DelegateRegistrationData());
-            var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
             var model = new PersonalInformationViewModel
             {
                 FirstName = "Test",
                 LastName = "User",
-                Centre = duplicateUser.CentreId,
-                PrimaryEmail = duplicateUser.EmailAddress,
-                CentreSpecificEmail = "centre email",
+                Centre = 7,
+                PrimaryEmail = "primary@email",
+                CentreSpecificEmail = "centre@email",
             };
-            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
-                .Returns(primaryInUse);
-            A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
-                .Returns(secondaryInUse);
+            controller.ModelState.AddModelError(nameof(PersonalInformationViewModel.PrimaryEmail), "error message");
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
-                .MustHaveHappened();
-            A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
-                .MustHaveHappened();
-            result.Should().BeViewResult().WithDefaultViewName();
-        }
-
-        [Test]
-        public void PersonalInformationPost_with_valid_emails_is_allowed()
-        {
-            // Given
-            controller.TempData.Set(new DelegateRegistrationData());
-            var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
-            var model = new PersonalInformationViewModel
-            {
-                FirstName = "Test",
-                LastName = "User",
-                Centre = duplicateUser.CentreId + 1,
-                PrimaryEmail = duplicateUser.EmailAddress,
-                CentreSpecificEmail = "centre email",
-            };
-            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
-                .Returns(false);
-            A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
-                .Returns(false);
-
-            // When
-            var result = controller.PersonalInformation(model);
-
-            // Then
-            A.CallTo(() => userService.EmailIsInUse(model.PrimaryEmail!))
-                .MustHaveHappened();
-            A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
-                .MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
+            result.Should().BeViewResult().ModelAs<PersonalInformationViewModel>();
+            controller.ModelState.IsValid.Should().BeFalse();
         }
 
         [Test]
@@ -211,7 +170,8 @@
                                 d =>
                                     d.FirstName == data.FirstName &&
                                     d.LastName == data.LastName &&
-                                    d.PrimaryEmail == data.Email &&
+                                    d.PrimaryEmail == data.PrimaryEmail &&
+                                    d.CentreSpecificEmail == data.CentreSpecificEmail &&
                                     d.Centre == data.Centre &&
                                     d.JobGroup == data.JobGroup &&
                                     d.PasswordHash == data.PasswordHash &&

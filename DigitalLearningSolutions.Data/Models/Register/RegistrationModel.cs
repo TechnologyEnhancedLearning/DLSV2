@@ -5,7 +5,8 @@
         public RegistrationModel(
             string firstName,
             string lastName,
-            string email,
+            string primaryEmail,
+            string? centreSpecificEmail,
             int centre,
             string? passwordHash,
             bool active,
@@ -15,7 +16,8 @@
         {
             FirstName = firstName;
             LastName = lastName;
-            PrimaryEmail = email;
+            PrimaryEmail = primaryEmail;
+            CentreSpecificEmail = centreSpecificEmail;
             Centre = centre;
             PasswordHash = passwordHash;
             Active = active;

@@ -2,7 +2,7 @@
 @model SummaryViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Summary" : "Register Delegate - Summary";
+  ViewData["Title"] = errorHasOccurred ? "Error: Register delegate - Summary" : "Register delegate - Summary";
 }
 
 @section NavMenuItems {
@@ -47,7 +47,7 @@
           Email
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.Email
+          @Model.PrimaryEmail
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="PersonalInformation">

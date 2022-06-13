@@ -72,35 +72,35 @@
                         "Xavier",
                         "Quondam",
                         centre: 3,
-                        email: "fake1",
+                        primaryEmail: "fake1",
                         centreSpecificEmail: "XQfake1"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                         "Xavier",
                         "Quondam",
                         centre: 3,
-                        email: "fake2",
+                        primaryEmail: "fake2",
                         centreSpecificEmail: "XQfake2"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                         "Xavier",
                         "Quondam",
                         centre: 3,
-                        email: "fake3",
+                        primaryEmail: "fake3",
                         centreSpecificEmail: "XQfake3"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                         "Xavier",
                         "Quondam",
                         centre: 3,
-                        email: "fake4",
+                        primaryEmail: "fake4",
                         centreSpecificEmail: "XQfake4"
                     ),
                     RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                         "Xavier",
                         "Quondam",
                         centre: 3,
-                        email: "fake5",
+                        primaryEmail: "fake5",
                         centreSpecificEmail: "XQfake5"
                     ),
                 };

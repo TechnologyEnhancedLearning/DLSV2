@@ -50,20 +50,25 @@
         [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
-            var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetCandidateId();
-            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var centreId = User.GetCentreId();
+            var userId = User.GetUserIdKnownNotNull();
+            var userEntity = userService.GetUserById(userId)!;
+            var adminAccount =
+                userEntity.AdminAccounts.SingleOrDefault(aa => aa.CentreId == centreId);
+            var delegateAccount =
+                userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == centreId);
 
             var customPrompts =
-                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
-                    User.GetCentreId(),
-                    delegateUser
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
+                    centreId,
+                    delegateAccount
                 );
 
             var model = new MyAccountViewModel(
-                adminUser,
-                delegateUser,
-                userService.GetCentreEmail(User.GetUserId()!.Value, User.GetCentreId()),
+                userEntity.UserAccount,
+                delegateAccount,
+                (adminAccount?.CentreName ?? delegateAccount?.CentreName)!,
+                userService.GetCentreEmail(userId, centreId),
                 customPrompts,
                 dlsSubApplication
             );
@@ -80,19 +85,21 @@
             bool isCheckDetailsRedirect = false
         )
         {
-            var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetCandidateId();
-            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var centreId = User.GetCentreId();
+            var userId = User.GetUserIdKnownNotNull();
+            var userEntity = userService.GetUserById(userId)!;
+            var delegateAccount =
+                userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == centreId);
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateAccount, centreId);
 
             var model = new MyAccountEditDetailsViewModel(
-                adminUser,
-                delegateUser,
+                userEntity.UserAccount,
+                delegateAccount,
                 jobGroups,
-                userService.GetCentreEmail(User.GetUserId()!.Value, User.GetCentreId()),
+                userService.GetCentreEmail(userId, centreId),
                 customPrompts,
                 dlsSubApplication,
                 returnUrl,
@@ -126,7 +133,7 @@
         )
         {
             var userDelegateId = User.GetCandidateId();
-            var userId = User.GetUserId()!.Value;
+            var userId = User.GetUserIdKnownNotNull();
 
             if (userDelegateId.HasValue)
             {
@@ -144,8 +151,7 @@
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
                 ModelState,
                 formData.HasProfessionalRegistrationNumber,
-                formData.ProfessionalRegistrationNumber,
-                userDelegateId.HasValue
+                formData.ProfessionalRegistrationNumber
             );
 
             if (!ModelState.IsValid)
@@ -153,6 +159,7 @@
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
+            var emailsValid = true;
             if (!userService.NewEmailAddressIsValid(
                     formData.Email!,
                     userId
@@ -162,7 +169,7 @@
                     nameof(MyAccountEditDetailsFormData.Email),
                     CommonValidationErrorMessages.EmailAlreadyInUse
                 );
-                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
+                emailsValid = false;
             }
 
             if (!string.IsNullOrWhiteSpace(formData.CentreEmail) && !userService.NewEmailAddressIsValid(
@@ -174,6 +181,11 @@
                     nameof(MyAccountEditDetailsFormData.CentreEmail),
                     CommonValidationErrorMessages.EmailAlreadyInUse
                 );
+                emailsValid = false;
+            }
+
+            if (!emailsValid)
+            {
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 

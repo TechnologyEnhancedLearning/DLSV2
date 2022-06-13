@@ -14,7 +14,7 @@
             FirstName = data.FirstName;
             LastName = data.LastName;
             Centre = data.Centre;
-            PrimaryEmail = data.Email;
+            PrimaryEmail = data.PrimaryEmail;
             CentreSpecificEmail = data.CentreSpecificEmail;
         }
 
@@ -38,7 +38,7 @@
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]
         public string? LastName { get; set; }
 
-        [Required(ErrorMessage = "Enter an email")]
+        [Required(ErrorMessage = "Enter a primary email")]
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
