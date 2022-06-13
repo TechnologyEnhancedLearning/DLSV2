@@ -161,9 +161,9 @@
 
             var emailsValid = true;
             if (!userService.NewEmailAddressIsValid(
-                    formData.Email!,
-                    userId
-                ))
+                formData.Email!,
+                userId
+            ))
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
@@ -172,13 +172,13 @@
                 emailsValid = false;
             }
 
-            if (!string.IsNullOrWhiteSpace(formData.CentreEmail) && !userService.NewEmailAddressIsValid(
-                    formData.CentreEmail,
-                    userId
-                ))
+            if (!string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) && !userService.NewEmailAddressIsValid(
+                formData.CentreSpecificEmail,
+                userId
+            ))
             {
                 ModelState.AddModelError(
-                    nameof(MyAccountEditDetailsFormData.CentreEmail),
+                    nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),
                     CommonValidationErrorMessages.EmailAlreadyInUse
                 );
                 emailsValid = false;
@@ -197,7 +197,7 @@
             userService.UpdateUserDetailsAndCentreSpecificDetails(
                 accountDetailsData,
                 delegateDetailsData,
-                formData.CentreEmail,
+                formData.CentreSpecificEmail,
                 User.GetCentreId()
             );
 

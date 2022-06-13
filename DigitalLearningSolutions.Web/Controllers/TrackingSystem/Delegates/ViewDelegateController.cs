@@ -28,9 +28,11 @@
         private readonly IPasswordResetService passwordResetService;
         private readonly PromptsService promptsService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public ViewDelegateController(
             IUserDataService userDataService,
+            IUserService userService,
             PromptsService promptsService,
             ICourseService courseService,
             IPasswordResetService passwordResetService,
@@ -38,6 +40,7 @@
         )
         {
             this.userDataService = userDataService;
+            this.userService = userService;
             this.promptsService = promptsService;
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
@@ -48,7 +51,7 @@
         {
             var centreId = User.GetCentreId();
 
-            var delegateUser = userDataService.GetDelegateById(delegateId)!;
+            var delegateUser = userService.GetDelegateById(delegateId)!;
 
             if (delegateUser == null)
             {

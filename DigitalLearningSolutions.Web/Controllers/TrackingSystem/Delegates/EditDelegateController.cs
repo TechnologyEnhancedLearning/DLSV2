@@ -77,16 +77,16 @@
 
             var delegateUser = userService.GetDelegateById(delegateId);
 
-            if (formData.CentreEmail == delegateUser!.UserAccount.PrimaryEmail ||
-                string.IsNullOrWhiteSpace(formData.CentreEmail))
+            if (formData.CentreSpecificEmail == delegateUser!.UserAccount.PrimaryEmail ||
+                string.IsNullOrWhiteSpace(formData.CentreSpecificEmail))
             {
-                formData.CentreEmail = null;
+                formData.CentreSpecificEmail = null;
             }
 
-            if (!userService.NewEmailAddressIsValid(formData.Email!, delegateUser!.UserAccount.Id))
+            if (!userService.NewEmailAddressIsValid(formData.CentreSpecificEmail!, delegateUser!.UserAccount.Id))
             {
                 ModelState.AddModelError(
-                    nameof(EditDetailsFormData.Email),
+                    nameof(EditDetailsFormData.CentreSpecificEmail),
                     CommonValidationErrorMessages.EmailAlreadyInUse
                 );
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
@@ -101,7 +101,7 @@
             userService.UpdateUserDetailsAndCentreSpecificDetails(
                 editDelegateDetailsData,
                 delegateDetailsData,
-                formData.CentreEmail,
+                formData.CentreSpecificEmail,
                 centreId
             );
 

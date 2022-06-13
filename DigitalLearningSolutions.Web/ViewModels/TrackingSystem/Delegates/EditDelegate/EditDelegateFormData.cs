@@ -16,7 +16,7 @@
             FirstName = delegateUser.UserAccount.FirstName;
             LastName = delegateUser.UserAccount.LastName;
             Email = delegateUser.UserAccount.PrimaryEmail;
-            CentreEmail = delegateUser.UserCentreDetails?.Email ?? delegateUser.UserAccount.PrimaryEmail;
+            CentreSpecificEmail = delegateUser.UserCentreDetails?.Email ?? delegateUser.UserAccount.PrimaryEmail;
 
             JobGroupId = jobGroups.Where(jg => jg.name == delegateUser.UserAccount.JobGroupName).Select(jg => jg.id)
                 .SingleOrDefault();
@@ -42,7 +42,7 @@
             FirstName = formData.FirstName;
             LastName = formData.LastName;
             Email = formData.Email;
-            CentreEmail = formData.CentreEmail;
+            CentreSpecificEmail = formData.CentreSpecificEmail;
             JobGroupId = formData.JobGroupId;
             Answer1 = formData.Answer1;
             Answer2 = formData.Answer2;
