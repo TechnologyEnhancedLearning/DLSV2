@@ -33,7 +33,9 @@
                 var centreAccountSet = DelegateAccounts.Select(
                     delegateAccount => new CentreAccountSet(
                         delegateAccount.CentreId,
-                        AdminAccounts.FirstOrDefault(adminAccount => adminAccount.CentreId == delegateAccount.CentreId),
+                        AdminAccounts.SingleOrDefault(
+                            adminAccount => adminAccount.CentreId == delegateAccount.CentreId
+                        ),
                         delegateAccount
                     )
                 ).ToList();

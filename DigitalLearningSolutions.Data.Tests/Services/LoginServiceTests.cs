@@ -406,8 +406,8 @@
                 new List<ChooseACentreAccount>
                 {
                     new ChooseACentreAccount(1, "admin+delegate", true, true, true, true, true),
-                    new ChooseACentreAccount(2, "admin inactive centre", false, true),
-                    new ChooseACentreAccount(3, "inactive delegate", true, false, true, true),
+                    new ChooseACentreAccount(2, "admin inactive centre", false, true, false, false, false),
+                    new ChooseACentreAccount(3, "inactive delegate", true, false, true, true, false),
                     new ChooseACentreAccount(4, "unapproved delegate", true, false, true, false, true),
                     new ChooseACentreAccount(5, "admin+unapproved delegate", true, true, true, false, true),
                 }

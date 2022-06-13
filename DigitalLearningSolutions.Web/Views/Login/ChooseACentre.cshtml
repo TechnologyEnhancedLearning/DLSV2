@@ -1,4 +1,5 @@
 @using DigitalLearningSolutions.Web.ViewModels.Login
+@using DigitalLearningSolutions.Data.Enums
 @model ChooseACentreViewModel
 @{
   ViewData["Title"] = "Choose A Centre";
@@ -20,7 +21,7 @@
         Please choose the centre you would like to sign in to.
       </p>
 
-      @if (Model.CentreUserDetails.Any(centreRow => centreRow.IsDelegateUnapproved)) {
+      @if (Model.CentreUserDetails.Any(centreRow => centreRow.IsUnapprovedDelegate)) {
         <vc:inset-text css-class="" text="You have an unapproved delegate account. You will receive an email at the address you registered with when your registration has been approved." />
       }
 
@@ -50,7 +51,7 @@
             </td>
             <td role="cell" class="nhsuk-table__cell choose-centre-td">
               <span class="nhsuk-table-responsive__heading">Status: </span>
-              <strong class="nhsuk-tag nhsuk-tag--@centreRow.StatusTag["Colour"]">@centreRow.StatusTag["Label"]</strong>
+              <strong class="nhsuk-tag nhsuk-tag--@centreRow.Status.TagColour">@centreRow.Status.TagLabel</strong>
             </td>
             <td role="cell" class="nhsuk-table__cell choose-centre-td">
               <span class="nhsuk-table-responsive__heading">Roles: </span>
@@ -64,7 +65,7 @@
               </div>
             </td>
             <td role="cell" class="nhsuk-table__cell choose-centre-td">
-              @if (centreRow.ActionButton == "Choose") {
+              @if (centreRow.Status.ActionButton == ChooseACentreButton.Choose) {
                 <form method="POST" asp-action="ChooseCentre">
                   <input type="hidden" name="centreId" value="@centreRow.CentreId" />
                   <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
@@ -72,7 +73,7 @@
                     Choose <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
                   </button>
                 </form>
-              } else if (centreRow.ActionButton == "Reactivate") {
+              } else if (centreRow.Status.ActionButton == ChooseACentreButton.Reactivate) {
                 @* TODO HEEDLS-906: Link to Reactivate centre account page *@
                 <button class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0">
                   Reactivate <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
@@ -87,7 +88,7 @@
       <p>You have no centre accounts.</p>
     }
 
-    @* TODO HEEDLS-879: Link to Switch centre page *@
+    @* TODO HEEDLS-877: Link to internal delegate self-registration centre page *@
     <a role="button" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4 nhsuk-u-margin-top-0">
       Register at a new centre
     </a>

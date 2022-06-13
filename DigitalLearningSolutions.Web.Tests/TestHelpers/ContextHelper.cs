@@ -82,15 +82,17 @@
                 new ClaimsIdentity(
                     new[]
                     {
-                        new Claim(CustomClaimTypes.UserCentreId, centreId?.ToString() ?? "False"),
-                        new Claim(CustomClaimTypes.UserAdminId, adminId?.ToString() ?? "False"),
-                        new Claim(CustomClaimTypes.LearnCandidateId, delegateId?.ToString() ?? "False"),
+                        centreId == null ? null : new Claim(CustomClaimTypes.UserCentreId, centreId.ToString()),
+                        adminId == null ? null : new Claim(CustomClaimTypes.UserAdminId, adminId.ToString()),
+                        delegateId == null ? null : new Claim(CustomClaimTypes.LearnCandidateId, delegateId.ToString()),
                         new Claim(CustomClaimTypes.LearnUserAuthenticated, delegateId != null ? "True" : "False"),
-                        new Claim(ClaimTypes.Email, emailAddress ?? string.Empty),
+                        emailAddress == null ? null : new Claim(ClaimTypes.Email, emailAddress),
                         new Claim(CustomClaimTypes.UserCentreAdmin, isCentreAdmin.ToString()),
                         new Claim(CustomClaimTypes.IsFrameworkDeveloper, isFrameworkDeveloper.ToString()),
-                        new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId?.ToString() ?? "False"),
-                        new Claim(CustomClaimTypes.UserId, userId?.ToString() ?? "False"),
+                        adminCategoryId == null
+                            ? null
+                            : new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId.ToString()),
+                        userId == null ? null : new Claim(CustomClaimTypes.UserId, userId.ToString()),
                     },
                     authenticationType
                 )

@@ -13,16 +13,53 @@
             int centreIdToLogInto
         )
         {
-            var centreAccountSet = userEntity.GetCentreAccountSet(centreIdToLogInto)!;
+            var centreAccountSet = userEntity.GetCentreAccountSet(centreIdToLogInto);
+
+            if (!(centreAccountSet is { CanLogInToCentre: true }))
+            {
+                throw new LoginWithNoValidAccountException(
+                    $"No active admin account or active, approved delegate account at centre {centreIdToLogInto} for user {userEntity.UserAccount.Id}"
+                );
+            }
+
             var userCentreClaims = GetClaimsForUserCentre(centreAccountSet);
 
-            var adminAccount = centreAccountSet.ActiveAdminAccount;
-            var delegateAccount = centreAccountSet.ActiveApprovedDelegateAccount;
+            var adminAccount = centreAccountSet.CanLogIntoAdminAccount ? centreAccountSet.AdminAccount : null;
+            var delegateAccount = centreAccountSet.CanLogIntoDelegateAccount ? centreAccountSet.DelegateAccount : null;
 
             var basicClaims = GetClaimsForCentrelessSignIn(userEntity.UserAccount);
             var adminClaims = GetAdminSpecificClaimsForSignIn(adminAccount);
             var delegateClaims = GetDelegateSpecificClaimsForSignIn(delegateAccount);
+            var permissionClaims = GetPermissionClaimsForSignIn(adminAccount, delegateAccount);
 
+            return basicClaims
+                .Concat(userCentreClaims)
+                .Concat(adminClaims)
+                .Concat(delegateClaims)
+                .Concat(permissionClaims)
+                .ToList();
+        }
+
+        public static List<Claim> GetClaimsForCentrelessSignIn(
+            UserAccount userAccount
+        )
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, userAccount.PrimaryEmail),
+                new Claim(CustomClaimTypes.UserId, userAccount.Id.ToString()),
+                new Claim(CustomClaimTypes.UserForename, userAccount.FirstName),
+                new Claim(CustomClaimTypes.UserSurname, userAccount.LastName),
+            };
+
+            return claims;
+        }
+
+        private static List<Claim> GetPermissionClaimsForSignIn(
+            AdminAccount? adminAccount,
+            DelegateAccount? delegateAccount
+        )
+        {
             var claims = new List<Claim>
             {
                 new Claim(CustomClaimTypes.UserCentreManager, adminAccount?.IsCentreManager.ToString() ?? "False"),
@@ -53,35 +90,11 @@
                     adminAccount?.IsLocalWorkforceManager.ToString() ?? "False"
                 ),
             };
-
-            return basicClaims.Concat(userCentreClaims).Concat(adminClaims).Concat(delegateClaims).Concat(claims)
-                .ToList();
-        }
-
-        public static List<Claim> GetClaimsForCentrelessSignIn(
-            UserAccount userAccount
-        )
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, userAccount.PrimaryEmail),
-                new Claim(CustomClaimTypes.UserId, userAccount.Id.ToString()),
-                new Claim(CustomClaimTypes.UserForename, userAccount.FirstName),
-                new Claim(CustomClaimTypes.UserSurname, userAccount.LastName),
-            };
-
             return claims;
         }
 
         private static IEnumerable<Claim> GetClaimsForUserCentre(CentreAccountSet centreAccountSet)
         {
-            if (!centreAccountSet.CanLogInToCentre)
-            {
-                throw new LoginWithNoValidAccountException(
-                    $"No active admin account or active, approved delegate account at centre {centreAccountSet.CentreId}"
-                );
-            }
-
             return new List<Claim>
             {
                 new Claim(CustomClaimTypes.UserCentreId, centreAccountSet.CentreId.ToString()),

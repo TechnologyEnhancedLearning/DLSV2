@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Models.User
 {
+    using System;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
@@ -23,7 +24,6 @@
         [TestCase(null, false, true, false)]
         [TestCase(null, true, false, false)]
         [TestCase(null, false, false, false)]
-        [TestCase(null, null, false, false)]
         public void CanLogInToCentre_returns_expected_value_when_centre_is_active(
             bool? activeAdmin,
             bool? activeDelegate,
@@ -60,7 +60,6 @@
         [TestCase(null, false, true, false)]
         [TestCase(null, true, false, false)]
         [TestCase(null, false, false, false)]
-        [TestCase(null, null, false, false)]
         public void CanLogDirectlyInToCentre_returns_expected_value_when_centre_is_active(
             bool? activeAdmin,
             bool? activeDelegate,
@@ -79,6 +78,20 @@
 
             // Then
             result.CanLogDirectlyInToCentre.Should().Be(expectedResult);
+        }
+
+        [Test]
+        public void
+            CentreAccountSet_constructor_throws_InvalidOperationException_if_admin_and_delegate_accounts_are_both_null()
+        {
+            // When
+            void MethodBeingTested()
+            {
+                var _ = new CentreAccountSet(2);
+            }
+
+            // Then
+            Assert.Throws<InvalidOperationException>(MethodBeingTested);
         }
     }
 }

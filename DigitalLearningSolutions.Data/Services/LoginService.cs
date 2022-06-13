@@ -70,7 +70,7 @@
             ).Select(
                 centreAccountSet => new ChooseACentreAccount(
                     centreAccountSet.CentreId,
-                    centreAccountSet.CentreName!,
+                    centreAccountSet.CentreName,
                     centreAccountSet.IsCentreActive,
                     centreAccountSet.AdminAccount?.Active == true,
                     centreAccountSet.DelegateAccount != null,
