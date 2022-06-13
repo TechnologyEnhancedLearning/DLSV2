@@ -120,7 +120,7 @@
                 END AS CentreID,
                 CASE
                     WHEN ucd.Email IS NOT NULL THEN ucd.Email
-                    ELSE ''
+                    ELSE NULL
                 END AS Email,
                 CASE
                     WHEN ucd.EmailVerified IS NOT NULL THEN ucd.EmailVerified

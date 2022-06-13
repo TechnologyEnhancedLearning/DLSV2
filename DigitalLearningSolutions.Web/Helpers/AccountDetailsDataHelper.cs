@@ -88,15 +88,17 @@
                 profileImage
             );
 
-            var delegateDetailsData = new DelegateDetailsData(
-                userDelegateId.Value,
-                answer1,
-                answer2,
-                answer3,
-                answer4,
-                answer5,
-                answer6
-            );
+            var delegateDetailsData = userDelegateId == null
+                ? null
+                : new DelegateDetailsData(
+                    userDelegateId.Value,
+                    answer1,
+                    answer2,
+                    answer3,
+                    answer4,
+                    answer5,
+                    answer6
+                );
             return (accountDetailsData, delegateDetailsData);
         }
     }

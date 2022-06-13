@@ -77,7 +77,8 @@
 
             var delegateUser = userService.GetDelegateById(delegateId);
 
-            if (formData.CentreEmail == delegateUser!.UserAccount.PrimaryEmail)
+            if (formData.CentreEmail == delegateUser!.UserAccount.PrimaryEmail ||
+                string.IsNullOrWhiteSpace(formData.CentreEmail))
             {
                 formData.CentreEmail = null;
             }
