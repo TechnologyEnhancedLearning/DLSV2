@@ -426,10 +426,21 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void RegisterCentreManager_calls_all_relevant_registration_methods()
         {
             // Given
-            var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+            const int userId = 123;
+            var centreManagerModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+            var delegateModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+
+            A.CallTo(
+                () => userDataService.GetDelegateUserByCandidateNumber(
+                    NewCandidateNumber,
+                    delegateModel.Centre
+                )
+            ).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(userId);
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(centreManagerModel, 1);
 
             // Then
             A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(A<DelegateRegistrationModel>._))
@@ -437,12 +448,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
-            ).MustHaveHappened(1, Times.Exactly);
-            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
-            A.CallTo(() => registrationDataService.RegisterAdmin(model, 0))
-                .MustHaveHappened(1, Times.Exactly);
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(() => registrationDataService.RegisterAdmin(centreManagerModel, userId))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
-                .MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -450,8 +460,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+            var exception = new DelegateCreationFailedException(
+                "error message",
+                DelegateCreationError.EmailAlreadyInUse
+            );
             A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(A<DelegateRegistrationModel>._))
-                .Returns("-1");
+                .Throws(exception);
 
             // When
             Action act = () => registrationService.RegisterCentreManager(model, 1);
@@ -465,8 +479,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+            var exception = new DelegateCreationFailedException(
+                "error message",
+                DelegateCreationError.EmailAlreadyInUse
+            );
             A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(A<DelegateRegistrationModel>._))
-                .Returns("-1");
+                .Throws(exception);
 
             // When
             Action act = () => registrationService.RegisterCentreManager(model, 1);
@@ -479,8 +497,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
-            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
-            A.CallTo(() => registrationDataService.RegisterAdmin(model, 0))
+            A.CallTo(() => registrationDataService.RegisterAdmin(model, A<int>._))
                 .MustNotHaveHappened();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustNotHaveHappened();
@@ -710,13 +727,16 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void PromoteDelegateToAdmin_calls_data_service_with_expected_value()
         {
             // Given
+            const int userId = 123;
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(null);
+            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(userId);
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1);
+            registrationService.PromoteDelegateToAdmin(adminRoles, 1, delegateUser.Id);
 
             // Then
             A.CallTo(
@@ -738,8 +758,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                             a.IsTrainer == adminRoles.IsTrainer &&
                             a.IsSupervisor == adminRoles.IsSupervisor
                     ),
-                    // TODO HEEDLS-900 these user IDs are placeholders and should be updated
-                    0
+                    userId
                 )
             ).MustHaveHappened();
         }

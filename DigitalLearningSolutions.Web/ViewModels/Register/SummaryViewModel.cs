@@ -13,8 +13,8 @@
         {
             FirstName = data.FirstName;
             LastName = data.LastName;
-            Email = data.Email;
-            SecondaryEmail = data.SecondaryEmail;
+            PrimaryEmail = data.PrimaryEmail;
+            CentreSpecificEmail = data.CentreSpecificEmail;
             ProfessionalRegistrationNumber = data.ProfessionalRegistrationNumber ?? "Not professionally registered";
             HasProfessionalRegistrationNumber = data.HasProfessionalRegistrationNumber;
         }
@@ -26,8 +26,8 @@
 
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public string? Email { get; set; }
-        public string? SecondaryEmail { get; set; }
+        public string? PrimaryEmail { get; set; }
+        public string? CentreSpecificEmail { get; set; }
         public string? Centre { get; set; }
         public string? JobGroup { get; set; }
         public bool Terms { get; set; }

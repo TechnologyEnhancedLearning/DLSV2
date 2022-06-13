@@ -113,5 +113,37 @@
             // Then
             result.Should().HaveCount(10);
         }
+
+        [Test]
+        [TestCase("centre@email")]
+        [TestCase("CENTRE@EMAIL")]
+        public void DoesEmailMatchCentre_calls_dataService_and_returns_true_if_email_matches_case_insensitively(
+            string centreEmail
+        )
+        {
+            // Given
+            const int centreId = 1;
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((true, centreEmail));
+
+            // When
+            var result = centresService.DoesEmailMatchCentre(centreEmail, centreId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void DoesEmailMatchCentre_calls_dataService_and_returns_false_if_email_does_not_match()
+        {
+            // Given
+            const int centreId = 1;
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((true, "different@email"));
+
+            // When
+            var result = centresService.DoesEmailMatchCentre("centre@email", centreId);
+
+            // Then
+            result.Should().BeFalse();
+        }
     }
 }

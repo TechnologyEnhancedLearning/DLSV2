@@ -124,6 +124,8 @@
 
         int? GetUserIdFromUsername(string username);
 
+        int GetUserIdFromDelegateId(int delegateId);
+
         UserAccount? GetUserAccountById(int userId);
 
         UserAccount? GetUserAccountByEmailAddress(string emailAddress);
@@ -146,8 +148,6 @@
 
     public partial class UserDataService : IUserDataService
     {
-        private readonly IDbConnection connection;
-
         private const string BaseSelectUserQuery =
             @"SELECT
                 u.ID,
@@ -170,6 +170,8 @@
                 u.DetailsLastChecked
             FROM Users AS u
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+
+        private readonly IDbConnection connection;
 
         public UserDataService(IDbConnection connection)
         {
@@ -194,6 +196,21 @@
             }
 
             return userIds.SingleOrDefault();
+        }
+
+        public int GetUserIdFromDelegateId(int delegateId)
+        {
+            var userId = connection.QuerySingle<int?>(
+                @"SELECT UserID FROM DelegateAccounts WHERE ID = @delegateId",
+                new { delegateId }
+            );
+
+            if (userId == null)
+            {
+                throw new UserAccountNotFoundException("No Delegate found with DelegateID: " + delegateId);
+            }
+
+            return userId.Value;
         }
 
         public UserAccount? GetUserAccountById(int userId)

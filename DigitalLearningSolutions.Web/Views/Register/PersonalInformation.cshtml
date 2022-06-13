@@ -11,7 +11,7 @@
 
       @if (errorHasOccurred)
       {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail), nameof(Model.SecondaryEmail) })" />
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail), nameof(Model.CentreSpecificEmail) })" />
       }
 
       <div class="nhsuk-u-margin-bottom-8">
@@ -81,7 +81,7 @@
                      autocomplete="email"
                      css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input asp-for="SecondaryEmail"
+      <vc:text-input asp-for="CentreSpecificEmail"
                      label="Centre email (optional)"
                      populate-with-current-value="true"
                      type="text"
