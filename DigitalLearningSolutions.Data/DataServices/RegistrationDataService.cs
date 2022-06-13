@@ -10,9 +10,7 @@
 
     public interface IRegistrationDataService
     {
-        string RegisterNewUserAndDelegateAccount(
-            DelegateRegistrationModel delegateRegistrationModel
-        );
+        string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel);
 
         (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(
             DelegateRegistrationModel delegateRegistrationModel,
@@ -41,9 +39,7 @@
             this.clockService = clockService;
         }
 
-        public string RegisterNewUserAndDelegateAccount(
-            DelegateRegistrationModel delegateRegistrationModel
-        )
+        public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
         {
             // TODO HEEDLS-900: this method previously returned error codes as well as candidate numbers.
             // any code that calls it and handled those errors on the basis of the codes needs to be updated
