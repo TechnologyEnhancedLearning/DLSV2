@@ -19,7 +19,6 @@
             LastName = delegateUser.UserAccount.LastName;
             EmailAddress = delegateUser.UserCentreDetails?.Email ?? delegateUser.UserAccount.PrimaryEmail;
             Password = delegateUser.UserAccount.PasswordHash;
-
             CandidateNumber = delegateUser.DelegateAccount.CandidateNumber;
             DateRegistered = delegateUser.DelegateAccount.DateRegistered;
             JobGroupId = delegateUser.UserAccount.JobGroupId;

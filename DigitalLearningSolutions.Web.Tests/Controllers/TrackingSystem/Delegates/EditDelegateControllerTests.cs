@@ -231,7 +231,7 @@
                         A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         null,
-                        A<int>._
+                        delegateUser.DelegateAccount.CentreId
                     )
                 ).MustHaveHappened();
                 result.Should().BeRedirectToActionResult().WithControllerName("ViewDelegate").WithActionName("Index");
