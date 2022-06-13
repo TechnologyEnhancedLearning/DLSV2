@@ -18,7 +18,7 @@
                 formData.LastName!,
                 formData.Email!,
                 formData.JobGroupId!.Value,
-                formData.HasProfessionalRegistrationNumber.HasValue,
+                formData.HasProfessionalRegistrationNumber,
                 formData.ProfessionalRegistrationNumber,
                 userDelegateId,
                 formData.ProfileImage,
@@ -44,7 +44,7 @@
                 formData.LastName!,
                 formData.Email!,
                 formData.JobGroupId!.Value,
-                formData.HasProfessionalRegistrationNumber.HasValue,
+                formData.HasProfessionalRegistrationNumber,
                 formData.ProfessionalRegistrationNumber,
                 userDelegateId,
                 profileImage,
@@ -63,7 +63,7 @@
             string? lastName,
             string? email,
             int? jobGroupId,
-            bool hasProfessionalRegistrationNumber,
+            bool? hasProfessionalRegistrationNumber,
             string? professionalRegistrationNumber,
             int? userDelegateId,
             byte[]? profileImage,
@@ -81,10 +81,10 @@
                 lastName!,
                 email!,
                 jobGroupId!.Value,
-                hasProfessionalRegistrationNumber
+                hasProfessionalRegistrationNumber == true
                     ? professionalRegistrationNumber
                     : null,
-                hasProfessionalRegistrationNumber,
+                hasProfessionalRegistrationNumber.HasValue,
                 profileImage
             );
 
