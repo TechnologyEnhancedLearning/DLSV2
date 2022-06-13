@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using Delegate = DigitalLearningSolutions.Data.Models.User.Delegate;
 
     public class PromptsService
     {
