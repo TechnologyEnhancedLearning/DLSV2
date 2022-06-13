@@ -64,17 +64,18 @@
 
         public IEnumerable<ChooseACentreAccount> GetChooseACentreAccounts(UserEntity? userEntity)
         {
-            return userEntity!.CentreAccounts.Values.Where(
-                centreAccounts => centreAccounts.AdminAccount?.Active == true || centreAccounts.DelegateAccount != null
+            return userEntity!.CentreAccountSet.Values.Where(
+                centreAccountSet => centreAccountSet.AdminAccount?.Active == true ||
+                                    centreAccountSet.DelegateAccount != null
             ).Select(
-                centreAccounts => new ChooseACentreAccount(
-                    centreAccounts.CentreId,
-                    centreAccounts.CentreName!,
-                    centreAccounts.IsCentreActive,
-                    centreAccounts.AdminAccount?.Active == true,
-                    centreAccounts.DelegateAccount != null,
-                    centreAccounts.DelegateAccount?.Approved ?? false,
-                    centreAccounts.DelegateAccount?.Active ?? false
+                centreAccountSet => new ChooseACentreAccount(
+                    centreAccountSet.CentreId,
+                    centreAccountSet.CentreName!,
+                    centreAccountSet.IsCentreActive,
+                    centreAccountSet.AdminAccount?.Active == true,
+                    centreAccountSet.DelegateAccount != null,
+                    centreAccountSet.DelegateAccount?.Approved ?? false,
+                    centreAccountSet.DelegateAccount?.Active ?? false
                 )
             );
         }
@@ -96,7 +97,7 @@
             // Determine if there is only a single account
             if (userEntity.IsSingleCentreAccount)
             {
-                var accountsToLogInto = userEntity.CentreAccounts.Values.First();
+                var accountsToLogInto = userEntity.CentreAccountSet.Values.First();
 
                 return accountsToLogInto.CanLogDirectlyInToCentre ? accountsToLogInto.CentreId : null as int?;
             }

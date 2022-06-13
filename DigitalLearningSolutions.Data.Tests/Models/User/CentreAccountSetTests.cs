@@ -5,7 +5,7 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class UserCentreAccountsTests
+    public class CentreAccountSetTests
     {
         [Test]
         // Note: the value of approvedDelegate has no effect when activeDelegate is null
@@ -32,7 +32,7 @@
         )
         {
             // When
-            var result = new UserCentreAccounts(
+            var result = new CentreAccountSet(
                 2,
                 activeAdmin == null ? null : UserTestHelper.GetDefaultAdminAccount(active: activeAdmin.Value),
                 activeDelegate == null
@@ -69,7 +69,7 @@
         )
         {
             // When
-            var result = new UserCentreAccounts(
+            var result = new CentreAccountSet(
                 2,
                 activeAdmin == null ? null : UserTestHelper.GetDefaultAdminAccount(active: activeAdmin.Value),
                 activeDelegate == null

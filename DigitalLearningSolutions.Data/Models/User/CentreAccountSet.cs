@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
-    public class UserCentreAccounts
+    public class CentreAccountSet
     {
-        public UserCentreAccounts(
+        public CentreAccountSet(
             int centreId,
             AdminAccount? adminAccount = null,
             DelegateAccount? delegateAccount = null

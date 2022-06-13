@@ -26,12 +26,12 @@
         public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold &&
                                 AdminAccounts.Any() && !AllAdminAccountsInactive;
 
-        public IDictionary<int, UserCentreAccounts> CentreAccounts
+        public IDictionary<int, CentreAccountSet> CentreAccountSet
         {
             get
             {
-                var centreAccounts = DelegateAccounts.Select(
-                    delegateAccount => new UserCentreAccounts(
+                var centreAccountSet = DelegateAccounts.Select(
+                    delegateAccount => new CentreAccountSet(
                         delegateAccount.CentreId,
                         AdminAccounts.FirstOrDefault(adminAccount => adminAccount.CentreId == delegateAccount.CentreId),
                         delegateAccount
@@ -39,23 +39,23 @@
                 ).ToList();
 
                 var adminOnlyAccounts = AdminAccounts.Where(
-                    aa => centreAccounts.All(account => account.CentreId != aa.CentreId)
+                    aa => centreAccountSet.All(account => account.CentreId != aa.CentreId)
                 );
 
-                centreAccounts.AddRange(
-                    adminOnlyAccounts.Select(account => new UserCentreAccounts(account.CentreId, account))
+                centreAccountSet.AddRange(
+                    adminOnlyAccounts.Select(account => new CentreAccountSet(account.CentreId, account))
                 );
 
-                return centreAccounts.ToDictionary(accounts => accounts.CentreId);
+                return centreAccountSet.ToDictionary(accounts => accounts.CentreId);
             }
         }
 
-        public UserCentreAccounts? GetCentreAccounts(int centreId)
+        public CentreAccountSet? GetCentreAccountSet(int centreId)
         {
-            CentreAccounts.TryGetValue(centreId, out var centreAccounts);
-            return centreAccounts;
+            CentreAccountSet.TryGetValue(centreId, out var centreAccountSet);
+            return centreAccountSet;
         }
 
-        public bool IsSingleCentreAccount => CentreAccounts.Count == 1;
+        public bool IsSingleCentreAccount => CentreAccountSet.Count == 1;
     }
 }

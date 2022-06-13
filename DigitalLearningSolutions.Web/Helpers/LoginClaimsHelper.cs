@@ -13,11 +13,11 @@
             int centreIdToLogInto
         )
         {
-            var centreAccounts = userEntity.GetCentreAccounts(centreIdToLogInto)!;
-            var userCentreClaims = GetClaimsForUserCentre(centreAccounts);
+            var centreAccountSet = userEntity.GetCentreAccountSet(centreIdToLogInto)!;
+            var userCentreClaims = GetClaimsForUserCentre(centreAccountSet);
 
-            var adminAccount = centreAccounts.ActiveAdminAccount;
-            var delegateAccount = centreAccounts.ActiveApprovedDelegateAccount;
+            var adminAccount = centreAccountSet.ActiveAdminAccount;
+            var delegateAccount = centreAccountSet.ActiveApprovedDelegateAccount;
 
             var basicClaims = GetClaimsForCentrelessSignIn(userEntity.UserAccount);
             var adminClaims = GetAdminSpecificClaimsForSignIn(adminAccount);
@@ -73,19 +73,19 @@
             return claims;
         }
 
-        private static IEnumerable<Claim> GetClaimsForUserCentre(UserCentreAccounts centreAccounts)
+        private static IEnumerable<Claim> GetClaimsForUserCentre(CentreAccountSet centreAccountSet)
         {
-            if (!centreAccounts.CanLogInToCentre)
+            if (!centreAccountSet.CanLogInToCentre)
             {
                 throw new LoginWithNoValidAccountException(
-                    $"No active admin account or active, approved delegate account at centre {centreAccounts.CentreId}"
+                    $"No active admin account or active, approved delegate account at centre {centreAccountSet.CentreId}"
                 );
             }
 
             return new List<Claim>
             {
-                new Claim(CustomClaimTypes.UserCentreId, centreAccounts.CentreId.ToString()),
-                new Claim(CustomClaimTypes.UserCentreName, centreAccounts.CentreName),
+                new Claim(CustomClaimTypes.UserCentreId, centreAccountSet.CentreId.ToString()),
+                new Claim(CustomClaimTypes.UserCentreName, centreAccountSet.CentreName),
             };
         }
 
