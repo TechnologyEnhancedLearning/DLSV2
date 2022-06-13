@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/myAccount.css")" asp-append-version="true">
 
 @{
-  ViewData["Title"] = "My Account";
+  ViewData["Title"] = "My account";
   ViewData["Application"] = Model.DlsSubApplication.HeaderExtension;
   ViewData["HeaderPath"] = Model.DlsSubApplication.HeaderPath;
   ViewData["HeaderPathName"] = Model.DlsSubApplication.HeaderPathName;
@@ -23,9 +23,7 @@
 
     <partial name="_MyDetailsCard" model="Model" />
 
-    @if (Model.DelegateNumber != null) {
-      <partial name="_CentreSpecificDetailsCard" model="Model" />
-    }
+    <partial name="_CentreSpecificDetailsCard" model="Model" />
   </div>
 </div>
 <div class="nhsuk-grid-row">
@@ -33,7 +31,7 @@
     <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="MyAccount" asp-action="EditDetails" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
       Edit details
     </a>
-    <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2" asp-controller="ChangePassword" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
+    <a class="nhsuk-button nhsuk-button--secondary left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="ChangePassword" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
       Change password
     </a>
     <a class="nhsuk-button nhsuk-button--secondary" asp-controller="NotificationPreferences" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
@@ -43,8 +41,6 @@
 </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Logout" asp-action="Index" role="button">
-      Log out
-    </a>
+    <partial name="_LogoutForm"/>
   </div>
 </div>

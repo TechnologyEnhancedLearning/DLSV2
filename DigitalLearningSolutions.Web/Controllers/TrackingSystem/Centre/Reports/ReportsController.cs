@@ -108,10 +108,10 @@
         [Route("EditFilters")]
         public IActionResult EditFilters(EditFiltersViewModel model)
         {
+            var categoryIdFilter = User.GetAdminCategoryId();
             if (!ModelState.IsValid)
             {
                 var centreId = User.GetCentreId();
-                var categoryIdFilter = User.GetAdminCategoryId();
                 var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
                 model.SetUpDropdowns(filterOptions, categoryIdFilter);
                 model.DataStart = activityService.GetActivityStartDateForCentre(centreId);
@@ -122,7 +122,7 @@
                 model.GetValidatedStartDate(),
                 model.GetValidatedEndDate(),
                 model.JobGroupId,
-                model.CourseCategoryId,
+                categoryIdFilter ?? model.CourseCategoryId,
                 model.CustomisationId,
                 model.FilterType,
                 model.ReportInterval

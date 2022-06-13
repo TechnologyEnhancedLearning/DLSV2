@@ -27,22 +27,40 @@
             int? candidateId,
             int? customisationId
         );
+
+        TrackerEndpointResponse StoreAspProgressNoSession(
+            int? progressId,
+            int? version,
+            string? progressText,
+            int? tutorialId,
+            int? tutorialTime,
+            int? tutorialStatus,
+            int? candidateId,
+            int? customisationId,
+            string? sessionId
+        );
     }
 
     public class TrackerActionService : ITrackerActionService
     {
         private readonly ILogger<TrackerActionService> logger;
         private readonly IProgressService progressService;
+        private readonly ISessionDataService sessionDataService;
+        private readonly IStoreAspProgressService storeAspProgressService;
         private readonly ITutorialContentDataService tutorialContentDataService;
 
         public TrackerActionService(
             ITutorialContentDataService tutorialContentDataService,
             IProgressService progressService,
+            ISessionDataService sessionDataService,
+            IStoreAspProgressService storeAspProgressService,
             ILogger<TrackerActionService> logger
         )
         {
             this.tutorialContentDataService = tutorialContentDataService;
             this.progressService = progressService;
+            this.sessionDataService = sessionDataService;
+            this.storeAspProgressService = storeAspProgressService;
             this.logger = logger;
         }
 
@@ -129,43 +147,99 @@
             int? customisationId
         )
         {
-            if (progressId == null || version == null || tutorialId == null ||
-                candidateId == null || customisationId == null)
-            {
-                return TrackerEndpointResponse.StoreAspProgressV2Exception;
-            }
+            var (validationResponse, progress) =
+                storeAspProgressService.GetProgressAndValidateCommonInputsForStoreAspSessionEndpoints(
+                    progressId,
+                    version,
+                    tutorialId,
+                    tutorialTime,
+                    tutorialStatus,
+                    candidateId,
+                    customisationId
+                );
 
-            if (tutorialTime == null || tutorialStatus == null)
+            if (validationResponse != null)
             {
-                return TrackerEndpointResponse.NullTutorialStatusOrTime;
-            }
-
-            var progress = progressService.GetDetailedCourseProgress(progressId.Value);
-            if (progress == null || progress.DelegateId != candidateId || progress.CustomisationId != customisationId)
-            {
-                return TrackerEndpointResponse.StoreAspProgressV2Exception;
+                return validationResponse;
             }
 
             try
             {
-                progressService.StoreAspProgressV2(
-                    progress.ProgressId,
-                    version.Value,
+                storeAspProgressService.StoreAspProgressAndSendEmailIfComplete(
+                    progress!,
+                    version!.Value,
                     progressText,
-                    tutorialId.Value,
-                    tutorialTime.Value,
-                    tutorialStatus.Value
+                    tutorialId!.Value,
+                    tutorialTime!.Value,
+                    tutorialStatus!.Value
                 );
-
-                if (tutorialStatus == 2)
-                {
-                    progressService.CheckProgressForCompletionAndSendEmailIfCompleted(progress);
-                }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return TrackerEndpointResponse.StoreAspProgressV2Exception;
+                return TrackerEndpointResponse.StoreAspProgressException;
+            }
+
+            return TrackerEndpointResponse.Success;
+        }
+
+        public TrackerEndpointResponse StoreAspProgressNoSession(
+            int? progressId,
+            int? version,
+            string? progressText,
+            int? tutorialId,
+            int? tutorialTime,
+            int? tutorialStatus,
+            int? candidateId,
+            int? customisationId,
+            string? sessionId
+        )
+        {
+            var (validationResponse, progress) =
+                storeAspProgressService.GetProgressAndValidateCommonInputsForStoreAspSessionEndpoints(
+                    progressId,
+                    version,
+                    tutorialId,
+                    tutorialTime,
+                    tutorialStatus,
+                    candidateId,
+                    customisationId
+                );
+
+            if (validationResponse != null)
+            {
+                return validationResponse;
+            }
+
+            var (sessionValidationResponse, parsedSessionId) =
+                storeAspProgressService.ParseSessionIdAndValidateSessionForStoreAspProgressNoSession(
+                    sessionId,
+                    candidateId!.Value,
+                    customisationId!.Value
+                );
+
+            if (sessionValidationResponse != null)
+            {
+                return sessionValidationResponse;
+            }
+
+            try
+            {
+                sessionDataService.AddTutorialTimeToSessionDuration(parsedSessionId!.Value, tutorialTime!.Value);
+
+                storeAspProgressService.StoreAspProgressAndSendEmailIfComplete(
+                    progress!,
+                    version!.Value,
+                    progressText,
+                    tutorialId!.Value,
+                    tutorialTime.Value,
+                    tutorialStatus!.Value
+                );
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return TrackerEndpointResponse.StoreAspProgressException;
             }
 
             return TrackerEndpointResponse.Success;

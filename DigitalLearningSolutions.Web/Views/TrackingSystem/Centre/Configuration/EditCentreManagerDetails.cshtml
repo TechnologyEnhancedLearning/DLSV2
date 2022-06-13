@@ -1,11 +1,9 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
 @model EditCentreManagerDetailsViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Edit Centre Manager Details" : "Edit Centre Manager Details";
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit centre manager details" : "Edit centre manager details";
 }
 
 <div class="nhsuk-grid-row">

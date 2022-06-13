@@ -349,6 +349,65 @@ describe('sortSearchableElements delegates groups', () => {
   });
 });
 
+describe('sortSearchableElements delegate learning log', () => {
+  beforeEach(() => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+      <input type="text" id="select-sort-by" />
+      <input type="text" id="select-sort-direction"/>
+        <div id="searchable-elements">
+            <div class="searchable-element" id="log-entry-b">
+              <span name="name" class="searchable-element-title">b: Log entry</span>
+              <p name="when">01/01/2022 10:01:01</p>
+              <p name="learning-time">0</p>
+              <p name="assessment-score">N/A</p>
+            </div>
+            <div class="searchable-element" id="log-entry-c">
+              <span name="name" class="searchable-element-title">c: Log entry</span>
+              <p name="when">01/01/2022 10:00:10</p>
+              <p name="learning-time">10</p>
+              <p name="assessment-score">50</p>
+            </div>
+            <div class="searchable-element" id="log-entry-a">
+              <span name="name" class="searchable-element-title">a: Log entry</span>
+              <p name="when">01/01/2022 10:00:01</p>
+              <p name="learning-time">2</p>
+              <p name="assessment-score">100</p>
+            </div>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+  });
+
+  it.each`
+  sortBy               | sortDirection   | firstId          | secondId         | thirdId
+  ${'When'}            | ${'Ascending'}  | ${'log-entry-a'} | ${'log-entry-c'} | ${'log-entry-b'}
+  ${'When'}            | ${'Descending'} | ${'log-entry-b'} | ${'log-entry-c'} | ${'log-entry-a'}
+  ${'LearningTime'}    | ${'Ascending'}  | ${'log-entry-b'} | ${'log-entry-a'} | ${'log-entry-c'}
+  ${'LearningTime'}    | ${'Descending'} | ${'log-entry-c'} | ${'log-entry-a'} | ${'log-entry-b'}
+  ${'AssessmentScore'} | ${'Ascending'}  | ${'log-entry-b'} | ${'log-entry-c'} | ${'log-entry-a'}
+  ${'AssessmentScore'} | ${'Descending'} | ${'log-entry-a'} | ${'log-entry-c'} | ${'log-entry-b'}
+  `('should correctly sort the cards $sortDirection by $sortBy', ({
+    sortBy, sortDirection, firstId, secondId, thirdId,
+  }) => {
+    // When
+    setSortBy(sortBy);
+    setSortDirection(sortDirection);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
+
+    // Then
+    expect(newSearchableElements?.length).toEqual(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
+  });
+});
+
 describe('sortSearchableElements course setup', () => {
   beforeEach(() => {
     // Given

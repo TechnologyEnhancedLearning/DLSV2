@@ -2,7 +2,7 @@
 @model MyAccountViewModel
 
 <div class="nhsuk-card">
-  <div class="nhsuk-card__content nhsuk-u-padding-bottom-0">
+  <div class="nhsuk-card__content nhsuk-u-padding-bottom-1">
     <h2 class="nhsuk-card__heading">
       My details
     </h2>
@@ -24,26 +24,24 @@
 
         <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            Primary email address
+            Primary email
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.PrimaryEmail" />
         </div>
 
-        @if (Model.DelegateNumber != null) {
-          <div class="nhsuk-summary-list__row basic-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              Job group
-            </dt>
-            <partial name="_SummaryFieldValue" model="@Model.JobGroup" />
-          </div>
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Job group
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.JobGroup" />
+        </div>
 
-          <div class="nhsuk-summary-list__row basic-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              Professional Registration Number
-            </dt>
-            <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
-          </div>
-        }
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Professional Registration Number
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+        </div>
 
         <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key profile-picture__label">

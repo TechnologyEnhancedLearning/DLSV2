@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
@@ -17,10 +18,11 @@
         public IEnumerable<CentreRegistrationPrompt>
             GetCentreRegistrationPromptsThatHaveOptionsByCentreId(int centreId);
 
-        public CentreRegistrationPromptsWithAnswers? GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
-            int centreId,
-            DelegateUser? delegateUser
-        );
+        public CentreRegistrationPromptsWithAnswers?
+            GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
+                int centreId,
+                DelegateAccount? delegateAccount
+            );
 
         public List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
             GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
@@ -71,12 +73,13 @@
             return GetCentreRegistrationPromptsByCentreId(centreId).CustomPrompts.Where(cp => cp.Options.Any());
         }
 
-        public CentreRegistrationPromptsWithAnswers? GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
-            int centreId,
-            DelegateUser? delegateUser
-        )
+        public CentreRegistrationPromptsWithAnswers?
+            GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
+                int centreId,
+                DelegateAccount? delegateAccount
+            )
         {
-            if (delegateUser == null)
+            if (delegateAccount == null)
             {
                 return null;
             }
@@ -85,7 +88,7 @@
 
             return new CentreRegistrationPromptsWithAnswers(
                 result.CentreId,
-                PopulateCentreRegistrationPromptWithAnswerListFromResult(result, delegateUser)
+                PopulateCentreRegistrationPromptWithAnswerListFromResult(result, delegateAccount)
             );
         }
 
@@ -260,6 +263,101 @@
             return list;
         }
 
+        private static List<CentreRegistrationPromptWithAnswer>
+            PopulateCentreRegistrationPromptWithAnswerListFromResult(
+                CentreRegistrationPromptsResult? result,
+                DelegateAccount delegateAccount
+            )
+        {
+            var list = new List<CentreRegistrationPromptWithAnswer>();
+
+            if (result == null)
+            {
+                return list;
+            }
+
+            var prompt1 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
+                1,
+                result.CentreRegistrationPrompt1Id,
+                result.CentreRegistrationPrompt1Prompt,
+                result.CentreRegistrationPrompt1Options,
+                result.CentreRegistrationPrompt1Mandatory,
+                delegateAccount.Answer1
+            );
+            if (prompt1 != null)
+            {
+                list.Add(prompt1);
+            }
+
+            var prompt2 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
+                2,
+                result.CentreRegistrationPrompt2Id,
+                result.CentreRegistrationPrompt2Prompt,
+                result.CentreRegistrationPrompt2Options,
+                result.CentreRegistrationPrompt2Mandatory,
+                delegateAccount.Answer2
+            );
+            if (prompt2 != null)
+            {
+                list.Add(prompt2);
+            }
+
+            var prompt3 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
+                3,
+                result.CentreRegistrationPrompt3Id,
+                result.CentreRegistrationPrompt3Prompt,
+                result.CentreRegistrationPrompt3Options,
+                result.CentreRegistrationPrompt3Mandatory,
+                delegateAccount.Answer3
+            );
+            if (prompt3 != null)
+            {
+                list.Add(prompt3);
+            }
+
+            var prompt4 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
+                4,
+                result.CentreRegistrationPrompt4Id,
+                result.CentreRegistrationPrompt4Prompt,
+                result.CentreRegistrationPrompt4Options,
+                result.CentreRegistrationPrompt4Mandatory,
+                delegateAccount.Answer4
+            );
+            if (prompt4 != null)
+            {
+                list.Add(prompt4);
+            }
+
+            var prompt5 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
+                5,
+                result.CentreRegistrationPrompt5Id,
+                result.CentreRegistrationPrompt5Prompt,
+                result.CentreRegistrationPrompt5Options,
+                result.CentreRegistrationPrompt5Mandatory,
+                delegateAccount.Answer5
+            );
+            if (prompt5 != null)
+            {
+                list.Add(prompt5);
+            }
+
+            var prompt6 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
+                6,
+                result.CentreRegistrationPrompt6Id,
+                result.CentreRegistrationPrompt6Prompt,
+                result.CentreRegistrationPrompt6Options,
+                result.CentreRegistrationPrompt6Mandatory,
+                delegateAccount.Answer6
+            );
+            if (prompt6 != null)
+            {
+                list.Add(prompt6);
+            }
+
+            return list;
+        }
+
+        [Obsolete("Use the method that takes a DelegateAccount instead of a DelegateUser as parameter")]
         private static List<CentreRegistrationPromptWithAnswer>
             PopulateCentreRegistrationPromptWithAnswerListFromResult(
                 CentreRegistrationPromptsResult? result,

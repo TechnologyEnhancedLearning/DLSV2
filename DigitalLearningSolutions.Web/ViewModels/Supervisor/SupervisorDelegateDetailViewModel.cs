@@ -7,14 +7,16 @@
     {
         public SupervisorDelegateDetailViewModel() { }
 
-        public SupervisorDelegateDetailViewModel(SupervisorDelegateDetail supervisorDelegateDetail, ReturnPageQuery returnPageQuery)
+        public SupervisorDelegateDetailViewModel(SupervisorDelegateDetail supervisorDelegateDetail, ReturnPageQuery returnPageQuery , bool isUserSupervisor = false)
         {
             SupervisorDelegateDetail = supervisorDelegateDetail;
             ReturnPageQuery = returnPageQuery;
+            IsUserSupervisor = isUserSupervisor;
         }
 
         public SupervisorDelegateDetail SupervisorDelegateDetail { get; set; }
         public ReturnPageQuery ReturnPageQuery { get; set; }
+        public bool IsUserSupervisor { get; set; }
 
         public override string SearchableName
         {

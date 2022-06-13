@@ -16,7 +16,8 @@
             FirstName = data.FirstName;
             LastName = data.LastName;
             Centre = data.Centre;
-            PrimaryEmail = data.Email;
+            PrimaryEmail = data.PrimaryEmail;
+            CentreSpecificEmail = data.CentreSpecificEmail;
         }
 
         public PersonalInformationViewModel(DelegateRegistrationData data) : this((RegistrationData)data)
@@ -39,7 +40,7 @@
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]
         public string? LastName { get; set; }
 
-        [Required(ErrorMessage = "Enter an email address")]
+        [Required(ErrorMessage = "Enter a primary email")]
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
@@ -48,7 +49,7 @@
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
-        public string? SecondaryEmail { get; set; }
+        public string? CentreSpecificEmail { get; set; }
 
         [Required(ErrorMessage = "Select a centre")]
         public int? Centre { get; set; }
