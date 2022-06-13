@@ -5,7 +5,7 @@
         public Delegate(
             DelegateAccount delegateAccount,
             UserAccount userAccount,
-            UserCentreDetails userCentreDetails
+            UserCentreDetails? userCentreDetails
         )
         {
             DelegateAccount = delegateAccount;

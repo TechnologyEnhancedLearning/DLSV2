@@ -66,7 +66,6 @@
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreId";
 
-        // TODO: 951 - Figure out dapper
         public Delegate? GetDelegateById(int id)
         {
             var sql = $@"SELECT
@@ -77,12 +76,12 @@
                 ce.Active AS CentreActive,
                 da.DateRegistered,
                 da.CandidateNumber,
-                LTRIM(RTRIM(da.Answer1),
-                LTRIM(RTRIM(da.Answer2),
-                LTRIM(RTRIM(da.Answer3),
-                LTRIM(RTRIM(da.Answer4),
-                LTRIM(RTRIM(da.Answer5),
-                LTRIM(RTRIM(da.Answer6),
+                LTRIM(RTRIM(da.Answer1)) AS Answer1,
+                LTRIM(RTRIM(da.Answer2)) AS Answer2,
+                LTRIM(RTRIM(da.Answer3)) AS Answer3,
+                LTRIM(RTRIM(da.Answer4)) AS Answer4,
+                LTRIM(RTRIM(da.Answer5)) AS Answer5,
+                LTRIM(RTRIM(da.Answer6)) AS Answer6,
                 da.Approved,
                 da.ExternalReg,
                 da.SelfReg,
@@ -107,10 +106,26 @@
                 u.HasDismissedLhLoginWarning,
                 u.EmailVerified,
                 u.DetailsLastChecked,
-                ucd.ID,
-                ucd.CentreID,
-                ucd.Email,
-                ucd.EmailVerified
+                CASE
+                    WHEN ucd.ID IS NOT NULL THEN ucd.ID
+                    ELSE 0
+                END AS ID,
+                CASE
+                    WHEN ucd.UserID IS NOT NULL THEN ucd.UserID
+                    ELSE 0
+                END AS UserID,
+                CASE
+                    WHEN ucd.CentreID IS NOT NULL THEN ucd.CentreID
+                    ELSE 0
+                END AS CentreID,
+                CASE
+                    WHEN ucd.Email IS NOT NULL THEN ucd.Email
+                    ELSE ''
+                END AS Email,
+                CASE
+                    WHEN ucd.EmailVerified IS NOT NULL THEN ucd.EmailVerified
+                    ELSE NULL
+                END AS EmailVerified
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
             INNER JOIN Users AS u ON u.ID = da.UserID
@@ -119,106 +134,20 @@
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
             WHERE da.ID = ${id}";
 
-            var sqlDA = $@"SELECT
-                da.ID,
-                da.Active,
-                da.CentreID,
-                ce.CentreName,
-                ce.Active AS CentreActive,
-                da.DateRegistered,
-                da.CandidateNumber,
-                da.Answer1,
-                da.Answer2,
-                da.Answer3,
-                da.Answer4,
-                da.Answer5,
-                da.Answer6,
-                da.Approved,
-                da.ExternalReg,
-                da.SelfReg,
-                da.OldPassword,
-                da.UserID,
-                da.CentreSpecificDetailsLastChecked
-            FROM DelegateAccounts AS da
-            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
-            INNER JOIN Users AS u ON u.ID = da.UserID
-            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
-                AND ucd.CentreId = da.CentreID
-            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
-            WHERE da.ID = ${id}";
-
-            var sqlUA = $@"SELECT
-                u.ID,
-                u.PrimaryEmail,
-                u.PasswordHash,
-                u.FirstName,
-                u.LastName,
-                u.JobGroupID,
-                jg.JobGroupName,
-                u.ProfessionalRegistrationNumber,
-                u.ProfileImage,
-                u.Active,
-                u.ResetPasswordID,
-                u.TermsAgreed,
-                u.FailedLoginCount,
-                u.HasBeenPromptedForPrn,
-                u.LearningHubAuthID,
-                u.HasDismissedLhLoginWarning,
-                u.EmailVerified,
-                u.DetailsLastChecked
-            FROM DelegateAccounts AS da
-            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
-            INNER JOIN Users AS u ON u.ID = da.UserID
-            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
-                AND ucd.CentreId = da.CentreID
-            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
-            WHERE da.ID = ${id}";
-
-            var sqlUCD = $@"SELECT
-                ucd.ID,
-                ucd.UserID,
-                ucd.CentreID,
-                ucd.Email,
-                ucd.EmailVerified
-            FROM DelegateAccounts AS da
-            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
-            INNER JOIN Users AS u ON u.ID = da.UserID
-            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
-                AND ucd.CentreId = da.CentreID
-            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
-            WHERE da.ID = ${id}
-            AND ucd.ID != 0";
-
-            /*var delegateUser = connection.Query<Delegate, DelegateAccount, UserAccount, UserCentreDetails, Delegate>(
+            var delegateUser = connection.Query<DelegateAccount, UserAccount, UserCentreDetails, Delegate>(
                 sql,
-                (delegateUser, delegateAccount, userAccount, userCentreDetails) =>
+                (delegateAccount, userAccount, userCentreDetails) =>
                 {
-                    delegateUser.DelegateAccount = delegateAccount;
-                    delegateUser.UserAccount = userAccount;
-                    delegateUser.UserCentreDetails = userCentreDetails;
+                    if (userCentreDetails.Id == 0)
+                    {
+                        userCentreDetails = null!;
+                    }
+
+                    var delegateUser = new Delegate(delegateAccount, userAccount, userCentreDetails);
                     return delegateUser;
                 },
-                splitOn: "da.ID,u.ID,ucd.ID"
-            ).FirstOrDefault();*/
-
-            var delegateAccount = connection.QuerySingle<DelegateAccount>(
-                sqlDA,
-                new { id }
-            );
-            var userAccount = connection.QuerySingle<UserAccount>(
-                sqlUA,
-                new { id }
-            );
-            var userCentreDetails = connection.Query<UserCentreDetails?>(
-                sqlUCD,
-                new { id }
+                splitOn: "ID,ID"
             ).FirstOrDefault();
-
-            var delegateUser = new Delegate(
-                delegateAccount,
-                userAccount,
-                userCentreDetails
-            );
 
             return delegateUser;
         }
