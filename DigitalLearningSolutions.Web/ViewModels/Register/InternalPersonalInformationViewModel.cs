@@ -15,6 +15,7 @@
         {
             CentreSpecificEmail = data.CentreSpecificEmail;
             Centre = data.Centre;
+            IsCentreSpecificRegistration = data.IsCentreSpecificRegistration;
         }
 
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]

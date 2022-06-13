@@ -152,6 +152,12 @@
 
             var model = new InternalLearnerInformationViewModel(data);
             PopulateLearnerInformationExtraFields(model, data);
+
+            if (!model.DelegateRegistrationPrompts.Any())
+            {
+                return RedirectToAction("Summary");
+            }
+
             return View(model);
         }
 
