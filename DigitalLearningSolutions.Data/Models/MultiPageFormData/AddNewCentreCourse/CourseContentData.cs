@@ -1,30 +1,15 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+﻿namespace DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
 
-    public class SetCourseContentViewModel
+    public class CourseContentData
     {
-        public SetCourseContentViewModel() { }
+        public CourseContentData(){}
 
-        public SetCourseContentViewModel(IEnumerable<Section> availableSections)
-        {
-            AvailableSections = availableSections;
-            IncludeAllSections = true;
-            SelectedSectionIds = null;
-        }
-
-        public SetCourseContentViewModel(CourseContentData data)
-        {
-            IncludeAllSections = data.IncludeAllSections;
-            AvailableSections = data.AvailableSections;
-            SelectedSectionIds = data.SelectedSectionIds;
-        }
-
-        public SetCourseContentViewModel(
+        public CourseContentData(
             IEnumerable<Section> availableSections,
             bool includeAllSections,
             IEnumerable<int>? selectedSectionIds
@@ -45,11 +30,6 @@
         public IEnumerable<Section> GetSelectedSections()
         {
             return AvailableSections.Where(section => SelectedSectionIds!.Contains(section.SectionId)).ToList();
-        }
-
-        public void SelectAllSections()
-        {
-            SelectedSectionIds = AvailableSections.Select(s => s.SectionId);
         }
     }
 }

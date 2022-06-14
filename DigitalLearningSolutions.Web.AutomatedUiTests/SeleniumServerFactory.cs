@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
     using System;
     using System.IO;
     using System.Linq;
+    using DocumentFormat.OpenXml.Drawing.Diagrams;
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -16,6 +17,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
     {
         private IWebHost host;
         public string RootUri;
+        public string ConnectionString;
 
         public SeleniumServerFactory()
         {
@@ -29,7 +31,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             host = builder.Build();
             host.Start();
             RootUri = host.ServerFeatures.Get<IServerAddressesFeature>().Addresses.First();
-
+            ConnectionString = GetConfigForUiTests().GetConnectionString("DefaultConnection");
+            
             // Fake Server to satisfy the return type
             return new TestServer(new WebHostBuilder()
                 .UseStartup<TStartup>()

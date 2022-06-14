@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 {
     using System.Linq;
-    using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
 
     public class SummaryViewModel
     {
@@ -11,19 +11,19 @@
             AddNewCentreCourseData data
         )
         {
-            ApplicationName = data.SetCourseDetailsModel!.ApplicationName;
-            CustomisationName = data.SetCourseDetailsModel.CustomisationName ?? string.Empty;
-            Password = data.SetCourseDetailsModel.Password;
-            NotificationEmails = data.SetCourseDetailsModel.NotificationEmails;
-            PostLearningAssessment = data.SetCourseDetailsModel.IsAssessed;
-            RequiredLearningPercentage = data.SetCourseDetailsModel.TutCompletionThreshold;
-            RequiredDiagnosticPercentage = data.SetCourseDetailsModel.DiagCompletionThreshold;
-            AllowSelfEnrolment = data.SetCourseOptionsModel!.AllowSelfEnrolment;
-            HideInLearningPortal = data.SetCourseOptionsModel.HideInLearningPortal;
+            ApplicationName = data.CourseDetailsData!.ApplicationName;
+            CustomisationName = data.CourseDetailsData.CustomisationName ?? string.Empty;
+            Password = data.CourseDetailsData.Password;
+            NotificationEmails = data.CourseDetailsData.NotificationEmails;
+            PostLearningAssessment = data.CourseDetailsData.IsAssessed;
+            RequiredLearningPercentage = data.CourseDetailsData.TutCompletionThreshold;
+            RequiredDiagnosticPercentage = data.CourseDetailsData.DiagCompletionThreshold;
+            AllowSelfEnrolment = data.CourseOptionsData!.AllowSelfEnrolment;
+            HideInLearningPortal = data.CourseOptionsData.HideInLearningPortal;
             DiagAssess = data.Application!.DiagAssess;
-            DiagnosticObjectiveSelection = data.SetCourseOptionsModel.DiagnosticObjectiveSelection;
-            NoContent = data.SetSectionContentModels == null || !data.GetTutorialsFromSections().Any();
-            IncludeAllSections = !NoContent && data.SetCourseContentModel!.IncludeAllSections;
+            DiagnosticObjectiveSelection = data.CourseOptionsData.DiagnosticObjectiveSelection;
+            NoContent = data.SectionContentData == null || !data.GetTutorialsFromSections().Any();
+            IncludeAllSections = !NoContent && data.CourseContentData!.IncludeAllSections;
             NumberOfLearning = NoContent ? 0 : GetNumberOfLearning(data);
             NumberOfDiagnostic = NoContent ? 0 : GetNumberOfDiagnostic(data);
         }

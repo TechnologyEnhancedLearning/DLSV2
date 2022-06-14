@@ -1,13 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
@@ -15,8 +16,10 @@
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Common;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
@@ -93,6 +96,7 @@
         private ICourseService courseService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
+        private IMultiPageFormDataService multiPageFormDataService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
@@ -105,6 +109,7 @@
             sectionService = A.Fake<ISectionService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             config = A.Fake<IConfiguration>();
+            multiPageFormDataService = A.Fake<IMultiPageFormDataService>();
 
             A.CallTo(
                 () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
@@ -127,7 +132,8 @@
                     tutorialService,
                     sectionService,
                     searchSortFilterPaginateService,
-                    config
+                    config,
+                    multiPageFormDataService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -139,7 +145,8 @@
                     tutorialService,
                     sectionService,
                     searchSortFilterPaginateService,
-                    config
+                    config,
+                    multiPageFormDataService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
@@ -183,7 +190,13 @@
             // Then
             using (new AssertionScope())
             {
-                controller.TempData.Peek<AddNewCentreCourseData>().Should().NotBeNull();
+                A.CallTo(
+                    () => multiPageFormDataService.SetMultiPageFormData(
+                        A<AddNewCentreCourseData>._,
+                        MultiPageFormDataFeature.AddNewCourse,
+                        controller.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("SelectCourse");
             }
         }
@@ -192,6 +205,13 @@
         public void SelectCourse_post_updates_temp_data_and_redirects()
         {
             SetAddNewCentreCourseTempData();
+            A.CallTo(
+                () => courseService.GetApplicationOptionsAlphabeticalListForCentre(
+                    ControllerContextHelper.CentreId,
+                    ControllerContextHelper.AdminCategoryId,
+                    null
+                )
+            ).Returns(new[] { application });
 
             // When
             var result = controller.SelectCourse(application.ApplicationId);
@@ -199,12 +219,19 @@
             // Then
             using (new AssertionScope())
             {
-                controller.TempData.Peek<AddNewCentreCourseData>()!.Application.Should()
-                    .BeEquivalentTo(application);
-                controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseDetailsModel.Should().BeNull();
-                controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseOptionsModel.Should().BeNull();
-                controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseContentModel.Should().BeNull();
-                controller.TempData.Peek<AddNewCentreCourseData>()!.SetSectionContentModels.Should().BeNull();
+                A.CallTo(
+                    () => multiPageFormDataService.SetMultiPageFormData(
+                        A<AddNewCentreCourseData>.That.Matches(
+                            d => d.Application!.ApplicationId == application.ApplicationId &&
+                                d.CourseDetailsData == null &&
+                                d.CourseOptionsData == null &&
+                                d.CourseContentData == null &&
+                                d.SectionContentData == null
+                        ),
+                        MultiPageFormDataFeature.AddNewCourse,
+                        controller.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("SetCourseDetails");
             }
         }
@@ -323,8 +350,13 @@
             // Then
             using (new AssertionScope())
             {
-                controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseDetailsModel.Should()
-                    .BeEquivalentTo(model);
+                A.CallTo(
+                    () => multiPageFormDataService.SetMultiPageFormData(
+                        A<AddNewCentreCourseData>.That.Matches(d => d.CourseDetailsData != null),
+                        MultiPageFormDataFeature.AddNewCourse,
+                        controller.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("SetCourseOptions");
             }
         }
@@ -342,8 +374,13 @@
             // Then
             using (new AssertionScope())
             {
-                controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseOptionsModel.Should()
-                    .BeEquivalentTo(model);
+                A.CallTo(
+                    () => multiPageFormDataService.SetMultiPageFormData(
+                        A<AddNewCentreCourseData>.That.Matches(d => d.CourseOptionsData != null),
+                        MultiPageFormDataFeature.AddNewCourse,
+                        controller.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("SetCourseContent");
             }
         }
@@ -380,7 +417,7 @@
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
-            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true, null, null) });
+            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true) });
 
             // When
             var result = controller.SetCourseContent(model);
@@ -388,8 +425,13 @@
             // Then
             using (new AssertionScope())
             {
-                controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseContentModel.Should()
-                    .BeEquivalentTo(model);
+                A.CallTo(
+                    () => multiPageFormDataService.SetMultiPageFormData(
+                        A<AddNewCentreCourseData>.That.Matches(d => d.CourseContentData != null),
+                        MultiPageFormDataFeature.AddNewCourse,
+                        controller.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("Summary");
             }
         }
@@ -406,7 +448,7 @@
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
-            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true, null, null) });
+            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true) });
 
             // When
             var result = controller.SetCourseContent(model);
@@ -427,12 +469,12 @@
             // Given
             var section1 = new Section(1, "Test name 1");
             var section2 = new Section(2, "Test name 2");
-            var setCourseContentModel = new SetCourseContentViewModel(
+            var setCourseContentModel = new CourseContentData(
                 new List<Section> { section1, section2 },
                 false,
                 new List<int> { 1, 2 }
             );
-            SetAddNewCentreCourseTempData(application, setCourseContentModel: setCourseContentModel);
+            SetAddNewCentreCourseTempData(application, courseContentModel: setCourseContentModel);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
@@ -451,12 +493,12 @@
         {
             // Given
             var section = new Section(1, "Test name 1");
-            var setCourseContentModel = new SetCourseContentViewModel(
+            var setCourseContentModel = new CourseContentData(
                 new List<Section> { section },
                 false,
                 new List<int> { 1 }
             );
-            SetAddNewCentreCourseTempData(application, setCourseContentModel: setCourseContentModel);
+            SetAddNewCentreCourseTempData(application, courseContentModel: setCourseContentModel);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
@@ -476,16 +518,16 @@
             var section1 = new Section(1, "Test name 1");
             var section2 = new Section(2, "Test name 2");
             var model = new SetSectionContentViewModel(section1, 0, true);
-            var setCourseContentModel = new SetCourseContentViewModel(
+            var setCourseContentModel = new CourseContentData(
                 new List<Section> { section1, section2 },
                 false,
                 new List<int> { 1, 2 }
             );
-            SetAddNewCentreCourseTempData(application, setCourseContentModel: setCourseContentModel);
+            SetAddNewCentreCourseTempData(application, courseContentModel: setCourseContentModel);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(A<int>._)
-            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true, null, null) });
+            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true) });
 
             // When
             var result = controller.SetSectionContent(model, "save");
@@ -493,8 +535,13 @@
             // Then
             using (new AssertionScope())
             {
-                controller.TempData.Peek<AddNewCentreCourseData>()!.SetSectionContentModels.Should()
-                    .BeEquivalentTo(new List<SetSectionContentViewModel> { model });
+                A.CallTo(
+                    () => multiPageFormDataService.SetMultiPageFormData(
+                        A<AddNewCentreCourseData>.That.Matches(d => d.SectionContentData != null),
+                        MultiPageFormDataFeature.AddNewCourse,
+                        controller.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("SetSectionContent");
             }
         }
@@ -505,16 +552,16 @@
             // Given
             var section = new Section(1, "Test name");
             var model = new SetSectionContentViewModel(section, 0, true);
-            var setCourseContentModel = new SetCourseContentViewModel(
+            var setCourseContentModel = new CourseContentData(
                 new List<Section> { section },
                 false,
                 new List<int> { 1 }
             );
-            SetAddNewCentreCourseTempData(setCourseContentModel: setCourseContentModel);
+            SetAddNewCentreCourseTempData(courseContentModel: setCourseContentModel);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
-            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true, null, null) });
+            ).Returns(new List<Tutorial> { new Tutorial(1, "Test name", true, true) });
 
             // When
             var result = controller.SetSectionContent(model, "save");
@@ -522,8 +569,13 @@
             // Then
             using (new AssertionScope())
             {
-                controller.TempData.Peek<AddNewCentreCourseData>()!.SetSectionContentModels.Should()
-                    .BeEquivalentTo(new List<SetSectionContentViewModel> { model });
+                A.CallTo(
+                    () => multiPageFormDataService.SetMultiPageFormData(
+                        A<AddNewCentreCourseData>.That.Matches(d => d.SectionContentData != null),
+                        MultiPageFormDataFeature.AddNewCourse,
+                        controller.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("Summary");
             }
         }
@@ -535,22 +587,22 @@
             var applicationName = application.ApplicationName;
             var customisationName = GetSetCourseDetailsViewModel().CustomisationName;
 
-            var tutorial = new Tutorial(1, "Tutorial name", true, true, null, null);
+            var tutorial = new Tutorial(1, "Tutorial name", true, true);
             var section = new Section(1, "Section name");
-            var sectionModel = new SetSectionContentViewModel(
+            var sectionData = new SectionContentData(
                 section,
                 0,
                 true,
                 new List<Tutorial> { tutorial }
             );
 
-            var setCourseOptionsModel = new EditCourseOptionsFormData(true, true, true);
+            var setCourseOptionsModel = new CourseOptionsData(true, true, true, true);
             SetAddNewCentreCourseTempData(
                 application,
-                GetSetCourseDetailsViewModel(),
+                GetSetCourseDetailsData(GetSetCourseDetailsViewModel()),
                 setCourseOptionsModel,
-                new SetCourseContentViewModel(),
-                new List<SetSectionContentViewModel> { sectionModel }
+                new CourseContentData(),
+                new List<SectionContentData> { sectionData }
             );
 
             A.CallTo(
@@ -583,6 +635,7 @@
 
         private static SetCourseDetailsViewModel GetSetCourseDetailsViewModel(
             int applicationId = 1,
+            string applicationName = "Test",
             string customisationName = "Name",
             bool passwordProtected = true,
             string password = "Password",
@@ -598,6 +651,7 @@
             return new SetCourseDetailsViewModel
             {
                 ApplicationId = applicationId,
+                ApplicationName = applicationName,
                 CustomisationName = customisationName,
                 PasswordProtected = passwordProtected,
                 Password = password,
@@ -611,23 +665,46 @@
             };
         }
 
+        private static CourseDetailsData GetSetCourseDetailsData(SetCourseDetailsViewModel model)
+        {
+            return new CourseDetailsData(
+                model.ApplicationId,
+                model.ApplicationName,
+                model.CustomisationName,
+                model.PasswordProtected,
+                model.Password,
+                model.ReceiveNotificationEmails,
+                model.NotificationEmails,
+                model.PostLearningAssessment,
+                model.IsAssessed,
+                model.DiagAssess,
+                model.TutCompletionThreshold,
+                model.DiagCompletionThreshold
+            );
+        }
+
         private void SetAddNewCentreCourseTempData(
             ApplicationDetails? selectedApplication = null,
-            SetCourseDetailsViewModel? setCourseDetailsModel = null,
-            EditCourseOptionsFormData setCourseOptionsModel = null!,
-            SetCourseContentViewModel setCourseContentModel = null!,
-            List<SetSectionContentViewModel>? setSectionContentModels = null
+            CourseDetailsData? setCourseDetailsModel = null,
+            CourseOptionsData setCourseOptionsModel = null!,
+            CourseContentData courseContentModel = null!,
+            List<SectionContentData>? setSectionContentModels = null
         )
         {
             var initialTempData = new AddNewCentreCourseData
             {
                 Application = selectedApplication,
-                SetCourseDetailsModel = setCourseDetailsModel,
-                SetCourseOptionsModel = setCourseOptionsModel,
-                SetCourseContentModel = setCourseContentModel,
-                SetSectionContentModels = setSectionContentModels,
+                CourseDetailsData = setCourseDetailsModel,
+                CourseOptionsData = setCourseOptionsModel,
+                CourseContentData = courseContentModel,
+                SectionContentData = setSectionContentModels,
             };
-            controller.TempData.Set(initialTempData);
+            A.CallTo(
+                () => multiPageFormDataService.GetMultiPageFormData<AddNewCentreCourseData>(
+                    A<MultiPageFormDataFeature>._,
+                    A<ITempDataDictionary>._
+                )
+            ).Returns(initialTempData);
         }
     }
 }
