@@ -20,10 +20,10 @@
             ProfileImage = profileImage;
         }
 
-        public int UserId { get; set; }
-        public byte[]? ProfileImage { get; set; }
-        public int JobGroupId { get; set; }
-        public string? ProfessionalRegistrationNumber { get; set; }
-        public bool HasBeenPromptedForPrn { get; set; }
+        public int UserId { get; }
+        public byte[]? ProfileImage { get; }
+        public int JobGroupId { get; }
+        public string? ProfessionalRegistrationNumber { get; }
+        public bool HasBeenPromptedForPrn { get; }
     }
 }

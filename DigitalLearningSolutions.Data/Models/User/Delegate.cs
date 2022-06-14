@@ -13,8 +13,8 @@
             UserCentreDetails = userCentreDetails;
         }
 
-        public DelegateAccount DelegateAccount { get; set; }
-        public UserAccount UserAccount { get; set; }
-        public UserCentreDetails? UserCentreDetails { get; set; }
+        public DelegateAccount DelegateAccount { get; }
+        public UserAccount UserAccount { get; }
+        public UserCentreDetails? UserCentreDetails { get; }
     }
 }
