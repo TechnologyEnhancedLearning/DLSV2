@@ -6,12 +6,8 @@
             1,
             nameof(UnexpectedError)
         );
-        public static AdminCreationError EmailAlreadyInUse = new AdminCreationError(
-            2,
-            nameof(EmailAlreadyInUse)
-        );// TODO HEEDLS-908 does this still need to exist?
         public static AdminCreationError ActiveAdminAlreadyExists = new AdminCreationError(
-            3,
+            2,
             nameof(ActiveAdminAlreadyExists)
         );
 

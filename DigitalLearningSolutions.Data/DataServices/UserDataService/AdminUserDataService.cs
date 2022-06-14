@@ -103,7 +103,6 @@
             );
         }
 
-        // TODO HEEDLS-908 does this want to switch to a different model entirely? probably yes
         public void UpdateAdminAccount(AdminRegistrationModel model, int adminId)
         {
             connection.Execute(
@@ -135,7 +134,7 @@
                     model.IsSuperAdmin,
                     adminId,
                 }
-                );
+            );
         }
 
         public int GetNumberOfActiveAdminsAtCentre(int centreId)

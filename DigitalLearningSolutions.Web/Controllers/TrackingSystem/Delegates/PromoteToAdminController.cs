@@ -79,18 +79,7 @@
             }
             catch (AdminCreationFailedException e)
             {
-                logger.LogError(e, "Error creating admin account for promoted delegate");
-                var error = e.Error;
-
-                if (error.Equals(AdminCreationError.UnexpectedError))
-                {
-                    return new StatusCodeResult(500);
-                }
-
-                if (error.Equals(AdminCreationError.EmailAlreadyInUse))
-                {
-                    return View("EmailInUse", delegateId);
-                }
+                logger.LogError(e, $"Error creating admin account for promoted delegate: {e.Error.Name}");
 
                 return new StatusCodeResult(500);
             }
