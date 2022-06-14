@@ -47,6 +47,7 @@
                 delegateRegistrationModel.Active,
                 PasswordHash = "temp",
                 ProfessionalRegistrationNumber = (string?)null,
+                TermsAgreed = currentTime,
                 DetailsLastChecked = currentTime,
             };
 
@@ -60,6 +61,7 @@
                         JobGroupID,
                         ProfessionalRegistrationNumber,
                         Active,
+                        TermsAgreed,
                         DetailsLastChecked
                     )
                     OUTPUT Inserted.ID
@@ -72,6 +74,7 @@
                         @jobGroup,
                         @professionalRegistrationNumber,
                         @active,
+                        @termsAgreed,
                         @detailsLastChecked
                     )",
                 userValues,
