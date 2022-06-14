@@ -3,6 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration;
     using DigitalLearningSolutions.Web.Extensions;
@@ -21,6 +23,7 @@
     {
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private HttpRequest httpRequest = null!;
+        private IMultiPageFormDataService multiPageFormDataService = null!;
         private RegistrationPromptsController registrationPromptsController = null!;
         private RegistrationPromptsController registrationPromptsControllerWithMockHttpContext = null!;
         private IUserDataService userDataService = null!;
@@ -54,9 +57,14 @@
         {
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             userDataService = A.Fake<IUserDataService>();
+            multiPageFormDataService = A.Fake<IMultiPageFormDataService>();
 
             registrationPromptsController =
-                new RegistrationPromptsController(centreRegistrationPromptsService, userDataService)
+                new RegistrationPromptsController(
+                        centreRegistrationPromptsService,
+                        userDataService,
+                        multiPageFormDataService
+                    )
                     .WithDefaultContext()
                     .WithMockUser(true)
                     .WithMockTempData();
@@ -66,7 +74,11 @@
             const string cookieValue = "AddRegistrationPromptData";
 
             registrationPromptsControllerWithMockHttpContext =
-                new RegistrationPromptsController(centreRegistrationPromptsService, userDataService)
+                new RegistrationPromptsController(
+                        centreRegistrationPromptsService,
+                        userDataService,
+                        multiPageFormDataService
+                    )
                     .WithMockHttpContext(httpRequest, cookieName, cookieValue)
                     .WithMockUser(true)
                     .WithMockTempData();
@@ -195,8 +207,10 @@
             var result = registrationPromptsController.AddRegistrationPromptNew();
 
             // Then
-            registrationPromptsController.TempData.Peek<AddRegistrationPromptData>().Should()
-                .NotBeNull();
+            AssertMultiPageFormDataIsUpdatedCorrectly(
+                new AddRegistrationPromptSelectPromptData(),
+                new RegistrationPromptAnswersData()
+            );
             result.Should().BeRedirectToActionResult().WithActionName("AddRegistrationPromptSelectPrompt");
         }
 
@@ -218,15 +232,22 @@
         [Test]
         public void AddRegistrationPromptSelectPrompt_post_updates_temp_data_and_redirects()
         {
-            var expectedPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
+            // Given
+            var expectedPromptData = new AddRegistrationPromptSelectPromptData(1, true);
             var initialTempData = new AddRegistrationPromptData();
-            registrationPromptsController.TempData.Set(initialTempData);
+            A.CallTo(
+                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                    MultiPageFormDataFeature.AddRegistrationPrompt,
+                    registrationPromptsController.TempData
+                )
+            ).Returns(initialTempData);
+            var inputViewModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
 
             // When
-            var result = registrationPromptsController.AddRegistrationPromptSelectPrompt(expectedPromptModel);
+            var result = registrationPromptsController.AddRegistrationPromptSelectPrompt(inputViewModel);
 
             // Then
-            AssertSelectPromptViewModelIsExpectedModel(expectedPromptModel);
+            AssertMultiPageFormDataIsUpdatedCorrectly(expectedPromptData, new RegistrationPromptAnswersData());
             result.Should().BeRedirectToActionResult().WithActionName("AddRegistrationPromptConfigureAnswers");
         }
 
@@ -234,19 +255,24 @@
         public void AddRegistrationPromptConfigureAnswers_next_updates_temp_data()
         {
             // Given
-            var expectedPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
-            var initialTempData = new AddRegistrationPromptData { SelectPromptViewModel = expectedPromptModel };
-            registrationPromptsController.TempData.Set(initialTempData);
-            var expectedAnswerModel = new RegistrationPromptAnswersViewModel("Test");
+            var expectedPromptData = new AddRegistrationPromptSelectPromptData(1, true);
+            var initialTempData = new AddRegistrationPromptData { SelectPromptData = expectedPromptData };
+            A.CallTo(
+                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                    MultiPageFormDataFeature.AddRegistrationPrompt,
+                    registrationPromptsController.TempData
+                )
+            ).Returns(initialTempData);
+            var expectedAnswerData = new RegistrationPromptAnswersData("Test");
+            var inputViewModel = new RegistrationPromptAnswersViewModel("Test");
             const string action = "next";
 
             // When
             var result =
-                registrationPromptsController.AddRegistrationPromptConfigureAnswers(expectedAnswerModel, action);
+                registrationPromptsController.AddRegistrationPromptConfigureAnswers(inputViewModel, action);
 
             // Then
-            AssertSelectPromptViewModelIsExpectedModel(expectedPromptModel);
-            AssertPromptAnswersViewModelIsExpectedModel(expectedAnswerModel);
+            AssertMultiPageFormDataIsUpdatedCorrectly(expectedPromptData, expectedAnswerData);
             result.Should().BeRedirectToActionResult().WithActionName("AddRegistrationPromptSummary");
         }
 
@@ -254,14 +280,20 @@
         public void AddRegistrationPromptConfigureAnswers_add_configures_new_answer_and_updates_temp_data()
         {
             // Given
-            var initialSelectPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
+            var initialSelectPromptData = new AddRegistrationPromptSelectPromptData(1, true);
 
-            var inputAnswersViewModel = new RegistrationPromptAnswersViewModel("Test", "Answer");
-            var expectedConfigureAnswerViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
+            var inputAnswersData = new RegistrationPromptAnswersData("Test", "Answer");
+            var expectedAnswersData = new RegistrationPromptAnswersData("Test\r\nAnswer");
 
             var initialTempData = new AddRegistrationPromptData
-                { SelectPromptViewModel = initialSelectPromptModel, ConfigureAnswersViewModel = inputAnswersViewModel };
-            registrationPromptsController.TempData.Set(initialTempData);
+                { SelectPromptData = initialSelectPromptData, ConfigureAnswersData = inputAnswersData };
+            A.CallTo(
+                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                    MultiPageFormDataFeature.AddRegistrationPrompt,
+                    registrationPromptsController.TempData
+                )
+            ).Returns(initialTempData);
+            var inputAnswersViewModel = new RegistrationPromptAnswersViewModel("Test", "Answer");
 
             const string action = "addPrompt";
 
@@ -272,8 +304,7 @@
             // Then
             using (new AssertionScope())
             {
-                AssertSelectPromptViewModelIsExpectedModel(initialSelectPromptModel);
-                AssertPromptAnswersViewModelIsExpectedModel(expectedConfigureAnswerViewModel);
+                AssertMultiPageFormDataIsUpdatedCorrectly(initialSelectPromptData, expectedAnswersData);
                 result.As<ViewResult>().Model.Should().BeOfType<RegistrationPromptAnswersViewModel>();
             }
         }
@@ -291,15 +322,21 @@
             )
         {
             // Given
-            var initialSelectPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
+            var initialSelectPromptData = new AddRegistrationPromptSelectPromptData(1, true);
 
-            var inputAnswersViewModel = new RegistrationPromptAnswersViewModel(optionsString, newAnswerInput);
+            var initialAnswersData = new RegistrationPromptAnswersData(optionsString, newAnswerInput);
 
             var initialTempData = new AddRegistrationPromptData
-                { SelectPromptViewModel = initialSelectPromptModel, ConfigureAnswersViewModel = inputAnswersViewModel };
-            registrationPromptsController.TempData.Set(initialTempData);
+                { SelectPromptData = initialSelectPromptData, ConfigureAnswersData = initialAnswersData };
+            A.CallTo(
+                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                    MultiPageFormDataFeature.AddRegistrationPrompt,
+                    registrationPromptsController.TempData
+                )
+            ).Returns(initialTempData);
 
             const string action = "addPrompt";
+            var inputAnswersViewModel = new RegistrationPromptAnswersViewModel(optionsString, newAnswerInput);
 
             // When
             var result =
@@ -317,25 +354,30 @@
         public void AddRegistrationPromptConfigureAnswers_delete_removes_configured_answer()
         {
             // Given
-            var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
+            var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true);
 
-            var initialViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
-            var expectedViewModel = new RegistrationPromptAnswersViewModel("Answer");
+            var initialAnswersData = new RegistrationPromptAnswersData("Test\r\nAnswer");
+            var expectedAnswersData = new RegistrationPromptAnswersData("Answer");
 
             const string action = "delete0";
 
             var initialTempData = new AddRegistrationPromptData
-                { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
-            registrationPromptsController.TempData.Set(initialTempData);
+                { SelectPromptData = initialPromptData, ConfigureAnswersData = initialAnswersData };
+            A.CallTo(
+                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                    MultiPageFormDataFeature.AddRegistrationPrompt,
+                    registrationPromptsController.TempData
+                )
+            ).Returns(initialTempData);
+            var inputViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
 
             // When
-            var result = registrationPromptsController.AddRegistrationPromptConfigureAnswers(initialViewModel, action);
+            var result = registrationPromptsController.AddRegistrationPromptConfigureAnswers(inputViewModel, action);
 
             // Then
             using (new AssertionScope())
             {
-                AssertSelectPromptViewModelIsExpectedModel(initialPromptModel);
-                AssertPromptAnswersViewModelIsExpectedModel(expectedViewModel);
+                AssertMultiPageFormDataIsUpdatedCorrectly(initialPromptData, expectedAnswersData);
                 result.As<ViewResult>().Model.Should().BeOfType<RegistrationPromptAnswersViewModel>();
             }
         }
@@ -358,11 +400,16 @@
         public void AddRegistrationPromptSummary_calls_registration_prompt_service_and_redirects_to_index()
         {
             // Given
-            var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
-            var initialViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
+            var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true);
+            var initialAnswersData = new RegistrationPromptAnswersData("Test\r\nAnswer");
             var initialTempData = new AddRegistrationPromptData
-                { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
-            registrationPromptsController.TempData.Set(initialTempData);
+                { SelectPromptData = initialPromptData, ConfigureAnswersData = initialAnswersData };
+            A.CallTo(
+                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                    MultiPageFormDataFeature.AddRegistrationPrompt,
+                    registrationPromptsController.TempData
+                )
+            ).Returns(initialTempData);
             A.CallTo(
                 () => centreRegistrationPromptsService.AddCentreRegistrationPrompt(
                     ControllerContextHelper.CentreId,
@@ -386,7 +433,12 @@
                         "Test\r\nAnswer"
                     )
                 ).MustHaveHappened();
-                registrationPromptsController.TempData.Peek<AddRegistrationPromptData>().Should().BeNull();
+                A.CallTo(
+                    () => multiPageFormDataService.ClearMultiPageFormData(
+                        MultiPageFormDataFeature.AddRegistrationPrompt,
+                        registrationPromptsController.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
             }
         }
@@ -395,11 +447,16 @@
         public void AddRegistrationPromptSummary_calls_registration_prompt_service_and_redirects_to_error_on_failure()
         {
             // Given
-            var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
-            var initialViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
+            var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true);
+            var initialAnswersData = new RegistrationPromptAnswersData("Test\r\nAnswer");
             var initialTempData = new AddRegistrationPromptData
-                { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
-            registrationPromptsController.TempData.Set(initialTempData);
+                { SelectPromptData = initialPromptData, ConfigureAnswersData = initialAnswersData };
+            A.CallTo(
+                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                    MultiPageFormDataFeature.AddRegistrationPrompt,
+                    registrationPromptsController.TempData
+                )
+            ).Returns(initialTempData);
             A.CallTo(
                 () => centreRegistrationPromptsService.AddCentreRegistrationPrompt(
                     ControllerContextHelper.CentreId,
@@ -454,16 +511,21 @@
         {
             // Given
             var inputViewModel = new BulkRegistrationPromptAnswersViewModel("Test\r\nAnswer", true, null);
-            var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
-            var initialConfigureAnswersViewModel = new RegistrationPromptAnswersViewModel("Test");
-            var expectedViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
+            var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true);
+            var initialAnswersData = new RegistrationPromptAnswersData("Test");
+            var expectedAnswersData = new RegistrationPromptAnswersData("Test\r\nAnswer");
 
             var initialTempData = new AddRegistrationPromptData
             {
-                SelectPromptViewModel = initialPromptModel,
-                ConfigureAnswersViewModel = initialConfigureAnswersViewModel,
+                SelectPromptData = initialPromptData,
+                ConfigureAnswersData = initialAnswersData,
             };
-            registrationPromptsController.TempData.Set(initialTempData);
+            A.CallTo(
+                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                    MultiPageFormDataFeature.AddRegistrationPrompt,
+                    registrationPromptsController.TempData
+                )
+            ).Returns(initialTempData);
 
             // When
             var result = registrationPromptsController.AddRegistrationPromptBulkPost(inputViewModel);
@@ -471,8 +533,7 @@
             // Then
             using (new AssertionScope())
             {
-                AssertSelectPromptViewModelIsExpectedModel(initialPromptModel);
-                AssertPromptAnswersViewModelIsExpectedModel(expectedViewModel);
+                AssertMultiPageFormDataIsUpdatedCorrectly(initialPromptData, expectedAnswersData);
                 result.Should().BeRedirectToActionResult().WithActionName("AddRegistrationPromptConfigureAnswers");
             }
         }
@@ -495,15 +556,15 @@
             }
         }
 
-        private void AssertSelectPromptViewModelIsExpectedModel(AddRegistrationPromptSelectPromptViewModel promptModel)
+        private void AssertSelectPromptViewModelIsExpectedModel(AddRegistrationPromptSelectPromptData promptModel)
         {
-            registrationPromptsController.TempData.Peek<AddRegistrationPromptData>()!.SelectPromptViewModel.Should()
+            registrationPromptsController.TempData.Peek<AddRegistrationPromptData>()!.SelectPromptData.Should()
                 .BeEquivalentTo(promptModel);
         }
 
         private void AssertPromptAnswersViewModelIsExpectedModel(RegistrationPromptAnswersViewModel promptModel)
         {
-            registrationPromptsController.TempData.Peek<AddRegistrationPromptData>()!.ConfigureAnswersViewModel.Should()
+            registrationPromptsController.TempData.Peek<AddRegistrationPromptData>()!.ConfigureAnswersData.Should()
                 .BeEquivalentTo(promptModel);
         }
 
@@ -518,6 +579,27 @@
             var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
                 .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
             errorMessage.Should().BeEquivalentTo(expectedErrorMessage);
+        }
+
+        private void AssertMultiPageFormDataIsUpdatedCorrectly(
+            AddRegistrationPromptSelectPromptData expectedPromptData,
+            RegistrationPromptAnswersData expectedAnswersData
+        )
+        {
+            A.CallTo(
+                () => multiPageFormDataService.SetMultiPageFormData(
+                    A<AddRegistrationPromptData>.That.Matches(
+                        d => d.SelectPromptData.Mandatory == expectedPromptData.Mandatory &&
+                             d.SelectPromptData.CustomPromptId == expectedPromptData.CustomPromptId &&
+                             d.ConfigureAnswersData.OptionsString == expectedAnswersData.OptionsString &&
+                             d.ConfigureAnswersData.Answer == expectedAnswersData.Answer &&
+                             d.ConfigureAnswersData.IncludeAnswersTableCaption ==
+                             expectedAnswersData.IncludeAnswersTableCaption
+                    ),
+                    MultiPageFormDataFeature.AddRegistrationPrompt,
+                    registrationPromptsController.TempData
+                )
+            ).MustHaveHappenedOnceExactly();
         }
     }
 }

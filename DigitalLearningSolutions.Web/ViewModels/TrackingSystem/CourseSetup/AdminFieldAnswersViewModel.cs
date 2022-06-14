@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class AdminFieldAnswersViewModel

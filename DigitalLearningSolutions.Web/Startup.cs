@@ -16,6 +16,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.ModelBinders;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -285,7 +286,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<RegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationByCentreData>>();
-            services.AddScoped<RedirectEmptySessionData<AddRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<EditRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
@@ -306,6 +306,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyDelegateAccessedViaValidRoute>();
             services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
             services.AddScoped<RedirectMissingMultiPageFormData<AddNewCentreCourseData>>();
+            services.AddScoped<RedirectMissingMultiPageFormData<AddRegistrationPromptData>>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

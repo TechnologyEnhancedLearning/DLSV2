@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Web.Helpers;
 

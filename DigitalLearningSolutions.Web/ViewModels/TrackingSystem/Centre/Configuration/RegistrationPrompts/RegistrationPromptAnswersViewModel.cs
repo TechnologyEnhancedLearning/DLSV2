@@ -1,14 +1,21 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
 
     public class RegistrationPromptAnswersViewModel : IValidatableObject
     {
         public RegistrationPromptAnswersViewModel() { }
+
+        public RegistrationPromptAnswersViewModel(RegistrationPromptAnswersData data)
+        {
+            OptionsString = data.OptionsString;
+            Answer = data.Answer;
+            IncludeAnswersTableCaption = data.IncludeAnswersTableCaption;
+        }
 
         public RegistrationPromptAnswersViewModel(
             string optionsString,
