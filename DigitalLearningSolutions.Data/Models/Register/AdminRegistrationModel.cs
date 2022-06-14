@@ -5,6 +5,47 @@
     public class AdminRegistrationModel : RegistrationModel
     {
         public AdminRegistrationModel(
+            int centre,
+            bool active,
+            bool approved,
+            int? categoryId,
+            bool isCentreAdmin,
+            bool isCentreManager,
+            bool isSupervisor,
+            bool isNominatedSupervisor,
+            bool isTrainer,
+            bool isContentCreator,
+            bool isCmsAdmin,
+            bool isCmsManager
+        ) : base("", "", "", centre, "", active, approved, "")
+        {
+            CategoryId = categoryId;
+            IsCentreAdmin = isCentreAdmin;
+            IsCentreManager = isCentreManager;
+            IsSupervisor = isSupervisor;
+            IsNominatedSupervisor = isNominatedSupervisor;
+            IsTrainer = isTrainer;
+            IsContentCreator = isContentCreator;
+            ProfileImage = null;
+
+            if (isCmsAdmin)
+            {
+                ImportOnly = true;
+                IsContentManager = true;
+            }
+            else if (isCmsManager)
+            {
+                ImportOnly = false;
+                IsContentManager = true;
+            }
+            else
+            {
+                ImportOnly = false;
+                IsContentManager = false;
+            }
+        }
+
+        public AdminRegistrationModel(
             string firstName,
             string lastName,
             string email,

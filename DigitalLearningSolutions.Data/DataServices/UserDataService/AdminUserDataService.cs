@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
 
     public partial class UserDataService
@@ -67,6 +68,16 @@
             ).SingleOrDefault();
         }
 
+        public AdminUser? GetAdminUserAtCentreForUser(int centreId, int userId)
+        {
+            return connection.Query<AdminUser>(
+                @$"{BaseSelectAdminQuery}
+                    WHERE au.CentreID = @centreId
+                    AND au.UserID = @userId",
+                new { centreId, userId }
+            ).SingleOrDefault();
+        }
+
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
             var users = connection.Query<AdminUser>(
@@ -90,6 +101,39 @@
                         WHERE AdminID = @id",
                 new { firstName, surname, email, profileImage, id }
             );
+        }
+
+        // TODO HEEDLS-908 does this want to switch to a different model entirely? probably yes
+        public void UpdateAdminAccount(AdminRegistrationModel model, int adminId)
+        {
+            connection.Execute(
+                @"UPDATE AdminUsers
+                        SET
+                            CategoryID = @categoryId,
+                            IsCentreAdmin = @isCentreAdmin,
+                            IsCentreManager = @isCentreManager,
+                            Active = @active,
+                            IsContentCreator = @isContentCreator,
+                            IsContentManager = @isContentManager,
+                            ImportOnly = @importOnly,
+                            IsTrainer = @isTrainer,
+                            IsSupervisor = @isSupervisor,
+                            IsNominatedSupervisor = @isNominatedSupervisor
+                        WHERE ID = @adminId",
+                new
+                {
+                    model.CategoryId,
+                    model.IsCentreAdmin,
+                    model.Active,
+                    model.IsContentCreator,
+                    model.IsContentManager,
+                    model.ImportOnly,
+                    model.IsTrainer,
+                    model.IsSupervisor,
+                    model.IsNominatedSupervisor,
+                    adminId,
+                }
+                );
         }
 
         public int GetNumberOfActiveAdminsAtCentre(int centreId)
@@ -158,7 +202,7 @@
                 new { adminId }
             );
         }
-        
+
         public IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId)
         {
             return connection.Query<AdminAccount>(

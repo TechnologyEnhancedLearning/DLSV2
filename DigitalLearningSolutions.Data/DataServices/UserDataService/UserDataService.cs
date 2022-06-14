@@ -6,6 +6,7 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserDataService
@@ -16,9 +17,13 @@
 
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
 
+        AdminUser? GetAdminUserAtCentreForUser(int centreId, int userId);
+
         int GetNumberOfActiveAdminsAtCentre(int centreId);
 
         void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
+
+        void UpdateAdminAccount(AdminRegistrationModel model, int adminId);
 
         void UpdateAdminUserPermissions(
             int adminId,
@@ -124,6 +129,8 @@
 
         int? GetUserIdFromUsername(string username);
 
+        int? GetUserIdFromDelegateId(int delegateId);
+
         UserAccount? GetUserAccountById(int userId);
 
         UserAccount? GetUserAccountByEmailAddress(string emailAddress);
@@ -192,6 +199,18 @@
                     "Recovered more than 1 User when logging in with username: " + username
                 );
             }
+
+            return userIds.SingleOrDefault();
+        }
+
+        public int? GetUserIdFromDelegateId(int delegateId)
+        {
+            var userIds = connection.Query<int?>(
+                @"SELECT UserID
+                    FROM DelegateAccounts
+                    WHERE ID = @delegateId",
+                new { delegateId }
+            ).ToList();
 
             return userIds.SingleOrDefault();
         }

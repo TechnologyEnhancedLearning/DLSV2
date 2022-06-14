@@ -220,32 +220,14 @@ namespace DigitalLearningSolutions.Data.Services
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
-            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress) ||
-                string.IsNullOrWhiteSpace(delegateUser.FirstName) ||
-                string.IsNullOrWhiteSpace(delegateUser.Password))
-            {
-                throw new AdminCreationFailedException(
-                    "Delegate missing first name, email or password",
-                    AdminCreationError.UnexpectedError
-                );
-            }
+            var userId = userDataService.GetUserIdFromDelegateId(delegateId)!.Value;
 
-            var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
-
-            if (adminUser != null)
-            {
-                throw new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse);
-            }
+            var adminUser = userDataService.GetAdminUserAtCentreForUser(delegateUser.CentreId, userId);
 
             var adminRegistrationModel = new AdminRegistrationModel(
-                delegateUser.FirstName,
-                delegateUser.LastName,
-                delegateUser.EmailAddress,
                 delegateUser.CentreId,
-                delegateUser.Password,
                 true,
                 true,
-                delegateUser.ProfessionalRegistrationNumber,
                 categoryId,
                 adminRoles.IsCentreAdmin,
                 false,
@@ -254,12 +236,22 @@ namespace DigitalLearningSolutions.Data.Services
                 adminRoles.IsTrainer,
                 adminRoles.IsContentCreator,
                 adminRoles.IsCmsAdministrator,
-                adminRoles.IsCmsManager,
-                delegateUser.ProfileImage
+                adminRoles.IsCmsManager
             );
 
-            // TODO HEEDLS-900 these user IDs are placeholders and should be updated
-            registrationDataService.RegisterAdmin(adminRegistrationModel, 0);
+            if (adminUser != null)
+            {
+                if (adminUser.Active)
+                {
+                    throw new AdminCreationFailedException(AdminCreationError.ActiveAdminAlreadyExists);
+                }
+
+                userDataService.UpdateAdminAccount(adminRegistrationModel, adminUser.Id);
+                // actually we can activate the admin in the update call (but should we?)
+                //userDataService.ActivateAdmin(adminUser.Id);
+            }
+
+            registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
         }
 
         public string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
