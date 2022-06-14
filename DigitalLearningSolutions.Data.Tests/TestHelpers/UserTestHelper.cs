@@ -260,7 +260,7 @@
                     UserId = userId,
                     CentreId = centreId,
                     Email = centreSpecificEmail,
-                    EmailVerified = centreSpecificEmailVerified!.Value,
+                    EmailVerified = centreSpecificEmailVerified,
                 };
 
             return new Delegate(delegateAccount, userAccount, userCentreDetails);

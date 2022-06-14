@@ -85,6 +85,20 @@
         }
 
         [Test]
+        public void Index_returns_not_found_result_if_no_delegate_found_with_given_id()
+        {
+            // Given
+            const int delegateId = 1;
+            A.CallTo(() => userService.GetDelegateById(delegateId)).Returns(null);
+
+            // When
+            var result = viewDelegateController.Index(delegateId);
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
         public void Deactivating_delegate_returns_redirect()
         {
             // Given

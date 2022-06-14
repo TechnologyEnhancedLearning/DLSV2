@@ -13,7 +13,7 @@
     public partial class UserDataServiceTests
     {
         [Test]
-        public void GetDelegateById_returns_delegate()
+        public void GetDelegateById_returns_delegate_with_null_user_centre_details()
         {
             // Given
             var expectedDelegate = UserTestHelper.GetDefaultDelegate();
@@ -23,6 +23,33 @@
 
             // Then
             returnedDelegateUser.Should().BeEquivalentTo(expectedDelegate);
+        }
+
+        [Test]
+        public void GetDelegateById_returns_delegate_with_correct_user_centre_details()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                    VALUES (61188, 2, 'centre@email.com')"
+            );
+            var expectedUserCentreDetails = UserTestHelper.GetDefaultDelegate(
+                userCentreDetailsId: 1,
+                centreSpecificEmail: "centre@email.com",
+                centreSpecificEmailVerified: null
+            ).UserCentreDetails;
+
+            // When
+            var returnedDelegateUser = userDataService.GetDelegateById(2);
+
+            // Then
+            returnedDelegateUser!.UserCentreDetails.Should().NotBeNull();
+            returnedDelegateUser.UserCentreDetails!.UserId.Should().Be(expectedUserCentreDetails!.UserId);
+            returnedDelegateUser.UserCentreDetails.CentreId.Should().Be(expectedUserCentreDetails.CentreId);
+            returnedDelegateUser.UserCentreDetails.Email.Should().Be(expectedUserCentreDetails.Email);
+            returnedDelegateUser.UserCentreDetails.EmailVerified.Should().Be(expectedUserCentreDetails.EmailVerified);
         }
 
         [Test]

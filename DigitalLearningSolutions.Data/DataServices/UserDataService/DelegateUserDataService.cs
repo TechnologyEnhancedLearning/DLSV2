@@ -10,7 +10,7 @@
 
     public partial class UserDataService
     {
-        private const string BaseSelectDelegateQuery =
+        private const string BaseSelectDelegateUserQuery =
             @"SELECT
                 cd.CandidateID AS Id,
                 cd.CandidateNumber,
@@ -68,7 +68,7 @@
 
         public Delegate? GetDelegateById(int id)
         {
-            var sql = $@"SELECT
+            var sql = @"SELECT
                 da.ID,
                 da.Active,
                 da.CentreID,
@@ -76,12 +76,12 @@
                 ce.Active AS CentreActive,
                 da.DateRegistered,
                 da.CandidateNumber,
-                LTRIM(RTRIM(da.Answer1)) AS Answer1,
-                LTRIM(RTRIM(da.Answer2)) AS Answer2,
-                LTRIM(RTRIM(da.Answer3)) AS Answer3,
-                LTRIM(RTRIM(da.Answer4)) AS Answer4,
-                LTRIM(RTRIM(da.Answer5)) AS Answer5,
-                LTRIM(RTRIM(da.Answer6)) AS Answer6,
+                da.Answer1,
+                da.Answer2,
+                da.Answer3,
+                da.Answer4,
+                da.Answer5,
+                da.Answer6,
                 da.Approved,
                 da.ExternalReg,
                 da.SelfReg,
@@ -110,29 +110,17 @@
                     WHEN ucd.ID IS NOT NULL THEN ucd.ID
                     ELSE 0
                 END AS ID,
-                CASE
-                    WHEN ucd.UserID IS NOT NULL THEN ucd.UserID
-                    ELSE 0
-                END AS UserID,
-                CASE
-                    WHEN ucd.CentreID IS NOT NULL THEN ucd.CentreID
-                    ELSE 0
-                END AS CentreID,
-                CASE
-                    WHEN ucd.Email IS NOT NULL THEN ucd.Email
-                    ELSE NULL
-                END AS Email,
-                CASE
-                    WHEN ucd.EmailVerified IS NOT NULL THEN ucd.EmailVerified
-                    ELSE NULL
-                END AS EmailVerified
+                ucd.UserID,
+                ucd.CentreID,
+                ucd.Email,
+                ucd.EmailVerified
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
             INNER JOIN Users AS u ON u.ID = da.UserID
             LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
                 AND ucd.CentreId = da.CentreID
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
-            WHERE da.ID = ${id}";
+            WHERE da.ID = @id";
 
             var delegateUser = connection.Query<DelegateAccount, UserAccount, UserCentreDetails, Delegate>(
                 sql,
@@ -146,8 +134,9 @@
                     var delegateUser = new Delegate(delegateAccount, userAccount, userCentreDetails);
                     return delegateUser;
                 },
+                new { id },
                 splitOn: "ID,ID"
-            ).FirstOrDefault();
+            ).SingleOrDefault();
 
             return delegateUser;
         }
@@ -155,7 +144,7 @@
         public DelegateUser? GetDelegateUserById(int id)
         {
             var user = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.CandidateId = @id",
                 new { id }
             ).SingleOrDefault();
@@ -166,7 +155,7 @@
         public List<DelegateUser> GetDelegateUsersByUsername(string username)
         {
             var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.Active = 1 AND
                          (cd.CandidateNumber = @username OR cd.EmailAddress = @username)",
                 new { username }
@@ -178,7 +167,7 @@
         public List<DelegateUser> GetAllDelegateUsersByUsername(string username)
         {
             var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.CandidateNumber = @username OR cd.EmailAddress = @username",
                 new { username }
             ).ToList();
@@ -189,7 +178,7 @@
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
         {
             var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.EmailAddress = @emailAddress",
                 new { emailAddress }
             ).ToList();
@@ -200,7 +189,7 @@
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId)
         {
             var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE (cd.Approved = 0)
                     AND (cd.Active = 1)
                     AND (cd.CentreID = @centreId)",
@@ -302,7 +291,7 @@
         public DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId)
         {
             var user = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.CandidateNumber = @candidateNumber AND cd.CentreId = @centreId",
                 new { candidateNumber, centreId }
             ).SingleOrDefault();
