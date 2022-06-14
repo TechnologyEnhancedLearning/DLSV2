@@ -11,7 +11,7 @@
     {
         LoginResult AttemptLogin(string username, string password);
 
-        IEnumerable<ChooseACentreAccount> GetChooseACentreAccounts(UserEntity? userEntity);
+        IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(UserEntity? userEntity);
     }
 
     public class LoginService : ILoginService
@@ -62,13 +62,13 @@
                 : DetermineDestinationForSuccessfulLogin(userEntity, username);
         }
 
-        public IEnumerable<ChooseACentreAccount> GetChooseACentreAccounts(UserEntity? userEntity)
+        public IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(UserEntity? userEntity)
         {
             return userEntity!.CentreAccountSet.Values.Where(
                 centreAccountSet => centreAccountSet.AdminAccount?.Active == true ||
                                     centreAccountSet.DelegateAccount != null
             ).Select(
-                centreAccountSet => new ChooseACentreAccount(
+                centreAccountSet => new ChooseACentreAccountViewModel(
                     centreAccountSet.CentreId,
                     centreAccountSet.CentreName,
                     centreAccountSet.IsCentreActive,

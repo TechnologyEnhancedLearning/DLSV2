@@ -326,7 +326,7 @@
         }
 
         [Test]
-        public void GetChooseACentreAccounts_combines_admin_and_delegate_accounts_by_centre()
+        public void GetChooseACentreAccountViewModels_combines_admin_and_delegate_accounts_by_centre()
         {
             // Given
             var adminAccountWithDelegate =
@@ -376,23 +376,23 @@
             );
 
             // When
-            var result = loginService.GetChooseACentreAccounts(userEntity);
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity);
 
             // Then
             result.Should().BeEquivalentTo(
-                new List<ChooseACentreAccount>
+                new List<ChooseACentreAccountViewModel>
                 {
-                    new ChooseACentreAccount(1, "admin+delegate", true, true, true, true, true),
-                    new ChooseACentreAccount(2, "admin inactive centre", false, true, false, false, false),
-                    new ChooseACentreAccount(3, "inactive delegate", true, false, true, true, false),
-                    new ChooseACentreAccount(4, "unapproved delegate", true, false, true, false, true),
-                    new ChooseACentreAccount(5, "admin+unapproved delegate", true, true, true, false, true),
+                    new ChooseACentreAccountViewModel(1, "admin+delegate", true, true, true, true, true),
+                    new ChooseACentreAccountViewModel(2, "admin inactive centre", false, true, false, false, false),
+                    new ChooseACentreAccountViewModel(3, "inactive delegate", true, false, true, true, false),
+                    new ChooseACentreAccountViewModel(4, "unapproved delegate", true, false, true, false, true),
+                    new ChooseACentreAccountViewModel(5, "admin+unapproved delegate", true, true, true, false, true),
                 }
             );
         }
 
         [Test]
-        public void GetChooseACentreAccounts_omits_inactive_admin_accounts()
+        public void GetChooseACentreAccountViewModels_omits_inactive_admin_accounts()
         {
             // Given
             var adminAccount = UserTestHelper.GetDefaultAdminAccount(
@@ -408,19 +408,19 @@
             );
 
             // When
-            var result = loginService.GetChooseACentreAccounts(userEntity);
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity);
 
             // Then
             result.Should().BeEquivalentTo(
-                new List<ChooseACentreAccount>
+                new List<ChooseACentreAccountViewModel>
                 {
-                    new ChooseACentreAccount(2, "delegate", true, false, true, true, true),
+                    new ChooseACentreAccountViewModel(2, "delegate", true, false, true, true, true),
                 }
             );
         }
 
         [Test]
-        public void GetChooseACentreAccounts_returns_empty_list_when_only_inactive_admin_accounts_exist()
+        public void GetChooseACentreAccountViewModels_returns_empty_list_when_only_inactive_admin_accounts_exist()
         {
             // Given
             var userEntity = new UserEntity(
@@ -430,14 +430,14 @@
             );
 
             // When
-            var result = loginService.GetChooseACentreAccounts(userEntity);
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity);
 
             // Then
             result.Should().HaveCount(0);
         }
 
         [Test]
-        public void GetChooseACentreAccounts_returns_empty_list_when_no_admin_or_delegate_accounts()
+        public void GetChooseACentreAccountViewModels_returns_empty_list_when_no_admin_or_delegate_accounts()
         {
             // Given
             var userEntity = new UserEntity(
@@ -447,7 +447,7 @@
             );
 
             // When
-            var result = loginService.GetChooseACentreAccounts(userEntity);
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity);
 
             // Then
             result.Should().HaveCount(0);

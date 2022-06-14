@@ -97,9 +97,9 @@
         public IActionResult ChooseACentre(string? returnUrl)
         {
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
-            var chooseACentreAccounts = loginService.GetChooseACentreAccounts(userEntity);
+            var chooseACentreAccountViewModels = loginService.GetChooseACentreAccountViewModels(userEntity);
             var model = new ChooseACentreViewModel(
-                chooseACentreAccounts.OrderByDescending(account => account.IsActiveAdmin)
+                chooseACentreAccountViewModels.OrderByDescending(account => account.IsActiveAdmin)
                     .ThenBy(account => account.CentreName).ToList(),
                 returnUrl
             );

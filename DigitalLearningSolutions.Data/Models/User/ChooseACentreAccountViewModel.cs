@@ -2,9 +2,9 @@
 {
     using DigitalLearningSolutions.Data.Enums;
 
-    public class ChooseACentreAccount
+    public class ChooseACentreAccountViewModel
     {
-        public ChooseACentreAccount(
+        public ChooseACentreAccountViewModel(
             int centreId,
             string centreName,
             bool isCentreActive,

@@ -5,7 +5,7 @@
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public class ChooseACentreAccountTests
+    public class ChooseACentreAccountViewModelTests
     {
         // The following are not valid states, but are listed here anyway, commented out, for completeness
         // - !isAdmin && !isDelegate
@@ -76,7 +76,7 @@
         )
         {
             // When
-            var result = new ChooseACentreAccount(
+            var result = new ChooseACentreAccountViewModel(
                 1,
                 "",
                 isCentreActive,

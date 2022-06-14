@@ -5,13 +5,13 @@
 
     public class ChooseACentreViewModel
     {
-        public ChooseACentreViewModel(List<ChooseACentreAccount> centreUserDetails, string? returnUrl)
+        public ChooseACentreViewModel(List<ChooseACentreAccountViewModel> centreUserDetails, string? returnUrl)
         {
             CentreUserDetails = centreUserDetails;
             ReturnUrl = returnUrl;
         }
 
-        public List<ChooseACentreAccount> CentreUserDetails { get; set; }
+        public List<ChooseACentreAccountViewModel> CentreUserDetails { get; set; }
         public string? ReturnUrl { get; set; }
     }
 }
