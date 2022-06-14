@@ -118,7 +118,8 @@
                             ImportOnly = @importOnly,
                             IsTrainer = @isTrainer,
                             IsSupervisor = @isSupervisor,
-                            IsNominatedSupervisor = @isNominatedSupervisor
+                            IsNominatedSupervisor = @isNominatedSupervisor,
+                            IsSuperAdmin = @isSuperAdmin
                         WHERE ID = @adminId",
                 new
                 {
@@ -131,6 +132,7 @@
                     model.IsTrainer,
                     model.IsSupervisor,
                     model.IsNominatedSupervisor,
+                    model.IsSuperAdmin,
                     adminId,
                 }
                 );

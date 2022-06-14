@@ -106,6 +106,8 @@
 
         public bool IsContentCreator { get; set; }
 
+        public bool IsSuperAdmin => false;
+
         public int? CategoryId { get; set; }
 
         public byte[]? ProfileImage { get; set; }

@@ -247,8 +247,6 @@ namespace DigitalLearningSolutions.Data.Services
                 }
 
                 userDataService.UpdateAdminAccount(adminRegistrationModel, adminUser.Id);
-                // actually we can activate the admin in the update call (but should we?)
-                //userDataService.ActivateAdmin(adminUser.Id);
             }
 
             registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
