@@ -30,9 +30,5 @@
         public bool CanLogIntoAdminAccount => AdminAccount?.Active == true;
         public bool CanLogIntoDelegateAccount => DelegateAccount is { Active: true, Approved: true };
         public bool CanLogInToCentre => IsCentreActive && (CanLogIntoAdminAccount || CanLogIntoDelegateAccount);
-
-        public bool CanLogDirectlyInToCentre => CanLogInToCentre &&
-                                                (AdminAccount == null || CanLogIntoAdminAccount) &&
-                                                (DelegateAccount == null || CanLogIntoDelegateAccount);
     }
 }

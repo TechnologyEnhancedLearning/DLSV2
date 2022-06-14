@@ -99,7 +99,7 @@
             {
                 var accountsToLogInto = userEntity.CentreAccountSet.Values.First();
 
-                return accountsToLogInto.CanLogDirectlyInToCentre ? accountsToLogInto.CentreId : null as int?;
+                return accountsToLogInto.CanLogInToCentre ? accountsToLogInto.CentreId : null as int?;
             }
 
             // Determine if we are logging in via candidate number.
