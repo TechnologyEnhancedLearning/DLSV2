@@ -130,6 +130,8 @@
 
         UserAccount? GetUserAccountByEmailAddress(string emailAddress);
 
+        int? GetUserIdByAdminId(int adminId);
+
         IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId);
 
         IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId);
@@ -226,6 +228,14 @@
             return connection.Query<UserAccount>(
                 @$"{BaseSelectUserQuery} WHERE u.PrimaryEmail = @emailAddress",
                 new { emailAddress }
+            ).SingleOrDefault();
+        }
+
+        public int? GetUserIdByAdminId(int adminId)
+        {
+            return connection.Query<int>(
+                @"SELECT UserID FROM AdminAccounts WHERE ID = @adminId",
+                new { adminId }
             ).SingleOrDefault();
         }
 
