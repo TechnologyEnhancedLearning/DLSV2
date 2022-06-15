@@ -264,7 +264,7 @@
         [TestCase(false, false, false, true, false, false, true)]
         [TestCase(false, false, false, false, false, false, true)]
         public void
-            AttemptLogin_returns_choose_a_centre_when_logging_into_single_inactive_centre_or_when_neither_admin_is_active_nor_delegate_account_is_active_and_approved(
+            AttemptLogin_returns_choose_a_centre_for_single_centre_user_when_centre_inactive_or_when_neither_admin_is_active_nor_delegate_account_is_active_and_approved(
                 bool centreActive,
                 bool isAdmin,
                 bool isActiveAdmin,
@@ -288,7 +288,7 @@
                             centreActive: centreActive,
                             active: isActiveDelegate,
                             approved: isApprovedDelegate
-                        )
+                        ),
                     }
                     : new List<DelegateAccount>()
             );
@@ -322,6 +322,71 @@
                     result.LoginAttemptResult.Should().NotBe(LoginAttemptResult.ChooseACentre);
                     result.CentreToLogInto.Should().NotBeNull();
                 }
+            }
+        }
+
+        [Test]
+        public void AttemptLogin_returns_choose_a_centre_for_multi_centre_user_when_logging_in_with_email()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                {
+                    UserTestHelper.GetDefaultDelegateAccount(id: 1, centreId: 1),
+                    UserTestHelper.GetDefaultDelegateAccount(id: 2, centreId: 2),
+                }
+            );
+            A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 1, 2 }, new List<int>()));
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.UserEntity.Should().Be(userEntity);
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.ChooseACentre);
+                result.CentreToLogInto.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void AttemptLogin_returns_log_in_to_single_for_multi_centre_user_when_logging_in_with_candidate_number()
+        {
+            // Given
+            const string candidateNumberForLogin = "AB1";
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                {
+                    UserTestHelper.GetDefaultDelegateAccount(
+                        id: 1,
+                        centreId: 1,
+                        candidateNumber: candidateNumberForLogin
+                    ),
+                    UserTestHelper.GetDefaultDelegateAccount(id: 2, centreId: 2, candidateNumber: "AB2"),
+                }
+            );
+            A.CallTo(() => userService.GetUserByUsername(candidateNumberForLogin)).Returns(userEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 1, 2 }, new List<int>()));
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
+
+            // When
+            var result = loginService.AttemptLogin(candidateNumberForLogin, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.UserEntity.Should().Be(userEntity);
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.LogIntoSingleCentre);
+                result.CentreToLogInto.Should().Be(1);
             }
         }
 

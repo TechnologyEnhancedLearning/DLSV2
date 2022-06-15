@@ -64,7 +64,7 @@
 
         public IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(UserEntity? userEntity)
         {
-            return userEntity!.CentreAccountSets.Values.Where(
+            return userEntity!.CentreAccountSetsByCentreId.Values.Where(
                 centreAccountSet => centreAccountSet.AdminAccount?.Active == true ||
                                     centreAccountSet.DelegateAccount != null
             ).Select(
@@ -97,7 +97,7 @@
             // Determine if there is only a single account
             if (userEntity.IsSingleCentreAccount)
             {
-                var accountsToLogInto = userEntity.CentreAccountSets.Values.Single();
+                var accountsToLogInto = userEntity.CentreAccountSetsByCentreId.Values.Single();
 
                 return accountsToLogInto.CanLogInToCentre ? accountsToLogInto.CentreId : null as int?;
             }

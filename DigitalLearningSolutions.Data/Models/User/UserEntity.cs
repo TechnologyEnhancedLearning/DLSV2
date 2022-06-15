@@ -26,7 +26,7 @@
         public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold &&
                                 AdminAccounts.Any() && !AllAdminAccountsInactive;
 
-        public IDictionary<int, CentreAccountSet> CentreAccountSets
+        public IDictionary<int, CentreAccountSet> CentreAccountSetsByCentreId
         {
             get
             {
@@ -54,10 +54,10 @@
 
         public CentreAccountSet? GetCentreAccountSet(int centreId)
         {
-            CentreAccountSets.TryGetValue(centreId, out var centreAccountSet);
+            CentreAccountSetsByCentreId.TryGetValue(centreId, out var centreAccountSet);
             return centreAccountSet;
         }
 
-        public bool IsSingleCentreAccount => CentreAccountSets.Count == 1;
+        public bool IsSingleCentreAccount => CentreAccountSetsByCentreId.Count == 1;
     }
 }
