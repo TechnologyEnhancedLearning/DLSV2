@@ -92,9 +92,12 @@
         }
 
         [HttpGet]
+        [SetDlsSubApplication]
+        [Route("/{dlsSubApplication}/Login/ChooseACentre", Order = 1)]
+        [Route("/Login/ChooseACentre", Order = 2)]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         [Authorize(Policy = CustomPolicies.BasicUser)]
-        public IActionResult ChooseACentre(string? returnUrl)
+        public IActionResult ChooseACentre(DlsSubApplication dlsSubApplication, string? returnUrl)
         {
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
             var chooseACentreAccountViewModels = loginService.GetChooseACentreAccountViewModels(userEntity);
