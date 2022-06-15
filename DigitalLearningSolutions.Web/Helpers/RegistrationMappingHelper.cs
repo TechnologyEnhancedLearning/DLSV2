@@ -18,6 +18,7 @@
                 true,
                 true,
                 data.ProfessionalRegistrationNumber,
+                data.JobGroup!.Value,
                 null,
                 true,
                 true,
@@ -57,7 +58,7 @@
         }
 
         public static InternalDelegateRegistrationModel
-            MapInternalDelegateRegistrationModelRegistrationToInternalDelegateRegistrationModel(
+            MapInternalDelegateRegistrationDataToInternalDelegateRegistrationModel(
                 InternalDelegateRegistrationData data
             )
         {

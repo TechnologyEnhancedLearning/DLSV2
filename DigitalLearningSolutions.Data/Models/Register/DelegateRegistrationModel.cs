@@ -26,7 +26,7 @@
             bool approved = false,
             string? aliasId = null,
             DateTime? notifyDate = null
-        ) : base(firstName, lastName, primaryEmail, centreSpecificEmail, centre, passwordHash, active, approved, professionalRegistrationNumber)
+        ) : base(firstName, lastName, primaryEmail, centreSpecificEmail, centre, passwordHash, active, approved, professionalRegistrationNumber, jobGroup)
         {
             Answer1 = answer1;
             Answer2 = answer2;
@@ -51,7 +51,7 @@
             bool active,
             bool approved,
             string? professionalRegistrationNumber
-        ) : base(firstName, lastName, primaryEmail, centreSpecificEmail, centre, passwordHash, active, approved, professionalRegistrationNumber)
+        ) : base(firstName, lastName, primaryEmail, centreSpecificEmail, centre, passwordHash, active, approved, professionalRegistrationNumber, jobGroup)
         {
             JobGroup = jobGroup;
         }
@@ -97,7 +97,8 @@
             userAccount.PasswordHash,
             true,
             approved,
-            userAccount.ProfessionalRegistrationNumber
+            userAccount.ProfessionalRegistrationNumber,
+            userAccount.JobGroupId
         )
         {
             Answer1 = internalDelegateRegistrationModel.Answer1;
@@ -106,7 +107,6 @@
             Answer4 = internalDelegateRegistrationModel.Answer4;
             Answer5 = internalDelegateRegistrationModel.Answer5;
             Answer6 = internalDelegateRegistrationModel.Answer6;
-            JobGroup = userAccount.JobGroupId;
             IsSelfRegistered = isSelfRegistered;
         }
 
@@ -125,8 +125,6 @@
         public string? AliasId { get; set; }
 
         public DateTime? NotifyDate { get; set; }
-
-        public int JobGroup { get; set; }
 
         public bool IsSelfRegistered { get; set; }
 

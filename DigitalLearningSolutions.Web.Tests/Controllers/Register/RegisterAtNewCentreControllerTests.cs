@@ -163,6 +163,27 @@
         }
 
         [Test]
+        public void IndexGet_while_not_logged_in_redirects_to_register_at_new_centre_journey()
+        {
+            // Given
+            var unauthenticatedController = new RegisterAtNewCentreController(
+                centresDataService,
+                featureManager,
+                promptsService,
+                registrationService,
+                supervisorDelegateService,
+                userService
+            ).WithDefaultContext().WithMockUser(false);
+
+            // When
+            var result = unauthenticatedController.Index();
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("Register")
+                .WithActionName("Index");
+        }
+
+        [Test]
         public async Task Summary_post_registers_delegate_with_expected_values()
         {
             // Given
@@ -217,7 +238,6 @@
             // Given
             var data = RegistrationDataHelper.GetDefaultInternalDelegateRegistrationData(centre: null);
             controller.TempData.Set(data);
-            controller.ModelState.AddModelError("", "");
 
             // When
             var result = await controller.Summary(new InternalSummaryViewModel());

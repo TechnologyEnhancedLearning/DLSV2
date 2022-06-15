@@ -71,9 +71,6 @@
             IDbTransaction? transaction = null
         )
         {
-            // TODO HEEDLS-900: this method previously returned error codes as well as candidate numbers.
-            // any code that calls it and handled those errors on the basis of the codes needs to be updated
-
             var transactionShouldBeClosed = false;
             if (transaction == null)
             {
@@ -89,7 +86,7 @@
                 transaction
             );
 
-            var (delegateId, candidateNumber) = RegisterDelegateAccountAndReturnCandidateNumber(
+            var (delegateId, candidateNumber) = RegisterDelegateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
                 userId,
                 currentTime,
@@ -249,7 +246,7 @@
             }
         }
 
-        private (int delegateId, string candidateNumber) RegisterDelegateAccountAndReturnCandidateNumber(
+        private (int delegateId, string candidateNumber) RegisterDelegateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
             int userIdToLinkDelegateAccountTo,
             DateTime currentTime,

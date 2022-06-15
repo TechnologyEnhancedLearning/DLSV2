@@ -34,7 +34,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
 
-        void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
+        void RegisterCentreManager(AdminRegistrationModel registrationModel);
 
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId);
 
@@ -234,11 +234,11 @@ namespace DigitalLearningSolutions.Data.Services
             return candidateNumber;
         }
 
-        public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
+        public void RegisterCentreManager(AdminRegistrationModel registrationModel)
         {
             using var transaction = new TransactionScope();
 
-            var userId = CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
+            var userId = CreateDelegateAccountForAdmin(registrationModel);
 
             registrationDataService.RegisterAdmin(registrationModel, userId);
 
@@ -278,6 +278,7 @@ namespace DigitalLearningSolutions.Data.Services
                 true,
                 true,
                 delegateUser.ProfessionalRegistrationNumber,
+                delegateUser.JobGroupId,
                 categoryId,
                 adminRoles.IsCentreAdmin,
                 false,
@@ -413,7 +414,7 @@ namespace DigitalLearningSolutions.Data.Services
                 ).Select(record => record.ID);
         }
 
-        private int CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel, int jobGroupId)
+        private int CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel)
         {
             var delegateRegistrationModel = new DelegateRegistrationModel(
                 registrationModel.FirstName,
@@ -421,7 +422,7 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.PrimaryEmail,
                 registrationModel.CentreSpecificEmail,
                 registrationModel.Centre,
-                jobGroupId,
+                registrationModel.JobGroup,
                 registrationModel.PasswordHash!,
                 true,
                 true,

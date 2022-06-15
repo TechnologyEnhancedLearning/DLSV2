@@ -138,6 +138,29 @@
         }
 
         [Test]
+        public void IndexGet_while_logged_in_redirects_to_register_at_new_centre_journey()
+        {
+            // Given
+            var authenticatedController = new RegisterController(
+                centresDataService,
+                jobGroupsDataService,
+                registrationService,
+                cryptoService,
+                userService,
+                promptsService,
+                featureManager,
+                supervisorDelegateService
+            ).WithDefaultContext().WithMockUser(true);
+
+            // When
+            var result = authenticatedController.Index();
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("RegisterAtNewCentre")
+                .WithActionName("Index");
+        }
+
+        [Test]
         public async Task Summary_post_registers_delegate_with_expected_values()
         {
             // Given

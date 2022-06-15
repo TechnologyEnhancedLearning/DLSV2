@@ -289,7 +289,7 @@
 
             A.CallTo(() => centresService.DoesEmailMatchCentre(centreEmailOrPrimaryIfNull, DefaultCentreId))
                 .Returns(true);
-            A.CallTo(() => registrationService.RegisterCentreManager(A<AdminRegistrationModel>._, A<int>._))
+            A.CallTo(() => registrationService.RegisterCentreManager(A<AdminRegistrationModel>._))
                 .DoesNothing();
 
             // When
@@ -315,9 +315,9 @@
                                 !a.IsContentCreator &&
                                 !a.IsTrainer &&
                                 !a.IsSupervisor &&
-                                a.ProfessionalRegistrationNumber == professionalRegistrationNumber
-                        ),
-                        jobGroupId
+                                a.ProfessionalRegistrationNumber == professionalRegistrationNumber &&
+                                a.JobGroup == jobGroupId
+                        )
                     )
                 )
                 .MustHaveHappened();

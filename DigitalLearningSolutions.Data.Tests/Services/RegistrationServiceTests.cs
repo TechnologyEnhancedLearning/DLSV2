@@ -378,7 +378,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model);
 
             // Then
             A.CallTo(
@@ -397,7 +397,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model);
 
             // Then
             A.CallTo(
@@ -413,7 +413,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model);
 
             // Then
             A.CallTo(
@@ -443,7 +443,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(userId);
 
             // When
-            registrationService.RegisterCentreManager(centreManagerModel, 1);
+            registrationService.RegisterCentreManager(centreManagerModel);
 
             // Then
             A.CallTo(() => registrationDataService.RegisterNewUserAndDelegateAccount(A<DelegateRegistrationModel>._))
@@ -471,7 +471,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Throws(exception);
 
             // When
-            Action act = () => registrationService.RegisterCentreManager(model, 1);
+            Action act = () => registrationService.RegisterCentreManager(model);
 
             // Then
             act.Should().Throw<Exception>();
@@ -490,7 +490,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Throws(exception);
 
             // When
-            Action act = () => registrationService.RegisterCentreManager(model, 1);
+            Action act = () => registrationService.RegisterCentreManager(model);
 
             // Then
             act.Should().Throw<Exception>();
@@ -513,7 +513,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model);
 
             // Then
             A.CallTo(
@@ -864,6 +864,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void CreateDelegateAccountForExistingUser_sends_approval_email_with_old_site_approval_link()
         {
             // Given
+            const bool refactoredTrackingSystemEnabled = false;
             const int userId = 2;
             var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
 
@@ -872,7 +873,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 model,
                 userId,
                 string.Empty,
-                false
+                refactoredTrackingSystemEnabled
             );
 
             // Then
@@ -895,6 +896,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void CreateDelegateAccountForExistingUser_sends_approval_email_with_refactored_tracking_system_link()
         {
             // Given
+            const bool refactoredTrackingSystemEnabled = true;
             const int userId = 2;
             var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
 
@@ -903,7 +905,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 model,
                 userId,
                 string.Empty,
-                true
+                refactoredTrackingSystemEnabled
             );
 
             // Then

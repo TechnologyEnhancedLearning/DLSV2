@@ -104,8 +104,6 @@
         {
             ValidateEmailAddress(model);
 
-            var data = TempData.Peek<InternalDelegateRegistrationData>()!;
-
             if (model.Centre != null)
             {
                 var delegateAccount = userService.GetUserById(User.GetUserIdKnownNotNull())!.DelegateAccounts
@@ -126,6 +124,8 @@
                 PopulatePersonalInformationExtraFields(model);
                 return View(model);
             }
+
+            var data = TempData.Peek<InternalDelegateRegistrationData>()!;
 
             if (data.Centre != model.Centre)
             {
@@ -243,7 +243,7 @@
                 var (candidateNumber, approved, userHasAdminAccountAtCentre) =
                     registrationService.CreateDelegateAccountForExistingUser(
                         RegistrationMappingHelper
-                            .MapInternalDelegateRegistrationModelRegistrationToInternalDelegateRegistrationModel(data),
+                            .MapInternalDelegateRegistrationDataToInternalDelegateRegistrationModel(data),
                         userId,
                         userIp,
                         refactoredTrackingSystemEnabled
@@ -259,11 +259,6 @@
             catch (DelegateCreationFailedException e)
             {
                 var error = e.Error;
-
-                if (error.Equals(DelegateCreationError.UnexpectedError))
-                {
-                    return new StatusCodeResult(500);
-                }
 
                 if (error.Equals(DelegateCreationError.EmailAlreadyInUse))
                 {
