@@ -4,6 +4,14 @@
 
     public class ChooseACentreAccountViewModel
     {
+        public readonly int CentreId;
+        public readonly string CentreName;
+        public readonly bool IsActiveAdmin;
+        public readonly bool IsDelegate;
+        private readonly bool isCentreInactive;
+        private readonly bool isApprovedDelegate;
+        private readonly bool isInactiveDelegate;
+
         public ChooseACentreAccountViewModel(
             int centreId,
             string centreName,
@@ -16,32 +24,25 @@
         {
             CentreId = centreId;
             CentreName = centreName;
-            IsCentreInactive = !isCentreActive;
+            isCentreInactive = !isCentreActive;
             IsActiveAdmin = isActiveAdmin;
             IsDelegate = isDelegate;
-            IsApprovedDelegate = IsDelegate && isDelegateApproved;
-            IsInactiveDelegate = IsDelegate && !isDelegateActive;
+            isApprovedDelegate = IsDelegate && isDelegateApproved;
+            isInactiveDelegate = IsDelegate && !isDelegateActive;
         }
 
-        public int CentreId { get; }
-        public string CentreName { get; }
-        public bool IsActiveAdmin { get; }
-        public bool IsDelegate { get; }
-        private bool IsCentreInactive { get; }
-        private bool IsApprovedDelegate { get; }
-        private bool IsInactiveDelegate { get; }
-        public bool IsUnapprovedDelegate => IsDelegate && !IsApprovedDelegate;
+        public bool IsUnapprovedDelegate => IsDelegate && !isApprovedDelegate;
 
         public ChooseACentreStatus Status
         {
             get
             {
-                if (IsCentreInactive)
+                if (isCentreInactive)
                 {
                     return ChooseACentreStatus.CentreInactive;
                 }
 
-                if (IsInactiveDelegate)
+                if (isInactiveDelegate)
                 {
                     return IsActiveAdmin ? ChooseACentreStatus.DelegateInactive : ChooseACentreStatus.Inactive;
                 }

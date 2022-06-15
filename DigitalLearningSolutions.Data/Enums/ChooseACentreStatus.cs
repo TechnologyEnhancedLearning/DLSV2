@@ -2,62 +2,56 @@
 {
     public class ChooseACentreStatus : Enumeration
     {
-        private const string ActiveLabel = "Active";
-        private const string InactiveLabel = "Inactive";
-        private const string UnapprovedLabel = "Unapproved";
-        private const string DelegateInactiveLabel = "Delegate inactive";
-        private const string DelegateUnapprovedLabel = "Delegate unapproved";
-        private const string CentreInactiveLabel = "Centre inactive";
-
-        private const string ActiveColor = "green";
-        private const string InactiveColor = "red";
-        private const string UnapprovedOrCentreInactiveColour = "grey";
+        // These colours form part of a CSS class: nhsuk-tag--[tagColour]
+        private const string GreenCssClassName = "green";
+        private const string RedCssClassName = "red";
+        private const string GreyCssClassName = "grey";
 
         public static readonly ChooseACentreStatus Active = new ChooseACentreStatus(
             0,
             nameof(Active),
-            ActiveLabel,
-            ActiveColor,
+            "Active",
+            GreenCssClassName,
             ChooseACentreButton.Choose
         );
 
         public static readonly ChooseACentreStatus Inactive = new ChooseACentreStatus(
             1,
             nameof(Inactive),
-            InactiveLabel,
-            InactiveColor,
+            "Inactive",
+            RedCssClassName,
             ChooseACentreButton.Reactivate
         );
 
         public static readonly ChooseACentreStatus DelegateInactive = new ChooseACentreStatus(
             2,
             nameof(DelegateInactive),
-            DelegateInactiveLabel,
-            InactiveColor,
+            "Delegate inactive",
+            RedCssClassName,
             ChooseACentreButton.Choose
         );
 
         public static readonly ChooseACentreStatus Unapproved = new ChooseACentreStatus(
             3,
             nameof(Unapproved),
-            UnapprovedLabel,
-            UnapprovedOrCentreInactiveColour,
+            "Unapproved",
+            GreyCssClassName,
             null
         );
 
         public static readonly ChooseACentreStatus DelegateUnapproved = new ChooseACentreStatus(
             4,
             nameof(DelegateUnapproved),
-            DelegateUnapprovedLabel,
-            UnapprovedOrCentreInactiveColour,
+            "Delegate unapproved",
+            GreyCssClassName,
             ChooseACentreButton.Choose
         );
 
         public static readonly ChooseACentreStatus CentreInactive = new ChooseACentreStatus(
             5,
             nameof(CentreInactive),
-            CentreInactiveLabel,
-            UnapprovedOrCentreInactiveColour,
+            "Centre inactive",
+            GreyCssClassName,
             null
         );
 

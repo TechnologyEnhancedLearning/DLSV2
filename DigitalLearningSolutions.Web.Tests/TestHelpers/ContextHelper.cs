@@ -89,9 +89,7 @@
                         emailAddress == null ? null : new Claim(ClaimTypes.Email, emailAddress),
                         new Claim(CustomClaimTypes.UserCentreAdmin, isCentreAdmin.ToString()),
                         new Claim(CustomClaimTypes.IsFrameworkDeveloper, isFrameworkDeveloper.ToString()),
-                        adminCategoryId == null
-                            ? null
-                            : new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId.ToString()),
+                        new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId?.ToString()),
                         userId == null ? null : new Claim(CustomClaimTypes.UserId, userId.ToString()),
                     },
                     authenticationType
