@@ -1,4 +1,5 @@
 ﻿using DigitalLearningSolutions.Data.Models.Frameworks;
+using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 using DigitalLearningSolutions.Data.Models.SelfAssessments;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
@@ -35,13 +36,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             if (!ModelState.IsValid)
             {
-                if(ModelState["Name"].ValidationState == ModelValidationState.Invalid)
+                if (ModelState["Name"].ValidationState == ModelValidationState.Invalid)
                 {
                     ModelState.Remove(nameof(CompetencyGroupBase.Name));
                     ModelState.AddModelError(nameof(CompetencyGroupBase.Name), "Please enter a valid competency group name (between 3 and 255 characters)");
                 }
 
-                if(ModelState["Description"].ValidationState == ModelValidationState.Invalid)
+                if (ModelState["Description"].ValidationState == ModelValidationState.Invalid)
                 {
                     ModelState.Remove(nameof(CompetencyGroupBase.Description));
                     ModelState.AddModelError(nameof(CompetencyGroupBase.Description), "Please enter a valid competency group description (between 0 and 1000 characters)");
@@ -82,11 +83,29 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
         }
 
-        public IActionResult DeleteFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId, int competencyGroupId)
+        public IActionResult ReviewFrameworkCompetencyConfirmation(int frameworkCompetencyGroupId, ReturnPageQuery returnPageQuery)
+        {
+            var frameworks = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyGroupId);
+
+            return View();
+        }
+
+        public IActionResult DeleteFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId, int competencyGroupId, ReturnPageQuery returnPageQuery)
         {
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
             if (userRole < 2) return StatusCode(403);
-            frameworkService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, GetAdminId());
+
+            var adminId = GetAdminId();
+
+            bool frameworkCompenciesToDelete = frameworkService.CheckFrameworkCompenciesToDelete(frameworkCompetencyGroupId);
+
+            if (frameworkCompenciesToDelete)
+            {
+                ReviewFrameworkCompetencyConfirmation(frameworkCompetencyGroupId, returnPageQuery);
+            }
+
+            frameworkService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, adminId);
+
             return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}/{frameworkCompetencyId}")]

@@ -1,0 +1,38 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@using Microsoft.Extensions.Configuration
+@model FrameworkCompetencyViewModel
+@inject IConfiguration Configuration
+
+@{
+  ViewData["Title"] = $"Learning Portal - {Model.FrameworkCompetency} - Remove - Confirmation";
+  ViewData["Application"] = "Learning Portal";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Current";
+  ViewData["HeaderPathName"] = "My Current Activities";
+}
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+
+<div>
+  <div class="nhsuk-form-group" id="form-group">
+    <form asp-action="RemoveCurrentCourse" asp-route-progressId="@Model.FrameworkCompetencyGroupId">
+      <div class="nhsuk-u-reading-width">
+        <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+          Remove Group - @Model.FrameworkCompetency?
+        </h1>
+        <p>
+          This action will remove the competency group and all of the competencies it contains. Are you sure you wish to continue?
+        </p>
+        <p>
+          Are you sure that you wish to proceed?
+        </p>
+      </div>
+      <button class="nhsuk-button delete-button" aria-describedby="@Model.FrameworkCompetencyGroupId-name" type="submit">
+        Remove group
+      </button>
+    </form>
+  </div>
+  
+  @*<vc:cancel-link-with-return-page-query asp-controller="LearningPortal" asp-action="Current" return-page-query="@Model.ReturnPageQuery" />*@
+</div>
