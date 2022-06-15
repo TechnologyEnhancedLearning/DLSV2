@@ -5,10 +5,10 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditRegistrationPrompt;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration;
     using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts;
     using FakeItEasy;
@@ -181,7 +181,20 @@
             // Then
             using (new AssertionScope())
             {
-                AssertEditTempDataIsExpected(model);
+                A.CallTo(
+                    () => multiPageFormDataService.SetMultiPageFormData(
+                        A<EditRegistrationPromptData>.That.Matches(
+                            d => d.PromptNumber == model.PromptNumber &&
+                                 d.Prompt == model.Prompt &&
+                                 d.Mandatory == model.Mandatory &&
+                                 d.Answer == model.Answer &&
+                                 d.IncludeAnswersTableCaption == model.IncludeAnswersTableCaption &&
+                                 d.OptionsString == model.OptionsString
+                        ),
+                        MultiPageFormDataFeature.EditRegistrationPrompt,
+                        registrationPromptsController.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("EditRegistrationPromptBulk");
             }
         }
@@ -490,10 +503,22 @@
             // Given
             var inputViewModel = new BulkRegistrationPromptAnswersViewModel("Test\r\nAnswer", false, 1);
             var initialEditViewModel = new EditRegistrationPromptViewModel(1, "Prompt", false, "Test");
-            var expectedViewModel = new EditRegistrationPromptViewModel(1, "Prompt", false, "Test\r\nAnswer");
-            var initialTempData = new EditRegistrationPromptData(initialEditViewModel);
-
-            registrationPromptsController.TempData.Set(initialTempData);
+            var initialTempData = new EditRegistrationPromptData
+            {
+                PromptNumber = initialEditViewModel.PromptNumber,
+                Prompt = initialEditViewModel.Prompt,
+                Mandatory = initialEditViewModel.Mandatory,
+                OptionsString = initialEditViewModel.OptionsString,
+                Answer = initialEditViewModel.Answer,
+                IncludeAnswersTableCaption = initialEditViewModel.IncludeAnswersTableCaption,
+            };
+            A.CallTo(
+                () => multiPageFormDataService.GetMultiPageFormData<EditRegistrationPromptData>(
+                    MultiPageFormDataFeature.EditRegistrationPrompt,
+                    registrationPromptsController.TempData
+                )
+            ).Returns(initialTempData);
+            
 
             // When
             var result = registrationPromptsController.EditRegistrationPromptBulkPost(inputViewModel);
@@ -501,7 +526,20 @@
             // Then
             using (new AssertionScope())
             {
-                AssertEditTempDataIsExpected(expectedViewModel);
+                A.CallTo(
+                    () => multiPageFormDataService.SetMultiPageFormData(
+                        A<EditRegistrationPromptData>.That.Matches(
+                            d => d.PromptNumber == initialTempData.PromptNumber &&
+                                 d.Prompt == initialTempData.Prompt &&
+                                 d.Mandatory == initialTempData.Mandatory &&
+                                 d.Answer == initialTempData.Answer &&
+                                 d.IncludeAnswersTableCaption == initialTempData.IncludeAnswersTableCaption &&
+                                 d.OptionsString == inputViewModel.OptionsString
+                        ),
+                        MultiPageFormDataFeature.EditRegistrationPrompt,
+                        registrationPromptsController.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("EditRegistrationPrompt");
             }
         }
@@ -554,24 +592,6 @@
                 result.As<ViewResult>().Model.Should().BeOfType<BulkRegistrationPromptAnswersViewModel>();
                 AssertModelStateErrorIsExpected(result, "The list of responses contains duplicate options");
             }
-        }
-
-        private void AssertSelectPromptViewModelIsExpectedModel(AddRegistrationPromptSelectPromptData promptModel)
-        {
-            registrationPromptsController.TempData.Peek<AddRegistrationPromptData>()!.SelectPromptData.Should()
-                .BeEquivalentTo(promptModel);
-        }
-
-        private void AssertPromptAnswersViewModelIsExpectedModel(RegistrationPromptAnswersViewModel promptModel)
-        {
-            registrationPromptsController.TempData.Peek<AddRegistrationPromptData>()!.ConfigureAnswersData.Should()
-                .BeEquivalentTo(promptModel);
-        }
-
-        private void AssertEditTempDataIsExpected(EditRegistrationPromptViewModel expectedData)
-        {
-            registrationPromptsController.TempData.Peek<EditRegistrationPromptData>()!.EditModel.Should()
-                .BeEquivalentTo(expectedData);
         }
 
         private static void AssertModelStateErrorIsExpected(IActionResult result, string expectedErrorMessage)

@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditRegistrationPrompt;
 
     public class EditRegistrationPromptViewModel : RegistrationPromptAnswersViewModel
     {
@@ -32,6 +32,17 @@
             Mandatory = centreRegistrationPrompt.Mandatory;
             OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(centreRegistrationPrompt.Options);
             IncludeAnswersTableCaption = true;
+        }
+
+        public EditRegistrationPromptViewModel(EditRegistrationPromptData data) : base(
+            data.OptionsString,
+            data.Answer,
+            data.IncludeAnswersTableCaption
+        )
+        {
+            Prompt = data.Prompt;
+            PromptNumber = data.PromptNumber;
+            Mandatory = data.Mandatory;
         }
 
         public int PromptNumber { get; set; }

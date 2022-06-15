@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditRegistrationPrompt;
 
     public class MultiPageFormDataFeature : Enumeration
     {
@@ -19,6 +20,13 @@
             nameof(AddRegistrationPrompt),
             "AddRegistrationPromptDataGuid",
             typeof(AddRegistrationPromptData)
+        );
+
+        public static readonly MultiPageFormDataFeature EditRegistrationPrompt = new MultiPageFormDataFeature(
+            0,
+            nameof(EditRegistrationPrompt),
+            "EditRegistrationPromptDataGuid",
+            typeof(EditRegistrationPromptData)
         );
 
         //public static readonly MultiPageFormDataFeature EditAdminField = new MultiPageFormDataFeature(

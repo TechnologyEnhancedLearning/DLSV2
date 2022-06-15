@@ -18,7 +18,7 @@
         }
 
         public RegistrationPromptAnswersViewModel(
-            string optionsString,
+            string? optionsString,
             string? answer = null,
             bool includeAnswersTableCaption = false
         )
