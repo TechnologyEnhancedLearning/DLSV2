@@ -68,12 +68,13 @@
             ).SingleOrDefault();
         }
 
-        public AdminUser? GetAdminUserAtCentreForUser(int centreId, int userId)
+        public (int AdminId, bool Active)? GetAdminIdAndStatusAtCentreForUser(int centreId, int userId)
         {
-            return connection.Query<AdminUser>(
-                @$"{BaseSelectAdminQuery}
-                    WHERE au.CentreID = @centreId
-                    AND au.UserID = @userId",
+            return connection.Query<(int AdminId, bool Active)>(
+                @$"SELECT ID AS AdminId, Active
+                    FROM AdminAccounts aa
+                    WHERE aa.CentreID = @centreId
+                    AND aa.UserID = @userId",
                 new { centreId, userId }
             ).SingleOrDefault();
         }
@@ -106,7 +107,7 @@
         public void UpdateAdminAccount(AdminRegistrationModel model, int adminId)
         {
             connection.Execute(
-                @"UPDATE AdminUsers
+                @"UPDATE AdminAccounts
                         SET
                             CategoryID = @categoryId,
                             IsCentreAdmin = @isCentreAdmin,
@@ -124,6 +125,7 @@
                 {
                     model.CategoryId,
                     model.IsCentreAdmin,
+                    model.IsCentreManager,
                     model.Active,
                     model.IsContentCreator,
                     model.IsContentManager,

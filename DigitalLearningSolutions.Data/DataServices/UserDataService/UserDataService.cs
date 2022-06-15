@@ -17,7 +17,7 @@
 
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
 
-        AdminUser? GetAdminUserAtCentreForUser(int centreId, int userId);
+        (int AdminId, bool Active)? GetAdminIdAndStatusAtCentreForUser(int centreId, int userId);
 
         int GetNumberOfActiveAdminsAtCentre(int centreId);
 

@@ -249,7 +249,8 @@
                 FROM Notifications N INNER JOIN NotificationRoles NR
                 ON N.NotificationID = NR.NotificationID
                 WHERE RoleID IN @roles AND AutoOptIn = 1",
-                new { adminUserId, roles = registrationModel.GetNotificationRoles() }
+                new { adminUserId, roles = registrationModel.GetNotificationRoles() },
+                transaction
             );
 
             transaction.Commit();

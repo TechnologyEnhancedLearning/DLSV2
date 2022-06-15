@@ -654,7 +654,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void PromoteDelegateToAdmin_throws_active_admin_already_exists_AdminCreationFailedException_if_admin_already_exists()
+        public void PromoteDelegateToAdmin_throws_active_admin_already_exists_AdminCreationFailedException_if_active_admin_already_exists()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
@@ -662,7 +662,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
             A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(1);
-            A.CallTo(() => userDataService.GetAdminUserAtCentreForUser(delegateUser.CentreId, 1)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetAdminIdAndStatusAtCentreForUser(delegateUser.CentreId, 1)).Returns((3, true));
 
             // When
             var result = Assert.Throws<AdminCreationFailedException>(
@@ -674,14 +674,49 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void PromoteDelegateToAdmin_calls_data_service_with_expected_value()
+        public void PromoteDelegateToAdmin_calls_data_service_with_expected_values_if_existing_admin_is_inactive()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var adminUser = UserTestHelper.GetDefaultAdminUser();
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(1);
+            A.CallTo(() => userDataService.GetAdminIdAndStatusAtCentreForUser(delegateUser.CentreId, 1)).Returns((3, false));
+
+            // When
+            registrationService.PromoteDelegateToAdmin(adminRoles, 1, 2);
+
+            // Then
+            A.CallTo(
+                () => registrationDataService.RegisterAdmin(
+                    A<AdminRegistrationModel>.That.Matches(
+                        a =>
+                            a.Centre == delegateUser.CentreId &&
+                            a.Active &&
+                            a.Approved &&
+                            a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
+                            !a.IsCentreManager &&
+                            a.IsContentManager == adminRoles.IsContentManager &&
+                            a.ImportOnly == adminRoles.IsCmsAdministrator &&
+                            a.IsContentCreator == adminRoles.IsContentCreator &&
+                            a.IsTrainer == adminRoles.IsTrainer &&
+                            a.IsSupervisor == adminRoles.IsSupervisor
+                    ),
+                    1
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_calls_data_service_with_expected_values_if_no_existing_admin()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
             A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(1);
-            A.CallTo(() => userDataService.GetAdminUserAtCentreForUser(delegateUser.CentreId, 1)).Returns(null);
+            A.CallTo(() => userDataService.GetAdminIdAndStatusAtCentreForUser(delegateUser.CentreId, 1)).Returns(null);
 
             // When
             registrationService.PromoteDelegateToAdmin(adminRoles, 1, 2);

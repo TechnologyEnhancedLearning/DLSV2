@@ -222,7 +222,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             var userId = userDataService.GetUserIdFromDelegateId(delegateId)!.Value;
 
-            var adminUser = userDataService.GetAdminUserAtCentreForUser(delegateUser.CentreId, userId);
+            var admin = userDataService.GetAdminIdAndStatusAtCentreForUser(delegateUser.CentreId, userId);
 
             var adminRegistrationModel = new AdminRegistrationModel(
                 delegateUser.CentreId,
@@ -239,14 +239,14 @@ namespace DigitalLearningSolutions.Data.Services
                 adminRoles.IsCmsManager
             );
 
-            if (adminUser != null)
+            if (admin != null)
             {
-                if (adminUser.Active)
+                if (admin.Value.Active)
                 {
                     throw new AdminCreationFailedException(AdminCreationError.ActiveAdminAlreadyExists);
                 }
 
-                userDataService.UpdateAdminAccount(adminRegistrationModel, adminUser.Id);
+                userDataService.UpdateAdminAccount(adminRegistrationModel, admin.Value.AdminId);
             }
 
             registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
