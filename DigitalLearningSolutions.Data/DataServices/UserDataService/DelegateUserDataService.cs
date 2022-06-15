@@ -6,7 +6,6 @@
     using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.User;
-    using Delegate = DigitalLearningSolutions.Data.Models.User.Delegate;
 
     public partial class UserDataService
     {
@@ -66,7 +65,7 @@
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreId";
 
-        public Delegate? GetDelegateById(int id)
+        public DelegateEntity? GetDelegateById(int id)
         {
             var sql = @"SELECT
                 da.ID,
@@ -106,10 +105,7 @@
                 u.HasDismissedLhLoginWarning,
                 u.EmailVerified,
                 u.DetailsLastChecked,
-                CASE
-                    WHEN ucd.ID IS NOT NULL THEN ucd.ID
-                    ELSE 0
-                END AS ID,
+                ucd.ID,
                 ucd.UserID,
                 ucd.CentreID,
                 ucd.Email,
@@ -122,25 +118,19 @@
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
             WHERE da.ID = @id";
 
-            var delegateUser = connection.Query<DelegateAccount, UserAccount, UserCentreDetails, Delegate>(
+            return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, DelegateEntity>(
                 sql,
-                (delegateAccount, userAccount, userCentreDetails) =>
-                {
-                    if (userCentreDetails.Id == 0)
-                    {
-                        userCentreDetails = null!;
-                    }
-
-                    var delegateUser = new Delegate(delegateAccount, userAccount, userCentreDetails);
-                    return delegateUser;
-                },
+                (delegateAccount, userAccount, userCentreDetails) => new DelegateEntity(
+                    delegateAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
                 new { id },
                 splitOn: "ID,ID"
             ).SingleOrDefault();
-
-            return delegateUser;
         }
 
+        [Obsolete("New code should use GetDelegateById instead")]
         public DelegateUser? GetDelegateUserById(int id)
         {
             var user = connection.Query<DelegateUser>(
@@ -208,7 +198,8 @@
             bool hasBeenPromptedForPrn,
             int jobGroupId,
             DateTime detailsLastChecked,
-            int userId
+            int userId,
+            bool shouldUpdateProfileImage = false
         )
         {
             connection.Execute(
@@ -217,7 +208,7 @@
                             FirstName = @firstName,
                             LastName = @surname,
                             PrimaryEmail = @primaryEmail,
-                            ProfileImage = @profileImage,
+                            ProfileImage = (CASE WHEN @shouldUpdateProfileImage = 1 THEN @profileImage ELSE ProfileImage END),
                             ProfessionalRegistrationNumber = @professionalRegNumber,
                             HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
                             JobGroupId = @jobGroupId,
@@ -234,6 +225,7 @@
                     hasBeenPromptedForPrn,
                     jobGroupId,
                     detailsLastChecked,
+                    shouldUpdateProfileImage,
                 }
             );
         }

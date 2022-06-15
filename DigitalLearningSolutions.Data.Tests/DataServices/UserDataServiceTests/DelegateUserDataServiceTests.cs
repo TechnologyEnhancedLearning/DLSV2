@@ -16,13 +16,13 @@
         public void GetDelegateById_returns_delegate_with_null_user_centre_details()
         {
             // Given
-            var expectedDelegate = UserTestHelper.GetDefaultDelegate();
+            var expectedDelegateEntity = UserTestHelper.GetDefaultDelegateEntity();
 
             // When
-            var returnedDelegateUser = userDataService.GetDelegateById(2);
+            var returnedDelegateEntity = userDataService.GetDelegateById(2);
 
             // Then
-            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegate);
+            returnedDelegateEntity.Should().BeEquivalentTo(expectedDelegateEntity);
         }
 
         [Test]
@@ -35,21 +35,21 @@
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
                     VALUES (61188, 2, 'centre@email.com')"
             );
-            var expectedUserCentreDetails = UserTestHelper.GetDefaultDelegate(
+            var expectedUserCentreDetails = UserTestHelper.GetDefaultDelegateEntity(
                 userCentreDetailsId: 1,
                 centreSpecificEmail: "centre@email.com",
                 centreSpecificEmailVerified: null
             ).UserCentreDetails;
 
             // When
-            var returnedDelegateUser = userDataService.GetDelegateById(2);
+            var returnedDelegateEntity = userDataService.GetDelegateById(2);
 
             // Then
-            returnedDelegateUser!.UserCentreDetails.Should().NotBeNull();
-            returnedDelegateUser.UserCentreDetails!.UserId.Should().Be(expectedUserCentreDetails!.UserId);
-            returnedDelegateUser.UserCentreDetails.CentreId.Should().Be(expectedUserCentreDetails.CentreId);
-            returnedDelegateUser.UserCentreDetails.Email.Should().Be(expectedUserCentreDetails.Email);
-            returnedDelegateUser.UserCentreDetails.EmailVerified.Should().Be(expectedUserCentreDetails.EmailVerified);
+            returnedDelegateEntity!.UserCentreDetails.Should().NotBeNull();
+            returnedDelegateEntity.UserCentreDetails!.UserId.Should().Be(expectedUserCentreDetails!.UserId);
+            returnedDelegateEntity.UserCentreDetails.CentreId.Should().Be(expectedUserCentreDetails.CentreId);
+            returnedDelegateEntity.UserCentreDetails.Email.Should().Be(expectedUserCentreDetails.Email);
+            returnedDelegateEntity.UserCentreDetails.EmailVerified.Should().Be(expectedUserCentreDetails.EmailVerified);
         }
 
         [Test]

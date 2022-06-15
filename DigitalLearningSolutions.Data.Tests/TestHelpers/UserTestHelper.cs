@@ -7,7 +7,6 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Data.SqlClient;
-    using Delegate = DigitalLearningSolutions.Data.Models.User.Delegate;
 
     public static class UserTestHelper
     {
@@ -161,7 +160,7 @@
             };
         }
 
-        public static Delegate GetDefaultDelegate(
+        public static DelegateEntity GetDefaultDelegateEntity(
             int delegateId = 2,
             int userId = 61188,
             bool active = true,
@@ -263,7 +262,7 @@
                     EmailVerified = centreSpecificEmailVerified,
                 };
 
-            return new Delegate(delegateAccount, userAccount, userCentreDetails);
+            return new DelegateEntity(delegateAccount, userAccount, userCentreDetails);
         }
 
         public static DelegateUser GetDefaultDelegateUser(

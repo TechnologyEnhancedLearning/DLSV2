@@ -7,33 +7,33 @@
     {
         public DelegateUserCard() { }
 
-        public DelegateUserCard(Delegate delegateUser)
+        public DelegateUserCard(DelegateEntity delegateEntity)
         {
-            Id = delegateUser.DelegateAccount.Id;
-            CentreId = delegateUser.DelegateAccount.CentreId;
-            CentreName = delegateUser.DelegateAccount.CentreName;
-            Active = delegateUser.DelegateAccount.Active;
-            Approved = delegateUser.DelegateAccount.Approved;
-            CentreActive = delegateUser.DelegateAccount.CentreActive;
-            FirstName = delegateUser.UserAccount.FirstName;
-            LastName = delegateUser.UserAccount.LastName;
-            EmailAddress = delegateUser.UserCentreDetails?.Email ?? delegateUser.UserAccount.PrimaryEmail;
-            Password = delegateUser.UserAccount.PasswordHash;
-            CandidateNumber = delegateUser.DelegateAccount.CandidateNumber;
-            DateRegistered = delegateUser.DelegateAccount.DateRegistered;
-            JobGroupId = delegateUser.UserAccount.JobGroupId;
-            JobGroupName = delegateUser.UserAccount.JobGroupName;
-            Answer1 = delegateUser.DelegateAccount.Answer1;
-            Answer2 = delegateUser.DelegateAccount.Answer2;
-            Answer3 = delegateUser.DelegateAccount.Answer3;
-            Answer4 = delegateUser.DelegateAccount.Answer4;
-            Answer5 = delegateUser.DelegateAccount.Answer5;
-            Answer6 = delegateUser.DelegateAccount.Answer6;
-            HasBeenPromptedForPrn = delegateUser.UserAccount.HasBeenPromptedForPrn;
-            ProfessionalRegistrationNumber = delegateUser.UserAccount.ProfessionalRegistrationNumber;
-            HasDismissedLhLoginWarning = delegateUser.UserAccount.HasDismissedLhLoginWarning;
-            SelfReg = delegateUser.DelegateAccount.SelfReg;
-            ExternalReg = delegateUser.DelegateAccount.ExternalReg;
+            Id = delegateEntity.DelegateAccount.Id;
+            CentreId = delegateEntity.DelegateAccount.CentreId;
+            CentreName = delegateEntity.DelegateAccount.CentreName;
+            Active = delegateEntity.DelegateAccount.Active;
+            Approved = delegateEntity.DelegateAccount.Approved;
+            CentreActive = delegateEntity.DelegateAccount.CentreActive;
+            FirstName = delegateEntity.UserAccount.FirstName;
+            LastName = delegateEntity.UserAccount.LastName;
+            EmailAddress = delegateEntity.UserCentreDetails?.Email ?? delegateEntity.UserAccount.PrimaryEmail;
+            Password = delegateEntity.UserAccount.PasswordHash;
+            CandidateNumber = delegateEntity.DelegateAccount.CandidateNumber;
+            DateRegistered = delegateEntity.DelegateAccount.DateRegistered;
+            JobGroupId = delegateEntity.UserAccount.JobGroupId;
+            JobGroupName = delegateEntity.UserAccount.JobGroupName;
+            Answer1 = delegateEntity.DelegateAccount.Answer1;
+            Answer2 = delegateEntity.DelegateAccount.Answer2;
+            Answer3 = delegateEntity.DelegateAccount.Answer3;
+            Answer4 = delegateEntity.DelegateAccount.Answer4;
+            Answer5 = delegateEntity.DelegateAccount.Answer5;
+            Answer6 = delegateEntity.DelegateAccount.Answer6;
+            HasBeenPromptedForPrn = delegateEntity.UserAccount.HasBeenPromptedForPrn;
+            ProfessionalRegistrationNumber = delegateEntity.UserAccount.ProfessionalRegistrationNumber;
+            HasDismissedLhLoginWarning = delegateEntity.UserAccount.HasDismissedLhLoginWarning;
+            SelfReg = delegateEntity.DelegateAccount.SelfReg;
+            ExternalReg = delegateEntity.DelegateAccount.ExternalReg;
         }
 
         public bool SelfReg { get; set; }

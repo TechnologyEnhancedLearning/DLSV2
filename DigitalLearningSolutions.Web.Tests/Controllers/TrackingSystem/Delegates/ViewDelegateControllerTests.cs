@@ -53,12 +53,12 @@
             // Given
             const int delegateId = 1;
             const string centreSpecificEmail = "centre@email.com";
-            var delegateUser = UserTestHelper.GetDefaultDelegate(
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
                 userCentreDetailsId: 1,
                 centreSpecificEmail: centreSpecificEmail,
                 centreSpecificEmailVerified: false
             );
-            A.CallTo(() => userService.GetDelegateById(delegateId)).Returns(delegateUser);
+            A.CallTo(() => userService.GetDelegateById(delegateId)).Returns(delegateEntity);
 
             // When
             var result = viewDelegateController.Index(delegateId);
@@ -73,15 +73,15 @@
         {
             // Given
             const int delegateId = 1;
-            var delegateUser = UserTestHelper.GetDefaultDelegate(delegateId, centreSpecificEmail: null);
-            A.CallTo(() => userService.GetDelegateById(delegateId)).Returns(delegateUser);
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(delegateId, centreSpecificEmail: null);
+            A.CallTo(() => userService.GetDelegateById(delegateId)).Returns(delegateEntity);
 
             // When
             var result = viewDelegateController.Index(delegateId);
 
             // Then
             result.As<ViewResult>().Model.As<ViewDelegateViewModel>().DelegateInfo.Email.Should()
-                .Be(delegateUser.UserAccount.PrimaryEmail);
+                .Be(delegateEntity.UserAccount.PrimaryEmail);
         }
 
         [Test]

@@ -51,14 +51,14 @@
         {
             var centreId = User.GetCentreId();
 
-            var delegateUser = userService.GetDelegateById(delegateId)!;
+            var delegateEntity = userService.GetDelegateById(delegateId)!;
 
-            if (delegateUser == null)
+            if (delegateEntity == null)
             {
                 return NotFound();
             }
 
-            var delegateUserCard = new DelegateUserCard(delegateUser);
+            var delegateUserCard = new DelegateUserCard(delegateEntity);
             var categoryIdFilter = User.GetAdminCategoryId();
 
             var customFields = promptsService.GetDelegateRegistrationPromptsForCentre(centreId, delegateUserCard);

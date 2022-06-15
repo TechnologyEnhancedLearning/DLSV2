@@ -137,7 +137,8 @@
                         A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string?>._,
-                        A<int>._
+                        A<int>._,
+                        A<bool>._
                     )
                 )
                 .DoesNothing();
@@ -162,7 +163,8 @@
                         A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string?>._,
-                        A<int>._
+                        A<int>._,
+                        true
                     )
                 )
                 .MustHaveHappened();
@@ -194,7 +196,8 @@
                         A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string?>._,
-                        A<int>._
+                        A<int>._,
+                        A<bool>._
                     )
                 )
                 .DoesNothing();
@@ -236,7 +239,8 @@
                         A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string?>._,
-                        A<int>._
+                        A<int>._,
+                        A<bool>._
                     )
                 )
                 .DoesNothing();

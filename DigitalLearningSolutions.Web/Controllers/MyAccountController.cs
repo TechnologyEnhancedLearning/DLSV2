@@ -198,7 +198,8 @@
                 accountDetailsData,
                 delegateDetailsData,
                 formData.CentreSpecificEmail,
-                User.GetCentreId()
+                User.GetCentreId(),
+                true
             );
 
             return this.RedirectToReturnUrl(formData.ReturnUrl, logger) ?? RedirectToAction(

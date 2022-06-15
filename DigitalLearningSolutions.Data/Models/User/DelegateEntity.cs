@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
-    public class Delegate
+    public class DelegateEntity
     {
-        public Delegate(
+        public DelegateEntity(
             DelegateAccount delegateAccount,
             UserAccount userAccount,
             UserCentreDetails? userCentreDetails

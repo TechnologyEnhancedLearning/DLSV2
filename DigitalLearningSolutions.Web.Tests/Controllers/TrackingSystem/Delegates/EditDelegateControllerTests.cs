@@ -53,8 +53,8 @@
         public void Index_returns_not_found_with_delegate_at_different_centre()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegate(DelegateId, centreId: 4);
-            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateUser);
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(DelegateId, centreId: 4);
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
 
             // When
             var result = controller.Index(DelegateId);
@@ -68,13 +68,13 @@
         {
             // Given
             const string centreSpecificEmail = "centre@email.com";
-            var delegateUser = UserTestHelper.GetDefaultDelegate(
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
                 DelegateId,
                 userCentreDetailsId: 1,
                 centreSpecificEmail: centreSpecificEmail,
                 centreSpecificEmailVerified: false
             );
-            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateUser);
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
 
             // When
             var result = controller.Index(DelegateId);
@@ -88,15 +88,15 @@
         public void Index_shows_primary_email_if_centre_specific_email_is_null()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegate(DelegateId, centreSpecificEmail: null);
-            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateUser);
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(DelegateId, centreSpecificEmail: null);
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
 
             // When
             var result = controller.Index(DelegateId);
 
             // Then
             result.As<ViewResult>().Model.As<EditDelegateViewModel>().CentreSpecificEmail.Should()
-                .Be(delegateUser.UserAccount.PrimaryEmail);
+                .Be(delegateEntity.UserAccount.PrimaryEmail);
         }
 
         [Test]
@@ -104,7 +104,7 @@
         {
             // Given
             const string email = "test@email.com";
-            var delegateUser = UserTestHelper.GetDefaultDelegate(DelegateId);
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(DelegateId);
             var formData = new EditDelegateFormData
             {
                 JobGroupId = 1,
@@ -112,8 +112,8 @@
                 HasProfessionalRegistrationNumber = false,
             };
 
-            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateUser);
-            A.CallTo(() => userService.NewEmailAddressIsValid(email, delegateUser.UserAccount.Id)).Returns(false);
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
+            A.CallTo(() => userService.NewEmailAddressIsValid(email, delegateEntity.UserAccount.Id)).Returns(false);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -162,7 +162,7 @@
         {
             // Given
             const string centreSpecificEmail = "centre@email.com";
-            var delegateUser = UserTestHelper.GetDefaultDelegate(
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
                 DelegateId,
                 userCentreDetailsId: 1,
                 centreSpecificEmail: centreSpecificEmail,
@@ -175,8 +175,8 @@
                 CentreSpecificEmail = centreSpecificEmail,
             };
 
-            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateUser);
-            A.CallTo(() => userService.NewEmailAddressIsValid(centreSpecificEmail, delegateUser.UserAccount.Id))
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
+            A.CallTo(() => userService.NewEmailAddressIsValid(centreSpecificEmail, delegateEntity.UserAccount.Id))
                 .Returns(true);
 
             // When
@@ -186,14 +186,15 @@
             using (new AssertionScope())
             {
                 A.CallTo(() => userService.GetDelegateById(DelegateId)).MustHaveHappenedOnceExactly();
-                A.CallTo(() => userService.NewEmailAddressIsValid(centreSpecificEmail, delegateUser.UserAccount.Id))
+                A.CallTo(() => userService.NewEmailAddressIsValid(centreSpecificEmail, delegateEntity.UserAccount.Id))
                     .MustHaveHappenedOnceExactly();
                 A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         centreSpecificEmail,
-                        delegateUser.DelegateAccount.CentreId
+                        delegateEntity.DelegateAccount.CentreId,
+                        false
                     )
                 ).MustHaveHappened();
                 result.Should().BeRedirectToActionResult().WithControllerName("ViewDelegate").WithActionName("Index");
@@ -205,12 +206,12 @@
         {
             // Given
             const string primaryEmail = "primary@email";
-            var delegateUser = UserTestHelper.GetDefaultDelegate(
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
                 DelegateId,
                 primaryEmail: primaryEmail,
                 centreSpecificEmail: "random@email"
             );
-            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateUser);
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
 
             var formData = new EditDelegateFormData
             {
@@ -231,7 +232,8 @@
                         A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         null,
-                        delegateUser.DelegateAccount.CentreId
+                        delegateEntity.DelegateAccount.CentreId,
+                        false
                     )
                 ).MustHaveHappened();
                 result.Should().BeRedirectToActionResult().WithControllerName("ViewDelegate").WithActionName("Index");

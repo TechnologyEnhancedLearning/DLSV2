@@ -21,21 +21,20 @@
                 formData.HasProfessionalRegistrationNumber,
                 formData.ProfessionalRegistrationNumber,
                 userDelegateId,
-                formData.ProfileImage,
                 formData.Answer1,
                 formData.Answer2,
                 formData.Answer3,
                 formData.Answer4,
                 formData.Answer5,
-                formData.Answer6
+                formData.Answer6,
+                formData.ProfileImage
             );
         }
 
         public static (EditAccountDetailsData, DelegateDetailsData) MapToEditAccountDetailsData(
             EditDelegateFormData formData,
             int userId,
-            int userDelegateId,
-            byte[]? profileImage
+            int delegateId
         )
         {
             return MapToEditAccountDetailsData(
@@ -46,8 +45,7 @@
                 formData.JobGroupId!.Value,
                 formData.HasProfessionalRegistrationNumber,
                 formData.ProfessionalRegistrationNumber,
-                userDelegateId,
-                profileImage,
+                delegateId,
                 formData.Answer1,
                 formData.Answer2,
                 formData.Answer3,
@@ -66,13 +64,13 @@
             bool? hasProfessionalRegistrationNumber,
             string? professionalRegistrationNumber,
             int? userDelegateId,
-            byte[]? profileImage,
             string? answer1,
             string? answer2,
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6
+            string? answer6,
+            byte[]? profileImage = null
         )
         {
             var accountDetailsData = new EditAccountDetailsData(

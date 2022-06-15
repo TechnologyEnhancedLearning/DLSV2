@@ -31,14 +31,12 @@
         private ISessionDataService sessionDataService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
-        private IUserVerificationService userVerificationService = null!;
 
         [SetUp]
         public void Setup()
         {
             userDataService = A.Fake<IUserDataService>();
             groupsService = A.Fake<IGroupsService>();
-            userVerificationService = A.Fake<IUserVerificationService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             sessionDataService = A.Fake<ISessionDataService>();
             logger = A.Fake<Logger<IUserService>>();
@@ -48,7 +46,6 @@
             userService = new UserService(
                 userDataService,
                 groupsService,
-                userVerificationService,
                 centreContractAdminUsageService,
                 sessionDataService,
                 logger,
@@ -120,15 +117,15 @@
         public void GetDelegateById_returns_user_from_data_service()
         {
             // Given
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegate();
-            A.CallTo(() => userDataService.GetDelegateById(expectedDelegateUser.DelegateAccount.Id))
-                .Returns(expectedDelegateUser);
+            var expectedDelegateEntity = UserTestHelper.GetDefaultDelegateEntity();
+            A.CallTo(() => userDataService.GetDelegateById(expectedDelegateEntity.DelegateAccount.Id))
+                .Returns(expectedDelegateEntity);
 
             // When
-            var returnedDelegateUser = userService.GetDelegateById(expectedDelegateUser.DelegateAccount.Id);
+            var returnedDelegateEntity = userService.GetDelegateById(expectedDelegateEntity.DelegateAccount.Id);
 
             // Then
-            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUser);
+            returnedDelegateEntity.Should().BeEquivalentTo(expectedDelegateEntity);
         }
 
         [Test]
@@ -160,64 +157,19 @@
         }
 
         [Test]
-        public void GetUsersWithActiveCentres_returns_users_with_active_centres()
-        {
-            // Given
-            var inputAdminAccount =
-                UserTestHelper.GetDefaultAdminUser(1, centreName: "First Centre", centreActive: true);
-            var inputDelegateList = new List<DelegateUser>
-            {
-                UserTestHelper.GetDefaultDelegateUser(2, centreName: "Second Centre", centreActive: true),
-                UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: true),
-                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: true),
-            };
-            var expectedDelegateIds = new List<int> { 2, 3, 4 };
-
-            // When
-            var (resultAdminUser, resultDelegateUsers) =
-                userService.GetUsersWithActiveCentres(inputAdminAccount, inputDelegateList);
-            var resultDelegateIds = resultDelegateUsers.Select(du => du.Id).ToList();
-
-            // Then
-            Assert.That(resultAdminUser.IsSameOrEqualTo(inputAdminAccount));
-            Assert.That(resultDelegateIds.SequenceEqual(expectedDelegateIds));
-        }
-
-        [Test]
-        public void GetUsersWithActiveCentres_does_not_return_users_with_inactive_centres()
-        {
-            // Given
-            var inputAdminAccount =
-                UserTestHelper.GetDefaultAdminUser(1, centreName: "First Centre", centreActive: false);
-            var inputDelegateList = new List<DelegateUser>
-            {
-                UserTestHelper.GetDefaultDelegateUser(2, centreName: "Second Centre", centreActive: false),
-                UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: false),
-                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: false),
-            };
-
-            // When
-            var (resultAdminUser, resultDelegateUsers) =
-                userService.GetUsersWithActiveCentres(inputAdminAccount, inputDelegateList);
-
-            // Then
-            Assert.IsNull(resultAdminUser);
-            Assert.That(resultDelegateUsers.IsNullOrEmpty);
-        }
-
-        [Test]
         public void
             UpdateUserDetailsAndCentreSpecificDetails_with_null_delegate_details_only_updates_user_and_centre_email()
         {
             // Given
             const int centreId = 1;
             const string centreEmail = "test@email.com";
+            const bool shouldUpdateProfileImage = true;
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var now = DateTime.Now;
             A.CallTo(() => clockService.UtcNow).Returns(now);
 
             // When
-            userService.UpdateUserDetailsAndCentreSpecificDetails(accountDetailsData, null, centreEmail, centreId);
+            userService.UpdateUserDetailsAndCentreSpecificDetails(accountDetailsData, null, centreEmail, centreId, shouldUpdateProfileImage);
 
             // Then
             A.CallTo(
@@ -230,7 +182,8 @@
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
                         now,
-                        accountDetailsData.UserId
+                        accountDetailsData.UserId,
+                        shouldUpdateProfileImage
                     )
                 )
                 .MustHaveHappened();
@@ -256,6 +209,7 @@
             const string answer4 = "answer4";
             const string answer5 = "answer5";
             const string answer6 = "answer6";
+            const bool shouldUpdateProfileImage = true;
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var delegateDetailsData = new DelegateDetailsData(
@@ -276,7 +230,8 @@
                 accountDetailsData,
                 delegateDetailsData,
                 null,
-                1
+                1,
+                shouldUpdateProfileImage
             );
 
             // Then
@@ -290,7 +245,8 @@
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
                         now,
-                        accountDetailsData.UserId
+                        accountDetailsData.UserId,
+                        shouldUpdateProfileImage
                     )
                 )
                 .MustHaveHappened();
@@ -667,25 +623,6 @@
                 A.CallTo(() => userDataService.DeleteAdminAccount(adminId)).MustHaveHappenedOnceExactly();
                 A.CallTo(() => userDataService.DeactivateAdmin(adminId)).MustHaveHappenedOnceExactly();
             }
-        }
-
-        [Test]
-        [TestCase(null)]
-        [TestCase("")]
-        [TestCase(" ")]
-        public void GetUsersByEmailAddress_returns_no_results_for_no_address(string? address)
-        {
-            // Given
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(new AdminUser());
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(A<string>._))
-                .Returns(new List<DelegateUser> { new DelegateUser() });
-
-            // When
-            var result = userService.GetUsersByEmailAddress(address);
-
-            // Then
-            result.adminUser.Should().BeNull();
-            result.delegateUsers.Should().BeEmpty();
         }
 
         [Test]

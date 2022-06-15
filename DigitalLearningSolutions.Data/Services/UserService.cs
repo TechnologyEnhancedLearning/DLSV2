@@ -12,15 +12,12 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
-    using Delegate = DigitalLearningSolutions.Data.Models.User.Delegate;
 
     public interface IUserService
     {
-        (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress);
-
         (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
 
-        Delegate? GetDelegateById(int id);
+        DelegateEntity? GetDelegateById(int id);
 
         DelegateUser? GetDelegateUserById(int delegateId);
 
@@ -28,21 +25,15 @@ namespace DigitalLearningSolutions.Data.Services
 
         List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
 
-        (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres(
-            AdminUser? adminUser,
-            List<DelegateUser> delegateUsers
-        );
-
         void UpdateUserDetailsAndCentreSpecificDetails(
             EditAccountDetailsData editAccountDetailsData,
             DelegateDetailsData? delegateDetailsData,
             string? centreEmail,
-            int centreId
+            int centreId,
+            bool shouldUpdateProfileImage
         );
 
         bool NewEmailAddressIsValid(string emailAddress, int userId);
-
-        bool IsPasswordValid(int? adminId, int? delegateId, string password);
 
         bool IsDelegateEmailValidForCentre(string email, int centreId);
 
@@ -94,12 +85,10 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly ILogger<IUserService> logger;
         private readonly ISessionDataService sessionDataService;
         private readonly IUserDataService userDataService;
-        private readonly IUserVerificationService userVerificationService;
 
         public UserService(
             IUserDataService userDataService,
             IGroupsService groupsService,
-            IUserVerificationService userVerificationService,
             ICentreContractAdminUsageService centreContractAdminUsageService,
             ISessionDataService sessionDataService,
             ILogger<IUserService> logger,
@@ -109,25 +98,11 @@ namespace DigitalLearningSolutions.Data.Services
         {
             this.userDataService = userDataService;
             this.groupsService = groupsService;
-            this.userVerificationService = userVerificationService;
             this.centreContractAdminUsageService = centreContractAdminUsageService;
             this.sessionDataService = sessionDataService;
             this.logger = logger;
             this.clockService = clockService;
             this.configuration = configuration;
-        }
-
-        public (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string? emailAddress)
-        {
-            if (string.IsNullOrWhiteSpace(emailAddress))
-            {
-                return (null, new List<DelegateUser>());
-            }
-
-            var adminUser = userDataService.GetAdminUserByEmailAddress(emailAddress);
-            var delegateUsers = userDataService.GetDelegateUsersByEmailAddress(emailAddress);
-
-            return (adminUser, delegateUsers);
         }
 
         public (AdminUser?, DelegateUser?) GetUsersById(int? userAdminId, int? userDelegateId)
@@ -161,74 +136,9 @@ namespace DigitalLearningSolutions.Data.Services
             return userDataService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
         }
 
-        public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres(
-            AdminUser? adminUser,
-            List<DelegateUser> delegateUsers
-        )
-        {
-            var adminUserWithActiveCentre = adminUser?.CentreActive == true ? adminUser : null;
-            var delegateUsersWithActiveCentres = delegateUsers.Where(du => du.CentreActive).ToList();
-            return (adminUserWithActiveCentre, delegateUsersWithActiveCentres);
-        }
-
-        public void UpdateUserDetailsAndCentreSpecificDetails(
-            EditAccountDetailsData editAccountDetailsData,
-            DelegateDetailsData? delegateDetailsData,
-            string? centreEmail,
-            int centreId
-        )
-        {
-            var detailsLastChecked = clockService.UtcNow;
-
-            if (delegateDetailsData != null)
-            {
-                groupsService.SynchroniseUserChangesWithGroups(
-                    delegateDetailsData.DelegateId,
-                    editAccountDetailsData,
-                    new RegistrationFieldAnswers(delegateDetailsData, editAccountDetailsData.JobGroupId)
-                );
-
-                userDataService.UpdateDelegateUserCentrePrompts(
-                    delegateDetailsData.DelegateId,
-                    delegateDetailsData.Answer1,
-                    delegateDetailsData.Answer2,
-                    delegateDetailsData.Answer3,
-                    delegateDetailsData.Answer4,
-                    delegateDetailsData.Answer5,
-                    delegateDetailsData.Answer6,
-                    detailsLastChecked
-                );
-            }
-
-            userDataService.UpdateUser(
-                editAccountDetailsData.FirstName,
-                editAccountDetailsData.Surname,
-                editAccountDetailsData.Email,
-                editAccountDetailsData.ProfileImage,
-                editAccountDetailsData.ProfessionalRegistrationNumber,
-                editAccountDetailsData.HasBeenPromptedForPrn,
-                editAccountDetailsData.JobGroupId,
-                detailsLastChecked,
-                editAccountDetailsData.UserId
-            );
-
-            userDataService.SetCentreEmail(
-                editAccountDetailsData.UserId,
-                centreId,
-                centreEmail
-            );
-        }
-
         public bool NewEmailAddressIsValid(string emailAddress, int userId)
         {
             return !userDataService.EmailIsInUseByOtherUser(userId, emailAddress);
-        }
-
-        public bool IsPasswordValid(int? adminId, int? delegateId, string password)
-        {
-            var verifiedLinkedUsersAccounts = GetVerifiedLinkedUsersAccounts(adminId, delegateId, password);
-
-            return verifiedLinkedUsersAccounts.Any();
         }
 
         public bool IsDelegateEmailValidForCentre(string email, int centreId)
@@ -373,7 +283,7 @@ namespace DigitalLearningSolutions.Data.Services
             return userDataService.GetUserAccountByEmailAddress(emailAddress);
         }
 
-        public Delegate? GetDelegateById(int id)
+        public DelegateEntity? GetDelegateById(int id)
         {
             return userDataService.GetDelegateById(id);
         }
@@ -410,28 +320,54 @@ namespace DigitalLearningSolutions.Data.Services
             return userDataService.GetCentreEmail(userId, centreId);
         }
 
-        private UserAccountSet GetVerifiedLinkedUsersAccounts(
-            int? adminId,
-            int? delegateId,
-            string password
+        public void UpdateUserDetailsAndCentreSpecificDetails(
+            EditAccountDetailsData editAccountDetailsData,
+            DelegateDetailsData? delegateDetailsData,
+            string? centreEmail,
+            int centreId,
+            bool shouldUpdateProfileImage
         )
         {
-            var (loggedInAdminUser, loggedInDelegateUser) = GetUsersById(adminId, delegateId);
+            var detailsLastChecked = clockService.UtcNow;
 
-            var signedInEmailIfAny = loggedInAdminUser?.EmailAddress ?? loggedInDelegateUser?.EmailAddress;
-
-            if (string.IsNullOrWhiteSpace(signedInEmailIfAny))
+            if (delegateDetailsData != null)
             {
-                var loggedInDelegateUsers = loggedInDelegateUser != null
-                    ? new List<DelegateUser> { loggedInDelegateUser }
-                    : new List<DelegateUser>();
+                groupsService.SynchroniseUserChangesWithGroups(
+                    delegateDetailsData.DelegateId,
+                    editAccountDetailsData,
+                    new RegistrationFieldAnswers(delegateDetailsData, editAccountDetailsData.JobGroupId)
+                );
 
-                return userVerificationService.VerifyUsers(password, loggedInAdminUser, loggedInDelegateUsers);
+                userDataService.UpdateDelegateUserCentrePrompts(
+                    delegateDetailsData.DelegateId,
+                    delegateDetailsData.Answer1,
+                    delegateDetailsData.Answer2,
+                    delegateDetailsData.Answer3,
+                    delegateDetailsData.Answer4,
+                    delegateDetailsData.Answer5,
+                    delegateDetailsData.Answer6,
+                    detailsLastChecked
+                );
             }
 
-            var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
+            userDataService.UpdateUser(
+                editAccountDetailsData.FirstName,
+                editAccountDetailsData.Surname,
+                editAccountDetailsData.Email,
+                editAccountDetailsData.ProfileImage,
+                editAccountDetailsData.ProfessionalRegistrationNumber,
+                editAccountDetailsData.HasBeenPromptedForPrn,
+                editAccountDetailsData.JobGroupId,
+                detailsLastChecked,
+                editAccountDetailsData.UserId,
+                shouldUpdateProfileImage
+            );
 
-            return userVerificationService.VerifyUsers(password, adminUser, delegateUsers);
+            userDataService.SetCentreEmail(
+                editAccountDetailsData.UserId,
+                centreId,
+                centreEmail
+            );
         }
 
         private bool NewUserRolesExceedAvailableSpots(

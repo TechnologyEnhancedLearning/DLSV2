@@ -7,7 +7,6 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
-    using Delegate = DigitalLearningSolutions.Data.Models.User.Delegate;
 
     public interface IUserDataService
     {
@@ -18,8 +17,6 @@
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
 
         int GetNumberOfActiveAdminsAtCentre(int centreId);
-
-        void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
 
         void UpdateAdminUserPermissions(
             int adminId,
@@ -35,7 +32,7 @@
 
         void UpdateUserFailedLoginCount(int userId, int updatedCount);
 
-        Delegate? GetDelegateById(int id);
+        DelegateEntity? GetDelegateById(int id);
 
         DelegateUser? GetDelegateUserById(int id);
 
@@ -56,7 +53,8 @@
             bool hasBeenPromptedForPrn,
             int jobGroupId,
             DateTime detailsLastChecked,
-            int userId
+            int userId,
+            bool shouldUpdateProfileImage = false
         );
 
         void UpdateDelegateAccount(

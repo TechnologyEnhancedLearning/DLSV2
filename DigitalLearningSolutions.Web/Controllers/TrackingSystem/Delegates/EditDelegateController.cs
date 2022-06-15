@@ -41,9 +41,9 @@
         public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreId();
-            var delegateUser = userService.GetDelegateById(delegateId);
+            var delegateEntity = userService.GetDelegateById(delegateId);
 
-            if (delegateUser == null || delegateUser.DelegateAccount.CentreId != centreId)
+            if (delegateEntity == null || delegateEntity.DelegateAccount.CentreId != centreId)
             {
                 return NotFound();
             }
@@ -51,8 +51,8 @@
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
 
             var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, centreId);
-            var model = new EditDelegateViewModel(delegateUser, jobGroups, customPrompts);
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateEntity, centreId);
+            var model = new EditDelegateViewModel(delegateEntity, jobGroups, customPrompts);
 
             return View(model);
         }
@@ -75,15 +75,15 @@
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
-            var delegateUser = userService.GetDelegateById(delegateId);
+            var delegateEntity = userService.GetDelegateById(delegateId);
 
-            if (formData.CentreSpecificEmail == delegateUser!.UserAccount.PrimaryEmail ||
+            if (formData.CentreSpecificEmail == delegateEntity!.UserAccount.PrimaryEmail ||
                 string.IsNullOrWhiteSpace(formData.CentreSpecificEmail))
             {
                 formData.CentreSpecificEmail = null;
             }
 
-            if (!userService.NewEmailAddressIsValid(formData.CentreSpecificEmail!, delegateUser!.UserAccount.Id))
+            if (!userService.NewEmailAddressIsValid(formData.CentreSpecificEmail!, delegateEntity!.UserAccount.Id))
             {
                 ModelState.AddModelError(
                     nameof(EditDetailsFormData.CentreSpecificEmail),
@@ -94,15 +94,15 @@
 
             var (editDelegateDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToEditAccountDetailsData(
                 formData,
-                delegateUser.UserAccount.Id,
-                delegateId,
-                delegateUser.UserAccount.ProfileImage
+                delegateEntity.UserAccount.Id,
+                delegateId
             );
             userService.UpdateUserDetailsAndCentreSpecificDetails(
                 editDelegateDetailsData,
                 delegateDetailsData,
                 formData.CentreSpecificEmail,
-                centreId
+                centreId,
+                false
             );
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });

@@ -11,28 +11,28 @@
     {
         public EditDelegateFormData() { }
 
-        public EditDelegateFormData(Delegate delegateUser, IEnumerable<(int id, string name)> jobGroups)
+        public EditDelegateFormData(DelegateEntity delegateEntity, IEnumerable<(int id, string name)> jobGroups)
         {
-            FirstName = delegateUser.UserAccount.FirstName;
-            LastName = delegateUser.UserAccount.LastName;
-            Email = delegateUser.UserAccount.PrimaryEmail;
-            CentreSpecificEmail = delegateUser.UserCentreDetails?.Email ?? delegateUser.UserAccount.PrimaryEmail;
+            FirstName = delegateEntity.UserAccount.FirstName;
+            LastName = delegateEntity.UserAccount.LastName;
+            Email = delegateEntity.UserAccount.PrimaryEmail;
+            CentreSpecificEmail = delegateEntity.UserCentreDetails?.Email ?? delegateEntity.UserAccount.PrimaryEmail;
 
-            JobGroupId = jobGroups.Where(jg => jg.name == delegateUser.UserAccount.JobGroupName).Select(jg => jg.id)
+            JobGroupId = jobGroups.Where(jg => jg.name == delegateEntity.UserAccount.JobGroupName).Select(jg => jg.id)
                 .SingleOrDefault();
 
-            Answer1 = delegateUser.DelegateAccount.Answer1;
-            Answer2 = delegateUser.DelegateAccount.Answer2;
-            Answer3 = delegateUser.DelegateAccount.Answer3;
-            Answer4 = delegateUser.DelegateAccount.Answer4;
-            Answer5 = delegateUser.DelegateAccount.Answer5;
-            Answer6 = delegateUser.DelegateAccount.Answer6;
+            Answer1 = delegateEntity.DelegateAccount.Answer1;
+            Answer2 = delegateEntity.DelegateAccount.Answer2;
+            Answer3 = delegateEntity.DelegateAccount.Answer3;
+            Answer4 = delegateEntity.DelegateAccount.Answer4;
+            Answer5 = delegateEntity.DelegateAccount.Answer5;
+            Answer6 = delegateEntity.DelegateAccount.Answer6;
 
-            ProfessionalRegistrationNumber = delegateUser.UserAccount.ProfessionalRegistrationNumber;
+            ProfessionalRegistrationNumber = delegateEntity.UserAccount.ProfessionalRegistrationNumber;
             HasProfessionalRegistrationNumber =
                 ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(
-                    delegateUser.UserAccount.HasBeenPromptedForPrn,
-                    delegateUser.UserAccount.ProfessionalRegistrationNumber
+                    delegateEntity.UserAccount.HasBeenPromptedForPrn,
+                    delegateEntity.UserAccount.ProfessionalRegistrationNumber
                 );
             IsSelfRegistrationOrEdit = false;
         }
