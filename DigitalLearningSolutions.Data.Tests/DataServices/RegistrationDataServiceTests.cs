@@ -42,7 +42,8 @@
             var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
 
             // When
-            var candidateNumber = service.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+            var candidateNumber = service.RegisterNewUserAndDelegateAccount(delegateRegistrationModel,
+                false);
             var user = await connection.GetDelegateUserByCandidateNumberAsync(candidateNumber);
 
             // Then
@@ -150,7 +151,8 @@
 
             void Action()
             {
-                newService.RegisterNewUserAndDelegateAccount(model);
+                newService.RegisterNewUserAndDelegateAccount(model,
+                    false);
             }
 
             return Action;

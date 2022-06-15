@@ -14,6 +14,7 @@
             bool active,
             bool approved,
             string? professionalRegistrationNumber,
+            int jobGroupId,
             int? categoryId,
             bool isCentreAdmin,
             bool isCentreManager,
@@ -33,7 +34,8 @@
             passwordHash,
             active,
             approved,
-            professionalRegistrationNumber
+            professionalRegistrationNumber,
+            jobGroupId
         )
         {
             CategoryId = categoryId;

@@ -232,7 +232,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 var candidateNumber = registrationService.RegisterDelegateByCentre(
                     RegistrationMappingHelper.MapCentreRegistrationToDelegateRegistrationModel(data),
-                    baseUrl
+                    baseUrl,
+                    false
                 );
 
                 TempData.Clear();
