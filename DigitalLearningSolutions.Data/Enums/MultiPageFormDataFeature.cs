@@ -2,8 +2,10 @@
 {
     using System;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditRegistrationPrompt;
 
     public class MultiPageFormDataFeature : Enumeration
@@ -29,11 +31,19 @@
             typeof(EditRegistrationPromptData)
         );
 
-        //public static readonly MultiPageFormDataFeature EditAdminField = new MultiPageFormDataFeature(
-        //    0,
-        //    nameof(EditAdminField),
-        //    "EditAdminFieldDataGuid"
-        //);
+        public static readonly MultiPageFormDataFeature AddAdminField = new MultiPageFormDataFeature(
+            0,
+            nameof(AddAdminField),
+            "AddAdminFieldDataGuid",
+            typeof(AddAdminFieldData)
+        );
+
+        public static readonly MultiPageFormDataFeature EditAdminField = new MultiPageFormDataFeature(
+            0,
+            nameof(EditAdminField),
+            "EditAdminFieldDataGuid",
+            typeof(EditAdminFieldData)
+        );
 
         public readonly string TempDataKey;
 

@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
 
     public class EditAdminFieldViewModel : AdminFieldAnswersViewModel
     {
@@ -26,6 +26,16 @@
             Prompt = text;
             OptionsString = options;
             IncludeAnswersTableCaption = true;
+        }
+
+        public EditAdminFieldViewModel(EditAdminFieldData data) : base(
+            data.OptionsString,
+            data.Answer,
+            data.IncludeAnswersTableCaption
+        )
+        {
+            Prompt = data.Prompt;
+            PromptNumber = data.PromptNumber;
         }
 
         public int PromptNumber { get; set; }

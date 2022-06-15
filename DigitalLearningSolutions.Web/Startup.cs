@@ -15,8 +15,10 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.ModelBinders;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditRegistrationPrompt;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -291,8 +293,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
             services.AddScoped<RedirectEmptySessionData<BulkUploadResult>>();
-            services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
-            services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
             services.AddScoped<RedirectEmptySessionData<EditLearningPathwayDefaultsData>>();
             services.AddScoped<VerifyAdminUserCanManageCourse>();
@@ -308,6 +308,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectMissingMultiPageFormData<AddNewCentreCourseData>>();
             services.AddScoped<RedirectMissingMultiPageFormData<AddRegistrationPromptData>>();
             services.AddScoped<RedirectMissingMultiPageFormData<EditRegistrationPromptData>>();
+            services.AddScoped<RedirectMissingMultiPageFormData<AddAdminFieldData>>();
+            services.AddScoped<RedirectMissingMultiPageFormData<EditAdminFieldData>>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
