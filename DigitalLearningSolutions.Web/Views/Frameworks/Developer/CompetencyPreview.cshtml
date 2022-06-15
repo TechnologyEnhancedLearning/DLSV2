@@ -21,7 +21,7 @@
   </nav>
 }
 <h1 class="competency-group-header nhsuk-u-font-size-32">@Model.Competency.CompetencyGroup</h1>
-<div class=" nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
+<div class="nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-4">
   @if (Model.Competency.Description != null)
   {
     <details class="nhsuk-details">
@@ -44,6 +44,19 @@
     </h2>
   }
 </div>
+@if (Model.CompetencyFlags?.Count() > 0)
+{
+  <div class="nhsuk-u-margin-bottom-8">
+    @foreach (var flag in Model.CompetencyFlags)
+    {
+      <span class="nhsuk-u-padding-right-2">
+        <strong class="nhsuk-tag @flag.FlagTagClass">
+          @flag.FlagName
+        </strong>
+      </span>
+    }
+  </div>
+}
 @foreach (var question in @Model.Competency.AssessmentQuestions)
 {
   <div class="nhsuk-form-group">

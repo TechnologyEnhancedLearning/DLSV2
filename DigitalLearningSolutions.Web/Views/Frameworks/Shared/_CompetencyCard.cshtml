@@ -3,6 +3,20 @@
 
 <div id="fc-@Model.FrameworkCompetency.Id" class="nhsuk-card nhsuk-u-margin-bottom-5 nhsuk-u-margin-left-3">
   <div class="nhsuk-card__content">
+    @if(Model.CompetencyFlags?.Count() > 0)
+    {
+      <div class="nhsuk-u-margin-bottom-3">
+        @foreach (var flag in Model.CompetencyFlags)
+        {
+          <span class="nhsuk-u-padding-right-2">
+            <strong class="nhsuk-tag @flag.FlagTagClass">
+              @flag.FlagName
+            </strong>
+          </span>
+        }
+      </div>
+    }
+
     @if (Model.FrameworkCompetency.Description != null)
     {
       <h4>

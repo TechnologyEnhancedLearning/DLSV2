@@ -29,8 +29,8 @@
         BrandedFramework? GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId);
 
         DetailFramework? GetDetailFrameworkByFrameworkId(int frameworkId, int adminId);
-        IEnumerable<CompetencyFlag> GetCompetencyFlagsByFrameworkIdAndCompetencyId(int frameworkId, int? competencyId);
-        IEnumerable<Flag> GetFlagsByFrameworkId(int frameworkId, int? flagId);
+        IEnumerable<CompetencyFlag> GetCompetencyFlags(int frameworkId, int? competencyId, bool? selected = null);
+        IEnumerable<Flag> GetFrameworkFlags(int frameworkId, int? flagId);
 
         IEnumerable<BrandedFramework> GetFrameworkByFrameworkName(string frameworkName, int adminId);
 
@@ -365,20 +365,21 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             );
         }
 
-        public IEnumerable<CompetencyFlag> GetCompetencyFlagsByFrameworkIdAndCompetencyId(int frameworkId, int? competencyId = null)
+        public IEnumerable<CompetencyFlag> GetCompetencyFlags(int frameworkId, int? competencyId = null, bool? selected = null)
         {
             var competencyIdFilter = competencyId.HasValue ? "cf.CompetencyId = @competencyId" : "1=1";
+            var selectedFilter = selected.HasValue ? $"cf.Selected = {(selected.Value ? 1 : 0)}" : "1=1";
             return connection.Query<CompetencyFlag>(
                 $@"SELECT CompetencyId, Selected, {FlagFields}
 	                FROM Flags fl
 	                INNER JOIN Frameworks AS fw ON fl.FrameworkID = fw.ID
 	                LEFT OUTER JOIN CompetencyFlags AS cf ON cf.FlagID = fl.ID AND {competencyIdFilter}
-                    WHERE fl.FrameworkId = @frameworkId",
+                    WHERE fl.FrameworkId = @frameworkId AND {selectedFilter}",
                 new { competencyId, frameworkId }
             );
         }
 
-        public IEnumerable<Flag> GetFlagsByFrameworkId(int frameworkId, int? flagId = null)
+        public IEnumerable<Flag> GetFrameworkFlags(int frameworkId, int? flagId = null)
         {
             var flagIdFilter = flagId.HasValue ? "fl.ID = @flagId" : "1=1";
             return connection.Query<Flag>(

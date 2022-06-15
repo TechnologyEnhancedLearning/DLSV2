@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
+    using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Helpers;
+    using System.Collections.Generic;
 
     public class SelfAssessmentCompetencyViewModel
     {
@@ -9,18 +11,21 @@
         public readonly Competency Competency;
         public readonly int CompetencyNumber;
         public readonly int TotalNumberOfCompetencies;
+        public readonly IEnumerable<CompetencyFlag> CompetencyFlags;
 
         public SelfAssessmentCompetencyViewModel(
             CurrentSelfAssessment assessment,
             Competency competency,
             int competencyNumber,
-            int totalNumberOfCompetencies
+            int totalNumberOfCompetencies,
+            IEnumerable<CompetencyFlag> competencyFlags = null
         )
         {
             Assessment = assessment;
             Competency = competency;
             CompetencyNumber = competencyNumber;
             TotalNumberOfCompetencies = totalNumberOfCompetencies;
+            CompetencyFlags = competencyFlags;
         }
         public string VocabPlural()
         {
