@@ -66,5 +66,15 @@
             // Then
             result.Should().BeEquivalentTo(UserTestHelper.GetDefaultUserAccount());
         }
+
+        [Test]
+        public void GetUserIdByAdminId_returns_expected_user_id()
+        {
+            // When
+            var result = userDataService.GetUserIdByAdminId(7);
+
+            // Then
+            result.Should().Be(2);
+        }
     }
 }
