@@ -1,10 +1,12 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
 @model AssessmentQuestion
 @{
+  
+  ViewData["ReviewerCommentsLabel"] = "comments";
   var actionLinkText = Model.Requested != null && Model.Verified == null ? "Confirm" : "View";
   if (!String.IsNullOrEmpty(Model.SupportingComments) || !String.IsNullOrEmpty(Model.SupervisorComments))
   {
-    actionLinkText += " (comments)";
+    actionLinkText += " (" + ViewData("ReviewerCommentsLabel"). + ")";
   }
 }
 
