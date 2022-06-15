@@ -101,7 +101,7 @@
         }
 
         [Test]
-        public void Summary_post_returns_redirect_to_index_with_email_in_use_register_error()
+        public void Summary_post_returns_500_error_with_already_active_admin_error()
         {
             // Given
             var formData = new AdminRolesFormData
@@ -114,13 +114,13 @@
                 LearningCategory = 0
             };
             A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._))
-                .Throws(new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse));
+                .Throws(new AdminCreationFailedException(AdminCreationError.ActiveAdminAlreadyExists));
 
             // When
             var result = controller.Index(formData, 1);
 
             // Then
-            result.Should().BeViewResult().WithViewName("EmailInUse");
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
     }
 }

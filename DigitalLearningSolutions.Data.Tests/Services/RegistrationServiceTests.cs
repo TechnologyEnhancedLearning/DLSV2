@@ -654,56 +654,23 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_delegate_has_no_first_name()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(firstName: null);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
-
-            // When
-            var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
-            );
-
-            // Then
-            result.Error.Should().Be(AdminCreationError.UnexpectedError);
-        }
-
-        [Test]
-        public void PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_delegate_has_no_email()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: null);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
-
-            // When
-            var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
-            );
-
-            // Then
-            result.Error.Should().Be(AdminCreationError.UnexpectedError);
-        }
-
-        [Test]
-        public void PromoteDelegateToAdmin_throws_email_in_use_AdminCreationFailedException_if_admin_already_exists()
+        public void PromoteDelegateToAdmin_throws_active_admin_already_exists_AdminCreationFailedException_if_admin_already_exists()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var adminUser = UserTestHelper.GetDefaultAdminUser();
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(1);
+            A.CallTo(() => userDataService.GetAdminUserAtCentreForUser(delegateUser.CentreId, 1)).Returns(adminUser);
 
             // When
             var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
+                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 2)
             );
 
             // Then
-            result.Error.Should().Be(AdminCreationError.EmailAlreadyInUse);
+            result.Error.Should().Be(AdminCreationError.ActiveAdminAlreadyExists);
         }
 
         [Test]
@@ -712,22 +679,19 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(null);
+            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(1);
+            A.CallTo(() => userDataService.GetAdminUserAtCentreForUser(delegateUser.CentreId, 1)).Returns(null);
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1);
+            registrationService.PromoteDelegateToAdmin(adminRoles, 1, 2);
 
             // Then
             A.CallTo(
                 () => registrationDataService.RegisterAdmin(
                     A<AdminRegistrationModel>.That.Matches(
                         a =>
-                            a.FirstName == delegateUser.FirstName &&
-                            a.LastName == delegateUser.LastName &&
-                            a.PrimaryEmail == delegateUser.EmailAddress &&
                             a.Centre == delegateUser.CentreId &&
-                            a.PasswordHash == delegateUser.Password &&
                             a.Active &&
                             a.Approved &&
                             a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
@@ -738,8 +702,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                             a.IsTrainer == adminRoles.IsTrainer &&
                             a.IsSupervisor == adminRoles.IsSupervisor
                     ),
-                    // TODO HEEDLS-900 these user IDs are placeholders and should be updated
-                    0
+                    1
                 )
             ).MustHaveHappened();
         }
