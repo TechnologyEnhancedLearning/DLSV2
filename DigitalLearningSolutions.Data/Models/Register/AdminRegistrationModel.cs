@@ -17,7 +17,7 @@
             bool isContentCreator,
             bool isCmsAdmin,
             bool isCmsManager
-        ) : base("", "", "", centre, "", active, approved, "")
+        ) : base("", "", "", null, centre, "", active, approved, "")
         {
             CategoryId = categoryId;
             IsCentreAdmin = isCentreAdmin;
