@@ -55,6 +55,7 @@
             var userIdToLinkDelegateAccountTo = RegisterUserAccount(
                 delegateRegistrationModel,
                 currentTime,
+                registerJourneyContainsTermsAndConditions,
                 transaction
             );
 
@@ -190,6 +191,7 @@
         private int RegisterUserAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             DateTime currentTime,
+            bool registerJourneyContainsTermsAndConditions,
             IDbTransaction transaction
         )
         {

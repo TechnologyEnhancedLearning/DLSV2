@@ -195,6 +195,7 @@
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
+                        A<bool>._,
                         A<int>._
                     )
                 )
@@ -248,6 +249,7 @@
                         registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
+                            false,
                             false,
                             SupervisorDelegateId
                         )
