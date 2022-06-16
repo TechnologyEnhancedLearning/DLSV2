@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -50,6 +51,8 @@
             {
                 return NotFound();
             }
+
+            HttpContext.Session.SetString("lmSessionID", "1810679");
 
             var model = new CentreDashboardViewModel(
                 dashboardInformation,

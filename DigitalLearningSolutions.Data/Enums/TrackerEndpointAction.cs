@@ -7,5 +7,6 @@
         StoreDiagnosticJson,
         StoreAspProgressV2,
         StoreAspProgressNoSession,
+        StoreAspAssessNoSession,
     }
 }

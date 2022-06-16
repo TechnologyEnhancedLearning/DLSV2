@@ -7,6 +7,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Progress;
+    using DigitalLearningSolutions.Data.Models.Tracker;
     using Microsoft.Extensions.Logging;
 
     public interface IProgressDataService
@@ -38,6 +39,8 @@
 
         void UnlockProgress(int progressId);
 
+        void LockProgress(int progressId);
+
         IEnumerable<LearningLogEntry> GetLearningLogEntries(int progressId);
 
         Progress? GetProgressByProgressId(int progressId);
@@ -45,6 +48,11 @@
         IEnumerable<DetailedSectionProgress> GetSectionProgressDataForProgressEntry(int progressId);
 
         IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection(int progressId, int sectionId);
+
+        SectionAndApplicationDetailsForAssessAttempts? GetSectionAndApplicationDetailsForAssessAttempts(
+            int sectionId,
+            int customisationId
+        );
 
         void UpdateCourseAdminFieldForDelegate(
             int progressId,
@@ -72,6 +80,19 @@
         );
 
         int GetCompletionStatusForProgress(int progressId);
+
+        IEnumerable<AssessAttempt> GetAssessAttemptsForProgressSection(int progressId, int sectionNumber);
+
+        void InsertAssessAttempt(
+            int delegateId,
+            int customisationId,
+            int version,
+            DateTime insertionDate,
+            int sectionNumber,
+            int score,
+            bool status,
+            int progressId
+        );
     }
 
     public class ProgressDataService : IProgressDataService
@@ -266,6 +287,16 @@
             );
         }
 
+        public void LockProgress(int progressId)
+        {
+            connection.Execute(
+                @"UPDATE Progress SET
+                        PLLocked = 1
+                    WHERE ProgressID = @progressId",
+                new { progressId }
+            );
+        }
+
         public IEnumerable<LearningLogEntry> GetLearningLogEntries(int progressId)
         {
             return connection.Query<LearningLogEntry>(
@@ -387,6 +418,21 @@
             );
         }
 
+        public SectionAndApplicationDetailsForAssessAttempts? GetSectionAndApplicationDetailsForAssessAttempts(
+            int sectionId,
+            int customisationId
+        )
+        {
+            return connection.Query<SectionAndApplicationDetailsForAssessAttempts>(
+                @"SELECT s.SectionNumber, a.PLAPassThreshold, a.AssessAttempts
+                    FROM dbo.Sections AS s 
+                    INNER JOIN dbo.Applications AS a ON a.ApplicationID = s.ApplicationID 
+                    INNER JOIN dbo.Customisations AS c ON c.ApplicationID = a.ApplicationID
+                    WHERE s.SectionID = @sectionId AND c.CustomisationID = @customisationId",
+                new { sectionId, customisationId }
+            ).SingleOrDefault();
+        }
+
         public void UpdateCourseAdminFieldForDelegate(
             int progressId,
             int promptNumber,
@@ -465,6 +511,45 @@
                 "GetAndReturnCompletionStatusByProgID",
                 new { progressId },
                 commandType: CommandType.StoredProcedure
+            );
+        }
+
+        public IEnumerable<AssessAttempt> GetAssessAttemptsForProgressSection(int progressId, int sectionNumber)
+        {
+            return connection.Query<AssessAttempt>(
+                @"SELECT
+                        AssessAttemptID,
+                        CandidateID,
+                        CustomisationID,
+                        CustomisationVersion,
+                        Date,
+                        AssessInstance,
+                        SectionNumber,
+                        Score,
+                        Status,
+                        ProgressId
+                    FROM dbo.AssessAttempts
+                    WHERE ProgressID = @progressId AND SectionNumber = @sectionNumber",
+                new { progressId, sectionNumber }
+            );
+        }
+
+        public void InsertAssessAttempt(
+            int delegateId,
+            int customisationId,
+            int version,
+            DateTime insertionDate,
+            int sectionNumber,
+            int score,
+            bool status,
+            int progressId
+        )
+        {
+            connection.Execute(
+                @"INSERT INTO AssessAttempts
+                        (CandidateID, CustomisationID, CustomisationVersion, Date, AssessInstance, SectionNumber, Score, Status, ProgressID)
+                    VALUES (@delegateId, @customisationId, @version, @insertionDate, 1, @sectionNumber, @score, @status, @progressId)",
+                new { delegateId, customisationId, version, insertionDate, sectionNumber, score, status, progressId }
             );
         }
     }
