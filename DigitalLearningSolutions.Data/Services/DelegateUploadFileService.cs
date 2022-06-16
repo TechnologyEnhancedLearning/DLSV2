@@ -27,8 +27,8 @@ namespace DigitalLearningSolutions.Data.Services
     {
         private readonly IConfiguration configuration;
         private readonly IJobGroupsDataService jobGroupsDataService;
-        private readonly IRegistrationService registrationService;
         private readonly IPasswordResetService passwordResetService;
+        private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
@@ -44,7 +44,7 @@ namespace DigitalLearningSolutions.Data.Services
         )
         {
             this.userDataService = userDataService;
-            this.registrationService = registrationDataService;
+            registrationService = registrationDataService;
             this.supervisorDelegateService = supervisorDelegateService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
@@ -192,7 +192,7 @@ namespace DigitalLearningSolutions.Data.Services
         {
             var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
 
-            var errorCodeOrCandidateNumber = registrationService.CreateAccountAndReturnCandidateNumber(model);
+            var errorCodeOrCandidateNumber = registrationService.CreateAccountAndReturnCandidateNumber(model, false);
             switch (errorCodeOrCandidateNumber)
             {
                 case "-1":
@@ -207,7 +207,8 @@ namespace DigitalLearningSolutions.Data.Services
                         "Unknown return value when creating delegate record."
                     );
                 default:
-                    var newDelegateRecord = userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
+                    var newDelegateRecord =
+                        userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
                     UpdateUserProfessionalRegistrationNumberIfNecessary(
                         delegateRow.HasPrn,
                         delegateRow.Prn,
@@ -231,7 +232,12 @@ namespace DigitalLearningSolutions.Data.Services
             }
         }
 
-        private void UpdateUserProfessionalRegistrationNumberIfNecessary(bool? delegateRowHasPrn, string? delegateRowPrn, int delegateId, bool isUpdate)
+        private void UpdateUserProfessionalRegistrationNumberIfNecessary(
+            bool? delegateRowHasPrn,
+            string? delegateRowPrn,
+            int delegateId,
+            bool isUpdate
+        )
         {
             if (delegateRowHasPrn.HasValue)
             {
@@ -288,7 +294,7 @@ namespace DigitalLearningSolutions.Data.Services
                 "Active",
                 "EmailAddress",
                 "HasPRN",
-                "PRN"
+                "PRN",
             }.OrderBy(x => x);
             var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
             return actualHeaders.SequenceEqual(expectedHeaders);

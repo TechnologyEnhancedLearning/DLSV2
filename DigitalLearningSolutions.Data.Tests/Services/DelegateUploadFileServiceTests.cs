@@ -381,7 +381,8 @@
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .Returns(delegateId);
@@ -528,7 +529,8 @@
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .Returns(delegateId);
@@ -553,7 +555,8 @@
                                 model.PrimaryEmail == row.EmailAddress &&
                                 model.AliasId == aliasId &&
                                 model.NotifyDate == null
-                        )
+                        ),
+                        false
                     )
                 )
                 .MustHaveHappened();
@@ -574,7 +577,8 @@
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .Returns(delegateId);
@@ -599,7 +603,8 @@
                                 model.PrimaryEmail == row.EmailAddress &&
                                 model.AliasId == aliasId &&
                                 model.NotifyDate == welcomeEmailDate
-                        )
+                        ),
+                        false
                     )
                 )
                 .MustHaveHappened();
@@ -620,7 +625,8 @@
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .Returns(delegateId);
@@ -664,7 +670,8 @@
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .Returns(delegateId);
@@ -713,7 +720,8 @@
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .Returns(failureStatusCode);
@@ -736,7 +744,8 @@
                 // Then
                 A.CallTo(
                         () => registrationService.CreateAccountAndReturnCandidateNumber(
-                            A<DelegateRegistrationModel>._
+                            A<DelegateRegistrationModel>._,
+                            false
                         )
                     )
                     .MustHaveHappened();
@@ -771,7 +780,8 @@
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .Returns(candidateNumber);
@@ -792,7 +802,8 @@
             // Then
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .MustHaveHappened();
@@ -823,7 +834,8 @@
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .Returns(candidateNumber);
@@ -840,7 +852,8 @@
             // Then
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .MustHaveHappened();
@@ -863,7 +876,8 @@
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .Returns(candidateNumber);
@@ -880,7 +894,8 @@
             // Then
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .MustHaveHappened();
@@ -902,7 +917,8 @@
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .Returns(candidateNumber);
@@ -915,7 +931,8 @@
             // Then
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .MustHaveHappened();
@@ -987,7 +1004,8 @@
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .Returns(delegateId);
@@ -1037,7 +1055,8 @@
 
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .Returns("ANY");
@@ -1147,7 +1166,8 @@
                 .MustNotHaveHappened();
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._
+                        A<DelegateRegistrationModel>._,
+                        false
                     )
                 )
                 .MustNotHaveHappened();

@@ -26,7 +26,18 @@
             bool approved = false,
             string? aliasId = null,
             DateTime? notifyDate = null
-        ) : base(firstName, lastName, primaryEmail, centreSpecificEmail, centre, passwordHash, active, approved, professionalRegistrationNumber, jobGroup)
+        ) : base(
+            firstName,
+            lastName,
+            primaryEmail,
+            centreSpecificEmail,
+            centre,
+            passwordHash,
+            active,
+            approved,
+            professionalRegistrationNumber,
+            jobGroup
+        )
         {
             Answer1 = answer1;
             Answer2 = answer2;
@@ -36,7 +47,6 @@
             Answer6 = answer6;
             AliasId = aliasId;
             NotifyDate = notifyDate;
-            JobGroup = jobGroup;
             IsSelfRegistered = isSelfRegistered;
         }
 
@@ -51,10 +61,18 @@
             bool active,
             bool approved,
             string? professionalRegistrationNumber
-        ) : base(firstName, lastName, primaryEmail, centreSpecificEmail, centre, passwordHash, active, approved, professionalRegistrationNumber, jobGroup)
-        {
-            JobGroup = jobGroup;
-        }
+        ) : base(
+            firstName,
+            lastName,
+            primaryEmail,
+            centreSpecificEmail,
+            centre,
+            passwordHash,
+            active,
+            approved,
+            professionalRegistrationNumber,
+            jobGroup
+        ) { }
 
         public DelegateRegistrationModel(
             DelegateTableRow row,

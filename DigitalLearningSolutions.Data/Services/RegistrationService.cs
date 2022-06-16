@@ -21,6 +21,7 @@ namespace DigitalLearningSolutions.Data.Services
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
+            bool registerJourneyContainsTermsAndConditions,
             int? inviteId = null
         );
 
@@ -31,14 +32,24 @@ namespace DigitalLearningSolutions.Data.Services
             bool refactoredTrackingSystemEnabled,
             int? supervisorDelegateId = null
         );
+        
+        string RegisterDelegateByCentre(
+            DelegateRegistrationModel delegateRegistrationModel,
+            string baseUrl,
+            bool registerJourneyContainsTermsAndConditions
+        );
 
-        string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
-
-        void RegisterCentreManager(AdminRegistrationModel registrationModel);
+        void RegisterCentreManager(
+            AdminRegistrationModel registrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        );
 
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId);
 
-        string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel);
+        string CreateAccountAndReturnCandidateNumber(
+            DelegateRegistrationModel delegateRegistrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        );
     }
 
     public class RegistrationService : IRegistrationService
@@ -87,6 +98,7 @@ namespace DigitalLearningSolutions.Data.Services
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
+            bool registerJourneyContainsTermsAndConditions,
             int? supervisorDelegateId = null
         )
         {
@@ -101,7 +113,11 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateRegistrationModel.Centre
             );
 
-            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
+            
+            var candidateNumber = CreateAccountAndReturnCandidateNumber(
+                delegateRegistrationModel,
+                registerJourneyContainsTermsAndConditions
+            );
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
@@ -179,11 +195,18 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved, userHasAdminAccountAtCentre);
         }
 
-        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
+        public string RegisterDelegateByCentre(
+            DelegateRegistrationModel delegateRegistrationModel,
+            string baseUrl,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             using var transaction = new TransactionScope();
 
-            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
+            var candidateNumber = CreateAccountAndReturnCandidateNumber(
+                delegateRegistrationModel,
+                registerJourneyContainsTermsAndConditions
+            );
 
             if (delegateRegistrationModel.PasswordHash != null)
             {
@@ -233,11 +256,14 @@ namespace DigitalLearningSolutions.Data.Services
             return candidateNumber;
         }
 
-        public void RegisterCentreManager(AdminRegistrationModel registrationModel)
+        public void RegisterCentreManager(
+            AdminRegistrationModel registrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             using var transaction = new TransactionScope();
 
-            var userId = CreateDelegateAccountForAdmin(registrationModel);
+            var userId = CreateDelegateAccountForAdmin(registrationModel, registerJourneyContainsTermsAndConditions);
 
             registrationDataService.RegisterAdmin(registrationModel, userId);
 
@@ -294,12 +320,18 @@ namespace DigitalLearningSolutions.Data.Services
             registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
         }
 
-        public string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
+        public string CreateAccountAndReturnCandidateNumber(
+            DelegateRegistrationModel delegateRegistrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             try
             {
                 ValidateRegistrationEmail(delegateRegistrationModel);
-                return registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+                return registrationDataService.RegisterNewUserAndDelegateAccount(
+                    delegateRegistrationModel,
+                    registerJourneyContainsTermsAndConditions
+                );
             }
             catch (DelegateCreationFailedException exception)
             {
@@ -414,7 +446,10 @@ namespace DigitalLearningSolutions.Data.Services
                 ).Select(record => record.ID);
         }
 
-        private int CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel)
+        private int CreateDelegateAccountForAdmin(
+            AdminRegistrationModel registrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             var delegateRegistrationModel = new DelegateRegistrationModel(
                 registrationModel.FirstName,
@@ -432,7 +467,10 @@ namespace DigitalLearningSolutions.Data.Services
             try
             {
                 var candidateNumber =
-                    registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+                    registrationDataService.RegisterNewUserAndDelegateAccount(
+                        delegateRegistrationModel,
+                        registerJourneyContainsTermsAndConditions
+                    );
                 passwordDataService.SetPasswordByCandidateNumber(
                     candidateNumber,
                     delegateRegistrationModel.PasswordHash!

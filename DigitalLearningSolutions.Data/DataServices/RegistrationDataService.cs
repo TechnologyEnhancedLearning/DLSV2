@@ -10,7 +10,10 @@
 
     public interface IRegistrationDataService
     {
-        string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel);
+        string RegisterNewUserAndDelegateAccount(
+            DelegateRegistrationModel delegateRegistrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        );
 
         (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(
             DelegateRegistrationModel delegateRegistrationModel,
@@ -39,7 +42,10 @@
             this.clockService = clockService;
         }
 
-        public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
+        public string RegisterNewUserAndDelegateAccount(
+            DelegateRegistrationModel delegateRegistrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
@@ -196,6 +202,7 @@
                 delegateRegistrationModel.Active,
                 PasswordHash = "temp",
                 ProfessionalRegistrationNumber = (string?)null,
+                TermsAgreed = registerJourneyContainsTermsAndConditions ? currentTime : (DateTime?)null,
                 DetailsLastChecked = currentTime,
             };
 
@@ -209,6 +216,7 @@
                         JobGroupID,
                         ProfessionalRegistrationNumber,
                         Active,
+                        TermsAgreed,
                         DetailsLastChecked
                     )
                     OUTPUT Inserted.ID
@@ -221,6 +229,7 @@
                         @jobGroup,
                         @professionalRegistrationNumber,
                         @active,
+                        @termsAgreed,
                         @detailsLastChecked
                     )",
                 userValues,
