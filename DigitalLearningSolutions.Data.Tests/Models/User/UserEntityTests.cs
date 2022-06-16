@@ -55,7 +55,7 @@
             var userEntity = new UserEntity(new UserAccount(), new List<AdminAccount>(), delegateAccounts);
 
             // When
-            var result = userEntity.IsSingleCentreAccount();
+            var result = userEntity.IsSingleCentreAccount;
 
             // Then
             result.Should().BeFalse();
@@ -69,7 +69,7 @@
             var userEntity = new UserEntity(new UserAccount(), adminAccounts, new List<DelegateAccount>());
 
             // When
-            var result = userEntity.IsSingleCentreAccount();
+            var result = userEntity.IsSingleCentreAccount;
 
             // Then
             result.Should().BeFalse();
@@ -86,7 +86,7 @@
             );
 
             // When
-            var result = userEntity.IsSingleCentreAccount();
+            var result = userEntity.IsSingleCentreAccount;
 
             // Then
             result.Should().BeFalse();
@@ -103,7 +103,7 @@
             );
 
             // When
-            var result = userEntity.IsSingleCentreAccount();
+            var result = userEntity.IsSingleCentreAccount;
 
             // Then
             result.Should().BeTrue();
@@ -120,7 +120,7 @@
             );
 
             // When
-            var result = userEntity.IsSingleCentreAccount();
+            var result = userEntity.IsSingleCentreAccount;
 
             // Then
             result.Should().BeTrue();
@@ -137,7 +137,7 @@
             );
 
             // When
-            var result = userEntity.IsSingleCentreAccount();
+            var result = userEntity.IsSingleCentreAccount;
 
             // Then
             result.Should().BeTrue();

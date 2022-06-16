@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
@@ -9,6 +10,8 @@
     public interface ILoginService
     {
         LoginResult AttemptLogin(string username, string password);
+
+        IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(UserEntity? userEntity);
     }
 
     public class LoginService : ILoginService
@@ -59,42 +62,44 @@
                 : DetermineDestinationForSuccessfulLogin(userEntity, username);
         }
 
+        public IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(UserEntity? userEntity)
+        {
+            return userEntity!.CentreAccountSetsByCentreId.Values.Where(
+                centreAccountSet => centreAccountSet.AdminAccount?.Active == true ||
+                                    centreAccountSet.DelegateAccount != null
+            ).Select(
+                centreAccountSet => new ChooseACentreAccountViewModel(
+                    centreAccountSet.CentreId,
+                    centreAccountSet.CentreName,
+                    centreAccountSet.IsCentreActive,
+                    centreAccountSet.AdminAccount?.Active == true,
+                    centreAccountSet.DelegateAccount != null,
+                    centreAccountSet.DelegateAccount?.Approved ?? false,
+                    centreAccountSet.DelegateAccount?.Active ?? false
+                )
+            );
+        }
+
         private LoginResult DetermineDestinationForSuccessfulLogin(UserEntity userEntity, string username)
         {
             userService.ResetFailedLoginCount(userEntity.UserAccount);
 
             var singleCentreToLogUserInto = GetCentreIdIfLoggingUserIntoSingleCentre(userEntity, username);
-            if (singleCentreToLogUserInto == null)
-            {
-                return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity);
-            }
 
-            var adminAccountToLogInto =
-                userEntity.AdminAccounts.SingleOrDefault(aa => aa.CentreId == singleCentreToLogUserInto.Value);
-            var delegateAccountToLogInto =
-                userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == singleCentreToLogUserInto.Value);
-
-            var centreIsActive = adminAccountToLogInto?.CentreActive ?? delegateAccountToLogInto?.CentreActive ?? false;
-            var accountAtCentreIsActive = (adminAccountToLogInto?.Active == null || adminAccountToLogInto.Active) &&
-                                          (delegateAccountToLogInto?.Active == null || delegateAccountToLogInto.Active);
-
-            if (!centreIsActive || !accountAtCentreIsActive || delegateAccountToLogInto is { Approved: false })
-            {
-                return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity);
-            }
-
-            return new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntity, singleCentreToLogUserInto.Value);
+            return singleCentreToLogUserInto == null
+                ? new LoginResult(LoginAttemptResult.ChooseACentre, userEntity)
+                : new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntity, singleCentreToLogUserInto);
         }
 
         // If there are no accounts this will also return null, as there is no single centre to log into
         private static int? GetCentreIdIfLoggingUserIntoSingleCentre(UserEntity userEntity, string username)
         {
             // Determine if there is only a single account
-            if (userEntity.IsSingleCentreAccount())
+            if (userEntity.IsSingleCentreAccount)
             {
-                var adminCentreId = userEntity.AdminAccounts.SingleOrDefault()?.CentreId;
-                var delegateCentreId = userEntity.DelegateAccounts.SingleOrDefault()?.CentreId;
-                return adminCentreId ?? delegateCentreId;
+                var accountsToLogInto = userEntity.CentreAccountSetsByCentreId.Values.Single();
+
+                return accountsToLogInto.CanLogInToCentre ? accountsToLogInto.CentreId : null as int?;
             }
 
             // Determine if we are logging in via candidate number.
