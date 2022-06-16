@@ -5,7 +5,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData;
 
-    public interface IMultiPageFormDataDataService
+    public interface IMultiPageFormDataService
     {
         MultiPageFormData? GetMultiPageFormDataByGuidAndFeature(Guid tempDataGuid, string feature);
 
@@ -16,11 +16,11 @@
         void DeleteByGuid(Guid tempDataGuid);
     }
 
-    public class MultiPageFormDataDataService : IMultiPageFormDataDataService
+    public class MultiPageFormDataService : IMultiPageFormDataService
     {
         private readonly IDbConnection connection;
 
-        public MultiPageFormDataDataService(IDbConnection connection)
+        public MultiPageFormDataService(IDbConnection connection)
         {
             this.connection = connection;
         }
@@ -43,7 +43,7 @@
         public void InsertMultiPageFormData(MultiPageFormData multiPageFormData)
         {
             connection.Execute(
-                @"INSERT MultiPageFormData (TempDataGuid, Json, Feature, CreatedDate)
+                @"INSERT INTO MultiPageFormData (TempDataGuid, Json, Feature, CreatedDate)
                     VALUES (@TempDataGuid, @Json, @Feature, @CreatedDate)",
                 multiPageFormData
             );
@@ -60,7 +60,7 @@
         public void DeleteByGuid(Guid tempDataGuid)
         {
             connection.Execute(
-                @"DELETE MultiPageFormData WHERE TempDataGuid = @tempDataGuid",
+                @"DELETE FROM MultiPageFormData WHERE TempDataGuid = @tempDataGuid",
                 new { tempDataGuid }
             );
         }

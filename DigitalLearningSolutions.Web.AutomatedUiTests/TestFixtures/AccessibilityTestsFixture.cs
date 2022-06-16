@@ -31,7 +31,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures
         private void ClearMultiPageFormData()
         {
             using var connection = new SqlConnection(connectionString);
-            using var command = new SqlCommand("DELETE MultiPageFormData", connection);
+            using var command = new SqlCommand("DELETE FROM MultiPageFormData", connection);
             command.Connection.Open();
             command.ExecuteNonQuery();
         }

@@ -15,11 +15,11 @@
     /// <typeparam name="T">The type required in MultiPageFormData</typeparam>
     public class RedirectMissingMultiPageFormData<T> : IActionFilter // where T : MultiPageFormDataFeature
     {
-        private readonly IMultiPageFormDataService multiPageFormDataService;
+        private readonly IMultiPageFormService multiPageFormService;
 
-        public RedirectMissingMultiPageFormData(IMultiPageFormDataService multiPageFormDataService)
+        public RedirectMissingMultiPageFormData(IMultiPageFormService multiPageFormService)
         {
-            this.multiPageFormDataService = multiPageFormDataService;
+            this.multiPageFormService = multiPageFormService;
         }
 
         public void OnActionExecuted(ActionExecutedContext context) { }
@@ -42,7 +42,7 @@
                     return;
                 }
 
-                if (!multiPageFormDataService.FormDataExistsForGuidAndFeature(feature, tempDataGuid))
+                if (!multiPageFormService.FormDataExistsForGuidAndFeature(feature, tempDataGuid))
                 {
                     RedirectToIndex(context, controller);
                 }

@@ -18,28 +18,28 @@
         );
 
         public static readonly MultiPageFormDataFeature AddRegistrationPrompt = new MultiPageFormDataFeature(
-            0,
+            1,
             nameof(AddRegistrationPrompt),
             "AddRegistrationPromptDataGuid",
             typeof(AddRegistrationPromptData)
         );
 
         public static readonly MultiPageFormDataFeature EditRegistrationPrompt = new MultiPageFormDataFeature(
-            0,
+            2,
             nameof(EditRegistrationPrompt),
             "EditRegistrationPromptDataGuid",
             typeof(EditRegistrationPromptData)
         );
 
         public static readonly MultiPageFormDataFeature AddAdminField = new MultiPageFormDataFeature(
-            0,
+            3,
             nameof(AddAdminField),
             "AddAdminFieldDataGuid",
             typeof(AddAdminFieldData)
         );
 
         public static readonly MultiPageFormDataFeature EditAdminField = new MultiPageFormDataFeature(
-            0,
+            4,
             nameof(EditAdminField),
             "EditAdminFieldDataGuid",
             typeof(EditAdminFieldData)
@@ -47,17 +47,17 @@
 
         public readonly string TempDataKey;
 
-        public readonly Type Type;
+        private readonly Type type;
 
-        public MultiPageFormDataFeature(int id, string name, string tempDataKey, Type type) : base(id, name)
+        private MultiPageFormDataFeature(int id, string name, string tempDataKey, Type type) : base(id, name)
         {
             TempDataKey = tempDataKey;
-            Type = type;
+            this.type = type;
         }
 
         public static MultiPageFormDataFeature? GetFeatureByType(Type type)
         {
-            return GetAll<MultiPageFormDataFeature>().SingleOrDefault(m => m.Type == type);
+            return GetAll<MultiPageFormDataFeature>().SingleOrDefault(m => m.type == type);
         }
     }
 }

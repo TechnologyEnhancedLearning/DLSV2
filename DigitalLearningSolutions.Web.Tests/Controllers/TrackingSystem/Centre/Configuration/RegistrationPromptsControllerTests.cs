@@ -23,7 +23,7 @@
     {
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private HttpRequest httpRequest = null!;
-        private IMultiPageFormDataService multiPageFormDataService = null!;
+        private IMultiPageFormService multiPageFormService = null!;
         private RegistrationPromptsController registrationPromptsController = null!;
         private RegistrationPromptsController registrationPromptsControllerWithMockHttpContext = null!;
         private IUserDataService userDataService = null!;
@@ -57,13 +57,13 @@
         {
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             userDataService = A.Fake<IUserDataService>();
-            multiPageFormDataService = A.Fake<IMultiPageFormDataService>();
+            multiPageFormService = A.Fake<IMultiPageFormService>();
 
             registrationPromptsController =
                 new RegistrationPromptsController(
                         centreRegistrationPromptsService,
                         userDataService,
-                        multiPageFormDataService
+                        multiPageFormService
                     )
                     .WithDefaultContext()
                     .WithMockUser(true)
@@ -77,7 +77,7 @@
                 new RegistrationPromptsController(
                         centreRegistrationPromptsService,
                         userDataService,
-                        multiPageFormDataService
+                        multiPageFormService
                     )
                     .WithMockHttpContext(httpRequest, cookieName, cookieValue)
                     .WithMockUser(true)
@@ -182,7 +182,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataService.SetMultiPageFormData(
+                    () => multiPageFormService.SetMultiPageFormData(
                         A<EditRegistrationPromptData>.That.Matches(
                             d => d.PromptNumber == model.PromptNumber &&
                                  d.Prompt == model.Prompt &&
@@ -249,7 +249,7 @@
             var expectedPromptData = new AddRegistrationPromptSelectPromptData(1, true);
             var initialTempData = new AddRegistrationPromptData();
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,
                     registrationPromptsController.TempData
                 )
@@ -271,7 +271,7 @@
             var expectedPromptData = new AddRegistrationPromptSelectPromptData(1, true);
             var initialTempData = new AddRegistrationPromptData { SelectPromptData = expectedPromptData };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,
                     registrationPromptsController.TempData
                 )
@@ -301,7 +301,7 @@
             var initialTempData = new AddRegistrationPromptData
                 { SelectPromptData = initialSelectPromptData, ConfigureAnswersData = inputAnswersData };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,
                     registrationPromptsController.TempData
                 )
@@ -342,7 +342,7 @@
             var initialTempData = new AddRegistrationPromptData
                 { SelectPromptData = initialSelectPromptData, ConfigureAnswersData = initialAnswersData };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,
                     registrationPromptsController.TempData
                 )
@@ -377,7 +377,7 @@
             var initialTempData = new AddRegistrationPromptData
                 { SelectPromptData = initialPromptData, ConfigureAnswersData = initialAnswersData };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,
                     registrationPromptsController.TempData
                 )
@@ -410,7 +410,7 @@
         }
 
         [Test]
-        public void AddRegistrationPromptSummary_calls_registration_prompt_service_and_redirects_to_index()
+        public void AddRegistrationPromptSummaryPost_calls_registration_prompt_service_and_redirects_to_index()
         {
             // Given
             var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true);
@@ -418,7 +418,7 @@
             var initialTempData = new AddRegistrationPromptData
                 { SelectPromptData = initialPromptData, ConfigureAnswersData = initialAnswersData };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,
                     registrationPromptsController.TempData
                 )
@@ -447,7 +447,7 @@
                     )
                 ).MustHaveHappened();
                 A.CallTo(
-                    () => multiPageFormDataService.ClearMultiPageFormData(
+                    () => multiPageFormService.ClearMultiPageFormData(
                         MultiPageFormDataFeature.AddRegistrationPrompt,
                         registrationPromptsController.TempData
                     )
@@ -457,7 +457,7 @@
         }
 
         [Test]
-        public void AddRegistrationPromptSummary_calls_registration_prompt_service_and_redirects_to_error_on_failure()
+        public void AddRegistrationPromptSummaryPost_calls_registration_prompt_service_and_redirects_to_error_on_failure()
         {
             // Given
             var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true);
@@ -465,7 +465,7 @@
             var initialTempData = new AddRegistrationPromptData
                 { SelectPromptData = initialPromptData, ConfigureAnswersData = initialAnswersData };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,
                     registrationPromptsController.TempData
                 )
@@ -513,7 +513,7 @@
                 IncludeAnswersTableCaption = initialEditViewModel.IncludeAnswersTableCaption,
             };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<EditRegistrationPromptData>(
+                () => multiPageFormService.GetMultiPageFormData<EditRegistrationPromptData>(
                     MultiPageFormDataFeature.EditRegistrationPrompt,
                     registrationPromptsController.TempData
                 )
@@ -527,7 +527,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataService.SetMultiPageFormData(
+                    () => multiPageFormService.SetMultiPageFormData(
                         A<EditRegistrationPromptData>.That.Matches(
                             d => d.PromptNumber == initialTempData.PromptNumber &&
                                  d.Prompt == initialTempData.Prompt &&
@@ -559,7 +559,7 @@
                 ConfigureAnswersData = initialAnswersData,
             };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddRegistrationPromptData>(
+                () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptData>(
                     MultiPageFormDataFeature.AddRegistrationPrompt,
                     registrationPromptsController.TempData
                 )
@@ -607,7 +607,7 @@
         )
         {
             A.CallTo(
-                () => multiPageFormDataService.SetMultiPageFormData(
+                () => multiPageFormService.SetMultiPageFormData(
                     A<AddRegistrationPromptData>.That.Matches(
                         d => d.SelectPromptData.Mandatory == expectedPromptData.Mandatory &&
                              d.SelectPromptData.CustomPromptId == expectedPromptData.CustomPromptId &&

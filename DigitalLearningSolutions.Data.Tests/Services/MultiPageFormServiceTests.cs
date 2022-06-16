@@ -13,19 +13,19 @@
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using NUnit.Framework;
 
-    public class MultiPageFormDataServiceTests
+    public class MultiPageFormServiceTests
     {
         private IClockService clockService = null!;
-        private IMultiPageFormDataDataService multiPageFormDataDataService = null!;
         private IMultiPageFormDataService multiPageFormDataService = null!;
+        private IMultiPageFormService multiPageFormService = null!;
         private ITempDataDictionary tempDataDictionary = null!;
 
         [SetUp]
         public void Setup()
         {
             clockService = A.Fake<IClockService>();
-            multiPageFormDataDataService = A.Fake<IMultiPageFormDataDataService>();
-            multiPageFormDataService = new MultiPageFormDataService(clockService, multiPageFormDataDataService);
+            multiPageFormDataService = A.Fake<IMultiPageFormDataService>();
+            multiPageFormService = new MultiPageFormService(clockService, multiPageFormDataService);
 
             tempDataDictionary = new TempDataDictionary(new DefaultHttpContext(), A.Fake<ITempDataProvider>());
         }
@@ -40,18 +40,18 @@
             A.CallTo(() => clockService.UtcNow).Returns(currentTime);
 
             // When
-            multiPageFormDataService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary);
+            multiPageFormService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary);
 
             // Then
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(A<Guid>._, A<string>._)
+                    () => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(A<Guid>._, A<string>._)
                 ).MustNotHaveHappened();
-                A.CallTo(() => multiPageFormDataDataService.UpdateJsonByGuid(A<Guid>._, A<string>._))
+                A.CallTo(() => multiPageFormDataService.UpdateJsonByGuid(A<Guid>._, A<string>._))
                     .MustNotHaveHappened();
                 A.CallTo(
-                    () => multiPageFormDataDataService.InsertMultiPageFormData(
+                    () => multiPageFormDataService.InsertMultiPageFormData(
                         A<MultiPageFormData>.That.Matches(
                             d => d.Json == objectToInsert.ToString() &&
                                  d.Feature == feature.Name &&
@@ -74,22 +74,22 @@
             A.CallTo(() => clockService.UtcNow).Returns(currentTime);
             var guid = Guid.NewGuid();
             tempDataDictionary[feature.TempDataKey] = guid;
-            A.CallTo(() => multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
+            A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
                 .Returns(null);
 
             // When
-            multiPageFormDataService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary);
+            multiPageFormService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary);
 
             // Then
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name)
+                    () => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name)
                 ).MustHaveHappenedOnceExactly();
-                A.CallTo(() => multiPageFormDataDataService.UpdateJsonByGuid(A<Guid>._, A<string>._))
+                A.CallTo(() => multiPageFormDataService.UpdateJsonByGuid(A<Guid>._, A<string>._))
                     .MustNotHaveHappened();
                 A.CallTo(
-                    () => multiPageFormDataDataService.InsertMultiPageFormData(
+                    () => multiPageFormDataService.InsertMultiPageFormData(
                         A<MultiPageFormData>.That.Matches(
                             d => d.Json == objectToInsert.ToString() &&
                                  d.Feature == feature.Name &&
@@ -111,7 +111,7 @@
             var currentTime = DateTime.UtcNow;
             var guid = Guid.NewGuid();
             tempDataDictionary[feature.TempDataKey] = guid;
-            A.CallTo(() => multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
+            A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
                 .Returns(
                     new MultiPageFormData
                     {
@@ -124,18 +124,18 @@
                 );
 
             // When
-            multiPageFormDataService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary);
+            multiPageFormService.SetMultiPageFormData(objectToInsert, feature, tempDataDictionary);
 
             // Then
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name)
+                    () => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name)
                 ).MustHaveHappenedOnceExactly();
-                A.CallTo(() => multiPageFormDataDataService.UpdateJsonByGuid(guid, objectToInsert.ToString()))
+                A.CallTo(() => multiPageFormDataService.UpdateJsonByGuid(guid, objectToInsert.ToString()))
                     .MustHaveHappenedOnceExactly();
                 A.CallTo(
-                    () => multiPageFormDataDataService.InsertMultiPageFormData(A<MultiPageFormData>._)
+                    () => multiPageFormDataService.InsertMultiPageFormData(A<MultiPageFormData>._)
                 ).MustNotHaveHappened();
                 tempDataDictionary[feature.TempDataKey].Should().Be(guid);
             }
@@ -145,7 +145,7 @@
         public void GetMultiPageFormData_throws_exception_when_TempData_Guid_is_null()
         {
             // When
-            Action act = () => multiPageFormDataService.GetMultiPageFormData<int>(
+            Action act = () => multiPageFormService.GetMultiPageFormData<int>(
                 MultiPageFormDataFeature.AddNewCourse,
                 tempDataDictionary
             );
@@ -162,11 +162,11 @@
             var guid = Guid.NewGuid();
             var feature = MultiPageFormDataFeature.AddNewCourse;
             tempDataDictionary[feature.TempDataKey] = guid;
-            A.CallTo(() => multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
+            A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
                 .Returns(null);
 
             // When
-            Action act = () => multiPageFormDataService.GetMultiPageFormData<int>(
+            Action act = () => multiPageFormService.GetMultiPageFormData<int>(
                 feature,
                 tempDataDictionary
             );
@@ -185,7 +185,7 @@
             var feature = MultiPageFormDataFeature.AddNewCourse;
             tempDataDictionary[feature.TempDataKey] = guid;
 
-            A.CallTo(() => multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
+            A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
                 .Returns(
                     new MultiPageFormData
                     {
@@ -198,7 +198,7 @@
                 );
 
             // When
-            var result = multiPageFormDataService.GetMultiPageFormData<int>(
+            var result = multiPageFormService.GetMultiPageFormData<int>(
                 feature,
                 tempDataDictionary
             );
@@ -215,7 +215,7 @@
         public void ClearMultiPageFormData_throws_exception_when_TempData_Guid_is_null()
         {
             // When
-            Action act = () => multiPageFormDataService.ClearMultiPageFormData(
+            Action act = () => multiPageFormService.ClearMultiPageFormData(
                 MultiPageFormDataFeature.AddNewCourse,
                 tempDataDictionary
             );
@@ -234,7 +234,7 @@
             tempDataDictionary[feature.TempDataKey] = guid;
 
             // When
-            multiPageFormDataService.ClearMultiPageFormData(
+            multiPageFormService.ClearMultiPageFormData(
                 feature,
                 tempDataDictionary
             );
@@ -242,7 +242,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => multiPageFormDataDataService.DeleteByGuid(guid)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => multiPageFormDataService.DeleteByGuid(guid)).MustHaveHappenedOnceExactly();
                 tempDataDictionary[feature.TempDataKey].Should().BeNull();
             }
         }
@@ -253,7 +253,7 @@
             // Given
             var guid = Guid.NewGuid();
             var feature = MultiPageFormDataFeature.AddNewCourse;
-            A.CallTo(() => multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
+            A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
                 .Returns(
                     new MultiPageFormData
                     {
@@ -266,7 +266,7 @@
                 );
 
             // When
-            var result = multiPageFormDataService.FormDataExistsForGuidAndFeature(
+            var result = multiPageFormService.FormDataExistsForGuidAndFeature(
                 feature,
                 guid
             );
@@ -281,11 +281,11 @@
             // Given
             var guid = Guid.NewGuid();
             var feature = MultiPageFormDataFeature.AddNewCourse;
-            A.CallTo(() => multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
+            A.CallTo(() => multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(guid, feature.Name))
                 .Returns(null);
 
             // When
-            var result = multiPageFormDataService.FormDataExistsForGuidAndFeature(
+            var result = multiPageFormService.FormDataExistsForGuidAndFeature(
                 feature,
                 guid
             );

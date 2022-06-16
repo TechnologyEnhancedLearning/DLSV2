@@ -16,7 +16,6 @@
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
-    using FluentAssertions.Common;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -96,7 +95,7 @@
         private ICourseService courseService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
-        private IMultiPageFormDataService multiPageFormDataService = null!;
+        private IMultiPageFormService multiPageFormService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
@@ -109,7 +108,7 @@
             sectionService = A.Fake<ISectionService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             config = A.Fake<IConfiguration>();
-            multiPageFormDataService = A.Fake<IMultiPageFormDataService>();
+            multiPageFormService = A.Fake<IMultiPageFormService>();
 
             A.CallTo(
                 () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
@@ -133,7 +132,7 @@
                     sectionService,
                     searchSortFilterPaginateService,
                     config,
-                    multiPageFormDataService
+                    multiPageFormService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -146,7 +145,7 @@
                     sectionService,
                     searchSortFilterPaginateService,
                     config,
-                    multiPageFormDataService
+                    multiPageFormService
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
@@ -191,7 +190,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataService.SetMultiPageFormData(
+                    () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseData>._,
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
@@ -220,13 +219,13 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataService.SetMultiPageFormData(
+                    () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseData>.That.Matches(
                             d => d.Application!.ApplicationId == application.ApplicationId &&
-                                d.CourseDetailsData == null &&
-                                d.CourseOptionsData == null &&
-                                d.CourseContentData == null &&
-                                d.SectionContentData == null
+                                 d.CourseDetailsData == null &&
+                                 d.CourseOptionsData == null &&
+                                 d.CourseContentData == null &&
+                                 d.SectionContentData == null
                         ),
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
@@ -351,7 +350,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataService.SetMultiPageFormData(
+                    () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseData>.That.Matches(d => d.CourseDetailsData != null),
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
@@ -375,7 +374,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataService.SetMultiPageFormData(
+                    () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseData>.That.Matches(d => d.CourseOptionsData != null),
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
@@ -426,7 +425,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataService.SetMultiPageFormData(
+                    () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseData>.That.Matches(d => d.CourseContentData != null),
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
@@ -536,7 +535,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataService.SetMultiPageFormData(
+                    () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseData>.That.Matches(d => d.SectionContentData != null),
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
@@ -570,7 +569,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataService.SetMultiPageFormData(
+                    () => multiPageFormService.SetMultiPageFormData(
                         A<AddNewCentreCourseData>.That.Matches(d => d.SectionContentData != null),
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
@@ -590,9 +589,6 @@
             var tutorial = new Tutorial(1, "Tutorial name", true, true);
             var section = new Section(1, "Section name");
             var sectionData = new SectionContentData(
-                section,
-                0,
-                true,
                 new List<Tutorial> { tutorial }
             );
 
@@ -700,7 +696,7 @@
                 SectionContentData = setSectionContentModels,
             };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddNewCentreCourseData>(
+                () => multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
                     A<MultiPageFormDataFeature>._,
                     A<ITempDataDictionary>._
                 )

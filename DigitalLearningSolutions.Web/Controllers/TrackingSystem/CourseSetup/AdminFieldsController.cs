@@ -31,17 +31,17 @@
         public const string BulkAction = "bulk";
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
-        private readonly IMultiPageFormDataService multiPageFormDataService;
+        private readonly IMultiPageFormService multiPageFormService;
 
         public AdminFieldsController(
             ICourseAdminFieldsService courseAdminFieldsService,
             ICourseAdminFieldsDataService courseAdminFieldsDataService,
-            IMultiPageFormDataService multiPageFormDataService
+            IMultiPageFormService multiPageFormService
         )
         {
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.courseAdminFieldsDataService = courseAdminFieldsDataService;
-            this.multiPageFormDataService = multiPageFormDataService;
+            this.multiPageFormService = multiPageFormService;
         }
 
         [HttpGet]
@@ -75,7 +75,7 @@
                 IncludeAnswersTableCaption = true,
             };
 
-            multiPageFormDataService.SetMultiPageFormData(
+            multiPageFormService.SetMultiPageFormData(
                 data,
                 MultiPageFormDataFeature.EditAdminField,
                 TempData
@@ -90,7 +90,7 @@
         [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldData>))]
         public IActionResult EditAdminField(int customisationId, int promptNumber)
         {
-            var data = multiPageFormDataService.GetMultiPageFormData<EditAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldData>(
                 MultiPageFormDataFeature.EditAdminField,
                 TempData
             );
@@ -133,7 +133,7 @@
         [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldData>))]
         public IActionResult EditAdminFieldAnswersBulk(int customisationId, int promptNumber)
         {
-            var data = multiPageFormDataService.GetMultiPageFormData<EditAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldData>(
                 MultiPageFormDataFeature.EditAdminField,
                 TempData
             );
@@ -146,7 +146,7 @@
             var model = new BulkAdminFieldAnswersViewModel(
                 data.OptionsString
             );
-            
+
             return View("BulkAdminFieldAnswers", model);
         }
 
@@ -166,12 +166,12 @@
                 return View("BulkAdminFieldAnswers", model);
             }
 
-            var data = multiPageFormDataService.GetMultiPageFormData<EditAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldData>(
                 MultiPageFormDataFeature.EditAdminField,
                 TempData
             );
             data.OptionsString = NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
-            multiPageFormDataService.SetMultiPageFormData(
+            multiPageFormService.SetMultiPageFormData(
                 data,
                 MultiPageFormDataFeature.EditAdminField,
                 TempData
@@ -188,7 +188,7 @@
         public IActionResult AddAdminFieldNew(int customisationId)
         {
             TempData.Clear();
-            multiPageFormDataService.SetMultiPageFormData(
+            multiPageFormService.SetMultiPageFormData(
                 new AddAdminFieldData(),
                 MultiPageFormDataFeature.AddAdminField,
                 TempData
@@ -203,7 +203,7 @@
         [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddAdminFieldData>))]
         public IActionResult AddAdminField(int customisationId)
         {
-            var data = multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                 MultiPageFormDataFeature.AddAdminField,
                 TempData
             );
@@ -241,7 +241,7 @@
         [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddAdminFieldData>))]
         public IActionResult AddAdminFieldAnswersBulk(int customisationId)
         {
-            var data = multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                 MultiPageFormDataFeature.AddAdminField,
                 TempData
             );
@@ -267,13 +267,13 @@
                 return View("AddBulkAdminFieldAnswers", model);
             }
 
-            var data = multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                 MultiPageFormDataFeature.AddAdminField,
                 TempData
             );
             data.OptionsString =
                 NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
-            multiPageFormDataService.SetMultiPageFormData(
+            multiPageFormService.SetMultiPageFormData(
                 data,
                 MultiPageFormDataFeature.AddAdminField,
                 TempData
@@ -357,7 +357,7 @@
                 IncludeAnswersTableCaption = model.IncludeAnswersTableCaption,
             };
 
-            multiPageFormDataService.SetMultiPageFormData(
+            multiPageFormService.SetMultiPageFormData(
                 data,
                 MultiPageFormDataFeature.EditAdminField,
                 TempData
@@ -380,7 +380,7 @@
                     model.OptionsString
                 ))
             {
-                multiPageFormDataService.ClearMultiPageFormData(MultiPageFormDataFeature.AddAdminField, TempData);
+                multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddAdminField, TempData);
                 return RedirectToAction("Index", new { customisationId });
             }
 
@@ -407,7 +407,7 @@
                 IncludeAnswersTableCaption = model.IncludeAnswersTableCaption,
             };
 
-            multiPageFormDataService.SetMultiPageFormData(
+            multiPageFormService.SetMultiPageFormData(
                 data,
                 MultiPageFormDataFeature.AddAdminField,
                 TempData
@@ -535,7 +535,7 @@
 
         private void UpdateTempDataWithAddAdminFieldModelValues(AddAdminFieldViewModel model)
         {
-            var data = multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                 MultiPageFormDataFeature.AddAdminField,
                 TempData
             );
@@ -543,7 +543,7 @@
             data.AdminFieldId = model.AdminFieldId;
             data.Answer = model.Answer;
             data.IncludeAnswersTableCaption = model.IncludeAnswersTableCaption;
-            multiPageFormDataService.SetMultiPageFormData(
+            multiPageFormService.SetMultiPageFormData(
                 data,
                 MultiPageFormDataFeature.AddAdminField,
                 TempData

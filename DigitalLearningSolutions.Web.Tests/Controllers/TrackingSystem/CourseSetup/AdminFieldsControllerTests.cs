@@ -26,7 +26,7 @@
         private ICourseAdminFieldsDataService courseAdminFieldsDataService = null!;
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseService courseService = null!;
-        private IMultiPageFormDataService multiPageFormDataService = null!;
+        private IMultiPageFormService multiPageFormService = null!;
 
         private static IEnumerable<TestCaseData> AddAnswerModelErrorTestData
         {
@@ -57,12 +57,12 @@
         {
             courseAdminFieldsDataService = A.Fake<ICourseAdminFieldsDataService>();
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
-            multiPageFormDataService = A.Fake<IMultiPageFormDataService>();
+            multiPageFormService = A.Fake<IMultiPageFormService>();
             courseService = A.Fake<ICourseService>();
             controller = new AdminFieldsController(
                     courseAdminFieldsService,
                     courseAdminFieldsDataService,
-                    multiPageFormDataService
+                    multiPageFormService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -212,7 +212,7 @@
             };
 
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<EditAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<EditAdminFieldData>(
                     MultiPageFormDataFeature.EditAdminField,
                     controller.TempData
                 )
@@ -228,7 +228,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => multiPageFormDataService.SetMultiPageFormData(
+                    () => multiPageFormService.SetMultiPageFormData(
                         A<EditAdminFieldData>.That.Matches(
                             d => d.PromptNumber == initialTempData.PromptNumber &&
                                  d.Prompt == initialTempData.Prompt &&
@@ -236,7 +236,7 @@
                                  d.IncludeAnswersTableCaption == initialTempData.IncludeAnswersTableCaption &&
                                  d.OptionsString == inputViewModel.OptionsString
                         ),
-                        MultiPageFormDataFeature.EditRegistrationPrompt,
+                        MultiPageFormDataFeature.EditAdminField,
                         controller.TempData
                     )
                 ).MustHaveHappenedOnceExactly();
@@ -264,7 +264,7 @@
             var initialTempData = new AddAdminFieldData
                 { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -283,7 +283,7 @@
 
             // Then
             A.CallTo(
-                () => multiPageFormDataService.ClearMultiPageFormData(
+                () => multiPageFormService.ClearMultiPageFormData(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -300,7 +300,7 @@
             var initialTempData = new AddAdminFieldData
                 { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -330,7 +330,7 @@
             var initialTempData = new AddAdminFieldData
                 { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -366,7 +366,7 @@
                 IncludeAnswersTableCaption = initialViewModel.IncludeAnswersTableCaption,
             };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -406,7 +406,7 @@
                 IncludeAnswersTableCaption = initialViewModel.IncludeAnswersTableCaption,
             };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -437,7 +437,7 @@
             var initialTempData = new AddAdminFieldData
                 { AdminFieldId = initialViewModel.AdminFieldId, OptionsString = initialViewModel.OptionsString };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -465,7 +465,7 @@
             var initialTempData = new AddAdminFieldData
                 { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -490,7 +490,7 @@
             var initialTempData = new AddAdminFieldData
                 { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -521,7 +521,7 @@
                 IncludeAnswersTableCaption = model.IncludeAnswersTableCaption,
             };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -547,7 +547,7 @@
             var initialTempData = new AddAdminFieldData
                 { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -573,7 +573,7 @@
             var initialTempData = new AddAdminFieldData
                 { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -596,7 +596,7 @@
             var initialTempData = new AddAdminFieldData
                 { AdminFieldId = initialAddViewModel.AdminFieldId, OptionsString = initialAddViewModel.OptionsString };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -675,7 +675,7 @@
             var initialTempData = new AddAdminFieldData
                 { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -704,7 +704,7 @@
             var initialTempData = new AddAdminFieldData
                 { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<AddAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
                     MultiPageFormDataFeature.AddAdminField,
                     controller.TempData
                 )
@@ -731,7 +731,7 @@
             var initialTempData = new EditAdminFieldData
                 { PromptNumber = model.PromptNumber, Prompt = model.Prompt, OptionsString = model.OptionsString };
             A.CallTo(
-                () => multiPageFormDataService.GetMultiPageFormData<EditAdminFieldData>(
+                () => multiPageFormService.GetMultiPageFormData<EditAdminFieldData>(
                     MultiPageFormDataFeature.EditAdminField,
                     controller.TempData
                 )
@@ -802,7 +802,7 @@
         )
         {
             A.CallTo(
-                () => multiPageFormDataService.SetMultiPageFormData(
+                () => multiPageFormService.SetMultiPageFormData(
                     A<AddAdminFieldData>.That.Matches(
                         d => d.AdminFieldId == expectedData.AdminFieldId &&
                              d.OptionsString == expectedData.OptionsString &&
@@ -821,7 +821,7 @@
         )
         {
             A.CallTo(
-                () => multiPageFormDataService.SetMultiPageFormData(
+                () => multiPageFormService.SetMultiPageFormData(
                     A<EditAdminFieldData>.That.Matches(
                         d => d.PromptNumber == expectedData.PromptNumber &&
                              d.Prompt == expectedData.Prompt &&
@@ -830,7 +830,7 @@
                              d.IncludeAnswersTableCaption ==
                              expectedData.IncludeAnswersTableCaption
                     ),
-                    MultiPageFormDataFeature.AddAdminField,
+                    MultiPageFormDataFeature.EditAdminField,
                     controller.TempData
                 )
             ).MustHaveHappened();

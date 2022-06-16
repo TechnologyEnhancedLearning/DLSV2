@@ -8,7 +8,7 @@
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Newtonsoft.Json;
 
-    public interface IMultiPageFormDataService
+    public interface IMultiPageFormService
     {
         void SetMultiPageFormData(object formData, MultiPageFormDataFeature feature, ITempDataDictionary tempData);
 
@@ -19,19 +19,19 @@
         bool FormDataExistsForGuidAndFeature(MultiPageFormDataFeature feature, Guid tempDataGuid);
     }
 
-    public class MultiPageFormDataService : IMultiPageFormDataService
+    public class MultiPageFormService : IMultiPageFormService
     {
         private readonly IClockService clockService;
 
-        private readonly IMultiPageFormDataDataService multiPageFormDataDataService;
+        private readonly IMultiPageFormDataService multiPageFormDataService;
 
-        public MultiPageFormDataService(
+        public MultiPageFormService(
             IClockService clockService,
-            IMultiPageFormDataDataService multiPageFormDataDataService
+            IMultiPageFormDataService multiPageFormDataService
         )
         {
             this.clockService = clockService;
-            this.multiPageFormDataDataService = multiPageFormDataDataService;
+            this.multiPageFormDataService = multiPageFormDataService;
         }
 
         public void SetMultiPageFormData(
@@ -46,10 +46,10 @@
             {
                 var tempDataGuid = (Guid)tempData[feature.TempDataKey];
                 var existingMultiPageFormData =
-                    multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(tempDataGuid, feature.Name);
+                    multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(tempDataGuid, feature.Name);
                 if (existingMultiPageFormData != null)
                 {
-                    multiPageFormDataDataService.UpdateJsonByGuid(tempDataGuid, json);
+                    multiPageFormDataService.UpdateJsonByGuid(tempDataGuid, json);
                     tempData[feature.TempDataKey] = tempDataGuid;
                     return;
                 }
@@ -62,7 +62,7 @@
                 Feature = feature.Name,
                 CreatedDate = clockService.UtcNow,
             };
-            multiPageFormDataDataService.InsertMultiPageFormData(multiPageFormData);
+            multiPageFormDataService.InsertMultiPageFormData(multiPageFormData);
             tempData[feature.TempDataKey] = multiPageFormData.TempDataGuid;
         }
 
@@ -75,7 +75,7 @@
 
             var tempDataGuid = (Guid)tempData.Peek(feature.TempDataKey);
             var existingMultiPageFormData =
-                multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(tempDataGuid, feature.Name);
+                multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(tempDataGuid, feature.Name);
 
             if (existingMultiPageFormData == null)
             {
@@ -94,14 +94,14 @@
             }
 
             var tempDataGuid = (Guid)tempData.Peek(feature.TempDataKey);
-            multiPageFormDataDataService.DeleteByGuid(tempDataGuid);
+            multiPageFormDataService.DeleteByGuid(tempDataGuid);
             tempData.Remove(feature.TempDataKey);
         }
 
         public bool FormDataExistsForGuidAndFeature(MultiPageFormDataFeature feature, Guid tempDataGuid)
         {
             var existingMultiPageFormData =
-                multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(tempDataGuid, feature.Name);
+                multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(tempDataGuid, feature.Name);
             return existingMultiPageFormData != null;
         }
     }

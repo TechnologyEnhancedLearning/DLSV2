@@ -11,7 +11,7 @@
     using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
-    public class MultiPageFormDataDataServiceTests
+    public class MultiPageFormDataServiceTests
     {
         private const string TestJson = "test json";
 
@@ -28,13 +28,13 @@
 
         private SqlConnection connection = null!;
 
-        private IMultiPageFormDataDataService multiPageFormDataDataService = null!;
+        private IMultiPageFormDataService multiPageFormDataService = null!;
 
         [SetUp]
         public void SetUp()
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
-            multiPageFormDataDataService = new MultiPageFormDataDataService(connection);
+            multiPageFormDataService = new MultiPageFormDataService(connection);
         }
 
         [Test]
@@ -45,7 +45,7 @@
             InsertMultiPageFormData();
 
             // When
-            var result = multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(
+            var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
                 TestGuid,
                 MultiPageFormDataFeature.AddNewCourse.Name
             );
@@ -62,7 +62,7 @@
             InsertMultiPageFormData();
 
             // When
-            var result = multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(
+            var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
                 Guid.NewGuid(),
                 MultiPageFormDataFeature.AddNewCourse.Name
             );
@@ -79,7 +79,7 @@
             InsertMultiPageFormData();
 
             // When
-            var result = multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(
+            var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
                 TestGuid,
                 "incorrect feature"
             );
@@ -94,8 +94,8 @@
             using var transaction = new TransactionScope();
 
             // When
-            multiPageFormDataDataService.InsertMultiPageFormData(expectedData);
-            var result = multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(
+            multiPageFormDataService.InsertMultiPageFormData(expectedData);
+            var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
                 TestGuid,
                 MultiPageFormDataFeature.AddNewCourse.Name
             );
@@ -113,8 +113,8 @@
             InsertMultiPageFormData();
 
             // When
-            multiPageFormDataDataService.UpdateJsonByGuid(TestGuid, newJsonString);
-            var result = multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(
+            multiPageFormDataService.UpdateJsonByGuid(TestGuid, newJsonString);
+            var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
                 TestGuid,
                 MultiPageFormDataFeature.AddNewCourse.Name
             );
@@ -132,8 +132,8 @@
             InsertMultiPageFormData();
 
             // When
-            multiPageFormDataDataService.DeleteByGuid(TestGuid);
-            var result = multiPageFormDataDataService.GetMultiPageFormDataByGuidAndFeature(
+            multiPageFormDataService.DeleteByGuid(TestGuid);
+            var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
                 TestGuid,
                 MultiPageFormDataFeature.AddNewCourse.Name
             );
