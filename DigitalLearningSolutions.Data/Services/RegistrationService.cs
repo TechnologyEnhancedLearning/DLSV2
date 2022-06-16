@@ -148,9 +148,8 @@ namespace DigitalLearningSolutions.Data.Services
             var delegateRegistrationModel =
                 new DelegateRegistrationModel(userEntity.UserAccount, internalDelegateRegistrationModel);
 
-            var userHasAdminAccountAtCentre = userEntity.AdminAccounts.Any(
-                aa => aa.Active && aa.CentreId == internalDelegateRegistrationModel.Centre
-            );
+            var userHasAdminAccountAtCentre = userEntity.GetCentreAccountSet(internalDelegateRegistrationModel.Centre)
+                ?.CanLogIntoAdminAccount == true;
 
             // TODO HEEDLS-899 sort out supervisor delegate stuff, this is just copied from the external registration
             var supervisorDelegateRecordIdsMatchingDelegate =
@@ -359,7 +358,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         private void ValidateRegistrationEmail(RegistrationModel model)
         {
-            var emails = (IEnumerable<string>)new[] { model.PrimaryEmail, model.CentreSpecificEmail }.Where(e => e != null);
+            var emails =
+                (IEnumerable<string>)new[] { model.PrimaryEmail, model.CentreSpecificEmail }.Where(e => e != null);
             if (userDataService.AnyEmailsInSetAreAlreadyInUse(emails))
             {
                 var error = DelegateCreationError.EmailAlreadyInUse;
