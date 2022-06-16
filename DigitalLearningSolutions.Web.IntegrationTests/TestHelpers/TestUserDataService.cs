@@ -38,6 +38,9 @@
                 CentreId = 1,
                 CandidateNumber = "TST1",
                 CentreName = "TestCenter 101",
+                CentreActive = true,
+                Approved = true,
+                Active = true,
                 SessionData = new Dictionary<string, string>
                 {
                     { LinkLearningHubRequest.SessionIdentifierKey, "635FB79F-E56C-4BB0-966B-A027E3660BBC" },
@@ -50,6 +53,9 @@
                 CentreId = 1,
                 CandidateNumber = "TST2",
                 CentreName = "TestCenter 1",
+                CentreActive = true,
+                Approved = true,
+                Active = true,
                 SessionData = new Dictionary<string, string>
                 {
                     { LinkLearningHubRequest.SessionIdentifierKey, "7D297B5B-9C63-4A95-94D4-176582005DA9" },
