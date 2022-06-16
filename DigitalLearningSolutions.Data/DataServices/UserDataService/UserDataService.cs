@@ -17,8 +17,6 @@
 
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
 
-        (int AdminId, bool Active)? GetAdminIdAndStatusAtCentreForUser(int centreId, int userId);
-
         int GetNumberOfActiveAdminsAtCentre(int centreId);
 
         void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);

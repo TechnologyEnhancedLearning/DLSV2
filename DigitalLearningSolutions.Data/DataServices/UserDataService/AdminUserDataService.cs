@@ -68,17 +68,6 @@
             ).SingleOrDefault();
         }
 
-        public (int AdminId, bool Active)? GetAdminIdAndStatusAtCentreForUser(int centreId, int userId)
-        {
-            return connection.Query<(int AdminId, bool Active)>(
-                @$"SELECT ID AS AdminId, Active
-                    FROM AdminAccounts aa
-                    WHERE aa.CentreID = @centreId
-                    AND aa.UserID = @userId",
-                new { centreId, userId }
-            ).SingleOrDefault();
-        }
-
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
             var users = connection.Query<AdminUser>(
