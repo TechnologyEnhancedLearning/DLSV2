@@ -185,7 +185,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 }
 
                 var model = new SelfAssessmentCompetencyViewModel(assessment, competency, 1, 1);
-                competency.CompetencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, competency.Id);
+                competency.CompetencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, competency.Id, selected: true);
                 return View("Developer/CompetencyPreview", model);
             }
             logger.LogWarning($"Attempt to preview competency failed for frameworkCompetencyId {frameworkCompetencyId}.");
