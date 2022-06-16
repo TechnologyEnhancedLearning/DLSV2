@@ -31,6 +31,7 @@
             BadFormatEmail,
             WhitespaceInEmail,
             HasPrnButMissingPrnValue,
+            PrnButHasPrnIsFalse,
             InvalidPrnLength,
             InvalidPrnCharacters,
         }
