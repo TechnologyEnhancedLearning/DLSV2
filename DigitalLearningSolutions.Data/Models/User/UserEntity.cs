@@ -17,24 +17,47 @@
             DelegateAccounts = delegateAccounts;
         }
 
-        public UserAccount UserAccount { get; set; }
-        public IEnumerable<AdminAccount> AdminAccounts { get; set; }
-        public IEnumerable<DelegateAccount> DelegateAccounts { get; set; }
+        public UserAccount UserAccount { get; }
+        public IEnumerable<AdminAccount> AdminAccounts { get; }
+        public IEnumerable<DelegateAccount> DelegateAccounts { get; }
 
         private bool AllAdminAccountsInactive => AdminAccounts.All(a => !a.Active);
-        public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold && AdminAccounts.Any() && !AllAdminAccountsInactive;
 
-        public bool IsSingleCentreAccount()
+        public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold &&
+                                AdminAccounts.Any() && !AllAdminAccountsInactive;
+
+        public IDictionary<int, CentreAccountSet> CentreAccountSetsByCentreId
         {
-            if (AdminAccounts.Count() > 1 || DelegateAccounts.Count() > 1)
+            get
             {
-                return false;
+                var centreAccountSet = DelegateAccounts.Select(
+                    delegateAccount => new CentreAccountSet(
+                        delegateAccount.CentreId,
+                        AdminAccounts.SingleOrDefault(
+                            adminAccount => adminAccount.CentreId == delegateAccount.CentreId
+                        ),
+                        delegateAccount
+                    )
+                ).ToList();
+
+                var adminOnlyAccounts = AdminAccounts.Where(
+                    aa => centreAccountSet.All(account => account.CentreId != aa.CentreId)
+                );
+
+                centreAccountSet.AddRange(
+                    adminOnlyAccounts.Select(account => new CentreAccountSet(account.CentreId, account))
+                );
+
+                return centreAccountSet.ToDictionary(accounts => accounts.CentreId);
             }
-
-            var adminCentreId = AdminAccounts.SingleOrDefault()?.CentreId;
-            var delegateCentreId = DelegateAccounts.SingleOrDefault()?.CentreId;
-
-            return adminCentreId == null || delegateCentreId == null || adminCentreId == delegateCentreId;
         }
+
+        public CentreAccountSet? GetCentreAccountSet(int centreId)
+        {
+            CentreAccountSetsByCentreId.TryGetValue(centreId, out var centreAccountSet);
+            return centreAccountSet;
+        }
+
+        public bool IsSingleCentreAccount => CentreAccountSetsByCentreId.Count == 1;
     }
 }

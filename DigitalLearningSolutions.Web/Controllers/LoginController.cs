@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
@@ -97,22 +96,34 @@
         [Authorize(Policy = CustomPolicies.BasicUser)]
         public IActionResult ChooseACentre(string? returnUrl)
         {
-            // TODO HEEDLS-912: sort out ChooseACentre page
-            var model = new ChooseACentreViewModel(new List<ChooseACentreAccount>());
+            var userEntity = userService.GetUserById(User.GetUserId()!.Value);
+            var chooseACentreAccountViewModels = loginService.GetChooseACentreAccountViewModels(userEntity);
+            var model = new ChooseACentreViewModel(
+                chooseACentreAccountViewModels.OrderByDescending(account => account.IsActiveAdmin)
+                    .ThenBy(account => account.CentreName).ToList(),
+                returnUrl
+            );
+
             return View("ChooseACentre", model);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize(Policy = CustomPolicies.BasicUser)]
         public async Task<IActionResult> ChooseCentre(int centreId, string? returnUrl)
         {
-            // TODO HEEDLS-912: sort out ChooseACentre page
-            var rememberMe = true;
             var userEntity = userService.GetUserById(User.GetUserIdKnownNotNull());
-            var firstAdminAccountCentreId = userEntity!.AdminAccounts.FirstOrDefault()?.CentreId;
-            var firstDelegateAccountCentreId = userEntity.DelegateAccounts.FirstOrDefault()?.CentreId;
-            var tempCentreIdToLogInto = (firstAdminAccountCentreId ?? firstDelegateAccountCentreId)!.Value;
-            return await LogIntoCentreAsync(userEntity!, rememberMe, returnUrl, tempCentreIdToLogInto);
+            var centreAccountSet = userEntity?.GetCentreAccountSet(centreId);
+
+            if (centreAccountSet?.IsCentreActive != true)
+            {
+                return RedirectToAction("AccessDenied", "LearningSolutions");
+            }
+
+            var rememberMe = (await HttpContext.AuthenticateAsync()).Properties.IsPersistent;
+
+            await HttpContext.Logout();
+
+            return await LogIntoCentreAsync(userEntity!, rememberMe, returnUrl, centreId);
         }
 
         private async Task<IActionResult> LogIntoCentreAsync(
@@ -131,8 +142,9 @@
                 IssuedUtc = DateTime.UtcNow,
             };
 
-            var adminAccount = userEntity!.AdminAccounts.SingleOrDefault(aa => aa.CentreId == centreIdToLogInto);
-            if (adminAccount != null)
+            var adminAccount = userEntity!.GetCentreAccountSet(centreIdToLogInto)?.AdminAccount;
+
+            if (adminAccount?.Active == true)
             {
                 sessionService.StartAdminSession(adminAccount.Id);
             }

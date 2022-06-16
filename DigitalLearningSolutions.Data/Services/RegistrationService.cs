@@ -21,16 +21,27 @@ namespace DigitalLearningSolutions.Data.Services
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
+            bool registerJourneyContainsTermsAndConditions,
             int? inviteId = null
         );
 
-        string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
+        string RegisterDelegateByCentre(
+            DelegateRegistrationModel delegateRegistrationModel,
+            string baseUrl,
+            bool registerJourneyContainsTermsAndConditions
+        );
 
-        void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
+        void RegisterCentreManager(
+            AdminRegistrationModel registrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        );
 
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId);
 
-        string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel);
+        string CreateAccountAndReturnCandidateNumber(
+            DelegateRegistrationModel delegateRegistrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        );
     }
 
     public class RegistrationService : IRegistrationService
@@ -38,7 +49,6 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly ICentresDataService centresDataService;
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
-        private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ILogger<RegistrationService> logger;
         private readonly IPasswordDataService passwordDataService;
         private readonly IPasswordResetService passwordResetService;
@@ -54,7 +64,6 @@ namespace DigitalLearningSolutions.Data.Services
             ICentresDataService centresDataService,
             IConfiguration config,
             ISupervisorDelegateService supervisorDelegateService,
-            IFrameworkNotificationService frameworkNotificationService,
             IUserDataService userDataService,
             ILogger<RegistrationService> logger
         )
@@ -67,7 +76,6 @@ namespace DigitalLearningSolutions.Data.Services
             this.userDataService = userDataService;
             this.config = config;
             this.supervisorDelegateService = supervisorDelegateService;
-            this.frameworkNotificationService = frameworkNotificationService;
             this.userDataService = userDataService;
             this.logger = logger;
         }
@@ -76,6 +84,7 @@ namespace DigitalLearningSolutions.Data.Services
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
+            bool registerJourneyContainsTermsAndConditions,
             int? supervisorDelegateId = null
         )
         {
@@ -92,7 +101,10 @@ namespace DigitalLearningSolutions.Data.Services
                                                  centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
                                                  userIp == "::1";
 
-            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
+            var candidateNumber = CreateAccountAndReturnCandidateNumber(
+                delegateRegistrationModel,
+                registerJourneyContainsTermsAndConditions
+            );
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
@@ -136,11 +148,18 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
+        public string RegisterDelegateByCentre(
+            DelegateRegistrationModel delegateRegistrationModel,
+            string baseUrl,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             using var transaction = new TransactionScope();
 
-            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
+            var candidateNumber = CreateAccountAndReturnCandidateNumber(
+                delegateRegistrationModel,
+                registerJourneyContainsTermsAndConditions
+            );
 
             if (delegateRegistrationModel.PasswordHash != null)
             {
@@ -189,11 +208,14 @@ namespace DigitalLearningSolutions.Data.Services
             return candidateNumber;
         }
 
-        public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
+        public void RegisterCentreManager(
+            AdminRegistrationModel registrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             using var transaction = new TransactionScope();
 
-            var userId = CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
+            var userId = CreateDelegateAccountForAdmin(registrationModel, registerJourneyContainsTermsAndConditions);
 
             registrationDataService.RegisterAdmin(registrationModel, userId);
 
@@ -208,13 +230,14 @@ namespace DigitalLearningSolutions.Data.Services
 
             var userId = userDataService.GetUserIdFromDelegateId(delegateId);
 
-            var admin = userDataService.GetAdminIdAndStatusAtCentreForUser(delegateUser.CentreId, userId);
+            var admin = userDataService.GetAdminAccountsByUserId(userId)
+                .SingleOrDefault(a => a.CentreId == delegateUser.CentreId);
 
             var adminRegistrationModel = new AdminRegistrationModel(
                     delegateUser.CentreId,
                 true,
                 true,
-                categoryId,
+                    categoryId,
                 adminRoles.IsCentreAdmin,
                 false,
                 adminRoles.IsSupervisor,
@@ -222,28 +245,35 @@ namespace DigitalLearningSolutions.Data.Services
                 adminRoles.IsTrainer,
                 adminRoles.IsContentCreator,
                 adminRoles.IsCmsAdministrator,
-                adminRoles.IsCmsManager
+                adminRoles.IsCmsManager,
+                delegateUser.JobGroupId
             );
 
             if (admin != null)
             {
-                if (admin.Value.Active)
+                if (admin.Active)
                 {
                     throw new AdminCreationFailedException(AdminCreationError.ActiveAdminAlreadyExists);
                 }
 
-                userDataService.UpdateAdminAccount(adminRegistrationModel, admin.Value.AdminId);
+                userDataService.UpdateAdminAccount(adminRegistrationModel, admin.Id);
             }
-            
+
             registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
         }
 
-        public string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
+        public string CreateAccountAndReturnCandidateNumber(
+            DelegateRegistrationModel delegateRegistrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             try
             {
                 ValidateRegistrationEmail(delegateRegistrationModel);
-                return registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+                return registrationDataService.RegisterNewUserAndDelegateAccount(
+                    delegateRegistrationModel,
+                    registerJourneyContainsTermsAndConditions
+                );
             }
             catch (DelegateCreationFailedException exception)
             {
@@ -267,7 +297,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         private void ValidateRegistrationEmail(DelegateRegistrationModel model)
         {
-            var emails = (IEnumerable<string>)new[] { model.PrimaryEmail, model.CentreSpecificEmail }.Where(e => e != null);
+            var emails =
+                (IEnumerable<string>)new[] { model.PrimaryEmail, model.CentreSpecificEmail }.Where(e => e != null);
             if (userDataService.AnyEmailsInSetAreAlreadyInUse(emails))
             {
                 var error = DelegateCreationError.EmailAlreadyInUse;
@@ -290,7 +321,10 @@ namespace DigitalLearningSolutions.Data.Services
                 ).Select(record => record.ID);
         }
 
-        private int CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel, int jobGroupId)
+        private int CreateDelegateAccountForAdmin(
+            AdminRegistrationModel registrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             var delegateRegistrationModel = new DelegateRegistrationModel(
                 registrationModel.FirstName,
@@ -298,7 +332,7 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.PrimaryEmail,
                 registrationModel.CentreSpecificEmail,
                 registrationModel.Centre,
-                jobGroupId,
+                registrationModel.JobGroup,
                 registrationModel.PasswordHash!,
                 true,
                 true,
@@ -308,7 +342,10 @@ namespace DigitalLearningSolutions.Data.Services
             try
             {
                 var candidateNumber =
-                    registrationDataService.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
+                    registrationDataService.RegisterNewUserAndDelegateAccount(
+                        delegateRegistrationModel,
+                        registerJourneyContainsTermsAndConditions
+                    );
                 passwordDataService.SetPasswordByCandidateNumber(
                     candidateNumber,
                     delegateRegistrationModel.PasswordHash!

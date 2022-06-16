@@ -149,6 +149,7 @@
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
+                        A<bool>._,
                         A<int>._
                     )
                 )
@@ -188,6 +189,7 @@
                             ),
                             IpAddress,
                             false,
+                            true,
                             SupervisorDelegateId
                         )
                 )
@@ -213,6 +215,7 @@
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
+                            true,
                             SupervisorDelegateId
                         )
                 )
@@ -238,6 +241,7 @@
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
+                            true,
                             SupervisorDelegateId
                         )
                 )
@@ -263,6 +267,7 @@
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
+                            true,
                             SupervisorDelegateId
                         )
                 )
@@ -280,6 +285,7 @@
                     () => registrationService.CreateDelegateAccountForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
+                        A<bool>._,
                         A<bool>._,
                         A<int>._
                     )
@@ -308,6 +314,7 @@
                     () => registrationService.CreateDelegateAccountForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
+                        A<bool>._,
                         A<bool>._,
                         A<int>._
                     )
