@@ -30,6 +30,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private INotificationService notificationService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
         private ISupervisorService supervisorService = null!;
+        private IFrameworkService frameworkService = null!;
         private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
 
@@ -66,6 +67,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 courseDataService,
                 selfAssessmentService,
                 supervisorService,
+                frameworkService,
                 notificationService,
                 frameworkNotificationService,
                 logger,

@@ -489,7 +489,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Flags/{frameworkId}/")]
         public IActionResult EditFrameworkFlags(int frameworkId, bool error = false)
         {
-            var flags = frameworkService.GetFrameworkFlags(frameworkId, null);
+            var flags = frameworkService.GetCustomFlagsByFrameworkId(frameworkId, null);
             var model = new CustomFlagsViewModel()
             {
                 Flags = flags
@@ -501,7 +501,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Flags/Delete/{frameworkId}/{flagId}")]
         public IActionResult RemoveFrameworkFlag(int flagId, int frameworkId)
         {
-            var flag = frameworkService.GetFrameworkFlags(frameworkId, flagId).FirstOrDefault();
+            var flag = frameworkService.GetCustomFlagsByFrameworkId(frameworkId, flagId).FirstOrDefault();
             if(flag == null)
             {
                 return StatusCode((int)HttpStatusCode.NotFound);
@@ -551,7 +551,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var model = new CustomFlagViewModel();
             if (actionname == "Edit")
             {
-                var flag = frameworkService.GetFrameworkFlags(frameworkId, (int?)flagId).FirstOrDefault();
+                var flag = frameworkService.GetCustomFlagsByFrameworkId(frameworkId, (int?)flagId).FirstOrDefault();
                 model = new CustomFlagViewModel()
                 {
                     Id = flag.FlagId,
@@ -621,13 +621,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 case "Details":
                     model.Collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
-                    model.Flags = frameworkService.GetFrameworkFlags(frameworkId, null);
+                    model.Flags = frameworkService.GetCustomFlagsByFrameworkId(frameworkId, null);
                     model.FrameworkDefaultQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId, adminId);
                     model.TabNavLinks = new TabsNavViewModel(FrameworkTab.Details, routeData);
                     break;
                 case "Structure":
                     model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
-                    model.CompetencyFlags = frameworkService.GetCompetencyFlags(frameworkId, null, selected: true);
+                    model.CompetencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, null, selected: true);
                     model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
                     model.TabNavLinks = new TabsNavViewModel(FrameworkTab.Structure, routeData);
                     break;

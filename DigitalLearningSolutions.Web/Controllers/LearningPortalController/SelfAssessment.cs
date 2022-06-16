@@ -102,7 +102,7 @@
             }
 
             selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
-
+            competency.CompetencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyId(competency.Id);
             var model = new SelfAssessmentCompetencyViewModel(
                 assessment,
                 competency,
@@ -295,10 +295,12 @@
             selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, candidateId);
             var competencies = FilterCompetencies(selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList(), searchModel);
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencies.Select(c => c.Id).ToArray());
 
             foreach (var competency in competencies)
             {
                 competency.QuestionLabel = assessment.QuestionLabel;
+                competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.Id);
                 foreach (var assessmentQuestion in competency.AssessmentQuestions)
                 {
                     if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)

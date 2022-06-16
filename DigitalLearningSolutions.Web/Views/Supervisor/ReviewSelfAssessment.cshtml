@@ -104,6 +104,7 @@
             <tr role="row" class="nhsuk-table__row first-row">
               <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
                 <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
+                <partial name="_ComperencyFlags" model="competency.CompetencyFlags" />
                 @if (competency.Description != null && !competency.AlwaysShowDescription)
                 {
                   <details class="nhsuk-details">

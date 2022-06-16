@@ -31,6 +31,7 @@
     <tbody class="nhsuk-table__body row-outer" id="comp-@competency.RowNo">
       <tr role="row" class="nhsuk-table__row first-row">
         <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
+          <partial name="_ComperencyFlags" model="competency.CompetencyFlags" />
           @if (competency.Description != null && !competency.AlwaysShowDescription)
           {
             <details class="nhsuk-details">

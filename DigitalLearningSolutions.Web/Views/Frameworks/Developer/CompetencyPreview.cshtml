@@ -44,19 +44,8 @@
     </h2>
   }
 </div>
-@if (Model.CompetencyFlags?.Count() > 0)
-{
-  <div class="nhsuk-u-margin-bottom-8">
-    @foreach (var flag in Model.CompetencyFlags)
-    {
-      <span class="nhsuk-u-padding-right-2">
-        <strong class="nhsuk-tag @flag.FlagTagClass">
-          @flag.FlagName
-        </strong>
-      </span>
-    }
-  </div>
-}
+<partial name="_ComperencyFlags" model="Model.Competency.CompetencyFlags" />
+<div class="nhsuk-u-padding-4"></div>
 @foreach (var question in @Model.Competency.AssessmentQuestions)
 {
   <div class="nhsuk-form-group">

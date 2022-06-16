@@ -103,7 +103,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 frameworkCompetency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
             }
             var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, adminId);
-            var competencyFlags = frameworkService.GetCompetencyFlags(frameworkId, frameworkCompetency?.CompetencyID);
+            var competencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, frameworkCompetency?.CompetencyID);
             if (detailFramework == null || frameworkCompetency == null) return StatusCode(404);
             var model = new FrameworkCompetencyViewModel()
             {
@@ -183,8 +183,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 {
                     assessmentQuestion.LevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(assessmentQuestion.Id, adminId, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.MinValue == 0).ToList();
                 }
-                var competencyFlags = frameworkService.GetCompetencyFlags(frameworkId, competency.Id);
-                var model = new SelfAssessmentCompetencyViewModel(assessment, competency, 1, 1, competencyFlags);
+
+                var model = new SelfAssessmentCompetencyViewModel(assessment, competency, 1, 1);
+                competency.CompetencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, competency.Id);
                 return View("Developer/CompetencyPreview", model);
             }
             logger.LogWarning($"Attempt to preview competency failed for frameworkCompetencyId {frameworkCompetencyId}.");

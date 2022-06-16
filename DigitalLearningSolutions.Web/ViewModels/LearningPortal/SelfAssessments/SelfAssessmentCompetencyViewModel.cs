@@ -11,21 +11,18 @@
         public readonly Competency Competency;
         public readonly int CompetencyNumber;
         public readonly int TotalNumberOfCompetencies;
-        public readonly IEnumerable<CompetencyFlag> CompetencyFlags;
 
         public SelfAssessmentCompetencyViewModel(
             CurrentSelfAssessment assessment,
             Competency competency,
             int competencyNumber,
-            int totalNumberOfCompetencies,
-            IEnumerable<CompetencyFlag> competencyFlags = null
+            int totalNumberOfCompetencies
         )
         {
             Assessment = assessment;
             Competency = competency;
             CompetencyNumber = competencyNumber;
             TotalNumberOfCompetencies = totalNumberOfCompetencies;
-            CompetencyFlags = competencyFlags;
         }
         public string VocabPlural()
         {

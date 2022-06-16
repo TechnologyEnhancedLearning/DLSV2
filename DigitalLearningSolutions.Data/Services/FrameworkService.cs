@@ -29,8 +29,10 @@
         BrandedFramework? GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId);
 
         DetailFramework? GetDetailFrameworkByFrameworkId(int frameworkId, int adminId);
-        IEnumerable<CompetencyFlag> GetCompetencyFlags(int frameworkId, int? competencyId, bool? selected = null);
-        IEnumerable<Flag> GetFrameworkFlags(int frameworkId, int? flagId);
+        IEnumerable<CompetencyFlag> GetSelectedCompetencyFlagsByCompetecyIds(int[] ids);
+        IEnumerable<CompetencyFlag> GetSelectedCompetencyFlagsByCompetecyId(int competencyId);
+        IEnumerable<CompetencyFlag> GetCompetencyFlagsByFrameworkId(int frameworkId, int? competencyId, bool? selected = null);
+        IEnumerable<Flag> GetCustomFlagsByFrameworkId(int frameworkId, int? flagId);
 
         IEnumerable<BrandedFramework> GetFrameworkByFrameworkName(string frameworkName, int adminId);
 
@@ -365,7 +367,7 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             );
         }
 
-        public IEnumerable<CompetencyFlag> GetCompetencyFlags(int frameworkId, int? competencyId = null, bool? selected = null)
+        public IEnumerable<CompetencyFlag> GetCompetencyFlagsByFrameworkId(int frameworkId, int? competencyId = null, bool? selected = null)
         {
             var competencyIdFilter = competencyId.HasValue ? "cf.CompetencyId = @competencyId" : "1=1";
             var selectedFilter = selected.HasValue ? $"cf.Selected = {(selected.Value ? 1 : 0)}" : "1=1";
@@ -379,7 +381,23 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             );
         }
 
-        public IEnumerable<Flag> GetFrameworkFlags(int frameworkId, int? flagId = null)
+        public IEnumerable<CompetencyFlag> GetSelectedCompetencyFlagsByCompetecyIds(int[] ids)
+        {
+            var competencyIdFilter = ids.Count() > 0 ? $"cf.CompetencyID IN ({String.Join(',', ids)})" : "1=1";
+            return connection.Query<CompetencyFlag>(
+                $@"SELECT CompetencyId, Selected, {FlagFields}
+	                FROM CompetencyFlags AS cf
+	                INNER JOIN Flags AS fl ON cf.FlagID = fl.ID
+                    WHERE cf.Selected = 1 AND {competencyIdFilter}"
+            );
+        }
+
+        public IEnumerable<CompetencyFlag> GetSelectedCompetencyFlagsByCompetecyId(int competencyId)
+        {
+            return GetSelectedCompetencyFlagsByCompetecyIds(new int[1] { competencyId });
+        }
+
+        public IEnumerable<Flag> GetCustomFlagsByFrameworkId(int frameworkId, int? flagId = null)
         {
             var flagIdFilter = flagId.HasValue ? "fl.ID = @flagId" : "1=1";
             return connection.Query<Flag>(
