@@ -13,6 +13,9 @@
                 .WithColumn("Json").AsCustom("NVARCHAR(MAX)").NotNullable()
                 .WithColumn("Feature").AsString(100).NotNullable()
                 .WithColumn("CreatedDate").AsDateTime().NotNullable();
+
+            Create.Index("IX_MultiPageFormData_TempDataGuid_Feature").OnTable("MultiPageFormData")
+                .OnColumn("TempDataGuid").Unique().OnColumn("Feature").Unique().WithOptions().Unique();
         }
 
         public override void Down()
