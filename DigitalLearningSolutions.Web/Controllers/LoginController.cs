@@ -11,6 +11,7 @@
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Login;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
@@ -92,9 +93,10 @@
         }
 
         [HttpGet]
-        [SetDlsSubApplication]
         [Route("/{dlsSubApplication}/Login/ChooseACentre", Order = 1)]
         [Route("/Login/ChooseACentre", Order = 2)]
+        [TypeFilter(typeof(ValidateAllowedDlsSubApplication))]
+        [SetDlsSubApplication]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         [Authorize(Policy = CustomPolicies.BasicUser)]
         public IActionResult ChooseACentre(DlsSubApplication dlsSubApplication, string? returnUrl)
