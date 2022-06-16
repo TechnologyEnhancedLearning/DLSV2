@@ -1,12 +1,10 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
-@using Microsoft.Extensions.Configuration
 @model EditFiltersViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = "Edit report filters";
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit report filters" : "Edit report filters";
   var reportIntervalValue = (int)Model.ReportInterval;
 }
 

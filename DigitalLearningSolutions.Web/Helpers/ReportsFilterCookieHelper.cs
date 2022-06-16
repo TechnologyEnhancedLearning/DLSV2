@@ -38,7 +38,13 @@
 
             try
             {
-                return JsonConvert.DeserializeObject<ActivityFilterData>(cookie);
+                var filterData = JsonConvert.DeserializeObject<ActivityFilterData>(cookie);
+                if (categoryIdFilter != null)
+                {
+                    filterData.CourseCategoryId = categoryIdFilter;
+                }
+
+                return filterData;
             }
             catch
             {

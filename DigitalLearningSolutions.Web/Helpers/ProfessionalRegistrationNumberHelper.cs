@@ -16,12 +16,11 @@
         }
 
         public static void ValidateProfessionalRegistrationNumber(
-            ModelStateDictionary modelState, 
-            bool? hasPrn, 
-            string? prn, 
-            bool isDelegateUser = true)
+            ModelStateDictionary modelState,
+            bool? hasPrn,
+            string? prn)
         {
-            if (!isDelegateUser || hasPrn == false)
+            if (hasPrn == false)
             {
                 return;
             }

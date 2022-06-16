@@ -5,7 +5,7 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Edit Details" : "Edit Details";
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit details" : "Edit details";
   var routeParamsForIndexLink = new Dictionary<string, string?> {
     { "dlsSubApplication", Model.DlsSubApplication.UrlSegment },
   };
@@ -74,7 +74,7 @@
                                     All communications will be sent to this email by default."; }
       <vc:text-input
         asp-for="@nameof(Model.Email)"
-        label="Primary email address"
+        label="Primary email"
         populate-with-current-value="true"
         type="text"
         spell-check="false"
@@ -124,23 +124,23 @@
     </div>
   </div>
 
-  @if (Model.IsDelegateUser) {
-    <input type="hidden" asp-for="IsDelegateUser" />
-    <div class="nhsuk-grid-row divider">
-      <div class="nhsuk-grid-column-full">
+  <input type="hidden" asp-for="IsDelegateUser" />
+  <div class="nhsuk-grid-row divider">
+    <div class="nhsuk-grid-column-full">
 
-        @{ var centreEmailHintText = @"If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address.
+      @{ var centreEmailHintText = @"If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address.
                                      Your primary email address will still be used for logging in and notifications for managing your account."; }
-        <vc:text-input
-          asp-for="@nameof(Model.CentreEmail)"
-          label="Centre email (optional)"
-          populate-with-current-value="true"
-          type="text"
-          spell-check="false"
-          autocomplete="email"
-          hint-text="@centreEmailHintText"
-          css-class="nhsuk-u-width-one-half" />
+      <vc:text-input
+        asp-for="@nameof(Model.CentreEmail)"
+        label="Centre email (optional)"
+        populate-with-current-value="true"
+        type="text"
+        spell-check="false"
+        autocomplete="email"
+        hint-text="@centreEmailHintText"
+        css-class="nhsuk-u-width-one-half" />
 
+      @if (Model.IsDelegateUser) {
         @foreach (var customField in Model.DelegateRegistrationPrompts) {
           @if (customField.Options.Any()) {
             <vc:select-list asp-for="@("Answer" + customField.PromptNumber)"
@@ -162,9 +162,9 @@
                            css-class="nhsuk-u-width-one-half" />
           }
         }
-      </div>
+      }
     </div>
-  }
+  </div>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">

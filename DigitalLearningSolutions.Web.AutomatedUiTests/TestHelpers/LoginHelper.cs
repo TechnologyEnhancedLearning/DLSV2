@@ -19,7 +19,9 @@
 
         public static void LogOutUser(this IWebDriver driver, string baseUrl)
         {
-            driver.Navigate().GoToUrl(baseUrl + "/Logout");
+            driver.Navigate().GoToUrl(baseUrl + "/MyAccount");
+            var submitButton = driver.FindElement(By.TagName("form"));
+            submitButton.Submit();
         }
     }
 }

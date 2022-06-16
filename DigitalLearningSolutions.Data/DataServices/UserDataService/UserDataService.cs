@@ -129,11 +129,13 @@
 
         int? GetUserIdFromUsername(string username);
 
-        int? GetUserIdFromDelegateId(int delegateId);
+        int GetUserIdFromDelegateId(int delegateId);
 
         UserAccount? GetUserAccountById(int userId);
 
         UserAccount? GetUserAccountByEmailAddress(string emailAddress);
+
+        int? GetUserIdByAdminId(int adminId);
 
         IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId);
 
@@ -153,8 +155,6 @@
 
     public partial class UserDataService : IUserDataService
     {
-        private readonly IDbConnection connection;
-
         private const string BaseSelectUserQuery =
             @"SELECT
                 u.ID,
@@ -177,6 +177,8 @@
                 u.DetailsLastChecked
             FROM Users AS u
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+
+        private readonly IDbConnection connection;
 
         public UserDataService(IDbConnection connection)
         {
@@ -203,16 +205,19 @@
             return userIds.SingleOrDefault();
         }
 
-        public int? GetUserIdFromDelegateId(int delegateId)
+        public int GetUserIdFromDelegateId(int delegateId)
         {
-            var userIds = connection.Query<int?>(
-                @"SELECT UserID
-                    FROM DelegateAccounts
-                    WHERE ID = @delegateId",
+            var userId = connection.QuerySingle<int?>(
+                @"SELECT UserID FROM DelegateAccounts WHERE ID = @delegateId",
                 new { delegateId }
-            ).ToList();
+            );
 
-            return userIds.SingleOrDefault();
+            if (userId == null)
+            {
+                throw new UserAccountNotFoundException("No Delegate found with DelegateID: " + delegateId);
+            }
+
+            return userId.Value;
         }
 
         public UserAccount? GetUserAccountById(int userId)
@@ -228,6 +233,14 @@
             return connection.Query<UserAccount>(
                 @$"{BaseSelectUserQuery} WHERE u.PrimaryEmail = @emailAddress",
                 new { emailAddress }
+            ).SingleOrDefault();
+        }
+
+        public int? GetUserIdByAdminId(int adminId)
+        {
+            return connection.Query<int>(
+                @"SELECT UserID FROM AdminAccounts WHERE ID = @adminId",
+                new { adminId }
             ).SingleOrDefault();
         }
 

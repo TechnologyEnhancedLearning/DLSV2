@@ -395,6 +395,28 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
+        public void GetDelegateCourseInfosForCourse_should_return_course_info_correctly()
+        {
+            // When
+            var results = courseDataService.GetDelegateCourseInfosForCourse(27915, 101).ToList();
+
+            // Then
+            results.Should().HaveCount(34);
+            results.Should().ContainEquivalentOf(ExpectedCourseInfo);
+        }
+
+        [Test]
+        public void GetDelegateCourseInfosForCourse_should_return_course_info_for_all_centres_course()
+        {
+            // When
+            var results = courseDataService.GetDelegateCourseInfosForCourse(27409, 101).ToList();
+
+            // Then
+            results.Should().HaveCount(9);
+            results[0].CourseName.Should().Be("An Introduction to Cognition - New");
+        }
+
+        [Test]
         public void GetCourseNameAndApplication_returns_course_name_and_application()
         {
             // When

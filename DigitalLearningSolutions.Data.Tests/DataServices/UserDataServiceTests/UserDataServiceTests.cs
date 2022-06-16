@@ -38,6 +38,16 @@
         }
 
         [Test]
+        public void GetUserIdFromDelegateId_returns_expected_userId_for_delegateId()
+        {
+            // When
+            var result = userDataService.GetUserIdFromDelegateId(1);
+
+            // Then
+            result.Should().Be(48157);
+        }
+
+        [Test]
         public void GetUserAccountById_returns_expected_user_account()
         {
             // When
@@ -55,6 +65,16 @@
 
             // Then
             result.Should().BeEquivalentTo(UserTestHelper.GetDefaultUserAccount());
+        }
+
+        [Test]
+        public void GetUserIdByAdminId_returns_expected_user_id()
+        {
+            // When
+            var result = userDataService.GetUserIdByAdminId(7);
+
+            // Then
+            result.Should().Be(2);
         }
     }
 }

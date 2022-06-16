@@ -1,8 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -18,24 +21,30 @@
     public class RegisterAdminController : Controller
     {
         private readonly ICentresDataService centresDataService;
+        private readonly ICentresService centresService;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
+            ICentresService centresService,
             ICryptoService cryptoService,
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
-            IUserDataService userDataService
+            IUserDataService userDataService,
+            IUserService userService
         )
         {
             this.centresDataService = centresDataService;
+            this.centresService = centresService;
             this.cryptoService = cryptoService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.userDataService = userDataService;
+            this.userService = userService;
         }
 
         public IActionResult Index(int? centreId = null)
@@ -69,7 +78,12 @@
             var model = new PersonalInformationViewModel(data);
             SetCentreName(model);
 
-            ValidateEmailAddress(model.PrimaryEmail, model.Centre!.Value);
+            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
+                model,
+                ModelState,
+                userService,
+                centresDataService
+            );
 
             return View(model);
         }
@@ -80,7 +94,12 @@
         {
             var data = TempData.Peek<RegistrationData>()!;
 
-            ValidateEmailAddress(model.PrimaryEmail, model.Centre!.Value);
+            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
+                model,
+                ModelState,
+                userService,
+                centresDataService
+            );
 
             if (!ModelState.IsValid)
             {
@@ -184,13 +203,32 @@
                 return new StatusCodeResult(500);
             }
 
-            var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
-            registrationService.RegisterCentreManager(
-                registrationModel,
-                data.JobGroup!.Value
-            );
+            try
+            {
+                var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
+                registrationService.RegisterCentreManager(
+                    registrationModel,
+                    data.JobGroup!.Value
+                );
 
-            return RedirectToAction("Confirmation");
+                return RedirectToAction("Confirmation");
+            }
+            catch (DelegateCreationFailedException e)
+            {
+                var error = e.Error;
+
+                if (error.Equals(DelegateCreationError.UnexpectedError))
+                {
+                    return new StatusCodeResult(500);
+                }
+
+                if (error.Equals(DelegateCreationError.EmailAlreadyInUse))
+                {
+                    return RedirectToAction("Index");
+                }
+
+                return new StatusCodeResult(500);
+            }
         }
 
         [HttpGet]
@@ -221,41 +259,14 @@
             return adminUser == null;
         }
 
-        private bool DoesEmailMatchCentre(string email, int centreId)
-        {
-            var autoRegisterManagerEmail =
-                centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
-            return email.Equals(autoRegisterManagerEmail);
-        }
-
         private bool CanProceedWithRegistration(RegistrationData data)
         {
-            return data.Centre.HasValue && data.Email != null && IsRegisterAdminAllowed(data.Centre.Value) &&
-                   DoesEmailMatchCentre(data.Email, data.Centre.Value) && IsEmailUnique(data.Email);
-        }
-
-        private void ValidateEmailAddress(string? email, int centreId)
-        {
-            if (email == null)
-            {
-                return;
-            }
-
-            if (!DoesEmailMatchCentre(email, centreId))
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.PrimaryEmail),
-                    "This email address does not match the one held by the centre"
-                );
-            }
-
-            if (!IsEmailUnique(email))
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.PrimaryEmail),
-                    "An admin user with this email address is already registered"
-                );
-            }
+            return data.Centre.HasValue && data.PrimaryEmail != null && IsRegisterAdminAllowed(data.Centre.Value) &&
+                   (data.CentreSpecificEmail != null &&
+                    centresService.DoesEmailMatchCentre(data.CentreSpecificEmail, data.Centre.Value) ||
+                    centresService.DoesEmailMatchCentre(data.PrimaryEmail, data.Centre.Value)) &&
+                   IsEmailUnique(data.PrimaryEmail) &&
+                   (data.CentreSpecificEmail == null || IsEmailUnique(data.CentreSpecificEmail));
         }
 
         private void SetCentreName(PersonalInformationViewModel model)

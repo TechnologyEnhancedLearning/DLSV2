@@ -91,6 +91,7 @@
 
 .applied-filter-container {
   flex: 1;
+  margin-right: 5px;
 
   @include mq($until: tablet) {
     width: 100%;
@@ -112,10 +113,4 @@
   padding-top: 11px;
   padding-bottom: 11px;
   margin-bottom: 4px;
-
-  #js-styling-hidden-area-while-loading & {
-    .js-enabled & {
-      margin-right: 4px;
-    }
-  }
 }

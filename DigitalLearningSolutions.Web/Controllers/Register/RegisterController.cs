@@ -22,11 +22,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [SetSelectedTab(nameof(NavMenuTab.Register))]
     public class RegisterController : Controller
     {
-        private readonly PromptsService promptsService;
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly IFeatureManager featureManager;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserService userService;
@@ -94,7 +94,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             // Check this email and centre combination doesn't already exist in case we were redirected
             // back here by the user trying to submit the final page of the form
-            ValidateEmailAddresses(model);
+            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, ModelState, userService);
 
             return View(model);
         }
@@ -103,7 +103,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
-            ValidateEmailAddresses(model);
+            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, ModelState, userService);
 
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
@@ -309,34 +309,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                    || centresDataService.GetCentreName(centreId.Value) != null;
         }
 
-        private void ValidateEmailAddresses(PersonalInformationViewModel model)
-        {
-            if (model.PrimaryEmail == null || !model.Centre.HasValue)
-            {
-                return;
-            }
-
-            if (userService.EmailIsInUse(model.PrimaryEmail))
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.PrimaryEmail),
-                    "A user with this primary email address is already registered; if this is you, please log in at this centre via the My Account page"
-                );
-            }
-
-            if (model.SecondaryEmail != null && userService.EmailIsInUse(model.SecondaryEmail))
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.SecondaryEmail),
-                    "A user with this email address is already registered at this centre; if this is you, please log in at this centre via the My Account page"
-                );
-            }
-        }
-
-        private IEnumerable<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsFromModel(
-            LearnerInformationViewModel model,
-            int centreId
-        )
+        private IEnumerable<EditDelegateRegistrationPromptViewModel>
+            GetEditDelegateRegistrationPromptViewModelsFromModel(
+                LearnerInformationViewModel model,
+                int centreId
+            )
         {
             return promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
                 centreId,
@@ -349,7 +326,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             );
         }
 
-        private IEnumerable<DelegateRegistrationPrompt> GetDelegateRegistrationPromptsFromData(DelegateRegistrationData data)
+        private IEnumerable<DelegateRegistrationPrompt> GetDelegateRegistrationPromptsFromData(
+            DelegateRegistrationData data
+        )
         {
             return promptsService.GetDelegateRegistrationPromptsForCentre(
                 data.Centre!.Value,
@@ -376,7 +355,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             DelegateRegistrationData data
         )
         {
-            model.DelegateRegistrationPrompts = GetEditDelegateRegistrationPromptViewModelsFromModel(model, data.Centre!.Value);
+            model.DelegateRegistrationPrompts =
+                GetEditDelegateRegistrationPromptViewModelsFromModel(model, data.Centre!.Value);
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
                 model.JobGroup
