@@ -698,22 +698,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var adminUser = UserTestHelper.GetDefaultAdminUser();
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-<<<<<<< HEAD
+
             A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(1);
             A.CallTo(() => userDataService.GetAdminIdAndStatusAtCentreForUser(delegateUser.CentreId, 1)).Returns((3, false));
 
             // When
             registrationService.PromoteDelegateToAdmin(adminRoles, 1, 2);
-=======
-
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(null);
-            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(userId);
-
-            // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, 1, delegateUser.Id);
->>>>>>> uar-test
 
             // Then
             A.CallTo(
@@ -765,6 +756,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                             a.IsTrainer == adminRoles.IsTrainer &&
                             a.IsSupervisor == adminRoles.IsSupervisor
                     ),
+                    1
                 )
             ).MustHaveHappened();
         }
