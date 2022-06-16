@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -9,7 +10,10 @@
 
     public interface IRegistrationDataService
     {
-        string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel);
+        string RegisterNewUserAndDelegateAccount(
+            DelegateRegistrationModel delegateRegistrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        );
 
         int RegisterAdmin(AdminRegistrationModel registrationModel, int userId);
     }
@@ -31,7 +35,10 @@
             this.clockService = clockService;
         }
 
-        public string RegisterNewUserAndDelegateAccount(DelegateRegistrationModel delegateRegistrationModel)
+        public string RegisterNewUserAndDelegateAccount(
+            DelegateRegistrationModel delegateRegistrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
@@ -47,6 +54,7 @@
                 delegateRegistrationModel.Active,
                 PasswordHash = "temp",
                 ProfessionalRegistrationNumber = (string?)null,
+                TermsAgreed = registerJourneyContainsTermsAndConditions ? currentTime : (DateTime?)null,
                 DetailsLastChecked = currentTime,
             };
 
@@ -60,6 +68,7 @@
                         JobGroupID,
                         ProfessionalRegistrationNumber,
                         Active,
+                        TermsAgreed,
                         DetailsLastChecked
                     )
                     OUTPUT Inserted.ID
@@ -72,6 +81,7 @@
                         @jobGroup,
                         @professionalRegistrationNumber,
                         @active,
+                        @termsAgreed,
                         @detailsLastChecked
                     )",
                 userValues,
@@ -94,15 +104,15 @@
             // this SQL is reproduced mostly verbatim from the uspSaveNewCandidate_V10 procedure in the legacy codebase.
             var candidateNumber = connection.QueryFirst<string>(
                 @"DECLARE @_MaxCandidateNumber AS integer
-		        SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
-								FROM      DelegateAccounts WITH (TABLOCKX, HOLDLOCK)
-								WHERE     (LEFT(CandidateNumber, 2) = @initials)
-								ORDER BY nCandidateNumber DESC)
-		        IF @_MaxCandidateNumber IS Null
-			        BEGIN
-			        SET @_MaxCandidateNumber = 0
-			        END
-		        SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
+                SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
+                                FROM      DelegateAccounts WITH (TABLOCKX, HOLDLOCK)
+                                WHERE     (LEFT(CandidateNumber, 2) = @initials)
+                                ORDER BY nCandidateNumber DESC)
+                IF @_MaxCandidateNumber IS Null
+                    BEGIN
+                    SET @_MaxCandidateNumber = 0
+                    END
+                SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
                 new { initials },
                 transaction
             );

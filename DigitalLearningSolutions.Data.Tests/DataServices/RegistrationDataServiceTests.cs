@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Data.SqlClient;
@@ -28,36 +29,87 @@
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
             userDataService = new UserDataService(connection);
-            clockService = new ClockService();
+            clockService = A.Fake<IClockService>();
             service = new RegistrationDataService(connection, userDataService, clockService);
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }
 
         [Test]
-        public async Task RegisterNewUserAndDelegateAccount_sets_all_fields_correctly_on_registration()
+        public void RegisterNewUserAndDelegateAccount_sets_all_fields_correctly_on_registration()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var dateTime = new DateTime(2022, 6, 16, 9, 41, 30);
+            A.CallTo(() => clockService.UtcNow).Returns(dateTime);
 
             // Given
             var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
 
             // When
-            var candidateNumber = service.RegisterNewUserAndDelegateAccount(delegateRegistrationModel);
-            var user = await connection.GetDelegateUserByCandidateNumberAsync(candidateNumber);
+            var candidateNumber = service.RegisterNewUserAndDelegateAccount(delegateRegistrationModel,
+                false);
+            // TODO HEEDLS-951 Replace this with a variant of GetDelegateEntity
+            var user = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, delegateRegistrationModel.Centre);
+            var delegateAccount = userDataService.GetDelegateAccountById(user!.Id);
+            var userAccount = userDataService.GetUserAccountById(delegateAccount!.UserId);
 
             // Then
-            user.FirstName.Should().Be(delegateRegistrationModel.FirstName);
-            user.LastName.Should().Be(delegateRegistrationModel.LastName);
-            user.EmailAddress.Should().Be(delegateRegistrationModel.PrimaryEmail);
-            user.CentreId.Should().Be(delegateRegistrationModel.Centre);
-            user.Answer1.Should().Be(delegateRegistrationModel.Answer1);
-            user.Answer2.Should().Be(delegateRegistrationModel.Answer2);
-            user.Answer3.Should().Be(delegateRegistrationModel.Answer3);
-            user.Answer4.Should().Be(delegateRegistrationModel.Answer4);
-            user.Answer5.Should().Be(delegateRegistrationModel.Answer5);
-            user.Answer6.Should().Be(delegateRegistrationModel.Answer6);
-            candidateNumber.Should().Be("TU67");
-            user.CandidateNumber.Should().Be("TU67");
+            using (new AssertionScope())
+            {
+                user.FirstName.Should().Be(delegateRegistrationModel.FirstName);
+                user.LastName.Should().Be(delegateRegistrationModel.LastName);
+                user.EmailAddress.Should().Be(delegateRegistrationModel.PrimaryEmail);
+                user.CentreId.Should().Be(delegateRegistrationModel.Centre);
+                user.Answer1.Should().Be(delegateRegistrationModel.Answer1);
+                user.Answer2.Should().Be(delegateRegistrationModel.Answer2);
+                user.Answer3.Should().Be(delegateRegistrationModel.Answer3);
+                user.Answer4.Should().Be(delegateRegistrationModel.Answer4);
+                user.Answer5.Should().Be(delegateRegistrationModel.Answer5);
+                user.Answer6.Should().Be(delegateRegistrationModel.Answer6);
+                candidateNumber.Should().Be("TU67");
+                user.CandidateNumber.Should().Be("TU67");
+                userAccount!.TermsAgreed.Should().BeNull();
+                userAccount.DetailsLastChecked.Should().Be(dateTime);
+                delegateAccount.CentreSpecificDetailsLastChecked.Should().Be(dateTime);
+            }
+        }
+
+        [Test]
+        public void RegisterNewUserAndDelegateAccount_sets_all_fields_correctly_when_registerJourneyHasTerms_is_true()
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
+            var dateTime = new DateTime(2022, 6, 16, 9, 41, 30);
+            A.CallTo(() => clockService.UtcNow).Returns(dateTime);
+
+            // When
+            var candidateNumber = service.RegisterNewUserAndDelegateAccount(delegateRegistrationModel,
+                true);
+            // TODO HEEDLS-951 Replace this with a variant of GetDelegateEntity
+            var user = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, delegateRegistrationModel.Centre);
+            var delegateAccount = userDataService.GetDelegateAccountById(user!.Id);
+            var userAccount = userDataService.GetUserAccountById(delegateAccount!.UserId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                user.FirstName.Should().Be(delegateRegistrationModel.FirstName);
+                user.LastName.Should().Be(delegateRegistrationModel.LastName);
+                user.EmailAddress.Should().Be(delegateRegistrationModel.PrimaryEmail);
+                user.CentreId.Should().Be(delegateRegistrationModel.Centre);
+                user.Answer1.Should().Be(delegateRegistrationModel.Answer1);
+                user.Answer2.Should().Be(delegateRegistrationModel.Answer2);
+                user.Answer3.Should().Be(delegateRegistrationModel.Answer3);
+                user.Answer4.Should().Be(delegateRegistrationModel.Answer4);
+                user.Answer5.Should().Be(delegateRegistrationModel.Answer5);
+                user.Answer6.Should().Be(delegateRegistrationModel.Answer6);
+                candidateNumber.Should().Be("TU67");
+                user.CandidateNumber.Should().Be("TU67");
+                userAccount!.TermsAgreed.Should().Be(dateTime);
+                userAccount.DetailsLastChecked.Should().Be(dateTime);
+                delegateAccount.CentreSpecificDetailsLastChecked.Should().Be(dateTime);
+            }
         }
 
         [Test]
@@ -150,7 +202,8 @@
 
             void Action()
             {
-                newService.RegisterNewUserAndDelegateAccount(model);
+                newService.RegisterNewUserAndDelegateAccount(model,
+                    false);
             }
 
             return Action;
@@ -172,17 +225,20 @@
 
             // Then
             var user = userDataService.GetAdminUserById(id)!;
-            user.CentreId.Should().Be(registrationModel.Centre);
-            user.IsCentreAdmin.Should().Be(registrationModel.IsCentreAdmin);
-            user.IsCentreManager.Should().Be(registrationModel.IsCentreManager);
-            user.Approved.Should().Be(registrationModel.Approved);
-            user.Active.Should().Be(registrationModel.Active);
-            user.IsContentCreator.Should().Be(registrationModel.IsContentCreator);
-            user.IsContentManager.Should().Be(registrationModel.IsContentManager);
-            user.ImportOnly.Should().Be(registrationModel.ImportOnly);
-            user.IsTrainer.Should().Be(registrationModel.IsTrainer);
-            user.IsSupervisor.Should().Be(registrationModel.IsSupervisor);
-            user.IsNominatedSupervisor.Should().Be(registrationModel.IsNominatedSupervisor);
+            using (new AssertionScope())
+            {
+                user.CentreId.Should().Be(registrationModel.Centre);
+                user.IsCentreAdmin.Should().Be(registrationModel.IsCentreAdmin);
+                user.IsCentreManager.Should().Be(registrationModel.IsCentreManager);
+                user.Approved.Should().Be(registrationModel.Approved);
+                user.Active.Should().Be(registrationModel.Active);
+                user.IsContentCreator.Should().Be(registrationModel.IsContentCreator);
+                user.IsContentManager.Should().Be(registrationModel.IsContentManager);
+                user.ImportOnly.Should().Be(registrationModel.ImportOnly);
+                user.IsTrainer.Should().Be(registrationModel.IsTrainer);
+                user.IsSupervisor.Should().Be(registrationModel.IsSupervisor);
+                user.IsNominatedSupervisor.Should().Be(registrationModel.IsNominatedSupervisor);
+            }
         }
 
         [Test]
@@ -202,14 +258,17 @@
             // Then
             var user = userDataService.GetAdminUserById(id)!;
             var preferences = notificationPreferencesDataService.GetNotificationPreferencesForAdmin(user.Id).ToList();
-            preferences.Count.Should().Be(7);
-            preferences.Should().ContainSingle(n => n.NotificationId.Equals(1) && !n.Accepted);
-            preferences.Should().ContainSingle(n => n.NotificationId.Equals(2) && n.Accepted);
-            preferences.Should().ContainSingle(n => n.NotificationId.Equals(3) && n.Accepted);
-            preferences.Should().ContainSingle(n => n.NotificationId.Equals(4) && !n.Accepted);
-            preferences.Should().ContainSingle(n => n.NotificationId.Equals(5) && n.Accepted);
-            preferences.Should().ContainSingle(n => n.NotificationId.Equals(6) && !n.Accepted);
-            preferences.Should().ContainSingle(n => n.NotificationId.Equals(7) && !n.Accepted);
+            using (new AssertionScope())
+            {
+                preferences.Count.Should().Be(7);
+                preferences.Should().ContainSingle(n => n.NotificationId.Equals(1) && !n.Accepted);
+                preferences.Should().ContainSingle(n => n.NotificationId.Equals(2) && n.Accepted);
+                preferences.Should().ContainSingle(n => n.NotificationId.Equals(3) && n.Accepted);
+                preferences.Should().ContainSingle(n => n.NotificationId.Equals(4) && !n.Accepted);
+                preferences.Should().ContainSingle(n => n.NotificationId.Equals(5) && n.Accepted);
+                preferences.Should().ContainSingle(n => n.NotificationId.Equals(6) && !n.Accepted);
+                preferences.Should().ContainSingle(n => n.NotificationId.Equals(7) && !n.Accepted);
+            }
         }
     }
 }

@@ -326,7 +326,8 @@
             A.CallTo(
                     () => registrationService.RegisterDelegateByCentre(
                         A<DelegateRegistrationModel>._,
-                        A<string>._
+                        A<string>._,
+                        A<bool>._
                     )
                 )
                 .Returns(sampleDelegateNumber);
@@ -355,7 +356,8 @@
             A.CallTo(
                     () => registrationService.RegisterDelegateByCentre(
                         A<DelegateRegistrationModel>._,
-                        A<string>._
+                        A<string>._,
+                        A<bool>._
                     )
                 )
                 .Returns(candidateNumber);
@@ -388,7 +390,8 @@
                                     d.NotifyDate == data.WelcomeEmailDate &&
                                     d.ProfessionalRegistrationNumber == data.ProfessionalRegistrationNumber
                             ),
-                            A<string>._
+                            A<string>._,
+                            false
                         )
                 )
                 .MustHaveHappened();
@@ -404,7 +407,8 @@
             A.CallTo(
                     () => registrationService.RegisterDelegateByCentre(
                         A<DelegateRegistrationModel>._,
-                        A<string>._
+                        A<string>._,
+                        A<bool>._
                     )
                 )
                 .Throws(new DelegateCreationFailedException(DelegateCreationError.UnexpectedError));
@@ -425,7 +429,8 @@
             A.CallTo(
                     () => registrationService.RegisterDelegateByCentre(
                         A<DelegateRegistrationModel>._,
-                        A<string>._
+                        A<string>._,
+                        A<bool>._
                     )
                 )
                 .Throws(new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse));

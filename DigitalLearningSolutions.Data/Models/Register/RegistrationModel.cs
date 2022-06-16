@@ -11,7 +11,8 @@
             string? passwordHash,
             bool active,
             bool approved,
-            string? professionalRegistrationNumber
+            string? professionalRegistrationNumber,
+            int jobGroupId
         )
         {
             FirstName = firstName;
@@ -23,6 +24,7 @@
             Active = active;
             Approved = approved;
             ProfessionalRegistrationNumber = professionalRegistrationNumber;
+            JobGroup = jobGroupId;
         }
 
         public string FirstName { get; set; }
@@ -42,5 +44,7 @@
         public bool Active { get; set; }
 
         public string? ProfessionalRegistrationNumber { get; set; }
+
+        public int JobGroup { get; set; }
     }
 }
