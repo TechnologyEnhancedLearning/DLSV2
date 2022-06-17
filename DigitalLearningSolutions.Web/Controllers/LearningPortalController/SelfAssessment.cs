@@ -560,18 +560,22 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add")]
         public IActionResult SetSupervisorName(AddSupervisorViewModel model)
         {
+            var sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             if (!ModelState.IsValid)
             {
+                var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
+               User.GetCentreId(),
+               sessionAddSupervisor.SelfAssessmentID,
+               User.GetCandidateIdKnownNotNull()
+           );
+                model.Supervisors = supervisors;
                 return View("SelfAssessments/AddSupervisor", model);
             }
-
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(model.SupervisorAdminID);
-            var sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             if (sessionAddSupervisor == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-
             sessionAddSupervisor.SupervisorAdminId = model.SupervisorAdminID;
             sessionAddSupervisor.SupervisorEmail = supervisor.Email;
             var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(model.SelfAssessmentID)
