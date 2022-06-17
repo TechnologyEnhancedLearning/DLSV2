@@ -1,17 +1,22 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
     public class RegistrationDataServiceTests
     {
+        private IClockService clockService = null!;
         private SqlConnection connection = null!;
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
@@ -21,7 +26,8 @@
         public void SetUp()
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
-            service = new RegistrationDataService(connection);
+            clockService = A.Fake<IClockService>();
+            service = new RegistrationDataService(connection, clockService);
             userDataService = new UserDataService(connection);
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }
@@ -52,6 +58,53 @@
         }
 
         [Test]
+        public async Task RegisterAdmin_Sets_all_fields_correctly_on_centre_manager_admin_registration()
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var registrationModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+            var currentTime = new DateTime(2022, 6, 17, 14, 05, 30);
+            A.CallTo(() => clockService.UtcNow).Returns(currentTime);
+
+            // When
+            service.RegisterAdmin(registrationModel, true);
+
+            // Then
+            var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;
+            var tcAgreed = await connection.GetTC_AgreedByAdminIdAsync(user.Id);
+            using (new AssertionScope())
+            {
+                user.FirstName.Should().Be(registrationModel.FirstName);
+                user.LastName.Should().Be(registrationModel.LastName);
+                user.CentreId.Should().Be(registrationModel.Centre);
+                user.Password.Should().Be(registrationModel.PasswordHash);
+                user.IsCentreAdmin.Should().BeTrue();
+                user.IsCentreManager.Should().BeTrue();
+                tcAgreed.Should().Be(currentTime);
+            }
+        }
+
+        [Test]
+        public async Task RegisterAdmin_Sets_tc_agreed_to_null_when_registerJourneyContainsTermsAndConditions_is_false()
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var registrationModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+            var currentTime = new DateTime(2022, 6, 17, 14, 05, 30);
+            A.CallTo(() => clockService.UtcNow).Returns(currentTime);
+
+            // When
+            service.RegisterAdmin(registrationModel, false);
+
+            // Then
+            var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;
+            var tcAgreed = await connection.GetTC_AgreedByAdminIdAsync(user.Id);
+            tcAgreed.Should().BeNull();
+        }
+
+        [Test]
         public void Sets_all_fields_correctly_on_centre_manager_admin_registration()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
@@ -60,7 +113,7 @@
             var registrationModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            service.RegisterAdmin(registrationModel);
+            service.RegisterAdmin(registrationModel, false);
 
             // Then
             var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;
@@ -81,7 +134,7 @@
             var registrationModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            service.RegisterAdmin(registrationModel);
+            service.RegisterAdmin(registrationModel, false);
 
             // Then
             var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;

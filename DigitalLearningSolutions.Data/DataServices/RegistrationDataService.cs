@@ -1,23 +1,27 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Data;
     using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Services;
 
     public interface IRegistrationDataService
     {
         string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
-        int RegisterAdmin(AdminRegistrationModel registrationModel);
+        int RegisterAdmin(AdminRegistrationModel registrationModel, bool registerJourneyContainsTermsAndConditions);
     }
 
     public class RegistrationDataService : IRegistrationDataService
     {
         private readonly IDbConnection connection;
+        private readonly IClockService clockService;
 
-        public RegistrationDataService(IDbConnection connection)
+        public RegistrationDataService(IDbConnection connection, IClockService clockService)
         {
             this.connection = connection;
+            this.clockService = clockService;
         }
 
         public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel)
@@ -55,8 +59,9 @@
             return candidateNumberOrErrorCode;
         }
 
-        public int RegisterAdmin(AdminRegistrationModel registrationModel)
+        public int RegisterAdmin(AdminRegistrationModel registrationModel, bool registerJourneyContainsTermsAndConditions)
         {
+            var currentTime = clockService.UtcNow;
             var values = new
             {
                 forename = registrationModel.FirstName,
@@ -74,7 +79,8 @@
                 importOnly = registrationModel.ImportOnly,
                 trainer = registrationModel.IsTrainer,
                 supervisor = registrationModel.IsSupervisor,
-                nominatedSupervisor = registrationModel.IsNominatedSupervisor
+                nominatedSupervisor = registrationModel.IsNominatedSupervisor,
+                tcAgreed = registerJourneyContainsTermsAndConditions ? currentTime : (DateTime?)null,
             };
 
             using var transaction = new TransactionScope();
@@ -97,7 +103,8 @@
                         ImportOnly,
                         Trainer,
                         Supervisor,
-                        NominatedSupervisor
+                        NominatedSupervisor,
+                        TCAgreed
                     )
                     OUTPUT Inserted.AdminID
                     VALUES
@@ -117,7 +124,8 @@
                         @importOnly,
                         @trainer,
                         @supervisor,
-                        @nominatedSupervisor
+                        @nominatedSupervisor,
+                        @tcAgreed
                     )",
                 values
             );
