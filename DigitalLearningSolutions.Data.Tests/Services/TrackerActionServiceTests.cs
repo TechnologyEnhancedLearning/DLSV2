@@ -285,7 +285,7 @@
         }
 
         [Test]
-        public void StoreAspProgressV2_returns_non_null_exceptions_from_validation()
+        public void StoreAspProgressV2_returns_exception_from_validation()
         {
             // Given
             A.CallTo(
@@ -353,7 +353,7 @@
         }
 
         [Test]
-        public void StoreAspProgressNoSession_returns_non_null_exceptions_from_query_and_progress_validation()
+        public void StoreAspProgressNoSession_returns_exception_from_query_and_progress_validation()
         {
             // Given
             A.CallTo(
@@ -396,7 +396,7 @@
         }
 
         [Test]
-        public void StoreAspProgressNoSession_returns_non_null_exceptions_from_session_validation()
+        public void StoreAspProgressNoSession_returns_exception_from_session_validation()
         {
             // Given
             StoreAspServiceReturnsDefaultDetailedCourseProgressOnValidation();
@@ -478,7 +478,7 @@
 
         [Test]
         public void
-            StoreAspAssessNoSession_returns_non_null_exception_from_query_param_and_progress_validation()
+            StoreAspAssessNoSession_returns_exception_from_query_param_and_progress_validation()
         {
             // Given
             A.CallTo(
@@ -527,7 +527,7 @@
         }
 
         [Test]
-        public void StoreAspAssessNoSession_returns_non_null_exception_from_section_validation()
+        public void StoreAspAssessNoSession_returns_exception_from_section_validation()
         {
             // Given
             A.CallTo(
@@ -569,7 +569,7 @@
         }
 
         [Test]
-        public void StoreAspAssessNoSession_returns_non_null_exception_from_session_validation()
+        public void StoreAspAssessNoSession_returns_exception_from_session_validation()
         {
             // Given
             GivenRequiredValidationForStoreAspAssessPassesAndReturnsDefaults();

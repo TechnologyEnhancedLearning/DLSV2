@@ -359,7 +359,7 @@
 
         [Test]
         public void
-            GetProgressAndValidateCommonInputsForStoreAspProgressEndpoints_returns_progress_record_and_null_exception_when_all_is_valid()
+            GetProgressAndValidateCommonInputsForStoreAspProgressEndpoints_returns_progress_record_and_no_exception_when_all_is_valid()
         {
             // Given
             ProgressServiceReturnsDefaultDetailedCourseProgress();
@@ -387,7 +387,7 @@
 
         [Test]
         public void
-            GetProgressAndValidateInputsForStoreAspAssess_returns_correct_progress_record_and_null_exception_when_all_is_valid()
+            GetProgressAndValidateInputsForStoreAspAssess_returns_correct_progress_record_and_no_exception_when_all_is_valid()
         {
             // Given
             var progressRecords = Builder<DelegateCourseInfo>.CreateListOfSize(4).All()
@@ -519,7 +519,7 @@
 
         [Test]
         public void
-            ParseSessionIdAndValidateSessionForStoreAspNoSessionEndpoints_returns_parsed_session_ID_and_null_exception_when_session_is_valid()
+            ParseSessionIdAndValidateSessionForStoreAspNoSessionEndpoints_returns_parsed_session_ID_and_no_exception_when_session_is_valid()
         {
             // Given
             SessionServiceReturnsDefaultSession();
@@ -656,7 +656,7 @@
 
         [Test]
         public void
-            GetAndValidateSectionAssessmentDetails_returns_assessment_details_and_null_exception_when_details_are_retrieved_correctly()
+            GetAndValidateSectionAssessmentDetails_returns_assessment_details_and_no_exception_when_details_are_retrieved_correctly()
         {
             // Given
             var expectedAssessmentDetails = new SectionAndApplicationDetailsForAssessAttempts
