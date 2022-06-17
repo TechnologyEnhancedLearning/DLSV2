@@ -19,6 +19,7 @@
         public bool IsUserAdmin { get; set; }
         public int CategoryId { get; set; }
         public bool IsSupervisor { get; set; }
+        public bool IsNominatedSupervisor { get; set; }
         public bool IsTrainer { get; set; }
         public bool IsFrameworkDeveloper { get; set; }
         public bool IsFrameworkContributor { get; set; }
@@ -45,6 +46,7 @@
             IsUserAdmin = adminUser.IsUserAdmin;
             CategoryId = adminUser.CategoryId;
             IsSupervisor = adminUser.IsSupervisor;
+            IsNominatedSupervisor = adminUser.IsNominatedSupervisor;
             IsTrainer = adminUser.IsTrainer;
             IsFrameworkDeveloper = adminUser.IsFrameworkDeveloper;
             IsFrameworkContributor = adminUser.IsFrameworkContributor;
