@@ -17,6 +17,11 @@
     @if (Model.UnverifiedEmailsCount == 0) {
       <p class="nhsuk-body-m"> All your email addresses are verified.</p>
     } else {
+      var centreEmailsExcludingFirstParagraph = (Model.PrimaryEmail == null
+        ? Model.CentreSpecificEmails.Skip(1)
+        : Model.CentreSpecificEmails).ToList();
+      var centreEmailExplanation = "You will not be able to access that account until you verify the address.";
+
       @if (Model.EmailVerificationReason.Equals(EmailVerificationReason.EmailNotVerified)) {
         string primaryEmail;
         string emailAddresses;
@@ -44,17 +49,21 @@
           pronoun = "them";
         }
         @if (Model.PrimaryEmail != null) {
-          var primaryEmailText = $"Your primary email address{primaryEmail} is not verified yet." +
+          var primaryEmailText = $"Your primary email address{primaryEmail} has not been verified yet." +
                                  " You can edit your account details, but you cannot access any centre accounts until it is verified.";
 
           <p class="nhsuk-body-m">@primaryEmailText</p>
+        } else {
+          var (firstCentreName, firstCentreEmail) = Model.CentreSpecificEmails.First();
+          var centreEmailFirstParagraphText = $"Your email address {firstCentreEmail} for your account at" +
+                                              $" {firstCentreName} has not been verified yet. {centreEmailExplanation}";
+          <p class="nhsuk-body-m">@centreEmailFirstParagraphText</p>
         }
 
-        @foreach (var (centreName, centreEmail) in Model.CentreSpecificEmails) {
-          <p class="nhsuk-body-m">
-            Your email address @centreEmail for your account at @centreName has not been verified yet.
-            You will not be able to access the centre account that uses it until you verify the address.
-          </p>
+        @foreach (var (centreName, centreEmail) in centreEmailsExcludingFirstParagraph) {
+          var centreEmailText = $"Your email address {centreEmail} for your account at {centreName} has also not been" +
+                                $" verified yet. {centreEmailExplanation}";
+          <p class="nhsuk-body-m">@centreEmailText</p>
         }
 
         var verifyEmailExplanation = $"An email with a verification link should have been sent to {emailAddresses}." +
@@ -72,10 +81,6 @@
           : "An email with a verification link has been sent to each of the changed addresses." +
             " Please click the links to verify your email addresses. If you have not received the emails after a few minutes," +
             " check your Junk folders, or return to the My account page to resend them.";
-
-        var centreEmailsExcludingFirstParagraph = Model.PrimaryEmail == null
-          ? Model.CentreSpecificEmails.Skip(1)
-          : Model.CentreSpecificEmails;
 
         @if (Model.PrimaryEmail != null) {
           string primaryEmail;
@@ -98,21 +103,20 @@
           @if (Model.UnverifiedEmailsCount == 1) {
             var emailChangedText = $"You've updated your email address for your account at {firstCentreName}." +
                                    $" An email with a verification link has been sent to {firstCentreEmail}." +
-                                   " Please click the link to verify your email address." +
-                                   " You will not be able to access that account until it is verified.";
+                                   $" Please click the link to verify your email address. {centreEmailExplanation}";
 
             <p class="nhsuk-body-m">@emailChangedText</p>
           } else {
             var firstEmailChangedText = $"You've updated your email address for your account at {firstCentreName}:" +
-                                        $" {firstCentreEmail}. You will not be able to access that account until it is verified.";
+                                        $" {firstCentreEmail}. {centreEmailExplanation}";
 
             <p class="nhsuk-body-m">@firstEmailChangedText</p>
           }
         }
 
         @foreach (var (centreName, centreEmail) in centreEmailsExcludingFirstParagraph) {
-          var centreEmailChangedText = $"You've also updated your email address for your account at {centreName}:" +
-                                       $" {centreEmail}. You will not be able to access that account until it is verified.";
+          var centreEmailChangedText = $"You've also updated your email address for your account at {centreName}: {centreEmail}." +
+                                       " You will not be able to access that account until you verify the address.";
 
           <p class="nhsuk-body-m">@centreEmailChangedText</p>
         }
@@ -121,6 +125,6 @@
       }
     }
 
-    <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="View My account"/>
+    <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="View My account" />
   </div>
 </div>
