@@ -14,12 +14,12 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             UserAccount userAccount,
             DelegateAccount? delegateAccount,
             List<(int id, string name)> jobGroups,
-            string? centreEmail,
+            string? centreSpecificEmail,
             List<EditDelegateRegistrationPromptViewModel> editDelegateRegistrationPromptViewModels,
             DlsSubApplication dlsSubApplication,
             string? returnUrl,
             bool isCheckDetailRedirect
-        ) : base(userAccount, delegateAccount, jobGroups, centreEmail, returnUrl, isCheckDetailRedirect)
+        ) : base(userAccount, delegateAccount, jobGroups, centreSpecificEmail, returnUrl, isCheckDetailRedirect)
         {
             DlsSubApplication = dlsSubApplication;
             JobGroups = SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(

@@ -78,20 +78,6 @@
             return users;
         }
 
-        public void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id)
-        {
-            connection.Execute(
-                @"UPDATE AdminUsers
-                        SET
-                            Forename = @firstName,
-                            Surname = @surname,
-                            Email = @email,
-                            ProfileImage = @profileImage
-                        WHERE AdminID = @id",
-                new { firstName, surname, email, profileImage, id }
-            );
-        }
-
         public int GetNumberOfActiveAdminsAtCentre(int centreId)
         {
             return (int)connection.ExecuteScalar(

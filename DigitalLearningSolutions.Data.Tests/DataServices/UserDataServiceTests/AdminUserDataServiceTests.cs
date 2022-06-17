@@ -95,32 +95,6 @@
         }
 
         [Test]
-        public void UpdateAdminUser_updates_user()
-        {
-            using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                var firstName = "TestFirstName";
-                var lastName = "TestLastName";
-                var email = "test@email.com";
-
-                // When
-                userDataService.UpdateAdminUser(firstName, lastName, email, null, 7);
-                var updatedUser = userDataService.GetAdminUserById(7)!;
-
-                // Then
-                updatedUser.FirstName.Should().BeEquivalentTo(firstName);
-                updatedUser.LastName.Should().BeEquivalentTo(lastName);
-                updatedUser.EmailAddress.Should().BeEquivalentTo(email);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
-        }
-
-        [Test]
         public void GetNumberOfActiveAdminsAtCentre_returns_expected_count()
         {
             // When
