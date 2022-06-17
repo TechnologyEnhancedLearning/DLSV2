@@ -69,7 +69,7 @@
                                     a.IsCentreAdmin &&
                                     !a.IsContentManager
                             ),
-                            0,
+                            null,
                             delegateId
                         )
                 )
@@ -90,7 +90,7 @@
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole,
                 LearningCategory = 0
             };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._))
+            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._))
                 .Throws(new AdminCreationFailedException(AdminCreationError.UnexpectedError));
 
             // When
@@ -113,7 +113,7 @@
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole,
                 LearningCategory = 0
             };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._))
+            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._))
                 .Throws(new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse));
 
             // When

@@ -14,7 +14,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
-    [Authorize(Policy = CustomPolicies.UserOnly)]
+    [Authorize(Policy = CustomPolicies.UserDelegateOnly)]
     public class LearningMenuController : Controller
     {
         private const int MinimumTutorialAverageTimeToIncreaseAuthExpiry = 45;

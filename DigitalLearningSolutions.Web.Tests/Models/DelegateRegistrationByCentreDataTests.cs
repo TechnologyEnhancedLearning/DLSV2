@@ -24,7 +24,7 @@
                 FirstName = FirstName,
                 LastName = LastName,
                 Centre = CentreId,
-                Email = Email,
+                PrimaryEmail = Email,
                 Alias = Alias
             };
             var data = new DelegateRegistrationByCentreData();
@@ -35,7 +35,7 @@
             // Then
             data.FirstName.Should().Be(FirstName);
             data.LastName.Should().Be(LastName);
-            data.Email.Should().Be(Email);
+            data.PrimaryEmail.Should().Be(Email);
             data.Centre.Should().Be(CentreId);
             data.Alias.Should().Be(Alias);
         }

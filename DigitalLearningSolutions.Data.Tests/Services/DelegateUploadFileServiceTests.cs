@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Data.Tests.Services
+﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
     using System.Collections.Generic;
@@ -28,15 +28,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     {
         private const int CentreId = 101;
         public const string TestDelegateUploadRelativeFilePath = "\\TestData\\DelegateUploadTest.xlsx";
-        
+        private IConfiguration configuration = null!;
+
         private DelegateUploadFileService delegateUploadFileService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IPasswordResetService passwordResetService = null!;
-        private IRegistrationDataService registrationDataService = null!;
+        private IRegistrationService registrationService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
-        private IConfiguration configuration = null!;
 
         [SetUp]
         public void SetUp()
@@ -48,7 +48,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             userDataService = A.Fake<IUserDataService>(x => x.Strict());
             userService = A.Fake<IUserService>(x => x.Strict());
-            registrationDataService = A.Fake<IRegistrationDataService>(x => x.Strict());
+            registrationService = A.Fake<IRegistrationService>(x => x.Strict());
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
             passwordResetService = A.Fake<IPasswordResetService>();
             configuration = A.Fake<IConfiguration>();
@@ -59,7 +59,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             delegateUploadFileService = new DelegateUploadFileService(
                 jobGroupsDataService,
                 userDataService,
-                registrationDataService,
+                registrationService,
                 supervisorDelegateService,
                 userService,
                 passwordResetService,
@@ -258,7 +258,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         [Test]
         public void ProcessDelegateTable_has_invalid_PRN_characters_error_for_PRN_with_invalid_characters()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "^%�PRN");
+            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "^%£PRN");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnCharacters);
         }
 
@@ -292,32 +292,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             AssertBulkUploadResultHasOnlyOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
             result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.NoRecordForDelegateId);
-        }
-
-        [Test]
-        public void
-            ProcessDelegateTable_has_alias_in_use_error_if_alias_id_matches_different_user()
-        {
-            // Given
-            const string delegateId = "DELEGATE";
-            const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, aliasId: aliasId);
-            var table = CreateTableFromData(new[] { row });
-
-            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
-            var aliasIdDelegate = UserTestHelper.GetDefaultDelegateUser(aliasId: aliasId);
-
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
-                .Returns(candidateNumberDelegate);
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(aliasIdDelegate);
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            AssertBulkUploadResultHasOnlyOneError(result);
-            result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.AliasIdInUse);
         }
 
         [Test]
@@ -357,56 +331,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
                 .Returns(candidateNumberDelegate);
-            ACallToUserDataServiceUpdatesDoNothing();
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            result.ProcessedCount.Should().Be(1);
-            result.UpdatedCount.Should().Be(1);
-        }
-
-        [Test]
-        public void
-            ProcessDelegateTable_has_email_in_use_error_if_delegate_is_found_by_alias_but_email_exists_on_another_delegate()
-        {
-            // Given
-            const string delegateId = "DELEGATE";
-            const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
-            var table = CreateTableFromData(new[] { row });
-            var aliasIdDelegate = UserTestHelper.GetDefaultDelegateUser(
-                candidateNumber: delegateId,
-                emailAddress: "different@test.com"
-            );
-
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId)).Returns(null);
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(aliasIdDelegate);
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(false);
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            AssertBulkUploadResultHasOnlyOneError(result);
-            result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.EmailAddressInUse);
-        }
-
-        [Test]
-        public void ProcessDelegateTable_has_does_not_check_email_if_delegate_found_by_alias_has_matching_email()
-        {
-            // Given
-            const string delegateId = "DELEGATE";
-            const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
-            var table = CreateTableFromData(new[] { row });
-            var aliasIdDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
-
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId)).Returns(null);
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(aliasIdDelegate);
-            ACallToUserDataServiceUpdatesDoNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -446,81 +371,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void ProcessDelegateTable_skips_updating_delegate_found_by_alias_if_all_details_match()
-        {
-            // Given
-            const string delegateId = "DELEGATE";
-            const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
-            var table = CreateTableFromData(new[] { row });
-            var aliasIdDelegate = UserTestHelper.GetDefaultDelegateUser(
-                firstName: row.FirstName,
-                lastName: row.LastName,
-                candidateNumber: delegateId,
-                answer1: row.Answer1,
-                answer2: row.Answer2,
-                active: true,
-                jobGroupId: 1,
-                aliasId: aliasId
-            );
-
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId)).Returns(null);
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(aliasIdDelegate);
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            AssertCreateOrUpdateDelegateWereNotCalled();
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(A<string>._, CentreId)).MustNotHaveHappened();
-            result.ProcessedCount.Should().Be(1);
-            result.SkippedCount.Should().Be(1);
-        }
-
-        [Test]
-        public void
-            ProcessDelegateTable_has_email_in_use_error_if_delegate_not_found_by_alias_but_email_exists_on_another_delegate()
-        {
-            // Given
-            const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
-            var table = CreateTableFromData(new[] { row });
-
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(null);
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(false);
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            AssertBulkUploadResultHasOnlyOneError(result);
-            result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.EmailAddressInUse);
-        }
-
-        [Test]
-        public void ProcessDelegateTable_calls_register_if_delegate_not_found_by_alias_and_email_is_unused()
-        {
-            // Given
-            const string delegateId = "DELEGATE";
-            const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
-            var table = CreateTableFromData(new[] { row });
-
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(null);
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
-                .Returns(delegateId);
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            result.ProcessedCount.Should().Be(1);
-            result.RegisteredCount.Should().Be(1);
-        }
-
-        [Test]
         public void ProcessDelegateTable_calls_register_if_delegateId_and_aliasId_are_empty_email_is_unused()
         {
             // Given
@@ -529,7 +379,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .Returns(delegateId);
 
             // When
@@ -551,27 +406,22 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
                 .Returns(candidateNumberDelegate);
-            ACallToUserDataServiceUpdatesDoNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
 
             // Then
             A.CallTo(
-                    () => userDataService.UpdateDelegate(
+                    () => userDataService.UpdateDelegateAccount(
                         candidateNumberDelegate.Id,
-                        row.FirstName,
-                        row.LastName,
-                        1,
                         true,
                         row.Answer1,
                         row.Answer2,
                         row.Answer3,
                         row.Answer4,
                         row.Answer5,
-                        row.Answer6,
-                        row.AliasID,
-                        row.EmailAddress
+                        row.Answer6
                     )
                 )
                 .MustHaveHappened();
@@ -591,7 +441,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
                 .Returns(candidateNumberDelegate);
-            ACallToUserDataServiceUpdatesDoNothing();
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -620,7 +474,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
             ).DoesNothing();
-            ACallToUserDataServiceUpdatesDoNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -649,7 +503,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
             ).DoesNothing();
-            ACallToUserDataServiceUpdatesDoNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -672,9 +526,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(null);
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .Returns(delegateId);
 
             // When
@@ -682,7 +540,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // Then
             A.CallTo(
-                    () => registrationDataService.RegisterDelegate(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
                         A<DelegateRegistrationModel>.That.Matches(
                             model =>
                                 model.FirstName == row.FirstName &&
@@ -694,10 +552,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                                 model.Answer4 == row.Answer4 &&
                                 model.Answer5 == row.Answer5 &&
                                 model.Answer6 == row.Answer6 &&
-                                model.Email == row.EmailAddress &&
+                                model.PrimaryEmail == row.EmailAddress &&
                                 model.AliasId == aliasId &&
                                 model.NotifyDate == null
-                        )
+                        ),
+                        false
                     )
                 )
                 .MustHaveHappened();
@@ -715,9 +574,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(null);
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .Returns(delegateId);
 
             // When
@@ -725,7 +588,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // Then
             A.CallTo(
-                    () => registrationDataService.RegisterDelegate(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
                         A<DelegateRegistrationModel>.That.Matches(
                             model =>
                                 model.FirstName == row.FirstName &&
@@ -737,10 +600,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                                 model.Answer4 == row.Answer4 &&
                                 model.Answer5 == row.Answer5 &&
                                 model.Answer6 == row.Answer6 &&
-                                model.Email == row.EmailAddress &&
+                                model.PrimaryEmail == row.EmailAddress &&
                                 model.AliasId == aliasId &&
                                 model.NotifyDate == welcomeEmailDate
-                        )
+                        ),
+                        false
                     )
                 )
                 .MustHaveHappened();
@@ -758,9 +622,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(null);
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .Returns(delegateId);
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
@@ -799,9 +667,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(null);
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .Returns(delegateId);
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
@@ -845,9 +717,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(null);
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .Returns(failureStatusCode);
 
             try
@@ -866,7 +742,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             finally
             {
                 // Then
-                A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+                A.CallTo(
+                        () => registrationService.CreateAccountAndReturnCandidateNumber(
+                            A<DelegateRegistrationModel>._,
+                            false
+                        )
+                    )
                     .MustHaveHappened();
                 A.CallTo(
                     () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
@@ -896,9 +777,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 { new SupervisorDelegate { ID = 1 }, new SupervisorDelegate { ID = 2 } };
             var supervisorDelegateIds = new List<int> { 1, 2 };
 
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(null);
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .Returns(candidateNumber);
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
@@ -915,7 +800,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
 
             // Then
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .MustHaveHappened();
             A.CallTo(
                 () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
@@ -940,9 +830,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             const string prn = "PRN1234";
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: true, prn: prn);
             var table = CreateTableFromData(new[] { row });
-            
+
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .Returns(candidateNumber);
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
@@ -955,7 +850,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
 
             // Then
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .MustHaveHappened();
             A.CallTo(
                 () =>
@@ -964,7 +864,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void ProcessDelegateTable_successful_register_updates_delegate_PRN_if_HasPRN_is_false_and_PRN_does_not_have_value()
+        public void
+            ProcessDelegateTable_successful_register_updates_delegate_PRN_if_HasPRN_is_false_and_PRN_does_not_have_value()
         {
             // Given
             const string candidateNumber = "DELEGATE";
@@ -973,7 +874,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .Returns(candidateNumber);
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
@@ -986,7 +892,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
 
             // Then
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .MustHaveHappened();
             A.CallTo(
                 () =>
@@ -1004,7 +915,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .Returns(candidateNumber);
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
@@ -1013,7 +929,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
 
             // Then
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .MustHaveHappened();
             A.CallTo(
                 () =>
@@ -1032,7 +953,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
                 .Returns(candidateNumberDelegate);
-            ACallToUserDataServiceUpdatesDoNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -1048,9 +969,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             const string delegateId = "DELEGATE";
             const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, aliasId: aliasId);
             var table = CreateTableFromData(new[] { row, row, row, row, row });
-            var aliasIdDelegate = UserTestHelper.GetDefaultDelegateUser(
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(
                 firstName: row.FirstName,
                 lastName: row.LastName,
                 candidateNumber: delegateId,
@@ -1061,8 +982,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 aliasId: aliasId
             );
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId)).Returns(null);
-            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(aliasIdDelegate);
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+                .Returns(candidateNumberDelegate);
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -1081,7 +1002,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row, row, row, row, row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .Returns(delegateId);
 
             // When
@@ -1105,7 +1031,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var data = new List<DelegateDataRow>
             {
                 updateRow, skipRow, registerRow, errorRow, registerRow, skipRow, updateRow, skipRow, updateRow,
-                updateRow
+                updateRow,
             };
             var table = CreateTableFromData(data);
 
@@ -1127,9 +1053,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
 
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .Returns("ANY");
-            ACallToUserDataServiceUpdatesDoNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -1221,14 +1152,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private void AssertCreateOrUpdateDelegateWereNotCalled()
         {
             A.CallTo(
-                    () => userDataService.UpdateDelegate(
-                        A<int>._,
-                        A<string>._,
-                        A<string>._,
+                    () => userDataService.UpdateDelegateAccount(
                         A<int>._,
                         A<bool>._,
-                        A<string>._,
-                        A<string>._,
                         A<string>._,
                         A<string>._,
                         A<string>._,
@@ -1238,7 +1164,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     )
                 )
                 .MustNotHaveHappened();
-            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+            A.CallTo(
+                    () => registrationService.CreateAccountAndReturnCandidateNumber(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+                )
                 .MustNotHaveHappened();
         }
 
@@ -1251,17 +1182,21 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             result.Errors.Should().HaveCount(1);
         }
 
-        private void ACallToUserDataServiceUpdatesDoNothing()
+        private void CallsToUserDataServiceUpdatesDoNothing()
         {
             A.CallTo(
-                () => userDataService.UpdateDelegate(
+                () => userDataService.UpdateUserDetails(
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
                     A<int>._,
-                    A<string>._,
-                    A<string>._,
+                    A<int>._
+                )
+            ).DoesNothing();
+            A.CallTo(
+                () => userDataService.UpdateDelegateAccount(
                     A<int>._,
                     A<bool>._,
-                    A<string>._,
-                    A<string>._,
                     A<string>._,
                     A<string>._,
                     A<string>._,
@@ -1326,8 +1261,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             public string Answer6 { get; }
             public string AliasID { get; }
             public string EmailAddress { get; }
-            public bool? HasPRN { get; set; }
-            public string? PRN { get; set; }
+            public bool? HasPRN { get; }
+            public string? PRN { get; }
         }
     }
 }

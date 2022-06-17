@@ -14,6 +14,7 @@
         public const int CentreId = 2;
         public const int AdminId = 7;
         public const int DelegateId = 2;
+        public const int UserId = 2;
         public const string EmailAddress = "email";
         public const bool IsCentreAdmin = false;
         public const bool IsFrameworkDeveloper = false;
@@ -36,19 +37,22 @@
         public static ActionExecutingContext WithMockUser(
             this ActionExecutingContext context,
             bool isAuthenticated,
-            int centreId = CentreId,
+            int? centreId = CentreId,
             int? adminId = AdminId,
             int? delegateId = DelegateId,
+            int? userId = UserId,
             string? emailAddress = EmailAddress,
             bool isCentreAdmin = IsCentreAdmin,
             bool isFrameworkDeveloper = IsFrameworkDeveloper,
-            int adminCategoryId = AdminCategoryId)
+            int? adminCategoryId = AdminCategoryId
+        )
         {
             context.HttpContext.WithMockUser(
                 isAuthenticated,
                 centreId,
                 adminId,
                 delegateId,
+                userId,
                 emailAddress,
                 isCentreAdmin,
                 isFrameworkDeveloper,
@@ -61,13 +65,14 @@
         public static HttpContext WithMockUser(
             this HttpContext context,
             bool isAuthenticated,
-            int centreId = CentreId,
+            int? centreId = CentreId,
             int? adminId = AdminId,
             int? delegateId = DelegateId,
+            int? userId = UserId,
             string? emailAddress = EmailAddress,
             bool isCentreAdmin = IsCentreAdmin,
             bool isFrameworkDeveloper = IsFrameworkDeveloper,
-            int adminCategoryId = AdminCategoryId
+            int? adminCategoryId = AdminCategoryId
         )
         {
             var authenticationType = isAuthenticated ? "mock" : string.Empty;
@@ -77,14 +82,15 @@
                 new ClaimsIdentity(
                     new[]
                     {
-                        new Claim(CustomClaimTypes.UserCentreId, centreId.ToString()),
-                        new Claim(CustomClaimTypes.UserAdminId, adminId?.ToString() ?? "False"),
-                        new Claim(CustomClaimTypes.LearnCandidateId, delegateId?.ToString() ?? "False"),
+                        centreId == null ? null : new Claim(CustomClaimTypes.UserCentreId, centreId.ToString()),
+                        adminId == null ? null : new Claim(CustomClaimTypes.UserAdminId, adminId.ToString()),
+                        delegateId == null ? null : new Claim(CustomClaimTypes.LearnCandidateId, delegateId.ToString()),
                         new Claim(CustomClaimTypes.LearnUserAuthenticated, delegateId != null ? "True" : "False"),
-                        new Claim(ClaimTypes.Email, emailAddress ?? string.Empty),
+                        emailAddress == null ? null : new Claim(ClaimTypes.Email, emailAddress),
                         new Claim(CustomClaimTypes.UserCentreAdmin, isCentreAdmin.ToString()),
                         new Claim(CustomClaimTypes.IsFrameworkDeveloper, isFrameworkDeveloper.ToString()),
-                        new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId.ToString()),
+                        new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId?.ToString()),
+                        userId == null ? null : new Claim(CustomClaimTypes.UserId, userId.ToString()),
                     },
                     authenticationType
                 )

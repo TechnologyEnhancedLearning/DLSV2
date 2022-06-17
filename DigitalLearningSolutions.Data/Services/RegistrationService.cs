@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
@@ -16,18 +17,31 @@ namespace DigitalLearningSolutions.Data.Services
 
     public interface IRegistrationService
     {
-        (string candidateNumber, bool approved) RegisterDelegate(
+        (string candidateNumber, bool approved) CreateDelegateAccountForNewUser(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
+            bool registerJourneyContainsTermsAndConditions,
             int? inviteId = null
         );
 
-        string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
+        string RegisterDelegateByCentre(
+            DelegateRegistrationModel delegateRegistrationModel,
+            string baseUrl,
+            bool registerJourneyContainsTermsAndConditions
+        );
 
-        void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
+        void RegisterCentreManager(
+            AdminRegistrationModel registrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        );
 
-        void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId);
+        void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId);
+
+        string CreateAccountAndReturnCandidateNumber(
+            DelegateRegistrationModel delegateRegistrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        );
     }
 
     public class RegistrationService : IRegistrationService
@@ -66,10 +80,11 @@ namespace DigitalLearningSolutions.Data.Services
             this.logger = logger;
         }
 
-        public (string candidateNumber, bool approved) RegisterDelegate(
+        public (string candidateNumber, bool approved) CreateDelegateAccountForNewUser(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
+            bool registerJourneyContainsTermsAndConditions,
             int? supervisorDelegateId = null
         )
         {
@@ -86,7 +101,10 @@ namespace DigitalLearningSolutions.Data.Services
                                                  centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
                                                  userIp == "::1";
 
-            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
+            var candidateNumber = CreateAccountAndReturnCandidateNumber(
+                delegateRegistrationModel,
+                registerJourneyContainsTermsAndConditions
+            );
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
@@ -130,20 +148,83 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
+        public string RegisterDelegateByCentre(
+            DelegateRegistrationModel delegateRegistrationModel,
+            string baseUrl,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             using var transaction = new TransactionScope();
 
-            CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
+            var candidateNumber = CreateAccountAndReturnCandidateNumber(
+                delegateRegistrationModel,
+                registerJourneyContainsTermsAndConditions
+            );
 
-            registrationDataService.RegisterAdmin(registrationModel);
+            if (delegateRegistrationModel.PasswordHash != null)
+            {
+                passwordDataService.SetPasswordByCandidateNumber(
+                    candidateNumber,
+                    delegateRegistrationModel.PasswordHash
+                );
+            }
+            else if (delegateRegistrationModel.NotifyDate.HasValue)
+            {
+                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    delegateRegistrationModel.PrimaryEmail,
+                    candidateNumber,
+                    baseUrl,
+                    delegateRegistrationModel.NotifyDate.Value,
+                    "RegisterDelegateByCentre_Refactor"
+                );
+            }
+
+            var supervisorDelegateRecordIdsMatchingDelegate =
+                GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
+
+            // We know this will give us a non-null user.
+            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
+            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
+                candidateNumber,
+                delegateRegistrationModel.Centre
+            )!;
+
+            userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                delegateUser.Id,
+                delegateRegistrationModel.ProfessionalRegistrationNumber,
+                true
+            );
+
+            if (supervisorDelegateRecordIdsMatchingDelegate.Any())
+            {
+                supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                    supervisorDelegateRecordIdsMatchingDelegate,
+                    delegateUser.Id
+                );
+            }
+
+            transaction.Complete();
+
+            return candidateNumber;
+        }
+
+        public void RegisterCentreManager(
+            AdminRegistrationModel registrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        )
+        {
+            using var transaction = new TransactionScope();
+
+            var userId = CreateDelegateAccountForAdmin(registrationModel, registerJourneyContainsTermsAndConditions);
+
+            registrationDataService.RegisterAdmin(registrationModel, userId);
 
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
             transaction.Complete();
         }
 
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId)
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
@@ -188,11 +269,13 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateUser.FirstName,
                     delegateUser.LastName,
                     delegateUser.EmailAddress,
+                    null,
                     delegateUser.CentreId,
                     delegateUser.Password,
                     true,
                     true,
                     delegateUser.ProfessionalRegistrationNumber,
+                    delegateUser.JobGroupId,
                     categoryId,
                     adminRoles.IsCentreAdmin,
                     false,
@@ -205,7 +288,8 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateUser.ProfileImage
                 );
 
-                registrationDataService.RegisterAdmin(adminRegistrationModel);
+                var userId = userDataService.GetUserIdFromDelegateId(delegateId);
+                registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
             }
             else
             {
@@ -213,74 +297,51 @@ namespace DigitalLearningSolutions.Data.Services
             }
         }
 
-        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
+        public string CreateAccountAndReturnCandidateNumber(
+            DelegateRegistrationModel delegateRegistrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
-            using var transaction = new TransactionScope();
-
-            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
-
-            if (delegateRegistrationModel.PasswordHash != null)
+            try
             {
-                passwordDataService.SetPasswordByCandidateNumber(
-                    candidateNumber,
-                    delegateRegistrationModel.PasswordHash
+                ValidateRegistrationEmail(delegateRegistrationModel);
+                return registrationDataService.RegisterNewUserAndDelegateAccount(
+                    delegateRegistrationModel,
+                    registerJourneyContainsTermsAndConditions
                 );
             }
-            else if (delegateRegistrationModel.NotifyDate.HasValue)
+            catch (DelegateCreationFailedException exception)
             {
-                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    delegateRegistrationModel.Email,
-                    candidateNumber,
-                    baseUrl,
-                    delegateRegistrationModel.NotifyDate.Value,
-                    "RegisterDelegateByCentre_Refactor"
-                );
+                var error = exception.Error;
+                var errorMessage = $"Could not create account for delegate on registration. Failure: {error.Name}";
+
+                logger.LogError(exception, errorMessage);
+
+                throw new DelegateCreationFailedException(errorMessage, exception, error);
             }
-
-            // We know this will give us a non-null user.
-            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
-            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
-                candidateNumber,
-                delegateRegistrationModel.Centre
-            )!;
-
-            userDataService.UpdateDelegateProfessionalRegistrationNumber(
-                delegateUser.Id,
-                delegateRegistrationModel.ProfessionalRegistrationNumber,
-                true
-            );
-
-            var supervisorDelegateRecordIdsMatchingDelegate =
-                GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
-            if (supervisorDelegateRecordIdsMatchingDelegate.Any())
+            catch (Exception exception)
             {
-                supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
-                    supervisorDelegateRecordIdsMatchingDelegate,
-                    delegateUser.Id
-                );
+                var error = DelegateCreationError.UnexpectedError;
+                var errorMessage = $"Could not create account for delegate on registration. Failure: {error.Name}";
+
+                logger.LogError(exception, errorMessage);
+
+                throw new DelegateCreationFailedException(errorMessage, exception, error);
             }
-
-            transaction.Complete();
-
-            return candidateNumber;
         }
 
-        private string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
+        private void ValidateRegistrationEmail(DelegateRegistrationModel model)
         {
-            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
-
-            var failureIfAny = DelegateCreationError.FromStoredProcedureErrorCode(candidateNumberOrErrorCode);
-
-            if (failureIfAny != null)
+            var emails =
+                (IEnumerable<string>)new[] { model.PrimaryEmail, model.CentreSpecificEmail }.Where(e => e != null);
+            if (userDataService.AnyEmailsInSetAreAlreadyInUse(emails))
             {
+                var error = DelegateCreationError.EmailAlreadyInUse;
                 logger.LogError(
-                    $"Could not create account for delegate on registration. Failure: {failureIfAny.Name}."
+                    $"Could not create account for delegate on registration. Failure: {error.Name}."
                 );
-
-                throw new DelegateCreationFailedException(failureIfAny);
+                throw new DelegateCreationFailedException(error);
             }
-
-            return candidateNumberOrErrorCode;
         }
 
         private IEnumerable<int> GetPendingSupervisorDelegateIdsMatchingDelegate(
@@ -290,52 +351,65 @@ namespace DigitalLearningSolutions.Data.Services
             return supervisorDelegateService
                 .GetPendingSupervisorDelegateRecordsByEmailAndCentre(
                     delegateRegistrationModel.Centre,
-                    delegateRegistrationModel.Email
+                    // TODO HEEDLS-899 it's undecided at time of comment whether this should be matched on centre email or primary email
+                    delegateRegistrationModel.PrimaryEmail
                 ).Select(record => record.ID);
         }
 
-        private void CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel, int jobGroupId)
+        private int CreateDelegateAccountForAdmin(
+            AdminRegistrationModel registrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             var delegateRegistrationModel = new DelegateRegistrationModel(
                 registrationModel.FirstName,
                 registrationModel.LastName,
-                registrationModel.Email,
+                registrationModel.PrimaryEmail,
+                registrationModel.CentreSpecificEmail,
                 registrationModel.Centre,
-                jobGroupId,
+                registrationModel.JobGroup,
                 registrationModel.PasswordHash!,
                 true,
                 true,
                 registrationModel.ProfessionalRegistrationNumber
             );
 
-            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
-            var failureIfAny = DelegateCreationError.FromStoredProcedureErrorCode(candidateNumberOrErrorCode);
-            if (failureIfAny != null)
+            try
             {
-                logger.LogError(
-                    $"Delegate account could not be created (error code: {candidateNumberOrErrorCode}) with email address: {registrationModel.Email}"
+                var candidateNumber =
+                    registrationDataService.RegisterNewUserAndDelegateAccount(
+                        delegateRegistrationModel,
+                        registerJourneyContainsTermsAndConditions
+                    );
+                passwordDataService.SetPasswordByCandidateNumber(
+                    candidateNumber,
+                    delegateRegistrationModel.PasswordHash!
                 );
 
-                throw new DelegateCreationFailedException(failureIfAny);
+                // We know this will give us a non-null user.
+                // If the delegate hadn't successfully been added we would have errored out of this method earlier.
+                var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
+                    candidateNumber,
+                    delegateRegistrationModel.Centre
+                )!;
+
+                userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                    delegateUser.Id,
+                    registrationModel.ProfessionalRegistrationNumber,
+                    true
+                );
+
+                return userDataService.GetUserIdFromDelegateId(delegateUser.Id);
             }
+            catch (Exception exception)
+            {
+                var error = DelegateCreationError.UnexpectedError;
+                var errorMessage = $"Could not create delegate account for admin. Failure: {error.Name}.";
 
-            passwordDataService.SetPasswordByCandidateNumber(
-                candidateNumberOrErrorCode,
-                delegateRegistrationModel.PasswordHash!
-            );
+                logger.LogError(exception, errorMessage);
 
-            // We know this will give us a non-null user.
-            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
-            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
-                candidateNumberOrErrorCode,
-                delegateRegistrationModel.Centre
-            )!;
-
-            userDataService.UpdateDelegateProfessionalRegistrationNumber(
-                delegateUser.Id,
-                registrationModel.ProfessionalRegistrationNumber,
-                true
-            );
+                throw new DelegateCreationFailedException(errorMessage, exception, error);
+            }
         }
 
         private Email GenerateApprovalEmail(

@@ -3,9 +3,9 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
 
-    public class CentreAnswersData
+    public class RegistrationFieldAnswers
     {
-        public CentreAnswersData(
+        public RegistrationFieldAnswers(
             int centreId,
             int jobGroupId,
             string? answer1,
@@ -24,6 +24,17 @@
             Answer4 = answer4;
             Answer5 = answer5;
             Answer6 = answer6;
+        }
+
+        public RegistrationFieldAnswers(DelegateDetailsData delegateDetailsData, int jobGroupId)
+        {
+            Answer1 = delegateDetailsData.Answer1;
+            Answer2 = delegateDetailsData.Answer2;
+            Answer3 = delegateDetailsData.Answer3;
+            Answer4 = delegateDetailsData.Answer4;
+            Answer5 = delegateDetailsData.Answer5;
+            Answer6 = delegateDetailsData.Answer6;
+            JobGroupId = jobGroupId;
         }
 
         public int CentreId { get; set; }

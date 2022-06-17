@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.UserDataServiceTests
 {
+    using System;
     using System.Transactions;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -14,8 +15,6 @@
             try
             {
                 // Given
-                const int jobGroupId = 1;
-                const string? jobGroupName = "Nursing / midwifery";
                 const string? answer1 = "Answer1";
                 const string? answer2 = "Answer2";
                 const string? answer3 = "Answer3";
@@ -26,20 +25,19 @@
                 // When
                 userDataService.UpdateDelegateUserCentrePrompts(
                     2,
-                    jobGroupId,
                     answer1,
                     answer2,
                     answer3,
                     answer4,
                     answer5,
-                    answer6
+                    answer6,
+                    DateTime.Now
                 );
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
 
                 // Then
                 using (new AssertionScope())
                 {
-                    updatedUser.JobGroupName.Should().BeEquivalentTo(jobGroupName);
                     updatedUser.Answer1.Should().BeEquivalentTo(answer1);
                     updatedUser.Answer2.Should().BeEquivalentTo(answer2);
                     updatedUser.Answer3.Should().BeEquivalentTo(answer3);

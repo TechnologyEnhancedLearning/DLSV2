@@ -8,3 +8,9 @@
   width: 150px;
   height: 150px;
 }
+
+.centre-email__row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}

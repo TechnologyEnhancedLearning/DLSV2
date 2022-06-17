@@ -14,20 +14,21 @@
         {
             // Given
             var delegateDetails = UserTestHelper.GetDefaultDelegateUser();
-            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData();
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers();
             var nonSynchronisedGroup = GroupTestHelper.GetDefaultGroup(
                 5,
                 "new answer",
                 linkedToField: 1,
                 changesToRegistrationDetailsShouldChangeGroupMembership: false
             );
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateDetails.Id)).Returns(delegateDetails);
             A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
                 new List<Group> { nonSynchronisedGroup }
             );
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
-                delegateDetails,
+                delegateDetails.Id,
                 reusableMyAccountDetailsData,
                 centreAnswersData
             );
@@ -47,7 +48,7 @@
         public void SynchroniseUserChangesWithGroups_does_nothing_if_synchronised_groups_are_not_for_changed_fields()
         {
             // Given
-            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
             var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
                 5,
                 "new answer",
@@ -60,7 +61,7 @@
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
                 reusableMyAccountDetailsData,
                 centreAnswersData
             );
@@ -81,7 +82,7 @@
             SynchroniseUserChangesWithGroups_does_nothing_if_synchronised_groups_for_changed_fields_have_different_values()
         {
             // Given
-            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
             var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
                 5,
                 "differentValue",
@@ -94,7 +95,7 @@
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
                 reusableMyAccountDetailsData,
                 centreAnswersData
             );
@@ -114,7 +115,7 @@
         public void SynchroniseUserChangesWithGroups_removes_delegate_from_synchronised_old_answer_group()
         {
             // Given
-            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
                 5,
@@ -128,7 +129,7 @@
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
                 reusableMyAccountDetailsData,
                 centreAnswersData
             );
@@ -142,7 +143,7 @@
             SynchroniseUserChangesWithGroups_removes_delegate_from_synchronised_old_answer_group_when_group_label_includes_prompt_name()
         {
             // Given
-            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             A.CallTo(
                 () => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
@@ -162,7 +163,7 @@
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
                 reusableMyAccountDetailsData,
                 centreAnswersData
             );
@@ -176,7 +177,7 @@
             SynchroniseUserChangesWithGroups_removes_delegate_from_all_synchronised_old_answer_groups_if_multiple_exist()
         {
             // Given
-            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             A.CallTo(
                 () => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
@@ -202,7 +203,7 @@
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
                 reusableMyAccountDetailsData,
                 centreAnswersData
             );
@@ -217,7 +218,7 @@
         public void SynchroniseUserChangesWithGroups_adds_delegate_to_synchronised_new_answer_group()
         {
             // Given
-            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
                 5,
@@ -231,7 +232,7 @@
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
                 reusableMyAccountDetailsData,
                 centreAnswersData
             );
@@ -245,7 +246,7 @@
             SynchroniseUserChangesWithGroups_adds_delegate_to_synchronised_new_answer_group_when_group_label_includes_prompt_name()
         {
             // Given
-            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             A.CallTo(
                 () => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
@@ -266,7 +267,7 @@
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
                 reusableMyAccountDetailsData,
                 centreAnswersData
             );
@@ -280,7 +281,7 @@
             SynchroniseUserChangesWithGroups_adds_delegate_to_all_synchronised_new_answer_groups_if_multiple_exist()
         {
             // Given
-            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             A.CallTo(
                 () => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
@@ -306,7 +307,7 @@
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
                 reusableMyAccountDetailsData,
                 centreAnswersData
             );
@@ -320,7 +321,7 @@
             SynchroniseUserChangesWithGroups_adds_delegate_to_synchronised_new_answer_groups_when_group_labels_differ_in_casing()
         {
             // Given
-            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             A.CallTo(
                 () => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
@@ -347,7 +348,7 @@
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
                 reusableMyAccountDetailsData,
                 centreAnswersData
             );

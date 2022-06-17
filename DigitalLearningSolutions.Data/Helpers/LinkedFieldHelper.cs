@@ -10,8 +10,8 @@
     public static class LinkedFieldHelper
     {
         public static List<LinkedFieldChange> GetLinkedFieldChanges(
-            CentreAnswersData oldAnswers,
-            CentreAnswersData newAnswers,
+            RegistrationFieldAnswers oldAnswers,
+            RegistrationFieldAnswers newAnswers,
             IJobGroupsDataService jobGroupsDataService,
             ICentreRegistrationPromptsService centreRegistrationPromptsService
         )

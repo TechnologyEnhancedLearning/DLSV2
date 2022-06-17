@@ -64,7 +64,7 @@
             );
 
             var centreId = User.GetCentreId();
-            var adminCategoryId = User.GetAdminCourseCategoryFilter();
+            var adminCategoryId = User.GetAdminCategoryId();
 
             try
             {

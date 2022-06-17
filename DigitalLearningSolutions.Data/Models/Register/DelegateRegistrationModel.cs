@@ -8,7 +8,8 @@
         public DelegateRegistrationModel(
             string firstName,
             string lastName,
-            string email,
+            string primaryEmail,
+            string? centreSpecificEmail,
             int centre,
             int jobGroup,
             string? passwordHash,
@@ -24,7 +25,18 @@
             bool approved = false,
             string? aliasId = null,
             DateTime? notifyDate = null
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
+        ) : base(
+            firstName,
+            lastName,
+            primaryEmail,
+            centreSpecificEmail,
+            centre,
+            passwordHash,
+            active,
+            approved,
+            professionalRegistrationNumber,
+            jobGroup
+        )
         {
             Answer1 = answer1;
             Answer2 = answer2;
@@ -34,24 +46,32 @@
             Answer6 = answer6;
             AliasId = aliasId;
             NotifyDate = notifyDate;
-            JobGroup = jobGroup;
             IsSelfRegistered = isSelfRegistered;
         }
 
         public DelegateRegistrationModel(
             string firstName,
             string lastName,
-            string email,
+            string primaryEmail,
+            string? centreSpecificEmail,
             int centre,
             int jobGroup,
             string? passwordHash,
             bool active,
             bool approved,
             string? professionalRegistrationNumber
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
-        {
-            JobGroup = jobGroup;
-        }
+        ) : base(
+            firstName,
+            lastName,
+            primaryEmail,
+            centreSpecificEmail,
+            centre,
+            passwordHash,
+            active,
+            approved,
+            professionalRegistrationNumber,
+            jobGroup
+        ) { }
 
         public DelegateRegistrationModel(
             DelegateTableRow row,
@@ -61,6 +81,7 @@
             row.FirstName!,
             row.LastName!,
             row.Email!,
+            null,
             centreId,
             row.JobGroupId!.Value,
             null,
@@ -93,8 +114,6 @@
         public string? AliasId { get; set; }
 
         public DateTime? NotifyDate { get; set; }
-
-        public int JobGroup { get; set; }
 
         public bool IsSelfRegistered { get; set; }
 

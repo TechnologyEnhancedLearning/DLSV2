@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
 
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
@@ -24,6 +25,7 @@
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly ILogger<MyAccountController> logger;
         private readonly PromptsService promptsService;
         private readonly IUserService userService;
 
@@ -32,7 +34,8 @@
             IUserService userService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
-            PromptsService registrationPromptsService
+            PromptsService registrationPromptsService,
+            ILogger<MyAccountController> logger
         )
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
@@ -40,23 +43,35 @@
             this.imageResizeService = imageResizeService;
             this.jobGroupsDataService = jobGroupsDataService;
             promptsService = registrationPromptsService;
+            this.logger = logger;
         }
 
         [NoCaching]
         [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
-            var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetCandidateId();
-            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var centreId = User.GetCentreId();
+            var userId = User.GetUserIdKnownNotNull();
+            var userEntity = userService.GetUserById(userId)!;
+            var adminAccount =
+                userEntity.AdminAccounts.SingleOrDefault(aa => aa.CentreId == centreId);
+            var delegateAccount =
+                userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == centreId);
 
             var customPrompts =
-                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
-                    User.GetCentreId(),
-                    delegateUser
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
+                    centreId,
+                    delegateAccount
                 );
 
-            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts, dlsSubApplication);
+            var model = new MyAccountViewModel(
+                userEntity.UserAccount,
+                delegateAccount,
+                (adminAccount?.CentreName ?? delegateAccount?.CentreName)!,
+                userService.GetCentreEmail(userId, centreId),
+                customPrompts,
+                dlsSubApplication
+            );
 
             return View(model);
         }
@@ -64,22 +79,31 @@
         [NoCaching]
         [HttpGet("EditDetails")]
         [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
-        public IActionResult EditDetails(DlsSubApplication dlsSubApplication)
+        public IActionResult EditDetails(
+            DlsSubApplication dlsSubApplication,
+            string? returnUrl = null,
+            bool isCheckDetailsRedirect = false
+        )
         {
-            var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetCandidateId();
-            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var centreId = User.GetCentreId();
+            var userId = User.GetUserIdKnownNotNull();
+            var userEntity = userService.GetUserById(userId)!;
+            var delegateAccount =
+                userEntity.DelegateAccounts.SingleOrDefault(da => da.CentreId == centreId);
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateAccount, centreId);
 
             var model = new MyAccountEditDetailsViewModel(
-                adminUser,
-                delegateUser,
+                userEntity.UserAccount,
+                delegateAccount,
                 jobGroups,
+                userService.GetCentreEmail(userId, centreId),
                 customPrompts,
-                dlsSubApplication
+                dlsSubApplication,
+                returnUrl,
+                isCheckDetailsRedirect
             );
 
             return View(model);
@@ -108,8 +132,8 @@
             DlsSubApplication dlsSubApplication
         )
         {
-            var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
+            var userId = User.GetUserIdKnownNotNull();
 
             if (userDelegateId.HasValue)
             {
@@ -124,20 +148,10 @@
                 );
             }
 
-            if (formData.Password != null &&
-                !userService.IsPasswordValid(userAdminId, userDelegateId, formData.Password))
-            {
-                ModelState.AddModelError(
-                    nameof(MyAccountEditDetailsFormData.Password),
-                    CommonValidationErrorMessages.IncorrectPassword
-                );
-            }
-
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
                 ModelState,
                 formData.HasProfessionalRegistrationNumber,
-                formData.ProfessionalRegistrationNumber,
-                userDelegateId.HasValue
+                formData.ProfessionalRegistrationNumber
             );
 
             if (!ModelState.IsValid)
@@ -145,24 +159,52 @@
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
-            if (!userService.NewEmailAddressIsValid(formData.Email!, userAdminId, userDelegateId, User.GetCentreId()))
+            var emailsValid = true;
+            if (!userService.NewEmailAddressIsValid(
+                    formData.Email!,
+                    userId
+                ))
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
-                    "A user with this email is already registered at this centre"
+                    CommonValidationErrorMessages.EmailAlreadyInUse
                 );
+                emailsValid = false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(formData.CentreEmail) && !userService.NewEmailAddressIsValid(
+                    formData.CentreEmail,
+                    userId
+                ))
+            {
+                ModelState.AddModelError(
+                    nameof(MyAccountEditDetailsFormData.CentreEmail),
+                    CommonValidationErrorMessages.EmailAlreadyInUse
+                );
+                emailsValid = false;
+            }
+
+            if (!emailsValid)
+            {
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
-            var (accountDetailsData, centreAnswersData) = AccountDetailsDataHelper.MapToUpdateAccountData(
+            var (accountDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToUpdateAccountData(
                 formData,
-                userAdminId,
-                userDelegateId,
+                userId,
+                userDelegateId
+            );
+            userService.UpdateUserDetailsAndCentreSpecificDetails(
+                accountDetailsData,
+                delegateDetailsData,
+                formData.CentreEmail,
                 User.GetCentreId()
             );
-            userService.UpdateUserAccountDetailsForAllVerifiedUsers(accountDetailsData, centreAnswersData);
 
-            return RedirectToAction("Index", new { dlsSubApplication = dlsSubApplication.UrlSegment });
+            return this.RedirectToReturnUrl(formData.ReturnUrl, logger) ?? RedirectToAction(
+                "Index",
+                new { dlsSubApplication = dlsSubApplication.UrlSegment }
+            );
         }
 
         private IActionResult ReturnToEditDetailsViewWithErrors(

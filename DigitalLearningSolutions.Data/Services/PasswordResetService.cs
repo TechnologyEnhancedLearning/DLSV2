@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Auth;
@@ -15,6 +14,12 @@
 
     public interface IPasswordResetService
     {
+        Task<ResetPasswordWithUserDetails?> GetValidPasswordResetEntityAsync(
+            string emailAddress,
+            string resetHash,
+            TimeSpan expiryTime
+        );
+
         Task<bool> EmailAndResetPasswordHashAreValidAsync(
             string emailAddress,
             string resetHash,
@@ -22,7 +27,9 @@
         );
 
         Task GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
-        Task InvalidateResetPasswordForEmailAsync(string email);
+
+        Task ResetPasswordAsync(ResetPasswordWithUserDetails passwordReset, string password);
+
         void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl);
 
         void GenerateAndScheduleDelegateWelcomeEmail(
@@ -45,31 +52,42 @@
         private readonly IClockService clockService;
         private readonly IEmailService emailService;
         private readonly IPasswordResetDataService passwordResetDataService;
+        private readonly IPasswordService passwordService;
         private readonly IUserService userService;
 
         public PasswordResetService(
             IUserService userService,
             IPasswordResetDataService passwordResetDataService,
+            IPasswordService passwordService,
             IEmailService emailService,
             IClockService clockService
         )
         {
             this.userService = userService;
             this.passwordResetDataService = passwordResetDataService;
+            this.passwordService = passwordService;
             this.emailService = emailService;
             this.clockService = clockService;
         }
 
         public async Task GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
         {
-            (User? user, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
-            user ??= delegateUsers.FirstOrDefault() ??
-                     throw new UserAccountNotFoundException(
-                         "No user account could be found with the specified email address"
-                     );
+            var user = userService.GetUserByEmailAddress(emailAddress);
 
-            await InvalidateResetPasswordForEmailAsync(emailAddress);
+            if (user == null)
+            {
+                throw new UserAccountNotFoundException(
+                    "No user account could be found with the specified email address"
+                );
+            }
+
+            if (user.ResetPasswordId != null)
+            {
+                await passwordResetDataService.RemoveResetPasswordAsync(user.ResetPasswordId.Value);
+            }
+
             string resetPasswordHash = GenerateResetPasswordHash(user);
+
             var resetPasswordEmail = GeneratePasswordResetEmail(
                 emailAddress,
                 resetPasswordHash,
@@ -79,14 +97,11 @@
             emailService.SendEmail(resetPasswordEmail);
         }
 
-        public async Task InvalidateResetPasswordForEmailAsync(string email)
+        public async Task ResetPasswordAsync(ResetPasswordWithUserDetails passwordReset, string password)
         {
-            var resetPasswordIds = userService.GetUsersByEmailAddress(email).GetDistinctResetPasswordIds();
-
-            foreach (var resetPasswordId in resetPasswordIds)
-            {
-                await passwordResetDataService.RemoveResetPasswordAsync(resetPasswordId);
-            }
+            await passwordResetDataService.RemoveResetPasswordAsync(passwordReset.Id);
+            await passwordService.ChangePasswordAsync(passwordReset.UserId, password!);
+            userService.ResetFailedLoginCountByUserId(passwordReset.UserId);
         }
 
         public void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl)
@@ -132,24 +147,31 @@
             emailService.ScheduleEmail(welcomeEmail, addedByProcess, deliveryDate);
         }
 
+        public async Task<ResetPasswordWithUserDetails?> GetValidPasswordResetEntityAsync(
+            string emailAddress,
+            string resetHash,
+            TimeSpan expiryTime
+        )
+        {
+            var resetPasswordEntity =
+                await passwordResetDataService.FindMatchingResetPasswordEntityWithUserDetailsAsync(
+                    emailAddress,
+                    resetHash
+                );
+
+            return
+                resetPasswordEntity != null && resetPasswordEntity.IsStillValidAt(clockService.UtcNow, expiryTime)
+                    ? resetPasswordEntity
+                    : null;
+        }
+
         public async Task<bool> EmailAndResetPasswordHashAreValidAsync(
             string emailAddress,
             string resetHash,
             TimeSpan expiryTime
         )
         {
-            var matchingResetPasswordEntities =
-                await passwordResetDataService.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
-                    emailAddress,
-                    resetHash
-                );
-
-            return matchingResetPasswordEntities.Any(
-                resetPassword => resetPassword.IsStillValidAt(
-                    clockService.UtcNow,
-                    expiryTime
-                )
-            );
+            return await GetValidPasswordResetEntityAsync(emailAddress, resetHash, expiryTime) != null;
         }
 
         public void SendWelcomeEmailsToDelegates(
@@ -171,15 +193,24 @@
             emailService.ScheduleEmails(emails, addedByProcess, deliveryDate);
         }
 
-        private string GenerateResetPasswordHash(User user)
+        private string GenerateResetPasswordHash(UserAccount user)
+        {
+            return GenerateResetPasswordHash(user.Id);
+        }
+
+        private string GenerateResetPasswordHash(DelegateUser delegateUser)
+        {
+            return GenerateResetPasswordHash(delegateUser.Id); // TODO: HEEDLS-887 delegateUser.Id != userId, so this is the wrong id to use here.
+        }
+
+        private string GenerateResetPasswordHash(int userId)
         {
             string hash = Guid.NewGuid().ToString();
 
             var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 clockService.UtcNow,
                 hash,
-                user.Id,
-                user is DelegateUser ? UserType.DelegateUser : UserType.AdminUser
+                userId
             );
 
             passwordResetDataService.CreatePasswordReset(resetPasswordCreateModel);
@@ -237,7 +268,7 @@
                 setPasswordUrl.Path += '/';
             }
 
-            setPasswordUrl.Path += "SetPassword";
+            setPasswordUrl.Path += "SetPassword"; // TODO: HEEDLS-901 The controller for this link has been deleted
             setPasswordUrl.Query = $"code={setPasswordHash}&email={emailAddress}";
 
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";

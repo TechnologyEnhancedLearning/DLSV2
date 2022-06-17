@@ -73,7 +73,7 @@
             {
                 registrationService.PromoteDelegateToAdmin(
                     formData.GetAdminRoles(),
-                    formData.LearningCategory,
+                    AdminCategoryHelper.AdminCategoryToCategoryId(formData.LearningCategory),
                     delegateId
                 );
             }

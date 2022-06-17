@@ -1,5 +1,8 @@
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.Register
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model PersonalInformationViewModel
+
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register Admin" : "Register Admin";
@@ -9,9 +12,8 @@
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="PersonalInformation">
 
-      @if (errorHasOccurred)
-      {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email) })" />
+      @if (errorHasOccurred) {
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail), nameof(Model.CentreSpecificEmail) })" />
       }
 
       <div class="nhsuk-u-margin-bottom-8">
@@ -42,12 +44,21 @@
                      autocomplete="family-name"
                      css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input asp-for="Email"
-                     label="Email"
+      <vc:text-input asp-for="PrimaryEmail"
+                     label="Primary email"
                      populate-with-current-value="true"
                      type="text"
                      spell-check="false"
-                     hint-text=""
+                     hint-text="This will be used for logging into the system. All communications will be sent to this email by default."
+                     autocomplete="email"
+                     css-class="nhsuk-u-width-one-half" />
+
+      <vc:text-input asp-for="CentreSpecificEmail"
+                     label="Centre email (optional)"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text="If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address. Your primary email address will still be used for logging in and notifications for managing your account."
                      autocomplete="email"
                      css-class="nhsuk-u-width-one-half" />
 
@@ -55,5 +66,17 @@
     </form>
 
     <vc:cancel-link asp-controller="Home" asp-action="Index" />
+
+    <p class="nhsuk-u-font-size-24 nhsuk-u-margin-top-9">
+      Alternatively, if you already have an account but would like to register at this centre as well, please log in.
+    </p>
+    @*TODO: HEEDLS-902 - Add return url once the internal registration journey is made*@
+    <a class="nhsuk-button nhsuk-button--secondary"
+       asp-controller="Login"
+       asp-action="Index"
+       role="button"
+       asp-route-returnUrl="">
+      Log in
+    </a>
   </div>
 </div>

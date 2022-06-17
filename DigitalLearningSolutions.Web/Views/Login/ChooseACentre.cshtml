@@ -1,4 +1,5 @@
 @using DigitalLearningSolutions.Web.ViewModels.Login
+@using DigitalLearningSolutions.Data.Enums
 @model ChooseACentreViewModel
 @{
   ViewData["Title"] = "Choose A Centre";
@@ -14,57 +15,82 @@
   <div class="nhsuk-grid-column-full">
 
     <h1 id="page-heading" class="nhsuk-heading-xl">Choose a centre</h1>
-    <p class="nhsuk-body-l">
-      You are registered at more than one centre. Please choose the centre you would like to sign in to.
-    </p>
 
-    <table role="table" class="nhsuk-table-responsive">
-      <thead role="rowgroup" class="nhsuk-table__head">
-      <tr role="row">
-        <th role="columnheader" scope="col">
-          Centre
-        </th>
-        <th role="columnheader" scope="col">
-          Roles
-        </th>
-        <th role="columnheader" scope="col">
-          Action
-        </th>
-      </tr>
-      </thead>
-      <tbody class="nhsuk-table__body">
-      @foreach (var centreRow in Model.CentreUserDetails) {
-        <tr role="row" class="nhsuk-table__row">
-          <td role="cell" class="nhsuk-table__cell choose-centre-td">
-            <span class="nhsuk-table-responsive__heading">Centre: </span>
-            @centreRow.CentreName
-          </td>
-          <td role="cell" class="nhsuk-table__cell choose-centre-td">
-            <span class="nhsuk-table-responsive__heading">Roles: </span>
-            <div class="centre-role-tags">
-              @if (centreRow.IsAdmin) {
-                <div>
-                  <strong class="nhsuk-tag nhsuk-tag--blue centre-role-tag">Admin</strong>
-                </div>
-              }
-              @if (centreRow.IsDelegate) {
-                <div>
-                  <strong class="nhsuk-tag nhsuk-tag--grey centre-role-tag">Delegate</strong>
-                </div>
-              }
-            </div>
-          </td>
-          <td role="cell" class="nhsuk-table__cell choose-centre-td">
-            <a role="button" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0"
-               asp-action="ChooseCentre" asp-route-centreId="@centreRow.CentreId">
-              Choose <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
-            </a>
-          </td>
-        </tr>
+    @if (Model.CentreUserDetails.Count > 0) {
+      <p class="nhsuk-body-l">
+        Please choose the centre you would like to sign in to.
+      </p>
+
+      @if (Model.CentreUserDetails.Any(centreRow => centreRow.IsUnapprovedDelegate)) {
+        <vc:inset-text css-class="" text="You have an unapproved delegate account. You will receive an email at the address you registered with when your registration has been approved." />
       }
-      </tbody>
-    </table>
 
-    <p class="nhsuk-body-l nhsuk-u-margin-top-8">If you need to switch centre after choosing, please log out and then back in again.</p>
+      <table role="table" class="nhsuk-table-responsive">
+        <thead role="rowgroup" class="nhsuk-table__head">
+        <tr role="row">
+          <th role="columnheader" scope="col">
+            Centre
+          </th>
+          <th role="columnheader" scope="col" class="centre-status-th">
+            Status
+          </th>
+          <th role="columnheader" scope="col">
+            Roles
+          </th>
+          <th role="columnheader" scope="col">
+            Action
+          </th>
+        </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+        @foreach (var centreRow in Model.CentreUserDetails) {
+          <tr role="row" class="nhsuk-table__row">
+            <td role="cell" class="nhsuk-table__cell choose-centre-td">
+              <span class="nhsuk-table-responsive__heading">Centre: </span>
+              @centreRow.CentreName
+            </td>
+            <td role="cell" class="nhsuk-table__cell choose-centre-td">
+              <span class="nhsuk-table-responsive__heading">Status: </span>
+              <strong class="nhsuk-tag nhsuk-tag--@centreRow.Status.TagColour">@centreRow.Status.TagLabel</strong>
+            </td>
+            <td role="cell" class="nhsuk-table__cell choose-centre-td">
+              <span class="nhsuk-table-responsive__heading">Roles: </span>
+              <div class="centre-role-tags">
+                @if (centreRow.IsActiveAdmin) {
+                  <strong class="nhsuk-tag nhsuk-tag--blue centre-role-tag">Admin</strong>
+                }
+                @if (centreRow.IsDelegate) {
+                  <strong class="nhsuk-tag nhsuk-tag--grey centre-role-tag">Delegate</strong>
+                }
+              </div>
+            </td>
+            <td role="cell" class="nhsuk-table__cell choose-centre-td">
+              @if (centreRow.Status.ActionButton == ChooseACentreButton.Choose) {
+                <form method="POST" asp-action="ChooseCentre">
+                  <input type="hidden" name="centreId" value="@centreRow.CentreId" />
+                  <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+                  <button type="submit" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0">
+                    Choose <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
+                  </button>
+                </form>
+              } else if (centreRow.Status.ActionButton == ChooseACentreButton.Reactivate) {
+                @* TODO HEEDLS-906: Link to Reactivate centre account page *@
+                <button class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0">
+                  Reactivate <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
+                </button>
+              }
+            </td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    } else {
+      <p>You have no centre accounts.</p>
+    }
+
+    @* TODO HEEDLS-877: Link to internal delegate self-registration centre page *@
+    <a role="button" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4 nhsuk-u-margin-top-0">
+      Register at a new centre
+    </a>
   </div>
 </div>

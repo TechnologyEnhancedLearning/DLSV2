@@ -91,16 +91,17 @@
         public void UnlockAccount_unlocks_account_and_returns_to_page()
         {
             // Given
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(UserTestHelper.GetDefaultAdminUser());
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(A<int>._, A<int>._)).DoesNothing();
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount();
+            A.CallTo(() => userService.ResetFailedLoginCountByUserId(A<int>._)).DoesNothing();
+            A.CallTo(() => userDataService.GetUserIdByAdminId(adminAccount.Id)).Returns(adminAccount.UserId);
 
             // When
-            var result = administratorController.UnlockAccount(1);
+            var result = administratorController.UnlockAccount(adminAccount.Id);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(1, 0)).MustHaveHappened();
+                A.CallTo(() => userService.ResetFailedLoginCountByUserId(adminAccount.UserId)).MustHaveHappened();
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
             }
         }
@@ -113,7 +114,10 @@
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
 
             // When
-            var result = administratorController.DeactivateOrDeleteAdmin(adminUser.Id, ReturnPageQueryHelper.GetDefaultReturnPageQuery());
+            var result = administratorController.DeactivateOrDeleteAdmin(
+                adminUser.Id,
+                ReturnPageQueryHelper.GetDefaultReturnPageQuery()
+            );
 
             // Then
             result.Should().BeNotFoundResult();

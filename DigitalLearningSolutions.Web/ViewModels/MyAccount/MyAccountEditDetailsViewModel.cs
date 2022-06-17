@@ -11,17 +11,20 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
     public class MyAccountEditDetailsViewModel : MyAccountEditDetailsFormData
     {
         public MyAccountEditDetailsViewModel(
-            AdminUser? adminUser,
-            DelegateUser? delegateUser,
+            UserAccount userAccount,
+            DelegateAccount? delegateAccount,
             List<(int id, string name)> jobGroups,
+            string? centreEmail,
             List<EditDelegateRegistrationPromptViewModel> editDelegateRegistrationPromptViewModels,
-            DlsSubApplication dlsSubApplication
-        ) : base(adminUser, delegateUser, jobGroups)
+            DlsSubApplication dlsSubApplication,
+            string? returnUrl,
+            bool isCheckDetailRedirect
+        ) : base(userAccount, delegateAccount, jobGroups, centreEmail, returnUrl, isCheckDetailRedirect)
         {
             DlsSubApplication = dlsSubApplication;
             JobGroups = SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(
                 jobGroups,
-                delegateUser?.JobGroupName
+                userAccount.JobGroupName
             );
             DelegateRegistrationPrompts = editDelegateRegistrationPromptViewModels;
         }
