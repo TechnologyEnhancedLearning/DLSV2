@@ -262,8 +262,10 @@ Build the Data.Migrations project manually and run the failing tests again - the
 ## Test discovery failing in Rider
 
 Rider may fail to discover or update tests and show you an error file starting with
-```Unfortunately, it's impossible to discover unit tests in some of your projects. :(
-Below you can find the error details for each project.```
+```
+Unfortunately, it's impossible to discover unit tests in some of your projects. :(
+Below you can find the error details for each project.
+```
 And then stack traces indicating `no element with id <id>`.
 
 This issue can be resolved by invalidating caches in File > Invalidate Caches.
