@@ -8,24 +8,24 @@
         public SummaryViewModel() { }
 
         public SummaryViewModel(
-            AddNewCentreCourseData data
+            AddNewCentreCourseTempData tempData
         )
         {
-            ApplicationName = data.CourseDetailsData!.ApplicationName;
-            CustomisationName = data.CourseDetailsData.CustomisationName ?? string.Empty;
-            Password = data.CourseDetailsData.Password;
-            NotificationEmails = data.CourseDetailsData.NotificationEmails;
-            PostLearningAssessment = data.CourseDetailsData.IsAssessed;
-            RequiredLearningPercentage = data.CourseDetailsData.TutCompletionThreshold;
-            RequiredDiagnosticPercentage = data.CourseDetailsData.DiagCompletionThreshold;
-            AllowSelfEnrolment = data.CourseOptionsData!.AllowSelfEnrolment;
-            HideInLearningPortal = data.CourseOptionsData.HideInLearningPortal;
-            DiagAssess = data.Application!.DiagAssess;
-            DiagnosticObjectiveSelection = data.CourseOptionsData.DiagnosticObjectiveSelection;
-            NoContent = data.SectionContentData == null || !data.GetTutorialsFromSections().Any();
-            IncludeAllSections = !NoContent && data.CourseContentData!.IncludeAllSections;
-            NumberOfLearning = NoContent ? 0 : GetNumberOfLearning(data);
-            NumberOfDiagnostic = NoContent ? 0 : GetNumberOfDiagnostic(data);
+            ApplicationName = tempData.CourseDetailsData!.ApplicationName;
+            CustomisationName = tempData.CourseDetailsData.CustomisationName ?? string.Empty;
+            Password = tempData.CourseDetailsData.Password;
+            NotificationEmails = tempData.CourseDetailsData.NotificationEmails;
+            PostLearningAssessment = tempData.CourseDetailsData.IsAssessed;
+            RequiredLearningPercentage = tempData.CourseDetailsData.TutCompletionThreshold;
+            RequiredDiagnosticPercentage = tempData.CourseDetailsData.DiagCompletionThreshold;
+            AllowSelfEnrolment = tempData.CourseOptionsData!.AllowSelfEnrolment;
+            HideInLearningPortal = tempData.CourseOptionsData.HideInLearningPortal;
+            DiagAssess = tempData.Application!.DiagAssess;
+            DiagnosticObjectiveSelection = tempData.CourseOptionsData.DiagnosticObjectiveSelection;
+            NoContent = tempData.SectionContentData == null || !tempData.GetTutorialsFromSections().Any();
+            IncludeAllSections = !NoContent && tempData.CourseContentData!.IncludeAllSections;
+            NumberOfLearning = NoContent ? 0 : GetNumberOfLearning(tempData);
+            NumberOfDiagnostic = NoContent ? 0 : GetNumberOfDiagnostic(tempData);
         }
 
         public string ApplicationName { get; set; }
@@ -44,15 +44,15 @@
         public int NumberOfLearning { get; set; }
         public int NumberOfDiagnostic { get; set; }
 
-        private static int GetNumberOfLearning(AddNewCentreCourseData data)
+        private static int GetNumberOfLearning(AddNewCentreCourseTempData tempData)
         {
-            var tutorials = data.GetTutorialsFromSections();
+            var tutorials = tempData.GetTutorialsFromSections();
             return tutorials.Count(t => t.LearningEnabled);
         }
 
-        private static int GetNumberOfDiagnostic(AddNewCentreCourseData data)
+        private static int GetNumberOfDiagnostic(AddNewCentreCourseTempData tempData)
         {
-            var tutorials = data.GetTutorialsFromSections();
+            var tutorials = tempData.GetTutorialsFromSections();
             return tutorials.Count(t => t.DiagnosticEnabled);
         }
     }

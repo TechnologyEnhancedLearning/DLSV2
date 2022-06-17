@@ -133,7 +133,7 @@
             TempData.Clear();
 
             multiPageFormService.SetMultiPageFormData(
-                new AddNewCentreCourseData(),
+                new AddNewCentreCourseTempData(),
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
@@ -141,7 +141,7 @@
         }
 
         [HttpGet("AddCourse/SelectCourse")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
         public IActionResult SelectCourse(
             string? categoryFilterString = null,
             string? topicFilterString = null
@@ -168,14 +168,14 @@
         }
 
         [HttpPost("AddCourse/SelectCourse")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
         public IActionResult SelectCourse(
             int? applicationId,
             string? categoryFilterString = null,
             string? topicFilterString = null
         )
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
@@ -207,10 +207,10 @@
         }
 
         [HttpGet("AddCourse/SetCourseDetails")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
         public IActionResult SetCourseDetails()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
@@ -223,10 +223,10 @@
         }
 
         [HttpPost("AddCourse/SetCourseDetails")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
         public IActionResult SetCourseDetails(SetCourseDetailsViewModel model)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
@@ -247,7 +247,7 @@
                 return View("AddNewCentreCourse/SetCourseDetails", model);
             }
 
-            data!.CourseDetailsData = new CourseDetailsData(
+            data!.CourseDetailsData = new CourseDetailsTempData(
                 model.ApplicationId,
                 model.ApplicationName,
                 model.CustomisationName,
@@ -267,10 +267,10 @@
         }
 
         [HttpGet("AddCourse/SetCourseOptions")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
         public IActionResult SetCourseOptions()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
@@ -284,15 +284,15 @@
         }
 
         [HttpPost("AddCourse/SetCourseOptions")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
         public IActionResult SetCourseOptions(EditCourseOptionsFormData model)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
 
-            data!.CourseOptionsData = new CourseOptionsData(
+            data!.CourseOptionsData = new CourseOptionsTempData(
                 model.Active,
                 model.AllowSelfEnrolment,
                 model.DiagnosticObjectiveSelection,
@@ -304,10 +304,10 @@
         }
 
         [HttpGet("AddCourse/SetCourseContent")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
         public IActionResult SetCourseContent()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
@@ -325,10 +325,10 @@
         }
 
         [HttpPost("AddCourse/SetCourseContent")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
         public IActionResult SetCourseContent(SetCourseContentViewModel model)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
@@ -350,7 +350,7 @@
                 return View("AddNewCentreCourse/SetCourseContent", model);
             }
 
-            data.CourseContentData = new CourseContentData(
+            data.CourseContentData = new CourseContentTempData(
                 model.AvailableSections,
                 model.IncludeAllSections,
                 model.SelectedSectionIds
@@ -361,10 +361,10 @@
         }
 
         [HttpGet("AddCourse/SetSectionContent")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
         public IActionResult SetSectionContent(int sectionIndex)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
@@ -387,7 +387,7 @@
         }
 
         [HttpPost("AddCourse/SetSectionContent")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
         public IActionResult SetSectionContent(
             SetSectionContentViewModel model,
             string action
@@ -403,10 +403,10 @@
         }
 
         [HttpGet("AddCourse/Summary")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
         public IActionResult Summary()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
@@ -417,10 +417,10 @@
         }
 
         [HttpPost("AddCourse/Summary")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
         public IActionResult? CreateNewCentreCourse()
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
@@ -518,13 +518,13 @@
             );
         }
 
-        private SetCourseContentViewModel GetSetCourseContentViewModel(AddNewCentreCourseData data)
+        private SetCourseContentViewModel GetSetCourseContentViewModel(AddNewCentreCourseTempData tempData)
         {
-            var sections = sectionService.GetSectionsThatHaveTutorialsForApplication(data!.Application!.ApplicationId);
+            var sections = sectionService.GetSectionsThatHaveTutorialsForApplication(tempData!.Application!.ApplicationId);
             return new SetCourseContentViewModel(sections);
         }
 
-        private IEnumerable<SectionContentData> GetSectionContentDataWithAllContentEnabled(
+        private IEnumerable<SectionContentTempData> GetSectionContentDataWithAllContentEnabled(
             SetCourseContentViewModel model,
             bool diagAssess
         )
@@ -540,28 +540,28 @@
                             tutorial.DiagStatus = diagAssess;
                         }
 
-                        return new SectionContentData(tutorials);
+                        return new SectionContentTempData(tutorials);
                     }
                 );
         }
 
         private IActionResult SaveSectionAndRedirect(SetSectionContentViewModel model)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
 
             if (data!.SectionContentData == null)
             {
-                data.SectionContentData = new List<SectionContentData>();
+                data.SectionContentData = new List<SectionContentTempData>();
             }
 
             data!.SectionContentData!.Add(
-                new SectionContentData(
+                new SectionContentTempData(
                     model.Tutorials != null
                         ? model.Tutorials.Select(GetCourseTutorialData)
-                        : new List<CourseTutorialData>()
+                        : new List<CourseTutorialTempData>()
                 )
             );
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
@@ -572,9 +572,9 @@
             );
         }
 
-        private static CourseTutorialData GetCourseTutorialData(CourseTutorialViewModel model)
+        private static CourseTutorialTempData GetCourseTutorialData(CourseTutorialViewModel model)
         {
-            return new CourseTutorialData(
+            return new CourseTutorialTempData(
                 model.TutorialId,
                 model.TutorialName,
                 model.LearningEnabled,
@@ -594,20 +594,20 @@
                 : RedirectToAction("SetSectionContent", new { sectionIndex = nextSectionIndex });
         }
 
-        private Customisation GetCustomisationFromTempData(AddNewCentreCourseData data)
+        private Customisation GetCustomisationFromTempData(AddNewCentreCourseTempData tempData)
         {
             return new Customisation(
                 User.GetCentreId(),
-                data!.Application!.ApplicationId,
-                data.CourseDetailsData!.CustomisationName ?? string.Empty,
-                data.CourseDetailsData.Password,
-                data.CourseOptionsData!.AllowSelfEnrolment,
-                int.Parse(data.CourseDetailsData.TutCompletionThreshold!),
-                data.CourseDetailsData.IsAssessed,
-                int.Parse(data.CourseDetailsData.DiagCompletionThreshold!),
-                data.CourseOptionsData.DiagnosticObjectiveSelection,
-                data.CourseOptionsData.HideInLearningPortal,
-                data.CourseDetailsData.NotificationEmails
+                tempData!.Application!.ApplicationId,
+                tempData.CourseDetailsData!.CustomisationName ?? string.Empty,
+                tempData.CourseDetailsData.Password,
+                tempData.CourseOptionsData!.AllowSelfEnrolment,
+                int.Parse(tempData.CourseDetailsData.TutCompletionThreshold!),
+                tempData.CourseDetailsData.IsAssessed,
+                int.Parse(tempData.CourseDetailsData.DiagCompletionThreshold!),
+                tempData.CourseOptionsData.DiagnosticObjectiveSelection,
+                tempData.CourseOptionsData.HideInLearningPortal,
+                tempData.CourseDetailsData.NotificationEmails
             );
         }
     }

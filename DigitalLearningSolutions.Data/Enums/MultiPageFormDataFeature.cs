@@ -14,35 +14,35 @@
             0,
             nameof(AddNewCourse),
             "AddNewCourseDataGuid",
-            typeof(AddNewCentreCourseData)
+            typeof(AddNewCentreCourseTempData)
         );
 
         public static readonly MultiPageFormDataFeature AddRegistrationPrompt = new MultiPageFormDataFeature(
             1,
             nameof(AddRegistrationPrompt),
             "AddRegistrationPromptDataGuid",
-            typeof(AddRegistrationPromptData)
+            typeof(AddRegistrationPromptTempData)
         );
 
         public static readonly MultiPageFormDataFeature EditRegistrationPrompt = new MultiPageFormDataFeature(
             2,
             nameof(EditRegistrationPrompt),
             "EditRegistrationPromptDataGuid",
-            typeof(EditRegistrationPromptData)
+            typeof(EditRegistrationPromptTempData)
         );
 
         public static readonly MultiPageFormDataFeature AddAdminField = new MultiPageFormDataFeature(
             3,
             nameof(AddAdminField),
             "AddAdminFieldDataGuid",
-            typeof(AddAdminFieldData)
+            typeof(AddAdminFieldTempData)
         );
 
         public static readonly MultiPageFormDataFeature EditAdminField = new MultiPageFormDataFeature(
             4,
             nameof(EditAdminField),
             "EditAdminFieldDataGuid",
-            typeof(EditAdminFieldData)
+            typeof(EditAdminFieldTempData)
         );
 
         public readonly string TempDataKey;

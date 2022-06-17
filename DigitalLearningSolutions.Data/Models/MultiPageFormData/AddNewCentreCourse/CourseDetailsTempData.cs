@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse
 {
-    public class CourseDetailsData
+    public class CourseDetailsTempData
     {
-        public CourseDetailsData(
+        public CourseDetailsTempData(
             int applicationId,
             string applicationName,
             string? customisationName,

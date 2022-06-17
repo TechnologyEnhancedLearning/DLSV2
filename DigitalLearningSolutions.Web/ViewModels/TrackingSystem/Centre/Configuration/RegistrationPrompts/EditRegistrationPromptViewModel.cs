@@ -34,15 +34,15 @@
             IncludeAnswersTableCaption = true;
         }
 
-        public EditRegistrationPromptViewModel(EditRegistrationPromptData data) : base(
-            data.OptionsString,
-            data.Answer,
-            data.IncludeAnswersTableCaption
+        public EditRegistrationPromptViewModel(EditRegistrationPromptTempData tempData) : base(
+            tempData.OptionsString,
+            tempData.Answer,
+            tempData.IncludeAnswersTableCaption
         )
         {
-            Prompt = data.Prompt;
-            PromptNumber = data.PromptNumber;
-            Mandatory = data.Mandatory;
+            Prompt = tempData.Prompt;
+            PromptNumber = tempData.PromptNumber;
+            Mandatory = tempData.Mandatory;
         }
 
         public int PromptNumber { get; set; }

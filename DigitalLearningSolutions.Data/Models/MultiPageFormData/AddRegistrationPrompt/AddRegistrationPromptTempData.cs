@@ -1,14 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt
 {
-    public class AddRegistrationPromptData
+    public class AddRegistrationPromptTempData
     {
-        public AddRegistrationPromptData()
+        public AddRegistrationPromptTempData()
         {
             SelectPromptData = new AddRegistrationPromptSelectPromptData();
-            ConfigureAnswersData = new RegistrationPromptAnswersData();
+            ConfigureAnswersTempData = new RegistrationPromptAnswersTempData();
         }
 
         public AddRegistrationPromptSelectPromptData SelectPromptData { get; set; }
-        public RegistrationPromptAnswersData ConfigureAnswersData { get; set; }
+        public RegistrationPromptAnswersTempData ConfigureAnswersTempData { get; set; }
     }
 }

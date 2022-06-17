@@ -3,25 +3,25 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class SectionContentData
+    public class SectionContentTempData
     {
         // 'Unused' constructor required for JsonConvert
-        public SectionContentData(){}
+        public SectionContentTempData(){}
 
-        public SectionContentData(
+        public SectionContentTempData(
             IEnumerable<Tutorial> tutorials
         )
         {
-            Tutorials = tutorials.Select(t => new CourseTutorialData(t));
+            Tutorials = tutorials.Select(t => new CourseTutorialTempData(t));
         }
 
-        public SectionContentData(
-            IEnumerable<CourseTutorialData> tutorials
+        public SectionContentTempData(
+            IEnumerable<CourseTutorialTempData> tutorials
         )
         {
             Tutorials = tutorials;
         }
 
-        public IEnumerable<CourseTutorialData> Tutorials { get; set; }
+        public IEnumerable<CourseTutorialTempData> Tutorials { get; set; }
     }
 }

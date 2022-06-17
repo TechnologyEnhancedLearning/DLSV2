@@ -10,11 +10,11 @@
     {
         public RegistrationPromptAnswersViewModel() { }
 
-        public RegistrationPromptAnswersViewModel(RegistrationPromptAnswersData data)
+        public RegistrationPromptAnswersViewModel(RegistrationPromptAnswersTempData tempData)
         {
-            OptionsString = data.OptionsString;
-            Answer = data.Answer;
-            IncludeAnswersTableCaption = data.IncludeAnswersTableCaption;
+            OptionsString = tempData.OptionsString;
+            Answer = tempData.Answer;
+            IncludeAnswersTableCaption = tempData.IncludeAnswersTableCaption;
         }
 
         public RegistrationPromptAnswersViewModel(

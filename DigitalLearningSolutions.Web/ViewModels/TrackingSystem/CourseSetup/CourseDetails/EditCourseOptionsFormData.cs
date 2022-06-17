@@ -9,12 +9,12 @@
     {
         public EditCourseOptionsFormData() { }
 
-        public EditCourseOptionsFormData(CourseOptionsData data)
+        public EditCourseOptionsFormData(CourseOptionsTempData tempData)
         {
-            Active = data.Active;
-            AllowSelfEnrolment = data.AllowSelfEnrolment;
-            DiagnosticObjectiveSelection = data.DiagnosticObjectiveSelection;
-            HideInLearningPortal = data.HideInLearningPortal;
+            Active = tempData.Active;
+            AllowSelfEnrolment = tempData.AllowSelfEnrolment;
+            DiagnosticObjectiveSelection = tempData.DiagnosticObjectiveSelection;
+            HideInLearningPortal = tempData.HideInLearningPortal;
         }
 
         public EditCourseOptionsFormData(

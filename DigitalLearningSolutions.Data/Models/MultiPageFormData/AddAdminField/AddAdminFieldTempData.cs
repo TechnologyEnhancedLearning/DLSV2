@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField
 {
-    public class AddAdminFieldData
+    public class AddAdminFieldTempData
     {
         public int? AdminFieldId { get; set; }
 

@@ -191,7 +191,7 @@
             {
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
-                        A<AddNewCentreCourseData>._,
+                        A<AddNewCentreCourseTempData>._,
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
                     )
@@ -220,7 +220,7 @@
             {
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
-                        A<AddNewCentreCourseData>.That.Matches(
+                        A<AddNewCentreCourseTempData>.That.Matches(
                             d => d.Application!.ApplicationId == application.ApplicationId &&
                                  d.CourseDetailsData == null &&
                                  d.CourseOptionsData == null &&
@@ -351,7 +351,7 @@
             {
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
-                        A<AddNewCentreCourseData>.That.Matches(d => d.CourseDetailsData != null),
+                        A<AddNewCentreCourseTempData>.That.Matches(d => d.CourseDetailsData != null),
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
                     )
@@ -375,7 +375,7 @@
             {
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
-                        A<AddNewCentreCourseData>.That.Matches(d => d.CourseOptionsData != null),
+                        A<AddNewCentreCourseTempData>.That.Matches(d => d.CourseOptionsData != null),
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
                     )
@@ -426,7 +426,7 @@
             {
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
-                        A<AddNewCentreCourseData>.That.Matches(d => d.CourseContentData != null),
+                        A<AddNewCentreCourseTempData>.That.Matches(d => d.CourseContentData != null),
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
                     )
@@ -468,12 +468,12 @@
             // Given
             var section1 = new Section(1, "Test name 1");
             var section2 = new Section(2, "Test name 2");
-            var setCourseContentModel = new CourseContentData(
+            var courseContentTempData = new CourseContentTempData(
                 new List<Section> { section1, section2 },
                 false,
                 new List<int> { 1, 2 }
             );
-            SetAddNewCentreCourseTempData(application, courseContentModel: setCourseContentModel);
+            SetAddNewCentreCourseTempData(application, courseContentTempData: courseContentTempData);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
@@ -492,12 +492,12 @@
         {
             // Given
             var section = new Section(1, "Test name 1");
-            var setCourseContentModel = new CourseContentData(
+            var courseContentTempData = new CourseContentTempData(
                 new List<Section> { section },
                 false,
                 new List<int> { 1 }
             );
-            SetAddNewCentreCourseTempData(application, courseContentModel: setCourseContentModel);
+            SetAddNewCentreCourseTempData(application, courseContentTempData: courseContentTempData);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
@@ -517,12 +517,12 @@
             var section1 = new Section(1, "Test name 1");
             var section2 = new Section(2, "Test name 2");
             var model = new SetSectionContentViewModel(section1, 0, true);
-            var setCourseContentModel = new CourseContentData(
+            var courseContentTempData = new CourseContentTempData(
                 new List<Section> { section1, section2 },
                 false,
                 new List<int> { 1, 2 }
             );
-            SetAddNewCentreCourseTempData(application, courseContentModel: setCourseContentModel);
+            SetAddNewCentreCourseTempData(application, courseContentTempData: courseContentTempData);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(A<int>._)
@@ -536,7 +536,7 @@
             {
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
-                        A<AddNewCentreCourseData>.That.Matches(d => d.SectionContentData != null),
+                        A<AddNewCentreCourseTempData>.That.Matches(d => d.SectionContentData != null),
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
                     )
@@ -551,12 +551,12 @@
             // Given
             var section = new Section(1, "Test name");
             var model = new SetSectionContentViewModel(section, 0, true);
-            var setCourseContentModel = new CourseContentData(
+            var courseContentTempData = new CourseContentTempData(
                 new List<Section> { section },
                 false,
                 new List<int> { 1 }
             );
-            SetAddNewCentreCourseTempData(courseContentModel: setCourseContentModel);
+            SetAddNewCentreCourseTempData(courseContentTempData: courseContentTempData);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
@@ -570,7 +570,7 @@
             {
                 A.CallTo(
                     () => multiPageFormService.SetMultiPageFormData(
-                        A<AddNewCentreCourseData>.That.Matches(d => d.SectionContentData != null),
+                        A<AddNewCentreCourseTempData>.That.Matches(d => d.SectionContentData != null),
                         MultiPageFormDataFeature.AddNewCourse,
                         controller.TempData
                     )
@@ -587,18 +587,17 @@
             var customisationName = GetSetCourseDetailsViewModel().CustomisationName;
 
             var tutorial = new Tutorial(1, "Tutorial name", true, true);
-            var section = new Section(1, "Section name");
-            var sectionData = new SectionContentData(
+            var sectionData = new SectionContentTempData(
                 new List<Tutorial> { tutorial }
             );
 
-            var setCourseOptionsModel = new CourseOptionsData(true, true, true, true);
+            var setCourseOptionsModel = new CourseOptionsTempData(true, true, true, true);
             SetAddNewCentreCourseTempData(
                 application,
                 GetSetCourseDetailsData(GetSetCourseDetailsViewModel()),
                 setCourseOptionsModel,
-                new CourseContentData(),
-                new List<SectionContentData> { sectionData }
+                new CourseContentTempData(),
+                new List<SectionContentTempData> { sectionData }
             );
 
             A.CallTo(
@@ -621,7 +620,7 @@
                 A.CallTo(
                     () => tutorialService.UpdateTutorialsStatuses(A<IEnumerable<Tutorial>>._, A<int>._)
                 ).MustHaveHappenedOnceExactly();
-                controller.TempData.Peek<AddNewCentreCourseData>().Should().BeNull();
+                controller.TempData.Peek<AddNewCentreCourseTempData>().Should().BeNull();
                 controller.TempData.Peek("customisationId").Should().Be(1);
                 controller.TempData.Peek("applicationName").Should().Be(applicationName);
                 controller.TempData.Peek("customisationName").Should().Be(customisationName);
@@ -661,9 +660,9 @@
             };
         }
 
-        private static CourseDetailsData GetSetCourseDetailsData(SetCourseDetailsViewModel model)
+        private static CourseDetailsTempData GetSetCourseDetailsData(SetCourseDetailsViewModel model)
         {
-            return new CourseDetailsData(
+            return new CourseDetailsTempData(
                 model.ApplicationId,
                 model.ApplicationName,
                 model.CustomisationName,
@@ -681,22 +680,22 @@
 
         private void SetAddNewCentreCourseTempData(
             ApplicationDetails? selectedApplication = null,
-            CourseDetailsData? setCourseDetailsModel = null,
-            CourseOptionsData setCourseOptionsModel = null!,
-            CourseContentData courseContentModel = null!,
-            List<SectionContentData>? setSectionContentModels = null
+            CourseDetailsTempData? setCourseDetailsModel = null,
+            CourseOptionsTempData setCourseOptionsTempData = null!,
+            CourseContentTempData courseContentTempData = null!,
+            List<SectionContentTempData>? setSectionContentModels = null
         )
         {
-            var initialTempData = new AddNewCentreCourseData
+            var initialTempData = new AddNewCentreCourseTempData
             {
                 Application = selectedApplication,
                 CourseDetailsData = setCourseDetailsModel,
-                CourseOptionsData = setCourseOptionsModel,
-                CourseContentData = courseContentModel,
+                CourseOptionsData = setCourseOptionsTempData,
+                CourseContentData = courseContentTempData,
                 SectionContentData = setSectionContentModels,
             };
             A.CallTo(
-                () => multiPageFormService.GetMultiPageFormData<AddNewCentreCourseData>(
+                () => multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
                     A<MultiPageFormDataFeature>._,
                     A<ITempDataDictionary>._
                 )

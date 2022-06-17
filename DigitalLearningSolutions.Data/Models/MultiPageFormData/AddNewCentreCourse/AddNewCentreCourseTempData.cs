@@ -3,18 +3,18 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
 
-    public class AddNewCentreCourseData
+    public class AddNewCentreCourseTempData
     {
-        public AddNewCentreCourseData()
+        public AddNewCentreCourseTempData()
         {
-            SectionContentData = new List<SectionContentData>();
+            SectionContentData = new List<SectionContentTempData>();
         }
 
         public ApplicationDetails? Application { get; set; }
-        public CourseDetailsData? CourseDetailsData { get; set; }
-        public CourseOptionsData? CourseOptionsData { get; set; }
-        public CourseContentData? CourseContentData { get; set; }
-        public List<SectionContentData>? SectionContentData { get; set; }
+        public CourseDetailsTempData? CourseDetailsData { get; set; }
+        public CourseOptionsTempData? CourseOptionsData { get; set; }
+        public CourseContentTempData? CourseContentData { get; set; }
+        public List<SectionContentTempData>? SectionContentData { get; set; }
 
         public void SetApplicationAndResetModels(ApplicationDetails application)
         {
@@ -30,9 +30,9 @@
             SectionContentData = null;
         }
 
-        public IEnumerable<CourseTutorialData> GetTutorialsFromSections()
+        public IEnumerable<CourseTutorialTempData> GetTutorialsFromSections()
         {
-            var tutorials = new List<CourseTutorialData>();
+            var tutorials = new List<CourseTutorialTempData>();
             foreach (var section in SectionContentData!)
             {
                 tutorials.AddRange(section.Tutorials);

@@ -17,11 +17,11 @@
             SelectedSectionIds = null;
         }
 
-        public SetCourseContentViewModel(CourseContentData data)
+        public SetCourseContentViewModel(CourseContentTempData tempData)
         {
-            IncludeAllSections = data.IncludeAllSections;
-            AvailableSections = data.AvailableSections;
-            SelectedSectionIds = data.SelectedSectionIds;
+            IncludeAllSections = tempData.IncludeAllSections;
+            AvailableSections = tempData.AvailableSections;
+            SelectedSectionIds = tempData.SelectedSectionIds;
         }
 
         public SetCourseContentViewModel(

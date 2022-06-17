@@ -22,13 +22,13 @@
             Answer = answer;
         }
 
-        public AddAdminFieldViewModel(AddAdminFieldData data) : base(
-            data.OptionsString,
-            data.Answer,
-            data.IncludeAnswersTableCaption
+        public AddAdminFieldViewModel(AddAdminFieldTempData tempData) : base(
+            tempData.OptionsString,
+            tempData.Answer,
+            tempData.IncludeAnswersTableCaption
         )
         {
-            AdminFieldId = data.AdminFieldId;
+            AdminFieldId = tempData.AdminFieldId;
         }
 
         [Required(ErrorMessage = "Select a field name")]

@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse
 {
-    public class CourseOptionsData
+    public class CourseOptionsTempData
     {
-        public CourseOptionsData(
+        public CourseOptionsTempData(
             bool active,
             bool allowSelfEnrolment,
             bool diagnosticObjectiveSelection,

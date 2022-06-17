@@ -3,11 +3,11 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class CourseContentData
+    public class CourseContentTempData
     {
-        public CourseContentData() { }
+        public CourseContentTempData() { }
 
-        public CourseContentData(
+        public CourseContentTempData(
             IEnumerable<Section> availableSections,
             bool includeAllSections,
             IEnumerable<int>? selectedSectionIds

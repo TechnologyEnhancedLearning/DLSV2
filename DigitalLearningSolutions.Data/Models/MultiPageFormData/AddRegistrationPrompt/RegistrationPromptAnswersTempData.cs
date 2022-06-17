@@ -3,11 +3,11 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
 
-    public class RegistrationPromptAnswersData
+    public class RegistrationPromptAnswersTempData
     {
-        public RegistrationPromptAnswersData() { }
+        public RegistrationPromptAnswersTempData() { }
 
-        public RegistrationPromptAnswersData(
+        public RegistrationPromptAnswersTempData(
             string? optionsString,
             string? answer = null,
             bool includeAnswersTableCaption = false

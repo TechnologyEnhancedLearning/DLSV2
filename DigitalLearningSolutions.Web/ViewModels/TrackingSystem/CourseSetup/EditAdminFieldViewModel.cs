@@ -28,14 +28,14 @@
             IncludeAnswersTableCaption = true;
         }
 
-        public EditAdminFieldViewModel(EditAdminFieldData data) : base(
-            data.OptionsString,
-            data.Answer,
-            data.IncludeAnswersTableCaption
+        public EditAdminFieldViewModel(EditAdminFieldTempData tempData) : base(
+            tempData.OptionsString,
+            tempData.Answer,
+            tempData.IncludeAnswersTableCaption
         )
         {
-            Prompt = data.Prompt;
-            PromptNumber = data.PromptNumber;
+            Prompt = tempData.Prompt;
+            PromptNumber = tempData.PromptNumber;
         }
 
         public int PromptNumber { get; set; }

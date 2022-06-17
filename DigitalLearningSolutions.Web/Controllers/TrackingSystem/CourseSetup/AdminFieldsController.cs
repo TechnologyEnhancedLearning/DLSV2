@@ -65,7 +65,7 @@
                 ).AdminFields
                 .Single(cp => cp.PromptNumber == promptNumber);
 
-            var data = new EditAdminFieldData
+            var data = new EditAdminFieldTempData
             {
                 PromptNumber = courseAdminField.PromptNumber,
                 Prompt = courseAdminField.PromptText,
@@ -87,10 +87,10 @@
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldTempData>))]
         public IActionResult EditAdminField(int customisationId, int promptNumber)
         {
-            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
                 MultiPageFormDataFeature.EditAdminField,
                 TempData
             );
@@ -106,7 +106,7 @@
         [HttpPost]
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldTempData>))]
         public IActionResult EditAdminField(
             int customisationId,
             EditAdminFieldViewModel model,
@@ -130,10 +130,10 @@
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldTempData>))]
         public IActionResult EditAdminFieldAnswersBulk(int customisationId, int promptNumber)
         {
-            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
                 MultiPageFormDataFeature.EditAdminField,
                 TempData
             );
@@ -153,7 +153,7 @@
         [HttpPost]
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldTempData>))]
         public IActionResult EditAdminFieldAnswersBulk(
             int customisationId,
             int promptNumber,
@@ -166,7 +166,7 @@
                 return View("BulkAdminFieldAnswers", model);
             }
 
-            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
                 MultiPageFormDataFeature.EditAdminField,
                 TempData
             );
@@ -189,7 +189,7 @@
         {
             TempData.Clear();
             multiPageFormService.SetMultiPageFormData(
-                new AddAdminFieldData(),
+                new AddAdminFieldTempData(),
                 MultiPageFormDataFeature.AddAdminField,
                 TempData
             );
@@ -200,10 +200,10 @@
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/Add")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddAdminFieldData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddAdminFieldTempData>))]
         public IActionResult AddAdminField(int customisationId)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
                 MultiPageFormDataFeature.AddAdminField,
                 TempData
             );
@@ -215,7 +215,7 @@
         [HttpPost]
         [Route("{customisationId:int}/AdminFields/Add")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddAdminFieldData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddAdminFieldTempData>))]
         public IActionResult AddAdminField(int customisationId, AddAdminFieldViewModel model, string action)
         {
             UpdateTempDataWithAddAdminFieldModelValues(model);
@@ -238,10 +238,10 @@
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/Add/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddAdminFieldData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddAdminFieldTempData>))]
         public IActionResult AddAdminFieldAnswersBulk(int customisationId)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
                 MultiPageFormDataFeature.AddAdminField,
                 TempData
             );
@@ -255,7 +255,7 @@
         [HttpPost]
         [Route("{customisationId:int}/AdminFields/Add/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddAdminFieldData>))]
+        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddAdminFieldTempData>))]
         public IActionResult AddAdminFieldAnswersBulk(
             int customisationId,
             AddBulkAdminFieldAnswersViewModel model
@@ -267,7 +267,7 @@
                 return View("AddBulkAdminFieldAnswers", model);
             }
 
-            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
                 MultiPageFormDataFeature.AddAdminField,
                 TempData
             );
@@ -348,7 +348,7 @@
 
         private void SetEditAdminFieldTempData(EditAdminFieldViewModel model)
         {
-            var data = new EditAdminFieldData
+            var data = new EditAdminFieldTempData
             {
                 PromptNumber = model.PromptNumber,
                 Prompt = model.Prompt,
@@ -399,7 +399,7 @@
 
         private void SetAddAdminFieldTempData(AddAdminFieldViewModel model)
         {
-            var data = new AddAdminFieldData
+            var data = new AddAdminFieldTempData
             {
                 AdminFieldId = model.AdminFieldId,
                 OptionsString = model.OptionsString,
@@ -535,7 +535,7 @@
 
         private void UpdateTempDataWithAddAdminFieldModelValues(AddAdminFieldViewModel model)
         {
-            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldData>(
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
                 MultiPageFormDataFeature.AddAdminField,
                 TempData
             );

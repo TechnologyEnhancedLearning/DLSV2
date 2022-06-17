@@ -8,20 +8,20 @@
     {
         public SetCourseDetailsViewModel() { }
 
-        public SetCourseDetailsViewModel(CourseDetailsData data)
+        public SetCourseDetailsViewModel(CourseDetailsTempData tempData)
         {
-            ApplicationId = data.ApplicationId;
-            ApplicationName = data.ApplicationName;
-            CustomisationName = data.CustomisationName;
-            PasswordProtected = data.PasswordProtected;
-            Password = data.Password;
-            ReceiveNotificationEmails = data.ReceiveNotificationEmails;
-            NotificationEmails = data.NotificationEmails;
-            PostLearningAssessment = data.PostLearningAssessment;
-            IsAssessed = data.IsAssessed;
-            DiagAssess = data.DiagAssess;
-            TutCompletionThreshold = data.TutCompletionThreshold;
-            DiagCompletionThreshold = data.DiagCompletionThreshold;
+            ApplicationId = tempData.ApplicationId;
+            ApplicationName = tempData.ApplicationName;
+            CustomisationName = tempData.CustomisationName;
+            PasswordProtected = tempData.PasswordProtected;
+            Password = tempData.Password;
+            ReceiveNotificationEmails = tempData.ReceiveNotificationEmails;
+            NotificationEmails = tempData.NotificationEmails;
+            PostLearningAssessment = tempData.PostLearningAssessment;
+            IsAssessed = tempData.IsAssessed;
+            DiagAssess = tempData.DiagAssess;
+            TutCompletionThreshold = tempData.TutCompletionThreshold;
+            DiagCompletionThreshold = tempData.DiagCompletionThreshold;
         }
 
         public SetCourseDetailsViewModel(ApplicationDetails application)

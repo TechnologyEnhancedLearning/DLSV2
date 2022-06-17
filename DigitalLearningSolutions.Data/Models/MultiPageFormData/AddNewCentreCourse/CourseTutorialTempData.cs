@@ -1,11 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse
 {
-    public class CourseTutorialData
+    public class CourseTutorialTempData
     {
         // 'Unused' constructor required for JsonConvert
-        public CourseTutorialData(){}
+        public CourseTutorialTempData(){}
 
-        public CourseTutorialData(Tutorial tutorial)
+        public CourseTutorialTempData(Tutorial tutorial)
         {
             TutorialId = tutorial.TutorialId;
             TutorialName = tutorial.TutorialName;
@@ -13,7 +13,7 @@
             DiagnosticEnabled = tutorial.DiagStatus ?? false;
         }
 
-        public CourseTutorialData(int tutorialId, string tutorialName, bool learningEnabled, bool diagnosticEnabled)
+        public CourseTutorialTempData(int tutorialId, string tutorialName, bool learningEnabled, bool diagnosticEnabled)
         {
             TutorialId = tutorialId;
             TutorialName = tutorialName;

@@ -9,14 +9,14 @@
     public class AddRegistrationPromptSummaryViewModel
     {
         public AddRegistrationPromptSummaryViewModel(
-            AddRegistrationPromptData data,
+            AddRegistrationPromptTempData tempData,
             string promptName
         )
         {
             PromptName = promptName;
-            Mandatory = data.SelectPromptData.Mandatory ? "Yes" : "No";
+            Mandatory = tempData.SelectPromptData.Mandatory ? "Yes" : "No";
             Answers = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(
-                data.ConfigureAnswersData.OptionsString
+                tempData.ConfigureAnswersTempData.OptionsString
             );
         }
 
