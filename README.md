@@ -259,6 +259,15 @@ so you may need to build Data.Migrations manually in order for new migrations to
 
 Build the Data.Migrations project manually and run the failing tests again - they should pass now.
 
+## Test discovery failing in Rider
+
+Rider may fail to discover or update tests and show you an error file starting with
+```Unfortunately, it's impossible to discover unit tests in some of your projects. :(
+Below you can find the error details for each project.```
+And then stack traces indicating `no element with id <id>`.
+
+This issue can be resolved by invalidating caches in File > Invalidate Caches.
+
 # Logging
 We're using [serilog](https://serilog.net/), specifically [serilog for .net core](https://nblumhardt.com/2019/10/serilog-in-aspnetcore-3/). This will automatically log:
 * Any ASP.NET Core logs with level warning or above
