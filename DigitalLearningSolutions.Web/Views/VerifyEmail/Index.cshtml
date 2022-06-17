@@ -20,7 +20,7 @@
       var centreEmailsExcludingFirstParagraph = (Model.PrimaryEmail == null
         ? Model.CentreSpecificEmails.Skip(1)
         : Model.CentreSpecificEmails).ToList();
-      var centreEmailExplanation = "You will not be able to access that account until you verify the address.";
+      const string centreEmailExplanation = "You will not be able to access that account until you verify the address.";
 
       @if (Model.EmailVerificationReason.Equals(EmailVerificationReason.EmailNotVerified)) {
         string primaryEmail;
@@ -32,7 +32,7 @@
         string pronoun;
 
         @if (Model.UnverifiedEmailsCount == 1) {
-          primaryEmail = $", {Model.PrimaryEmail},";
+          primaryEmail = null;
           emailAddresses = Model.PrimaryEmail ?? "this address";
           link = "link";
           address = "address";
@@ -40,7 +40,7 @@
           folder = "folder";
           pronoun = "it";
         } else {
-          primaryEmail = null;
+          primaryEmail = $", {Model.PrimaryEmail},";
           emailAddresses = "each of the addresses above";
           link = "links";
           address = "addresses";
