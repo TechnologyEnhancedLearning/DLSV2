@@ -1,0 +1,10 @@
+﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.Extensions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.LogOut)">
+  <a class="nhsuk-header__navigation-link" asp-controller="Logout" asp-action="Index">
+    Log out
+    <partial name="_NhsChevronRight" />
+  </a>
+</li>

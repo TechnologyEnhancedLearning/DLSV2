@@ -85,6 +85,8 @@ namespace DigitalLearningSolutions.Data.Services
         string? GetCentreEmail(int userId, int centreId);
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
+
+        IEnumerable<(string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(int userId);
     }
 
     public class UserService : IUserService
@@ -481,6 +483,11 @@ namespace DigitalLearningSolutions.Data.Services
         public string? GetCentreEmail(int userId, int centreId)
         {
             return userDataService.GetCentreEmail(userId, centreId);
+        }
+
+        public IEnumerable<(string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(int userId)
+        {
+            return userDataService.GetUnverifiedCentreEmailsForUser(userId);
         }
 
         private bool NewUserRolesExceedAvailableSpots(
