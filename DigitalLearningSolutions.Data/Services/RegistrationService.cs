@@ -234,10 +234,10 @@ namespace DigitalLearningSolutions.Data.Services
                 .SingleOrDefault(a => a.CentreId == delegateUser.CentreId);
 
             var adminRegistrationModel = new AdminRegistrationModel(
-                    delegateUser.CentreId,
+                delegateUser.CentreId,
                 true,
                 true,
-                    categoryId,
+                categoryId,
                 adminRoles.IsCentreAdmin,
                 false,
                 adminRoles.IsSupervisor,

@@ -840,7 +840,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void PromoteDelegateToAdmin_throws_active_admin_already_exists_AdminCreationFailedException_if_active_admin_already_exists()
+        public void
+            PromoteDelegateToAdmin_throws_active_admin_already_exists_AdminCreationFailedException_if_active_admin_already_exists()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
@@ -848,7 +849,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
             A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(1);
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(1)).Returns(new []{ adminAccount });
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(1)).Returns(new[] { adminAccount });
 
             // When
             var result = Assert.Throws<AdminCreationFailedException>(
@@ -870,7 +871,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(1);
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(1)).Returns(new []{ adminAccount });
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(1)).Returns(new[] { adminAccount });
 
             // When
             registrationService.PromoteDelegateToAdmin(adminRoles, 1, 2);
@@ -904,7 +905,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
             A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(1);
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(1)).Returns(new AdminAccount[]{});
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(1)).Returns(new AdminAccount[] { });
 
             // When
             registrationService.PromoteDelegateToAdmin(adminRoles, 1, 2);
