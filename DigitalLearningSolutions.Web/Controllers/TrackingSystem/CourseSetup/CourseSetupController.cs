@@ -253,20 +253,7 @@
                 return View("AddNewCentreCourse/SetCourseDetails", model);
             }
 
-            data!.CourseDetailsData = new CourseDetailsTempData(
-                model.ApplicationId,
-                model.ApplicationName,
-                model.CustomisationName,
-                model.PasswordProtected,
-                model.Password,
-                model.ReceiveNotificationEmails,
-                model.NotificationEmails,
-                model.PostLearningAssessment,
-                model.IsAssessed,
-                model.DiagAssess,
-                model.TutCompletionThreshold,
-                model.DiagCompletionThreshold
-            );
+            data!.CourseDetailsData = model.ToCourseDetailsTempData();
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             return RedirectToAction("SetCourseOptions");
@@ -303,12 +290,7 @@
                 TempData
             );
 
-            data!.CourseOptionsData = new CourseOptionsTempData(
-                model.Active,
-                model.AllowSelfEnrolment,
-                model.DiagnosticObjectiveSelection,
-                model.HideInLearningPortal
-            );
+            data!.CourseOptionsData = model.ToCourseOptionsTempData();
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             return RedirectToAction("SetCourseContent");
@@ -366,11 +348,7 @@
                 return View("AddNewCentreCourse/SetCourseContent", model);
             }
 
-            data.CourseContentData = new CourseContentTempData(
-                model.AvailableSections,
-                model.IncludeAllSections,
-                model.SelectedSectionIds
-            );
+            data.CourseContentData = model.ToDataCourseContentTempData();
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
 
             return RedirectToAction(model.IncludeAllSections ? "Summary" : "SetSectionContent");
@@ -541,7 +519,12 @@
 
         private SetCourseContentViewModel GetSetCourseContentViewModel(AddNewCentreCourseTempData tempData)
         {
-            var sections = sectionService.GetSectionsThatHaveTutorialsForApplication(tempData!.Application!.ApplicationId);
+            if (tempData.Application == null)
+            {
+                throw new Exception("Application should not be null at this point in the journey");
+            }
+
+            var sections = sectionService.GetSectionsThatHaveTutorialsForApplication(tempData.Application.ApplicationId);
             return new SetCourseContentViewModel(sections);
         }
 

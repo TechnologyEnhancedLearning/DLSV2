@@ -334,14 +334,7 @@
 
         private void SetEditAdminFieldTempData(EditAdminFieldViewModel model)
         {
-            var data = new EditAdminFieldTempData
-            {
-                PromptNumber = model.PromptNumber,
-                Prompt = model.Prompt,
-                OptionsString = model.OptionsString,
-                Answer = model.Answer,
-                IncludeAnswersTableCaption = model.IncludeAnswersTableCaption,
-            };
+            var data = model.ToEditAdminFieldTempData();
 
             multiPageFormService.SetMultiPageFormData(
                 data,
@@ -385,13 +378,7 @@
 
         private void SetAddAdminFieldTempData(AddAdminFieldViewModel model)
         {
-            var data = new AddAdminFieldTempData
-            {
-                AdminFieldId = model.AdminFieldId,
-                OptionsString = model.OptionsString,
-                Answer = model.Answer,
-                IncludeAnswersTableCaption = model.IncludeAnswersTableCaption,
-            };
+            var data = model.ToAddAdminFieldTempData();
 
             multiPageFormService.SetMultiPageFormData(
                 data,

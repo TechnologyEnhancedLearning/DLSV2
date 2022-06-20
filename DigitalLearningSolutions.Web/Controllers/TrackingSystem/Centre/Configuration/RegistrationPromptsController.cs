@@ -496,15 +496,7 @@
 
         private void SetEditRegistrationPromptTempData(EditRegistrationPromptViewModel model)
         {
-            var data = new EditRegistrationPromptTempData
-            {
-                PromptNumber = model.PromptNumber,
-                Prompt = model.Prompt,
-                Mandatory = model.Mandatory,
-                OptionsString = model.OptionsString,
-                Answer = model.Answer,
-                IncludeAnswersTableCaption = model.IncludeAnswersTableCaption,
-            };
+            var data = model.ToEditRegistrationPromptTempData();
 
             multiPageFormService.SetMultiPageFormData(
                 data,
@@ -587,11 +579,7 @@
                 MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
             );
-            data.ConfigureAnswersTempData = new RegistrationPromptAnswersTempData(
-                model.OptionsString,
-                model.Answer,
-                model.IncludeAnswersTableCaption
-            );
+            data.ConfigureAnswersTempData = model.ToDataConfigureAnswersTempData();
             multiPageFormService.SetMultiPageFormData(
                 data,
                 MultiPageFormDataFeature.AddRegistrationPrompt,
