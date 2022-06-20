@@ -5,6 +5,37 @@
 
     public class DelegateUserCard : DelegateUser
     {
+        public DelegateUserCard() { }
+
+        public DelegateUserCard(DelegateEntity delegateEntity)
+        {
+            Id = delegateEntity.DelegateAccount.Id;
+            CentreId = delegateEntity.DelegateAccount.CentreId;
+            CentreName = delegateEntity.DelegateAccount.CentreName;
+            Active = delegateEntity.DelegateAccount.Active;
+            Approved = delegateEntity.DelegateAccount.Approved;
+            CentreActive = delegateEntity.DelegateAccount.CentreActive;
+            FirstName = delegateEntity.UserAccount.FirstName;
+            LastName = delegateEntity.UserAccount.LastName;
+            EmailAddress = delegateEntity.UserCentreDetails?.Email ?? delegateEntity.UserAccount.PrimaryEmail;
+            Password = delegateEntity.UserAccount.PasswordHash;
+            CandidateNumber = delegateEntity.DelegateAccount.CandidateNumber;
+            DateRegistered = delegateEntity.DelegateAccount.DateRegistered;
+            JobGroupId = delegateEntity.UserAccount.JobGroupId;
+            JobGroupName = delegateEntity.UserAccount.JobGroupName;
+            Answer1 = delegateEntity.DelegateAccount.Answer1;
+            Answer2 = delegateEntity.DelegateAccount.Answer2;
+            Answer3 = delegateEntity.DelegateAccount.Answer3;
+            Answer4 = delegateEntity.DelegateAccount.Answer4;
+            Answer5 = delegateEntity.DelegateAccount.Answer5;
+            Answer6 = delegateEntity.DelegateAccount.Answer6;
+            HasBeenPromptedForPrn = delegateEntity.UserAccount.HasBeenPromptedForPrn;
+            ProfessionalRegistrationNumber = delegateEntity.UserAccount.ProfessionalRegistrationNumber;
+            HasDismissedLhLoginWarning = delegateEntity.UserAccount.HasDismissedLhLoginWarning;
+            SelfReg = delegateEntity.DelegateAccount.SelfReg;
+            ExternalReg = delegateEntity.DelegateAccount.ExternalReg;
+        }
+
         public bool SelfReg { get; set; }
         public bool ExternalReg { get; set; }
         public int? AdminId { get; set; }

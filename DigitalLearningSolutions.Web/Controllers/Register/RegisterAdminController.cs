@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
-    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -206,10 +205,7 @@
             try
             {
                 var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
-                registrationService.RegisterCentreManager(
-                    registrationModel,
-                    data.JobGroup!.Value
-                );
+                registrationService.RegisterCentreManager(registrationModel, true);
 
                 return RedirectToAction("Confirmation");
             }

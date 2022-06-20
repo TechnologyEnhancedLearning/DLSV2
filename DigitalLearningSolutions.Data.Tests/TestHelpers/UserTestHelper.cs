@@ -160,6 +160,111 @@
             };
         }
 
+        public static DelegateEntity GetDefaultDelegateEntity(
+            int delegateId = 2,
+            int userId = 61188,
+            bool active = true,
+            int centreId = 2,
+            string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
+            bool centreActive = true,
+            string candidateNumber = "SV1234",
+            DateTime? dateRegistered = null,
+            string? answer1 = null,
+            string? answer2 = null,
+            string? answer3 = null,
+            string? answer4 = null,
+            string? answer5 = null,
+            string? answer6 = null,
+            bool approved = true,
+            bool externalReg = false,
+            bool selfReg = false,
+            string? oldPassword = "password",
+            DateTime? centreSpecificDetailsLastChecked = null,
+            string primaryEmail = "email@test.com",
+            string passwordHash = "password",
+            string firstName = "Firstname",
+            string lastName = "Test",
+            int jobGroupId = 1,
+            string jobGroupName = "Nursing / midwifery",
+            string? professionalRegistrationNumber = null,
+            byte[]? profileImage = null,
+            int? resetPasswordId = null,
+            DateTime? termsAgreed = null,
+            int failedLoginCount = 0,
+            bool hasBeenPromptedForPrn = false,
+            int? learningHubAuthId = null,
+            bool hasDismissedLhLoginWarning = false,
+            DateTime? emailVerified = null,
+            DateTime? detailsLastChecked = null,
+            int? userCentreDetailsId = null,
+            string? centreSpecificEmail = null,
+            bool? centreSpecificEmailVerified = null
+        )
+        {
+            dateRegistered ??= DateTime.Parse("2010-09-22 06:52:09.080");
+            centreSpecificDetailsLastChecked ??= DateTime.Parse("2022-04-27 16:29:12.270");
+            emailVerified ??= DateTime.Parse("2022-04-27 16:28:55.637");
+            detailsLastChecked ??= DateTime.Parse("2022-04-27 16:28:55.637");
+
+            var delegateAccount = new DelegateAccount
+            {
+                Id = delegateId,
+                UserId = userId,
+                Active = active,
+                CentreId = centreId,
+                CentreName = centreName,
+                CentreActive = centreActive,
+                CandidateNumber = candidateNumber,
+                DateRegistered = dateRegistered.Value,
+                Answer1 = answer1,
+                Answer2 = answer2,
+                Answer3 = answer3,
+                Answer4 = answer4,
+                Answer5 = answer5,
+                Answer6 = answer6,
+                Approved = approved,
+                ExternalReg = externalReg,
+                SelfReg = selfReg,
+                OldPassword = oldPassword,
+                CentreSpecificDetailsLastChecked = centreSpecificDetailsLastChecked,
+            };
+
+            var userAccount = new UserAccount
+            {
+                Id = userId,
+                PrimaryEmail = primaryEmail,
+                PasswordHash = passwordHash,
+                FirstName = firstName,
+                LastName = lastName,
+                JobGroupId = jobGroupId,
+                JobGroupName = jobGroupName,
+                ProfessionalRegistrationNumber = professionalRegistrationNumber,
+                ProfileImage = profileImage,
+                Active = active,
+                ResetPasswordId = resetPasswordId,
+                TermsAgreed = termsAgreed,
+                FailedLoginCount = failedLoginCount,
+                HasBeenPromptedForPrn = hasBeenPromptedForPrn,
+                LearningHubAuthId = learningHubAuthId,
+                HasDismissedLhLoginWarning = hasDismissedLhLoginWarning,
+                EmailVerified = emailVerified,
+                DetailsLastChecked = detailsLastChecked,
+            };
+
+            var userCentreDetails = userCentreDetailsId == null
+                ? null
+                : new UserCentreDetails
+                {
+                    Id = userCentreDetailsId.Value,
+                    UserId = userId,
+                    CentreId = centreId,
+                    Email = centreSpecificEmail,
+                    EmailVerified = centreSpecificEmailVerified,
+                };
+
+            return new DelegateEntity(delegateAccount, userAccount, userCentreDetails);
+        }
+
         public static DelegateUser GetDefaultDelegateUser(
             int id = 2,
             int centreId = 2,
@@ -328,7 +433,7 @@
             return users.Single();
         }
 
-        public static MyAccountDetailsData GetDefaultAccountDetailsData(
+        public static EditAccountDetailsData GetDefaultAccountDetailsData(
             int userId = 2,
             string firstName = "firstname",
             string surname = "lastname",
@@ -337,7 +442,7 @@
             byte[]? profileImage = null
         )
         {
-            return new MyAccountDetailsData(
+            return new EditAccountDetailsData(
                 userId,
                 firstName,
                 surname,
@@ -360,7 +465,16 @@
             string? answer6 = null
         )
         {
-            return new RegistrationFieldAnswers(centreId, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6);
+            return new RegistrationFieldAnswers(
+                centreId,
+                jobGroupId,
+                answer1,
+                answer2,
+                answer3,
+                answer4,
+                answer5,
+                answer6
+            );
         }
 
         public static void GivenDelegateUserIsInDatabase(DelegateUser user, SqlConnection sqlConnection)

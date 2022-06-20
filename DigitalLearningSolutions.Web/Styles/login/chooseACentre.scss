@@ -8,10 +8,16 @@
   margin-right: 5px;
 }
 
+.centre-status-th {
+  min-width: 210px;
+}
+
 .nhsuk-table__row {
   td.nhsuk-table__cell {
     &.choose-centre-td {
-        min-width: 200px;
+      .nhsuk-table-responsive__heading {
+        min-width: 4.25em;
+      }
 
       @include govuk-media-query($until: desktop) {
         border-bottom: none;

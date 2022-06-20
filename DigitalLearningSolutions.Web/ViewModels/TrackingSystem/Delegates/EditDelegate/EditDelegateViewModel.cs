@@ -10,13 +10,16 @@
     public class EditDelegateViewModel : EditDelegateFormData
     {
         public EditDelegateViewModel(
-            DelegateUser delegateUser,
+            DelegateEntity delegateEntity,
             IReadOnlyCollection<(int id, string name)> jobGroups,
             List<EditDelegateRegistrationPromptViewModel> editDelegateRegistrationPromptViewModels
-        ) : base(delegateUser, jobGroups)
+        ) : base(delegateEntity, jobGroups)
         {
-            DelegateId = delegateUser.Id;
-            JobGroups = SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, delegateUser.JobGroupName);
+            DelegateId = delegateEntity.DelegateAccount.Id;
+            JobGroups = SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(
+                jobGroups,
+                delegateEntity.UserAccount.JobGroupName
+            );
             CustomFields = editDelegateRegistrationPromptViewModels;
         }
 

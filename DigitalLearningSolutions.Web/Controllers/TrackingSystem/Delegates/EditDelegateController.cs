@@ -22,8 +22,8 @@
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     public class EditDelegateController : Controller
     {
-        private readonly PromptsService promptsService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly PromptsService promptsService;
         private readonly IUserService userService;
 
         public EditDelegateController(
@@ -41,9 +41,9 @@
         public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreId();
-            var delegateUser = userService.GetUsersById(null, delegateId).delegateUser;
+            var delegateEntity = userService.GetDelegateById(delegateId);
 
-            if (delegateUser == null || delegateUser.CentreId != centreId)
+            if (delegateEntity == null || delegateEntity.DelegateAccount.CentreId != centreId)
             {
                 return NotFound();
             }
@@ -51,8 +51,8 @@
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
 
             var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, centreId);
-            var model = new EditDelegateViewModel(delegateUser, jobGroups, customPrompts);
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateEntity, centreId);
+            var model = new EditDelegateViewModel(delegateEntity, jobGroups, customPrompts);
 
             return View(model);
         }
@@ -75,22 +75,35 @@
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
-            // TODO HEEDLS-951 Fix this so that it is passing the correct User ID, that of the delegate not the logged in admin
-            if (!userService.NewEmailAddressIsValid(formData.Email!, User.GetUserIdKnownNotNull()))
+            var delegateEntity = userService.GetDelegateById(delegateId);
+
+            if (formData.CentreSpecificEmail == delegateEntity!.UserAccount.PrimaryEmail ||
+                string.IsNullOrWhiteSpace(formData.CentreSpecificEmail))
+            {
+                formData.CentreSpecificEmail = null;
+            }
+
+            if (!userService.NewEmailAddressIsValid(formData.CentreSpecificEmail!, delegateEntity!.UserAccount.Id))
             {
                 ModelState.AddModelError(
-                    nameof(EditDetailsFormData.Email),
+                    nameof(EditDetailsFormData.CentreSpecificEmail),
                     CommonValidationErrorMessages.EmailAlreadyInUse
                 );
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
-            var (accountDetailsData, centreAnswersData) = AccountDetailsDataHelper.MapToUpdateAccountData(
+            var (editDelegateDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToEditAccountDetailsData(
                 formData,
-                delegateId,
-                User.GetCentreId()
+                delegateEntity.UserAccount.Id,
+                delegateId
             );
-            userService.UpdateUserAccountDetailsViaDelegateAccount(accountDetailsData, centreAnswersData);
+            userService.UpdateUserDetailsAndCentreSpecificDetails(
+                editDelegateDetailsData,
+                delegateDetailsData,
+                formData.CentreSpecificEmail,
+                centreId,
+                false
+            );
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
