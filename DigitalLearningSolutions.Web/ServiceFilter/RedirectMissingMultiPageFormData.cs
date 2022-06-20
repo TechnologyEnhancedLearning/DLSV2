@@ -7,18 +7,20 @@
     using Microsoft.AspNetCore.Mvc.Filters;
 
     /// <summary>
-    ///     Redirects to the Index action of the current controller if there is no TempData Guid or MultiPageFormData of type T
-    ///     set.
-    ///     This service filter must be registered in <see cref="Startup.ConfigureServices" /> once for each type T it's used
-    ///     with.
+    ///     Redirects to the Index action of the current controller if there is no
+    ///     TempData Guid or MultiPageFormData for the feature set.
     /// </summary>
-    /// <typeparam name="T">The type required in MultiPageFormData</typeparam>
-    public class RedirectMissingMultiPageFormData<T> : IActionFilter // where T : MultiPageFormDataFeature
+    public class RedirectMissingMultiPageFormData : IActionFilter
     {
+        private readonly MultiPageFormDataFeature feature;
         private readonly IMultiPageFormService multiPageFormService;
 
-        public RedirectMissingMultiPageFormData(IMultiPageFormService multiPageFormService)
+        public RedirectMissingMultiPageFormData(
+            IMultiPageFormService multiPageFormService,
+            string feature
+        )
         {
+            this.feature = feature;
             this.multiPageFormService = multiPageFormService;
         }
 
@@ -28,13 +30,6 @@
         {
             if (context.Controller is Controller controller)
             {
-                var feature = MultiPageFormDataFeature.GetFeatureByType(typeof(T));
-                if (feature == null)
-                {
-                    RedirectToIndex(context, controller);
-                    return;
-                }
-
                 var tempDataObject = controller.TempData.Peek(feature.TempDataKey);
                 if (tempDataObject == null || !(tempDataObject is Guid tempDataGuid))
                 {

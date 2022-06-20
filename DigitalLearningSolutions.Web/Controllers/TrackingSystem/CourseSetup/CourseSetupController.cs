@@ -142,7 +142,10 @@
         }
 
         [HttpGet("AddCourse/SelectCourse")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
+        )]
         public IActionResult SelectCourse(
             string? categoryFilterString = null,
             string? topicFilterString = null
@@ -169,7 +172,10 @@
         }
 
         [HttpPost("AddCourse/SelectCourse")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
+        )]
         public IActionResult SelectCourse(
             int? applicationId,
             string? categoryFilterString = null,
@@ -208,7 +214,10 @@
         }
 
         [HttpGet("AddCourse/SetCourseDetails")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
+        )]
         public IActionResult SetCourseDetails()
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
@@ -229,7 +238,10 @@
         }
 
         [HttpPost("AddCourse/SetCourseDetails")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
+        )]
         public IActionResult SetCourseDetails(SetCourseDetailsViewModel model)
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
@@ -260,7 +272,10 @@
         }
 
         [HttpGet("AddCourse/SetCourseOptions")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
+        )]
         public IActionResult SetCourseOptions()
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
@@ -282,7 +297,10 @@
         }
 
         [HttpPost("AddCourse/SetCourseOptions")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
+        )]
         public IActionResult SetCourseOptions(EditCourseOptionsFormData model)
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
@@ -297,7 +315,10 @@
         }
 
         [HttpGet("AddCourse/SetCourseContent")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
+        )]
         public IActionResult SetCourseContent()
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
@@ -318,7 +339,10 @@
         }
 
         [HttpPost("AddCourse/SetCourseContent")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
+        )]
         public IActionResult SetCourseContent(SetCourseContentViewModel model)
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
@@ -355,7 +379,10 @@
         }
 
         [HttpGet("AddCourse/SetSectionContent")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
+        )]
         public IActionResult SetSectionContent(int sectionIndex)
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
@@ -365,7 +392,9 @@
 
             if (data.CourseContentData == null || data.Application == null)
             {
-                throw new Exception("Application amd CourseContentData should not be null at this point in the journey");
+                throw new Exception(
+                    "Application amd CourseContentData should not be null at this point in the journey"
+                );
             }
 
             var section = data!.CourseContentData!.GetSelectedSections().ElementAt(sectionIndex);
@@ -386,7 +415,10 @@
         }
 
         [HttpPost("AddCourse/SetSectionContent")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
+        )]
         public IActionResult SetSectionContent(
             SetSectionContentViewModel model,
             string action
@@ -402,7 +434,10 @@
         }
 
         [HttpGet("AddCourse/Summary")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
+        )]
         public IActionResult Summary()
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
@@ -416,7 +451,10 @@
         }
 
         [HttpPost("AddCourse/Summary")]
-        [ServiceFilter(typeof(RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewCourse) }
+        )]
         public IActionResult? CreateNewCentreCourse()
         {
             var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
@@ -524,7 +562,8 @@
                 throw new Exception("Application should not be null at this point in the journey");
             }
 
-            var sections = sectionService.GetSectionsThatHaveTutorialsForApplication(tempData.Application.ApplicationId);
+            var sections =
+                sectionService.GetSectionsThatHaveTutorialsForApplication(tempData.Application.ApplicationId);
             return new SetCourseContentViewModel(sections);
         }
 

@@ -305,11 +305,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyDelegateCanAccessActionPlanResource>();
             services.AddScoped<VerifyDelegateAccessedViaValidRoute>();
             services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
-            services.AddScoped<RedirectMissingMultiPageFormData<AddNewCentreCourseTempData>>();
-            services.AddScoped<RedirectMissingMultiPageFormData<AddRegistrationPromptTempData>>();
-            services.AddScoped<RedirectMissingMultiPageFormData<EditRegistrationPromptTempData>>();
-            services.AddScoped<RedirectMissingMultiPageFormData<AddAdminFieldTempData>>();
-            services.AddScoped<RedirectMissingMultiPageFormData<EditAdminFieldTempData>>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
