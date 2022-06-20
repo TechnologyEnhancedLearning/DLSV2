@@ -19,7 +19,25 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl" id="app-page-heading">My account</h1>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-half">
+        <h1 class="nhsuk-heading-xl" id="app-page-heading">
+          My account
+        </h1>
+      </div>
+      <div class="nhsuk-grid-column-one-half heading-button-group">
+        <a
+          class="nhsuk-button nhsuk-button--secondary heading-button"
+          asp-controller="Login"
+          asp-action="ChooseACentre"
+          asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment"
+          asp-route-returnUrl="/Home/Welcome"
+          role="button">
+          Switch centre
+        </a>
+      </div>
+    </div>
+
 
     <partial name="_MyDetailsCard" model="Model" />
 
@@ -41,6 +59,6 @@
 </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <partial name="_LogoutForm"/>
+    <partial name="_LogoutForm" />
   </div>
 </div>

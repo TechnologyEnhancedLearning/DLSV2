@@ -11,6 +11,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Login;
@@ -341,7 +342,7 @@
             GivenAUserEntityWithAdminAndDelegateAccounts(userEntity);
 
             // When
-            var result = controllerWithAuthenticatedUser.ChooseACentre(returnUrl);
+            var result = controllerWithAuthenticatedUser.ChooseACentre(DlsSubApplication.Default, returnUrl);
 
             // Then
             using (new AssertionScope())
