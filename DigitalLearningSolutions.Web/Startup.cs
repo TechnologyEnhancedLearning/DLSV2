@@ -213,7 +213,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<ISessionService, SessionService>();
-            services.AddScoped<IStoreAspProgressService, StoreAspProgressService>();
+            services.AddScoped<IStoreAspService, StoreAspService>();
             services.AddScoped<ISupervisorDelegateService, SupervisorDelegateService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
             services.AddScoped<IDashboardInformationService, DashboardInformationService>();

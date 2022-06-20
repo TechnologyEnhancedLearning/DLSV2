@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
@@ -14,20 +14,22 @@
         private const int CandidateId = 11;
         private const int CustomisationId = 12;
         private const int DefaultSessionId = 13;
-        private ISession httpContextSession;
-        private ISessionDataService sessionDataService;
-        private ISessionService sessionService;
+        private IClockService clockService = null!;
+        private ISession httpContextSession = null!;
+        private ISessionDataService sessionDataService = null!;
+        private ISessionService sessionService = null!;
 
         [SetUp]
         public void SetUp()
         {
+            clockService = A.Fake<IClockService>();
             sessionDataService = A.Fake<ISessionDataService>();
             A.CallTo(() => sessionDataService.StartOrRestartDelegateSession(A<int>._, A<int>._))
                 .Returns(DefaultSessionId);
 
             httpContextSession = new MockHttpContextSession();
 
-            sessionService = new SessionService(sessionDataService);
+            sessionService = new SessionService(clockService, sessionDataService);
         }
 
         [Test]
@@ -46,11 +48,14 @@
             A.CallTo(() => sessionDataService.StartOrRestartDelegateSession(CandidateId, newCourseId))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => sessionDataService.StartOrRestartDelegateSession(A<int>._, A<int>._))
-                .WhenArgumentsMatch((int candidateId, int customisationId) =>
-                    candidateId != CandidateId || customisationId != newCourseId)
+                .WhenArgumentsMatch(
+                    (int candidateId, int customisationId) =>
+                        candidateId != CandidateId || customisationId != newCourseId
+                )
                 .MustNotHaveHappened();
 
-            A.CallTo(() => sessionDataService.UpdateDelegateSessionDuration(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => sessionDataService.UpdateDelegateSessionDuration(A<int>._, A<DateTime>._))
+                .MustNotHaveHappened();
         }
 
         [Test]
@@ -77,15 +82,17 @@
             httpContextSession.Clear();
             const int courseInSession = CustomisationId;
             httpContextSession.SetInt32($"SessionID-{courseInSession}", DefaultSessionId);
+            var currentUtcTime = new DateTime(2022, 06, 14, 12, 01, 01);
+            A.CallTo(() => clockService.UtcNow).Returns(currentUtcTime);
 
             // When
             sessionService.StartOrUpdateDelegateSession(CandidateId, courseInSession, httpContextSession);
 
             // Then
-            A.CallTo(() => sessionDataService.UpdateDelegateSessionDuration(DefaultSessionId))
+            A.CallTo(() => sessionDataService.UpdateDelegateSessionDuration(DefaultSessionId, currentUtcTime))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => sessionDataService.UpdateDelegateSessionDuration(A<int>._))
-                .WhenArgumentsMatch((int sessionId) => sessionId != DefaultSessionId)
+            A.CallTo(() => sessionDataService.UpdateDelegateSessionDuration(A<int>._, A<DateTime>._))
+                .WhenArgumentsMatch((int sessionId, DateTime currentTime) => sessionId != DefaultSessionId)
                 .MustNotHaveHappened();
 
             A.CallTo(() => sessionDataService.StartOrRestartDelegateSession(A<int>._, A<int>._)).MustNotHaveHappened();

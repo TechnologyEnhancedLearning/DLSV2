@@ -12,6 +12,7 @@
     internal class SessionDataServiceTests
     {
         private const int TwoMinutesInMilliseconds = 120 * 1000;
+        private readonly DateTime currentTime = new DateTime(2022, 06, 14, 11, 12, 13, 14);
         private SessionDataService sessionDataService = null!;
         private SessionTestHelper sessionTestHelper = null!;
 
@@ -112,7 +113,7 @@
 
                 // When
                 const int sessionId = 473;
-                sessionDataService.UpdateDelegateSessionDuration(sessionId);
+                sessionDataService.UpdateDelegateSessionDuration(sessionId, currentTime);
 
                 // Then
                 var updatedSessions = sessionTestHelper.GetCandidateSessions(candidateId).ToList();
@@ -124,7 +125,7 @@
 
                 var activeSession = updatedSessions.First(session => session.SessionId == sessionId);
                 activeSession.LoginTime.AddMinutes(activeSession.Duration)
-                    .Should().BeCloseTo(DateTime.UtcNow, TwoMinutesInMilliseconds);
+                    .Should().BeCloseTo(currentTime, TwoMinutesInMilliseconds);
             }
         }
 
@@ -139,7 +140,7 @@
 
                 // When
                 const int sessionId = 468;
-                sessionDataService.UpdateDelegateSessionDuration(sessionId);
+                sessionDataService.UpdateDelegateSessionDuration(sessionId, currentTime);
 
                 // Then
                 var updatedSessions = sessionTestHelper.GetCandidateSessions(candidateId);
