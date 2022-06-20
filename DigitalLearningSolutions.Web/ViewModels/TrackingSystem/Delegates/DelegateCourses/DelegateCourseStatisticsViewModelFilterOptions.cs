@@ -7,8 +7,6 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class DelegateCourseStatisticsViewModelFilterOptions
     {
@@ -29,13 +27,8 @@
             IEnumerable<string> topics
         )
         {
-            return new[]
+            var filterOptions = new[]
             {
-                new FilterModel(
-                    nameof(CourseStatistics.CategoryName),
-                    "Category",
-                    GetCategoryOptions(categories)
-                ),
                 new FilterModel(
                     nameof(CourseStatistics.CourseTopic),
                     "Topic",
@@ -48,6 +41,18 @@
                     CourseHasAdminFieldOptions
                 ),
             };
+
+            categories = categories.ToList();
+
+            return categories.Any()
+                ? filterOptions.Prepend(
+                    new FilterModel(
+                        nameof(CourseStatistics.CategoryName),
+                        "Category",
+                        GetCategoryOptions(categories)
+                    )
+                )
+                : filterOptions;
         }
 
         private static IEnumerable<FilterOptionModel> GetCategoryOptions(IEnumerable<string> categories)

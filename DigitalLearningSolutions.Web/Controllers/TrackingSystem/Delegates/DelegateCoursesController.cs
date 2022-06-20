@@ -65,7 +65,7 @@
             var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId);
 
             var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
-                .GetFilterOptions(details.Categories, details.Topics).ToList();
+                .GetFilterOptions(categoryId.HasValue ? new string[] { } : details.Categories, details.Topics).ToList();
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),

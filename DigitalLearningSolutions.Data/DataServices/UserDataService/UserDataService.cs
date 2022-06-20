@@ -103,6 +103,8 @@
 
         void DeactivateAdmin(int adminId);
 
+        void ReactivateAdmin(int adminId);
+
         void ActivateDelegateUser(int delegateId);
 
         int? GetDelegateUserLearningHubAuthId(int delegateId);

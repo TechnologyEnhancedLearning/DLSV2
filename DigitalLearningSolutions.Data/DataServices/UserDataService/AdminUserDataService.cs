@@ -120,7 +120,7 @@
                     isContentManager,
                     importOnly,
                     categoryId,
-                    adminId
+                    adminId,
                 }
             );
         }
@@ -144,7 +144,24 @@
                 new { adminId }
             );
         }
-        
+
+        /// <summary>
+        /// When we reactivate an admin, we must ensure the admin permissions are not
+        /// greater than basic levels. Otherwise, a basic admin would be able to
+        /// "create" admins with more permissions than themselves.
+        /// </summary>
+        public void ReactivateAdmin(int adminId)
+        {
+            connection.Execute(
+                @"UPDATE AdminUsers SET
+                        Active = 1,
+                        IsCentreManager = 0,
+                        UserAdmin = 0
+                    WHERE AdminID = @adminId",
+                new { adminId }
+            );
+        }
+
         public IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId)
         {
             return connection.Query<AdminAccount>(

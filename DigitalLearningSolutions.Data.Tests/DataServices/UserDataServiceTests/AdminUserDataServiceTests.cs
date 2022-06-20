@@ -171,6 +171,31 @@
         }
 
         [Test]
+        public void ReactivateAdminUser_activates_user_and_resets_admin_permissions()
+        {
+            using var transaction = new TransactionScope();
+            // Given
+            const int adminId = 16;
+            connection.SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(adminId);
+
+            // When
+            var deactivatedAdmin = userDataService.GetAdminUserById(adminId)!;
+            userDataService.ReactivateAdmin(adminId);
+            var reactivatedAdmin = userDataService.GetAdminUserById(adminId)!;
+
+            // Then
+            using (new AssertionScope())
+            {
+                deactivatedAdmin.Active.Should().Be(false);
+                deactivatedAdmin.IsCentreManager.Should().Be(true);
+                deactivatedAdmin.IsUserAdmin.Should().Be(true);
+                reactivatedAdmin.Active.Should().Be(true);
+                reactivatedAdmin.IsCentreManager.Should().Be(false);
+                reactivatedAdmin.IsUserAdmin.Should().Be(false);
+            }
+        }
+
+        [Test]
         public void DeleteAdminAccount_deletes_admin_record()
         {
             // Given
