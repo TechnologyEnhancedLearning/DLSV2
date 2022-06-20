@@ -169,7 +169,13 @@
             A.CallTo(() => clockService.UtcNow).Returns(now);
 
             // When
-            userService.UpdateUserDetailsAndCentreSpecificDetails(accountDetailsData, null, centreEmail, centreId, shouldUpdateProfileImage);
+            userService.UpdateUserDetailsAndCentreSpecificDetails(
+                accountDetailsData,
+                null,
+                centreEmail,
+                centreId,
+                shouldUpdateProfileImage
+            );
 
             // Then
             A.CallTo(
@@ -831,6 +837,63 @@
 
             // Then
             result.Should().Be(isEmailInUse);
+        }
+
+        [Test]
+        [TestCase(null)]
+        [TestCase("unverified@primary.email")]
+        public void GetUnverifiedEmailsForUser_returns_unverified_primary_email(string? primaryEmail)
+        {
+            // Given
+            var userAccount = UserTestHelper.GetDefaultUserAccount(
+                emailVerified: primaryEmail == null ? DateTime.Now : (DateTime?)null,
+                primaryEmail: "unverified@primary.email"
+            );
+            A.CallTo(() => userDataService.GetUserAccountById(userAccount.Id)).Returns(userAccount);
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userAccount.Id)).Returns(new List<AdminAccount>());
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(userAccount.Id))
+                .Returns(new List<DelegateAccount>());
+            A.CallTo(() => userDataService.GetUnverifiedCentreEmailsForUser(userAccount.Id))
+                .Returns(new List<(int, string, string)>());
+
+            // When
+            var result = userService.GetUnverifiedEmailsForUser(userAccount.Id);
+
+            // Then
+            result.primaryEmail.Should().BeEquivalentTo(primaryEmail);
+        }
+
+        [Test]
+        public void GetUnverifiedEmailsForUser_returns_centre_emails_for_active_accounts()
+        {
+            // Given
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+            var activeAdminAccount = UserTestHelper.GetDefaultAdminAccount(centreId: 1, active: true);
+            var inactiveAdminAccount = UserTestHelper.GetDefaultAdminAccount(centreId: 2, active: false);
+            var activeDelegateAccount = UserTestHelper.GetDefaultDelegateAccount(centreId: 3, active: true);
+            var inactiveDelegateAccount = UserTestHelper.GetDefaultDelegateAccount(centreId: 4, active: false);
+            A.CallTo(() => userDataService.GetUserAccountById(userAccount.Id)).Returns(userAccount);
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userAccount.Id)).Returns(
+                new List<AdminAccount> { activeAdminAccount, inactiveAdminAccount }
+            );
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(userAccount.Id))
+                .Returns(new List<DelegateAccount> { activeDelegateAccount, inactiveDelegateAccount });
+            A.CallTo(() => userDataService.GetUnverifiedCentreEmailsForUser(userAccount.Id))
+                .Returns(
+                    new List<(int, string, string)>
+                    {
+                        (1, "centre1", "centre@1.email"), (2, "centre2", "centre@2.email"),
+                        (3, "centre3", "centre@3.email"), (4, "centre4", "centre@4.email")
+                    }
+                );
+
+            // When
+            var result = userService.GetUnverifiedEmailsForUser(userAccount.Id);
+
+            // Then
+            result.centreEmails.Count().Should().Be(2);
+            result.centreEmails.Should().Contain(("centre1", "centre@1.email"));
+            result.centreEmails.Should().Contain(("centre3", "centre@3.email"));
         }
 
         private void AssertAdminPermissionsCalledCorrectly(

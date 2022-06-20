@@ -92,7 +92,7 @@
         }
 
         [Test]
-        public void GetUnverifiedCentreEmailsForUser_returns_unverified_emails()
+        public void GetUnverifiedCentreEmailsForUser_returns_unverified_emails_for_active_centres()
         {
             using var transaction = new TransactionScope();
 
@@ -104,6 +104,10 @@
             connection.Execute(
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
                         VALUES (8, 375, 'unverified@centre.email')"
+            );
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails(UserID, CentreID, Email)
+                        VALUES (8, 378, 'unverified@inactive_centre.email')"
             );
 
             // When
