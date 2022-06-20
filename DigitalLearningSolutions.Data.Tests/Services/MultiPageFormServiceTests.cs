@@ -98,12 +98,13 @@
                     )
                 ).MustHaveHappenedOnceExactly();
                 tempDataDictionary[feature.TempDataKey].Should().BeOfType<Guid>();
+                tempDataDictionary[feature.TempDataKey].Should().NotBe(guid);
             }
         }
 
         [Test]
         public void
-            SetMultiPageFormData_updates_existing_MultiPageFormData_and_sets_TempData_Guid_if_existing_record_is_found()
+            SetMultiPageFormData_updates_existing_MultiPageFormData_and_preserves_TempData_Guid_if_existing_record_is_found()
         {
             // Given
             const int objectToInsert = 12345;

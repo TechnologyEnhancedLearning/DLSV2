@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
@@ -215,9 +216,14 @@
                 TempData
             );
 
+            if (data.Application == null)
+            {
+                throw new Exception("Application should not be null at this point in the journey");
+            }
+
             var model = data.CourseDetailsData != null
                 ? new SetCourseDetailsViewModel(data.CourseDetailsData)
-                : new SetCourseDetailsViewModel(data!.Application!);
+                : new SetCourseDetailsViewModel(data.Application);
 
             return View("AddNewCentreCourse/SetCourseDetails", model);
         }
@@ -275,10 +281,15 @@
                 TempData
             );
 
+            if (data.Application == null)
+            {
+                throw new Exception("Application should not be null at this point in the journey");
+            }
+
             var model = data!.CourseOptionsData != null
                 ? new EditCourseOptionsFormData(data!.CourseOptionsData)
                 : new EditCourseOptionsFormData();
-            model.SetUpCheckboxes(data.Application!.DiagAssess);
+            model.SetUpCheckboxes(data.Application.DiagAssess);
 
             return View("AddNewCentreCourse/SetCourseOptions", model);
         }
@@ -333,6 +344,11 @@
                 TempData
             );
 
+            if (data.Application == null)
+            {
+                throw new Exception("Application should not be null at this point in the journey");
+            }
+
             if (model.IncludeAllSections)
             {
                 ModelState.ClearErrorsOnField(nameof(model.SelectedSectionIds));
@@ -368,6 +384,11 @@
                 MultiPageFormDataFeature.AddNewCourse,
                 TempData
             );
+
+            if (data.CourseContentData == null || data.Application == null)
+            {
+                throw new Exception("Application amd CourseContentData should not be null at this point in the journey");
+            }
 
             var section = data!.CourseContentData!.GetSelectedSections().ElementAt(sectionIndex);
             var tutorials = tutorialService.GetTutorialsForSection(section.SectionId).ToList();

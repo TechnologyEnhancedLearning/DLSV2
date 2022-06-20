@@ -60,7 +60,7 @@
         }
 
         [HttpGet]
-        [Route("{promptNumber:int}/Edit/Start")]
+        [Route("Edit/Start/{promptNumber:int}")]
         public IActionResult EditRegistrationPromptStart(int promptNumber)
         {
             TempData.Clear();
@@ -86,29 +86,24 @@
                 TempData
             );
 
-            return RedirectToAction("EditRegistrationPrompt", new { promptNumber });
+            return RedirectToAction("EditRegistrationPrompt");
         }
 
         [HttpGet]
-        [Route("{promptNumber:int}/Edit")]
+        [Route("Edit")]
         [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditRegistrationPromptTempData>))]
-        public IActionResult EditRegistrationPrompt(int promptNumber)
+        public IActionResult EditRegistrationPrompt()
         {
             var data = multiPageFormService.GetMultiPageFormData<EditRegistrationPromptTempData>(
                 MultiPageFormDataFeature.EditRegistrationPrompt,
                 TempData
             );
 
-            if (promptNumber != data.PromptNumber)
-            {
-                return RedirectToAction("EditRegistrationPromptStart", new { promptNumber });
-            }
-
             return View(new EditRegistrationPromptViewModel(data));
         }
 
         [HttpPost]
-        [Route("{promptNumber}/Edit")]
+        [Route("Edit")]
         [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditRegistrationPromptTempData>))]
         public IActionResult EditRegistrationPrompt(EditRegistrationPromptViewModel model, string action)
         {
@@ -127,24 +122,19 @@
         }
 
         [HttpGet]
-        [Route("{promptNumber:int}/Edit/Bulk")]
+        [Route("Edit/Bulk")]
         [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditRegistrationPromptTempData>))]
-        public IActionResult EditRegistrationPromptBulk(int promptNumber)
+        public IActionResult EditRegistrationPromptBulk()
         {
             var data = multiPageFormService.GetMultiPageFormData<EditRegistrationPromptTempData>(
                 MultiPageFormDataFeature.EditRegistrationPrompt,
                 TempData
             );
 
-            if (promptNumber != data.PromptNumber)
-            {
-                return RedirectToAction("EditRegistrationPromptStart", new { promptNumber });
-            }
-
             var model = new BulkRegistrationPromptAnswersViewModel(
                 data.OptionsString,
                 false,
-                promptNumber
+                data.PromptNumber
             );
 
             return View("BulkRegistrationPromptAnswers", model);
@@ -172,7 +162,7 @@
                 TempData
             );
 
-            return RedirectToAction("EditRegistrationPrompt", new { promptNumber = model.PromptNumber });
+            return RedirectToAction("EditRegistrationPrompt");
         }
 
         [HttpGet]

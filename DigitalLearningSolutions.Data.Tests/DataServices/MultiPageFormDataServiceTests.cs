@@ -7,21 +7,18 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
     public class MultiPageFormDataServiceTests
     {
-        private const string TestJson = "test json";
-
-        private static readonly Guid TestGuid = Guid.NewGuid();
-
-        private readonly MultiPageFormData expectedData = new MultiPageFormData
+        private readonly MultiPageFormData dataInDb = new MultiPageFormData
         {
-            Id = 1,
-            TempDataGuid = TestGuid,
-            Json = TestJson,
+            Id = 2,
+            TempDataGuid = Guid.NewGuid(),
+            Json = "test json",
             Feature = MultiPageFormDataFeature.AddNewCourse.Name,
             CreatedDate = new DateTime(2022, 06, 14, 14, 20, 12),
         };
@@ -42,16 +39,16 @@
         {
             // Given
             using var transaction = new TransactionScope();
-            InsertMultiPageFormData();
+            InsertMultiPageFormData(dataInDb);
 
             // When
             var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
-                TestGuid,
+                dataInDb.TempDataGuid,
                 MultiPageFormDataFeature.AddNewCourse.Name
             );
 
             // Then
-            result.Should().BeEquivalentTo(expectedData);
+            result.Should().BeEquivalentTo(dataInDb);
         }
 
         [Test]
@@ -59,7 +56,7 @@
         {
             // Given
             using var transaction = new TransactionScope();
-            InsertMultiPageFormData();
+            InsertMultiPageFormData(dataInDb);
 
             // When
             var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
@@ -76,11 +73,11 @@
         {
             // Given
             using var transaction = new TransactionScope();
-            InsertMultiPageFormData();
+            InsertMultiPageFormData(dataInDb);
 
             // When
             var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
-                TestGuid,
+                dataInDb.TempDataGuid,
                 "incorrect feature"
             );
 
@@ -94,14 +91,14 @@
             using var transaction = new TransactionScope();
 
             // When
-            multiPageFormDataService.InsertMultiPageFormData(expectedData);
+            multiPageFormDataService.InsertMultiPageFormData(dataInDb);
             var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
-                TestGuid,
+                dataInDb.TempDataGuid,
                 MultiPageFormDataFeature.AddNewCourse.Name
             );
 
             // Then
-            result.Should().BeEquivalentTo(expectedData, options => options.Excluding(d => d.Id));
+            result.Should().BeEquivalentTo(dataInDb, options => options.Excluding(d => d.Id));
         }
 
         [Test]
@@ -110,12 +107,12 @@
             // Given
             using var transaction = new TransactionScope();
             const string newJsonString = "new json";
-            InsertMultiPageFormData();
+            InsertMultiPageFormData(dataInDb);
 
             // When
-            multiPageFormDataService.UpdateJsonByGuid(TestGuid, newJsonString);
+            multiPageFormDataService.UpdateJsonByGuid(dataInDb.TempDataGuid, newJsonString);
             var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
-                TestGuid,
+                dataInDb.TempDataGuid,
                 MultiPageFormDataFeature.AddNewCourse.Name
             );
 
@@ -125,16 +122,40 @@
         }
 
         [Test]
+        public void UpdateJsonByGuid_does_not_update_other_records()
+        {
+            // Given
+            using var transaction = new TransactionScope();
+            const string newJsonString = "new json";
+            var secondDataInDb = Builder<MultiPageFormData>
+                .CreateNew()
+                .With(d => d.TempDataGuid = Guid.NewGuid())
+                .Build();
+            InsertMultiPageFormData(dataInDb);
+            InsertMultiPageFormData(secondDataInDb);
+
+            // When
+            multiPageFormDataService.UpdateJsonByGuid(secondDataInDb.TempDataGuid, newJsonString);
+            var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
+                dataInDb.TempDataGuid,
+                MultiPageFormDataFeature.AddNewCourse.Name
+            );
+
+            // Then
+            result.Should().BeEquivalentTo(dataInDb);
+        }
+
+        [Test]
         public void DeleteByGuid_deletes_expected_record()
         {
             // Given
             using var transaction = new TransactionScope();
-            InsertMultiPageFormData();
+            InsertMultiPageFormData(dataInDb);
 
             // When
-            multiPageFormDataService.DeleteByGuid(TestGuid);
+            multiPageFormDataService.DeleteByGuid(dataInDb.TempDataGuid);
             var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
-                TestGuid,
+                dataInDb.TempDataGuid,
                 MultiPageFormDataFeature.AddNewCourse.Name
             );
 
@@ -142,14 +163,37 @@
             result.Should().BeNull();
         }
 
-        private void InsertMultiPageFormData()
+        [Test]
+        public void DeleteByGuid_does_not_delete_other_records()
+        {
+            // Given
+            using var transaction = new TransactionScope();
+            var secondDataInDb = Builder<MultiPageFormData>
+                .CreateNew()
+                .With(d => d.TempDataGuid = Guid.NewGuid())
+                .Build();
+            InsertMultiPageFormData(dataInDb);
+            InsertMultiPageFormData(secondDataInDb);
+
+            // When
+            multiPageFormDataService.DeleteByGuid(secondDataInDb.TempDataGuid);
+            var result = multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(
+                dataInDb.TempDataGuid,
+                MultiPageFormDataFeature.AddNewCourse.Name
+            );
+
+            // Then
+            result.Should().BeEquivalentTo(dataInDb);
+        }
+
+        private void InsertMultiPageFormData(MultiPageFormData data)
         {
             connection.Execute(
                 @"SET IDENTITY_INSERT dbo.MultiPageFormData ON
                     INSERT MultiPageFormData (ID, TempDataGuid, Json, Feature, CreatedDate)
                     VALUES (@Id, @TempDataGuid, @Json, @Feature, @CreatedDate)
                     SET IDENTITY_INSERT dbo.MultiPageFormData OFF",
-                expectedData
+                data
             );
         }
     }

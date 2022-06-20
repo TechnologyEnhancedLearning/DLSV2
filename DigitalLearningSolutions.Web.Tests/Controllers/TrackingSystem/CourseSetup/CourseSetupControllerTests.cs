@@ -443,7 +443,7 @@
             var sectionModel = new Section(1, "Test name");
             var model = new SetCourseContentViewModel(new List<Section> { sectionModel }, false, null);
             controller.ModelState.AddModelError("SelectedSectionIds", "test message");
-            SetAddNewCentreCourseTempData();
+            SetAddNewCentreCourseTempData(new ApplicationDetails());
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)

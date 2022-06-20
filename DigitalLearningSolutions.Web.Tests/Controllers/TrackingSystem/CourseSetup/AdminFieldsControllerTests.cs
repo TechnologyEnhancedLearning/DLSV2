@@ -222,7 +222,7 @@
                 .Returns(true);
 
             // When
-            var result = controller.EditAdminFieldAnswersBulk(1, 1, inputViewModel);
+            var result = controller.EditAdminFieldAnswersBulk(1, inputViewModel);
 
             // Then
             using (new AssertionScope())
@@ -773,7 +773,7 @@
             var model = new BulkAdminFieldAnswersViewModel("test\r\n   tEsT   ");
 
             // When
-            var result = controller.EditAdminFieldAnswersBulk(1, 1, model);
+            var result = controller.EditAdminFieldAnswersBulk(1, model);
 
             // Then
             using (new AssertionScope())

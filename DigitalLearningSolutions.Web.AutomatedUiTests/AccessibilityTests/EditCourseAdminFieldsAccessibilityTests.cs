@@ -16,7 +16,7 @@
         {
             // Given
             Driver.LogUserInAsAdminAndDelegate(BaseUrl);
-            const string startUrl = "/TrackingSystem/CourseSetup/100/AdminFields/1/Edit/Start";
+            const string startUrl = "/TrackingSystem/CourseSetup/100/AdminFields/Edit/Start/1";
 
             // When
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);

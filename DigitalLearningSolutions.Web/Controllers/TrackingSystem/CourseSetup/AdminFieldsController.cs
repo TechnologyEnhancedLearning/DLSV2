@@ -57,7 +57,7 @@
         }
 
         [HttpGet]
-        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Start")]
+        [Route("{customisationId:int}/AdminFields/Edit/Start/{promptNumber:int}")]
         public IActionResult EditAdminFieldStart(int customisationId, int promptNumber)
         {
             var courseAdminField = courseAdminFieldsService.GetCourseAdminFieldsForCourse(
@@ -85,26 +85,21 @@
         }
 
         [HttpGet]
-        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit")]
+        [Route("{customisationId:int}/AdminFields/Edit")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldTempData>))]
-        public IActionResult EditAdminField(int customisationId, int promptNumber)
+        public IActionResult EditAdminField(int customisationId)
         {
             var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
                 MultiPageFormDataFeature.EditAdminField,
                 TempData
             );
 
-            if (promptNumber != data.PromptNumber)
-            {
-                return RedirectToAction("EditAdminFieldStart", new { promptNumber, customisationId });
-            }
-
             return View(new EditAdminFieldViewModel(data));
         }
 
         [HttpPost]
-        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit")]
+        [Route("{customisationId:int}/AdminFields/Edit")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldTempData>))]
         public IActionResult EditAdminField(
@@ -128,20 +123,15 @@
         }
 
         [HttpGet]
-        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Bulk")]
+        [Route("{customisationId:int}/AdminFields/Edit/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldTempData>))]
-        public IActionResult EditAdminFieldAnswersBulk(int customisationId, int promptNumber)
+        public IActionResult EditAdminFieldAnswersBulk(int customisationId)
         {
             var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
                 MultiPageFormDataFeature.EditAdminField,
                 TempData
             );
-
-            if (promptNumber != data.PromptNumber)
-            {
-                return RedirectToAction("EditAdminFieldStart", new { promptNumber, customisationId });
-            }
 
             var model = new BulkAdminFieldAnswersViewModel(
                 data.OptionsString
@@ -151,12 +141,11 @@
         }
 
         [HttpPost]
-        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Bulk")]
+        [Route("{customisationId:int}/AdminFields/Edit/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         [ServiceFilter(typeof(RedirectMissingMultiPageFormData<EditAdminFieldTempData>))]
         public IActionResult EditAdminFieldAnswersBulk(
             int customisationId,
-            int promptNumber,
             BulkAdminFieldAnswersViewModel model
         )
         {
@@ -177,10 +166,7 @@
                 TempData
             );
 
-            return RedirectToAction(
-                "EditAdminField",
-                new { customisationId, promptNumber }
-            );
+            return RedirectToAction("EditAdminField", new { customisationId });
         }
 
         [HttpGet]
