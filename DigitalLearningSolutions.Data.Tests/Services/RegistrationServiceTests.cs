@@ -940,15 +940,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             using (new AssertionScope())
             {
                 A.CallTo(() => userDataService.ReactivateAdmin(adminUser.Id)).MustHaveHappenedOnceExactly();
-                A.CallTo(
-                    () => userDataService.UpdateAdminUser(
-                        delegateUser.FirstName!,
-                        delegateUser.LastName,
-                        delegateUser.EmailAddress!,
-                        delegateUser.ProfileImage,
-                        adminUser.Id
-                    )
-                ).MustHaveHappenedOnceExactly();
                 A.CallTo(() => passwordDataService.SetPasswordByAdminId(adminUser.Id, delegateUser.Password!))
                     .MustHaveHappenedOnceExactly();
                 A.CallTo(
@@ -1037,15 +1028,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private void UpdateToExistingAdminAccountMustNotHaveHappened()
         {
             A.CallTo(() => userDataService.ReactivateAdmin(A<int>._)).MustNotHaveHappened();
-            A.CallTo(
-                () => userDataService.UpdateAdminUser(
-                    A<string>._,
-                    A<string>._,
-                    A<string>._,
-                    A<byte[]>._,
-                    A<int>._
-                )
-            ).MustNotHaveHappened();
             A.CallTo(() => passwordDataService.SetPasswordByAdminId(A<int>._, A<string>._)).MustNotHaveHappened();
             A.CallTo(
                 () => userDataService.UpdateAdminUserPermissions(
