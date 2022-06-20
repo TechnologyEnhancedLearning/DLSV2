@@ -26,22 +26,11 @@
             }
 
             var userId = User.GetUserIdKnownNotNull();
-            var userEntity = userService.GetUserById(userId)!;
-            var unverifiedPrimaryEmail =
-                userEntity.UserAccount.EmailVerified == null ? userEntity.UserAccount.PrimaryEmail : null;
-            var unverifiedCentreSpecificEmails = userService.GetUnverifiedCentreEmailsForUser(userId).Where(
-                pair => userEntity.AdminAccounts.Any(
-                            account => account.CentreName.Equals(pair.centreName) && account.Active
-                        ) ||
-                        userEntity.DelegateAccounts.Any(
-                            account => account.CentreName.Equals(pair.centreName) && account.Active
-                        )
-            );
-
+            var (unverifiedPrimaryEmail, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
             var model = new VerifyEmailViewModel(
                 emailVerificationReason,
                 unverifiedPrimaryEmail,
-                unverifiedCentreSpecificEmails.ToList()
+                unverifiedCentreEmails.ToList()
             );
 
             return View(model);

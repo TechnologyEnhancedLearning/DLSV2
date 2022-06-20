@@ -148,7 +148,7 @@
 
         string? GetCentreEmail(int userId, int centreId);
 
-        IEnumerable<(string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(int userId);
+        IEnumerable<(int centreId, string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(int userId);
     }
 
     public partial class UserDataService : IUserDataService

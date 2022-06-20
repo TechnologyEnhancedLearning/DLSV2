@@ -137,10 +137,13 @@
             ).SingleOrDefault();
         }
 
-        public IEnumerable<(string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(int userId)
+        public IEnumerable<(int centreId, string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(
+            int userId
+        )
         {
-            return connection.Query<(string, string)>(
+            return connection.Query<(int, string, string)>(
                 @"SELECT
+                        c.CentreID,
                         c.CentreName,
                         ucd.Email
                     FROM UserCentreDetails AS ucd
