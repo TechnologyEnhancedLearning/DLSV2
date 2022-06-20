@@ -58,7 +58,7 @@
         }
 
         [Test]
-        public async Task RegisterAdmin_Sets_all_fields_correctly_on_centre_manager_admin_registration()
+        public async Task RegisterAdmin_sets_all_fields_correctly_on_centre_manager_admin_registration()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -72,7 +72,7 @@
 
             // Then
             var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;
-            var tcAgreed = await connection.GetTC_AgreedByAdminIdAsync(user.Id);
+            var tcAgreed = await connection.GetTCAgreedByAdminIdAsync(user.Id);
             using (new AssertionScope())
             {
                 user.FirstName.Should().Be(registrationModel.FirstName);
@@ -100,29 +100,14 @@
 
             // Then
             var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;
-            var tcAgreed = await connection.GetTC_AgreedByAdminIdAsync(user.Id);
-            tcAgreed.Should().BeNull();
-        }
-
-        [Test]
-        public void Sets_all_fields_correctly_on_centre_manager_admin_registration()
-        {
-            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            // Given
-            var registrationModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
-
-            // When
-            service.RegisterAdmin(registrationModel, false);
-
-            // Then
-            var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;
+            var tcAgreed = await connection.GetTCAgreedByAdminIdAsync(user.Id);
             user.FirstName.Should().Be(registrationModel.FirstName);
             user.LastName.Should().Be(registrationModel.LastName);
             user.CentreId.Should().Be(registrationModel.Centre);
             user.Password.Should().Be(registrationModel.PasswordHash);
             user.IsCentreAdmin.Should().BeTrue();
             user.IsCentreManager.Should().BeTrue();
+            tcAgreed.Should().BeNull();
         }
 
         [Test]

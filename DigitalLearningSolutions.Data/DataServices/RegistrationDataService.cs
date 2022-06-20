@@ -10,13 +10,14 @@
     public interface IRegistrationDataService
     {
         string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
+
         int RegisterAdmin(AdminRegistrationModel registrationModel, bool registerJourneyContainsTermsAndConditions);
     }
 
     public class RegistrationDataService : IRegistrationDataService
     {
-        private readonly IDbConnection connection;
         private readonly IClockService clockService;
+        private readonly IDbConnection connection;
 
         public RegistrationDataService(IDbConnection connection, IClockService clockService)
         {
@@ -47,7 +48,7 @@
                 delegateRegistrationModel.NotifyDate,
                 // The parameter @Bulk causes the stored procedure to send old welcome emails,
                 // which is something we do not want in the refactored system so we always set this to 0
-                Bulk = 0
+                Bulk = 0,
             };
 
             var candidateNumberOrErrorCode = connection.QueryFirstOrDefault<string>(
@@ -59,7 +60,10 @@
             return candidateNumberOrErrorCode;
         }
 
-        public int RegisterAdmin(AdminRegistrationModel registrationModel, bool registerJourneyContainsTermsAndConditions)
+        public int RegisterAdmin(
+            AdminRegistrationModel registrationModel,
+            bool registerJourneyContainsTermsAndConditions
+        )
         {
             var currentTime = clockService.UtcNow;
             var values = new

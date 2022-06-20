@@ -355,7 +355,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(
@@ -374,7 +374,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(
@@ -390,7 +390,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(
@@ -409,7 +409,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
@@ -432,7 +432,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
 
             // When
-            Action act = () => registrationService.RegisterCentreManager(model, 1);
+            Action act = () => registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             act.Should().Throw<Exception>();
@@ -446,7 +446,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
 
             // When
-            Action act = () => registrationService.RegisterCentreManager(model, 1);
+            Action act = () => registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             act.Should().Throw<Exception>();
@@ -469,7 +469,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(

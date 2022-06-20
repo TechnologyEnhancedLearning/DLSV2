@@ -177,7 +177,7 @@
             return users.Single();
         }
 
-        public static async Task<DateTime?> GetTC_AgreedByAdminIdAsync(
+        public static async Task<DateTime?> GetTCAgreedByAdminIdAsync(
             this DbConnection connection,
             int adminId
         )
