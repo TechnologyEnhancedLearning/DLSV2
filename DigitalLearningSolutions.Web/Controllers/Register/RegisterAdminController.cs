@@ -188,7 +188,8 @@
             var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
             registrationService.RegisterCentreManager(
                 registrationModel,
-                data.JobGroup!.Value
+                data.JobGroup!.Value,
+                true
             );
 
             return RedirectToAction("Confirmation");

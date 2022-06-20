@@ -355,7 +355,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(
@@ -374,7 +374,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(
@@ -390,7 +390,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(
@@ -409,7 +409,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
@@ -418,7 +418,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => registrationDataService.RegisterAdmin(model))
+            A.CallTo(() => registrationDataService.RegisterAdmin(model, true))
                 .MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustHaveHappened(1, Times.Exactly);
@@ -432,7 +432,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
 
             // When
-            Action act = () => registrationService.RegisterCentreManager(model, 1);
+            Action act = () => registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             act.Should().Throw<Exception>();
@@ -446,7 +446,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
 
             // When
-            Action act = () => registrationService.RegisterCentreManager(model, 1);
+            Action act = () => registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             act.Should().Throw<Exception>();
@@ -456,7 +456,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
-            A.CallTo(() => registrationDataService.RegisterAdmin(model))
+            A.CallTo(() => registrationDataService.RegisterAdmin(model, A<bool>._))
                 .MustNotHaveHappened();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustNotHaveHappened();
@@ -469,7 +469,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(
@@ -782,7 +782,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                                 a.IsContentCreator == adminRoles.IsContentCreator &&
                                 a.IsTrainer == adminRoles.IsTrainer &&
                                 a.IsSupervisor == adminRoles.IsSupervisor
-                        )
+                        ),
+                        false
                     )
                 ).MustHaveHappened();
                 UpdateToExistingAdminAccountMustNotHaveHappened();
