@@ -243,13 +243,6 @@ namespace DigitalLearningSolutions.Data.Services
             if (adminUser?.Active == false && adminUser.CentreId == delegateUser.CentreId)
             {
                 userDataService.ReactivateAdmin(adminUser.Id);
-                userDataService.UpdateAdminUser(
-                    delegateUser.FirstName,
-                    delegateUser.LastName,
-                    delegateUser.EmailAddress,
-                    delegateUser.ProfileImage,
-                    adminUser.Id
-                );
                 passwordDataService.SetPasswordByAdminId(adminUser.Id, delegateUser.Password);
                 userDataService.UpdateAdminUserPermissions(
                     adminUser.Id,
