@@ -55,8 +55,7 @@
             const string centreSpecificEmail = "centre@email.com";
             var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
                 userCentreDetailsId: 1,
-                centreSpecificEmail: centreSpecificEmail,
-                centreSpecificEmailVerified: false
+                centreSpecificEmail: centreSpecificEmail
             );
             A.CallTo(() => userService.GetDelegateById(delegateId)).Returns(delegateEntity);
 

@@ -198,7 +198,7 @@
             DateTime? detailsLastChecked = null,
             int? userCentreDetailsId = null,
             string? centreSpecificEmail = null,
-            bool? centreSpecificEmailVerified = null
+            DateTime? centreSpecificEmailVerified = null
         )
         {
             dateRegistered ??= DateTime.Parse("2010-09-22 06:52:09.080");

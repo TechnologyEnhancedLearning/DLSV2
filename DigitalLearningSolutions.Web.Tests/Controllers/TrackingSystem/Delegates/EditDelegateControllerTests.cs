@@ -71,8 +71,7 @@
             var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
                 DelegateId,
                 userCentreDetailsId: 1,
-                centreSpecificEmail: centreSpecificEmail,
-                centreSpecificEmailVerified: false
+                centreSpecificEmail: centreSpecificEmail
             );
             A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
 
@@ -165,8 +164,7 @@
             var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
                 DelegateId,
                 userCentreDetailsId: 1,
-                centreSpecificEmail: centreSpecificEmail,
-                centreSpecificEmailVerified: false
+                centreSpecificEmail: centreSpecificEmail
             );
             var formData = new EditDelegateFormData
             {
