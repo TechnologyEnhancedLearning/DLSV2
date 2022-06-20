@@ -93,33 +93,6 @@
             }
         }
 
-        [TestCase(null, 1, 123)]
-        [TestCase(101, null, 123)]
-        [TestCase(101, 1, null)]
-        public void
-            GetProgressAndValidateInputsForStoreAspAssess_returns_StoreAspAssessException_if_a_query_param_is_null(
-                int? version,
-                int? candidateId,
-                int? customisationId
-            )
-        {
-            // When
-            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
-                version,
-                100,
-                candidateId,
-                customisationId
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.validationResponse.Should().Be(TrackerEndpointResponse.StoreAspAssessException);
-                result.progress.Should().BeNull();
-                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).MustNotHaveHappened();
-            }
-        }
-
         [TestCase(null, 1)]
         [TestCase(1, null)]
         public void
@@ -145,26 +118,6 @@
                 result.validationResponse.Should().Be(TrackerEndpointResponse.NullScoreTutorialStatusOrTime);
                 result.progress.Should().BeNull();
                 A.CallTo(() => progressService.GetDetailedCourseProgress(A<int>._)).MustNotHaveHappened();
-            }
-        }
-
-        [Test]
-        public void GetProgressAndValidateInputsForStoreAspAssess_returns_NullScoreException_if_score_param_is_null()
-        {
-            // When
-            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
-                1,
-                null,
-                2,
-                3
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.validationResponse.Should().Be(TrackerEndpointResponse.NullScoreTutorialStatusOrTime);
-                result.progress.Should().BeNull();
-                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).MustNotHaveHappened();
             }
         }
 
@@ -231,133 +184,6 @@
         }
 
         [Test]
-        public void GetProgressAndValidateInputsForStoreAspAssess_returns_StoreAspAssessException_if_progress_is_null()
-        {
-            // Given
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).Returns(new List<DelegateCourseInfo>());
-
-            // When
-            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
-                1,
-                2,
-                DefaultDelegateId,
-                4
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.validationResponse.Should().Be(TrackerEndpointResponse.StoreAspAssessException);
-                result.progress.Should().BeNull();
-                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(DefaultDelegateId))
-                    .MustHaveHappenedOnceExactly();
-            }
-        }
-
-        [Test]
-        public void
-            GetProgressAndValidateInputsForStoreAspAssess_returns_StoreAspAssessException_if_progress_records_are_all_invalid()
-        {
-            // Given
-            var invalidProgressRecords = Builder<DelegateCourseInfo>.CreateListOfSize(3).All()
-                .With(p => p.RemovedDate = null)
-                .And(p => p.Completed = null)
-                .And(p => p.CustomisationId = DefaultCustomisationId)
-                .And(p => p.IsProgressLocked = false)
-                .TheFirst(1).With(p => p.RemovedDate = DateTime.UtcNow)
-                .TheNext(1).With(p => p.Completed = DateTime.UtcNow)
-                .TheNext(1).With(p => p.CustomisationId = DefaultCustomisationId + 100)
-                .Build();
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).Returns(invalidProgressRecords);
-
-            // When
-            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
-                1,
-                2,
-                DefaultDelegateId,
-                DefaultCustomisationId
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.validationResponse.Should().Be(TrackerEndpointResponse.StoreAspAssessException);
-                result.progress.Should().BeNull();
-                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(DefaultDelegateId))
-                    .MustHaveHappenedOnceExactly();
-            }
-        }
-
-        [Test]
-        public void
-            GetProgressAndValidateInputsForStoreAspAssess_returns_StoreAspAssessException_if_otherwise_valid_progress_record_is_locked()
-        {
-            // Given
-            var progressRecords = Builder<DelegateCourseInfo>.CreateListOfSize(4).All()
-                .With(p => p.RemovedDate = null)
-                .And(p => p.Completed = null)
-                .And(p => p.CustomisationId = DefaultCustomisationId)
-                .And(p => p.IsProgressLocked = false)
-                .TheFirst(1).With(p => p.RemovedDate = DateTime.UtcNow)
-                .TheNext(1).With(p => p.Completed = DateTime.UtcNow)
-                .TheNext(1).With(p => p.CustomisationId = DefaultCustomisationId + 100)
-                .TheNext(1).With(p => p.IsProgressLocked = true)
-                .Build();
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).Returns(progressRecords);
-
-            // When
-            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
-                1,
-                2,
-                DefaultDelegateId,
-                DefaultCustomisationId
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.validationResponse.Should().Be(TrackerEndpointResponse.StoreAspAssessException);
-                result.progress.Should().BeNull();
-                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(DefaultDelegateId))
-                    .MustHaveHappenedOnceExactly();
-            }
-        }
-
-        [Test]
-        public void
-            GetProgressAndValidateInputsForStoreAspAssess_returns_StoreAspAssessException_if_multiple_valid_progress_records_obtained()
-        {
-            // Given
-            var progressRecords = Builder<DelegateCourseInfo>.CreateListOfSize(5).All()
-                .With(p => p.RemovedDate = null)
-                .And(p => p.Completed = null)
-                .And(p => p.CustomisationId = DefaultCustomisationId)
-                .And(p => p.IsProgressLocked = false)
-                .TheFirst(1).With(p => p.RemovedDate = DateTime.UtcNow)
-                .TheNext(1).With(p => p.Completed = DateTime.UtcNow)
-                .TheNext(1).With(p => p.CustomisationId = DefaultCustomisationId + 100)
-                .Build();
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).Returns(progressRecords);
-
-            // When
-            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
-                1,
-                2,
-                DefaultDelegateId,
-                DefaultCustomisationId
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.validationResponse.Should().Be(TrackerEndpointResponse.StoreAspAssessException);
-                result.progress.Should().BeNull();
-                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(DefaultDelegateId))
-                    .MustHaveHappenedOnceExactly();
-            }
-        }
-
-        [Test]
         public void
             GetProgressAndValidateCommonInputsForStoreAspProgressEndpoints_returns_progress_record_and_no_exception_when_all_is_valid()
         {
@@ -381,41 +207,6 @@
                 result.validationResponse.Should().BeNull();
                 result.progress.Should().Be(defaultCourseProgress);
                 A.CallTo(() => progressService.GetDetailedCourseProgress(DefaultProgressId))
-                    .MustHaveHappenedOnceExactly();
-            }
-        }
-
-        [Test]
-        public void
-            GetProgressAndValidateInputsForStoreAspAssess_returns_correct_progress_record_and_no_exception_when_all_is_valid()
-        {
-            // Given
-            var progressRecords = Builder<DelegateCourseInfo>.CreateListOfSize(4).All()
-                .With(p => p.RemovedDate = null)
-                .And(p => p.Completed = null)
-                .And(p => p.CustomisationId = DefaultCustomisationId)
-                .And(p => p.IsProgressLocked = false)
-                .TheFirst(1).With(p => p.RemovedDate = DateTime.UtcNow)
-                .TheNext(1).With(p => p.Completed = DateTime.UtcNow)
-                .TheNext(1).With(p => p.CustomisationId = DefaultCustomisationId + 100)
-                .Build();
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).Returns(progressRecords);
-
-            // When
-            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
-                1,
-                2,
-                DefaultDelegateId,
-                DefaultCustomisationId
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                var expectedProgressRecord = progressRecords[3];
-                result.validationResponse.Should().BeNull();
-                result.progress.Should().BeEquivalentTo(expectedProgressRecord);
-                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(DefaultDelegateId))
                     .MustHaveHappenedOnceExactly();
             }
         }
@@ -606,6 +397,216 @@
                 () => progressService.CheckProgressForCompletionAndSendEmailIfCompleted(defaultCourseProgress)
             ).MustHaveHappenedOnceExactly();
         }
+
+        [TestCase(null, 1, 123)]
+        [TestCase(101, null, 123)]
+        [TestCase(101, 1, null)]
+        public void
+            GetProgressAndValidateInputsForStoreAspAssess_returns_StoreAspAssessException_if_a_query_param_is_null(
+                int? version,
+                int? candidateId,
+                int? customisationId
+            )
+        {
+            // When
+            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
+                version,
+                100,
+                candidateId,
+                customisationId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.validationResponse.Should().Be(TrackerEndpointResponse.StoreAspAssessException);
+                result.progress.Should().BeNull();
+                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).MustNotHaveHappened();
+            }
+        }
+
+        [Test]
+        public void GetProgressAndValidateInputsForStoreAspAssess_returns_NullScoreException_if_score_param_is_null()
+        {
+            // When
+            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
+                1,
+                null,
+                2,
+                3
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.validationResponse.Should().Be(TrackerEndpointResponse.NullScoreTutorialStatusOrTime);
+                result.progress.Should().BeNull();
+                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).MustNotHaveHappened();
+            }
+        }
+
+                [Test]
+        public void GetProgressAndValidateInputsForStoreAspAssess_returns_StoreAspAssessException_if_progress_is_null()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).Returns(new List<DelegateCourseInfo>());
+
+            // When
+            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
+                1,
+                2,
+                DefaultDelegateId,
+                4
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.validationResponse.Should().Be(TrackerEndpointResponse.StoreAspAssessException);
+                result.progress.Should().BeNull();
+                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(DefaultDelegateId))
+                    .MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void
+            GetProgressAndValidateInputsForStoreAspAssess_returns_StoreAspAssessException_if_progress_records_are_all_invalid()
+        {
+            // Given
+            var invalidProgressRecords = Builder<DelegateCourseInfo>.CreateListOfSize(3).All()
+                .With(p => p.RemovedDate = null)
+                .And(p => p.Completed = null)
+                .And(p => p.CustomisationId = DefaultCustomisationId)
+                .And(p => p.IsProgressLocked = false)
+                .TheFirst(1).With(p => p.RemovedDate = DateTime.UtcNow)
+                .TheNext(1).With(p => p.Completed = DateTime.UtcNow)
+                .TheNext(1).With(p => p.CustomisationId = DefaultCustomisationId + 100)
+                .Build();
+            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).Returns(invalidProgressRecords);
+
+            // When
+            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
+                1,
+                2,
+                DefaultDelegateId,
+                DefaultCustomisationId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.validationResponse.Should().Be(TrackerEndpointResponse.StoreAspAssessException);
+                result.progress.Should().BeNull();
+                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(DefaultDelegateId))
+                    .MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void
+            GetProgressAndValidateInputsForStoreAspAssess_returns_StoreAspAssessException_if_otherwise_valid_progress_record_is_locked()
+        {
+            // Given
+            var progressRecords = Builder<DelegateCourseInfo>.CreateListOfSize(4).All()
+                .With(p => p.RemovedDate = null)
+                .And(p => p.Completed = null)
+                .And(p => p.CustomisationId = DefaultCustomisationId)
+                .And(p => p.IsProgressLocked = false)
+                .TheFirst(1).With(p => p.RemovedDate = DateTime.UtcNow)
+                .TheNext(1).With(p => p.Completed = DateTime.UtcNow)
+                .TheNext(1).With(p => p.CustomisationId = DefaultCustomisationId + 100)
+                .TheNext(1).With(p => p.IsProgressLocked = true)
+                .Build();
+            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).Returns(progressRecords);
+
+            // When
+            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
+                1,
+                2,
+                DefaultDelegateId,
+                DefaultCustomisationId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.validationResponse.Should().Be(TrackerEndpointResponse.StoreAspAssessException);
+                result.progress.Should().BeNull();
+                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(DefaultDelegateId))
+                    .MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void
+            GetProgressAndValidateInputsForStoreAspAssess_returns_StoreAspAssessException_if_multiple_valid_progress_records_obtained()
+        {
+            // Given
+            var progressRecords = Builder<DelegateCourseInfo>.CreateListOfSize(5).All()
+                .With(p => p.RemovedDate = null)
+                .And(p => p.Completed = null)
+                .And(p => p.CustomisationId = DefaultCustomisationId)
+                .And(p => p.IsProgressLocked = false)
+                .TheFirst(1).With(p => p.RemovedDate = DateTime.UtcNow)
+                .TheNext(1).With(p => p.Completed = DateTime.UtcNow)
+                .TheNext(1).With(p => p.CustomisationId = DefaultCustomisationId + 100)
+                .Build();
+            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).Returns(progressRecords);
+
+            // When
+            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
+                1,
+                2,
+                DefaultDelegateId,
+                DefaultCustomisationId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.validationResponse.Should().Be(TrackerEndpointResponse.StoreAspAssessException);
+                result.progress.Should().BeNull();
+                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(DefaultDelegateId))
+                    .MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void
+            GetProgressAndValidateInputsForStoreAspAssess_returns_correct_progress_record_and_no_exception_when_all_is_valid()
+        {
+            // Given
+            var progressRecords = Builder<DelegateCourseInfo>.CreateListOfSize(4).All()
+                .With(p => p.RemovedDate = null)
+                .And(p => p.Completed = null)
+                .And(p => p.CustomisationId = DefaultCustomisationId)
+                .And(p => p.IsProgressLocked = false)
+                .TheFirst(1).With(p => p.RemovedDate = DateTime.UtcNow)
+                .TheNext(1).With(p => p.Completed = DateTime.UtcNow)
+                .TheNext(1).With(p => p.CustomisationId = DefaultCustomisationId + 100)
+                .Build();
+            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(A<int>._)).Returns(progressRecords);
+
+            // When
+            var result = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
+                1,
+                2,
+                DefaultDelegateId,
+                DefaultCustomisationId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                var expectedProgressRecord = progressRecords[3];
+                result.validationResponse.Should().BeNull();
+                result.progress.Should().BeEquivalentTo(expectedProgressRecord);
+                A.CallTo(() => courseDataService.GetDelegateCoursesInfo(DefaultDelegateId))
+                    .MustHaveHappenedOnceExactly();
+            }
+        }
+
 
         [Test]
         public void GetAndValidateSectionAssessmentDetails_returns_StoreAspAssessException_when_sectionId_is_null()
