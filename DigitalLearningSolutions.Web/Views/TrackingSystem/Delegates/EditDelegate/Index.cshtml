@@ -14,19 +14,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] {
-                                                   nameof(Model.FirstName),
-                                                   nameof(Model.LastName),
-                                                   nameof(Model.CentreSpecificEmail),
-                                                   nameof(Model.HasProfessionalRegistrationNumber),
-                                                   nameof(Model.ProfessionalRegistrationNumber),
-                                                   nameof(Model.JobGroupId),
-                                                   nameof(Model.Answer1),
-                                                   nameof(Model.Answer2),
-                                                   nameof(Model.Answer3),
-                                                   nameof(Model.Answer4),
-                                                   nameof(Model.Answer5),
-                                                   nameof(Model.Answer6) })" />
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.CentreSpecificEmail), nameof(Model.HasProfessionalRegistrationNumber), nameof(Model.ProfessionalRegistrationNumber), nameof(Model.JobGroupId), nameof(Model.Answer1), nameof(Model.Answer2), nameof(Model.Answer3), nameof(Model.Answer4), nameof(Model.Answer5), nameof(Model.Answer6) })" />
     }
 
     <h1 class="nhsuk-heading-xl">Edit delegate details</h1>
@@ -62,17 +50,17 @@
                        hint-text=""
                        css-class="nhsuk-u-width-one-half" />
 
+        <vc:select-list asp-for="@nameof(Model.JobGroupId)"
+                        label="Job group"
+                        value="@Model.JobGroupId.ToString()"
+                        hint-text=""
+                        deselectable="false"
+                        css-class="nhsuk-u-width-one-half"
+                        default-option="Select a job group"
+                        select-list-options="@Model.JobGroups" />
+
         <partial name="_EditRegistrationNumber" model="@Model" />
       </div>
-
-      <vc:select-list asp-for="@nameof(Model.JobGroupId)"
-                      label="Job group"
-                      value="@Model.JobGroupId.ToString()"
-                      hint-text=""
-                      deselectable="false"
-                      css-class="nhsuk-u-width-one-half"
-                      default-option="Select a job group"
-                      select-list-options="@Model.JobGroups" />
 
       @foreach (var customField in Model.CustomFields) {
         @if (customField.Options.Any()) {
