@@ -23,7 +23,12 @@
       <p>
         You will need to log out and in again before you can access the Learning Portal.
       </p>
-      <partial name="_LogoutForm"/>
+      <partial name="_LogoutForm" />
+    } else if (Model.Approved) {
+      <p>
+        You will need to log out and in again before you can access your new account.
+      </p>
+      <partial name="_LogoutForm" />
     }
 
     @if (!Model.Approved) {

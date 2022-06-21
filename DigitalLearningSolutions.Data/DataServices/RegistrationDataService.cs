@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
+    using Microsoft.Extensions.Logging;
 
     public interface IRegistrationDataService
     {
@@ -30,16 +31,19 @@
         private readonly IClockService clockService;
         private readonly IDbConnection connection;
         private readonly IUserDataService userDataService;
+        private readonly ILogger<IRegistrationDataService> logger;
 
         public RegistrationDataService(
             IDbConnection connection,
             IUserDataService userDataService,
-            IClockService clockService
+            IClockService clockService,
+            ILogger<IRegistrationDataService> logger
         )
         {
             this.connection = connection;
             this.userDataService = userDataService;
             this.clockService = clockService;
+            this.logger = logger;
         }
 
         public string RegisterNewUserAndDelegateAccount(
@@ -270,15 +274,15 @@
             // this SQL is reproduced mostly verbatim from the uspSaveNewCandidate_V10 procedure in the legacy codebase.
             var candidateNumber = connection.QueryFirst<string>(
                 @"DECLARE @_MaxCandidateNumber AS integer
-                SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
-                                FROM      DelegateAccounts WITH (TABLOCKX, HOLDLOCK)
-                                WHERE     (LEFT(CandidateNumber, 2) = @initials)
-                                ORDER BY nCandidateNumber DESC)
-                IF @_MaxCandidateNumber IS Null
-                    BEGIN
-                    SET @_MaxCandidateNumber = 0
-                    END
-                SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
+                    SET @_MaxCandidateNumber = (SELECT TOP (1) CONVERT(int, SUBSTRING(CandidateNumber, 3, 250)) AS nCandidateNumber
+                    FROM DelegateAccounts
+                    WHERE (LEFT(CandidateNumber, 2) = @initials)
+                    ORDER BY nCandidateNumber DESC)
+                    IF @_MaxCandidateNumber IS Null
+                        BEGIN
+                        SET @_MaxCandidateNumber = 0
+                        END
+                    SELECT @initials + CONVERT(varchar(100), @_MaxCandidateNumber + 1)",
                 new { initials },
                 transaction
             );
@@ -302,8 +306,11 @@
                 CentreSpecificDetailsLastChecked = currentTime,
             };
 
-            var delegateId = connection.QuerySingle<int>(
-                @"INSERT INTO DelegateAccounts
+            var delegateId = 0;
+            try
+            {
+                delegateId = connection.QuerySingle<int>(
+                    @"INSERT INTO DelegateAccounts
                     (
                         UserID,
                         CentreID,
@@ -340,9 +347,16 @@
                         @isSelfRegistered,
                         @centreSpecificDetailsLastChecked
                     )",
-                candidateValues,
-                transaction
-            );
+                    candidateValues,
+                    transaction
+                );
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error inserting new DelegateAccount record");
+                transaction.Rollback();
+                throw;
+            }
 
             return (delegateId, candidateNumber);
         }

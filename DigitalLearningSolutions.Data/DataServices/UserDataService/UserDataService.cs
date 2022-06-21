@@ -34,6 +34,8 @@
 
         DelegateEntity? GetDelegateById(int id);
 
+        DelegateEntity? GetDelegateByCandidateNumber(string candidateNumber);
+
         DelegateUser? GetDelegateUserById(int id);
 
         List<DelegateUser> GetDelegateUsersByUsername(string username);

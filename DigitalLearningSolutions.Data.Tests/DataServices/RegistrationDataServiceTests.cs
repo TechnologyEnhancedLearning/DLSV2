@@ -7,19 +7,20 @@
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Data.SqlClient;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class RegistrationDataServiceTests
     {
         private IClockService clockService = null!;
         private SqlConnection connection = null!;
+        private ILogger<IRegistrationDataService> logger = null!;
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
         private IUserDataService userDataService = null!;
@@ -30,7 +31,8 @@
             connection = ServiceTestHelper.GetDatabaseConnection();
             userDataService = new UserDataService(connection);
             clockService = A.Fake<IClockService>();
-            service = new RegistrationDataService(connection, userDataService, clockService);
+            logger = A.Fake<ILogger<IRegistrationDataService>>();
+            service = new RegistrationDataService(connection, userDataService, clockService, logger);
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }
 
@@ -45,31 +47,30 @@
             var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
 
             // When
-            var candidateNumber = service.RegisterNewUserAndDelegateAccount(delegateRegistrationModel,
-                false);
-            // TODO HEEDLS-951 Replace this with a variant of GetDelegateEntity
-            var user = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, delegateRegistrationModel.Centre);
-            var delegateAccount = userDataService.GetDelegateAccountById(user!.Id);
-            var userAccount = userDataService.GetUserAccountById(delegateAccount!.UserId);
-
+            var candidateNumber = service.RegisterNewUserAndDelegateAccount(
+                delegateRegistrationModel,
+                false
+            );
+            
             // Then
+            var delegateEntity = userDataService.GetDelegateByCandidateNumber(candidateNumber);
             using (new AssertionScope())
             {
-                user.FirstName.Should().Be(delegateRegistrationModel.FirstName);
-                user.LastName.Should().Be(delegateRegistrationModel.LastName);
-                user.EmailAddress.Should().Be(delegateRegistrationModel.PrimaryEmail);
-                user.CentreId.Should().Be(delegateRegistrationModel.Centre);
-                user.Answer1.Should().Be(delegateRegistrationModel.Answer1);
-                user.Answer2.Should().Be(delegateRegistrationModel.Answer2);
-                user.Answer3.Should().Be(delegateRegistrationModel.Answer3);
-                user.Answer4.Should().Be(delegateRegistrationModel.Answer4);
-                user.Answer5.Should().Be(delegateRegistrationModel.Answer5);
-                user.Answer6.Should().Be(delegateRegistrationModel.Answer6);
+                delegateEntity!.UserAccount.FirstName.Should().Be(delegateRegistrationModel.FirstName);
+                delegateEntity.UserAccount.LastName.Should().Be(delegateRegistrationModel.LastName);
+                delegateEntity.UserAccount.PrimaryEmail.Should().Be(delegateRegistrationModel.PrimaryEmail);
+                delegateEntity.UserAccount.TermsAgreed.Should().BeNull();
+                delegateEntity.UserAccount.DetailsLastChecked.Should().Be(dateTime);
+                delegateEntity.DelegateAccount.CentreId.Should().Be(delegateRegistrationModel.Centre);
+                delegateEntity.DelegateAccount.Answer1.Should().Be(delegateRegistrationModel.Answer1);
+                delegateEntity.DelegateAccount.Answer2.Should().Be(delegateRegistrationModel.Answer2);
+                delegateEntity.DelegateAccount.Answer3.Should().Be(delegateRegistrationModel.Answer3);
+                delegateEntity.DelegateAccount.Answer4.Should().Be(delegateRegistrationModel.Answer4);
+                delegateEntity.DelegateAccount.Answer5.Should().Be(delegateRegistrationModel.Answer5);
+                delegateEntity.DelegateAccount.Answer6.Should().Be(delegateRegistrationModel.Answer6);
                 candidateNumber.Should().Be("TU67");
-                user.CandidateNumber.Should().Be("TU67");
-                userAccount!.TermsAgreed.Should().BeNull();
-                userAccount.DetailsLastChecked.Should().Be(dateTime);
-                delegateAccount.CentreSpecificDetailsLastChecked.Should().Be(dateTime);
+                delegateEntity.DelegateAccount.CandidateNumber.Should().Be("TU67");
+                delegateEntity.DelegateAccount.CentreSpecificDetailsLastChecked.Should().Be(dateTime);
             }
         }
 
@@ -84,129 +85,31 @@
             A.CallTo(() => clockService.UtcNow).Returns(dateTime);
 
             // When
-            var candidateNumber = service.RegisterNewUserAndDelegateAccount(delegateRegistrationModel,
-                true);
-            // TODO HEEDLS-951 Replace this with a variant of GetDelegateEntity
-            var user = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, delegateRegistrationModel.Centre);
-            var delegateAccount = userDataService.GetDelegateAccountById(user!.Id);
-            var userAccount = userDataService.GetUserAccountById(delegateAccount!.UserId);
-
+            var candidateNumber = service.RegisterNewUserAndDelegateAccount(
+                delegateRegistrationModel,
+                true
+            );
+           
             // Then
+            var delegateEntity = userDataService.GetDelegateByCandidateNumber(candidateNumber);
             using (new AssertionScope())
             {
-                user.FirstName.Should().Be(delegateRegistrationModel.FirstName);
-                user.LastName.Should().Be(delegateRegistrationModel.LastName);
-                user.EmailAddress.Should().Be(delegateRegistrationModel.PrimaryEmail);
-                user.CentreId.Should().Be(delegateRegistrationModel.Centre);
-                user.Answer1.Should().Be(delegateRegistrationModel.Answer1);
-                user.Answer2.Should().Be(delegateRegistrationModel.Answer2);
-                user.Answer3.Should().Be(delegateRegistrationModel.Answer3);
-                user.Answer4.Should().Be(delegateRegistrationModel.Answer4);
-                user.Answer5.Should().Be(delegateRegistrationModel.Answer5);
-                user.Answer6.Should().Be(delegateRegistrationModel.Answer6);
+                delegateEntity!.UserAccount.FirstName.Should().Be(delegateRegistrationModel.FirstName);
+                delegateEntity.UserAccount.LastName.Should().Be(delegateRegistrationModel.LastName);
+                delegateEntity.UserAccount.PrimaryEmail.Should().Be(delegateRegistrationModel.PrimaryEmail);
+                delegateEntity.UserAccount!.TermsAgreed.Should().Be(dateTime);
+                delegateEntity.UserAccount.DetailsLastChecked.Should().Be(dateTime);
+                delegateEntity.DelegateAccount.CentreId.Should().Be(delegateRegistrationModel.Centre);
+                delegateEntity.DelegateAccount.Answer1.Should().Be(delegateRegistrationModel.Answer1);
+                delegateEntity.DelegateAccount.Answer2.Should().Be(delegateRegistrationModel.Answer2);
+                delegateEntity.DelegateAccount.Answer3.Should().Be(delegateRegistrationModel.Answer3);
+                delegateEntity.DelegateAccount.Answer4.Should().Be(delegateRegistrationModel.Answer4);
+                delegateEntity.DelegateAccount.Answer5.Should().Be(delegateRegistrationModel.Answer5);
+                delegateEntity.DelegateAccount.Answer6.Should().Be(delegateRegistrationModel.Answer6);
                 candidateNumber.Should().Be("TU67");
-                user.CandidateNumber.Should().Be("TU67");
-                userAccount!.TermsAgreed.Should().Be(dateTime);
-                userAccount.DetailsLastChecked.Should().Be(dateTime);
-                delegateAccount.CentreSpecificDetailsLastChecked.Should().Be(dateTime);
+                delegateEntity.DelegateAccount.CandidateNumber.Should().Be("TU67");
+                delegateEntity.DelegateAccount.CentreSpecificDetailsLastChecked.Should().Be(dateTime);
             }
-        }
-
-        [Test]
-        public void RegisterNewUserAndDelegateAccount_has_consistent_sequential_candidate_numbers()
-        {
-            try
-            {
-                // Given
-                var models = new[]
-                {
-                    RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        "Xavier",
-                        "Quondam",
-                        centre: 3,
-                        primaryEmail: "fake1",
-                        centreSpecificEmail: "XQfake1"
-                    ),
-                    RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        "Xavier",
-                        "Quondam",
-                        centre: 3,
-                        primaryEmail: "fake2",
-                        centreSpecificEmail: "XQfake2"
-                    ),
-                    RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        "Xavier",
-                        "Quondam",
-                        centre: 3,
-                        primaryEmail: "fake3",
-                        centreSpecificEmail: "XQfake3"
-                    ),
-                    RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        "Xavier",
-                        "Quondam",
-                        centre: 3,
-                        primaryEmail: "fake4",
-                        centreSpecificEmail: "XQfake4"
-                    ),
-                    RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
-                        "Xavier",
-                        "Quondam",
-                        centre: 3,
-                        primaryEmail: "fake5",
-                        centreSpecificEmail: "XQfake5"
-                    ),
-                };
-                var actions = models.Select(GetRegistrationAction).ToArray();
-
-                Func<Task> userLookup1 = async () => await connection.GetDelegateUserByCandidateNumberAsync("XQ1");
-                Func<Task> userLookup2 = async () => await connection.GetDelegateUserByCandidateNumberAsync("XQ2");
-                Func<Task> userLookup3 = async () => await connection.GetDelegateUserByCandidateNumberAsync("XQ3");
-                Func<Task> userLookup4 = async () => await connection.GetDelegateUserByCandidateNumberAsync("XQ4");
-                Func<Task> userLookup5 = async () => await connection.GetDelegateUserByCandidateNumberAsync("XQ5");
-                Func<Task> userLookup6 = async () => await connection.GetDelegateUserByCandidateNumberAsync("XQ6");
-                Func<Task> userLookup7 = async () => await connection.GetDelegateUserByCandidateNumberAsync("XQ7");
-
-                // When
-                Parallel.Invoke(actions);
-
-                // Then
-                using (new AssertionScope())
-                {
-                    userLookup1.Should().NotThrow();
-                    userLookup2.Should().NotThrow();
-                    userLookup3.Should().NotThrow();
-                    userLookup4.Should().NotThrow();
-                    userLookup5.Should().NotThrow();
-                    userLookup6.Should().Throw<InvalidOperationException>()
-                        .WithMessage("Sequence contains no elements");
-                    userLookup7.Should().Throw<InvalidOperationException>()
-                        .WithMessage("Sequence contains no elements");
-                }
-            }
-            // we clean up manually due to difficulties in parallel invocation of data service methods inside a transaction.
-            // if the test is failing, check the cleanup is working correctly.
-            finally
-            {
-                connection.Execute("DELETE FROM UserCentreDetails WHERE Email LIKE 'XQfake%'");
-                connection.Execute("DELETE FROM DelegateAccounts WHERE CandidateNumber LIKE 'XQ%'");
-                connection.Execute("DELETE FROM Users WHERE FirstName = 'Xavier' AND LastName = 'Quondam'");
-            }
-        }
-
-        private Action GetRegistrationAction(DelegateRegistrationModel model)
-        {
-            var newConnection = ServiceTestHelper.GetDatabaseConnection();
-            var newUserDataService = new UserDataService(newConnection);
-            var newClockService = new ClockService();
-            var newService = new RegistrationDataService(newConnection, newUserDataService, newClockService);
-
-            void Action()
-            {
-                newService.RegisterNewUserAndDelegateAccount(model,
-                    false);
-            }
-
-            return Action;
         }
 
         [Test]
@@ -233,9 +136,9 @@
                     userId,
                     currentTime
                 );
-            var user = await connection.GetDelegateUserByCandidateNumberAsync(candidateNumber);
 
             // Then
+            var user = await connection.GetDelegateUserByCandidateNumberAsync(candidateNumber);
             using (new AssertionScope())
             {
                 user.Id.Should().Be(delegateId);
@@ -280,12 +183,12 @@
                     userId,
                     currentTime
                 );
-            var userCentreDetailsCount = connection.QuerySingle<int>(
-                "SELECT COUNT(*) FROM UserCentreDetails WHERE CentreID = 3 AND UserID = 2"
-            );
-            var user = await connection.GetDelegateUserByCandidateNumberAsync(candidateNumber);
 
             // Then
+            var userCentreDetailsCount = connection.QuerySingle<int>(
+                "SELECT COUNT(*) FROM UserCentreDetails WHERE CentreID = 3 AND UserID = 2 AND Email IS NOT NULL"
+            );
+            var user = await connection.GetDelegateUserByCandidateNumberAsync(candidateNumber);
             user.Id.Should().Be(delegateId);
             userCentreDetailsCount.Should().Be(0);
             candidateNumber.Should().Be("FS352");

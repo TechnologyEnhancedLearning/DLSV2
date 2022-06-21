@@ -10,9 +10,9 @@
             CentreId = centreId;
         }
 
-        public string CandidateNumber { get; set; }
-        public bool Approved { get; set; }
-        public bool HasAdminAccountAtCentre { get; set; }
-        public int? CentreId { get; set; }
+        public string CandidateNumber { get; }
+        public bool Approved { get; }
+        public bool HasAdminAccountAtCentre { get; }
+        public int? CentreId { get; }
     }
 }

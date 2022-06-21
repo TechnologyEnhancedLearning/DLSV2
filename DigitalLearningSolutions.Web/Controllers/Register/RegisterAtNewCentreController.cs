@@ -20,6 +20,7 @@
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.Register))]
+    [Authorize(Policy = CustomPolicies.BasicUser)]
     public class RegisterAtNewCentreController : Controller
     {
         private readonly ICentresDataService centresDataService;
@@ -48,11 +49,6 @@
 
         public IActionResult Index(int? centreId = null, string? inviteId = null)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Register", new { centreId, inviteId });
-            }
-
             if (!CheckCentreIdValid(centreId))
             {
                 return NotFound();
@@ -81,7 +77,6 @@
         }
 
         [HttpGet]
-        [Authorize(Policy = CustomPolicies.BasicUser)]
         [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult PersonalInformation()
         {
@@ -98,7 +93,6 @@
         }
 
         [HttpPost]
-        [Authorize(Policy = CustomPolicies.BasicUser)]
         [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult PersonalInformation(InternalPersonalInformationViewModel model)
         {
@@ -129,6 +123,8 @@
 
             if (data.Centre != model.Centre)
             {
+                // If we've returned from the summary page to change values, we may have registration prompt answers
+                // that are no longer valid as we've changed centres. In this case we need to clear them.
                 data.ClearCustomPromptAnswers();
             }
 
@@ -139,7 +135,6 @@
         }
 
         [HttpGet]
-        [Authorize(Policy = CustomPolicies.BasicUser)]
         [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult LearnerInformation()
         {
@@ -162,7 +157,6 @@
         }
 
         [HttpPost]
-        [Authorize(Policy = CustomPolicies.BasicUser)]
         [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult LearnerInformation(InternalLearnerInformationViewModel model)
         {
@@ -198,13 +192,13 @@
 
         [HttpGet]
         [NoCaching]
-        [Authorize(Policy = CustomPolicies.BasicUser)]
         [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult Summary()
         {
             var data = TempData.Peek<InternalDelegateRegistrationData>()!;
-            var viewModel = new InternalSummaryViewModel(data)
+            var viewModel = new InternalSummaryViewModel
             {
+                CentreSpecificEmail = data.CentreSpecificEmail,
                 Centre = centresDataService.GetCentreName((int)data.Centre!),
                 DelegateRegistrationPrompts = promptsService.GetDelegateRegistrationPromptsForCentre(
                     data.Centre!.Value,
@@ -221,9 +215,8 @@
 
         [HttpPost]
         [NoCaching]
-        [Authorize(Policy = CustomPolicies.BasicUser)]
         [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
-        public async Task<IActionResult> Summary(InternalSummaryViewModel model)
+        public async Task<IActionResult> SummaryPost()
         {
             var data = TempData.Peek<InternalDelegateRegistrationData>()!;
 
@@ -270,7 +263,6 @@
         }
 
         [HttpGet]
-        [Authorize(Policy = CustomPolicies.BasicUser)]
         public IActionResult Confirmation()
         {
             var candidateNumber = (string?)TempData.Peek("candidateNumber");
@@ -288,13 +280,12 @@
             var hasAdminAccount = (bool)hasAdminAccountNullable;
             var approved = (bool)approvedNullable;
             var centreId = (int)centreIdNullable;
-
-            var centreIdForContactInformation = approved ? null : (int?)centreId;
+            
             var viewModel = new InternalConfirmationViewModel(
                 candidateNumber,
                 approved,
                 hasAdminAccount,
-                centreIdForContactInformation
+                centreId
             );
             return View(viewModel);
         }

@@ -71,7 +71,6 @@
             const int centreId = 3;
             controller.TempData.Set(new InternalDelegateRegistrationData());
             var userAccount = UserTestHelper.GetDefaultUserAccount();
-            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
             var model = new InternalPersonalInformationViewModel
             {
                 Centre = centreId,
@@ -80,7 +79,7 @@
             A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
                 .Returns(true);
             A.CallTo(() => userService.GetUserById(userAccount.Id)).Returns(
-                new UserEntity(userAccount, new List<AdminAccount>(), new[] { delegateAccount })
+                new UserEntity(userAccount, new List<AdminAccount>(), new[] { new DelegateAccount() })
             );
 
             // When
@@ -97,10 +96,9 @@
         {
             // Given
             controller.TempData.Set(new InternalDelegateRegistrationData());
-            var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
             var model = new InternalPersonalInformationViewModel
             {
-                Centre = duplicateUser.CentreId + 1,
+                Centre = ControllerContextHelper.CentreId + 1,
                 CentreSpecificEmail = "centre email",
             };
             A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
@@ -163,27 +161,6 @@
         }
 
         [Test]
-        public void IndexGet_while_not_logged_in_redirects_to_register_at_new_centre_journey()
-        {
-            // Given
-            var unauthenticatedController = new RegisterAtNewCentreController(
-                centresDataService,
-                featureManager,
-                promptsService,
-                registrationService,
-                supervisorDelegateService,
-                userService
-            ).WithDefaultContext().WithMockUser(false);
-
-            // When
-            var result = unauthenticatedController.Index();
-
-            // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("Register")
-                .WithActionName("Index");
-        }
-
-        [Test]
         public async Task Summary_post_registers_delegate_with_expected_values()
         {
             // Given
@@ -207,7 +184,7 @@
             );
 
             // When
-            var result = await controller.Summary(new InternalSummaryViewModel());
+            var result = await controller.SummaryPost();
 
             // Then
             A.CallTo(
@@ -241,7 +218,7 @@
             controller.TempData.Set(data);
 
             // When
-            var result = await controller.Summary(new InternalSummaryViewModel());
+            var result = await controller.SummaryPost();
 
             // Then
             A.CallTo(
@@ -281,7 +258,7 @@
             );
 
             // When
-            var result = await controller.Summary(new InternalSummaryViewModel());
+            var result = await controller.SummaryPost();
 
             // Then
             result.Should().BeStatusCodeResult().WithStatusCode(500);
@@ -310,7 +287,7 @@
             );
 
             // When
-            var result = await controller.Summary(new InternalSummaryViewModel());
+            var result = await controller.SummaryPost();
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");

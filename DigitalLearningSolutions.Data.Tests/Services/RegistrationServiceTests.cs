@@ -1103,7 +1103,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void CreateDelegateAccountForExistingUser_sends_approval_email_with_old_site_approval_link()
+        public void CreateDelegateAccountForExistingUser_sends_approval_email()
         {
             // Given
             const bool refactoredTrackingSystemEnabled = false;
@@ -1127,8 +1127,34 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                                 e.To[0] == ApproverEmail &&
                                 e.Cc.IsNullOrEmpty() &&
                                 e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval" &&
-                                e.Body.TextBody.Contains(OldSystemBaseUrl + "/tracking/approvedelegates")
+                                e.Subject == "Digital Learning Solutions Registration Requires Approval"
+                        )
+                    )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void CreateDelegateAccountForExistingUser_sends_approval_email_with_old_site_approval_link()
+        {
+            // Given
+            const bool refactoredTrackingSystemEnabled = false;
+            const int userId = 2;
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+
+            // When
+            registrationService.CreateDelegateAccountForExistingUser(
+                model,
+                userId,
+                string.Empty,
+                refactoredTrackingSystemEnabled
+            );
+
+            // Then
+            A.CallTo(
+                () =>
+                    emailService.SendEmail(
+                        A<Email>.That.Matches(
+                            e => e.Body.TextBody.Contains(OldSystemBaseUrl + "/tracking/approvedelegates")
                         )
                     )
             ).MustHaveHappened();
@@ -1155,12 +1181,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     emailService.SendEmail(
                         A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval" &&
-                                e.Body.TextBody.Contains(RefactoredSystemBaseUrl + "/TrackingSystem/Delegates/Approve")
+                            e => e.Body.TextBody.Contains(RefactoredSystemBaseUrl + "/TrackingSystem/Delegates/Approve")
                         )
                     )
             ).MustHaveHappened();
