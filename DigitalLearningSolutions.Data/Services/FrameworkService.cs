@@ -239,7 +239,7 @@
 
         bool CheckFrameworkCompenciesToDelete(int frameworkCompetencyId);
 
-        void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int adminId);
+        void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
 
         void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
 
@@ -1058,7 +1058,7 @@ WHERE (fc.Id = @frameworkCompetencyId)",
             return false;
         }
 
-        public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int adminId)
+        public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId)
         {
             if ((frameworkCompetencyGroupId < 1) | (adminId < 1))
             {
@@ -1101,14 +1101,14 @@ WHERE (fc.Id = @frameworkCompetencyId)",
             var usedElsewhere = (int)connection.ExecuteScalar(
                 @"SELECT COUNT(*) FROM FrameworkCompetencyGroups
                     WHERE CompetencyGroupId = @competencyGroupId",
-                new { frameworkCompetencyGroupId }
+                new { competencyGroupId }
             );
             if (usedElsewhere == 0)
             {
                 usedElsewhere = (int)connection.ExecuteScalar(
                     @"SELECT COUNT(*) FROM SelfAssessmentStructure
                     WHERE CompetencyGroupId = @competencyGroupId",
-                    new { frameworkCompetencyGroupId }
+                    new { competencyGroupId }
                 );
             }
 
@@ -1118,17 +1118,17 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                     @"UPDATE CompetencyGroups
                    SET UpdatedByAdminID = @adminId
                     WHERE ID = @competencyGroupId",
-                    new { adminId, frameworkCompetencyGroupId }
+                    new { adminId, competencyGroupId }
                 );
                 numberOfAffectedRows = connection.Execute(
                     @"DELETE FROM CompetencyGroups WHERE ID = @competencyGroupId",
-                    new { frameworkCompetencyGroupId }
+                    new { competencyGroupId }
                 );
                 if (numberOfAffectedRows < 1)
                 {
                     logger.LogWarning(
                         "Not deleting competency group as db update failed. " +
-                        $"competencyGroupId: {frameworkCompetencyGroupId}, adminId: {adminId}"
+                        $"competencyGroupId: { competencyGroupId }, adminId: { adminId }"
                     );
                 }
             }

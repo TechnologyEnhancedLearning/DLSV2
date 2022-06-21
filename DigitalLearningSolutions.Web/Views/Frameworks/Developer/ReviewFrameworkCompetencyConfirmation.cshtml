@@ -1,10 +1,10 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @using Microsoft.Extensions.Configuration
-@model FrameworkCompetencyViewModel
+@model ConfirmRemoveCompetencyGroupViewModel
 @inject IConfiguration Configuration
 
 @{
-  ViewData["Title"] = $"Learning Portal - {Model.FrameworkCompetency} - Remove - Confirmation";
+  ViewData["Title"] = "Remove Framework Competencies - Confirmation";
   ViewData["Application"] = "Learning Portal";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Current";
   ViewData["HeaderPathName"] = "My Current Activities";
@@ -19,7 +19,7 @@
     <form asp-action="RemoveCurrentCourse" asp-route-progressId="@Model.FrameworkCompetencyGroupId">
       <div class="nhsuk-u-reading-width">
         <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
-          Remove Group - @Model.FrameworkCompetency?
+          Remove Framework Competencies
         </h1>
         <p>
           This action will remove the competency group and all of the competencies it contains. Are you sure you wish to continue?
