@@ -310,7 +310,7 @@
 
             var searchViewModel = searchModel == null ?
                 new SearchSelfAssessmentOvervieviewViewModel(searchModel?.SearchText, assessment.Id, vocabulary, null)
-                : searchModel.Initialise(searchModel.AppliedFilters);   
+                : searchModel.Initialise(searchModel.AppliedFilters);
             var model = new SelfAssessmentOverviewViewModel
             {
                 SelfAssessment = assessment,
@@ -320,7 +320,10 @@
                 SupervisorSignOffs = supervisorSignOffs,
                 SearchViewModel = searchViewModel
             };
-            searchModel.IsSupervisorResultsReviewed = assessment.IsSupervisorResultsReviewed;
+            if(searchModel != null)
+            {
+                searchModel.IsSupervisorResultsReviewed = assessment.IsSupervisorResultsReviewed;
+            }
             ViewBag.SupervisorSelfAssessmentReview = assessment.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/SelfAssessmentOverview", model);
         }
@@ -356,9 +359,12 @@
             }
 
             var filteredQuestions = filteredCompetencies.SelectMany(c => c.AssessmentQuestions);
-            search.AnyQuestionMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 3);
-            search.AnyQuestionPartiallyMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 2);
-            search.AnyQuestionNotMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 1);
+            if(search != null)
+            {
+                search.AnyQuestionMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 3);
+                search.AnyQuestionPartiallyMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 2);
+                search.AnyQuestionNotMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 1);
+            }
 
             return (filteredCompetencies);
         }
