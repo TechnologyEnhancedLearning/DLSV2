@@ -1,0 +1,43 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model RemoveCustomFlagConfirmationViewModel
+@{
+  ViewData["Title"] = $"Frameworks - Custom Flag Remove - Confirmation";
+  ViewData["Application"] = "Frameworks";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/Frameworks/{Model.FrameworkId}/Details";
+  ViewData["HeaderPathName"] = "Framework Details";
+}
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+
+<div>
+  <div class="nhsuk-form-group" id="form-group">
+    <form method="post" asp-action="RemoveFrameworkFlag">
+      <div class="nhsuk-u-reading-width">
+        <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+          Remove flag - @Model.FlagName
+        </h1>
+        <p id="remove-details">
+          This action will remove the flag from all of its associated competencies and from the framework.
+        </p>
+        <p>
+          Are you sure you wish proceed?
+        </p>
+      </div>
+      <button class="nhsuk-button delete-button" aria-describedby="remove-details" type="submit">
+        Remove flag
+      </button>
+    </form>
+  </div>
+</div>
+<div class="nhsuk-back-link nhsuk-u-margin-left-1">
+  <a class="nhsuk-back-link__link" asp-action="EditFrameworkFlags" asp-route-frameworkId="@Model.FrameworkId">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+    </svg>
+    Cancel
+  </a>
+</div>

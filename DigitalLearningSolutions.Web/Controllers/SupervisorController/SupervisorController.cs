@@ -16,6 +16,7 @@
         private readonly ICommonService commonService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ISelfAssessmentService selfAssessmentService;
+        private readonly IFrameworkService frameworkService;
         private readonly IConfigDataService configDataService;
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IUserDataService userDataService;
@@ -28,6 +29,7 @@
            ICommonService commonService,
            IFrameworkNotificationService frameworkNotificationService,
            ISelfAssessmentService selfAssessmentService,
+           IFrameworkService frameworkService,
            IConfigDataService configDataService,
            ICentreRegistrationPromptsService centreRegistrationPromptsService,
            IUserDataService userDataService,
@@ -40,6 +42,7 @@
             this.commonService = commonService;
             this.frameworkNotificationService = frameworkNotificationService;
             this.selfAssessmentService = selfAssessmentService;
+            this.frameworkService = frameworkService;
             this.configDataService = configDataService;
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.userDataService = userDataService;
