@@ -19,7 +19,9 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.Extensions.Primitives;
     using Microsoft.FeatureManagement;
     using NUnit.Framework;
@@ -62,6 +64,53 @@
                 .WithMockServices()
                 .WithMockTempData()
                 .WithMockUser(true);
+        }
+
+        [Test]
+        public void IndexGet_with_invalid_centreId_param_shows_error()
+        {
+            // Given
+            const int centreId = 7;
+            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(null);
+
+            // When
+            var result = controller.Index(centreId);
+
+            // Then
+            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void IndexGet_with_valid_centreId_param_sets_data_correctly()
+        {
+            // Given
+            const int centreId = 7;
+            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
+
+            // When
+            var result = controller.Index(centreId);
+
+            // Then
+            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
+            var data = controller.TempData.Peek<InternalDelegateRegistrationData>()!;
+            data.Centre.Should().Be(centreId);
+            data.IsCentreSpecificRegistration.Should().BeTrue();
+            result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
+        }
+
+        [Test]
+        public void IndexGet_with_no_centreId_param_allows_normal_registration()
+        {
+            // When
+            var result = controller.Index();
+
+            // Then
+            A.CallTo(() => centresDataService.GetCentreName(A<int>._)).MustNotHaveHappened();
+            var data = controller.TempData.Peek<InternalDelegateRegistrationData>()!;
+            data.Centre.Should().BeNull();
+            data.IsCentreSpecificRegistration.Should().BeFalse();
+            result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
         }
 
         [Test]
@@ -114,50 +163,41 @@
         }
 
         [Test]
-        public void IndexGet_with_invalid_centreId_param_shows_error()
+        public void LearnerInformationPost_updates_tempdata_correctly()
         {
             // Given
-            const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(null);
+            const string answer1 = "answer1";
+            const string answer2 = "answer2";
+            const string answer3 = "answer3";
+            const string answer4 = "answer4";
+            const string answer5 = "answer5";
+            const string answer6 = "answer6";
+
+            controller.TempData.Set(new InternalDelegateRegistrationData { Centre = 1 });
+            var model = new InternalLearnerInformationViewModel
+            {
+                Answer1 = answer1,
+                Answer2 = answer2,
+                Answer3 = answer3,
+                Answer4 = answer4,
+                Answer5 = answer5,
+                Answer6 = answer6,
+            };
 
             // When
-            var result = controller.Index(centreId);
+            controller.LearnerInformation(model);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void IndexGet_with_valid_centreId_param_sets_data_correctly()
-        {
-            // Given
-            const int centreId = 7;
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
-
-            // When
-            var result = controller.Index(centreId);
-
-            // Then
-            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             var data = controller.TempData.Peek<InternalDelegateRegistrationData>()!;
-            data.Centre.Should().Be(centreId);
-            data.IsCentreSpecificRegistration.Should().BeTrue();
-            result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
-        }
-
-        [Test]
-        public void IndexGet_with_no_centreId_param_allows_normal_registration()
-        {
-            // When
-            var result = controller.Index();
-
-            // Then
-            A.CallTo(() => centresDataService.GetCentreName(A<int>._)).MustNotHaveHappened();
-            var data = controller.TempData.Peek<InternalDelegateRegistrationData>()!;
-            data.Centre.Should().BeNull();
-            data.IsCentreSpecificRegistration.Should().BeFalse();
-            result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
+            using (new AssertionScope())
+            {
+                data.Answer1.Should().Be(answer1);
+                data.Answer2.Should().Be(answer2);
+                data.Answer3.Should().Be(answer3);
+                data.Answer4.Should().Be(answer4);
+                data.Answer5.Should().Be(answer5);
+                data.Answer6.Should().Be(answer6);
+            }
         }
 
         [Test]
