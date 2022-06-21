@@ -7,10 +7,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public FrameworkCompetencyGroupViewModel(FrameworkCompetencyGroup frameworkCompetencyGroup)
         {
             Ordering = frameworkCompetencyGroup.Ordering;
-            FrameworkCompetencies = frameworkCompetencyGroup.FrameworkCompetencies;
+            FrameworkCompetencyGroup = frameworkCompetencyGroup;
         }
 
         public int Ordering { get; set; }
-        public List<FrameworkCompetency> FrameworkCompetencies { get; set; }
+        public FrameworkCompetencyGroup FrameworkCompetencyGroup { get; set; }
     }
 }

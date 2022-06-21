@@ -83,11 +83,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
         }
 
-        public IActionResult ReviewFrameworkCompetencyConfirmation(int frameworkCompetencyGroupId)
+        public IActionResult ReviewFrameworkCompetencyConfirmation(int frameworkId, int frameworkCompetencyGroupId)
         {
-            var frameworkCompetencyGroup = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyGroupId);
+            var frameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId);
+            var frameworkCompetencyGroup = frameworkCompetencyGroups.FirstOrDefault(c => c.CompetencyGroupID == frameworkCompetencyGroupId);
 
-            if (frameworkCompetencyGroup == null)
+
+            if (frameworkCompetencyGroups == null)
             {
                 logger.LogWarning(
                     $"Attempt to remove course framework compentency group with id {frameworkCompetencyGroupId} which does not exist in db"
@@ -96,7 +98,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var model = new FrameworkCompetencyGroupViewModel();
+            var model = new FrameworkCompetencyGroupViewModel(frameworkCompetencyGroup);
 
             return View("Frameworks/Developer/RemoveFrameworkCompetencyConfirmation", model);
         }
@@ -112,7 +114,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 
             if (frameworkCompenciesToDelete)
             {
-                ReviewFrameworkCompetencyConfirmation(frameworkCompetencyGroupId);
+                ReviewFrameworkCompetencyConfirmation(frameworkId, frameworkCompetencyGroupId);
             }
 
             frameworkService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, adminId);
