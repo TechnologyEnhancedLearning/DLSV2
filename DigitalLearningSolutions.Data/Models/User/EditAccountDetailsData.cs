@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
-    public class MyAccountDetailsData : AccountDetailsData
+    public class EditAccountDetailsData : AccountDetailsData
     {
-        public MyAccountDetailsData(
+        public EditAccountDetailsData(
             int userId,
             string firstName,
             string surname,
@@ -20,18 +20,10 @@
             ProfileImage = profileImage;
         }
 
-        public MyAccountDetailsData(
-            string firstName,
-            string surname,
-            string email
-        ) : base(firstName, surname, email)
-        {
-        }
-
-        public int UserId { get; set; }
-        public byte[]? ProfileImage { get; set; }
-        public int JobGroupId { get; set; }
-        public string? ProfessionalRegistrationNumber { get; set; }
-        public bool HasBeenPromptedForPrn { get; set; }
+        public int UserId { get; }
+        public byte[]? ProfileImage { get; }
+        public int JobGroupId { get; }
+        public string? ProfessionalRegistrationNumber { get; }
+        public bool HasBeenPromptedForPrn { get; }
     }
 }

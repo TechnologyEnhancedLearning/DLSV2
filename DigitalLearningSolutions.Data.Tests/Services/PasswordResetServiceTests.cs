@@ -174,7 +174,7 @@
         public void GenerateAndSendDelegateWelcomeEmail_with_null_user_should_throw_an_exception()
         {
             // Given
-            A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns((null, new List<DelegateUser>()));
+            A.CallTo(() => userService.GetDelegateUsersByEmailAddress(A<string>._)).Returns(new List<DelegateUser>());
 
             // Then
             Assert.Throws<UserAccountNotFoundException>(

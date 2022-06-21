@@ -182,8 +182,11 @@ function doesElementMatchFilterValue(
   searchableElement: ISearchableElement,
   filter: string,
 ): boolean {
-  const filterElement = searchableElement.element
-    .querySelector(`[data-filter-value="${filter}"]`);
+  const filterElement = searchableElement.element.querySelector(
+    // Escape " in `filter` because `[attr=""value""]` is not a valid selector.
+    // The `g` flag on the regex means "greedy", i.e. match multiple times (with every match being replaced).
+    `[data-filter-value="${filter.replace(/"/g, '\\"')}"]`,
+  );
   const filterValue = filterElement?.getAttribute('data-filter-value')?.trim() ?? '';
   return filterValue === filter;
 }

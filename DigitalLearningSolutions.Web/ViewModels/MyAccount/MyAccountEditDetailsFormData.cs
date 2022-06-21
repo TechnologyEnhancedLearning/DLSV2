@@ -18,7 +18,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             UserAccount userAccount,
             DelegateAccount? delegateAccount,
             List<(int id, string name)> jobGroups,
-            string? centreEmail,
+            string? centreSpecificEmail,
             string? returnUrl,
             bool isCheckDetailRedirect
         )
@@ -44,7 +44,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer5 = delegateAccount?.Answer5;
             Answer6 = delegateAccount?.Answer6;
 
-            CentreEmail = centreEmail;
+            CentreSpecificEmail = centreSpecificEmail;
             ReturnUrl = returnUrl;
             IsSelfRegistrationOrEdit = true;
             IsCheckDetailRedirect = isCheckDetailRedirect;
@@ -55,7 +55,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             FirstName = formData.FirstName;
             LastName = formData.LastName;
             Email = formData.Email;
-            CentreEmail = formData.CentreEmail;
+            CentreSpecificEmail = formData.CentreSpecificEmail;
             ProfileImageFile = formData.ProfileImageFile;
             ProfileImage = formData.ProfileImage;
             IsDelegateUser = formData.IsDelegateUser;

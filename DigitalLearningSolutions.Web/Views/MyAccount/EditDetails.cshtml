@@ -21,7 +21,7 @@
         nameof(Model.JobGroupId),
         nameof(Model.HasProfessionalRegistrationNumber),
         nameof(Model.ProfessionalRegistrationNumber),
-        nameof(Model.CentreEmail),
+        nameof(Model.CentreSpecificEmail),
         nameof(Model.Answer1),
         nameof(Model.Answer2),
         nameof(Model.Answer3),
@@ -131,7 +131,7 @@
       @{ var centreEmailHintText = @"If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address.
                                      Your primary email address will still be used for logging in and notifications for managing your account."; }
       <vc:text-input
-        asp-for="@nameof(Model.CentreEmail)"
+        asp-for="@nameof(Model.CentreSpecificEmail)"
         label="Centre email (optional)"
         populate-with-current-value="true"
         type="text"

@@ -268,7 +268,7 @@
 
             groupsDataService.AddDelegateToGroup(delegateUser.Id, groupId, clockService.UtcNow, 0);
 
-            var accountDetailsData = new MyAccountDetailsData(
+            var accountDetailsData = new EditAccountDetailsData(
                 delegateUser.Id,
                 delegateUser.FirstName!,
                 delegateUser.LastName,

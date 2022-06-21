@@ -9,7 +9,7 @@
 
     public partial class UserDataService
     {
-        private const string BaseSelectDelegateQuery =
+        private const string BaseSelectDelegateUserQuery =
             @"SELECT
                 cd.CandidateID AS Id,
                 cd.CandidateNumber,
@@ -65,10 +65,76 @@
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreId";
 
+        public DelegateEntity? GetDelegateById(int id)
+        {
+            var sql = @"SELECT
+                da.ID,
+                da.Active,
+                da.CentreID,
+                ce.CentreName,
+                ce.Active AS CentreActive,
+                da.DateRegistered,
+                da.CandidateNumber,
+                da.Answer1,
+                da.Answer2,
+                da.Answer3,
+                da.Answer4,
+                da.Answer5,
+                da.Answer6,
+                da.Approved,
+                da.ExternalReg,
+                da.SelfReg,
+                da.OldPassword,
+                da.UserID,
+                da.CentreSpecificDetailsLastChecked,
+                u.ID,
+                u.PrimaryEmail,
+                u.PasswordHash,
+                u.FirstName,
+                u.LastName,
+                u.JobGroupID,
+                jg.JobGroupName,
+                u.ProfessionalRegistrationNumber,
+                u.ProfileImage,
+                u.Active,
+                u.ResetPasswordID,
+                u.TermsAgreed,
+                u.FailedLoginCount,
+                u.HasBeenPromptedForPrn,
+                u.LearningHubAuthID,
+                u.HasDismissedLhLoginWarning,
+                u.EmailVerified,
+                u.DetailsLastChecked,
+                ucd.ID,
+                ucd.UserID,
+                ucd.CentreID,
+                ucd.Email,
+                ucd.EmailVerified
+            FROM DelegateAccounts AS da
+            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
+            INNER JOIN Users AS u ON u.ID = da.UserID
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
+                AND ucd.CentreId = da.CentreID
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
+            WHERE da.ID = @id";
+
+            return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, DelegateEntity>(
+                sql,
+                (delegateAccount, userAccount, userCentreDetails) => new DelegateEntity(
+                    delegateAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { id },
+                splitOn: "ID,ID"
+            ).SingleOrDefault();
+        }
+
+        [Obsolete("New code should use GetDelegateById instead")]
         public DelegateUser? GetDelegateUserById(int id)
         {
             var user = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.CandidateId = @id",
                 new { id }
             ).SingleOrDefault();
@@ -79,7 +145,7 @@
         public List<DelegateUser> GetDelegateUsersByUsername(string username)
         {
             var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.Active = 1 AND
                          (cd.CandidateNumber = @username OR cd.EmailAddress = @username)",
                 new { username }
@@ -91,7 +157,7 @@
         public List<DelegateUser> GetAllDelegateUsersByUsername(string username)
         {
             var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.CandidateNumber = @username OR cd.EmailAddress = @username",
                 new { username }
             ).ToList();
@@ -102,7 +168,7 @@
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
         {
             var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.EmailAddress = @emailAddress",
                 new { emailAddress }
             ).ToList();
@@ -113,7 +179,7 @@
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId)
         {
             var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE (cd.Approved = 0)
                     AND (cd.Active = 1)
                     AND (cd.CentreID = @centreId)",
@@ -132,7 +198,8 @@
             bool hasBeenPromptedForPrn,
             int jobGroupId,
             DateTime detailsLastChecked,
-            int userId
+            int userId,
+            bool shouldUpdateProfileImage = false
         )
         {
             connection.Execute(
@@ -141,7 +208,7 @@
                             FirstName = @firstName,
                             LastName = @surname,
                             PrimaryEmail = @primaryEmail,
-                            ProfileImage = @profileImage,
+                            ProfileImage = (CASE WHEN @shouldUpdateProfileImage = 1 THEN @profileImage ELSE ProfileImage END),
                             ProfessionalRegistrationNumber = @professionalRegNumber,
                             HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
                             JobGroupId = @jobGroupId,
@@ -158,6 +225,7 @@
                     hasBeenPromptedForPrn,
                     jobGroupId,
                     detailsLastChecked,
+                    shouldUpdateProfileImage,
                 }
             );
         }
@@ -215,7 +283,7 @@
         public DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId)
         {
             var user = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.CandidateNumber = @candidateNumber AND cd.CentreId = @centreId",
                 new { candidateNumber, centreId }
             ).SingleOrDefault();

@@ -143,6 +143,12 @@ export class SearchSortFilterAndPaginate {
     const sortedUniqueElements = _.uniqBy(sortedElements, 'parentIndex');
 
     const resultCount = sortedUniqueElements.length;
+    const itemsPerPage = getItemsPerPageValue();
+    const totalPages = Math.ceil(resultCount / itemsPerPage);
+
+    if (this.page < 1 || this.page > totalPages) {
+      this.updatePageNumberIfPaginated(1, searchableData);
+    }
 
     const paginatedElements = this.paginationEnabled
       ? paginateResults(sortedUniqueElements, this.page)
