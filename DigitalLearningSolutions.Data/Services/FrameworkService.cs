@@ -239,7 +239,7 @@
 
         bool CheckFrameworkCompenciesToDelete(int frameworkCompetencyId);
 
-        void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
+        void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int adminId);
 
         void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
 
@@ -1058,14 +1058,13 @@ WHERE (fc.Id = @frameworkCompetencyId)",
             return false;
         }
 
-        public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId)
+        public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int adminId)
         {
-            if ((frameworkCompetencyGroupId < 1) | (adminId < 1) | (competencyGroupId < 1))
+            if ((frameworkCompetencyGroupId < 1) | (adminId < 1))
             {
                 logger.LogWarning(
                     $"Not deleting framework competency group as it failed server side validation. AdminId: {adminId}," +
-                    $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId}," +
-                    $"competencyGroupId: {competencyGroupId}"
+                    $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId},"
                 );
                 return;
             }
@@ -1094,7 +1093,7 @@ WHERE (fc.Id = @frameworkCompetencyId)",
             {
                 logger.LogWarning(
                     "Not deleting framework competency group as db update failed. " +
-                    $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, competencyGroupId: {competencyGroupId}, adminId: {adminId}"
+                    $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, adminId: {adminId}"
                 );
             }
 
@@ -1102,14 +1101,14 @@ WHERE (fc.Id = @frameworkCompetencyId)",
             var usedElsewhere = (int)connection.ExecuteScalar(
                 @"SELECT COUNT(*) FROM FrameworkCompetencyGroups
                     WHERE CompetencyGroupId = @competencyGroupId",
-                new { competencyGroupId }
+                new { frameworkCompetencyGroupId }
             );
             if (usedElsewhere == 0)
             {
                 usedElsewhere = (int)connection.ExecuteScalar(
                     @"SELECT COUNT(*) FROM SelfAssessmentStructure
                     WHERE CompetencyGroupId = @competencyGroupId",
-                    new { competencyGroupId }
+                    new { frameworkCompetencyGroupId }
                 );
             }
 
@@ -1119,17 +1118,17 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                     @"UPDATE CompetencyGroups
                    SET UpdatedByAdminID = @adminId
                     WHERE ID = @competencyGroupId",
-                    new { adminId, competencyGroupId }
+                    new { adminId, frameworkCompetencyGroupId }
                 );
                 numberOfAffectedRows = connection.Execute(
                     @"DELETE FROM CompetencyGroups WHERE ID = @competencyGroupId",
-                    new { competencyGroupId }
+                    new { frameworkCompetencyGroupId }
                 );
                 if (numberOfAffectedRows < 1)
                 {
                     logger.LogWarning(
                         "Not deleting competency group as db update failed. " +
-                        $"competencyGroupId: {competencyGroupId}, adminId: {adminId}"
+                        $"competencyGroupId: {frameworkCompetencyGroupId}, adminId: {adminId}"
                     );
                 }
             }

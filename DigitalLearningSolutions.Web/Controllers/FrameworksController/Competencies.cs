@@ -83,14 +83,25 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
         }
 
-        public IActionResult ReviewFrameworkCompetencyConfirmation(int frameworkCompetencyGroupId, ReturnPageQuery returnPageQuery)
+        public IActionResult ReviewFrameworkCompetencyConfirmation(int frameworkCompetencyGroupId)
         {
-            var frameworks = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyGroupId);
+            var frameworkCompetencyGroup = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyGroupId);
 
-            return View();
+            if (frameworkCompetencyGroup == null)
+            {
+                logger.LogWarning(
+                    $"Attempt to remove course framework compentency group with id {frameworkCompetencyGroupId} which does not exist in db"
+                );
+
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            var model = new FrameworkCompetencyGroupViewModel();
+
+            return View("Frameworks/Developer/RemoveFrameworkCompetencyConfirmation", model);
         }
 
-        public IActionResult DeleteFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId, int competencyGroupId, ReturnPageQuery returnPageQuery)
+        public IActionResult DeleteFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId)
         {
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
             if (userRole < 2) return StatusCode(403);
@@ -101,10 +112,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 
             if (frameworkCompenciesToDelete)
             {
-                ReviewFrameworkCompetencyConfirmation(frameworkCompetencyGroupId, returnPageQuery);
+                ReviewFrameworkCompetencyConfirmation(frameworkCompetencyGroupId);
             }
 
-            frameworkService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, adminId);
+            frameworkService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, adminId);
 
             return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
         }
