@@ -4,7 +4,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -189,6 +188,8 @@
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
             var viewModel = data.ConfigureAnswersViewModel;
+            viewModel.PromptName = centreRegistrationPromptsService.GetCentreRegistrationPromptsAlphabeticalList()
+                .Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
 
             return View(viewModel);
         }
@@ -276,11 +277,11 @@
             }
 
             if (centreRegistrationPromptsService.AddCentreRegistrationPrompt(
-                User.GetCentreId(),
-                data.SelectPromptViewModel.CustomPromptId!.Value,
-                data.SelectPromptViewModel.Mandatory,
-                data.ConfigureAnswersViewModel.OptionsString
-            ))
+                    User.GetCentreId(),
+                    data.SelectPromptViewModel.CustomPromptId!.Value,
+                    data.SelectPromptViewModel.Mandatory,
+                    data.ConfigureAnswersViewModel.OptionsString
+                ))
             {
                 TempData.Clear();
                 return RedirectToAction("Index");
