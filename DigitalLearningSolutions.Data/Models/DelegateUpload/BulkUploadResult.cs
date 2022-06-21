@@ -34,6 +34,7 @@
             PrnButHasPrnIsFalse,
             InvalidPrnLength,
             InvalidPrnCharacters,
+            InvalidHasPrnValue
         }
 
         public BulkUploadResult() { }
