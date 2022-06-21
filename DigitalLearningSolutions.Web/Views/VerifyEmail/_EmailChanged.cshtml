@@ -1,0 +1,46 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.VerifyEmail
+@model VerifyEmailViewModel
+
+@if (Model.PrimaryEmail != null) {
+  var primaryEmailOnlyExplanation = Model.SingleUnverifiedEmail
+    ? $"An email with a verification link has been sent to {Model.PrimaryEmail}." +
+      " Please click the link to verify your email address. "
+    : null;
+
+  var primaryEmailChangedText = $"You've updated your primary email address: {Model.PrimaryEmail}." +
+                                $" {primaryEmailOnlyExplanation}You will not be able to access any centre accounts until it is verified.";
+
+  <p class="nhsuk-body-m">@primaryEmailChangedText</p>
+} else {
+  var (firstCentreName, firstCentreEmail) = Model.CentreSpecificEmails.First();
+  @if (Model.SingleUnverifiedEmail) {
+    var emailChangedText = $"You've updated your email address for your account at {firstCentreName}." +
+                           $" An email with a verification link has been sent to {firstCentreEmail}." +
+                           $" Please click the link to verify your email address. {VerifyEmailViewModel.CentreEmailExplanation}";
+
+    <p class="nhsuk-body-m">@emailChangedText</p>
+  } else {
+    var firstEmailChangedText = $"You've updated your email address for your account at {firstCentreName}:" +
+                                $" {firstCentreEmail}. {VerifyEmailViewModel.CentreEmailExplanation}";
+
+    <p class="nhsuk-body-m">@firstEmailChangedText</p>
+  }
+}
+
+@foreach (var (centreName, centreEmail) in Model.CentreEmailsExcludingFirstParagraph) {
+  var centreEmailChangedText = $"You've also updated your email address for your account at {centreName}: {centreEmail}." +
+                               " You will not be able to access that account until you verify the address.";
+
+  <p class="nhsuk-body-m">@centreEmailChangedText</p>
+}
+
+@{
+  var endingText = Model.SingleUnverifiedEmail
+    ? "If you have not received the email after a few minutes, check your Junk folder," +
+      " or return to the My account page to resend it."
+    : "An email with a verification link has been sent to each of the changed addresses." +
+      " Please click the links to verify your email addresses. If you have not received the emails after a few minutes," +
+      " check your Junk folders, or return to the My account page to resend them.";
+}
+
+<p class="nhsuk-body-m">@endingText</p>

@@ -136,5 +136,24 @@
                 new { userId, centreId }
             ).SingleOrDefault();
         }
+
+        public IEnumerable<(int centreId, string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(
+            int userId
+        )
+        {
+            return connection.Query<(int, string, string)>(
+                @"SELECT
+                        c.CentreID,
+                        c.CentreName,
+                        ucd.Email
+                    FROM UserCentreDetails AS ucd
+                    INNER JOIN Centres AS c ON c.CentreID = ucd.CentreID
+                    WHERE ucd.UserID = @userId
+                        AND ucd.Email IS NOT NULL
+                        AND ucd.EmailVerified IS NULL
+                        AND c.Active = 1",
+                new { userId }
+            );
+        }
     }
 }

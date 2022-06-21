@@ -74,6 +74,9 @@ namespace DigitalLearningSolutions.Data.Services
         string? GetCentreEmail(int userId, int centreId);
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
+
+        (string? primaryEmail, IEnumerable<(string centreName, string centreEmail)> centreEmails)
+            GetUnverifiedEmailsForUser(int userId);
     }
 
     public class UserService : IUserService
@@ -318,6 +321,29 @@ namespace DigitalLearningSolutions.Data.Services
         public string? GetCentreEmail(int userId, int centreId)
         {
             return userDataService.GetCentreEmail(userId, centreId);
+        }
+
+        public (string? primaryEmail, IEnumerable<(string centreName, string centreEmail)> centreEmails)
+            GetUnverifiedEmailsForUser(int userId)
+        {
+            var userEntity = GetUserById(userId);
+
+            if (userEntity == null)
+            {
+                return (null, new List<(string centreName, string centreEmail)>());
+            }
+
+            var unverifiedPrimaryEmail = userEntity.UserAccount.EmailVerified == null
+                ? userEntity.UserAccount.PrimaryEmail
+                : null;
+
+            var unverifiedCentreEmails = userDataService.GetUnverifiedCentreEmailsForUser(userId).Where(
+                tuple =>
+                    userEntity.AdminAccounts.Any(account => account.CentreId == tuple.centreId && account.Active) ||
+                    userEntity.DelegateAccounts.Any(account => account.CentreId == tuple.centreId && account.Active)
+            ).Select(tuple => (tuple.centreName, tuple.centreEmail));
+
+            return (unverifiedPrimaryEmail, unverifiedCentreEmails);
         }
 
         public void UpdateUserDetailsAndCentreSpecificDetails(

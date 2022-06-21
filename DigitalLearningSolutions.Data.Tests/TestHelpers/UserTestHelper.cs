@@ -31,7 +31,6 @@
             DateTime? detailsLastChecked = null
         )
         {
-            emailVerified ??= DateTime.Parse("2022-04-27 16:28:55.247");
             detailsLastChecked ??= DateTime.Parse("2022-04-27 16:28:55.247");
             return new UserAccount
             {

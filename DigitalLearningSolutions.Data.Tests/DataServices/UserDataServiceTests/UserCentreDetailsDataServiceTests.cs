@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Transactions;
     using Dapper;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
 
@@ -88,6 +89,33 @@
             // Then
             result.Should().BeEquivalentTo(email);
             count.Should().Equal(entriesCount);
+        }
+
+        [Test]
+        public void GetUnverifiedCentreEmailsForUser_returns_unverified_emails_for_active_centres()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email, EmailVerified)
+                        VALUES (8, 374, 'verified@centre.email', '2022-06-17 17:06:22')"
+            );
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                        VALUES (8, 375, 'unverified@centre.email')"
+            );
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails(UserID, CentreID, Email)
+                        VALUES (8, 378, 'unverified@inactive_centre.email')"
+            );
+
+            // When
+            var result = userDataService.GetUnverifiedCentreEmailsForUser(8).ToList();
+
+            // Then
+            result.Should().HaveCount(1);
+            result[0].centreEmail.Should().BeEquivalentTo("unverified@centre.email");
         }
     }
 }
