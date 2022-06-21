@@ -3,7 +3,7 @@
     public static class FeatureFlags
     {
         public const string RefactoredTrackingSystem = "RefactoredTrackingSystem";
-        public const string LegacyTrackingSystem = "LegacyTrackingSystem";
+        public const string ShowAppCardForLegacyTrackingSystem = "ShowAppCardForLegacyTrackingSystem";
         public const string WorkforceManagerInterface = "WorkforceManagerInterface";
         public const string SupervisorProfileAssessmentInterface = "SupervisorProfileAssessmentInterface";
         public const string RefactoredSuperAdminInterface = "RefactoredSuperAdminInterface";
