@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Register
-@model ConfirmationViewModel
+@model InternalConfirmationViewModel
 
 @{
   ViewData["Title"] = "Registration confirmation";
@@ -19,6 +19,18 @@
       <span class="nhsuk-u-visually-hidden">Information: </span>
       <p>Your delegate number is <span class="nhsuk-u-font-weight-bold">@Model.CandidateNumber</span></p>
     </div>
+    @if (Model.HasAdminAccountAtCentre) {
+      <p>
+        You will need to log out and in again before you can access the Learning Portal.
+      </p>
+      <partial name="_LogoutForm" />
+    } else if (Model.Approved) {
+      <p>
+        You will need to log out and in again before you can access your new account.
+      </p>
+      <partial name="_LogoutForm" />
+    }
+
     @if (!Model.Approved) {
       <div class="nhsuk-warning-callout">
         <h2 class="nhsuk-warning-callout__label">

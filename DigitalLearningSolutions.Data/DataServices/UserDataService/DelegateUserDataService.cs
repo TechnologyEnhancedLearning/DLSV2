@@ -65,9 +65,8 @@
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreId";
 
-        public DelegateEntity? GetDelegateById(int id)
-        {
-            var sql = @"SELECT
+        private const string BaseDelegateEntitySelectQuery =
+            @"SELECT
                 da.ID,
                 da.Active,
                 da.CentreID,
@@ -114,9 +113,12 @@
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
             INNER JOIN Users AS u ON u.ID = da.UserID
             LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
-                AND ucd.CentreId = da.CentreID
-            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
-            WHERE da.ID = @id";
+            AND ucd.CentreId = da.CentreID
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+
+        public DelegateEntity? GetDelegateById(int id)
+        {
+            var sql = $@"{BaseDelegateEntitySelectQuery} WHERE da.ID = @id";
 
             return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, DelegateEntity>(
                 sql,
@@ -126,6 +128,22 @@
                     userCentreDetails
                 ),
                 new { id },
+                splitOn: "ID,ID"
+            ).SingleOrDefault();
+        }
+
+        public DelegateEntity? GetDelegateByCandidateNumber(string candidateNumber)
+        {
+            var sql = $@"{BaseDelegateEntitySelectQuery} WHERE da.CandidateNumber = @candidateNumber";
+
+            return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, DelegateEntity>(
+                sql,
+                (delegateAccount, userAccount, userCentreDetails) => new DelegateEntity(
+                    delegateAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { candidateNumber },
                 splitOn: "ID,ID"
             ).SingleOrDefault();
         }
@@ -280,6 +298,7 @@
             );
         }
 
+        [Obsolete("New code should use GetDelegateByCandidateNumber instead")]
         public DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId)
         {
             var user = connection.Query<DelegateUser>(

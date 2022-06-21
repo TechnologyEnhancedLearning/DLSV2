@@ -56,7 +56,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "RegisterAtNewCentre", new { centreId, inviteId });
             }
 
             if (!CheckCentreIdValid(centreId))

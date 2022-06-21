@@ -88,6 +88,35 @@
             };
         }
 
+        public static InternalDelegateRegistrationData GetDefaultInternalDelegateRegistrationData(
+            string? email = "test@email.com",
+            int? centre = 2,
+            bool isCentreSpecificRegistration = false,
+            int? supervisorDelegateId = 1,
+            string? answer1 = "answer1",
+            string? answer2 = "answer2",
+            string? answer3 = "answer3",
+            string? answer4 = "answer4",
+            string? answer5 = "answer5",
+            string? answer6 = "answer6"
+        )
+        {
+            return new InternalDelegateRegistrationData
+            {
+                Id = Guid.NewGuid(),
+                Email = email,
+                Centre = centre,
+                IsCentreSpecificRegistration = isCentreSpecificRegistration,
+                SupervisorDelegateId = supervisorDelegateId,
+                Answer1 = answer1,
+                Answer2 = answer2,
+                Answer3 = answer3,
+                Answer4 = answer4,
+                Answer5 = answer5,
+                Answer6 = answer6
+            };
+        }
+
         public static DelegateRegistrationByCentreData GetDefaultDelegateRegistrationByCentreData(
             string? firstName = "Test",
             string? lastName = "Name",

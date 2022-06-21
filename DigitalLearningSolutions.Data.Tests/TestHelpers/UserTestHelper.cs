@@ -411,6 +411,7 @@
         {
             var users = await connection.QueryAsync<DelegateUser>(
                 @"SELECT
+                        CandidateID AS Id,
                         FirstName,
                         LastName,
                         EmailAddress,
@@ -423,7 +424,8 @@
                         Answer4,
                         Answer5,
                         Answer6,
-                        CandidateNumber
+                        CandidateNumber,
+                        DateRegistered
                     FROM Candidates
                     WHERE CandidateNumber = @candidateNumber",
                 new { candidateNumber }
