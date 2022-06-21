@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DelegateUpload
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
@@ -48,7 +49,8 @@
             Answer6 = FindFieldValue("Answer6");
             AliasId = FindFieldValue("AliasID");
             Email = FindFieldValue("EmailAddress")?.Trim();
-            HasPrn = bool.TryParse(FindFieldValue("HasPRN"), out var hasPrn) ? hasPrn : (bool?)null;
+            HasPrnRawValue = FindFieldValue("HasPRN");
+            HasPrn = bool.TryParse(HasPrnRawValue, out var hasPrn) ? hasPrn : (bool?)null;
             Prn = FindNullableFieldValue("PRN");
             RowStatus = RowStatus.NotYetProcessed;
         }
@@ -67,6 +69,7 @@
         public string? Answer6 { get; set; }
         public string? AliasId { get; set; }
         public string? Email { get; set; }
+        public string? HasPrnRawValue { get; set; }
         public bool? HasPrn { get; set; }
         public string? Prn { get; set; }
 
@@ -142,6 +145,10 @@
             else if (Answer6 != null && Answer6.Length > 100)
             {
                 Error = BulkUploadResult.ErrorReason.TooLongAnswer6;
+            }
+            else if (!string.IsNullOrWhiteSpace(HasPrnRawValue) && !bool.TryParse(HasPrnRawValue, out _))
+            {
+                Error = BulkUploadResult.ErrorReason.InvalidHasPrnValue;
             }
             else if (HasPrn.HasValue && HasPrn.Value && string.IsNullOrEmpty(Prn))
             {
