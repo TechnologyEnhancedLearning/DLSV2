@@ -77,8 +77,11 @@
 
             var delegateEntity = userService.GetDelegateById(delegateId);
 
-            if (formData.CentreSpecificEmail == delegateEntity!.UserAccount.PrimaryEmail ||
-                string.IsNullOrWhiteSpace(formData.CentreSpecificEmail))
+            var centreEmailDefaultsToPrimary =
+                formData.CentreSpecificEmail == delegateEntity!.UserAccount.PrimaryEmail &&
+                delegateEntity.UserCentreDetails?.Email == null;
+
+            if (centreEmailDefaultsToPrimary || string.IsNullOrWhiteSpace(formData.CentreSpecificEmail))
             {
                 formData.CentreSpecificEmail = null;
             }
