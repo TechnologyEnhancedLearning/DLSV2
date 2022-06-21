@@ -22,6 +22,7 @@
       </div>
 
       <input type="hidden" asp-for="OptionsString" />
+      <input type="hidden" asp-for="PromptName"/>
 
       @if (string.IsNullOrEmpty(Model.OptionsString)) {
         <partial name="_NoConfiguredAnswers" />

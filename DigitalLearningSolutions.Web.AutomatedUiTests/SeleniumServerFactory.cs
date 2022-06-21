@@ -14,13 +14,14 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
 
     public class SeleniumServerFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
+        public string ConnectionString;
         private IWebHost host;
         public string RootUri;
 
         public SeleniumServerFactory()
         {
             CreateServer(CreateWebHostBuilder());
-            this.CreateClient();
+            CreateClient();
         }
 
         protected sealed override TestServer CreateServer(IWebHostBuilder builder)
@@ -29,13 +30,17 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             host = builder.Build();
             host.Start();
             RootUri = host.ServerFeatures.Get<IServerAddressesFeature>().Addresses.First();
+            ConnectionString = GetConfigForUiTests().GetConnectionString("DefaultConnection");
 
             // Fake Server to satisfy the return type
-            return new TestServer(new WebHostBuilder()
-                .UseStartup<TStartup>()
-                .UseSerilog()
-                .ConfigureAppConfiguration(configBuilder => { configBuilder.AddConfiguration(GetConfigForUiTests()); }
-                    ));
+            return new TestServer(
+                new WebHostBuilder()
+                    .UseStartup<TStartup>()
+                    .UseSerilog()
+                    .ConfigureAppConfiguration(
+                        configBuilder => { configBuilder.AddConfiguration(GetConfigForUiTests()); }
+                    )
+            );
         }
 
         protected sealed override IWebHostBuilder CreateWebHostBuilder()
@@ -44,19 +49,21 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
                 .UseStartup<TStartup>()
                 .UseSerilog()
                 .UseUrls("http://127.0.0.1:0")
-                .ConfigureAppConfiguration(configBuilder =>
-                {
-                    var jsonConfigSources = configBuilder.Sources
-                        .Where(source => source.GetType() == typeof(JsonConfigurationSource))
-                        .ToList();
-
-                    foreach (var jsonConfigSource in jsonConfigSources)
+                .ConfigureAppConfiguration(
+                    configBuilder =>
                     {
-                        configBuilder.Sources.Remove(jsonConfigSource);
-                    }
+                        var jsonConfigSources = configBuilder.Sources
+                            .Where(source => source.GetType() == typeof(JsonConfigurationSource))
+                            .ToList();
 
-                    configBuilder.AddConfiguration(GetConfigForUiTests());
-                });
+                        foreach (var jsonConfigSource in jsonConfigSources)
+                        {
+                            configBuilder.Sources.Remove(jsonConfigSource);
+                        }
+
+                        configBuilder.AddConfiguration(GetConfigForUiTests());
+                    }
+                );
         }
 
         protected override void Dispose(bool disposing)

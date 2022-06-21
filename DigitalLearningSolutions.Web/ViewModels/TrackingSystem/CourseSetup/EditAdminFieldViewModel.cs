@@ -1,7 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
 
     public class EditAdminFieldViewModel : AdminFieldAnswersViewModel
     {
@@ -25,6 +26,16 @@
             Prompt = text;
             OptionsString = options;
             IncludeAnswersTableCaption = true;
+        }
+
+        public EditAdminFieldViewModel(EditAdminFieldTempData tempData) : base(
+            tempData.OptionsString,
+            tempData.Answer,
+            tempData.IncludeAnswersTableCaption
+        )
+        {
+            Prompt = tempData.Prompt;
+            PromptNumber = tempData.PromptNumber;
         }
 
         public int PromptNumber { get; set; }
