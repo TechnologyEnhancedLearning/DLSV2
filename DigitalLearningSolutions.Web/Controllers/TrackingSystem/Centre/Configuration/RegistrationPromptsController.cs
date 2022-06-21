@@ -277,11 +277,11 @@
             }
 
             if (centreRegistrationPromptsService.AddCentreRegistrationPrompt(
-                User.GetCentreId(),
-                data.SelectPromptViewModel.CustomPromptId!.Value,
-                data.SelectPromptViewModel.Mandatory,
-                data.ConfigureAnswersViewModel.OptionsString
-            ))
+                    User.GetCentreId(),
+                    data.SelectPromptViewModel.CustomPromptId!.Value,
+                    data.SelectPromptViewModel.Mandatory,
+                    data.ConfigureAnswersViewModel.OptionsString
+                ))
             {
                 TempData.Clear();
                 return RedirectToAction("Index");
