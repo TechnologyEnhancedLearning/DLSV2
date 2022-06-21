@@ -88,8 +88,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var frameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId);
             var frameworkCompetencyGroup = frameworkCompetencyGroups.FirstOrDefault(c => c.CompetencyGroupID == frameworkCompetencyGroupId);
 
-
-            if (frameworkCompetencyGroups == null)
+            if (frameworkCompetencyGroup == null)
             {
                 logger.LogWarning(
                     $"Attempt to remove course framework compentency group with id {frameworkCompetencyGroupId} which does not exist in db"
