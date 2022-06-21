@@ -30,7 +30,7 @@ namespace DigitalLearningSolutions.Data.Services
             DelegateDetailsData? delegateDetailsData,
             string? centreEmail,
             int centreId,
-            bool shouldUpdateProfileImage
+            bool changeMadeBySameUser
         );
 
         bool NewEmailAddressIsValid(string emailAddress, int userId);
@@ -325,7 +325,7 @@ namespace DigitalLearningSolutions.Data.Services
             DelegateDetailsData? delegateDetailsData,
             string? centreEmail,
             int centreId,
-            bool shouldUpdateProfileImage
+            bool changeMadeBySameUser
         )
         {
             var detailsLastChecked = clockService.UtcNow;
@@ -360,7 +360,7 @@ namespace DigitalLearningSolutions.Data.Services
                 editAccountDetailsData.JobGroupId,
                 detailsLastChecked,
                 editAccountDetailsData.UserId,
-                shouldUpdateProfileImage
+                changeMadeBySameUser
             );
 
             userDataService.SetCentreEmail(

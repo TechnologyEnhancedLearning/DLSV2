@@ -54,7 +54,7 @@
             int jobGroupId,
             DateTime detailsLastChecked,
             int userId,
-            bool shouldUpdateProfileImage = false
+            bool changeMadeBySameUser = false
         );
 
         void UpdateDelegateAccount(
