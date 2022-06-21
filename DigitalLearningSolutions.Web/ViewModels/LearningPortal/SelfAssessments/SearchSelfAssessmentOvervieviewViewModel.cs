@@ -43,18 +43,23 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 
         public SearchSelfAssessmentOvervieviewViewModel Initialise(List<AppliedFilterViewModel> appliedFilters)
         {
-            var filterOptions = Enum.GetValues(typeof(SelfAssessmentCompetencyFilter))
-                .Cast<SelfAssessmentCompetencyFilter>()
-                .Where(f => (!AnyQuestionMeetingRequirements || f != SelfAssessmentCompetencyFilter.MeetingRequirements)
-                         && (!AnyQuestionPartiallyMeetingRequirements || f != SelfAssessmentCompetencyFilter.PartiallyMeetingRequirements)
-                         && (!AnyQuestionNotMeetingRequirements || f != SelfAssessmentCompetencyFilter.NotMeetingRequirements))
-                .Select(f => new FilterOptionModel(f.GetDescription(IsSupervisorResultsReviewed), f.ToString(), FilterStatus.Default));
+            var allFilters = Enum.GetValues(typeof(SelfAssessmentCompetencyFilter)).Cast<SelfAssessmentCompetencyFilter>();
+            var filterOptions = allFilters.Where(f => f.IsResponseStatusFilter()).ToList();
+            if (AnyQuestionMeetingRequirements) filterOptions.Add(SelfAssessmentCompetencyFilter.MeetingRequirements);
+            if (AnyQuestionNotMeetingRequirements) filterOptions.Add(SelfAssessmentCompetencyFilter.NotMeetingRequirements);
+            if (AnyQuestionPartiallyMeetingRequirements) filterOptions.Add(SelfAssessmentCompetencyFilter.PartiallyMeetingRequirements);
+
+            var dropdownFilterOptions = filterOptions.Select(
+                f => new FilterOptionModel(f.GetDescription(IsSupervisorResultsReviewed),
+                f.ToString(),
+                FilterStatus.Default));
+
             Filters = new List<FilterModel>()
             {
                 new FilterModel(
                         filterProperty: FilterBy,
                         filterName: FilterBy,
-                        filterOptions: filterOptions)
+                        filterOptions: dropdownFilterOptions)
             };
             AppliedFilters = appliedFilters ?? new List<AppliedFilterViewModel>();
             return this;

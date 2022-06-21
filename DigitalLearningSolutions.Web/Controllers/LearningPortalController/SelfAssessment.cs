@@ -253,11 +253,6 @@
         public IActionResult FilteredSelfAssessmentGroups(SearchSelfAssessmentOvervieviewViewModel model)
         {
             model.AppliedFilters = TempData.Get<List<AppliedFilterViewModel>>();
-            if (model.FilterBy == "CLEAR")
-            {
-                model.AppliedFilters.Clear();
-            }
-
             return SelfAssessmentOverview(model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model);
         }
 
@@ -333,11 +328,11 @@
         private List<Competency> FilterCompetencies(List<Competency> competencies, SearchSelfAssessmentOvervieviewViewModel search)
         {
             var searchText = search?.SearchText?.Trim() ?? string.Empty;
-            List<Competency> filteredCompetencies = null;
-            if (searchText.Length > 0 || search?.AppliedFilters.Count() > 0)
+            List<Competency> filteredCompetencies = competencies;
+            if (searchText.Length > 0 || search?.AppliedFilters?.Count() > 0)
             {
                 var wordsInSearchText = searchText.Split().Where(w => w != string.Empty);
-                var filters = search.AppliedFilters.Select(f => Enum.Parse<SelfAssessmentCompetencyFilter>(f.FilterValue));
+                var filters = search.AppliedFilters?.Select(f => Enum.Parse<SelfAssessmentCompetencyFilter>(f.FilterValue)) ?? Enumerable.Empty<SelfAssessmentCompetencyFilter>();
                 var noResponseStatusFilterApplied = !filters.Any(f => f.IsResponseStatusFilter());
                 var noRequirementsFilterApplied = !filters.Any(f => f.IsRequirementsFilter());
                 filteredCompetencies = (
@@ -358,14 +353,14 @@
                         && (noResponseStatusFilterApplied || responseStatusFilterMatchesAnyQuestion)
                         && (noRequirementsFilterApplied || requirementsFilterMatchesAnyQuestion)
                     select c).ToList();
-
-                var filteredQuestions = filteredCompetencies.SelectMany(c => c.AssessmentQuestions);
-                search.AnyQuestionMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 3);
-                search.AnyQuestionPartiallyMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 2);
-                search.AnyQuestionNotMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 1);
             }
 
-            return (filteredCompetencies ?? competencies);
+            var filteredQuestions = filteredCompetencies.SelectMany(c => c.AssessmentQuestions);
+            search.AnyQuestionMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 3);
+            search.AnyQuestionPartiallyMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 2);
+            search.AnyQuestionNotMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 1);
+
+            return (filteredCompetencies);
         }
 
         [HttpPost]
