@@ -25,12 +25,16 @@
 
       <input type="hidden" asp-for="OptionsString" />
       <input type="hidden" asp-for="Prompt" />
+      <input type="hidden" asp-for="PromptNumber" />
 
       <vc:field-name-value-display display-name="Field" field-value="@Model.Prompt" />
 
-      @if (string.IsNullOrEmpty(Model.OptionsString)) {
+      @if (string.IsNullOrEmpty(Model.OptionsString))
+      {
         <partial name="_NoConfiguredAnswers" />
-      } else {
+      }
+      else
+      {
         <partial name="_AdminFieldAnswerTable" model="Model" />
       }
 

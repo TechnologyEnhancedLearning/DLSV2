@@ -482,9 +482,9 @@
                 tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);
             }
 
-            transaction.Complete();
-
             multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddNewCourse, TempData);
+
+            transaction.Complete();
 
             TempData.Clear();
             TempData.Add("customisationId", customisationId);

@@ -343,6 +343,8 @@
                 model.OptionsString
             );
 
+            multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.EditAdminField, TempData);
+
             return RedirectToAction("Index", new { customisationId });
         }
 
