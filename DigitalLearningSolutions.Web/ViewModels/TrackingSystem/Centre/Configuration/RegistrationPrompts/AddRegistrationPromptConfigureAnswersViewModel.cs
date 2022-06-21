@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
@@ -28,6 +27,8 @@
         public string? Answer { get; set; }
 
         public bool IncludeAnswersTableCaption { get; set; }
+
+        public string? PromptName { get; set; }
 
         private IEnumerable<string> ComparableOptions => NewlineSeparatedStringListHelper
             .SplitNewlineSeparatedList(OptionsString)
