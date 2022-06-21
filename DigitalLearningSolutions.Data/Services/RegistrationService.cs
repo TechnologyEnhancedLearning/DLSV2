@@ -25,7 +25,11 @@ namespace DigitalLearningSolutions.Data.Services
 
         string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
 
-        void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
+        void RegisterCentreManager(
+            AdminRegistrationModel registrationModel,
+            int jobGroupId,
+            bool registerJourneyContainsTermsAndConditions
+        );
 
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId);
     }
@@ -130,19 +134,6 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
-        {
-            using var transaction = new TransactionScope();
-
-            CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
-
-            registrationDataService.RegisterAdmin(registrationModel);
-
-            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
-
-            transaction.Complete();
-        }
-
         public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
@@ -205,7 +196,7 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateUser.ProfileImage
                 );
 
-                registrationDataService.RegisterAdmin(adminRegistrationModel);
+                registrationDataService.RegisterAdmin(adminRegistrationModel, false);
             }
             else
             {
@@ -263,6 +254,23 @@ namespace DigitalLearningSolutions.Data.Services
             transaction.Complete();
 
             return candidateNumber;
+        }
+
+        public void RegisterCentreManager(
+            AdminRegistrationModel registrationModel,
+            int jobGroupId,
+            bool registerJourneyContainsTermsAndConditions
+        )
+        {
+            using var transaction = new TransactionScope();
+
+            CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
+
+            registrationDataService.RegisterAdmin(registrationModel, registerJourneyContainsTermsAndConditions);
+
+            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
+
+            transaction.Complete();
         }
 
         private string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)

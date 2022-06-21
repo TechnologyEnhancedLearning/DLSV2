@@ -13,7 +13,6 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
-    using DigitalLearningSolutions.Data.Enums;
 
     public partial class SupervisorController
     {
@@ -232,8 +231,7 @@
             var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId).ToList()
             );
-            var delegateSelfAssessment =
-                supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, adminId);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, adminId);
             var model = new ReviewSelfAssessmentViewModel()
             {
                 SupervisorDelegateDetail = superviseDelegate,
@@ -241,6 +239,13 @@
                 CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup),
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed
             };
+
+            var flags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(reviewedCompetencies.Select(c => c.Id).ToArray());
+            foreach (var competency in reviewedCompetencies)
+            {
+                competency.CompetencyFlags = flags.Where(f => f.CompetencyId == competency.Id);
+            };
+
             if (superviseDelegate.CandidateID != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(

@@ -246,7 +246,7 @@
         public void AddRegistrationPromptSelectPrompt_post_updates_temp_data_and_redirects()
         {
             // Given
-            var expectedPromptData = new AddRegistrationPromptSelectPromptData(1, true);
+            var expectedPromptData = new AddRegistrationPromptSelectPromptData(1, true, "prompt");
             var initialTempData = new AddRegistrationPromptTempData();
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
@@ -254,6 +254,8 @@
                     registrationPromptsController.TempData
                 )
             ).Returns(initialTempData);
+            A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsAlphabeticalList())
+                .Returns(new List<(int id, string value)> { (1, "prompt") });
             var inputViewModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
 
             // When
@@ -268,7 +270,7 @@
         public void AddRegistrationPromptConfigureAnswers_next_updates_temp_data()
         {
             // Given
-            var expectedPromptData = new AddRegistrationPromptSelectPromptData(1, true);
+            var expectedPromptData = new AddRegistrationPromptSelectPromptData(1, true, "prompt");
             var initialTempData = new AddRegistrationPromptTempData { SelectPromptData = expectedPromptData };
             A.CallTo(
                 () => multiPageFormService.GetMultiPageFormData<AddRegistrationPromptTempData>(
@@ -293,7 +295,7 @@
         public void AddRegistrationPromptConfigureAnswers_add_configures_new_answer_and_updates_temp_data()
         {
             // Given
-            var initialSelectPromptData = new AddRegistrationPromptSelectPromptData(1, true);
+            var initialSelectPromptData = new AddRegistrationPromptSelectPromptData(1, true, "prompt");
 
             var inputAnswersData = new RegistrationPromptAnswersTempData("Test", "Answer");
             var expectedAnswersData = new RegistrationPromptAnswersTempData("Test\r\nAnswer");
@@ -335,7 +337,7 @@
             )
         {
             // Given
-            var initialSelectPromptData = new AddRegistrationPromptSelectPromptData(1, true);
+            var initialSelectPromptData = new AddRegistrationPromptSelectPromptData(1, true, "prompt");
 
             var initialAnswersData = new RegistrationPromptAnswersTempData(optionsString, newAnswerInput);
 
@@ -367,7 +369,7 @@
         public void AddRegistrationPromptConfigureAnswers_delete_removes_configured_answer()
         {
             // Given
-            var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true);
+            var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true, "prompt");
 
             var initialAnswersData = new RegistrationPromptAnswersTempData("Test\r\nAnswer");
             var expectedAnswersData = new RegistrationPromptAnswersTempData("Answer");
@@ -413,7 +415,7 @@
         public void AddRegistrationPromptSummaryPost_calls_registration_prompt_service_and_redirects_to_index()
         {
             // Given
-            var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true);
+            var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true, "prompt");
             var initialAnswersData = new RegistrationPromptAnswersTempData("Test\r\nAnswer");
             var initialTempData = new AddRegistrationPromptTempData
                 { SelectPromptData = initialPromptData, ConfigureAnswersTempData = initialAnswersData };
@@ -457,10 +459,11 @@
         }
 
         [Test]
-        public void AddRegistrationPromptSummaryPost_calls_registration_prompt_service_and_redirects_to_error_on_failure()
+        public void
+            AddRegistrationPromptSummaryPost_calls_registration_prompt_service_and_redirects_to_error_on_failure()
         {
             // Given
-            var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true);
+            var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true, "prompt");
             var initialAnswersData = new RegistrationPromptAnswersTempData("Test\r\nAnswer");
             var initialTempData = new AddRegistrationPromptTempData
                 { SelectPromptData = initialPromptData, ConfigureAnswersTempData = initialAnswersData };
@@ -518,7 +521,6 @@
                     registrationPromptsController.TempData
                 )
             ).Returns(initialTempData);
-            
 
             // When
             var result = registrationPromptsController.EditRegistrationPromptBulkPost(inputViewModel);
@@ -549,7 +551,7 @@
         {
             // Given
             var inputViewModel = new BulkRegistrationPromptAnswersViewModel("Test\r\nAnswer", true, null);
-            var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true);
+            var initialPromptData = new AddRegistrationPromptSelectPromptData(1, true, "prompt");
             var initialAnswersData = new RegistrationPromptAnswersTempData("Test");
             var expectedAnswersData = new RegistrationPromptAnswersTempData("Test\r\nAnswer");
 

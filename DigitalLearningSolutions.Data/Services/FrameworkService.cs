@@ -29,6 +29,10 @@
         BrandedFramework? GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId);
 
         DetailFramework? GetDetailFrameworkByFrameworkId(int frameworkId, int adminId);
+        IEnumerable<CompetencyFlag> GetSelectedCompetencyFlagsByCompetecyIds(int[] ids);
+        IEnumerable<CompetencyFlag> GetSelectedCompetencyFlagsByCompetecyId(int competencyId);
+        IEnumerable<CompetencyFlag> GetCompetencyFlagsByFrameworkId(int frameworkId, int? competencyId, bool? selected = null);
+        IEnumerable<Flag> GetCustomFlagsByFrameworkId(int frameworkId, int? flagId);
 
         IEnumerable<BrandedFramework> GetFrameworkByFrameworkName(string frameworkName, int adminId);
 
@@ -125,6 +129,8 @@
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
 
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify);
+        void AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
+        void UpdateFrameworkCustomFlag(int frameworkId, int id, string flagName, string flagGroup, string flagTagClass);
 
         void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting);
 
@@ -195,6 +201,7 @@
         );
 
         void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId);
+        void UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds);
 
         void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
 
@@ -235,6 +242,7 @@
         );
 
         //Delete data
+        void RemoveCustomFlag(int flagId);
         void RemoveCollaboratorFromFramework(int frameworkId, int id);
 
         void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
@@ -284,6 +292,8 @@
         private const string DetailFrameworkFields =
             @",FW.Description
               ,FW.FrameworkConfig";
+
+        private const string FlagFields = @"fl.ID AS FlagId, fl.FrameworkId, fl.FlagName, fl.FlagGroup, fl.FlagTagClass";
 
         private const string FrameworkTables =
             @"Frameworks AS FW LEFT OUTER JOIN
@@ -355,6 +365,46 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
                       WHERE FW.ID = @frameworkId",
                 new { frameworkId, adminId }
             );
+        }
+
+        public IEnumerable<CompetencyFlag> GetCompetencyFlagsByFrameworkId(int frameworkId, int? competencyId = null, bool? selected = null)
+        {
+            var competencyIdFilter = competencyId.HasValue ? "cf.CompetencyId = @competencyId" : "1=1";
+            var selectedFilter = selected.HasValue ? $"cf.Selected = {(selected.Value ? 1 : 0)}" : "1=1";
+            return connection.Query<CompetencyFlag>(
+                $@"SELECT CompetencyId, Selected, {FlagFields}
+	                FROM Flags fl
+	                INNER JOIN Frameworks AS fw ON fl.FrameworkID = fw.ID
+	                LEFT OUTER JOIN CompetencyFlags AS cf ON cf.FlagID = fl.ID AND {competencyIdFilter}
+                    WHERE fl.FrameworkId = @frameworkId AND {selectedFilter}",
+                new { competencyId, frameworkId }
+            );
+        }
+
+        public IEnumerable<CompetencyFlag> GetSelectedCompetencyFlagsByCompetecyIds(int[] ids)
+        {
+            var competencyIdFilter = ids.Count() > 0 ? $"cf.CompetencyID IN ({String.Join(',', ids)})" : "1=1";
+            return connection.Query<CompetencyFlag>(
+                $@"SELECT CompetencyId, Selected, {FlagFields}
+	                FROM CompetencyFlags AS cf
+	                INNER JOIN Flags AS fl ON cf.FlagID = fl.ID
+                    WHERE cf.Selected = 1 AND {competencyIdFilter}"
+            );
+        }
+
+        public IEnumerable<CompetencyFlag> GetSelectedCompetencyFlagsByCompetecyId(int competencyId)
+        {
+            return GetSelectedCompetencyFlagsByCompetecyIds(new int[1] { competencyId });
+        }
+
+        public IEnumerable<Flag> GetCustomFlagsByFrameworkId(int frameworkId, int? flagId = null)
+        {
+            var flagIdFilter = flagId.HasValue ? "fl.ID = @flagId" : "1=1";
+            return connection.Query<Flag>(
+                $@"SELECT {FlagFields}
+	                FROM Flags fl
+                    WHERE FrameworkId = @frameworkId AND {flagIdFilter}",
+                new { frameworkId, flagId });
         }
 
         public IEnumerable<BrandedFramework> GetFrameworkByFrameworkName(string frameworkName, int adminId)
@@ -795,6 +845,16 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             );
         }
 
+        public void RemoveCustomFlag(int flagId)
+        {
+            connection.Execute(
+                @"DELETE FROM CompetencyFlags WHERE FlagID = @flagId", new { flagId}
+            );
+            connection.Execute(
+                @"DELETE FROM Flags WHERE ID = @flagId", new { flagId }
+            );
+        }
+
         public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId)
         {
             var result = connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
@@ -1005,9 +1065,8 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             //DO WE NEED SOMETHING IN HERE TO CHECK WHETHER IT IS USED ELSEWHERE AND WARN THE USER?
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Competencies SET Name = @name, Description = @description, UpdatedByAdminID = @adminId
-                    FROM   Competencies INNER JOIN
-             FrameworkCompetencies AS fc ON Competencies.ID = fc.CompetencyID
-WHERE (fc.Id = @frameworkCompetencyId)",
+                    FROM   Competencies INNER JOIN FrameworkCompetencies AS fc ON Competencies.ID = fc.CompetencyID
+                    WHERE (fc.Id = @frameworkCompetencyId)",
                 new { name, description, adminId, frameworkCompetencyId }
             );
             if (numberOfAffectedRows < 1)
@@ -1017,6 +1076,46 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                     $"Name: {name}, admin id: {adminId}, frameworkCompetencyId: {frameworkCompetencyId}"
                 );
             }
+        }
+
+        public void UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds)
+        {
+            string? commaSeparatedSelectedFlagIds = null;
+            if (selectedFlagIds?.Length > 0)
+            {
+                commaSeparatedSelectedFlagIds = String.Join(',', selectedFlagIds);
+                connection.Execute(
+                    @$"INSERT INTO CompetencyFlags(CompetencyID, FlagID, Selected)
+						SELECT @competencyId, f.ID, 1 
+						FROM Flags f
+						WHERE f.ID IN ({commaSeparatedSelectedFlagIds}) AND NOT EXISTS(
+							SELECT FlagID FROM CompetencyFlags 
+							WHERE FlagID = f.ID AND CompetencyID = @competencyId
+						)",
+                    new { competencyId, selectedFlagIds });
+            }
+            connection.Execute(
+                @$"UPDATE CompetencyFlags
+                    SET Selected = (CASE WHEN FlagID IN ({commaSeparatedSelectedFlagIds ?? "null"}) THEN 1 ELSE 0 END)
+                    WHERE CompetencyID = @competencyId",
+                new { competencyId, frameworkId });
+        }
+
+        public void AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass)
+        {
+            connection.Execute(
+                @$"INSERT INTO Flags(FrameworkID, FlagName, FlagGroup, FlagTagClass)
+                    VALUES(@frameworkId, @flagName, @flagGroup, @flagTagClass)",
+                new { frameworkId, flagName, flagGroup, flagTagClass });
+        }
+
+        public void UpdateFrameworkCustomFlag(int frameworkId, int id, string flagName, string flagGroup, string flagTagClass)
+        {
+            connection.Execute(
+                @$"UPDATE Flags
+                   SET FrameworkID = @frameworkId, FlagName = @flagName, FlagGroup = @flagGroup, FlagTagClass = @flagTagClass
+                   WHERE ID = @id",
+                new { frameworkId, id, flagName, flagGroup, flagTagClass });
         }
 
         public void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction)

@@ -147,6 +147,10 @@
             {
                 Error = BulkUploadResult.ErrorReason.HasPrnButMissingPrnValue;
             }
+            else if (HasPrn.HasValue && !HasPrn.Value && !string.IsNullOrEmpty(Prn))
+            {
+                Error = BulkUploadResult.ErrorReason.PrnButHasPrnIsFalse;
+            }
             else if (!string.IsNullOrEmpty(Prn) && (Prn.Length < 5 || Prn.Length > 20))
             {
                 Error = BulkUploadResult.ErrorReason.InvalidPrnLength;

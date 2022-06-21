@@ -95,6 +95,8 @@
                 .Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, CandidateId))
                 .Returns(competency);
+            A.CallTo(() => frameworkService.GetSelectedCompetencyFlagsByCompetecyId(competency.Id))
+                .Returns(new List<Data.Models.Frameworks.CompetencyFlag>() { });
             var expectedModel = new SelfAssessmentCompetencyViewModel(
                 selfAssessment,
                 competency,

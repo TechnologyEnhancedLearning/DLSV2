@@ -102,7 +102,7 @@
             }
 
             selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
-
+            competency.CompetencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyId(competency.Id);
             var model = new SelfAssessmentCompetencyViewModel(
                 assessment,
                 competency,
@@ -295,10 +295,12 @@
             selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, candidateId);
             var competencies = FilterCompetencies(selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList(), searchModel);
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencies.Select(c => c.Id).ToArray());
 
             foreach (var competency in competencies)
             {
                 competency.QuestionLabel = assessment.QuestionLabel;
+                competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.Id);
                 foreach (var assessmentQuestion in competency.AssessmentQuestions)
                 {
                     if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
@@ -560,18 +562,22 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add")]
         public IActionResult SetSupervisorName(AddSupervisorViewModel model)
         {
+            var sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             if (!ModelState.IsValid)
             {
+                var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
+               User.GetCentreId(),
+               sessionAddSupervisor.SelfAssessmentID,
+               User.GetCandidateIdKnownNotNull()
+           );
+                model.Supervisors = supervisors;
                 return View("SelfAssessments/AddSupervisor", model);
             }
-
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(model.SupervisorAdminID);
-            var sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             if (sessionAddSupervisor == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-
             sessionAddSupervisor.SupervisorAdminId = model.SupervisorAdminID;
             sessionAddSupervisor.SupervisorEmail = supervisor.Email;
             var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(model.SelfAssessmentID)

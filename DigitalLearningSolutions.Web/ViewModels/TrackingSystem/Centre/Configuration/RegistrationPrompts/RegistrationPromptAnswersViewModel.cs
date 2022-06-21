@@ -10,13 +10,6 @@
     {
         public RegistrationPromptAnswersViewModel() { }
 
-        public RegistrationPromptAnswersViewModel(RegistrationPromptAnswersTempData tempData)
-        {
-            OptionsString = tempData.OptionsString;
-            Answer = tempData.Answer;
-            IncludeAnswersTableCaption = tempData.IncludeAnswersTableCaption;
-        }
-
         public RegistrationPromptAnswersViewModel(
             string? optionsString,
             string? answer = null,
@@ -28,6 +21,14 @@
             IncludeAnswersTableCaption = includeAnswersTableCaption;
         }
 
+        public RegistrationPromptAnswersViewModel(AddRegistrationPromptTempData tempData)
+        {
+            PromptName = tempData.SelectPromptData.PromptName;
+            OptionsString = tempData.ConfigureAnswersTempData.OptionsString;
+            Answer = tempData.ConfigureAnswersTempData.Answer;
+            IncludeAnswersTableCaption = tempData.ConfigureAnswersTempData.IncludeAnswersTableCaption;
+        }
+
         public string? OptionsString { get; set; }
 
         [Required(ErrorMessage = "Enter a response")]
@@ -35,6 +36,8 @@
         public string? Answer { get; set; }
 
         public bool IncludeAnswersTableCaption { get; set; }
+
+        public string? PromptName { get; set; }
 
         private IEnumerable<string> ComparableOptions => NewlineSeparatedStringListHelper
             .SplitNewlineSeparatedList(OptionsString)

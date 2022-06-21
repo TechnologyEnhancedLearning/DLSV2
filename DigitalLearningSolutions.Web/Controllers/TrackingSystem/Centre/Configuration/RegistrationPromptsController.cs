@@ -248,7 +248,7 @@
                 MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
             );
-            var viewModel = new RegistrationPromptAnswersViewModel(data.ConfigureAnswersTempData);
+            var viewModel = new RegistrationPromptAnswersViewModel(data);
 
             return View(viewModel);
         }
@@ -601,7 +601,9 @@
                 MultiPageFormDataFeature.AddRegistrationPrompt,
                 TempData
             );
-            data.SelectPromptData = new AddRegistrationPromptSelectPromptData(model.CustomPromptId, model.Mandatory);
+            var promptName = centreRegistrationPromptsService.GetCentreRegistrationPromptsAlphabeticalList()
+                .Single(c => c.id == model.CustomPromptId).value;
+            data.SelectPromptData = new AddRegistrationPromptSelectPromptData(model.CustomPromptId, model.Mandatory, promptName);
             multiPageFormService.SetMultiPageFormData(
                 data,
                 MultiPageFormDataFeature.AddRegistrationPrompt,

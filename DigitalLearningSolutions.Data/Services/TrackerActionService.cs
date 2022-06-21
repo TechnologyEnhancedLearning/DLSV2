@@ -39,28 +39,44 @@
             int? customisationId,
             string? sessionId
         );
+
+        TrackerEndpointResponse StoreAspAssessNoSession(
+            int? version,
+            int? sectionId,
+            int? score,
+            int? candidateId,
+            int? customisationId,
+            string? sessionId
+        );
     }
 
     public class TrackerActionService : ITrackerActionService
     {
+        private readonly IClockService clockService;
         private readonly ILogger<TrackerActionService> logger;
+        private readonly int NumberOfMinutesForDuplicateAttemptThreshold = 1;
+        private readonly IProgressDataService progressDataService;
         private readonly IProgressService progressService;
         private readonly ISessionDataService sessionDataService;
-        private readonly IStoreAspProgressService storeAspProgressService;
+        private readonly IStoreAspService storeAspService;
         private readonly ITutorialContentDataService tutorialContentDataService;
 
         public TrackerActionService(
             ITutorialContentDataService tutorialContentDataService,
+            IClockService clockService,
             IProgressService progressService,
+            IProgressDataService progressDataService,
             ISessionDataService sessionDataService,
-            IStoreAspProgressService storeAspProgressService,
+            IStoreAspService storeAspService,
             ILogger<TrackerActionService> logger
         )
         {
             this.tutorialContentDataService = tutorialContentDataService;
             this.progressService = progressService;
+            this.progressDataService = progressDataService;
             this.sessionDataService = sessionDataService;
-            this.storeAspProgressService = storeAspProgressService;
+            this.storeAspService = storeAspService;
+            this.clockService = clockService;
             this.logger = logger;
         }
 
@@ -148,7 +164,7 @@
         )
         {
             var (validationResponse, progress) =
-                storeAspProgressService.GetProgressAndValidateCommonInputsForStoreAspSessionEndpoints(
+                storeAspService.GetProgressAndValidateCommonInputsForStoreAspProgressEndpoints(
                     progressId,
                     version,
                     tutorialId,
@@ -165,7 +181,7 @@
 
             try
             {
-                storeAspProgressService.StoreAspProgressAndSendEmailIfComplete(
+                storeAspService.StoreAspProgressAndSendEmailIfComplete(
                     progress!,
                     version!.Value,
                     progressText,
@@ -196,7 +212,7 @@
         )
         {
             var (validationResponse, progress) =
-                storeAspProgressService.GetProgressAndValidateCommonInputsForStoreAspSessionEndpoints(
+                storeAspService.GetProgressAndValidateCommonInputsForStoreAspProgressEndpoints(
                     progressId,
                     version,
                     tutorialId,
@@ -212,10 +228,11 @@
             }
 
             var (sessionValidationResponse, parsedSessionId) =
-                storeAspProgressService.ParseSessionIdAndValidateSessionForStoreAspProgressNoSession(
+                storeAspService.ParseSessionIdAndValidateSessionForStoreAspNoSessionEndpoints(
                     sessionId,
                     candidateId!.Value,
-                    customisationId!.Value
+                    customisationId!.Value,
+                    TrackerEndpointResponse.StoreAspProgressException
                 );
 
             if (sessionValidationResponse != null)
@@ -227,7 +244,7 @@
             {
                 sessionDataService.AddTutorialTimeToSessionDuration(parsedSessionId!.Value, tutorialTime!.Value);
 
-                storeAspProgressService.StoreAspProgressAndSendEmailIfComplete(
+                storeAspService.StoreAspProgressAndSendEmailIfComplete(
                     progress!,
                     version!.Value,
                     progressText,
@@ -240,6 +257,98 @@
             {
                 logger.LogError(ex, ex.Message);
                 return TrackerEndpointResponse.StoreAspProgressException;
+            }
+
+            return TrackerEndpointResponse.Success;
+        }
+
+        public TrackerEndpointResponse StoreAspAssessNoSession(
+            int? version,
+            int? sectionId,
+            int? score,
+            int? candidateId,
+            int? customisationId,
+            string? sessionId
+        )
+        {
+            var (validationResponse, progress) = storeAspService.GetProgressAndValidateInputsForStoreAspAssess(
+                version,
+                score,
+                candidateId,
+                customisationId
+            );
+
+            if (validationResponse != null)
+            {
+                return validationResponse;
+            }
+
+            var (sectionValidationResponse, assessmentDetails) =
+                storeAspService.GetAndValidateSectionAssessmentDetails(sectionId, customisationId!.Value);
+
+            if (sectionValidationResponse != null)
+            {
+                return sectionValidationResponse;
+            }
+
+            var currentUtcTime = clockService.UtcNow;
+
+            if (sessionId != null)
+            {
+                var (sessionValidationResponse, parsedSessionId) =
+                    storeAspService.ParseSessionIdAndValidateSessionForStoreAspNoSessionEndpoints(
+                        sessionId,
+                        candidateId!.Value,
+                        customisationId.Value,
+                        TrackerEndpointResponse.StoreAspAssessException
+                    );
+
+                if (sessionValidationResponse != null)
+                {
+                    return sessionValidationResponse;
+                }
+
+                sessionDataService.UpdateDelegateSessionDuration(parsedSessionId!.Value, currentUtcTime);
+            }
+
+            var previousAssessAttempts = progressDataService.GetAssessAttemptsForProgressSection(
+                progress!.ProgressId,
+                assessmentDetails!.SectionNumber
+            ).ToList();
+
+            var duplicateCreationTimeThreshold =
+                currentUtcTime.AddMinutes(-NumberOfMinutesForDuplicateAttemptThreshold);
+            var duplicateRecord =
+                previousAssessAttempts.FirstOrDefault(
+                    aa => aa.Score == score && aa.Date >= duplicateCreationTimeThreshold
+                );
+            var numberOfFailedAttempts = previousAssessAttempts.Count(aa => !aa.Status);
+
+            if (duplicateRecord == null)
+            {
+                var assessmentPassed = score >= assessmentDetails.PlaPassThreshold;
+
+                progressDataService.InsertAssessAttempt(
+                    candidateId!.Value,
+                    customisationId.Value,
+                    version!.Value,
+                    currentUtcTime,
+                    assessmentDetails.SectionNumber,
+                    score!.Value,
+                    assessmentPassed,
+                    progress.ProgressId
+                );
+
+                numberOfFailedAttempts += assessmentPassed ? 0 : 1;
+            }
+
+            if (assessmentDetails.AssessAttempts > 0 && numberOfFailedAttempts >= assessmentDetails.AssessAttempts)
+            {
+                progressDataService.LockProgress(progress.ProgressId);
+            }
+            else
+            {
+                progressService.CheckProgressForCompletionAndSendEmailIfCompleted(progress);
             }
 
             return TrackerEndpointResponse.Success;
