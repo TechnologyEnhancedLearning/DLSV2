@@ -251,36 +251,43 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         [Test]
         public void ProcessDelegateTable_has_missing_PRN_error_for_HasPRN_true_with_missing_PRN()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true);
+            var row = GetSampleDelegateDataRow(hasPrn: true.ToString());
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.HasPrnButMissingPrnValue);
         }
 
         [Test]
         public void ProcessDelegateTable_has_false_HasPRN_error_for_PRN_with_value_and_false_HasPRN()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: false, prn: "PRN1234");
+            var row = GetSampleDelegateDataRow(hasPrn: false.ToString(), prn: "PRN1234");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.PrnButHasPrnIsFalse);
         }
 
         [Test]
         public void ProcessDelegateTable_has_invalid_PRN_characters_error_for_PRN_with_invalid_characters()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "^%£PRN");
+            var row = GetSampleDelegateDataRow(hasPrn: true.ToString(), prn: "^%£PRN");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnCharacters);
         }
 
         [Test]
         public void ProcessDelegateTable_has_invalid_PRN_length_error_for_PRN_too_short()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "PRN1");
+            var row = GetSampleDelegateDataRow(hasPrn: true.ToString(), prn: "PRN1");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnLength);
         }
 
         [Test]
         public void ProcessDelegateTable_has_invalid_PRN_length_error_for_PRN_too_long()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "PRNAboveAllowedLength");
+            var row = GetSampleDelegateDataRow(hasPrn: true.ToString(), prn: "PRNAboveAllowedLength");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnLength);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_invalid_HasPRN_error_for_HasPRN_not_parsable_to_bool()
+        {
+            var row = GetSampleDelegateDataRow(hasPrn: "ThisDoesNotMatchTRUE");
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidHasPrnValue);
         }
 
         [Test]
@@ -428,7 +435,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string delegateId = "DELEGATE";
-            var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, prn: "PRN1234");
             var table = CreateTableFromData(new[] { row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(
                 firstName: row.FirstName,
@@ -437,7 +444,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 answer1: row.Answer1,
                 answer2: row.Answer2,
                 active: true,
-                jobGroupId: 1
+                jobGroupId: 1,
+                hasBeenPromptedForPrn: true,
+                professionalRegistrationNumber: row.PRN
             );
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
@@ -598,7 +607,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             const string delegateId = "DELEGATE";
             const string prn = "PRN1234";
-            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: true, prn: prn);
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: true.ToString(), prn: prn);
             var table = CreateTableFromData(new[] { row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
 
@@ -623,7 +632,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string delegateId = "DELEGATE";
-            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: false);
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: false.ToString());
             var table = CreateTableFromData(new[] { row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
 
@@ -996,7 +1005,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             const string candidateNumber = "DELEGATE";
             const int newDelegateRecordId = 5;
             const string prn = "PRN1234";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: true, prn: prn);
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: true.ToString(), prn: prn);
             var table = CreateTableFromData(new[] { row });
             
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
@@ -1027,7 +1036,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             const string candidateNumber = "DELEGATE";
             const int newDelegateRecordId = 5;
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: false);
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: false.ToString());
             var table = CreateTableFromData(new[] { row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
@@ -1229,7 +1238,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             string active = "True",
             string aliasId = "",
             string jobGroupId = "1",
-            bool? hasPrn = null,
+            string? hasPrn = null,
             string? prn = null
         )
         {
@@ -1326,7 +1335,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 string answer6,
                 string aliasId,
                 string emailAddress,
-                bool? hasPrn,
+                string? hasPrn,
                 string? prn
             )
             {
@@ -1360,8 +1369,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             public string Answer6 { get; }
             public string AliasID { get; }
             public string EmailAddress { get; }
-            public bool? HasPRN { get; set; }
-            public string? PRN { get; set; }
+            public string? HasPRN { get; }
+            public string? PRN { get; }
         }
     }
 }

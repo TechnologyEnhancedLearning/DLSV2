@@ -237,10 +237,12 @@
                 return false;
             }
 
-            return DelegateDownloadFileService.GetHasPrnForDelegate(
+            var delegateUserHasPrn = DelegateDownloadFileService.GetHasPrnForDelegate(
                 delegateUser.HasBeenPromptedForPrn,
                 delegateUser.ProfessionalRegistrationNumber
-            ) == HasPrn;
+            );
+
+            return delegateUserHasPrn == HasPrn || HasPrn == null;
         }
     }
 }
