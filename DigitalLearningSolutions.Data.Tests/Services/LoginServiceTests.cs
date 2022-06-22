@@ -43,7 +43,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidUsername);
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidCredentials);
                 result.Accounts.AdminAccount.Should().BeNull();
                 result.Accounts.DelegateAccounts.Should().BeEmpty();
             }
@@ -119,7 +119,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidPassword);
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidCredentials);
                 result.Accounts.AdminAccount.Should().BeNull();
                 result.Accounts.DelegateAccounts.Should().BeEmpty();
             }
@@ -140,7 +140,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustHaveHappened();
-                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidPassword);
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidCredentials);
                 result.Accounts.AdminAccount.Should().BeNull();
                 result.Accounts.DelegateAccounts.Should().BeEmpty();
             }

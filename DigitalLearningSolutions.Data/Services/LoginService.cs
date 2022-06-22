@@ -29,7 +29,7 @@
 
             if (NoAccounts(unverifiedAdminUser, unverifiedDelegateUsers))
             {
-                return new LoginResult(LoginAttemptResult.InvalidUsername);
+                return new LoginResult(LoginAttemptResult.InvalidCredentials);
             }
 
             var (verifiedAdminUser, verifiedDelegateUsers) = userVerificationService.VerifyUsers(
@@ -74,7 +74,7 @@
 
             if (verifiedAdminUser == null && !delegateAccountVerificationSuccessful)
             {
-                return new LoginResult(LoginAttemptResult.InvalidPassword);
+                return new LoginResult(LoginAttemptResult.InvalidCredentials);
             }
 
             if (verifiedAdminUser != null)
