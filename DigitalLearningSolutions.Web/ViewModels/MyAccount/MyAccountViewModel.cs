@@ -16,7 +16,8 @@
             string centreName,
             string? centreEmail,
             CentreRegistrationPromptsWithAnswers? customPrompts,
-            DlsSubApplication dlsSubApplication
+            DlsSubApplication dlsSubApplication,
+            string switchCentreReturnUrl
         )
         {
             FirstName = userAccount.FirstName;
@@ -49,6 +50,7 @@
             }
 
             DlsSubApplication = dlsSubApplication;
+            SwitchCentreReturnUrl = switchCentreReturnUrl;
         }
 
         public string Centre { get; set; }
@@ -74,5 +76,7 @@
         public List<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
 
         public DlsSubApplication DlsSubApplication { get; set; }
+
+        public string SwitchCentreReturnUrl { get; set; }
     }
 }

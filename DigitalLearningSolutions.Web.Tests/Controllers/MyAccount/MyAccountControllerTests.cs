@@ -19,13 +19,16 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
+    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
 
     public class MyAccountControllerTests
     {
         private const string Email = "test@user.com";
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
+        private IConfiguration config = null!;
         private IImageResizeService imageResizeService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private ILogger<MyAccountController> logger = null!;
@@ -37,12 +40,38 @@
         public void Setup()
         {
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
+            config = A.Fake<IConfiguration>();
             userService = A.Fake<IUserService>();
             imageResizeService = A.Fake<ImageResizeService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             promptsService = new PromptsService(centreRegistrationPromptsService);
             logger = A.Fake<ILogger<MyAccountController>>();
             urlHelper = A.Fake<IUrlHelper>();
+
+            A.CallTo(() => config[ConfigurationExtensions.AppRootPathName]).Returns("https://www.test.com");
+        }
+
+        [Test]
+        public void Index_sets_switch_centre_return_url_correctly()
+        {
+            // Given
+            var myAccountController = new MyAccountController(
+                centreRegistrationPromptsService,
+                userService,
+                imageResizeService,
+                jobGroupsDataService,
+                promptsService,
+                logger,
+                config
+            ).WithDefaultContext().WithMockUser(true);
+
+            // When
+            var result = myAccountController.Index(DlsSubApplication.Default);
+
+            // Then
+            const string expectedReturnUrl = "%2fHome%2fWelcome";
+            result.As<ViewResult>().Model.As<MyAccountViewModel>().SwitchCentreReturnUrl.Should()
+                .BeEquivalentTo(expectedReturnUrl);
         }
 
         [Test]
@@ -55,7 +84,8 @@
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
-                logger
+                logger,
+                config
             ).WithDefaultContext().WithMockUser(true);
             var formData = new MyAccountEditDetailsFormData();
             var expectedModel = new MyAccountEditDetailsViewModel(
@@ -85,7 +115,8 @@
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
-                logger
+                logger,
+                config
             ).WithDefaultContext().WithMockUser(true, adminId: null);
             var customPromptLists = new List<CentreRegistrationPrompt>
                 { PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, mandatory: true) };
@@ -129,7 +160,8 @@
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
-                logger
+                logger,
+                config
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
             A.CallTo(
@@ -186,7 +218,8 @@
                     imageResizeService,
                     jobGroupsDataService,
                     promptsService,
-                    logger
+                    logger,
+                    config
                 ).WithDefaultContext()
                 .WithMockUser(true, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
@@ -229,7 +262,8 @@
                     imageResizeService,
                     jobGroupsDataService,
                     promptsService,
-                    logger
+                    logger,
+                    config
                 ).WithDefaultContext()
                 .WithMockUser(true, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
@@ -277,7 +311,8 @@
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
-                logger
+                logger,
+                config
             ).WithDefaultContext().WithMockUser(true, adminId: null);
             var customPromptLists = new List<CentreRegistrationPrompt>
                 { PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, mandatory: true) };
@@ -324,7 +359,8 @@
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
-                logger
+                logger,
+                config
             ).WithDefaultContext().WithMockUser(true, adminId: null);
             const string action = "unexpectedString";
             var model = new MyAccountEditDetailsFormData();

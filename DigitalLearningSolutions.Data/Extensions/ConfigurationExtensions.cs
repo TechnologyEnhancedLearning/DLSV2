@@ -6,7 +6,7 @@
     {
         public const string UseSignposting = "FeatureManagement:UseSignposting";
 
-        private const string AppRootPathName = "AppRootPath";
+        public const string AppRootPathName = "AppRootPath";
         private const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
         private const string LearningHubOpenApiKey = "LearningHubOpenAPIKey";
         private const string LearningHubOpenApiBaseUrl = "LearningHubOpenAPIBaseUrl";

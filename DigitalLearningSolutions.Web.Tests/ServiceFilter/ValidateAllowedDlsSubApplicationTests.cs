@@ -15,6 +15,7 @@
     using Microsoft.AspNetCore.Mvc.Controllers;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Microsoft.FeatureManagement;
     using NUnit.Framework;
@@ -81,7 +82,8 @@
                 A.Fake<IImageResizeService>(),
                 A.Fake<IJobGroupsDataService>(),
                 A.Fake<PromptsService>(),
-                A.Fake<ILogger<MyAccountController>>()
+                A.Fake<ILogger<MyAccountController>>(),
+                A.Fake<IConfiguration>()
             )
             {
                 ControllerContext = new ControllerContext
@@ -141,7 +143,8 @@
                 A.Fake<IImageResizeService>(),
                 A.Fake<IJobGroupsDataService>(),
                 A.Fake<PromptsService>(),
-                A.Fake<ILogger<MyAccountController>>()
+                A.Fake<ILogger<MyAccountController>>(),
+                A.Fake<IConfiguration>()
             )
             {
                 ControllerContext = new ControllerContext
