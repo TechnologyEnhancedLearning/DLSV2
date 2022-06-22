@@ -5,8 +5,7 @@
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
-    using ConfigurationExtensions = Data.Extensions.ConfigurationExtensions;
-
+    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
 
     public class StringHelperTests
     {

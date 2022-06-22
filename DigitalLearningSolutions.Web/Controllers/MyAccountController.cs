@@ -24,12 +24,12 @@
     public class MyAccountController : Controller
     {
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
+        private readonly IConfiguration config;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly ILogger<MyAccountController> logger;
         private readonly PromptsService promptsService;
         private readonly IUserService userService;
-        private readonly IConfiguration config;
 
         public MyAccountController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
