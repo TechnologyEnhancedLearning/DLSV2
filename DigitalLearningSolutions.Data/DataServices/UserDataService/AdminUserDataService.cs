@@ -79,41 +79,6 @@
             return users;
         }
 
-        public void UpdateAdminAccount(AdminRegistrationModel model, int adminId)
-        {
-            connection.Execute(
-                @"UPDATE AdminAccounts
-                        SET
-                            CategoryID = @categoryId,
-                            IsCentreAdmin = @isCentreAdmin,
-                            IsCentreManager = @isCentreManager,
-                            Active = @active,
-                            IsContentCreator = @isContentCreator,
-                            IsContentManager = @isContentManager,
-                            ImportOnly = @importOnly,
-                            IsTrainer = @isTrainer,
-                            IsSupervisor = @isSupervisor,
-                            IsNominatedSupervisor = @isNominatedSupervisor,
-                            IsSuperAdmin = @isSuperAdmin
-                        WHERE ID = @adminId",
-                new
-                {
-                    model.CategoryId,
-                    model.IsCentreAdmin,
-                    model.IsCentreManager,
-                    model.Active,
-                    model.IsContentCreator,
-                    model.IsContentManager,
-                    model.ImportOnly,
-                    model.IsTrainer,
-                    model.IsSupervisor,
-                    model.IsNominatedSupervisor,
-                    model.IsSuperAdmin,
-                    adminId,
-                }
-            );
-        }
-
         public int GetNumberOfActiveAdminsAtCentre(int centreId)
         {
             return (int)connection.ExecuteScalar(
@@ -189,7 +154,7 @@
         public void ReactivateAdmin(int adminId)
         {
             connection.Execute(
-                @"UPDATE AdminUsers SET
+                @"UPDATE AdminAccounts SET
                         Active = 1,
                         IsCentreManager = 0,
                         UserAdmin = 0

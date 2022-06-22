@@ -233,22 +233,6 @@ namespace DigitalLearningSolutions.Data.Services
             var admin = userDataService.GetAdminAccountsByUserId(userId)
                 .SingleOrDefault(a => a.CentreId == delegateUser.CentreId);
 
-            var adminRegistrationModel = new AdminRegistrationModel(
-                delegateUser.CentreId,
-                true,
-                true,
-                categoryId,
-                adminRoles.IsCentreAdmin,
-                false,
-                adminRoles.IsSupervisor,
-                adminRoles.IsNominatedSupervisor,
-                adminRoles.IsTrainer,
-                adminRoles.IsContentCreator,
-                adminRoles.IsCmsAdministrator,
-                adminRoles.IsCmsManager,
-                delegateUser.JobGroupId
-            );
-
             if (admin != null)
             {
                 if (admin.Active)
@@ -256,19 +240,9 @@ namespace DigitalLearningSolutions.Data.Services
                     throw new AdminCreationFailedException(AdminCreationError.ActiveAdminAlreadyExists);
                 }
 
-                userDataService.UpdateAdminAccount(adminRegistrationModel, admin.Id);
-            }
-
-            registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
-
-            var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
-
-            if (adminUser?.Active == false && adminUser.CentreId == delegateUser.CentreId)
-            {
-                userDataService.ReactivateAdmin(adminUser.Id);
-                passwordDataService.SetPasswordByAdminId(adminUser.Id, delegateUser.Password);
+                userDataService.ReactivateAdmin(admin.Id);
                 userDataService.UpdateAdminUserPermissions(
-                    adminUser.Id,
+                    admin.Id,
                     adminRoles.IsCentreAdmin,
                     adminRoles.IsSupervisor,
                     adminRoles.IsNominatedSupervisor,
@@ -279,19 +253,12 @@ namespace DigitalLearningSolutions.Data.Services
                     categoryId
                 );
             }
-            else if (adminUser == null)
+            else
             {
-                var adminRegistrationModel_ = new AdminRegistrationModel(
-                    delegateUser.FirstName,
-                    delegateUser.LastName,
-                    delegateUser.EmailAddress,
-                    null,
+                var adminRegistrationModel = new AdminRegistrationModel(
                     delegateUser.CentreId,
-                    delegateUser.Password,
                     true,
                     true,
-                    delegateUser.ProfessionalRegistrationNumber,
-                    delegateUser.JobGroupId,
                     categoryId,
                     adminRoles.IsCentreAdmin,
                     false,
@@ -301,14 +268,10 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsContentCreator,
                     adminRoles.IsCmsAdministrator,
                     adminRoles.IsCmsManager,
-                    delegateUser.ProfileImage
+                    delegateUser.JobGroupId
                 );
 
-                registrationDataService.RegisterAdmin(adminRegistrationModel_, userId);
-            }
-            else
-            {
-                throw new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse);
+                registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
             }
         }
 

@@ -19,8 +19,6 @@
 
         int GetNumberOfActiveAdminsAtCentre(int centreId);
 
-        void UpdateAdminAccount(AdminRegistrationModel model, int adminId);
-
         void UpdateAdminUserPermissions(
             int adminId,
             bool isCentreAdmin,
