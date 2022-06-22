@@ -4,8 +4,7 @@
     {
         LogIntoSingleCentre,
         ChooseACentre,
-        InvalidPassword,
-        InvalidUsername,
+        InvalidCredentials,
         InactiveAccount,
         AccountsHaveMismatchedPasswords,
         AccountLocked,

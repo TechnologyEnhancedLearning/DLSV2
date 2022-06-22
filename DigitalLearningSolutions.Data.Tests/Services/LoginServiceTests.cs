@@ -40,7 +40,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidUsername);
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidCredentials);
                 result.UserEntity.Should().BeNull();
                 result.CentreToLogInto.Should().BeNull();
             }
@@ -124,15 +124,15 @@
             // Then
             using (new AssertionScope())
             {
-                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidPassword);
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidCredentials);
                 result.UserEntity.Should().BeNull();
                 result.CentreToLogInto.Should().BeNull();
             }
         }
 
         [Test]
-        [TestCase(LoginAttemptResult.InvalidPassword, 0)]
-        [TestCase(LoginAttemptResult.InvalidPassword, 3)]
+        [TestCase(LoginAttemptResult.InvalidCredentials, 0)]
+        [TestCase(LoginAttemptResult.InvalidCredentials, 3)]
         [TestCase(LoginAttemptResult.AccountLocked, 4)]
         [TestCase(LoginAttemptResult.AccountLocked, 5)]
         [TestCase(LoginAttemptResult.AccountLocked, 10)]
@@ -164,7 +164,7 @@
             using (new AssertionScope())
             {
                 result.LoginAttemptResult.Should().Be(expectedResult);
-                if (expectedResult == LoginAttemptResult.InvalidPassword)
+                if (expectedResult == LoginAttemptResult.InvalidCredentials)
                 {
                     result.UserEntity.Should().BeNull();
                 }

@@ -31,7 +31,7 @@
 
             if (userEntity == null)
             {
-                return new LoginResult(LoginAttemptResult.InvalidUsername);
+                return new LoginResult(LoginAttemptResult.InvalidCredentials);
             }
 
             if (!userEntity.UserAccount.Active)
@@ -54,7 +54,7 @@
 
                 return userEntity.IsLocked
                     ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity)
-                    : new LoginResult(LoginAttemptResult.InvalidPassword);
+                    : new LoginResult(LoginAttemptResult.InvalidCredentials);
             }
 
             return userEntity.IsLocked
