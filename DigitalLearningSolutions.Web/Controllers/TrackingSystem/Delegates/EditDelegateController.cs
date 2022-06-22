@@ -86,7 +86,10 @@
                 formData.CentreSpecificEmail = null;
             }
 
-            if (!userService.NewEmailAddressIsValid(formData.CentreSpecificEmail!, delegateEntity!.UserAccount.Id))
+            if (formData.CentreSpecificEmail != null && !userService.NewEmailAddressIsValid(
+                formData.CentreSpecificEmail,
+                delegateEntity!.UserAccount.Id
+            ))
             {
                 ModelState.AddModelError(
                     nameof(EditDetailsFormData.CentreSpecificEmail),
