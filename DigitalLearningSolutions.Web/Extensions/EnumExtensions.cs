@@ -15,14 +15,16 @@ namespace DigitalLearningSolutions.Web.Extensions
             }
         }
 
-        public static string GetDescription(this SelfAssessmentCompetencyFilter status)
+        public static string GetDescription(this SelfAssessmentCompetencyFilter status, bool isSupervisorResultReview = false)
         {
             switch (status)
             {
-                case SelfAssessmentCompetencyFilter.NotYetResponded:
-                    return "Not yet responded";
+                case SelfAssessmentCompetencyFilter.RequiresSelfAssessment:
+                    return "Requires self assessment";
                 case SelfAssessmentCompetencyFilter.SelfAssessed:
-                    return "Self-assessed";
+                    return "Self-assessed" + (isSupervisorResultReview ? " (confirmation not yet requested)" : "");
+                case SelfAssessmentCompetencyFilter.ConfirmationRequested:
+                    return "Confirmation requested";
                 case SelfAssessmentCompetencyFilter.Verified:
                     return "Confirmed";
                 case SelfAssessmentCompetencyFilter.MeetingRequirements:
@@ -45,9 +47,10 @@ namespace DigitalLearningSolutions.Web.Extensions
 
         public static bool IsResponseStatusFilter(this SelfAssessmentCompetencyFilter filter)
         {
-            return filter == SelfAssessmentCompetencyFilter.NotYetResponded
+            return filter == SelfAssessmentCompetencyFilter.RequiresSelfAssessment
                 || filter == SelfAssessmentCompetencyFilter.SelfAssessed
-                || filter == SelfAssessmentCompetencyFilter.Verified;
+                || filter == SelfAssessmentCompetencyFilter.Verified
+                || filter == SelfAssessmentCompetencyFilter.ConfirmationRequested;
         }
     }
 }

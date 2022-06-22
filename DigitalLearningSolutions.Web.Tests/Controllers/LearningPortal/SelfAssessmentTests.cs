@@ -323,6 +323,8 @@
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
                 .Returns(selfAssessment);
+            A.CallTo(() => selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId))
+                .Returns(new List<Competency>() { });
 
             // When
             controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary);

@@ -2,9 +2,10 @@
 {
     public enum SelfAssessmentCompetencyFilter
     {
-        NotYetResponded,
+        RequiresSelfAssessment,
         SelfAssessed,
         Verified,
+        ConfirmationRequested,
         MeetingRequirements,
         PartiallyMeetingRequirements,
         NotMeetingRequirements

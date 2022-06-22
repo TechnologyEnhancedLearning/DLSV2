@@ -8,7 +8,7 @@
   <div class="search-container">
     <div class="search-box-container" id="search">
       <label class="nhsuk-u-visually-hidden" for="search-field">Search</label>
-      <input class="search-box" id="search-field" name="searchText"
+      <input class="search-box nhsuk-input" id="search-field" name="searchText"
              style="border-bottom-right-radius: initial; border-top-right-radius: initial;"
              type="search" placeholder="Search" autocomplete="off" value="@Model.SearchText">
       <button class="nhsuk-button search-submit" type="submit" asp-action="SearchInSelfAssessmentOverviewGroups">
@@ -23,14 +23,15 @@
     @Html.DropDownListFor(m => m.ResponseStatus,
       Model.Filters.First().FilterOptions
         .Where(f => parent.SelfAssessment.IsSupervisorResultsReviewed
-                    || f.FilterValue == SelfAssessmentCompetencyFilter.NotYetResponded.ToString()
+                    || f.FilterValue == SelfAssessmentCompetencyFilter.RequiresSelfAssessment.ToString()
                     || f.FilterValue == SelfAssessmentCompetencyFilter.SelfAssessed.ToString())
         .Select(f => new SelectListItem(
           text: f.DisplayText,
           value: f.FilterValue.ToString(),
-          selected: f.FilterValue == SelfAssessmentCompetencyFilter.NotYetResponded.ToString())
+          selected: f.FilterValue == SelfAssessmentCompetencyFilter.RequiresSelfAssessment.ToString())
         ),
-      new {
+      new
+          {
         @class = "nhsuk-select filter-dropdown",
         aria_label = "ResponseStatus filter"
       })
@@ -39,9 +40,11 @@
     </button>
   </div>
   @Html.HiddenFor(m => m.SelfAssessmentId)
+  @Html.HiddenFor(m => m.IsSupervisorResultsReviewed)
   @Html.HiddenFor(m => m.Vocabulary)
   @Html.Hidden(nameof(Model.SearchText), Model.SearchText)
-  @for (int i = 0; i < Model.AppliedFilters.Count; i++) {
+  @for (int i = 0; i < Model.AppliedFilters.Count; i++)
+  {
     @Html.HiddenFor(m => m.AppliedFilters[i].DisplayText)
     @Html.HiddenFor(m => m.AppliedFilters[i].FilterValue)
   }
