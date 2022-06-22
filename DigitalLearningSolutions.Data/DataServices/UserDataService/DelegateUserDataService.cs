@@ -217,7 +217,7 @@
             int jobGroupId,
             DateTime detailsLastChecked,
             int userId,
-            bool shouldUpdateProfileImage = false
+            bool changeMadeBySameUser = false
         )
         {
             connection.Execute(
@@ -226,11 +226,11 @@
                             FirstName = @firstName,
                             LastName = @surname,
                             PrimaryEmail = @primaryEmail,
-                            ProfileImage = (CASE WHEN @shouldUpdateProfileImage = 1 THEN @profileImage ELSE ProfileImage END),
+                            ProfileImage = (CASE WHEN @changeMadeBySameUser = 1 THEN @profileImage ELSE ProfileImage END),
                             ProfessionalRegistrationNumber = @professionalRegNumber,
                             HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
                             JobGroupId = @jobGroupId,
-                            DetailsLastChecked = @detailsLastChecked
+                            DetailsLastChecked = (CASE WHEN @changeMadeBySameUser = 1 THEN @detailsLastChecked ELSE DetailsLastChecked END)
                         WHERE ID = @userId",
                 new
                 {
@@ -243,7 +243,7 @@
                     hasBeenPromptedForPrn,
                     jobGroupId,
                     detailsLastChecked,
-                    shouldUpdateProfileImage,
+                    changeMadeBySameUser,
                 }
             );
         }

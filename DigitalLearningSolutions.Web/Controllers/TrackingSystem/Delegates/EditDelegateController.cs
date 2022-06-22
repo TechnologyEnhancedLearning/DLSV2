@@ -77,13 +77,19 @@
 
             var delegateEntity = userService.GetDelegateById(delegateId);
 
-            if (formData.CentreSpecificEmail == delegateEntity!.UserAccount.PrimaryEmail ||
-                string.IsNullOrWhiteSpace(formData.CentreSpecificEmail))
+            var centreEmailDefaultsToPrimary =
+                formData.CentreSpecificEmail == delegateEntity!.UserAccount.PrimaryEmail &&
+                delegateEntity.UserCentreDetails?.Email == null;
+
+            if (centreEmailDefaultsToPrimary || string.IsNullOrWhiteSpace(formData.CentreSpecificEmail))
             {
                 formData.CentreSpecificEmail = null;
             }
 
-            if (!userService.NewEmailAddressIsValid(formData.CentreSpecificEmail!, delegateEntity!.UserAccount.Id))
+            if (formData.CentreSpecificEmail != null && !userService.NewEmailAddressIsValid(
+                formData.CentreSpecificEmail,
+                delegateEntity!.UserAccount.Id
+            ))
             {
                 ModelState.AddModelError(
                     nameof(EditDetailsFormData.CentreSpecificEmail),
