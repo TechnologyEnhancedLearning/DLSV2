@@ -125,7 +125,7 @@
                 Centre = centreId,
                 CentreSpecificEmail = "centre email",
             };
-            A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
+            A.CallTo(() => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId))
                 .Returns(true);
             A.CallTo(() => userService.GetUserById(userAccount.Id)).Returns(
                 new UserEntity(userAccount, new List<AdminAccount>(), new[] { new DelegateAccount() })
@@ -135,7 +135,7 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
+            A.CallTo(() => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId))
                 .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
@@ -150,14 +150,14 @@
                 Centre = ControllerContextHelper.CentreId + 1,
                 CentreSpecificEmail = "centre email",
             };
-            A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
+            A.CallTo(() => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId))
                 .Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(model.CentreSpecificEmail!))
+            A.CallTo(() => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId))
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }

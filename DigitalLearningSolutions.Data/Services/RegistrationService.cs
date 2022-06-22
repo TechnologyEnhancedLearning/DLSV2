@@ -378,7 +378,11 @@ namespace DigitalLearningSolutions.Data.Services
         {
             try
             {
-                ValidateCentreEmail(delegateRegistrationModel.CentreSpecificEmail);
+                if (delegateRegistrationModel.CentreSpecificEmail != null)
+                {
+                    ValidateCentreEmail(userId, delegateRegistrationModel.CentreSpecificEmail);
+                }
+                
                 var currentTime = clockService.UtcNow;
                 return registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
                     delegateRegistrationModel,
@@ -420,10 +424,9 @@ namespace DigitalLearningSolutions.Data.Services
             }
         }
 
-        private void ValidateCentreEmail(string? centreEmail)
+        private void ValidateCentreEmail(int userId, string centreEmail)
         {
-            var emails = (IEnumerable<string>)new[] { centreEmail }.Where(e => e != null);
-            if (userDataService.AnyEmailsInSetAreAlreadyInUse(emails))
+            if (userDataService.EmailIsInUseByOtherUser(userId, centreEmail))
             {
                 var error = DelegateCreationError.EmailAlreadyInUse;
                 logger.LogError(
