@@ -103,11 +103,15 @@
         {
             // Given
             const string email = "test@email.com";
-            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(DelegateId);
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
+                DelegateId,
+                userCentreDetailsId: 1,
+                centreSpecificEmail: email
+            );
             var formData = new EditDelegateFormData
             {
                 JobGroupId = 1,
-                Email = email,
+                CentreSpecificEmail = email,
                 HasProfessionalRegistrationNumber = false,
             };
 
