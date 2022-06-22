@@ -280,7 +280,7 @@
             var hasAdminAccount = (bool)hasAdminAccountNullable;
             var approved = (bool)approvedNullable;
             var centreId = (int)centreIdNullable;
-            
+
             var viewModel = new InternalConfirmationViewModel(
                 candidateNumber,
                 approved,
@@ -298,7 +298,10 @@
 
         private void ValidateEmailAddress(InternalPersonalInformationViewModel model)
         {
-            if (model.CentreSpecificEmail != null && userService.EmailIsInUse(model.CentreSpecificEmail))
+            if (model.CentreSpecificEmail != null && userService.NewEmailAddressIsValid(
+                    model.CentreSpecificEmail,
+                    User.GetUserIdKnownNotNull()
+                ))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.CentreSpecificEmail),
