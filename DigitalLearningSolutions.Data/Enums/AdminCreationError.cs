@@ -6,9 +6,9 @@
             1,
             nameof(UnexpectedError)
         );
-        public static AdminCreationError ActiveAdminAlreadyExists = new AdminCreationError(
+        public static AdminCreationError AlreadyActiveAdminAtCentre = new AdminCreationError(
             2,
-            nameof(ActiveAdminAlreadyExists)
+            nameof(AlreadyActiveAdminAtCentre)
         );
 
         public AdminCreationError(int id, string name) : base(id, name) { }

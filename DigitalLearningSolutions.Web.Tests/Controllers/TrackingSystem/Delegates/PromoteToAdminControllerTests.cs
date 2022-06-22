@@ -114,7 +114,7 @@
                 LearningCategory = 0
             };
             A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._))
-                .Throws(new AdminCreationFailedException(AdminCreationError.ActiveAdminAlreadyExists));
+                .Throws(new AdminCreationFailedException(AdminCreationError.AlreadyActiveAdminAtCentre));
 
             // When
             var result = controller.Index(formData, 1);

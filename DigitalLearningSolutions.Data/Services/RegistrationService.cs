@@ -237,7 +237,7 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 if (admin.Active)
                 {
-                    throw new AdminCreationFailedException(AdminCreationError.ActiveAdminAlreadyExists);
+                    throw new AdminCreationFailedException(AdminCreationError.AlreadyActiveAdminAtCentre);
                 }
 
                 userDataService.ReactivateAdmin(admin.Id);

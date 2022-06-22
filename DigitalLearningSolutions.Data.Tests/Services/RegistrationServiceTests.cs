@@ -859,7 +859,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // Then
             UpdateToExistingAdminAccountMustNotHaveHappened();
-            result.Error.Should().Be(AdminCreationError.ActiveAdminAlreadyExists);
+            result.Error.Should().Be(AdminCreationError.AlreadyActiveAdminAtCentre);
         }
 
         [Test]
