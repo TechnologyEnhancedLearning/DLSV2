@@ -9,31 +9,30 @@
 
     public class EditDelegateFormData : EditDetailsFormData, IEditProfessionalRegistrationNumbers, IValidatableObject
     {
-        public EditDelegateFormData() {}
+        public EditDelegateFormData() { }
 
-        public EditDelegateFormData(DelegateUser delegateUser, IEnumerable<(int id, string name)> jobGroups)
+        public EditDelegateFormData(DelegateEntity delegateEntity, IEnumerable<(int id, string name)> jobGroups)
         {
-            FirstName = delegateUser.FirstName;
-            LastName = delegateUser.LastName;
-            Email = delegateUser.EmailAddress;
+            FirstName = delegateEntity.UserAccount.FirstName;
+            LastName = delegateEntity.UserAccount.LastName;
+            Email = delegateEntity.UserAccount.PrimaryEmail;
+            CentreSpecificEmail = delegateEntity.UserCentreDetails?.Email ?? delegateEntity.UserAccount.PrimaryEmail;
 
-            JobGroupId = jobGroups.Where(jg => jg.name == delegateUser.JobGroupName).Select(jg => jg.id)
+            JobGroupId = jobGroups.Where(jg => jg.name == delegateEntity.UserAccount.JobGroupName).Select(jg => jg.id)
                 .SingleOrDefault();
 
-            Answer1 = delegateUser.Answer1;
-            Answer2 = delegateUser.Answer2;
-            Answer3 = delegateUser.Answer3;
-            Answer4 = delegateUser.Answer4;
-            Answer5 = delegateUser.Answer5;
-            Answer6 = delegateUser.Answer6;
+            Answer1 = delegateEntity.DelegateAccount.Answer1;
+            Answer2 = delegateEntity.DelegateAccount.Answer2;
+            Answer3 = delegateEntity.DelegateAccount.Answer3;
+            Answer4 = delegateEntity.DelegateAccount.Answer4;
+            Answer5 = delegateEntity.DelegateAccount.Answer5;
+            Answer6 = delegateEntity.DelegateAccount.Answer6;
 
-            AliasId = delegateUser.AliasId;
-
-            ProfessionalRegistrationNumber = delegateUser.ProfessionalRegistrationNumber;
+            ProfessionalRegistrationNumber = delegateEntity.UserAccount.ProfessionalRegistrationNumber;
             HasProfessionalRegistrationNumber =
                 ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(
-                    delegateUser.HasBeenPromptedForPrn,
-                    delegateUser.ProfessionalRegistrationNumber
+                    delegateEntity.UserAccount.HasBeenPromptedForPrn,
+                    delegateEntity.UserAccount.ProfessionalRegistrationNumber
                 );
             IsSelfRegistrationOrEdit = false;
         }
@@ -43,6 +42,7 @@
             FirstName = formData.FirstName;
             LastName = formData.LastName;
             Email = formData.Email;
+            CentreSpecificEmail = formData.CentreSpecificEmail;
             JobGroupId = formData.JobGroupId;
             Answer1 = formData.Answer1;
             Answer2 = formData.Answer2;
@@ -50,13 +50,9 @@
             Answer4 = formData.Answer4;
             Answer5 = formData.Answer5;
             Answer6 = formData.Answer6;
-            AliasId = formData.AliasId;
             ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
             HasProfessionalRegistrationNumber = formData.HasProfessionalRegistrationNumber;
             IsSelfRegistrationOrEdit = false;
         }
-
-        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongAlias)]
-        public string? AliasId { get; set; }
     }
 }

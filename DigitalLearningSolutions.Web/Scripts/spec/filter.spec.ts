@@ -51,7 +51,7 @@ describe('filter', () => {
 
   it('should return expected results with 2 filters in the same group', () => {
     // Given
-    createFilterableElements(`Name|Name|a${filterSeparator}Name|Name|c`);
+    createFilterableElements(`Name|Name|a${filterSeparator}Name|Name|"c"`);
 
     // When
     const filteredElements = filterSearchableElements(
@@ -67,7 +67,7 @@ describe('filter', () => {
   it('should return expected results with a mix of grouped and ungrouped filters', () => {
     // Given
     createFilterableElements(
-      `Name|Name|a${filterSeparator}Name|Name|c${filterSeparator}Number|Number|1`,
+      `Name|Name|a${filterSeparator}Name|Name|"c"${filterSeparator}Number|Number|1`,
     );
 
     // When
@@ -112,7 +112,7 @@ describe('applied filter container', () => {
   it('should have the same number of children as there are filters', () => {
     // Given
     createFilterableElements(
-      `Name|Name|a${filterSeparator}Name|Name|c${filterSeparator}Number|Number|1`,
+      `Name|Name|a${filterSeparator}Name|Name|"c"${filterSeparator}Number|Number|1`,
     );
 
     // When
@@ -137,7 +137,7 @@ function createFilterableElements(existingFilterString: string) {
       <html>
       <head></head>
       <body>
-        <input type="text" id="existing-filter-string" value="${existingFilterString}"/>
+        <input type="text" id="existing-filter-string" value='${existingFilterString}' />
         <div id="applied-filters" hidden>
             <div class="applied-filter-container" id="applied-filter-container"></div>
         </div>
@@ -163,8 +163,8 @@ function createFilterableElements(existingFilterString: string) {
           </div>
           <div class="searchable-element" id="course-c">
             <span name="name" class="searchable-element-title">c: Course</span>
-            <div class="card-filter-tag" data-filter-value="Name|Name|c">
-              <strong>Name: c</strong>
+            <div class="card-filter-tag" data-filter-value='Name|Name|"c"'>
+              <strong>Name: "c"</strong>
             </div>
             <div class="card-filter-tag" data-filter-value="Number|Number|1">
               <strong>Number: 1</strong>
@@ -173,7 +173,7 @@ function createFilterableElements(existingFilterString: string) {
         </div>
         <div class="filter-tag" data-filter-value="Name|Name|a">Name: a</div>
         <div class="filter-tag" data-filter-value="Name|Name|b">Name: b</div>
-        <div class="filter-tag" data-filter-value="Name|Name|c">Name: c</div>
+        <div class="filter-tag" data-filter-value='Name|Name|"c"'>Name: "c"</div>
         <div class="filter-tag" data-filter-value="Number|Number|1">Number: 1</div>
         <div class="filter-tag" data-filter-value="Number|Number|2">Number: 2</div>
         <div class="nhsuk-pagination-item--previous"></div>

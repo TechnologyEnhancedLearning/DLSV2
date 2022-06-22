@@ -134,10 +134,11 @@
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
-                        A<MyAccountDetailsData>._,
+                        A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string?>._,
-                        A<int>._
+                        A<int>._,
+                        A<bool>._
                     )
                 )
                 .DoesNothing();
@@ -159,10 +160,11 @@
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).MustHaveHappened();
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
-                        A<MyAccountDetailsData>._,
+                        A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string?>._,
-                        A<int>._
+                        A<int>._,
+                        true
                     )
                 )
                 .MustHaveHappened();
@@ -191,10 +193,11 @@
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
-                        A<MyAccountDetailsData>._,
+                        A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string?>._,
-                        A<int>._
+                        A<int>._,
+                        A<bool>._
                     )
                 )
                 .DoesNothing();
@@ -233,10 +236,11 @@
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
-                        A<MyAccountDetailsData>._,
+                        A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
                         A<string?>._,
-                        A<int>._
+                        A<int>._,
+                        A<bool>._
                     )
                 )
                 .DoesNothing();

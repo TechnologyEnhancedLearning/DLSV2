@@ -260,6 +260,56 @@ namespace DigitalLearningSolutions.Data.Services
             }
 
             registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
+
+            var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
+
+            if (adminUser?.Active == false && adminUser.CentreId == delegateUser.CentreId)
+            {
+                userDataService.ReactivateAdmin(adminUser.Id);
+                passwordDataService.SetPasswordByAdminId(adminUser.Id, delegateUser.Password);
+                userDataService.UpdateAdminUserPermissions(
+                    adminUser.Id,
+                    adminRoles.IsCentreAdmin,
+                    adminRoles.IsSupervisor,
+                    adminRoles.IsNominatedSupervisor,
+                    adminRoles.IsTrainer,
+                    adminRoles.IsContentCreator,
+                    adminRoles.IsContentManager,
+                    adminRoles.ImportOnly,
+                    categoryId
+                );
+            }
+            else if (adminUser == null)
+            {
+                var adminRegistrationModel_ = new AdminRegistrationModel(
+                    delegateUser.FirstName,
+                    delegateUser.LastName,
+                    delegateUser.EmailAddress,
+                    null,
+                    delegateUser.CentreId,
+                    delegateUser.Password,
+                    true,
+                    true,
+                    delegateUser.ProfessionalRegistrationNumber,
+                    delegateUser.JobGroupId,
+                    categoryId,
+                    adminRoles.IsCentreAdmin,
+                    false,
+                    adminRoles.IsSupervisor,
+                    adminRoles.IsNominatedSupervisor,
+                    adminRoles.IsTrainer,
+                    adminRoles.IsContentCreator,
+                    adminRoles.IsCmsAdministrator,
+                    adminRoles.IsCmsManager,
+                    delegateUser.ProfileImage
+                );
+
+                registrationDataService.RegisterAdmin(adminRegistrationModel_, userId);
+            }
+            else
+            {
+                throw new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse);
+            }
         }
 
         public string CreateAccountAndReturnCandidateNumber(

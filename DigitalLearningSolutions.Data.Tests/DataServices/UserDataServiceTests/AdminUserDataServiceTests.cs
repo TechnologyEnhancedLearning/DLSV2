@@ -95,32 +95,6 @@
         }
 
         [Test]
-        public void UpdateAdminUser_updates_user()
-        {
-            using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                var firstName = "TestFirstName";
-                var lastName = "TestLastName";
-                var email = "test@email.com";
-
-                // When
-                userDataService.UpdateAdminUser(firstName, lastName, email, null, 7);
-                var updatedUser = userDataService.GetAdminUserById(7)!;
-
-                // Then
-                updatedUser.FirstName.Should().BeEquivalentTo(firstName);
-                updatedUser.LastName.Should().BeEquivalentTo(lastName);
-                updatedUser.EmailAddress.Should().BeEquivalentTo(email);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
-        }
-
-        [Test]
         public void GetNumberOfActiveAdminsAtCentre_returns_expected_count()
         {
             // When
@@ -193,6 +167,31 @@
             finally
             {
                 transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void ReactivateAdminUser_activates_user_and_resets_admin_permissions()
+        {
+            using var transaction = new TransactionScope();
+            // Given
+            const int adminId = 16;
+            connection.SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(adminId);
+
+            // When
+            var deactivatedAdmin = userDataService.GetAdminUserById(adminId)!;
+            userDataService.ReactivateAdmin(adminId);
+            var reactivatedAdmin = userDataService.GetAdminUserById(adminId)!;
+
+            // Then
+            using (new AssertionScope())
+            {
+                deactivatedAdmin.Active.Should().Be(false);
+                deactivatedAdmin.IsCentreManager.Should().Be(true);
+                deactivatedAdmin.IsUserAdmin.Should().Be(true);
+                reactivatedAdmin.Active.Should().Be(true);
+                reactivatedAdmin.IsCentreManager.Should().Be(false);
+                reactivatedAdmin.IsUserAdmin.Should().Be(false);
             }
         }
 
