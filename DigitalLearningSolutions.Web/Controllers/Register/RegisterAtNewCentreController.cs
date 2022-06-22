@@ -298,7 +298,7 @@
 
         private void ValidateEmailAddress(InternalPersonalInformationViewModel model)
         {
-            if (model.CentreSpecificEmail != null && userService.NewEmailAddressIsValid(
+            if (model.CentreSpecificEmail != null && !userService.NewEmailAddressIsValid(
                     model.CentreSpecificEmail,
                     User.GetUserIdKnownNotNull()
                 ))
