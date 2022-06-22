@@ -36,6 +36,8 @@
 
         DelegateEntity? GetDelegateByCandidateNumber(string candidateNumber);
 
+        IEnumerable<DelegateEntity> GetUnapprovedDelegatesByCentreId(int centreId);
+
         DelegateUser? GetDelegateUserById(int id);
 
         List<DelegateUser> GetDelegateUsersByUsername(string username);

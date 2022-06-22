@@ -18,7 +18,9 @@
             GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre(int centreId);
 
         public void ApproveDelegate(int delegateId, int centreId);
+
         public void ApproveAllUnapprovedDelegatesForCentre(int centreId);
+
         public void RejectDelegate(int delegateId, int centreId);
     }
 
@@ -56,55 +58,58 @@
         {
             var users = userDataService.GetUnapprovedDelegateUsersByCentreId(centreId);
             var usersWithPrompts =
-                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(centreId, users);
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
+                    centreId,
+                    users
+                );
 
             return usersWithPrompts;
         }
 
         public void ApproveDelegate(int delegateId, int centreId)
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId);
+            var delegateEntity = userDataService.GetDelegateById(delegateId);
 
-            if (delegateUser == null || delegateUser.CentreId != centreId)
+            if (delegateEntity == null || delegateEntity.DelegateAccount.CentreId != centreId)
             {
                 throw new UserAccountNotFoundException(
                     $"Delegate user id {delegateId} not found at centre id {centreId}."
                 );
             }
 
-            if (delegateUser.Approved)
+            if (delegateEntity.DelegateAccount.Approved)
             {
                 logger.LogWarning($"Delegate user id {delegateId} already approved.");
             }
             else
             {
-                userDataService.ApproveDelegateUsers(delegateUser.Id);
+                userDataService.ApproveDelegateUsers(delegateId);
 
-                SendDelegateApprovalEmails(delegateUser);
+                SendDelegateApprovalEmails(delegateEntity);
             }
         }
 
         public void ApproveAllUnapprovedDelegatesForCentre(int centreId)
         {
-            var delegateUsers = userDataService.GetUnapprovedDelegateUsersByCentreId(centreId).ToArray();
+            var delegateEntities = userDataService.GetUnapprovedDelegatesByCentreId(centreId).ToArray();
 
-            userDataService.ApproveDelegateUsers(delegateUsers.Select(d => d.Id).ToArray());
+            userDataService.ApproveDelegateUsers(delegateEntities.Select(d => d.DelegateAccount.Id).ToArray());
 
-            SendDelegateApprovalEmails(delegateUsers);
+            SendDelegateApprovalEmails(delegateEntities);
         }
 
         public void RejectDelegate(int delegateId, int centreId)
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId);
+            var delegateEntity = userDataService.GetDelegateById(delegateId);
 
-            if (delegateUser == null || delegateUser.CentreId != centreId)
+            if (delegateEntity == null || delegateEntity.DelegateAccount.CentreId != centreId)
             {
                 throw new UserAccountNotFoundException(
                     $"Delegate user id {delegateId} not found at centre id {centreId}."
                 );
             }
 
-            if (delegateUser.Approved)
+            if (delegateEntity.DelegateAccount.Approved)
             {
                 logger.LogWarning($"Delegate user id {delegateId} cannot be rejected as they are already approved.");
                 throw new UserAccountInvalidStateException(
@@ -113,58 +118,40 @@
             }
 
             userDataService.RemoveDelegateAccount(delegateId);
-            SendRejectionEmail(delegateUser);
+            SendRejectionEmail(delegateEntity);
         }
 
-        private void SendDelegateApprovalEmails(params DelegateUser[] delegateUsers)
+        private void SendDelegateApprovalEmails(params DelegateEntity[] delegateEntities)
         {
             var approvalEmails = new List<Email>();
-            foreach (var delegateUser in delegateUsers)
+            foreach (var delegateEntity in delegateEntities)
             {
-                if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
-                {
-                    LogNoEmailWarning(delegateUser.Id);
-                }
-                else
-                {
-                    var centreInformationUrl =
-                        centresDataService.GetCentreDetailsById(delegateUser.CentreId)?.ShowOnMap == true
-                            ? FindCentreUrl + $"?centreId={delegateUser.CentreId}"
-                            : null;
-                    var delegateApprovalEmail = GenerateDelegateApprovalEmail(
-                        delegateUser.CandidateNumber,
-                        delegateUser.EmailAddress,
-                        LoginUrl,
-                        centreInformationUrl
-                    );
-                    approvalEmails.Add(delegateApprovalEmail);
-                }
+                var centreId = delegateEntity.DelegateAccount.CentreId;
+                var centreInformationUrl =
+                    centresDataService.GetCentreDetailsById(centreId)?.ShowOnMap == true
+                        ? FindCentreUrl + $"?centreId={centreId}"
+                        : null;
+                var delegateApprovalEmail = GenerateDelegateApprovalEmail(
+                    delegateEntity.DelegateAccount.CandidateNumber,
+                    delegateEntity.GetEmailForCentreNotifications(),
+                    LoginUrl,
+                    centreInformationUrl
+                );
+                approvalEmails.Add(delegateApprovalEmail);
             }
 
             emailService.SendEmails(approvalEmails);
         }
 
-        private void SendRejectionEmail(DelegateUser delegateUser)
+        private void SendRejectionEmail(DelegateEntity delegateEntity)
         {
-            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
-            {
-                LogNoEmailWarning(delegateUser.Id);
-            }
-            else
-            {
-                var delegateRejectionEmail = GenerateDelegateRejectionEmail(
-                    delegateUser.FullName,
-                    delegateUser.CentreName,
-                    delegateUser.EmailAddress,
-                    FindCentreUrl
-                );
-                emailService.SendEmail(delegateRejectionEmail);
-            }
-        }
-
-        private void LogNoEmailWarning(int id)
-        {
-            logger.LogWarning($"Delegate user id {id} has no email associated with their account.");
+            var delegateRejectionEmail = GenerateDelegateRejectionEmail(
+                delegateEntity.UserAccount.FullName,
+                delegateEntity.DelegateAccount.CentreName,
+                delegateEntity.GetEmailForCentreNotifications(),
+                FindCentreUrl
+            );
+            emailService.SendEmail(delegateRejectionEmail);
         }
 
         private static Email GenerateDelegateApprovalEmail(
@@ -180,15 +167,15 @@
             {
                 TextBody =
                     $@"Your Digital Learning Solutions registration has been approved by your centre administrator.
-                            You can now log in to Digital Learning Solutions using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration, using the URL: {loginUrl} .
-                            For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.
-                            {(centreInformationUrl == null ? "" : $@"View centre contact information: {centreInformationUrl}")}",
+                    You can now log in to Digital Learning Solutions using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration, using the URL: {loginUrl} .
+                    For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.
+                    {(centreInformationUrl == null ? "" : $@"View centre contact information: {centreInformationUrl}")}",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
-                                    <p>Your Digital Learning Solutions registration has been approved by your centre administrator.</p>
-                                    <p>You can now <a href=""{loginUrl}"">log in to Digital Learning Solutions</a> using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
-                                    <p>For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.</p>
-                                    {(centreInformationUrl == null ? "" : $@"<p><a href=""{centreInformationUrl}"">View centre contact information</a></p>")}
-                                </body >"
+                                <p>Your Digital Learning Solutions registration has been approved by your centre administrator.</p>
+                                <p>You can now <a href=""{loginUrl}"">log in to Digital Learning Solutions</a> using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
+                                <p>For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.</p>
+                                {(centreInformationUrl == null ? "" : $@"<p><a href=""{centreInformationUrl}"">View centre contact information</a></p>")}
+                            </body >",
             };
 
             return new Email(emailSubject, body, emailAddress);
@@ -201,7 +188,7 @@
             string findCentreUrl
         )
         {
-            string emailSubject = "Digital Learning Solutions Registration Rejected";
+            var emailSubject = "Digital Learning Solutions Registration Rejected";
 
             var body = new BodyBuilder
             {
@@ -222,7 +209,7 @@
                                     <li>You have accidentally chosen the wrong centre during the registration process.</li>
                                 </ul>
                                 <p>If you need access to the DLS platform, please use the <a href=""{findCentreUrl}"">Find Your Centre</a> page to locate your local DLS centre and use the contact details provided there to ask for help with registration.</p>
-                            </body >"
+                            </body >",
             };
 
             return new Email(emailSubject, body, emailAddress);

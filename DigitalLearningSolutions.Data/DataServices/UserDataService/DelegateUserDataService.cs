@@ -148,6 +148,23 @@
             ).SingleOrDefault();
         }
 
+        public IEnumerable<DelegateEntity> GetUnapprovedDelegatesByCentreId(int centreId)
+        {
+            var sql =
+                $@"{BaseDelegateEntitySelectQuery} WHERE da.Approved = 0 AND da.Active = 1 AND da.CentreID = @centreId";
+
+            return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, DelegateEntity>(
+                sql,
+                (delegateAccount, userAccount, userCentreDetails) => new DelegateEntity(
+                    delegateAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { centreId },
+                splitOn: "ID,ID"
+            );
+        }
+
         [Obsolete("New code should use GetDelegateById instead")]
         public DelegateUser? GetDelegateUserById(int id)
         {
@@ -194,6 +211,7 @@
             return users;
         }
 
+        [Obsolete("New code should use GetUnapprovedDelegatesByCentreId instead")]
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId)
         {
             var users = connection.Query<DelegateUser>(
