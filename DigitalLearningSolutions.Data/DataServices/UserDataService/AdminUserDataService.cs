@@ -157,8 +157,8 @@
                 @"UPDATE AdminAccounts SET
                         Active = 1,
                         IsCentreManager = 0,
-                        UserAdmin = 0
-                    WHERE AdminID = @adminId",
+                        IsSuperAdmin = 0
+                    WHERE ID = @adminId",
                 new { adminId }
             );
         }

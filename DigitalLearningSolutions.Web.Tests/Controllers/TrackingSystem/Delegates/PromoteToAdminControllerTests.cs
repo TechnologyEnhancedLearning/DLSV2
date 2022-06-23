@@ -72,7 +72,7 @@
                                     !a.IsContentManager
                             ),
                             null,
-                            delegateId,
+                            formData.UserId,
                             formData.CentreId
                         )
                 )
