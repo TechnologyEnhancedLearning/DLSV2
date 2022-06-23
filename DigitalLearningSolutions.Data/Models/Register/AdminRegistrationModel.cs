@@ -16,9 +16,8 @@
             bool isTrainer,
             bool isContentCreator,
             bool isCmsAdmin,
-            bool isCmsManager,
-            int jobGroupId
-        ) : base("", "", "", null, centre, "", active, approved, "", jobGroupId)
+            bool isCmsManager
+        ) : base("", "", "", null, centre, "", active, approved, "", null)
         {
             CategoryId = categoryId;
             IsCentreAdmin = isCentreAdmin;

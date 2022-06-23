@@ -16,6 +16,8 @@
         }
 
         public string? FullName { get; set; }
+        public int UserId { get; set; }
+        public int CentreId { get; set; }
         public bool IsCentreAdmin { get; set; }
         public bool IsSupervisor { get; set; }
         public bool IsNominatedSupervisor { get; set; }

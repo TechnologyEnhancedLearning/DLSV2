@@ -12,7 +12,7 @@
             bool active,
             bool approved,
             string? professionalRegistrationNumber,
-            int jobGroupId
+            int? jobGroupId
         )
         {
             FirstName = firstName;
@@ -45,6 +45,6 @@
 
         public string? ProfessionalRegistrationNumber { get; set; }
 
-        public int JobGroup { get; set; }
+        public int? JobGroup { get; set; }
     }
 }

@@ -36,7 +36,7 @@ namespace DigitalLearningSolutions.Data.Services
             bool registerJourneyContainsTermsAndConditions
         );
 
-        void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId);
+        void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId, int centreId);
 
         string CreateAccountAndReturnCandidateNumber(
             DelegateRegistrationModel delegateRegistrationModel,
@@ -224,25 +224,21 @@ namespace DigitalLearningSolutions.Data.Services
             transaction.Complete();
         }
 
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId)
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int userId, int centreId)
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+            var adminAtCentre = userDataService.GetAdminAccountsByUserId(userId)
+                .SingleOrDefault(a => a.CentreId == centreId);
 
-            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
-
-            var admin = userDataService.GetAdminAccountsByUserId(userId)
-                .SingleOrDefault(a => a.CentreId == delegateUser.CentreId);
-
-            if (admin != null)
+            if (adminAtCentre != null)
             {
-                if (admin.Active)
+                if (adminAtCentre.Active)
                 {
                     throw new AdminCreationFailedException("Active admin already exists for this user at this centre");
                 }
 
-                userDataService.ReactivateAdmin(admin.Id);
+                userDataService.ReactivateAdmin(adminAtCentre.Id);
                 userDataService.UpdateAdminUserPermissions(
-                    admin.Id,
+                    adminAtCentre.Id,
                     adminRoles.IsCentreAdmin,
                     adminRoles.IsSupervisor,
                     adminRoles.IsNominatedSupervisor,
@@ -256,7 +252,7 @@ namespace DigitalLearningSolutions.Data.Services
             else
             {
                 var adminRegistrationModel = new AdminRegistrationModel(
-                    delegateUser.CentreId,
+                    centreId,
                     true,
                     true,
                     categoryId,
@@ -267,8 +263,7 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsTrainer,
                     adminRoles.IsContentCreator,
                     adminRoles.IsCmsAdministrator,
-                    adminRoles.IsCmsManager,
-                    delegateUser.JobGroupId
+                    adminRoles.IsCmsManager
                 );
 
                 registrationDataService.RegisterAdmin(adminRegistrationModel, userId);

@@ -53,6 +53,7 @@
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
 
             if (delegateUser!.IsAdmin || !delegateUser.IsPasswordSet)
             {
@@ -63,7 +64,7 @@
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
             var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
-            var model = new PromoteToAdminViewModel(delegateUser, centreId, categories, numberOfAdmins);
+            var model = new PromoteToAdminViewModel(delegateUser, userId, centreId, categories, numberOfAdmins);
             return View(model);
         }
 
@@ -75,7 +76,8 @@
                 registrationService.PromoteDelegateToAdmin(
                     formData.GetAdminRoles(),
                     AdminCategoryHelper.AdminCategoryToCategoryId(formData.LearningCategory),
-                    delegateId
+                    formData.UserId,
+                    formData.CentreId
                 );
             }
             catch (AdminCreationFailedException e)
