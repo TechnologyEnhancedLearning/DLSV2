@@ -65,10 +65,7 @@
                     ModelState.AddModelError("Password", "The credentials you have entered are incorrect");
                     return View("Index", model);
                 case LoginAttemptResult.AccountLocked:
-                    return RedirectToAction(
-                        "AccountLocked",
-                        new { failedCount = loginResult.Accounts.AdminAccount!.FailedLoginCount }
-                    );
+                    return RedirectToAction("AccountLocked");
                 case LoginAttemptResult.AccountNotApproved:
                     return View("AccountNotApproved");
                 case LoginAttemptResult.InactiveCentre:
@@ -129,9 +126,9 @@
         }
 
         [HttpGet]
-        public IActionResult AccountLocked(int failedCount)
+        public IActionResult AccountLocked()
         {
-            return View(failedCount);
+            return View();
         }
 
         private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails(
