@@ -4,9 +4,9 @@ UPDATE c
 SET c.ResetPasswordID = NULL FROM Candidates AS c
 INNER JOIN ResetPassword AS r
 ON r.ID = c.ResetPasswordID
-WHERE CAST (r.PasswordResetDateTime AS DATE) <= GETDATE() -4
+WHERE r.PasswordResetDateTime < DATEADD(day, -4, GETDATE())
 
 DELETE
 FROM ResetPassword
-WHERE CAST(PasswordResetDateTime AS DATE) <= GETDATE() - 4
+WHERE PasswordResetDateTime < DATEADD(day, -4, GETDATE())
 END
