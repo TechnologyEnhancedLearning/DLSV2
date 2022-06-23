@@ -5,7 +5,6 @@
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
-    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
 
     public class StringHelperTests
     {
@@ -16,7 +15,7 @@
         public void GetLocalRedirectUrl_returns_correctly_formatted_url(string appRootPath, string expectedReturnValue)
         {
             // Given
-            A.CallTo(() => config[ConfigurationExtensions.AppRootPathName]).Returns(appRootPath);
+            A.CallTo(() => config["AppRootPath"]).Returns(appRootPath);
             const string endpointToRedirectTo = "/MyAccount";
 
             // When

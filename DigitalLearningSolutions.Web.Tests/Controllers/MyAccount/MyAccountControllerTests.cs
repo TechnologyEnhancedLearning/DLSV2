@@ -22,7 +22,6 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
-    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
 
     public class MyAccountControllerTests
     {
@@ -48,7 +47,7 @@
             logger = A.Fake<ILogger<MyAccountController>>();
             urlHelper = A.Fake<IUrlHelper>();
 
-            A.CallTo(() => config[ConfigurationExtensions.AppRootPathName]).Returns("https://www.test.com");
+            A.CallTo(() => config["AppRootPath"]).Returns("https://www.test.com");
         }
 
         [Test]
