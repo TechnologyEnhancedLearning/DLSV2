@@ -31,8 +31,7 @@
             // Then
             var expectedUnlockData = new UnlockData
             {
-                DelegateEmail = "hcta@egviomklw.",
-                DelegateName = "xxxxx xxxxxxxxx",
+                DelegateId = 1,
                 ContactForename = "xxxxx",
                 ContactEmail = "e@1htrnkisv.wa",
                 CourseName = "Office 2013 Essentials for the Workplace - Erin Test 01",

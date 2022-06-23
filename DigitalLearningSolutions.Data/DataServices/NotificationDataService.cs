@@ -25,8 +25,7 @@
         {
             return connection.Query<UnlockData?>(
                 @"SELECT TOP (1)
-                        candidates.EmailAddress AS DelegateEmail,
-                        candidates.FirstName + ' ' + candidates.LastName AS DelegateName,
+                        candidates.CandidateID AS DelegateId,
                         centres.ContactForename,
                         COALESCE (centres.NotifyEmail, COALESCE (centres.ContactEmail, centres.pwEmail)) AS ContactEmail,
                         applications.ApplicationName + ' - ' + customisations.CustomisationName AS CourseName,

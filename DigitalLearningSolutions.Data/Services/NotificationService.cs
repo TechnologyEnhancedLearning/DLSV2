@@ -30,18 +30,21 @@
         private readonly IEmailService emailService;
         private readonly IFeatureManager featureManager;
         private readonly INotificationDataService notificationDataService;
+        private readonly IUserService userService;
 
         public NotificationService(
             IConfiguration configuration,
             INotificationDataService notificationDataService,
             IEmailService emailService,
-            IFeatureManager featureManager
+            IFeatureManager featureManager,
+            IUserService userService
         )
         {
             this.configuration = configuration;
             this.notificationDataService = notificationDataService;
             this.emailService = emailService;
             this.featureManager = featureManager;
+            this.userService = userService;
         }
 
         public async Task SendUnlockRequest(int progressId)
@@ -54,6 +57,7 @@
                 );
             }
 
+            var delegateEntity = userService.GetDelegateById(unlockData.DelegateId)!;
             unlockData.ContactForename =
                 unlockData.ContactForename == "" ? "Colleague" : unlockData.ContactForename;
             var refactoredTrackingSystemEnabled = await featureManager.IsEnabledAsync("RefactoredTrackingSystem");
@@ -82,18 +86,18 @@
             var builder = new BodyBuilder
             {
                 TextBody = $@"Dear {unlockData.ContactForename}
-                    Digital Learning Solutions Delegate, {unlockData.DelegateName}, has requested that you unlock their progress for the course {unlockData.CourseName}.
+                    Digital Learning Solutions Delegate, {delegateEntity.UserAccount.FullName}, has requested that you unlock their progress for the course {unlockData.CourseName}.
                     They have reached the maximum number of assessment attempt allowed without passing.
                     To review and unlock their progress, visit this url: ${unlockUrl.Uri}.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                     <p>Dear {unlockData.ContactForename}</p>
-                    <p>Digital Learning Solutions Delegate, {unlockData.DelegateName}, has requested that you unlock their progress for the course {unlockData.CourseName}</p>
+                    <p>Digital Learning Solutions Delegate, {delegateEntity.UserAccount.FullName}, has requested that you unlock their progress for the course {unlockData.CourseName}</p>
                     <p>They have reached the maximum number of assessment attempt allowed without passing.</p><p>To review and unlock their progress, <a href='{unlockUrl.Uri}'>click here</a>.</p>
                     </body>",
             };
 
             emailService.SendEmail(
-                new Email(emailSubjectLine, builder, unlockData.ContactEmail, unlockData.DelegateEmail)
+                new Email(emailSubjectLine, builder, unlockData.ContactEmail, delegateEntity.GetEmailForCentreNotifications())
             );
         }
 

@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
@@ -16,6 +18,7 @@
         private IFeatureManager featureManager = null!;
         private INotificationDataService notificationDataService = null!;
         private NotificationService notificationService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -24,6 +27,7 @@
             notificationDataService = A.Fake<INotificationDataService>();
             emailService = A.Fake<IEmailService>();
             featureManager = A.Fake<IFeatureManager>();
+            userService = A.Fake<IUserService>();
 
             A.CallTo(() => notificationDataService.GetUnlockData(A<int>._)).Returns(
                 new UnlockData
@@ -32,16 +36,18 @@
                     ContactForename = "Forename",
                     CourseName = "Activity Name",
                     CustomisationId = 22,
-                    DelegateEmail = "cc@example.com",
-                    DelegateName = "Delegate Name",
+                    DelegateId = 1,
                 }
             );
+
+            A.CallTo(() => userService.GetDelegateById(A<int>._)).Returns(UserTestHelper.GetDefaultDelegateEntity());
 
             notificationService = new NotificationService(
                 configuration,
                 notificationDataService,
                 emailService,
-                featureManager
+                featureManager,
+                userService
             );
 
             A.CallTo(() => configuration["AppRootPath"]).Returns("https://new-tracking-system.com");
@@ -71,12 +77,12 @@
         }
 
         [Test]
-        public void Trying_to_send_unlock_request_sends_email()
+        public async Task Trying_to_send_unlock_request_sends_email()
         {
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(true);
             // When
-            notificationService.SendUnlockRequest(1);
+            await notificationService.SendUnlockRequest(1);
 
             // Then
             A.CallTo(
@@ -87,28 +93,28 @@
         }
 
         [Test]
-        public void Trying_to_send_unlock_makes_request_to_feature_manager_to_get_correct_url()
+        public async Task Trying_to_send_unlock_makes_request_to_feature_manager_to_get_correct_url()
         {
             // Given
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(false);
 
             // When
-            notificationService.SendUnlockRequest(1);
+            await notificationService.SendUnlockRequest(1);
 
             // Then
             A.CallTo(() => featureManager.IsEnabledAsync(A<string>._)).MustHaveHappened();
         }
 
         [Test]
-        public void Trying_to_send_unlock_request_send_email_with_correct_old_url()
+        public async Task Trying_to_send_unlock_request_send_email_with_correct_old_url()
         {
             // Given
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(false);
 
             // When
-            notificationService.SendUnlockRequest(1);
+            await notificationService.SendUnlockRequest(1);
 
             //
             //Then
@@ -122,13 +128,13 @@
         }
 
         [Test]
-        public void trying_to_send_unlock_request_send_email_with_correct_new_url()
+        public async Task Trying_to_send_unlock_request_send_email_with_correct_new_url()
         {
             // Given
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(true);
             // When
-            notificationService.SendUnlockRequest(1);
+            await notificationService.SendUnlockRequest(1);
 
             // Then
             A.CallTo(

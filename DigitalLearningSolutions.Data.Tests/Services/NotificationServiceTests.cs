@@ -21,6 +21,7 @@
         private IFeatureManager featureManager = null!;
         private INotificationDataService notificationDataService = null!;
         private INotificationService notificationService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
@@ -29,12 +30,14 @@
             emailService = A.Fake<IEmailService>();
             featureManager = A.Fake<IFeatureManager>();
             notificationDataService = A.Fake<INotificationDataService>();
+            userService = A.Fake<IUserService>();
 
             notificationService = new NotificationService(
                 configuration,
                 notificationDataService,
                 emailService,
-                featureManager
+                featureManager,
+                userService
             );
         }
 
