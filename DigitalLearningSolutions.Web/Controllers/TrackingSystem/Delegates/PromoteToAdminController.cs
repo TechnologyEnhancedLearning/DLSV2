@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -79,7 +80,7 @@
             }
             catch (AdminCreationFailedException e)
             {
-                logger.LogError(e, $"Error creating admin account for promoted delegate: {e.Error.Name}");
+                logger.LogError(e, $"Error creating admin account for promoted delegate: {e.Message}");
 
                 return new StatusCodeResult(500);
             }

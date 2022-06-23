@@ -91,7 +91,7 @@
                 LearningCategory = 0
             };
             A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._))
-                .Throws(new AdminCreationFailedException(AdminCreationError.UnexpectedError));
+                .Throws(new AdminCreationFailedException());
 
             // When
             var result = controller.Index(formData, 1);
@@ -114,7 +114,7 @@
                 LearningCategory = 0
             };
             A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._))
-                .Throws(new AdminCreationFailedException(AdminCreationError.AlreadyActiveAdminAtCentre));
+                .Throws(new AdminCreationFailedException());
 
             // When
             var result = controller.Index(formData, 1);

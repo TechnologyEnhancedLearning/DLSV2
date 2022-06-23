@@ -842,7 +842,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
         [Test]
         public void
-            PromoteDelegateToAdmin_throws_active_admin_already_exists_AdminCreationFailedException_if_active_admin_already_exists()
+            PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_active_admin_already_exists()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
@@ -853,13 +853,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(1)).Returns(new[] { adminAccount });
 
             // When
-            var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 2)
-            );
+            Action action = () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 2);
 
             // Then
+            action.Should().Throw<AdminCreationFailedException>();
             UpdateToExistingAdminAccountMustNotHaveHappened();
-            result.Error.Should().Be(AdminCreationError.AlreadyActiveAdminAtCentre);
         }
 
         [Test]
