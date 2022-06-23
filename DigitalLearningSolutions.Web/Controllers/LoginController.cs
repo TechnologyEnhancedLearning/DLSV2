@@ -61,20 +61,11 @@
             var (adminLoginDetails, delegateLoginDetails) = GetLoginDetails(loginResult.Accounts);
             switch (loginResult.LoginAttemptResult)
             {
-                case LoginAttemptResult.InvalidUsername:
-                    ModelState.AddModelError(
-                        "Username",
-                        "A user with this email or user ID could not be found"
-                    );
-                    return View("Index", model);
-                case LoginAttemptResult.InvalidPassword:
-                    ModelState.AddModelError("Password", "The password you have entered is incorrect");
+                case LoginAttemptResult.InvalidCredentials:
+                    ModelState.AddModelError("Password", "The credentials you have entered are incorrect");
                     return View("Index", model);
                 case LoginAttemptResult.AccountLocked:
-                    return RedirectToAction(
-                        "AccountLocked",
-                        new { failedCount = loginResult.Accounts.AdminAccount!.FailedLoginCount }
-                    );
+                    return RedirectToAction("AccountLocked");
                 case LoginAttemptResult.AccountNotApproved:
                     return View("AccountNotApproved");
                 case LoginAttemptResult.InactiveCentre:
@@ -135,9 +126,9 @@
         }
 
         [HttpGet]
-        public IActionResult AccountLocked(int failedCount)
+        public IActionResult AccountLocked()
         {
-            return View(failedCount);
+            return View();
         }
 
         private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails(
