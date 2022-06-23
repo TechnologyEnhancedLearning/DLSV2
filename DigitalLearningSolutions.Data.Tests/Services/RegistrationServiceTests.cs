@@ -845,15 +845,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_active_admin_already_exists()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var adminAccount = UserTestHelper.GetDefaultAdminAccount();
+            const int userId = 2;
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount(userId: userId);
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(1);
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(1)).Returns(new[] { adminAccount });
+
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
 
             // When
-            Action action = () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 2);
+            Action action = () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, userId, 2);
 
             // Then
             action.Should().Throw<AdminCreationFailedException>();
@@ -865,16 +864,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const int categoryId = 1;
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var adminAccount = UserTestHelper.GetDefaultAdminAccount(active: false, categoryId: categoryId);
+            const int userId = 2;
+            const int centreId = 2;
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount(active: false, categoryId: categoryId, userId: userId);
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
 
-            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(1);
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(1)).Returns(new[] { adminAccount });
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, 1, 2);
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId);
 
             // Then
             using (new AssertionScope())
@@ -897,7 +895,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     () => registrationDataService.RegisterAdmin(
                         A<AdminRegistrationModel>.That.Matches(
                             a =>
-                                a.Centre == delegateUser.CentreId &&
+                                a.Centre == centreId &&
                                 a.Active &&
                                 a.Approved &&
                                 a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
@@ -918,21 +916,21 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void PromoteDelegateToAdmin_calls_data_service_with_expected_values_if_no_existing_admin()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            const int categoryId = 1;
+            const int userId = 2;
+            const int centreId = 2;
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(1);
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(1)).Returns(new AdminAccount[] { });
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new AdminAccount[] { });
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, 1, 2);
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId);
 
             // Then
             A.CallTo(
                 () => registrationDataService.RegisterAdmin(
                     A<AdminRegistrationModel>.That.Matches(
                         a =>
-                            a.Centre == delegateUser.CentreId &&
+                            a.Centre == centreId &&
                             a.Active &&
                             a.Approved &&
                             a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
@@ -943,7 +941,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                             a.IsTrainer == adminRoles.IsTrainer &&
                             a.IsSupervisor == adminRoles.IsSupervisor
                     ),
-                    1
+                    userId
                 )
             ).MustHaveHappened();
             UpdateToExistingAdminAccountMustNotHaveHappened();

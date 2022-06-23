@@ -36,7 +36,7 @@ namespace DigitalLearningSolutions.Data.Services
             bool registerJourneyContainsTermsAndConditions
         );
 
-        void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId, int centreId);
+        void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int userId, int centreId);
 
         string CreateAccountAndReturnCandidateNumber(
             DelegateRegistrationModel delegateRegistrationModel,
@@ -340,7 +340,7 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.PrimaryEmail,
                 registrationModel.CentreSpecificEmail,
                 registrationModel.Centre,
-                registrationModel.JobGroup,
+                registrationModel.JobGroup!.Value,
                 registrationModel.PasswordHash!,
                 true,
                 true,

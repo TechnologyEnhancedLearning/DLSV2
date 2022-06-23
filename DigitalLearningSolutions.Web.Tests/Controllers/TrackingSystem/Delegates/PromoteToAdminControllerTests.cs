@@ -52,9 +52,11 @@
                 IsTrainer = false,
                 IsContentCreator = false,
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole,
-                LearningCategory = 0
+                LearningCategory = 0,
+                UserId = 2,
+                CentreId = 101,
             };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._))
+            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._, A<int>._))
                 .DoesNothing();
 
             // When
@@ -70,7 +72,7 @@
                                     !a.IsContentManager
                             ),
                             null,
-                            delegateId
+                            delegateId,
                         )
                 )
                 .MustHaveHappened();
@@ -90,7 +92,7 @@
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole,
                 LearningCategory = 0
             };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._))
+            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._, A<int>._))
                 .Throws(new AdminCreationFailedException());
 
             // When
@@ -111,9 +113,9 @@
                 IsTrainer = false,
                 IsContentCreator = false,
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole,
-                LearningCategory = 0
+                LearningCategory = 0,
             };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._))
+            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._, A<int>._))
                 .Throws(new AdminCreationFailedException());
 
             // When
