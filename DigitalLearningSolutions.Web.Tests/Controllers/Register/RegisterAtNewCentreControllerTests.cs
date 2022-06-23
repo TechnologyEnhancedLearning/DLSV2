@@ -126,7 +126,7 @@
                 CentreSpecificEmail = "centre email",
             };
             A.CallTo(() => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId))
-                .Returns(true);
+                .Returns(false);
             A.CallTo(() => userService.GetUserById(userAccount.Id)).Returns(
                 new UserEntity(userAccount, new List<AdminAccount>(), new[] { new DelegateAccount() })
             );
@@ -151,7 +151,7 @@
                 CentreSpecificEmail = "centre email",
             };
             A.CallTo(() => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId))
-                .Returns(false);
+                .Returns(true);
 
             // When
             var result = controller.PersonalInformation(model);
