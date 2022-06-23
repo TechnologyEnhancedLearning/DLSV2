@@ -40,7 +40,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidUsername);
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidCredentials);
                 result.UserEntity.Should().BeNull();
                 result.CentreToLogInto.Should().BeNull();
             }
@@ -56,6 +56,9 @@
                 new List<DelegateAccount>()
             );
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -124,15 +127,15 @@
             // Then
             using (new AssertionScope())
             {
-                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidPassword);
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InvalidCredentials);
                 result.UserEntity.Should().BeNull();
                 result.CentreToLogInto.Should().BeNull();
             }
         }
 
         [Test]
-        [TestCase(LoginAttemptResult.InvalidPassword, 0)]
-        [TestCase(LoginAttemptResult.InvalidPassword, 3)]
+        [TestCase(LoginAttemptResult.InvalidCredentials, 0)]
+        [TestCase(LoginAttemptResult.InvalidCredentials, 3)]
         [TestCase(LoginAttemptResult.AccountLocked, 4)]
         [TestCase(LoginAttemptResult.AccountLocked, 5)]
         [TestCase(LoginAttemptResult.AccountLocked, 10)]
@@ -164,15 +167,7 @@
             using (new AssertionScope())
             {
                 result.LoginAttemptResult.Should().Be(expectedResult);
-                if (expectedResult == LoginAttemptResult.InvalidPassword)
-                {
-                    result.UserEntity.Should().BeNull();
-                }
-                else
-                {
-                    result.UserEntity.Should().BeEquivalentTo(userEntity);
-                }
-
+                result.UserEntity.Should().BeNull();
                 result.CentreToLogInto.Should().BeNull();
                 A.CallTo(() => userService.UpdateFailedLoginCount(userEntity.UserAccount)).MustHaveHappened();
             }
@@ -234,7 +229,7 @@
             using (new AssertionScope())
             {
                 result.LoginAttemptResult.Should().Be(LoginAttemptResult.AccountLocked);
-                result.UserEntity.Should().Be(userEntity);
+                result.UserEntity.Should().BeNull();
                 result.CentreToLogInto.Should().BeNull();
                 A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).MustNotHaveHappened();
             }

@@ -62,19 +62,13 @@
             var loginResult = loginService.AttemptLogin(model.Username!.Trim(), model.Password!);
             switch (loginResult.LoginAttemptResult)
             {
-                case LoginAttemptResult.InvalidUsername:
-                    ModelState.AddModelError(
-                        "Username",
-                        "A user with this email or delegate ID could not be found"
-                    );
-                    return View("Index", model);
-                case LoginAttemptResult.InvalidPassword:
-                    ModelState.AddModelError("Password", "The password you have entered is incorrect");
+                case LoginAttemptResult.InvalidCredentials:
+                    ModelState.AddModelError("Password", "The credentials you have entered are incorrect");
                     return View("Index", model);
                 case LoginAttemptResult.AccountsHaveMismatchedPasswords:
                     return View("MismatchingPasswords");
                 case LoginAttemptResult.AccountLocked:
-                    return View("AccountLocked", loginResult.UserEntity!.UserAccount.FailedLoginCount);
+                    return View("AccountLocked");
                 case LoginAttemptResult.InactiveAccount:
                     return View("AccountInactive");
                 case LoginAttemptResult.LogIntoSingleCentre:
