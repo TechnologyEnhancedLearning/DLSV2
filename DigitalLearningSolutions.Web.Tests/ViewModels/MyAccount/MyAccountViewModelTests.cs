@@ -12,6 +12,8 @@
 
     public class MyAccountViewModelTests
     {
+        private const string SwitchCentreReturnUrl = "/MyAccount";
+
         [Test]
         public void MyAccountViewModel_AdminUser_and_DelegateUser_populates_expected_values()
         {
@@ -33,7 +35,8 @@
                 delegateAccount.CentreName,
                 centreEmail,
                 customPrompts,
-                DlsSubApplication.Default
+                DlsSubApplication.Default,
+                SwitchCentreReturnUrl
             );
 
             // Then
@@ -51,6 +54,7 @@
                 returnedModel.DateRegistered.Should().BeEquivalentTo(
                     delegateAccount.DateRegistered.ToString(DateHelper.StandardDateFormat)
                 );
+                returnedModel.SwitchCentreReturnUrl.Should().Be(SwitchCentreReturnUrl);
             }
         }
 
@@ -69,7 +73,8 @@
                 centreName,
                 centreEmail,
                 null,
-                DlsSubApplication.Default
+                DlsSubApplication.Default,
+                SwitchCentreReturnUrl
             );
 
             // Then
@@ -85,6 +90,7 @@
                 returnedModel.DelegateRegistrationPrompts.Should().BeEmpty();
                 returnedModel.CentreEmail.Should().BeEquivalentTo(centreEmail);
                 returnedModel.DateRegistered.Should().BeNull();
+                returnedModel.SwitchCentreReturnUrl.Should().Be(SwitchCentreReturnUrl);
             }
         }
 
@@ -109,7 +115,8 @@
                 delegateAccount.CentreName,
                 null,
                 customPrompts,
-                DlsSubApplication.Default
+                DlsSubApplication.Default,
+                SwitchCentreReturnUrl
             );
 
             // Then
@@ -149,7 +156,8 @@
                 UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
-                DlsSubApplication.Default
+                DlsSubApplication.Default,
+                SwitchCentreReturnUrl
             );
 
             // Then
@@ -182,7 +190,8 @@
                 UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
-                DlsSubApplication.Default
+                DlsSubApplication.Default,
+                SwitchCentreReturnUrl
             );
 
             // Then
@@ -215,7 +224,8 @@
                 UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
-                DlsSubApplication.Default
+                DlsSubApplication.Default,
+                SwitchCentreReturnUrl
             );
 
             // Then

@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
@@ -23,6 +24,7 @@
     public class MyAccountController : Controller
     {
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
+        private readonly IConfiguration config;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly ILogger<MyAccountController> logger;
@@ -35,7 +37,8 @@
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
             PromptsService registrationPromptsService,
-            ILogger<MyAccountController> logger
+            ILogger<MyAccountController> logger,
+            IConfiguration config
         )
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
@@ -44,6 +47,7 @@
             this.jobGroupsDataService = jobGroupsDataService;
             promptsService = registrationPromptsService;
             this.logger = logger;
+            this.config = config;
         }
 
         [NoCaching]
@@ -64,13 +68,17 @@
                     delegateAccount
                 );
 
+            var switchCentreReturnUrl =
+                StringHelper.GetLocalRedirectUrl(config, "/Home/Welcome");
+
             var model = new MyAccountViewModel(
                 userEntity.UserAccount,
                 delegateAccount,
                 (adminAccount?.CentreName ?? delegateAccount?.CentreName)!,
                 userService.GetCentreEmail(userId, centreId),
                 customPrompts,
-                dlsSubApplication
+                dlsSubApplication,
+                switchCentreReturnUrl
             );
 
             return View(model);

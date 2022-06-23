@@ -1,5 +1,5 @@
-@using DigitalLearningSolutions.Web.ViewModels.Login
 @using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.ViewModels.Login
 @model ChooseACentreViewModel
 @{
   ViewData["Title"] = "Choose A Centre";
@@ -17,8 +17,10 @@
         Please choose the centre you would like to sign in to.
       </p>
 
-      @if (Model.CentreUserDetails.Any(centreRow => centreRow.IsUnapprovedDelegate)) {
-        <vc:inset-text css-class="" text="You have an unapproved delegate account. You will receive an email at the address you registered with when your registration has been approved." />
+      @if (Model.CentreUserDetails.Any(centreRow =>
+        centreRow.Status.Equals(ChooseACentreStatus.DelegateUnapproved)
+        || centreRow.Status.Equals(ChooseACentreStatus.Unapproved))) {
+        <vc:inset-text css-class="" text="You have an unapproved delegate account. You will be notified via your primary email when your registration has been approved." />
       }
 
       <table role="table" class="nhsuk-table-responsive">
@@ -74,6 +76,8 @@
                 <button class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0">
                   Reactivate <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
                 </button>
+              } else {
+                <span class="nhsuk-u-visually-hidden">You cannot log in to this centre.</span>
               }
             </td>
           </tr>

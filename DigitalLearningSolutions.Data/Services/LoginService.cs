@@ -108,7 +108,15 @@
                     string.Equals(da.CandidateNumber, username, StringComparison.CurrentCultureIgnoreCase)
             );
 
-            return delegateAccountToLogIntoIfCandidateNumberUsed?.CentreId;
+            if (delegateAccountToLogIntoIfCandidateNumberUsed == null)
+            {
+                return null;
+            }
+
+            var canLogIntoToAccount = userEntity
+                .CentreAccountSetsByCentreId[delegateAccountToLogIntoIfCandidateNumberUsed.CentreId].CanLogInToCentre;
+
+            return canLogIntoToAccount ? delegateAccountToLogIntoIfCandidateNumberUsed.CentreId : null as int?;
         }
     }
 }
