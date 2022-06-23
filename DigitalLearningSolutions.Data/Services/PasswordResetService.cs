@@ -30,18 +30,17 @@
 
         Task ResetPasswordAsync(ResetPasswordWithUserDetails passwordReset, string password);
 
-        void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl);
+        void GenerateAndSendDelegateWelcomeEmail(int delegateId, string baseUrl);
 
         void GenerateAndScheduleDelegateWelcomeEmail(
-            string recipientEmailAddress,
-            string candidateNumber,
+            int delegateId,
             string baseUrl,
             DateTime deliveryDate,
             string addedByProcess
         );
 
         void SendWelcomeEmailsToDelegates(
-            IEnumerable<DelegateUser> delegateUsers,
+            IEnumerable<int> delegateId,
             DateTime deliveryDate,
             string baseUrl
         );
@@ -86,7 +85,7 @@
                 await passwordResetDataService.RemoveResetPasswordAsync(user.ResetPasswordId.Value);
             }
 
-            string resetPasswordHash = GenerateResetPasswordHash(user);
+            var resetPasswordHash = GenerateResetPasswordHash(user);
 
             var resetPasswordEmail = GeneratePasswordResetEmail(
                 emailAddress,
@@ -104,44 +103,33 @@
             userService.ResetFailedLoginCountByUserId(passwordReset.UserId);
         }
 
-        public void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl)
+        public void GenerateAndSendDelegateWelcomeEmail(int delegateId, string baseUrl)
         {
-            var delegateUsers = userService.GetDelegateUsersByEmailAddress(emailAddress);
-            var delegateUser = delegateUsers.FirstOrDefault(d => d.CandidateNumber == candidateNumber) ??
-                               throw new UserAccountNotFoundException(
-                                   "No user account could be found with the specified email address and candidate number"
-                               );
+            var delegateEntity = userService.GetDelegateById(delegateId)!;
 
-            string setPasswordHash = GenerateResetPasswordHash(delegateUser);
+            var setPasswordHash = GenerateResetPasswordHash(delegateEntity.UserAccount);
             var welcomeEmail = GenerateWelcomeEmail(
-                emailAddress,
+                delegateEntity,
                 setPasswordHash,
-                baseUrl,
-                delegateUser
+                baseUrl
             );
             emailService.SendEmail(welcomeEmail);
         }
 
         public void GenerateAndScheduleDelegateWelcomeEmail(
-            string recipientEmailAddress,
-            string candidateNumber,
+            int delegateId,
             string baseUrl,
             DateTime deliveryDate,
             string addedByProcess
         )
         {
-            var delegateUsers = userService.GetDelegateUsersByEmailAddress(recipientEmailAddress);
-            var delegateUser = delegateUsers.FirstOrDefault(d => d.CandidateNumber == candidateNumber) ??
-                               throw new UserAccountNotFoundException(
-                                   "No user account could be found with the specified email address and candidate number"
-                               );
+            var delegateEntity = userService.GetDelegateById(delegateId)!;
 
-            string setPasswordHash = GenerateResetPasswordHash(delegateUser);
+            var setPasswordHash = GenerateResetPasswordHash(delegateEntity.UserAccount);
             var welcomeEmail = GenerateWelcomeEmail(
-                recipientEmailAddress,
+                delegateEntity,
                 setPasswordHash,
-                baseUrl,
-                delegateUser
+                baseUrl
             );
 
             emailService.ScheduleEmail(welcomeEmail, addedByProcess, deliveryDate);
@@ -175,20 +163,22 @@
         }
 
         public void SendWelcomeEmailsToDelegates(
-            IEnumerable<DelegateUser> delegateUsers,
+            IEnumerable<int> delegateIds,
             DateTime deliveryDate,
             string baseUrl
         )
         {
             const string addedByProcess = "SendWelcomeEmail_Refactor";
-            var emails = delegateUsers.Select(
-                delegateUser =>
-                    GenerateWelcomeEmail(
-                        delegateUser.EmailAddress!,
-                        GenerateResetPasswordHash(delegateUser),
-                        baseUrl,
-                        delegateUser
-                    )
+            var emails = delegateIds.Select(
+                delegateId =>
+                {
+                    var delegateEntity = userService.GetDelegateById(delegateId)!;
+                    return GenerateWelcomeEmail(
+                        delegateEntity,
+                        GenerateResetPasswordHash(delegateEntity.UserAccount),
+                        baseUrl
+                    );
+                }
             );
             emailService.ScheduleEmails(emails, addedByProcess, deliveryDate);
         }
@@ -198,14 +188,9 @@
             return GenerateResetPasswordHash(user.Id);
         }
 
-        private string GenerateResetPasswordHash(DelegateUser delegateUser)
-        {
-            return GenerateResetPasswordHash(delegateUser.Id); // TODO: HEEDLS-887 delegateUser.Id != userId, so this is the wrong id to use here.
-        }
-
         private string GenerateResetPasswordHash(int userId)
         {
-            string hash = Guid.NewGuid().ToString();
+            var hash = Guid.NewGuid().ToString();
 
             var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 clockService.UtcNow,
@@ -225,7 +210,7 @@
             string baseUrl
         )
         {
-            UriBuilder resetPasswordUrl = new UriBuilder(baseUrl);
+            var resetPasswordUrl = new UriBuilder(baseUrl);
             if (!resetPasswordUrl.Path.EndsWith('/'))
             {
                 resetPasswordUrl.Path += '/';
@@ -234,7 +219,7 @@
             resetPasswordUrl.Path += "ResetPassword";
             resetPasswordUrl.Query = $"code={resetHash}&email={emailAddress}";
 
-            string emailSubject = "Digital Learning Solutions Tracking System Password Reset";
+            var emailSubject = "Digital Learning Solutions Tracking System Password Reset";
 
             var body = new BodyBuilder
             {
@@ -256,13 +241,13 @@
         }
 
         private Email GenerateWelcomeEmail(
-            string emailAddress,
+            DelegateEntity delegateEntity,
             string setPasswordHash,
-            string baseUrl,
-            DelegateUser delegateUser
+            string baseUrl
         )
         {
-            UriBuilder setPasswordUrl = new UriBuilder(baseUrl);
+            var emailAddress = delegateEntity.GetEmailForCentreNotifications();
+            var setPasswordUrl = new UriBuilder(baseUrl);
             if (!setPasswordUrl.Path.EndsWith('/'))
             {
                 setPasswordUrl.Path += '/';
@@ -273,18 +258,18 @@
 
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";
 
-            BodyBuilder body = new BodyBuilder
+            var body = new BodyBuilder
             {
-                TextBody = $@"Dear {delegateUser.FullName},
-                            An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateUser.CentreName}.
-                            You have been assigned the unique DLS delegate number {delegateUser.CandidateNumber}.
+                TextBody = $@"Dear {delegateEntity.UserAccount.FullName},
+                            An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateEntity.DelegateAccount.CentreName}.
+                            You have been assigned the unique DLS delegate number {delegateEntity.DelegateAccount.CandidateNumber}.
                             To complete your registration and access your Digital Learning Solutions content, please click: {setPasswordUrl.Uri}
                             Note that this link can only be used once and it will expire in three days.
                             Please don't reply to this email as it has been automatically generated.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
-                                <p>Dear {delegateUser.FullName},</p>
-                                <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateUser.CentreName}.</p>
-                                <p>You have been assigned the unique DLS delegate number {delegateUser.CandidateNumber}.</p>
+                                <p>Dear {delegateEntity.UserAccount.FullName},</p>
+                                <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateEntity.DelegateAccount.CentreName}.</p>
+                                <p>You have been assigned the unique DLS delegate number {delegateEntity.DelegateAccount.CandidateNumber}.</p>
                                 <p><a href=""{setPasswordUrl.Uri}"">Click here to complete your registration and access your Digital Learning Solutions content</a></p>
                                 <p>Note that this link can only be used once and it will expire in three days.</p>
                                 <p>Please don't reply to this email as it has been automatically generated.</p>

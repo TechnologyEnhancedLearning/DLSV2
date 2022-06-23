@@ -142,14 +142,13 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 var viewModel = new EmailDelegatesViewModel(result, availableFilters, formData);
                 return View(viewModel);
             }
-
-            var selectedUsers = delegateUsers.Where(user => formData.SelectedDelegateIds!.Contains(user.Id)).ToList();
+            
             var emailDate = new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
             var baseUrl = config.GetAppRootPath();
 
-            passwordResetService.SendWelcomeEmailsToDelegates(selectedUsers, emailDate, baseUrl);
+            passwordResetService.SendWelcomeEmailsToDelegates(formData.SelectedDelegateIds!, emailDate, baseUrl);
 
-            return View("Confirmation", selectedUsers.Count);
+            return View("Confirmation", formData.SelectedDelegateIds!.Count());
         }
 
         [Route("AllEmailDelegateItems")]

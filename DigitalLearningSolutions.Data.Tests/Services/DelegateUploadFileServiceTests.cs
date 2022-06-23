@@ -632,8 +632,7 @@
                 .Returns(delegateId);
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    A<string>._,
-                    A<string>._,
+                    A<int>._,
                     A<string>._,
                     A<DateTime>._,
                     A<string>._
@@ -646,8 +645,7 @@
             // Then
             A.CallTo(
                     () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                        row.EmailAddress,
-                        A<string>._,
+                        A<int>._,
                         A<string>._,
                         welcomeEmailDate,
                         A<string>._
@@ -677,8 +675,7 @@
                 .Returns(delegateId);
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    A<string>._,
-                    A<string>._,
+                    A<int>._,
                     A<string>._,
                     A<DateTime>._,
                     A<string>._
@@ -691,8 +688,7 @@
             // Then
             A.CallTo(
                     () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                        A<string>._,
-                        A<string>._,
+                        A<int>._,
                         A<string>._,
                         A<DateTime>._,
                         A<string>._

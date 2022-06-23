@@ -208,24 +208,6 @@ namespace DigitalLearningSolutions.Data.Services
                 registerJourneyContainsTermsAndConditions
             );
 
-            if (delegateRegistrationModel.PasswordHash != null)
-            {
-                passwordDataService.SetPasswordByCandidateNumber(
-                    candidateNumber,
-                    delegateRegistrationModel.PasswordHash
-                );
-            }
-            else if (delegateRegistrationModel.NotifyDate.HasValue)
-            {
-                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    delegateRegistrationModel.PrimaryEmail,
-                    candidateNumber,
-                    baseUrl,
-                    delegateRegistrationModel.NotifyDate.Value,
-                    "RegisterDelegateByCentre_Refactor"
-                );
-            }
-
             // TODO HEEDLS-899 sort out supervisor delegate stuff
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
@@ -236,6 +218,23 @@ namespace DigitalLearningSolutions.Data.Services
                 candidateNumber,
                 delegateRegistrationModel.Centre
             )!;
+
+            if (delegateRegistrationModel.PasswordHash != null)
+            {
+                passwordDataService.SetPasswordByCandidateNumber(
+                    candidateNumber,
+                    delegateRegistrationModel.PasswordHash
+                );
+            }
+            else if (delegateRegistrationModel.NotifyDate.HasValue)
+            {
+                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    delegateUser.Id,
+                    baseUrl,
+                    delegateRegistrationModel.NotifyDate.Value,
+                    "RegisterDelegateByCentre_Refactor"
+                );
+            }
 
             userDataService.UpdateDelegateProfessionalRegistrationNumber(
                 delegateUser.Id,
