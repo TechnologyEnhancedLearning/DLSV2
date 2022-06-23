@@ -56,6 +56,9 @@
                 new List<DelegateAccount>()
             );
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -164,15 +167,7 @@
             using (new AssertionScope())
             {
                 result.LoginAttemptResult.Should().Be(expectedResult);
-                if (expectedResult == LoginAttemptResult.InvalidCredentials)
-                {
-                    result.UserEntity.Should().BeNull();
-                }
-                else
-                {
-                    result.UserEntity.Should().BeEquivalentTo(userEntity);
-                }
-
+                result.UserEntity.Should().BeNull();
                 result.CentreToLogInto.Should().BeNull();
                 A.CallTo(() => userService.UpdateFailedLoginCount(userEntity.UserAccount)).MustHaveHappened();
             }
@@ -234,7 +229,7 @@
             using (new AssertionScope())
             {
                 result.LoginAttemptResult.Should().Be(LoginAttemptResult.AccountLocked);
-                result.UserEntity.Should().Be(userEntity);
+                result.UserEntity.Should().BeNull();
                 result.CentreToLogInto.Should().BeNull();
                 A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).MustNotHaveHappened();
             }

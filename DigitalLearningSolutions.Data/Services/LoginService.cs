@@ -34,11 +34,6 @@
                 return new LoginResult(LoginAttemptResult.InvalidCredentials);
             }
 
-            if (!userEntity.UserAccount.Active)
-            {
-                return new LoginResult(LoginAttemptResult.InactiveAccount);
-            }
-
             var verificationResult = userVerificationService.VerifyUserEntity(password, userEntity);
 
             if (verificationResult.PasswordMatchesAtLeastOneAccountPassword &&
@@ -53,12 +48,17 @@
                 userService.UpdateFailedLoginCount(userEntity.UserAccount);
 
                 return userEntity.IsLocked
-                    ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity)
+                    ? new LoginResult(LoginAttemptResult.AccountLocked)
                     : new LoginResult(LoginAttemptResult.InvalidCredentials);
             }
 
-            return userEntity.IsLocked
-                ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity)
+            if (userEntity.IsLocked)
+            {
+                return new LoginResult(LoginAttemptResult.AccountLocked);
+            }
+
+            return !userEntity.UserAccount.Active
+                ? new LoginResult(LoginAttemptResult.InactiveAccount)
                 : DetermineDestinationForSuccessfulLogin(userEntity, username);
         }
 
