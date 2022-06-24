@@ -442,7 +442,6 @@
             // Given
             const int groupId = 1;
             const int addedByAdminId = 2;
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var dateTime = DateTime.UtcNow;
 
             GivenCurrentTimeIs(dateTime);
@@ -451,7 +450,7 @@
                 .DoesNothing();
 
             // When
-            groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(groupId, delegateUser, addedByAdminId);
+            groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(groupId, 2, addedByAdminId);
 
             // Then
             A.CallTo(() => groupsDataService.AddDelegateToGroup(2, 1, dateTime, 0)).MustHaveHappenedOnceExactly();

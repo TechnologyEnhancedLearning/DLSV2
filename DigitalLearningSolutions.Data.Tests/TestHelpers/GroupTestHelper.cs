@@ -16,7 +16,7 @@
             int delegateId = 245969,
             string? firstName = "xxxxx",
             string lastName = "xxxx",
-            string? emailAddress = "gslectik.m@vao",
+            string emailAddress = "gslectik.m@vao",
             string candidateNumber = "KT553",
             bool hasBeenPromptedForPrn = false,
             string? professionalRegistrationNumber = null
@@ -31,7 +31,7 @@
                 DelegateId = delegateId,
                 FirstName = firstName,
                 LastName = lastName,
-                EmailAddress = emailAddress,
+                PrimaryEmail = emailAddress,
                 CandidateNumber = candidateNumber,
                 AddedDate = addedDate,
                 HasBeenPromptedForPrn = hasBeenPromptedForPrn,

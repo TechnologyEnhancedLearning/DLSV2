@@ -246,7 +246,7 @@
             string baseUrl
         )
         {
-            var emailAddress = delegateEntity.GetEmailForCentreNotifications();
+            var emailAddress = delegateEntity.EmailForCentreNotifications;
             var setPasswordUrl = new UriBuilder(baseUrl);
             if (!setPasswordUrl.Path.EndsWith('/'))
             {

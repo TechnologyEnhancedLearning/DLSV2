@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
+    using DigitalLearningSolutions.Data.Helpers;
+
     public class DelegateEntity
     {
         public DelegateEntity(
@@ -17,14 +19,10 @@
         public UserAccount UserAccount { get; }
         public UserCentreDetails? UserCentreDetails { get; }
 
-        public string GetEmailForCentreNotifications()
-        {
-            if (UserCentreDetails?.EmailVerified != null)
-            {
-                return UserCentreDetails?.Email ?? UserAccount.PrimaryEmail;
-            }
-
-            return UserAccount.PrimaryEmail;
-        }
+        public string EmailForCentreNotifications => CentreEmailHelper.GetEmailForCentreNotifications(
+            UserAccount.PrimaryEmail,
+            UserCentreDetails?.Email,
+            UserCentreDetails?.EmailVerified
+        );
     }
 }

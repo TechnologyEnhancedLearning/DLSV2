@@ -307,7 +307,7 @@
             DateTime? detailsLastChecked = null,
             int? userCentreDetailsId = null,
             string? centreSpecificEmail = null,
-            bool? centreSpecificEmailVerified = null
+            DateTime? centreSpecificEmailVerified = null
         )
         {
             emailVerified ??= DateTime.Parse("2022-04-27 16:28:55.637");

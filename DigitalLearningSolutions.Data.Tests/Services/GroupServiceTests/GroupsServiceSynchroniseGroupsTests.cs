@@ -30,7 +30,8 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 delegateDetails.Id,
                 reusableEditAccountDetailsData,
-                centreAnswersData
+                centreAnswersData,
+                null
             );
 
             // Then
@@ -63,7 +64,8 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
-                centreAnswersData
+                centreAnswersData,
+                null
             );
 
             // Then
@@ -97,7 +99,8 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
-                centreAnswersData
+                centreAnswersData,
+                null
             );
 
             // Then
@@ -131,7 +134,8 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
-                centreAnswersData
+                centreAnswersData,
+                null
             );
 
             // Then
@@ -165,7 +169,8 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
-                centreAnswersData
+                centreAnswersData,
+                null
             );
 
             // Then
@@ -205,7 +210,8 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
-                centreAnswersData
+                centreAnswersData,
+                null
             );
 
             // Then
@@ -234,7 +240,8 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
-                centreAnswersData
+                centreAnswersData,
+                null
             );
 
             // Then
@@ -269,7 +276,8 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
-                centreAnswersData
+                centreAnswersData,
+                null
             );
 
             // Then
@@ -309,7 +317,8 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
-                centreAnswersData
+                centreAnswersData,
+                null
             );
 
             // Then
@@ -350,7 +359,8 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
-                centreAnswersData
+                centreAnswersData,
+                null
             );
 
             // Then

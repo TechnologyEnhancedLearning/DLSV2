@@ -133,7 +133,7 @@
                         : null;
                 var delegateApprovalEmail = GenerateDelegateApprovalEmail(
                     delegateEntity.DelegateAccount.CandidateNumber,
-                    delegateEntity.GetEmailForCentreNotifications(),
+                    delegateEntity.EmailForCentreNotifications,
                     LoginUrl,
                     centreInformationUrl
                 );
@@ -148,7 +148,7 @@
             var delegateRejectionEmail = GenerateDelegateRejectionEmail(
                 delegateEntity.UserAccount.FullName,
                 delegateEntity.DelegateAccount.CentreName,
-                delegateEntity.GetEmailForCentreNotifications(),
+                delegateEntity.EmailForCentreNotifications,
                 FindCentreUrl
             );
             emailService.SendEmail(delegateRejectionEmail);

@@ -97,7 +97,7 @@
             };
 
             emailService.SendEmail(
-                new Email(emailSubjectLine, builder, unlockData.ContactEmail, delegateEntity.GetEmailForCentreNotifications())
+                new Email(emailSubjectLine, builder, unlockData.ContactEmail, delegateEntity.EmailForCentreNotifications)
             );
         }
 
@@ -180,7 +180,7 @@
             var email = new Email(
                 emailSubjectLine,
                 builder,
-                new[] { delegateEntity.GetEmailForCentreNotifications() },
+                new[] { delegateEntity.EmailForCentreNotifications },
                 emailsToCc
             );
             emailService.SendEmail(email);
@@ -193,7 +193,7 @@
             if (adminId != null)
             {
                 var adminEntity = userService.GetAdminById(adminId.Value)!;
-                emailsToCc.Add(adminEntity.GetEmailForCentreNotifications());
+                emailsToCc.Add(adminEntity.EmailForCentreNotifications);
             }
 
             if (courseNotificationEmail != null)
