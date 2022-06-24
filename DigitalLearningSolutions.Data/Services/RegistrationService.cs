@@ -218,7 +218,7 @@ namespace DigitalLearningSolutions.Data.Services
             var userId = CreateDelegateAccountForAdmin(registrationModel, registerJourneyContainsTermsAndConditions);
 
             var accountRegistrationModel = new AdminAccountRegistrationModel(registrationModel, userId);
-            registrationDataService.RegisterAdmin(accountRegistrationModel, userId);
+            registrationDataService.RegisterAdmin(accountRegistrationModel);
 
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
@@ -268,7 +268,7 @@ namespace DigitalLearningSolutions.Data.Services
                     true
                 );
 
-                registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
+                registrationDataService.RegisterAdmin(adminRegistrationModel);
             }
         }
 

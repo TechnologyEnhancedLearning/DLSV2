@@ -531,7 +531,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => registrationDataService.RegisterAdmin(centreManagerModel, userId))
+            A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustHaveHappenedOnceExactly();
@@ -600,7 +600,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
-            A.CallTo(() => registrationDataService.RegisterAdmin(model, A<int>._))
+            A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._))
                 .MustNotHaveHappened();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustNotHaveHappened();
@@ -866,7 +866,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             const int categoryId = 1;
             const int userId = 2;
             const int centreId = 2;
-            var adminAccount = UserTestHelper.GetDefaultAdminAccount(active: false, categoryId: categoryId, userId: userId);
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount(
+                active: false,
+                categoryId: categoryId,
+                userId: userId
+            );
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
 
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
@@ -892,22 +896,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     )
                 ).MustHaveHappenedOnceExactly();
                 A.CallTo(
-                    () => registrationDataService.RegisterAdmin(
-                        A<AdminRegistrationModel>.That.Matches(
-                            a =>
-                                a.Centre == centreId &&
-                                a.Active &&
-                                a.Approved &&
-                                a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
-                                !a.IsCentreManager &&
-                                a.IsContentManager == adminRoles.IsContentManager &&
-                                a.ImportOnly == adminRoles.IsCmsAdministrator &&
-                                a.IsContentCreator == adminRoles.IsContentCreator &&
-                                a.IsTrainer == adminRoles.IsTrainer &&
-                                a.IsSupervisor == adminRoles.IsSupervisor
-                        ),
-                        1
-                    )
+                    () => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._)
                 ).MustNotHaveHappened();
             }
         }
@@ -928,11 +917,10 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () => registrationDataService.RegisterAdmin(
-                    A<AdminRegistrationModel>.That.Matches(
+                    A<AdminAccountRegistrationModel>.That.Matches(
                         a =>
-                            a.Centre == centreId &&
+                            a.CentreId == centreId &&
                             a.Active &&
-                            a.Approved &&
                             a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
                             !a.IsCentreManager &&
                             a.IsContentManager == adminRoles.IsContentManager &&
@@ -940,8 +928,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                             a.IsContentCreator == adminRoles.IsContentCreator &&
                             a.IsTrainer == adminRoles.IsTrainer &&
                             a.IsSupervisor == adminRoles.IsSupervisor
-                    ),
-                    userId
+                    )
                 )
             ).MustHaveHappened();
             UpdateToExistingAdminAccountMustNotHaveHappened();

@@ -15,7 +15,7 @@
             bool registerJourneyContainsTermsAndConditions
         );
 
-        int RegisterAdmin(AdminAccountRegistrationModel registrationModel, int userId);
+        int RegisterAdmin(AdminAccountRegistrationModel registrationModel);
     }
 
     public class RegistrationDataService : IRegistrationDataService
@@ -184,7 +184,7 @@
             return candidateNumber;
         }
 
-        public int RegisterAdmin(AdminAccountRegistrationModel registrationModel, int userId)
+        public int RegisterAdmin(AdminAccountRegistrationModel registrationModel)
         {
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
@@ -192,7 +192,7 @@
             if (!string.IsNullOrWhiteSpace(registrationModel.CentreSpecificEmail))
             {
                 userDataService.SetCentreEmail(
-                    userId,
+                    registrationModel.UserId,
                     registrationModel.CentreId,
                     registrationModel.CentreSpecificEmail,
                     transaction
@@ -201,7 +201,7 @@
 
             var adminValues = new
             {
-                userId,
+                registrationModel.UserId,
                 centreID = registrationModel.CentreId,
                 categoryID = registrationModel.CategoryId,
                 isCentreAdmin = registrationModel.IsCentreAdmin,

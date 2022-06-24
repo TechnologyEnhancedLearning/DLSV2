@@ -45,10 +45,15 @@
             var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
 
             // When
-            var candidateNumber = service.RegisterNewUserAndDelegateAccount(delegateRegistrationModel,
-                false);
+            var candidateNumber = service.RegisterNewUserAndDelegateAccount(
+                delegateRegistrationModel,
+                false
+            );
             // TODO HEEDLS-951 Replace this with a variant of GetDelegateEntity
-            var user = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, delegateRegistrationModel.Centre);
+            var user = userDataService.GetDelegateUserByCandidateNumber(
+                candidateNumber,
+                delegateRegistrationModel.Centre
+            );
             var delegateAccount = userDataService.GetDelegateAccountById(user!.Id);
             var userAccount = userDataService.GetUserAccountById(delegateAccount!.UserId);
 
@@ -84,10 +89,15 @@
             A.CallTo(() => clockService.UtcNow).Returns(dateTime);
 
             // When
-            var candidateNumber = service.RegisterNewUserAndDelegateAccount(delegateRegistrationModel,
-                true);
+            var candidateNumber = service.RegisterNewUserAndDelegateAccount(
+                delegateRegistrationModel,
+                true
+            );
             // TODO HEEDLS-951 Replace this with a variant of GetDelegateEntity
-            var user = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, delegateRegistrationModel.Centre);
+            var user = userDataService.GetDelegateUserByCandidateNumber(
+                candidateNumber,
+                delegateRegistrationModel.Centre
+            );
             var delegateAccount = userDataService.GetDelegateAccountById(user!.Id);
             var userAccount = userDataService.GetUserAccountById(delegateAccount!.UserId);
 
@@ -202,8 +212,10 @@
 
             void Action()
             {
-                newService.RegisterNewUserAndDelegateAccount(model,
-                    false);
+                newService.RegisterNewUserAndDelegateAccount(
+                    model,
+                    false
+                );
             }
 
             return Action;
@@ -216,21 +228,20 @@
 
             // Given
             var registrationModel =
-                RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel(
+                RegistrationModelTestHelper.GetDefaultCentreManagerAccountRegistrationModel(
                     categoryId: 1
                 );
 
             // When
-            var id = service.RegisterAdmin(registrationModel, 4046);
+            var id = service.RegisterAdmin(registrationModel);
 
             // Then
             var user = userDataService.GetAdminUserById(id)!;
             using (new AssertionScope())
             {
-                user.CentreId.Should().Be(registrationModel.Centre);
+                user.CentreId.Should().Be(registrationModel.CentreId);
                 user.IsCentreAdmin.Should().Be(registrationModel.IsCentreAdmin);
                 user.IsCentreManager.Should().Be(registrationModel.IsCentreManager);
-                user.Approved.Should().Be(registrationModel.Approved);
                 user.Active.Should().Be(registrationModel.Active);
                 user.IsContentCreator.Should().Be(registrationModel.IsContentCreator);
                 user.IsContentManager.Should().Be(registrationModel.IsContentManager);
@@ -248,12 +259,12 @@
 
             // Given
             var registrationModel =
-                RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel(
+                RegistrationModelTestHelper.GetDefaultCentreManagerAccountRegistrationModel(
                     categoryId: 1
                 );
 
             // When
-            var id = service.RegisterAdmin(registrationModel, 4046);
+            var id = service.RegisterAdmin(registrationModel);
 
             // Then
             var user = userDataService.GetAdminUserById(id)!;
