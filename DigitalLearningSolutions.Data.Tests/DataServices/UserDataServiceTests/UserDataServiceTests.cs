@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.UserDataServiceTests
 {
+    using System;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -54,7 +55,9 @@
             var result = userDataService.GetUserAccountById(2);
 
             // Then
-            result.Should().BeEquivalentTo(UserTestHelper.GetDefaultUserAccount());
+            result.Should().BeEquivalentTo(
+                UserTestHelper.GetDefaultUserAccount(emailVerified: DateTime.Parse("2022-04-27 16:28:55.247"))
+            );
         }
 
         [Test]
@@ -64,7 +67,9 @@
             var result = userDataService.GetUserAccountByEmailAddress("test@gmail.com");
 
             // Then
-            result.Should().BeEquivalentTo(UserTestHelper.GetDefaultUserAccount());
+            result.Should().BeEquivalentTo(
+                UserTestHelper.GetDefaultUserAccount(emailVerified: DateTime.Parse("2022-04-27 16:28:55.247"))
+            );
         }
 
         [Test]

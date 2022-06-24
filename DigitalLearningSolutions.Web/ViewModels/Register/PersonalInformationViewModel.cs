@@ -1,13 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Register
 {
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
-    using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class PersonalInformationViewModel
+    public class PersonalInformationViewModel : InternalPersonalInformationViewModel
     {
         public PersonalInformationViewModel() { }
 
@@ -46,21 +44,7 @@
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? PrimaryEmail { get; set; }
 
-        [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
-        [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
-        [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
-        public string? CentreSpecificEmail { get; set; }
-
-        [Required(ErrorMessage = "Select a centre")]
-        public int? Centre { get; set; }
-
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongAlias)]
         public string? Alias { get; set; }
-
-        public bool IsCentreSpecificRegistration { get; set; }
-
-        public string? CentreName { get; set; }
-
-        public IEnumerable<SelectListItem> CentreOptions { get; set; } = new List<SelectListItem>();
     }
 }

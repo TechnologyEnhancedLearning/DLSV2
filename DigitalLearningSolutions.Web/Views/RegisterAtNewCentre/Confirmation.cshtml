@@ -1,0 +1,52 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model InternalConfirmationViewModel
+
+@{
+  ViewData["Title"] = "Registration confirmation";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl">
+      Delegate registration complete
+    </h1>
+    <p class="nhsuk-body-l">
+      You should make a note of your delegate number and keep it safe.
+      You can use it to log in to the Learning Portal and any Digital
+      Learning Solutions courses.
+    </p>
+    <div class="nhsuk-inset-text">
+      <span class="nhsuk-u-visually-hidden">Information: </span>
+      <p>Your delegate number is <span class="nhsuk-u-font-weight-bold">@Model.CandidateNumber</span></p>
+    </div>
+    @if (Model.HasAdminAccountAtCentre) {
+      <p>
+        You will need to log out and in again before you can access the Learning Portal.
+      </p>
+      <partial name="_LogoutForm" />
+    } else if (Model.Approved) {
+      <p>
+        You will need to log out and in again before you can access your new account.
+      </p>
+      <partial name="_LogoutForm" />
+    }
+
+    @if (!Model.Approved) {
+      <div class="nhsuk-warning-callout">
+        <h2 class="nhsuk-warning-callout__label">
+          <span role="text">
+            <span class="nhsuk-u-visually-hidden">Important: </span>
+            Your registration must be approved
+          </span>
+        </h2>
+        <p>
+          Your registration must be approved by a centre administrator before you can log in.
+          You will receive an email at the address you registered with when your registration
+          has been approved.
+          Check your Junk folder if the email doesn't arrive.
+        </p>
+      </div>
+      <vc:centre-contact-info centre-id="@Model.CentreId.GetValueOrDefault()" />
+    }
+  </div>
+</div>

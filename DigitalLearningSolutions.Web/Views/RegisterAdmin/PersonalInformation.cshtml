@@ -1,11 +1,9 @@
-@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.Register
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model PersonalInformationViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register Admin" : "Register Admin";
+  ViewData["Title"] = errorHasOccurred ? "Error: Register admin" : "Register admin";
 }
 
 <div class="nhsuk-grid-row">

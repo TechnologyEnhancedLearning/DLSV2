@@ -24,6 +24,16 @@
         justify-content: left;
         text-align: left;
       }
+
+      &:last-child {
+        @include govuk-media-query($until: desktop) {
+          padding-left: 80px;
+        }
+
+        @include govuk-media-query($until: tablet) {
+          padding-left: 68px;
+        }
+      }
     }
   }
 }

@@ -175,5 +175,28 @@
                 notifyDate
             );
         }
+
+        public static InternalDelegateRegistrationModel GetDefaultInternalDelegateRegistrationModel(
+            int centre = Centre,
+            string? answer1 = "answer1",
+            string? answer2 = "answer2",
+            string? answer3 = "answer3",
+            string? answer4 = "answer4",
+            string? answer5 = "answer5",
+            string? answer6 = "answer6",
+            string? centreSpecificEmail = "testuser@weekends.com"
+        )
+        {
+            return new InternalDelegateRegistrationModel(
+                centre,
+                centreSpecificEmail,
+                answer1,
+                answer2,
+                answer3,
+                answer4,
+                answer5,
+                answer6
+            );
+        }
     }
 }

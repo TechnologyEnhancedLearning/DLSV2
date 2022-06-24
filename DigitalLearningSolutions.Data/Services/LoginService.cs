@@ -31,12 +31,7 @@
 
             if (userEntity == null)
             {
-                return new LoginResult(LoginAttemptResult.InvalidUsername);
-            }
-
-            if (!userEntity.UserAccount.Active)
-            {
-                return new LoginResult(LoginAttemptResult.InactiveAccount);
+                return new LoginResult(LoginAttemptResult.InvalidCredentials);
             }
 
             var verificationResult = userVerificationService.VerifyUserEntity(password, userEntity);
@@ -53,12 +48,17 @@
                 userService.UpdateFailedLoginCount(userEntity.UserAccount);
 
                 return userEntity.IsLocked
-                    ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity)
-                    : new LoginResult(LoginAttemptResult.InvalidPassword);
+                    ? new LoginResult(LoginAttemptResult.AccountLocked)
+                    : new LoginResult(LoginAttemptResult.InvalidCredentials);
             }
 
-            return userEntity.IsLocked
-                ? new LoginResult(LoginAttemptResult.AccountLocked, userEntity)
+            if (userEntity.IsLocked)
+            {
+                return new LoginResult(LoginAttemptResult.AccountLocked);
+            }
+
+            return !userEntity.UserAccount.Active
+                ? new LoginResult(LoginAttemptResult.InactiveAccount)
                 : DetermineDestinationForSuccessfulLogin(userEntity, username);
         }
 
@@ -108,7 +108,15 @@
                     string.Equals(da.CandidateNumber, username, StringComparison.CurrentCultureIgnoreCase)
             );
 
-            return delegateAccountToLogIntoIfCandidateNumberUsed?.CentreId;
+            if (delegateAccountToLogIntoIfCandidateNumberUsed == null)
+            {
+                return null;
+            }
+
+            var canLogIntoToAccount = userEntity
+                .CentreAccountSetsByCentreId[delegateAccountToLogIntoIfCandidateNumberUsed.CentreId].CanLogInToCentre;
+
+            return canLogIntoToAccount ? delegateAccountToLogIntoIfCandidateNumberUsed.CentreId : null as int?;
         }
     }
 }

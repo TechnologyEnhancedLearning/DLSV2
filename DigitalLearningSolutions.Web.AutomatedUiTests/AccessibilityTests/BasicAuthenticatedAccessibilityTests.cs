@@ -139,6 +139,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Resources", "Resources")]
         [InlineData("/SuperAdmin/Centres", "Centres")]
         [InlineData("/SuperAdmin/System/Faqs", "FAQs")]
+        [InlineData("/VerifyEmail/EmailChanged", "Verify your email address")]
+        [InlineData("/VerifyEmail/EmailNotVerified", "Verify your email address")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when

@@ -1,0 +1,38 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.VerifyEmail
+@model VerifyEmailViewModel
+
+@if (Model.PrimaryEmail != null) {
+  var primaryEmailText = $"Your primary email address, {Model.PrimaryEmail}, has not been verified yet." +
+                         " You can edit your account details, but you cannot access any centre accounts until it is verified.";
+
+  <p class="nhsuk-body-m">@primaryEmailText</p>
+} else {
+  var (firstCentreName, firstCentreEmail) = Model.CentreSpecificEmails.First();
+  var centreEmailFirstParagraphText = $"Your email address {firstCentreEmail} for your account at" +
+                                      $" {firstCentreName} has not been verified yet. {VerifyEmailViewModel.CentreEmailExplanation}";
+  <p class="nhsuk-body-m">@centreEmailFirstParagraphText</p>
+}
+
+@foreach (var (centreName, centreEmail) in Model.CentreEmailsExcludingFirstParagraph) {
+  var centreEmailText = $"Your email address {centreEmail} for your account at {centreName} has also not been" +
+                        $" verified yet. {VerifyEmailViewModel.CentreEmailExplanation}";
+  <p class="nhsuk-body-m">@centreEmailText</p>
+}
+
+@{
+  var emailAddresses = Model.SingleUnverifiedEmail
+    ? Model.PrimaryEmail ?? "this address"
+    : "each of the addresses above";
+  var link = Model.SingleUnverifiedEmail ? "link" : "links";
+  var address = Model.SingleUnverifiedEmail ? "address" : "addresses";
+  var email = Model.SingleUnverifiedEmail ? "this email" : "the emails";
+  var folder = Model.SingleUnverifiedEmail ? "folder" : "folders";
+  var pronoun = Model.SingleUnverifiedEmail ? "it" : "them";
+
+  var verifyEmailExplanation = $"An email with a verification link should have been sent to {emailAddresses}." +
+                               $" Please click the {link} to verify your email {address}." +
+                               $" If you have not received {email} after a few minutes, check your Junk {folder}," +
+                               $" or return to the My account page to resend {pronoun}.";
+}
+
+<p class="nhsuk-body-m">@verifyEmailExplanation</p>

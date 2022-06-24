@@ -285,6 +285,7 @@ namespace DigitalLearningSolutions.Web
         {
             services.AddScoped<RedirectEmptySessionData<RegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
+            services.AddScoped<RedirectEmptySessionData<InternalDelegateRegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationByCentreData>>();
             services.AddScoped<RedirectEmptySessionData<AddRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<EditRegistrationPromptData>>();
@@ -345,8 +346,7 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            var applicationPath = new Uri(config.GetAppRootPath()).AbsolutePath.TrimEnd('/');
-            var url = HttpUtility.UrlEncode(applicationPath + context.Request.Path);
+            var url = StringHelper.GetLocalRedirectUrl(config, context.Request.Path);
             var queryString = HttpUtility.UrlEncode(context.Request.QueryString.Value);
             context.HttpContext.Response.Redirect(config.GetAppRootPath() + $"/Login?returnUrl={url}{queryString}");
             return Task.CompletedTask;
@@ -354,7 +354,7 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect("/AccessDenied");
+            context.HttpContext.Response.Redirect(config.GetAppRootPath() + "/AccessDenied");
             return Task.CompletedTask;
         }
     }

@@ -31,7 +31,6 @@
             DateTime? detailsLastChecked = null
         )
         {
-            emailVerified ??= DateTime.Parse("2022-04-27 16:28:55.247");
             detailsLastChecked ??= DateTime.Parse("2022-04-27 16:28:55.247");
             return new UserAccount
             {
@@ -198,7 +197,7 @@
             DateTime? detailsLastChecked = null,
             int? userCentreDetailsId = null,
             string? centreSpecificEmail = null,
-            bool? centreSpecificEmailVerified = null
+            DateTime? centreSpecificEmailVerified = null
         )
         {
             dateRegistered ??= DateTime.Parse("2010-09-22 06:52:09.080");
@@ -412,6 +411,7 @@
         {
             var users = await connection.QueryAsync<DelegateUser>(
                 @"SELECT
+                        CandidateID AS Id,
                         FirstName,
                         LastName,
                         EmailAddress,
@@ -424,7 +424,8 @@
                         Answer4,
                         Answer5,
                         Answer6,
-                        CandidateNumber
+                        CandidateNumber,
+                        DateRegistered
                     FROM Candidates
                     WHERE CandidateNumber = @candidateNumber",
                 new { candidateNumber }

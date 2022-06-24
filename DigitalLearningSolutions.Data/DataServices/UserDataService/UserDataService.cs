@@ -34,6 +34,8 @@
 
         DelegateEntity? GetDelegateById(int id);
 
+        DelegateEntity? GetDelegateByCandidateNumber(string candidateNumber);
+
         DelegateUser? GetDelegateUserById(int id);
 
         List<DelegateUser> GetDelegateUsersByUsername(string username);
@@ -54,7 +56,7 @@
             int jobGroupId,
             DateTime detailsLastChecked,
             int userId,
-            bool shouldUpdateProfileImage = false
+            bool changeMadeBySameUser = false
         );
 
         void UpdateDelegateAccount(
@@ -151,6 +153,8 @@
         );
 
         string? GetCentreEmail(int userId, int centreId);
+
+        IEnumerable<(int centreId, string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(int userId);
     }
 
     public partial class UserDataService : IUserDataService
