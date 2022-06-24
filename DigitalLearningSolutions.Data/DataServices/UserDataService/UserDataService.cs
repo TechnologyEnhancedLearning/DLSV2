@@ -6,7 +6,6 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserDataService
@@ -137,6 +136,8 @@
         int? GetUserIdByAdminId(int adminId);
 
         IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId);
+
+        AdminAccount? GetAdminAccountbyId(int id);
 
         IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId);
 

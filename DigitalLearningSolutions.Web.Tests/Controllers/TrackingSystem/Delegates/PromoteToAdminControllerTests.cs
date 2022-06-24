@@ -22,11 +22,13 @@
         private ICourseCategoriesDataService courseCategoriesDataService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             registrationService = A.Fake<IRegistrationService>();
@@ -35,7 +37,8 @@
                     courseCategoriesDataService,
                     centreContractAdminUsageService,
                     registrationService,
-                    new NullLogger<PromoteToAdminController>()
+                    new NullLogger<PromoteToAdminController>(),
+                    userService
                 )
                 .WithDefaultContext();
         }
@@ -92,29 +95,6 @@
                 IsContentCreator = false,
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole,
                 LearningCategory = 0
-            };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._, A<int>._))
-                .Throws(new AdminCreationFailedException());
-
-            // When
-            var result = controller.Index(formData, 1);
-
-            // Then
-            result.Should().BeStatusCodeResult().WithStatusCode(500);
-        }
-
-        [Test]
-        public void Summary_post_returns_500_error_with_already_active_admin_error()
-        {
-            // Given
-            var formData = new AdminRolesFormData
-            {
-                IsCentreAdmin = true,
-                IsSupervisor = false,
-                IsTrainer = false,
-                IsContentCreator = false,
-                ContentManagementRole = ContentManagementRole.NoContentManagementRole,
-                LearningCategory = 0,
             };
             A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._, A<int>._))
                 .Throws(new AdminCreationFailedException());

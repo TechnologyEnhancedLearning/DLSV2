@@ -10,9 +10,17 @@
     {
         public AdminRolesFormData() { }
 
-        public AdminRolesFormData(User user)
+        public AdminRolesFormData(User user, int centreId)
         {
             FullName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(user.FirstName, user.LastName);
+            CentreId = centreId;
+        }
+
+        public AdminRolesFormData(string firstName, string lastName, int centreId, int userId)
+        {
+            FullName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(firstName, lastName);
+            CentreId = centreId;
+            UserId = userId;
         }
 
         public string? FullName { get; set; }

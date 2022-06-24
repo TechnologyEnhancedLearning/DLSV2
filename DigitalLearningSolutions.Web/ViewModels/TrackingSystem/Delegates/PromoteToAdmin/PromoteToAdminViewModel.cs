@@ -15,15 +15,16 @@
         public PromoteToAdminViewModel() { }
 
         public PromoteToAdminViewModel(
-            DelegateUser delegateUser,
+            string firstName,
+            string lastName,
+            int delegateId,
             int userId,
             int centreId,
             IEnumerable<Category> categories,
             CentreContractAdminUsage numberOfAdmins
-        ) : base(delegateUser, centreId)
+        ) : base(firstName, lastName, centreId, userId)
         {
-            DelegateId = delegateUser.Id;
-            UserId = userId;
+            DelegateId = delegateId;
 
             IsCentreAdmin = false;
             IsSupervisor = false;
@@ -42,8 +43,6 @@
         }
 
         public int DelegateId { get; set; }
-
-        public int UserId { get; set; }
 
         private void SetUpCheckboxesAndRadioButtons(CentreContractAdminUsage numberOfAdmins)
         {

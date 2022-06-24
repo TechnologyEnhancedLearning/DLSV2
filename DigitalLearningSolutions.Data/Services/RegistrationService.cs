@@ -217,7 +217,8 @@ namespace DigitalLearningSolutions.Data.Services
 
             var userId = CreateDelegateAccountForAdmin(registrationModel, registerJourneyContainsTermsAndConditions);
 
-            registrationDataService.RegisterAdmin(registrationModel, userId);
+            var accountRegistrationModel = new AdminAccountRegistrationModel(registrationModel, userId);
+            registrationDataService.RegisterAdmin(accountRegistrationModel, userId);
 
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
@@ -251,19 +252,20 @@ namespace DigitalLearningSolutions.Data.Services
             }
             else
             {
-                var adminRegistrationModel = new AdminRegistrationModel(
+                var adminRegistrationModel = new AdminAccountRegistrationModel(
+                    userId,
+                    null,
                     centreId,
-                    true,
-                    true,
                     categoryId,
                     adminRoles.IsCentreAdmin,
                     false,
+                    adminRoles.IsContentManager,
+                    adminRoles.IsContentCreator,
+                    adminRoles.IsTrainer,
+                    adminRoles.ImportOnly,
                     adminRoles.IsSupervisor,
                     adminRoles.IsNominatedSupervisor,
-                    adminRoles.IsTrainer,
-                    adminRoles.IsContentCreator,
-                    adminRoles.IsCmsAdministrator,
-                    adminRoles.IsCmsManager
+                    true
                 );
 
                 registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
@@ -340,7 +342,7 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.PrimaryEmail,
                 registrationModel.CentreSpecificEmail,
                 registrationModel.Centre,
-                registrationModel.JobGroup!.Value,
+                registrationModel.JobGroup,
                 registrationModel.PasswordHash!,
                 true,
                 true,
