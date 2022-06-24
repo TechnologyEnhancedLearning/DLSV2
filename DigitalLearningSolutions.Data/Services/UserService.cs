@@ -77,6 +77,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         (string? primaryEmail, IEnumerable<(string centreName, string centreEmail)> centreEmails)
             GetUnverifiedEmailsForUser(int userId);
+
+        AdminEntity? GetAdminById(int adminId);
     }
 
     public class UserService : IUserService
@@ -344,6 +346,11 @@ namespace DigitalLearningSolutions.Data.Services
             ).Select(tuple => (tuple.centreName, tuple.centreEmail));
 
             return (unverifiedPrimaryEmail, unverifiedCentreEmails);
+        }
+
+        public AdminEntity? GetAdminById(int adminId)
+        {
+            return userDataService.GetAdminById(adminId);
         }
 
         public void UpdateUserDetailsAndCentreSpecificDetails(

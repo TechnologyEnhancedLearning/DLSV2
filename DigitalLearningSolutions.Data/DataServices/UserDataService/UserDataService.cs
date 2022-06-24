@@ -10,6 +10,8 @@
 
     public interface IUserDataService
     {
+        AdminEntity? GetAdminById(int id);
+
         AdminUser? GetAdminUserById(int id);
 
         List<AdminUser> GetAdminUsersByCentreId(int centreId);

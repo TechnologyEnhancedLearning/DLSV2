@@ -264,6 +264,119 @@
             return new DelegateEntity(delegateAccount, userAccount, userCentreDetails);
         }
 
+        public static AdminEntity GetDefaultAdminEntity(
+            int adminId = 7,
+            int userId = 2,
+            int centreId = 2,
+            string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
+            bool centreActive = true,
+            bool active = true,
+            bool isCentreAdmin = true,
+            bool isCentreManager = true,
+            bool isContentCreator = false,
+            bool isContentManager = true,
+            bool publishToAll = true,
+            bool isReportsViewer = false,
+            bool isSuperAdmin = true,
+            int categoryId = 1,
+            string? categoryName = "Undefined",
+            bool isSupervisor = true,
+            bool isTrainer = true,
+            bool isFrameworkDeveloper = true,
+            bool importOnly = true,
+            bool isFrameworkContributor = false,
+            bool isLocalWorkforceManager = false,
+            bool isNominatedSupervisor = false,
+            bool isWorkforceContributor = false,
+            bool isWorkforceManager = false,
+            string primaryEmail = "email@test.com",
+            string passwordHash = "password",
+            string firstName = "Firstname",
+            string lastName = "Test",
+            int jobGroupId = 1,
+            string jobGroupName = "Nursing / midwifery",
+            string? professionalRegistrationNumber = null,
+            byte[]? profileImage = null,
+            int? resetPasswordId = null,
+            DateTime? termsAgreed = null,
+            int failedLoginCount = 0,
+            bool hasBeenPromptedForPrn = false,
+            int? learningHubAuthId = null,
+            bool hasDismissedLhLoginWarning = false,
+            DateTime? emailVerified = null,
+            DateTime? detailsLastChecked = null,
+            int? userCentreDetailsId = null,
+            string? centreSpecificEmail = null,
+            bool? centreSpecificEmailVerified = null
+        )
+        {
+            emailVerified ??= DateTime.Parse("2022-04-27 16:28:55.637");
+            detailsLastChecked ??= DateTime.Parse("2022-04-27 16:28:55.637");
+
+            var adminAccount = new AdminAccount
+            {
+                Id = adminId,
+                UserId = userId,
+                CentreId = centreId,
+                CentreName = centreName,
+                CentreActive = centreActive,
+                IsCentreAdmin = isCentreAdmin,
+                IsReportsViewer = isReportsViewer,
+                IsSuperAdmin = isSuperAdmin,
+                IsCentreManager = isCentreManager,
+                Active = active,
+                IsContentManager = isContentManager,
+                PublishToAll = publishToAll,
+                ImportOnly = importOnly,
+                IsContentCreator = isContentCreator,
+                IsSupervisor = isSupervisor,
+                IsTrainer = isTrainer,
+                CategoryId = categoryId,
+                CategoryName = categoryName,
+                IsFrameworkDeveloper = isFrameworkDeveloper,
+                IsFrameworkContributor = isFrameworkContributor,
+                IsWorkforceManager = isWorkforceManager,
+                IsWorkforceContributor = isWorkforceContributor,
+                IsLocalWorkforceManager = isLocalWorkforceManager,
+                IsNominatedSupervisor = isNominatedSupervisor,
+            };
+
+            var userAccount = new UserAccount
+            {
+                Id = userId,
+                PrimaryEmail = primaryEmail,
+                PasswordHash = passwordHash,
+                FirstName = firstName,
+                LastName = lastName,
+                JobGroupId = jobGroupId,
+                JobGroupName = jobGroupName,
+                ProfessionalRegistrationNumber = professionalRegistrationNumber,
+                ProfileImage = profileImage,
+                Active = active,
+                ResetPasswordId = resetPasswordId,
+                TermsAgreed = termsAgreed,
+                FailedLoginCount = failedLoginCount,
+                HasBeenPromptedForPrn = hasBeenPromptedForPrn,
+                LearningHubAuthId = learningHubAuthId,
+                HasDismissedLhLoginWarning = hasDismissedLhLoginWarning,
+                EmailVerified = emailVerified,
+                DetailsLastChecked = detailsLastChecked,
+            };
+
+            var userCentreDetails = userCentreDetailsId == null
+                ? null
+                : new UserCentreDetails
+                {
+                    Id = userCentreDetailsId.Value,
+                    UserId = userId,
+                    CentreId = centreId,
+                    Email = centreSpecificEmail,
+                    EmailVerified = centreSpecificEmailVerified,
+                };
+
+            return new AdminEntity(adminAccount, userAccount, userCentreDetails);
+        }
+
         public static DelegateUser GetDefaultDelegateUser(
             int id = 2,
             int centreId = 2,

@@ -45,9 +45,10 @@
         public void SendProgressCompletionNotification_calls_data_service_and_sends_email_to_correct_delegate_email()
         {
             // Given
+            const string delegateEmail = "delegate@email.com";
             var progress = ProgressTestHelper.GetDefaultDetailedCourseProgress();
 
-            SetUpSendProgressCompletionNotificationEmailFakes();
+            SetUpSendProgressCompletionNotificationEmailFakes(delegateEmail: delegateEmail);
 
             // When
             notificationService.SendProgressCompletionNotificationEmail(progress, 2, 3);
@@ -58,25 +59,10 @@
             A.CallTo(
                 () => emailService.SendEmail(
                     A<Email>.That.Matches(
-                        e => e.To.SequenceEqual(new[] { progress.DelegateEmail })
+                        e => e.To.SequenceEqual(new[] { delegateEmail })
                     )
                 )
             ).MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public void SendProgressCompletionNotification_does_not_send_email_if_delegate_email_is_null()
-        {
-            // Given
-            var progress = ProgressTestHelper.GetDefaultDetailedCourseProgress(delegateEmail: null);
-            SetUpSendProgressCompletionNotificationEmailFakes();
-
-            // When
-            notificationService.SendProgressCompletionNotificationEmail(progress, 2, 3);
-
-            // Then
-            A.CallTo(() => emailService.SendEmail(A<Email>._))
-                .MustNotHaveHappened();
         }
 
         [Test]
@@ -103,7 +89,7 @@
             const string adminEmail = "admin@email.com";
 
             var progress = ProgressTestHelper.GetDefaultDetailedCourseProgress();
-            SetUpSendProgressCompletionNotificationEmailFakes(adminEmail: adminEmail);
+            SetUpSendProgressCompletionNotificationEmailFakes(adminId: 1, adminEmail: adminEmail);
 
             // When
             notificationService.SendProgressCompletionNotificationEmail(progress, 2, 3);
@@ -268,7 +254,9 @@
         private void SetUpSendProgressCompletionNotificationEmailFakes(
             int centreId = 101,
             string courseName = "Example application - course name",
+            int? adminId = null,
             string? adminEmail = null,
+            string delegateEmail = "",
             int sessionId = 123
         )
         {
@@ -276,9 +264,25 @@
             {
                 CentreId = centreId,
                 CourseName = courseName,
-                AdminEmail = adminEmail,
+                AdminId = adminId,
                 SessionId = sessionId,
             };
+
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(
+                UserTestHelper.GetDefaultDelegateEntity(
+                    DelegateId,
+                    primaryEmail: delegateEmail
+                )
+            );
+            if (adminId != null && adminEmail != null)
+            {
+                A.CallTo(() => userService.GetAdminById(adminId.Value)).Returns(
+                    UserTestHelper.GetDefaultAdminEntity(
+                        adminId.Value,
+                        primaryEmail: adminEmail
+                    )
+                );
+            }
 
             A.CallTo(() => notificationDataService.GetProgressCompletionData(ProgressId, DelegateId, CustomisationId))
                 .Returns(progressCompletionData);

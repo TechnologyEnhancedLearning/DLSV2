@@ -59,7 +59,7 @@
             {
                 CentreId = 237,
                 CourseName = "Entry Level - Win XP, Office 2003/07 OLD - Standard",
-                AdminEmail = null,
+                AdminId = null,
                 CourseNotificationEmail = courseNotificationEmail,
                 SessionId = 429,
             };
@@ -79,7 +79,7 @@
             {
                 CentreId = 374,
                 CourseName = "Level 3 - Microsoft Word 2010  - LH TEST NEW COURSE PUBLISHED",
-                AdminEmail = "hcoayru@lmgein.",
+                AdminId = 4106,
                 CourseNotificationEmail = null,
                 SessionId = 0,
             };

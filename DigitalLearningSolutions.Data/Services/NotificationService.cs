@@ -112,9 +112,9 @@
                 progress.DelegateId,
                 progress.CustomisationId
             );
+            var delegateEntity = userService.GetDelegateById(progress.DelegateId);
 
-            if (progressCompletionData == null || progress.DelegateEmail == null ||
-                progress.DelegateEmail.Trim() == string.Empty)
+            if (progressCompletionData == null || delegateEntity == null)
             {
                 return;
             }
@@ -150,7 +150,7 @@
                     "in other activities in your Learning Portal. These have automatically been marked as complete.";
             }
 
-            if (progressCompletionData.AdminEmail != null || progressCompletionData.CourseNotificationEmail != null)
+            if (progressCompletionData.AdminId != null || progressCompletionData.CourseNotificationEmail != null)
             {
                 htmlActivityCompletionInfo +=
                     "<p><b>Note:</b> This message has been copied to the administrator(s) managing this activity, for their information.</p>";
@@ -161,7 +161,7 @@
             const string emailSubjectLine = "Digital Learning Solutions Activity Complete";
             var delegateNameOrGenericTitle = progress.DelegateFirstName ?? "Digital Learning Solutions Delegate";
             var emailsToCc = GetEmailsToCc(
-                progressCompletionData.AdminEmail,
+                progressCompletionData.AdminId,
                 progressCompletionData.CourseNotificationEmail
             );
 
@@ -180,19 +180,20 @@
             var email = new Email(
                 emailSubjectLine,
                 builder,
-                new[] { progress.DelegateEmail },
+                new[] { delegateEntity.GetEmailForCentreNotifications() },
                 emailsToCc
             );
             emailService.SendEmail(email);
         }
 
-        private static string[]? GetEmailsToCc(string? adminEmail, string? courseNotificationEmail)
+        private string[]? GetEmailsToCc(int? adminId, string? courseNotificationEmail)
         {
             var emailsToCc = new List<string>();
 
-            if (adminEmail != null)
+            if (adminId != null)
             {
-                emailsToCc.Add(adminEmail);
+                var adminEntity = userService.GetAdminById(adminId.Value)!;
+                emailsToCc.Add(adminEntity.GetEmailForCentreNotifications());
             }
 
             if (courseNotificationEmail != null)
