@@ -14,7 +14,6 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
 
     public class SeleniumServerFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
-        public string ConnectionString;
         private IWebHost host;
         public string RootUri;
 
@@ -30,7 +29,6 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             host = builder.Build();
             host.Start();
             RootUri = host.ServerFeatures.Get<IServerAddressesFeature>().Addresses.First();
-            ConnectionString = GetConfigForUiTests().GetConnectionString("DefaultConnection");
 
             // Fake Server to satisfy the return type
             return new TestServer(
