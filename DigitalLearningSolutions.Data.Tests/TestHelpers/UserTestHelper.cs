@@ -289,12 +289,12 @@
             bool isNominatedSupervisor = false,
             bool isWorkforceContributor = false,
             bool isWorkforceManager = false,
-            string primaryEmail = "email@test.com",
-            string passwordHash = "password",
-            string firstName = "Firstname",
-            string lastName = "Test",
-            int jobGroupId = 1,
-            string jobGroupName = "Nursing / midwifery",
+            string firstName = "forename",
+            string lastName = "surname",
+            string primaryEmail = "test@gmail.com",
+            string passwordHash = "Password",
+            int jobGroupId = 10,
+            string jobGroupName = "Other",
             string? professionalRegistrationNumber = null,
             byte[]? profileImage = null,
             int? resetPasswordId = null,
@@ -310,8 +310,8 @@
             DateTime? centreSpecificEmailVerified = null
         )
         {
-            emailVerified ??= DateTime.Parse("2022-04-27 16:28:55.637");
-            detailsLastChecked ??= DateTime.Parse("2022-04-27 16:28:55.637");
+            emailVerified ??= DateTime.Parse("2022-04-27 16:28:55.247");
+            detailsLastChecked ??= DateTime.Parse("2022-04-27 16:28:55.247");
 
             var adminAccount = new AdminAccount
             {

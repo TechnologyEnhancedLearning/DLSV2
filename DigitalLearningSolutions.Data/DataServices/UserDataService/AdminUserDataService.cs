@@ -102,14 +102,14 @@
                 ucd.EmailVerified
             FROM AdminAccounts AS aa
             LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = aa.CategoryID
-            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
-            INNER JOIN Users AS u ON u.ID = da.UserID
-            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreId = da.CentreID
+            INNER JOIN Centres AS ce ON ce.CentreId = aa.CentreID
+            INNER JOIN Users AS u ON u.ID = aa.UserID
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreId = aa.CentreID
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
 
         public AdminEntity? GetAdminById(int id)
         {
-            var sql = $@"{BaseAdminEntitySelectQuery} WHERE da.ID = @id";
+            var sql = $@"{BaseAdminEntitySelectQuery} WHERE aa.ID = @id";
 
             return connection.Query<AdminAccount, UserAccount, UserCentreDetails, AdminEntity>(
                 sql,
