@@ -22,7 +22,8 @@
 }
   <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
   <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">
-  <partial name="../../Supervisor/Shared/_SignOffHistory.cshtml" model="@Model.SupervisorSignOffs" />
+  <partial name="../../Supervisor/Shared/_SignOffHistory.cshtml" model="@Model.SupervisorSignOffs"
+  view-data="@(new ViewDataDictionary(ViewData) { {"reviewerCommentsLabel", (Model.SelfAssessment.ReviewerCommentsLabel == null ? "Comments": Model.SelfAssessment.ReviewerCommentsLabel) } })" />
   <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
       <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
