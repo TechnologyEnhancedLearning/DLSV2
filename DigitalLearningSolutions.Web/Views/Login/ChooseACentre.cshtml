@@ -72,10 +72,10 @@
                   </button>
                 </form>
               } else if (centreRow.Status.ActionButton == ChooseACentreButton.Reactivate) {
-                @* TODO HEEDLS-906: Link to Reactivate centre account page *@
-                <button class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0">
-                  Reactivate <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
-                </button>
+                var reactivateRouteData = new Dictionary<string, string> {{"centreId", centreRow.CentreId.ToString()}};
+                <a asp-controller="RegisterAtNewCentre" asp-action="Index" asp-all-route-data="@reactivateRouteData" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0">
+                  Reregister <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
+                </a>
               } else {
                 <span class="nhsuk-u-visually-hidden">You cannot log in to this centre.</span>
               }

@@ -478,7 +478,10 @@
             );
         }
 
-        public static void SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(this DbConnection connection, int adminId)
+        public static void SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(
+            this DbConnection connection,
+            int adminId
+        )
         {
             connection.Execute(
                 @"UPDATE AdminUsers SET
@@ -568,6 +571,32 @@
             await connection.ExecuteAsync(
                 @"UPDATE DelegateAccounts SET OldPassword = @oldPassword WHERE UserID = @userId;",
                 new { oldPassword = "old password", userId = user.Id }
+            );
+        }
+
+        public static async Task InsertUserCentreDetails(
+            this DbConnection connection,
+            int userId,
+            int centreId,
+            string? email,
+            DateTime? emailVerified = null
+        )
+        {
+            await connection.ExecuteAsync(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email, EmailVerified)
+                    VALUES (@userId, @centreId, @email, @emailVerified)",
+                new { userId, centreId, email, emailVerified }
+            );
+        }
+
+        public static (string? email, DateTime? emailVerified) GetEmailAndVerifiedDateFromUserCentreDetails(
+            this DbConnection connection,
+            int userId,
+            int centreId
+        )
+        {
+            return connection.QuerySingle<(string? email, DateTime? emailVerified)>(
+                $"SELECT Email, EmailVerified FROM UserCentreDetails WHERE CentreID = {centreId} AND UserID = {userId}"
             );
         }
     }

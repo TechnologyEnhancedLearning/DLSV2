@@ -102,13 +102,11 @@
             {
                 var delegateAccount = userService.GetUserById(User.GetUserIdKnownNotNull())!.DelegateAccounts
                     .SingleOrDefault(da => da.CentreId == model.Centre);
-                if (delegateAccount != null)
+                if (delegateAccount?.Active == true)
                 {
                     ModelState.AddModelError(
                         nameof(InternalPersonalInformationViewModel.Centre),
-                        delegateAccount.Active
-                            ? "You are already registered at this centre"
-                            : "You already have an inactive account at this centre - you can reactivate it via the Switch centre page"
+                        "You are already registered at this centre"
                     );
                 }
             }
@@ -299,9 +297,9 @@
         private void ValidateEmailAddress(InternalPersonalInformationViewModel model)
         {
             if (model.CentreSpecificEmail != null && !userService.NewEmailAddressIsValid(
-                    model.CentreSpecificEmail,
-                    User.GetUserIdKnownNotNull()
-                ))
+                model.CentreSpecificEmail,
+                User.GetUserIdKnownNotNull()
+            ))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.CentreSpecificEmail),

@@ -23,6 +23,13 @@
             IDbTransaction? transaction = null
         );
 
+        void ReregisterDelegateAccountAndCentreDetailForExistingUser(
+            DelegateRegistrationModel delegateRegistrationModel,
+            int userId,
+            int delegateId,
+            DateTime currentTime
+        );
+
         int RegisterAdmin(AdminRegistrationModel registrationModel, int userId);
     }
 
@@ -30,8 +37,8 @@
     {
         private readonly IClockService clockService;
         private readonly IDbConnection connection;
-        private readonly IUserDataService userDataService;
         private readonly ILogger<IRegistrationDataService> logger;
+        private readonly IUserDataService userDataService;
 
         public RegistrationDataService(
             IDbConnection connection,
@@ -112,6 +119,35 @@
             }
 
             return (delegateId, candidateNumber);
+        }
+
+        public void ReregisterDelegateAccountAndCentreDetailForExistingUser(
+            DelegateRegistrationModel delegateRegistrationModel,
+            int userId,
+            int delegateId,
+            DateTime currentTime
+        )
+        {
+            connection.EnsureOpen();
+            var transaction = connection.BeginTransaction();
+
+            userDataService.SetCentreEmail(
+                userId,
+                delegateRegistrationModel.Centre,
+                delegateRegistrationModel.CentreSpecificEmail,
+                transaction
+            );
+
+            ReregisterDelegateAccount(
+                delegateRegistrationModel,
+                delegateId,
+                currentTime,
+                transaction
+            );
+
+            // TODO HEEDLS-874 deal with group assignment
+
+            transaction.Commit();
         }
 
         public int RegisterAdmin(AdminRegistrationModel registrationModel, int userId)
@@ -359,6 +395,44 @@
             }
 
             return (delegateId, candidateNumber);
+        }
+
+        private void ReregisterDelegateAccount(
+            DelegateRegistrationModel delegateRegistrationModel,
+            int delegateId,
+            DateTime currentTime,
+            IDbTransaction transaction
+        )
+        {
+            var newDelegateValues = new
+            {
+                delegateId,
+                delegateRegistrationModel.Answer1,
+                delegateRegistrationModel.Answer2,
+                delegateRegistrationModel.Answer3,
+                delegateRegistrationModel.Answer4,
+                delegateRegistrationModel.Answer5,
+                delegateRegistrationModel.Answer6,
+                delegateRegistrationModel.Approved,
+                delegateRegistrationModel.Active,
+                CentreSpecificDetailsLastChecked = currentTime,
+            };
+
+            connection.Execute(
+                @"UPDATE DelegateAccounts SET
+                            Answer1 = @answer1,
+                            Answer2 = @answer2,
+                            Answer3 = @answer3,
+                            Answer4 = @answer4,
+                            Answer5 = @answer5,
+                            Answer6 = @answer6,
+                            Approved = @approved,
+                            Active = @active,
+                            CentreSpecificDetailsLastChecked = @centreSpecificDetailsLastChecked
+                        WHERE ID = @delegateId",
+                newDelegateValues,
+                transaction
+            );
         }
     }
 }

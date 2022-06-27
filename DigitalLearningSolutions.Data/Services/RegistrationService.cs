@@ -32,7 +32,7 @@ namespace DigitalLearningSolutions.Data.Services
             bool refactoredTrackingSystemEnabled,
             int? supervisorDelegateId = null
         );
-        
+
         string RegisterDelegateByCentre(
             DelegateRegistrationModel delegateRegistrationModel,
             string baseUrl,
@@ -113,7 +113,6 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateRegistrationModel.Centre
             );
 
-            
             var candidateNumber = CreateAccountAndReturnCandidateNumber(
                 delegateRegistrationModel,
                 registerJourneyContainsTermsAndConditions
@@ -164,8 +163,8 @@ namespace DigitalLearningSolutions.Data.Services
             var delegateRegistrationModel =
                 new DelegateRegistrationModel(userEntity.UserAccount, internalDelegateRegistrationModel);
 
-            var userHasAdminAccountAtCentre = userEntity.GetCentreAccountSet(internalDelegateRegistrationModel.Centre)
-                ?.CanLogIntoAdminAccount == true;
+            var userAccountsAtCentre = userEntity.GetCentreAccountSet(internalDelegateRegistrationModel.Centre);
+            var userHasAdminAccountAtCentre = userAccountsAtCentre?.CanLogIntoAdminAccount == true;
 
             // TODO HEEDLS-899 sort out supervisor delegate stuff, this is just copied from the external registration
             var supervisorDelegateRecordIdsMatchingDelegate =
@@ -179,8 +178,55 @@ namespace DigitalLearningSolutions.Data.Services
                 userHasAdminAccountAtCentre
             );
 
-            var (delegateId, candidateNumber) =
-                RegisterDelegateAccountAndCentreDetailsForExistingUser(userId, delegateRegistrationModel);
+            var delegateAccountAtCentre = userAccountsAtCentre?.DelegateAccount;
+
+            if (delegateAccountAtCentre?.Active == true)
+            {
+                var errorMessage =
+                    "Could not create account for delegate on registration. " +
+                    $"Failure: active delegate account with ID {delegateAccountAtCentre.Id} already exists " +
+                    $"at centre with ID {delegateAccountAtCentre.CentreId} for user with ID {delegateAccountAtCentre.UserId}";
+                throw new DelegateCreationFailedException(
+                    errorMessage,
+                    DelegateCreationError.ActiveAccountAlreadyExists
+                );
+            }
+
+            int delegateId;
+            string candidateNumber;
+
+            try
+            {
+                if (delegateAccountAtCentre == null)
+                {
+                    (delegateId, candidateNumber) =
+                        RegisterDelegateAccountAndCentreDetailsForExistingUser(userId, delegateRegistrationModel);
+                }
+                else
+                {
+                    delegateId = delegateAccountAtCentre.Id;
+                    candidateNumber = delegateAccountAtCentre.CandidateNumber;
+                    ReregisterDelegateAccountForExistingUser(userId, delegateId, delegateRegistrationModel);
+                }
+            }
+            catch (DelegateCreationFailedException exception)
+            {
+                var error = exception.Error;
+                var errorMessage = $"Could not create account for delegate on registration. Failure: {error.Name}";
+
+                logger.LogError(exception, errorMessage);
+
+                throw new DelegateCreationFailedException(errorMessage, exception, error);
+            }
+            catch (Exception exception)
+            {
+                var error = DelegateCreationError.UnexpectedError;
+                var errorMessage = $"Could not create account for delegate on registration. Failure: {error.Name}";
+
+                logger.LogError(exception, errorMessage);
+
+                throw new DelegateCreationFailedException(errorMessage, exception, error);
+            }
 
             if (supervisorDelegateRecordIdsMatchingDelegate.Any())
             {
@@ -343,32 +389,11 @@ namespace DigitalLearningSolutions.Data.Services
             bool registerJourneyContainsTermsAndConditions
         )
         {
-            try
-            {
-                ValidateRegistrationEmail(delegateRegistrationModel);
-                return registrationDataService.RegisterNewUserAndDelegateAccount(
-                    delegateRegistrationModel,
-                    registerJourneyContainsTermsAndConditions
-                );
-            }
-            catch (DelegateCreationFailedException exception)
-            {
-                var error = exception.Error;
-                var errorMessage = $"Could not create account for delegate on registration. Failure: {error.Name}";
-
-                logger.LogError(exception, errorMessage);
-
-                throw new DelegateCreationFailedException(errorMessage, exception, error);
-            }
-            catch (Exception exception)
-            {
-                var error = DelegateCreationError.UnexpectedError;
-                var errorMessage = $"Could not create account for delegate on registration. Failure: {error.Name}";
-
-                logger.LogError(exception, errorMessage);
-
-                throw new DelegateCreationFailedException(errorMessage, exception, error);
-            }
+            ValidateRegistrationEmail(delegateRegistrationModel);
+            return registrationDataService.RegisterNewUserAndDelegateAccount(
+                delegateRegistrationModel,
+                registerJourneyContainsTermsAndConditions
+            );
         }
 
         private (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailsForExistingUser(
@@ -382,7 +407,7 @@ namespace DigitalLearningSolutions.Data.Services
                 {
                     ValidateCentreEmail(userId, delegateRegistrationModel.CentreSpecificEmail);
                 }
-                
+
                 var currentTime = clockService.UtcNow;
                 return registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
                     delegateRegistrationModel,
@@ -408,6 +433,26 @@ namespace DigitalLearningSolutions.Data.Services
 
                 throw new DelegateCreationFailedException(errorMessage, exception, error);
             }
+        }
+
+        private void ReregisterDelegateAccountForExistingUser(
+            int userId,
+            int delegateId,
+            DelegateRegistrationModel delegateRegistrationModel
+        )
+        {
+            if (delegateRegistrationModel.CentreSpecificEmail != null)
+            {
+                ValidateCentreEmail(userId, delegateRegistrationModel.CentreSpecificEmail);
+            }
+
+            var currentTime = clockService.UtcNow;
+            registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                delegateRegistrationModel,
+                userId,
+                delegateId,
+                currentTime
+            );
         }
 
         private void ValidateRegistrationEmail(RegistrationModel model)
