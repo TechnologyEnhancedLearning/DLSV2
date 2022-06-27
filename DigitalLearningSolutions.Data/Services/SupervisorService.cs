@@ -276,7 +276,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
         public DelegateSelfAssessment GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId)
         {
             return connection.Query<DelegateSelfAssessment>(
-               @$"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.QuestionLabel, sa.DescriptionLabel,
+               @$"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.QuestionLabel, sa.DescriptionLabel, sa.ReviewerCommentsLabel,
                 sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, ca.StartedDate,
                 COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed,
                 ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate,
@@ -574,7 +574,7 @@ WHERE (ca.SelfAssessmentID = @selfAssessmentId) AND (cas.SupervisorDelegateId = 
             connection.Execute(@"UPDATE SelfAssessmentResultSupervisorVerifications SET Superceded = 1 WHERE CandidateAssessmentSupervisorID = @candidateAssessmentSupervisorId AND SelfAssessmentResultId = @resultId", new { candidateAssessmentSupervisorId, resultId });
             //Insert a new SelfAssessmentResultSupervisorVerifications record:
             var numberOfAffectedRows = connection.Execute(
-                     @"INSERT INTO SelfAssessmentResultSupervisorVerifications (CandidateAssessmentSupervisorID, SelfAssessmentResultId, EmailSent) VALUES (@candidateAssessmentSupervisorId, @resultId, GETUTCDATE())",  new { candidateAssessmentSupervisorId, resultId });
+                     @"INSERT INTO SelfAssessmentResultSupervisorVerifications (CandidateAssessmentSupervisorID, SelfAssessmentResultId, EmailSent) VALUES (@candidateAssessmentSupervisorId, @resultId, GETUTCDATE())", new { candidateAssessmentSupervisorId, resultId });
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
@@ -597,7 +597,7 @@ WHERE (ca.SelfAssessmentID = @selfAssessmentId) AND (cas.SupervisorDelegateId = 
         public SelfAssessmentResultSummary GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId)
         {
             return connection.Query<SelfAssessmentResultSummary>(
-                @"SELECT ca.ID, ca.SelfAssessmentID, sa.Name AS RoleName, COALESCE (sasr.SelfAssessmentReview, 1) AS SelfAssessmentReview, COALESCE (sasr.ResultsReview, 1) AS SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate, 
+                @"SELECT ca.ID, ca.SelfAssessmentID, sa.Name AS RoleName, sa.ReviewerCommentsLabel, COALESCE (sasr.SelfAssessmentReview, 1) AS SelfAssessmentReview, COALESCE (sasr.ResultsReview, 1) AS SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate, 
              ca.LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, npg.ProfessionalGroup, nsg.SubGroup, nr.RoleProfile, casv.ID AS CandidateAssessmentSupervisorVerificationId,
                  (SELECT COUNT(sas1.CompetencyID) AS CompetencyAssessmentQuestionCount
                  FROM    SelfAssessmentStructure AS sas1 INNER JOIN
