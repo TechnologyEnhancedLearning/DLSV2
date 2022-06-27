@@ -147,7 +147,7 @@
                     </legend>
                     <input name="ResultSupervisorVerificationId" type="hidden" asp-for="ResultSupervisorVerificationId" />
                     <nhs-form-group nhs-validation-for="SupervisorComments">
-                        <vc:text-area asp-for="SupervisorComments" character-count="null" label=@(Model.DelegateSelfAssessment.ReviewerCommentsLabel == null ? "Reviewer comments": Model.DelegateSelfAssessment.ReviewerCommentsLabel.ToString()) rows="5" css-class="" hint-text="" populate-with-current-value="true" spell-check="false"></vc:text-area>
+                        <vc:text-area asp-for="SupervisorComments" character-count="null" label="Reviewer comments" rows="5" css-class="" hint-text="" populate-with-current-value="true" spell-check="false"></vc:text-area>
                     </nhs-form-group>
 
                     <nhs-form-group nhs-validation-for="SignedOff">
@@ -228,7 +228,7 @@ else if (ViewContext.RouteData.Values["viewMode"].ToString() == "View" && Model.
             {
                 <div class="nhsuk-summary-list__row">
                 <dt class="nhsuk-summary-list__key">
-                    @(Model.DelegateSelfAssessment.ReviewerCommentsLabel == null ? "Reviewer comments": Model.DelegateSelfAssessment.ReviewerCommentsLabel.ToString())
+                    Reviewer comments
                 </dt>
                 <dd class="nhsuk-summary-list__value">
                         @Html.Raw(Model.SupervisorComments)

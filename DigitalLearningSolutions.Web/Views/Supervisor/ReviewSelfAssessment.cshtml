@@ -155,8 +155,7 @@
   {
     <div class="nhsuk-u-margin-top-4">
       <h3>Self Assessment Sign-off Status</h3>
-      <partial name="Shared/_SupervisorSignOffSummary" model="@Model.SupervisorSignOffs"
-      view-data="@(new ViewDataDictionary(ViewData) { { "reviewerCommentsLabel", (Model.DelegateSelfAssessment.ReviewerCommentsLabel == null ? "Comments": Model.DelegateSelfAssessment.ReviewerCommentsLabel) } })" />
+      <partial name="Shared/_SupervisorSignOffSummary" model="@Model.SupervisorSignOffs" />
     </div>
   }
   @if (Model.CompetencyGroups.Any())
