@@ -2,20 +2,20 @@
 {
     using DigitalLearningSolutions.Data.Helpers;
 
-    public class DelegateEntity
+    public class AdminEntity
     {
-        public DelegateEntity(
-            DelegateAccount delegateAccount,
+        public AdminEntity(
+            AdminAccount adminAccount,
             UserAccount userAccount,
             UserCentreDetails? userCentreDetails
         )
         {
-            DelegateAccount = delegateAccount;
+            AdminAccount = adminAccount;
             UserAccount = userAccount;
             UserCentreDetails = userCentreDetails;
         }
 
-        public DelegateAccount DelegateAccount { get; }
+        public AdminAccount AdminAccount { get; }
         public UserAccount UserAccount { get; }
         public UserCentreDetails? UserCentreDetails { get; }
 

@@ -190,17 +190,19 @@
                         gd.GroupDelegateID,
                         gd.GroupID,
                         gd.DelegateID,
+                        gd.AddedDate,
+                        da.CandidateNumber,
                         u.FirstName,
                         u.LastName,
-                        COALESCE(ucd.Email, u.PrimaryEmail) as EmailAddress,
-                        da.CandidateNumber,
-                        gd.AddedDate,
                         u.HasBeenPromptedForPrn,
-                        u.ProfessionalRegistrationNumber
+                        u.ProfessionalRegistrationNumber,
+                        u.PrimaryEmail,
+                        ucd.Email AS CentreEmail,
+                        ucd.EmailVerified AS CentreEmailVerified
                     FROM GroupDelegates AS gd
-                    INNER JOIN DelegateAccounts AS da ON da.ID = gd.DelegateID
-                    INNER JOIN Users AS u ON u.ID = da.UserID
-                    LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
+                    JOIN DelegateAccounts AS da ON da.ID = gd.DelegateID
+                    JOIN Users AS u ON u.ID = da.UserID
+                    LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreId = da.CentreID
                     WHERE gd.GroupID = @groupId",
                 new { groupId }
             );

@@ -4,7 +4,7 @@
 
     public static class ConfigurationExtensions
     {
-        public const string UseSignposting = "FeatureManagement:UseSignposting";
+        private const string UseSignposting = "FeatureManagement:UseSignposting";
 
         private const string AppRootPathName = "AppRootPath";
         private const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";

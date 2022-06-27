@@ -151,7 +151,7 @@
                 () =>
                     groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(
                         A<int>._,
-                        delegateUser,
+                        1,
                         0
                     )
             ).DoesNothing();

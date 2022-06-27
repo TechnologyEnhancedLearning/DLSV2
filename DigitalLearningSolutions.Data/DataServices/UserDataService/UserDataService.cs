@@ -10,6 +10,8 @@
 
     public interface IUserDataService
     {
+        AdminEntity? GetAdminById(int id);
+
         AdminUser? GetAdminUserById(int id);
 
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
@@ -35,6 +37,8 @@
         DelegateEntity? GetDelegateById(int id);
 
         DelegateEntity? GetDelegateByCandidateNumber(string candidateNumber);
+
+        IEnumerable<DelegateEntity> GetUnapprovedDelegatesByCentreId(int centreId);
 
         DelegateUser? GetDelegateUserById(int id);
 

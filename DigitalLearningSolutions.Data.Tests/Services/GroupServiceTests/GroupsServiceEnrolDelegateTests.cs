@@ -39,6 +39,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -79,6 +80,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -119,6 +121,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -159,6 +162,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -200,6 +204,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -240,6 +245,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -282,6 +288,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -321,6 +328,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -355,6 +363,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -389,6 +398,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -423,6 +433,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -459,6 +470,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -490,6 +502,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
                 reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -533,6 +546,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 oldDelegateDetails,
                 newAccountDetails,
+                null,
                 8
             );
 
@@ -588,6 +602,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 oldDelegateDetails,
                 newAccountDetails,
+                null,
                 8
             );
 

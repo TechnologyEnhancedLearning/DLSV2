@@ -733,8 +733,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    model.PrimaryEmail,
-                    NewCandidateNumber,
+                    A<int>._,
                     baseUrl,
                     model.NotifyDate!.Value,
                     "RegisterDelegateByCentre_Refactor"
@@ -766,8 +765,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    A<string>._,
-                    NewCandidateNumber,
+                    A<int>._,
                     A<string>._,
                     A<DateTime>._,
                     A<string>._

@@ -13,7 +13,6 @@
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
-    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
 
     public class RecommendedLearningControllerTests
     {
@@ -55,7 +54,7 @@
             SelfAssessmentResults_redirect_to_expected_action_does_not_call_filtered_api_when_using_signposting()
         {
             // Given
-            A.CallTo(() => configuration[ConfigurationExtensions.UseSignposting]).Returns("true");
+            A.CallTo(() => configuration["FeatureManagement:UseSignposting"]).Returns("true");
 
             // When
             var result = await controller.SelfAssessmentResults(SelfAssessmentId);
@@ -76,7 +75,7 @@
         {
             // Given
             var expectedBookmarkString = $"/LearningPortal/SelfAssessment/{SelfAssessmentId}/RecommendedLearning";
-            A.CallTo(() => configuration[ConfigurationExtensions.UseSignposting]).Returns("true");
+            A.CallTo(() => configuration["FeatureManagement:UseSignposting"]).Returns("true");
 
             // When
             var result = await controller.RecommendedLearning(SelfAssessmentId);

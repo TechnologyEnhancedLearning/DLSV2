@@ -18,8 +18,9 @@
                 .With(gd => gd.GroupDelegateId = 62)
                 .With(gd => gd.FirstName = "Test")
                 .With(gd => gd.LastName = "Name")
-                .With(gd => gd.EmailAddress = "gslectik.m@vao")
+                .With(gd => gd.PrimaryEmail = "gslectik.m@vao")
                 .With(gd => gd.CandidateNumber = "KT553")
+                .With(gd => gd.CentreEmail = null)
                 .Build();
 
             // When
@@ -43,8 +44,9 @@
                 .With(gd => gd.GroupDelegateId = 62)
                 .With(gd => gd.FirstName = null)
                 .With(gd => gd.LastName = "Name")
-                .With(gd => gd.EmailAddress = "gslectik.m@vao")
+                .With(gd => gd.PrimaryEmail = "gslectik.m@vao")
                 .With(gd => gd.CandidateNumber = "KT553")
+                .With(gd => gd.CentreEmail = null)
                 .Build();
 
             // When

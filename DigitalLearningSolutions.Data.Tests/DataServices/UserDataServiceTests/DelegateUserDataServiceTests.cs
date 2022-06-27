@@ -93,6 +93,17 @@
         }
 
         [Test]
+        public void GetUnapprovedDelegatesByCentreId_returns_correct_delegate_users()
+        {
+            // When
+            var returnedDelegateEntities = userDataService.GetUnapprovedDelegatesByCentreId(101).ToList();
+
+            // Then
+            returnedDelegateEntities.Count.Should().Be(4);
+            returnedDelegateEntities.Select(d => d.DelegateAccount.Id).Should().BeEquivalentTo(new[] { 28, 16, 115768, 297514 });
+        }
+
+        [Test]
         public void GetDelegateUserById_Returns_delegate_users()
         {
             // Given

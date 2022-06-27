@@ -12,6 +12,19 @@
     public partial class UserDataServiceTests
     {
         [Test]
+        public void GetAdminById_Returns_admin_user()
+        {
+            // Given
+            var expectedAdminEntity = UserTestHelper.GetDefaultAdminEntity();
+
+            // When
+            var returnedAdminUser = userDataService.GetAdminById(7);
+
+            // Then
+            returnedAdminUser.Should().BeEquivalentTo(expectedAdminEntity);
+        }
+
+        [Test]
         public void GetAdminUserById_Returns_admin_user()
         {
             // Given
