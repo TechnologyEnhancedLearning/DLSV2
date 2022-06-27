@@ -177,8 +177,7 @@
             }
         </p>
         <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
-        <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs"
-        view-data="@(new ViewDataDictionary(ViewData) { { "reviewerCommentsLabel", (Model.SelfAssessment.ReviewerCommentsLabel == null ? "Comments": Model.SelfAssessment.ReviewerCommentsLabel) } })" />
+        <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
         @if (Model.AllQuestionsVerifiedOrNotRequired())
         {
             @if (!Model.SupervisorSignOffs.Any())
