@@ -454,7 +454,7 @@
             var isJobGroup = groupDetails.RegistrationField.Equals(RegistrationField.JobGroup);
             var linkedToField = groupDetails.RegistrationField.LinkedToFieldId;
 
-            (var newGroupNames, var groupNamePrefix) = isJobGroup
+            var (newGroupNames, groupNamePrefix) = isJobGroup
                 ? GetJobGroupsAndPrefix()
                 : GetCentreRegistrationPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationField.Id);
 
