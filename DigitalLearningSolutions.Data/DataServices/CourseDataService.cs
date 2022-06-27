@@ -196,7 +196,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             LEFT OUTER JOIN Users uEnrolledBy ON uEnrolledBy.ID = aaEnrolledBy.UserID
             INNER JOIN DelegateAccounts AS da ON da.ID = pr.CandidateID
             INNER JOIN Users u ON u.ID = da.UserID
-            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID";
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID";
 
         public CourseDataService(IDbConnection connection, ILogger<CourseDataService> logger)
         {
@@ -838,7 +838,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     FROM DelegateAccounts AS da
                     INNER JOIN Users AS u on u.ID = da.UserID
                     INNER JOIN Progress AS p ON p.CandidateID = da.ID
-                    LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID
+                    LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.centreID = da.centreID
                     INNER JOIN Customisations cu ON cu.CustomisationID = p.CustomisationID
                     WHERE da.CentreID = @centreId
                         AND p.CustomisationID = @customisationId",

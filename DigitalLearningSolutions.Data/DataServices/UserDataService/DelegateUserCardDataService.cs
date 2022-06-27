@@ -42,7 +42,7 @@
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS c ON c.CentreID = da.CentreID
             INNER JOIN Users AS u ON u.ID = da.UserID
-            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
 
         public DelegateUserCard? GetDelegateUserCardById(int id)
