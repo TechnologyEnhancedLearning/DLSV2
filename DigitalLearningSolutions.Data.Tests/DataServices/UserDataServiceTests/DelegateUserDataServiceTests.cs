@@ -106,19 +106,6 @@
         }
 
         [Test]
-        public void GetDelegateUsersByUsername_Returns_delegate_user()
-        {
-            // Given
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-
-            // When
-            var returnedDelegateUsers = userDataService.GetDelegateUsersByUsername("SV1234");
-
-            // Then
-            returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUser);
-        }
-
-        [Test]
         public void GetAllDelegateUsersByUsername_Returns_delegate_user()
         {
             // Given
