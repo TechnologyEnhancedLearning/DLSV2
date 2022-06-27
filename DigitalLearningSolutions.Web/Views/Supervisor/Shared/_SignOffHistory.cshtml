@@ -14,7 +14,7 @@
           Status
         </th>
         <th role="columnheader" class="" scope="col">
-          Comments
+          @ViewData["reviewerCommentsLabel"]
         </th>
       </tr>
     </thead>
@@ -38,7 +38,7 @@
               <span class="nhsuk-tag nhsuk-tag--red">Rejected @supervisorSignOff.Verified.Value.ToShortDateString()</span>}
           </td>
           <td role="cell" class="nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">Comments </span>@supervisorSignOff.Comments
+            <span class="nhsuk-table-responsive__heading">@ViewData["reviewerCommentsLabel"]</span>@supervisorSignOff.Comments
           </td>
         </tr>
       }
