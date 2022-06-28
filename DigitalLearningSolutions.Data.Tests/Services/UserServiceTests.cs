@@ -413,19 +413,19 @@
             var testDelegates = new List<DelegateUserCard>
             {
                 new DelegateUserCard
-                    { AliasId = "include", Approved = true, SelfReg = false, Password = null, EmailAddress = "email" },
+                    { FirstName = "include", Approved = true, SelfReg = false, Password = null, EmailAddress = "email" },
                 new DelegateUserCard
-                    { AliasId = "include", Approved = true, SelfReg = false, Password = "", EmailAddress = "email" },
+                    { FirstName = "include", Approved = true, SelfReg = false, Password = "", EmailAddress = "email" },
                 new DelegateUserCard
-                    { AliasId = "skip", Approved = false, SelfReg = false, Password = null, EmailAddress = "email" },
+                    { FirstName = "skip", Approved = false, SelfReg = false, Password = null, EmailAddress = "email" },
                 new DelegateUserCard
-                    { AliasId = "skip", Approved = true, SelfReg = true, Password = null, EmailAddress = "email" },
+                    { FirstName = "skip", Approved = true, SelfReg = true, Password = null, EmailAddress = "email" },
                 new DelegateUserCard
-                    { AliasId = "skip", Approved = true, SelfReg = false, Password = "pw", EmailAddress = "email" },
+                    { FirstName = "skip", Approved = true, SelfReg = false, Password = "pw", EmailAddress = "email" },
                 new DelegateUserCard
-                    { AliasId = "skip", Approved = true, SelfReg = false, Password = null, EmailAddress = "" },
+                    { FirstName = "skip", Approved = true, SelfReg = false, Password = null, EmailAddress = "" },
                 new DelegateUserCard
-                    { AliasId = "skip", Approved = true, SelfReg = false, Password = null, EmailAddress = null },
+                    { FirstName = "skip", Approved = true, SelfReg = false, Password = null, EmailAddress = null },
             };
             A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(101)).Returns(testDelegates);
 
@@ -434,8 +434,8 @@
 
             // Then
             result.Should().HaveCount(2);
-            result[0].AliasId.Should().Be("include");
-            result[1].AliasId.Should().Be("include");
+            result[0].FirstName.Should().Be("include");
+            result[1].FirstName.Should().Be("include");
         }
 
         [Test]
