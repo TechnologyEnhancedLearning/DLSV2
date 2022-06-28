@@ -446,7 +446,9 @@
             var dateTime = DateTime.UtcNow;
 
             GivenCurrentTimeIs(dateTime);
-            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(A<int>._)).Returns(new List<GroupCourse>());
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateId))
+                .Returns(UserTestHelper.GetDefaultDelegateUser(centreId: CentreId));
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(CentreId)).Returns(new List<GroupCourse>());
             A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
                 .DoesNothing();
 
