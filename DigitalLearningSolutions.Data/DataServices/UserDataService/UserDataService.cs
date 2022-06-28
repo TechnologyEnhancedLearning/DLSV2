@@ -139,7 +139,7 @@
 
         IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId);
 
-        AdminAccount? GetAdminAccountbyId(int id);
+        AdminAccount? GetAdminAccountById(int id);
 
         IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId);
 

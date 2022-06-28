@@ -535,7 +535,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .MustHaveHappened(1, Times.Exactly);
             A.CallTo(
                 () =>
-                    passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
+                    passwordDataService.SetPasswordByCandidateNumber(NewCandidateNumber, RegistrationModelTestHelper.PasswordHash)
             ).MustHaveHappenedOnceExactly();
             A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._))
                 .MustHaveHappenedOnceExactly();
@@ -863,6 +863,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             action.Should().Throw<AdminCreationFailedException>();
             UpdateToExistingAdminAccountMustNotHaveHappened();
+            A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._))
+                .MustNotHaveHappened();
         }
 
         [Test]
@@ -914,8 +916,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             const int categoryId = 1;
             const int userId = 2;
             const int centreId = 2;
+            var activeAdminAtDifferentCentre = UserTestHelper.GetDefaultAdminAccount(centreId: 3, active: true);
+            var inactiveAdminAtDifferentCentre = UserTestHelper.GetDefaultAdminAccount(centreId: 4, active: false);
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new AdminAccount[] { });
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(
+                new[] { activeAdminAtDifferentCentre, inactiveAdminAtDifferentCentre }
+            );
 
             // When
             registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId);
@@ -1162,7 +1168,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private void UpdateToExistingAdminAccountMustNotHaveHappened()
         {
             A.CallTo(() => userDataService.ReactivateAdmin(A<int>._)).MustNotHaveHappened();
-            A.CallTo(() => passwordDataService.SetPasswordByAdminId(A<int>._, A<string>._)).MustNotHaveHappened();
             A.CallTo(
                 () => userDataService.UpdateAdminUserPermissions(
                     A<int>._,
