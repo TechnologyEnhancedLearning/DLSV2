@@ -12,7 +12,6 @@
         private const string FirstName = "Test";
         private const string LastName = "User";
         private const string Email = "test@email.com";
-        private const string Alias = "testuser";
         private const int CentreId = 5;
 
         [Test]
