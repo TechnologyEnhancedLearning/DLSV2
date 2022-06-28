@@ -202,7 +202,7 @@
                     FROM GroupDelegates AS gd
                     JOIN DelegateAccounts AS da ON da.ID = gd.DelegateID
                     JOIN Users AS u ON u.ID = da.UserID
-                    LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreId = da.CentreID
+                    LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
                     WHERE gd.GroupID = @groupId",
                 new { groupId }
             );
