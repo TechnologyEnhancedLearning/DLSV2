@@ -7,13 +7,13 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class CentreAdministratorsViewModel : BaseSearchablePageViewModel<AdminUser>
+    public class CentreAdministratorsViewModel : BaseSearchablePageViewModel<AdminEntity>
     {
         public CentreAdministratorsViewModel(
             int centreId,
-            SearchSortFilterPaginationResult<AdminUser> result,
+            SearchSortFilterPaginationResult<AdminEntity> result,
             IEnumerable<FilterModel> availableFilters,
-            AdminUser loggedInAdminUser
+            AdminAccount loggedInAdminAccount
         ) : base(
             result,
             true,
@@ -23,10 +23,10 @@
         {
             CentreId = centreId;
             Admins = result.ItemsToDisplay.Select(
-                adminUser => new SearchableAdminViewModel(
-                    adminUser,
-                    loggedInAdminUser,
-                    result.GetReturnPageQuery($"{adminUser.Id}-card")
+                admin => new SearchableAdminViewModel(
+                    admin,
+                    loggedInAdminAccount,
+                    result.GetReturnPageQuery($"{admin.AdminAccount.Id}-card")
                 )
             );
         }

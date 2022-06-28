@@ -25,6 +25,20 @@
         }
 
         [Test]
+        public void GetAdminsByCentreId_Returns_admin_list()
+        {
+            // Given
+            var expectedAdminEntity = UserTestHelper.GetDefaultAdminEntity();
+
+            // When
+            var returnedAdmins =
+                userDataService.GetAdminsByCentreId(expectedAdminEntity.AdminAccount.CentreId).ToList();
+
+            // Then
+            returnedAdmins[0].Should().BeEquivalentTo(expectedAdminEntity);
+        }
+
+        [Test]
         public void GetAdminUserById_Returns_admin_user()
         {
             // Given

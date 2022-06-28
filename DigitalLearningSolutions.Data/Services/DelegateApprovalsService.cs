@@ -14,7 +14,7 @@
 
     public interface IDelegateApprovalsService
     {
-        public List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
+        public List<(DelegateEntity delegateEntity, List<CentreRegistrationPromptWithAnswer> prompts)>
             GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre(int centreId);
 
         public void ApproveDelegate(int delegateId, int centreId);
@@ -53,12 +53,12 @@
         private string LoginUrl => config["AppRootPath"] + "/Login";
         private string FindCentreUrl => config["AppRootPath"] + "/FindYourCentre";
 
-        public List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
+        public List<(DelegateEntity delegateEntity, List<CentreRegistrationPromptWithAnswer> prompts)>
             GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre(int centreId)
         {
-            var users = userDataService.GetUnapprovedDelegateUsersByCentreId(centreId);
+            var users = userDataService.GetUnapprovedDelegatesByCentreId(centreId);
             var usersWithPrompts =
-                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegates(
                     centreId,
                     users
                 );

@@ -24,10 +24,10 @@
                 DelegateAccount? delegateAccount
             );
 
-        public List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
-            GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
+        public List<(DelegateEntity delegateEntity, List<CentreRegistrationPromptWithAnswer> prompts)>
+            GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegates(
                 int centreId,
-                IEnumerable<DelegateUser> delegateUsers
+                IEnumerable<DelegateEntity> delegates
             );
 
         public void UpdateCentreRegistrationPrompt(int centreId, int promptNumber, bool mandatory, string? options);
@@ -92,17 +92,17 @@
             );
         }
 
-        public List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
-            GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
+        public List<(DelegateEntity delegateEntity, List<CentreRegistrationPromptWithAnswer> prompts)>
+            GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegates(
                 int centreId,
-                IEnumerable<DelegateUser> delegateUsers
+                IEnumerable<DelegateEntity> delegates
             )
         {
             var customPrompts = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(centreId);
 
-            return delegateUsers.Select(
+            return delegates.Select(
                     user =>
-                        (user, PopulateCentreRegistrationPromptWithAnswerListFromResult(customPrompts, user))
+                        (user, PopulateCentreRegistrationPromptWithAnswerListFromResult(customPrompts, user.DelegateAccount))
                 )
                 .ToList();
         }

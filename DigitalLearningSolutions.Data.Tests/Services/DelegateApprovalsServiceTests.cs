@@ -50,8 +50,8 @@
             GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre_returns_unapproved_delegates_with_registration_prompt_answers_for_centre()
         {
             // Given
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var expectedUserList = new List<DelegateUser> { expectedDelegateUser };
+            var expectedDelegate = UserTestHelper.GetDefaultDelegateEntity();
+            var expectedDelegateList = new List<DelegateEntity> { expectedDelegate };
             var expectedRegistrationPrompts = new List<CentreRegistrationPromptWithAnswer>
             {
                 PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(
@@ -62,18 +62,18 @@
                 ),
             };
 
-            A.CallTo(() => userDataService.GetUnapprovedDelegateUsersByCentreId(2))
-                .Returns(expectedUserList);
+            A.CallTo(() => userDataService.GetUnapprovedDelegatesByCentreId(2))
+                .Returns(expectedDelegateList);
             A.CallTo(
                     () => centreRegistrationPromptsService
-                        .GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
+                        .GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegates(
                             2,
-                            expectedUserList
+                            expectedDelegateList
                         )
                 )
                 .Returns(
-                    new List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
-                        { (expectedDelegateUser, expectedRegistrationPrompts) }
+                    new List<(DelegateEntity delegateEntity, List<CentreRegistrationPromptWithAnswer> prompts)>
+                        { (expectedDelegate, expectedRegistrationPrompts) }
                 );
 
             // When
@@ -81,8 +81,8 @@
 
             // Then
             result.Should().BeEquivalentTo(
-                new List<(DelegateUser, List<CentreRegistrationPromptWithAnswer>)>
-                    { (expectedDelegateUser, expectedRegistrationPrompts) }
+                new List<(DelegateEntity, List<CentreRegistrationPromptWithAnswer>)>
+                    { (expectedDelegate, expectedRegistrationPrompts) }
             );
         }
 

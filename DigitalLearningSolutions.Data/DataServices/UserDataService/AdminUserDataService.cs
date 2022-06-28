@@ -123,6 +123,21 @@
             ).SingleOrDefault();
         }
 
+        public IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId)
+        {
+            var sql = $@"{BaseAdminEntitySelectQuery} WHERE aa.centreID = @centreId";
+
+            return connection.Query<AdminAccount, UserAccount, UserCentreDetails, AdminEntity>(
+                sql,
+                (adminAccount, userAccount, userCentreDetails) => new AdminEntity(
+                    adminAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { centreId }
+            );
+        }
+
         [Obsolete("New code should use GetAdminById instead")]
         public AdminUser? GetAdminUserById(int id)
         {
@@ -144,6 +159,7 @@
             ).SingleOrDefault();
         }
 
+        [Obsolete("New code should use GetAdminsByCentreId instead")]
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
             var users = connection.Query<AdminUser>(

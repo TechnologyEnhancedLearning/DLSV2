@@ -135,13 +135,13 @@
         }
 
         [Test]
-        public void GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers_Returns_Populated_Tuple()
+        public void GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegates_Returns_Populated_Tuple()
         {
             // Given
             const string answer1 = "Answer 1";
             const string answer2 = "Answer 2";
-            var delegateUser1 = UserTestHelper.GetDefaultDelegateUser(answer1: answer1);
-            var delegateUser2 = UserTestHelper.GetDefaultDelegateUser(answer1: answer2);
+            var delegateEntity1 = UserTestHelper.GetDefaultDelegateEntity(answer1: answer1);
+            var delegateEntity2 = UserTestHelper.GetDefaultDelegateEntity(answer1: answer2);
             var expectedPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(
                 1,
                 options: null,
@@ -168,9 +168,9 @@
 
             // When
             var result = centreRegistrationPromptsService
-                .GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
+                .GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegates(
                     29,
-                    new[] { delegateUser1, delegateUser2 }
+                    new[] { delegateEntity1, delegateEntity2 }
                 );
 
             // Then
@@ -179,13 +179,13 @@
                 result.Count.Should().Be(2);
 
                 var first = result.First();
-                first.Item1.Should().BeEquivalentTo(delegateUser1);
+                first.Item1.Should().BeEquivalentTo(delegateEntity1);
                 first.Item2.Count.Should().Be(2);
                 first.Item2[0].Should().BeEquivalentTo(expectedPrompt1);
                 first.Item2[1].Should().BeEquivalentTo(expectedPrompt2);
 
                 var second = result.Last();
-                second.Item1.Should().BeEquivalentTo(delegateUser2);
+                second.Item1.Should().BeEquivalentTo(delegateEntity2);
                 second.Item2.Count.Should().Be(2);
                 second.Item2[0].Should().BeEquivalentTo(expectedPrompt3);
                 second.Item2[1].Should().BeEquivalentTo(expectedPrompt2);
