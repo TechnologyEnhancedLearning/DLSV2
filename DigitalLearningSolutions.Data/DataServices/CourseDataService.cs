@@ -188,14 +188,14 @@ namespace DigitalLearningSolutions.Data.DataServices
                 u.ProfessionalRegistrationNumber,
                 da.CentreID AS DelegateCentreId
             FROM Customisations cu
-            INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
-            INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
-            LEFT OUTER JOIN AdminAccounts aaSupervisor ON aaSupervisor.ID = pr.SupervisorAdminId
-            LEFT OUTER JOIN Users uSupervisor ON uSupervisor.ID = aaSupervisor.UserID
-            LEFT OUTER JOIN AdminAccounts aaEnrolledBy ON aaEnrolledBy.ID = pr.EnrolledByAdminID
-            LEFT OUTER JOIN Users uEnrolledBy ON uEnrolledBy.ID = aaEnrolledBy.UserID
+            INNER JOIN Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+            INNER JOIN Progress AS pr ON pr.CustomisationID = cu.CustomisationID
+            LEFT OUTER JOIN AdminAccounts AS aaSupervisor ON aaSupervisor.ID = pr.SupervisorAdminId
+            LEFT OUTER JOIN Users AS uSupervisor ON uSupervisor.ID = aaSupervisor.UserID
+            LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy ON aaEnrolledBy.ID = pr.EnrolledByAdminID
+            LEFT OUTER JOIN Users AS uEnrolledBy ON uEnrolledBy.ID = aaEnrolledBy.UserID
             INNER JOIN DelegateAccounts AS da ON da.ID = pr.CandidateID
-            INNER JOIN Users u ON u.ID = da.UserID
+            INNER JOIN Users AS u ON u.ID = da.UserID
             LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID";
 
         public CourseDataService(IDbConnection connection, ILogger<CourseDataService> logger)
@@ -839,7 +839,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN Users AS u on u.ID = da.UserID
                     INNER JOIN Progress AS p ON p.CandidateID = da.ID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.centreID = da.centreID
-                    INNER JOIN Customisations cu ON cu.CustomisationID = p.CustomisationID
+                    INNER JOIN Customisations AS cu ON cu.CustomisationID = p.CustomisationID
                     WHERE da.CentreID = @centreId
                         AND p.CustomisationID = @customisationId",
                 new { customisationId, centreId }
