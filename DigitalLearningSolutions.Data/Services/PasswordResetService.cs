@@ -240,7 +240,7 @@
             return new Email(emailSubject, body, emailAddress);
         }
 
-        private Email GenerateWelcomeEmail(
+        private static Email GenerateWelcomeEmail(
             DelegateEntity delegateEntity,
             string setPasswordHash,
             string baseUrl

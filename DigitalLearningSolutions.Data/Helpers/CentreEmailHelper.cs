@@ -1,21 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Data.Helpers
 {
-    using System;
-
     public static class CentreEmailHelper
     {
         public static string GetEmailForCentreNotifications(
             string primaryEmail,
-            string? centreEmail,
-            DateTime? centreEmailVerified
+            string? centreEmail
         )
         {
-            if (centreEmailVerified != null)
-            {
-                return centreEmail ?? primaryEmail;
-            }
-
-            return primaryEmail;
+            return centreEmail ?? primaryEmail;
         }
     }
 }

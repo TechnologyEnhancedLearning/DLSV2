@@ -197,8 +197,7 @@
                         u.HasBeenPromptedForPrn,
                         u.ProfessionalRegistrationNumber,
                         u.PrimaryEmail,
-                        ucd.Email AS CentreEmail,
-                        ucd.EmailVerified AS CentreEmailVerified
+                        ucd.Email AS CentreEmail
                     FROM GroupDelegates AS gd
                     JOIN DelegateAccounts AS da ON da.ID = gd.DelegateID
                     JOIN Users AS u ON u.ID = da.UserID

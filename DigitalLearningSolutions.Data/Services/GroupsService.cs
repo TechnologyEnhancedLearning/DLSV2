@@ -427,7 +427,7 @@
             if (groupCourse == null)
             {
                 transaction.Dispose();
-                logger.LogError("Attempted to add a course that a centre does not have access to to a group.");
+                logger.LogError("Attempted to add a course that a centre does not have access to a group.");
                 throw new CourseAccessDeniedException(
                     $"No course with customisationId {customisationId} available at centre {centreId}"
                 );
