@@ -72,7 +72,7 @@
         }
 
         [Test]
-        public void GetProgressCompletionData_returns_admin_email_when_there_is_one()
+        public void GetProgressCompletionData_returns_admin_id_when_there_is_one()
         {
             // Given
             var progressCompletionData = new ProgressCompletionData

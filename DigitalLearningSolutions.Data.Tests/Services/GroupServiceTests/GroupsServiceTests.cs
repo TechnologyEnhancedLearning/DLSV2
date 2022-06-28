@@ -441,6 +441,7 @@
         {
             // Given
             const int groupId = 1;
+            const int delegateId = 2;
             const int addedByAdminId = 2;
             var dateTime = DateTime.UtcNow;
 
@@ -450,11 +451,11 @@
                 .DoesNothing();
 
             // When
-            groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(groupId, 2, addedByAdminId);
+            groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(groupId, delegateId, addedByAdminId);
 
             // Then
-            A.CallTo(() => groupsDataService.AddDelegateToGroup(2, 1, dateTime, 0)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(2)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.AddDelegateToGroup(delegateId, groupId, dateTime, 0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(delegateId)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
