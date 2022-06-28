@@ -24,8 +24,8 @@
             bool active,
             string? professionalRegistrationNumber,
             bool approved = false,
-            string? aliasId = null,
-            DateTime? notifyDate = null
+            DateTime? notifyDate = null,
+            string? aliasId = null
         ) : base(
             firstName,
             lastName,
@@ -96,8 +96,8 @@
             row.Active!.Value,
             null,
             true,
-            row.AliasId,
-            welcomeEmailDate
+            welcomeEmailDate,
+            row.AliasId
         ) { }
 
         public DelegateRegistrationModel(

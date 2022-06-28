@@ -160,29 +160,6 @@
             return user;
         }
 
-        public List<DelegateUser> GetDelegateUsersByUsername(string username)
-        {
-            var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateUserQuery}
-                    WHERE cd.Active = 1 AND
-                         (cd.CandidateNumber = @username OR cd.EmailAddress = @username)",
-                new { username }
-            ).ToList();
-
-            return users;
-        }
-
-        public List<DelegateUser> GetAllDelegateUsersByUsername(string username)
-        {
-            var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateUserQuery}
-                    WHERE cd.CandidateNumber = @username OR cd.EmailAddress = @username",
-                new { username }
-            ).ToList();
-
-            return users;
-        }
-
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
         {
             var users = connection.Query<DelegateUser>(

@@ -14,7 +14,6 @@
             FirstName = data.FirstName;
             LastName = data.LastName;
             PrimaryEmail = data.PrimaryEmail;
-            Alias = data.Alias;
             IsPasswordSet = data.IsPasswordSet;
             if (data.ShouldSendEmail)
             {
@@ -27,7 +26,6 @@
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? PrimaryEmail { get; set; }
-        public string? Alias { get; set; }
         public bool IsPasswordSet { get; set; }
         public string? WelcomeEmailDate { get; set; }
         public bool ShouldSendEmail => WelcomeEmailDate != null;

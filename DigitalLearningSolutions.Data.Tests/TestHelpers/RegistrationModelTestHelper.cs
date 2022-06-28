@@ -138,7 +138,6 @@
                 active,
                 professionalRegistrationNumber,
                 approved,
-                aliasId,
                 notifyDate
             );
         }
