@@ -23,12 +23,8 @@
             IsCentreSpecificRegistration = data.IsCentreSpecificRegistration;
         }
 
-        public PersonalInformationViewModel(DelegateRegistrationByCentreData data) : this(
-            (DelegateRegistrationData)data
-        )
-        {
-            Alias = data.Alias;
-        }
+        public PersonalInformationViewModel(DelegateRegistrationByCentreData data)
+            : this((DelegateRegistrationData)data) { }
 
         [Required(ErrorMessage = "Enter a first name")]
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongFirstName)]
@@ -43,8 +39,5 @@
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? PrimaryEmail { get; set; }
-
-        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongAlias)]
-        public string? Alias { get; set; }
     }
 }

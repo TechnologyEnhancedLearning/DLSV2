@@ -132,7 +132,6 @@
             string? answer4 = "answer4",
             string? answer5 = "answer5",
             string? answer6 = "answer6",
-            string? aliasId = "alias",
             DateTime? welcomeEmailDate = null
         )
         {
@@ -153,7 +152,6 @@
                 Answer4 = answer4,
                 Answer5 = answer5,
                 Answer6 = answer6,
-                Alias = aliasId,
                 WelcomeEmailDate = welcomeEmailDate,
             };
         }

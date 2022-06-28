@@ -38,10 +38,6 @@
 
         DelegateUser? GetDelegateUserById(int id);
 
-        List<DelegateUser> GetDelegateUsersByUsername(string username);
-
-        List<DelegateUser> GetAllDelegateUsersByUsername(string username);
-
         List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
 
         List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);

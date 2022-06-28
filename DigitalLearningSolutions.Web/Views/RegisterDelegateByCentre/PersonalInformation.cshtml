@@ -13,7 +13,7 @@
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="PersonalInformation">
       @if (errorHasOccurred) {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail), nameof(Model.Alias) })" />
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail) })" />
       }
 
       <div class="nhsuk-u-margin-bottom-8">
@@ -50,15 +50,6 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="email"
-                     css-class="nhsuk-u-width-one-half" />
-
-      <vc:text-input asp-for="Alias"
-                     label="Alias (optional)"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="false"
-                     hint-text=""
-                     autocomplete=""
                      css-class="nhsuk-u-width-one-half" />
 
       <button class="nhsuk-button" type="submit">Next</button>
