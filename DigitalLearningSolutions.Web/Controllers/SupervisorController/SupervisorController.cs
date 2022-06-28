@@ -12,28 +12,28 @@
     [Authorize(Policy = CustomPolicies.UserSupervisor)]
     public partial class SupervisorController : Controller
     {
-        private readonly ISupervisorService supervisorService;
-        private readonly ICommonService commonService;
-        private readonly IFrameworkNotificationService frameworkNotificationService;
-        private readonly ISelfAssessmentService selfAssessmentService;
-        private readonly IConfigDataService configDataService;
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
-        private readonly IUserDataService userDataService;
-        private readonly ILogger<SupervisorController> logger;
+        private readonly ICommonService commonService;
         private readonly IConfiguration config;
+        private readonly IConfigDataService configDataService;
+        private readonly IFrameworkNotificationService frameworkNotificationService;
+        private readonly ILogger<SupervisorController> logger;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly ISelfAssessmentService selfAssessmentService;
+        private readonly ISupervisorService supervisorService;
+        private readonly IUserDataService userDataService;
 
         public SupervisorController(
-           ISupervisorService supervisorService,
-           ICommonService commonService,
-           IFrameworkNotificationService frameworkNotificationService,
-           ISelfAssessmentService selfAssessmentService,
-           IConfigDataService configDataService,
-           ICentreRegistrationPromptsService centreRegistrationPromptsService,
-           IUserDataService userDataService,
-           ILogger<SupervisorController> logger,
-           IConfiguration config,
-           ISearchSortFilterPaginateService searchSortFilterPaginateService
+            ISupervisorService supervisorService,
+            ICommonService commonService,
+            IFrameworkNotificationService frameworkNotificationService,
+            ISelfAssessmentService selfAssessmentService,
+            IConfigDataService configDataService,
+            ICentreRegistrationPromptsService centreRegistrationPromptsService,
+            IUserDataService userDataService,
+            ILogger<SupervisorController> logger,
+            IConfiguration config,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.supervisorService = supervisorService;
@@ -60,16 +60,9 @@
 
         private string GetUserEmail()
         {
-            // TODO HEEDLS-899 This will have been broken by changes to the claims since it will be expecting centre specific emails
-            var userEmail = User.GetUserPrimaryEmail();
-            if (userEmail == null)
-            {
-                return "";
-            }
-            else
-            {
-                return userEmail;
-            }
+            var adminId = GetAdminID();
+            var adminEntity = userDataService.GetAdminById(adminId);
+            return adminEntity!.UserCentreDetails?.Email ?? adminEntity.UserAccount.PrimaryEmail;
         }
     }
 }
