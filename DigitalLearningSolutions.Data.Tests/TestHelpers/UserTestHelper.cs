@@ -596,7 +596,8 @@
         )
         {
             return connection.QuerySingle<(string? email, DateTime? emailVerified)>(
-                $"SELECT Email, EmailVerified FROM UserCentreDetails WHERE CentreID = {centreId} AND UserID = {userId}"
+                $"SELECT Email, EmailVerified FROM UserCentreDetails WHERE CentreID = @centreId AND UserID = @userId",
+                new { centreId, userId }
             );
         }
     }

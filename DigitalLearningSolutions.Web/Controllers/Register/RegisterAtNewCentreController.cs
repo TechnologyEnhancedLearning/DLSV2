@@ -100,8 +100,8 @@
 
             if (model.Centre != null)
             {
-                var delegateAccount = userService.GetUserById(User.GetUserIdKnownNotNull())!.DelegateAccounts
-                    .SingleOrDefault(da => da.CentreId == model.Centre);
+                var delegateAccount = userService.GetUserById(User.GetUserIdKnownNotNull())!
+                    .GetCentreAccountSet(model.Centre.Value)?.DelegateAccount;
                 if (delegateAccount?.Active == true)
                 {
                     ModelState.AddModelError(

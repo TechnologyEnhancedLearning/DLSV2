@@ -243,15 +243,7 @@
                 userBeforeUpdate.PasswordHash.Should().BeEmpty();
                 userBeforeUpdate.ProfessionalRegistrationNumber.Should().BeNull();
 
-                userAfterUpdate!.Id.Should().Be(userBeforeUpdate.Id);
-                userAfterUpdate.FirstName.Should().Be(userBeforeUpdate.FirstName);
-                userAfterUpdate.LastName.Should().Be(userBeforeUpdate.LastName);
-                userAfterUpdate.PrimaryEmail.Should().Be(userBeforeUpdate.PrimaryEmail);
-                userAfterUpdate.DetailsLastChecked.Should().Be(userBeforeUpdate.DetailsLastChecked);
-                userAfterUpdate.JobGroupId.Should().Be(userBeforeUpdate.JobGroupId);
-                userAfterUpdate.PasswordHash.Should().Be(userBeforeUpdate.PasswordHash);
-                userAfterUpdate.ProfessionalRegistrationNumber.Should()
-                    .Be(userBeforeUpdate.ProfessionalRegistrationNumber);
+                userAfterUpdate.Should().BeEquivalentTo(userBeforeUpdate);
 
                 delegateBeforeUpdate!.CentreId.Should().Be(121);
                 delegateBeforeUpdate.Id.Should().Be(existingDelegateId);
@@ -321,9 +313,12 @@
             );
 
             // Then
-            var userCentreDetails = connection.GetEmailAndVerifiedDateFromUserCentreDetails(userId, centreId);
-            userCentreDetails.email.Should().Be(newCentreEmail);
-            userCentreDetails.emailVerified.Should().BeNull();
+            using (new AssertionScope())
+            {
+                var userCentreDetails = connection.GetEmailAndVerifiedDateFromUserCentreDetails(userId, centreId);
+                userCentreDetails.email.Should().Be(newCentreEmail);
+                userCentreDetails.emailVerified.Should().BeNull();
+            }
         }
 
         [Test]

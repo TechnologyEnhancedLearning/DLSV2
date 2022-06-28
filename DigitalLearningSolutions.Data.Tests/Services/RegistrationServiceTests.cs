@@ -1038,6 +1038,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         )
                 )
                 .MustHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
             approved.Should().BeTrue();
         }
 
@@ -1069,6 +1077,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         )
                 )
                 .MustHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
             approved.Should().BeTrue();
         }
 
@@ -1100,6 +1116,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         )
                 )
                 .MustHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
             approved.Should().BeFalse();
         }
 
