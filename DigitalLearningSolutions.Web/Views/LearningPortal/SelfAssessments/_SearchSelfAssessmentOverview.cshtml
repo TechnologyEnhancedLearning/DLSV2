@@ -20,18 +20,18 @@
     </div>
   </div>
   <div class="filter-value-container">
-    @Html.DropDownListFor(m => m.ResponseStatus,
+    @Html.DropDownListFor(m => m.SelectedFilter,
       Model.Filters.First().FilterOptions
         .Where(f => parent.SelfAssessment.IsSupervisorResultsReviewed
                     || f.FilterValue == SelfAssessmentCompetencyFilter.RequiresSelfAssessment.ToString()
                     || f.FilterValue == SelfAssessmentCompetencyFilter.SelfAssessed.ToString())
         .Select(f => new SelectListItem(
           text: f.DisplayText,
-          value: f.FilterValue.ToString(),
+          value: f.FilterValue,
           selected: f.FilterValue == SelfAssessmentCompetencyFilter.RequiresSelfAssessment.ToString())
         ),
       new
-          {
+      {
         @class = "nhsuk-select filter-dropdown",
         aria_label = "ResponseStatus filter"
       })

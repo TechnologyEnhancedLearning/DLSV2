@@ -32,7 +32,7 @@
         IEnumerable<CompetencyFlag> GetSelectedCompetencyFlagsByCompetecyIds(int[] ids);
         IEnumerable<CompetencyFlag> GetSelectedCompetencyFlagsByCompetecyId(int competencyId);
         IEnumerable<CompetencyFlag> GetCompetencyFlagsByFrameworkId(int frameworkId, int? competencyId, bool? selected = null);
-        IEnumerable<Flag> GetCustomFlagsByFrameworkId(int frameworkId, int? flagId);
+        IEnumerable<Flag> GetCustomFlagsByFrameworkId(int? frameworkId, int? flagId);
 
         IEnumerable<BrandedFramework> GetFrameworkByFrameworkName(string frameworkName, int adminId);
 
@@ -383,7 +383,8 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
 
         public IEnumerable<CompetencyFlag> GetSelectedCompetencyFlagsByCompetecyIds(int[] ids)
         {
-            var competencyIdFilter = ids.Count() > 0 ? $"cf.CompetencyID IN ({String.Join(',', ids)})" : "1=1";
+            var commaSeparatedIds = String.Join(',', ids.Distinct());
+            var competencyIdFilter = ids.Count() > 0 ? $"cf.CompetencyID IN ({commaSeparatedIds})" : "1=1";
             return connection.Query<CompetencyFlag>(
                 $@"SELECT CompetencyId, Selected, {FlagFields}
 	                FROM CompetencyFlags AS cf
@@ -397,13 +398,14 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             return GetSelectedCompetencyFlagsByCompetecyIds(new int[1] { competencyId });
         }
 
-        public IEnumerable<Flag> GetCustomFlagsByFrameworkId(int frameworkId, int? flagId = null)
+        public IEnumerable<Flag> GetCustomFlagsByFrameworkId(int? frameworkId, int? flagId = null)
         {
             var flagIdFilter = flagId.HasValue ? "fl.ID = @flagId" : "1=1";
+            var frameworkFilter = frameworkId.HasValue ? "FrameworkId = @frameworkId" : "1=1";
             return connection.Query<Flag>(
                 $@"SELECT {FlagFields}
 	                FROM Flags fl
-                    WHERE FrameworkId = @frameworkId AND {flagIdFilter}",
+                    WHERE {frameworkFilter} AND {flagIdFilter}",
                 new { frameworkId, flagId });
         }
 
