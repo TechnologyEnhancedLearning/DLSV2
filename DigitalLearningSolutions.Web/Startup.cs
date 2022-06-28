@@ -1,6 +1,5 @@
 namespace DigitalLearningSolutions.Web
 {
-    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.IO;
@@ -346,7 +345,7 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            var url = StringHelper.GetLocalRedirectUrl(config, context.Request.Path);
+            var url = HttpUtility.UrlEncode(StringHelper.GetLocalRedirectUrl(config, context.Request.Path));
             var queryString = HttpUtility.UrlEncode(context.Request.QueryString.Value);
             context.HttpContext.Response.Redirect(config.GetAppRootPath() + $"/Login?returnUrl={url}{queryString}");
             return Task.CompletedTask;

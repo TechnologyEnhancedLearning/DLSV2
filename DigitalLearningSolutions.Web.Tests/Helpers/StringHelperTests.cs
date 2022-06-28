@@ -10,8 +10,8 @@
     {
         private readonly IConfiguration config = A.Fake<IConfiguration>();
 
-        [TestCase("https://hee-dls-test.softwire.com", "%2fMyAccount")]
-        [TestCase("https://hee-dls-test.softwire.com/uar-test", "%2fuar-test%2fMyAccount")]
+        [TestCase("https://hee-dls-test.softwire.com", "/MyAccount")]
+        [TestCase("https://hee-dls-test.softwire.com/uar-test", "/uar-test/MyAccount")]
         public void GetLocalRedirectUrl_returns_correctly_formatted_url(string appRootPath, string expectedReturnValue)
         {
             // Given
