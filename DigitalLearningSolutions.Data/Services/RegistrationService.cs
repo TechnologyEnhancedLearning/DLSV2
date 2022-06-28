@@ -389,30 +389,12 @@ namespace DigitalLearningSolutions.Data.Services
             bool registerJourneyContainsTermsAndConditions
         )
         {
-            ValidateRegistrationEmail(delegateRegistrationModel);
-            return registrationDataService.RegisterNewUserAndDelegateAccount(
-                delegateRegistrationModel,
-                registerJourneyContainsTermsAndConditions
-            );
-        }
-
-        private (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailsForExistingUser(
-            int userId,
-            DelegateRegistrationModel delegateRegistrationModel
-        )
-        {
             try
             {
-                if (delegateRegistrationModel.CentreSpecificEmail != null)
-                {
-                    ValidateCentreEmail(userId, delegateRegistrationModel.CentreSpecificEmail);
-                }
-
-                var currentTime = clockService.UtcNow;
-                return registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                ValidateRegistrationEmail(delegateRegistrationModel);
+                return registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
-                    userId,
-                    currentTime
+                    registerJourneyContainsTermsAndConditions
                 );
             }
             catch (DelegateCreationFailedException exception)
@@ -433,6 +415,24 @@ namespace DigitalLearningSolutions.Data.Services
 
                 throw new DelegateCreationFailedException(errorMessage, exception, error);
             }
+        }
+
+        private (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailsForExistingUser(
+            int userId,
+            DelegateRegistrationModel delegateRegistrationModel
+        )
+        {
+            if (delegateRegistrationModel.CentreSpecificEmail != null)
+            {
+                ValidateCentreEmail(userId, delegateRegistrationModel.CentreSpecificEmail);
+            }
+
+            var currentTime = clockService.UtcNow;
+            return registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                delegateRegistrationModel,
+                userId,
+                currentTime
+            );
         }
 
         private void ReregisterDelegateAccountForExistingUser(
