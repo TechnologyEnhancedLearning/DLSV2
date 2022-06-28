@@ -187,18 +187,21 @@
         {
             return connection.Query<GroupDelegate>(
                 @"SELECT
-                        GroupDelegateID,
-                        GroupID,
-                        DelegateID,
-                        FirstName,
-                        LastName,
-                        EmailAddress,
-                        CandidateNumber,
-                        AddedDate,
-                        HasBeenPromptedForPrn,
-                        ProfessionalRegistrationNumber
+                        gd.GroupDelegateID,
+                        gd.GroupID,
+                        gd.DelegateID,
+                        gd.AddedDate,
+                        da.CandidateNumber,
+                        u.FirstName,
+                        u.LastName,
+                        u.HasBeenPromptedForPrn,
+                        u.ProfessionalRegistrationNumber,
+                        u.PrimaryEmail,
+                        ucd.Email AS CentreEmail
                     FROM GroupDelegates AS gd
-                    JOIN Candidates AS c ON c.CandidateID = gd.DelegateID
+                    JOIN DelegateAccounts AS da ON da.ID = gd.DelegateID
+                    JOIN Users AS u ON u.ID = da.UserID
+                    LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
                     WHERE gd.GroupID = @groupId",
                 new { groupId }
             );

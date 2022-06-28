@@ -35,6 +35,8 @@
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
                     VALUES (61188, 2, 'centre@email.com')"
             );
+            // We set userCentreDetailsId here so that UserTestHelper.GetDefaultDelegateEntity returns an
+            // DelegateEntity with a non-null UserCentreDetails
             var expectedUserCentreDetails = UserTestHelper.GetDefaultDelegateEntity(
                 userCentreDetailsId: 1,
                 centreSpecificEmail: "centre@email.com",
@@ -90,6 +92,17 @@
             returnedDelegateEntity.UserCentreDetails.CentreId.Should().Be(expectedUserCentreDetails.CentreId);
             returnedDelegateEntity.UserCentreDetails.Email.Should().Be(expectedUserCentreDetails.Email);
             returnedDelegateEntity.UserCentreDetails.EmailVerified.Should().Be(expectedUserCentreDetails.EmailVerified);
+        }
+
+        [Test]
+        public void GetUnapprovedDelegatesByCentreId_returns_correct_delegate_users()
+        {
+            // When
+            var returnedDelegateEntities = userDataService.GetUnapprovedDelegatesByCentreId(101).ToList();
+
+            // Then
+            returnedDelegateEntities.Count.Should().Be(4);
+            returnedDelegateEntities.Select(d => d.DelegateAccount.Id).Should().BeEquivalentTo(new[] { 28, 16, 115768, 297514 });
         }
 
         [Test]

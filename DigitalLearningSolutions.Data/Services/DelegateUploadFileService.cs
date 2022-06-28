@@ -219,8 +219,7 @@ namespace DigitalLearningSolutions.Data.Services
                     if (welcomeEmailDate.HasValue)
                     {
                         passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                            delegateRow.Email!,
-                            newDelegateRecord.CandidateNumber,
+                            newDelegateRecord.Id,
                             configuration.GetAppRootPath(),
                             welcomeEmailDate.Value,
                             "DelegateBulkUpload_Refactor"

@@ -78,8 +78,7 @@
             var baseUrl = config.GetAppRootPath();
 
             passwordResetService.GenerateAndSendDelegateWelcomeEmail(
-                delegateUser.EmailAddress!,
-                delegateUser.CandidateNumber,
+                delegateId,
                 baseUrl
             );
 

@@ -12,6 +12,48 @@
     public partial class UserDataServiceTests
     {
         [Test]
+        public void GetAdminById_returns_admin()
+        {
+            // Given
+            var expectedAdminEntity = UserTestHelper.GetDefaultAdminEntity();
+
+            // When
+            var returnedAdminEntity = userDataService.GetAdminById(7);
+
+            // Then
+            returnedAdminEntity.Should().BeEquivalentTo(expectedAdminEntity);
+        }
+
+        [Test]
+        public void GetAdminById_returns_admin_with_correct_user_centre_details()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                    VALUES (2, 2, 'centre@email.com')"
+            );
+            // We set userCentreDetailsId here so that UserTestHelper.GetDefaultAdminEntity returns an
+            // AdminEntity with a non-null UserCentreDetails
+            var expectedUserCentreDetails = UserTestHelper.GetDefaultAdminEntity(
+                userCentreDetailsId: 1,
+                centreSpecificEmail: "centre@email.com",
+                centreSpecificEmailVerified: null
+            ).UserCentreDetails;
+
+            // When
+            var returnedAdminEntity = userDataService.GetAdminById(7);
+
+            // Then
+            returnedAdminEntity!.UserCentreDetails.Should().NotBeNull();
+            returnedAdminEntity.UserCentreDetails!.UserId.Should().Be(expectedUserCentreDetails!.UserId);
+            returnedAdminEntity.UserCentreDetails.CentreId.Should().Be(expectedUserCentreDetails.CentreId);
+            returnedAdminEntity.UserCentreDetails.Email.Should().Be(expectedUserCentreDetails.Email);
+            returnedAdminEntity.UserCentreDetails.EmailVerified.Should().Be(expectedUserCentreDetails.EmailVerified);
+        }
+
+        [Test]
         public void GetAdminUserById_Returns_admin_user()
         {
             // Given

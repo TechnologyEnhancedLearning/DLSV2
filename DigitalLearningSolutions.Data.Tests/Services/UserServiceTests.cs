@@ -281,7 +281,8 @@
                                rfa.Answer4 == answer4 &&
                                rfa.Answer5 == answer5 &&
                                rfa.Answer6 == answer6
-                    )
+                    ),
+                    null
                 )
             ).MustHaveHappened();
         }
