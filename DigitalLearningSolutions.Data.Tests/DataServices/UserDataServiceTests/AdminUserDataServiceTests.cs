@@ -34,6 +34,8 @@
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
                     VALUES (2, 2, 'centre@email.com')"
             );
+            // We set userCentreDetailsId here so that UserTestHelper.GetDefaultAdminEntity returns an
+            // AdminEntity with a non-null UserCentreDetails
             var expectedUserCentreDetails = UserTestHelper.GetDefaultAdminEntity(
                 userCentreDetailsId: 1,
                 centreSpecificEmail: "centre@email.com",

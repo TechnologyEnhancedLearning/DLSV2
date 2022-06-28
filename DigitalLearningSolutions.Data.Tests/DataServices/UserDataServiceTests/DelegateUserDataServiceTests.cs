@@ -35,6 +35,8 @@
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
                     VALUES (61188, 2, 'centre@email.com')"
             );
+            // We set userCentreDetailsId here so that UserTestHelper.GetDefaultDelegateEntity returns an
+            // DelegateEntity with a non-null UserCentreDetails
             var expectedUserCentreDetails = UserTestHelper.GetDefaultDelegateEntity(
                 userCentreDetailsId: 1,
                 centreSpecificEmail: "centre@email.com",

@@ -455,7 +455,7 @@
 
             // Then
             A.CallTo(() => groupsDataService.AddDelegateToGroup(delegateId, groupId, dateTime, 0)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(delegateId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(CentreId)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -801,7 +801,7 @@
                 .Returns(new List<GroupDelegate> { reusableGroupDelegate });
 
             A.CallTo(
-                    () => groupsDataService.GetGroupCourseIfVisibleToCentre(groupCourse.GroupCustomisationId, centreId)
+                    () => groupsDataService.GetGroupCourseIfVisibleToCentre(groupCourse.GroupCustomisationId, CentreId)
                 )
                 .Returns(groupCourse);
         }
