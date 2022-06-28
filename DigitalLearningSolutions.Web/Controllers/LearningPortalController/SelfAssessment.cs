@@ -301,8 +301,8 @@
 
             var recentResults = selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList();
             var competencyIds = recentResults.Select(c => c.Id).ToArray();
-            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds).DistinctBy(f => f.FlagId);
-            var competencies = FilterCompetencies(recentResults, competencyFlags, searchModel);
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+            var competencies = CompetencyFilterHelper.FilterCompetencies(recentResults, competencyFlags, searchModel);
 
             foreach (var competency in competencies)
             {
@@ -340,22 +340,6 @@
             }
             ViewBag.SupervisorSelfAssessmentReview = assessment.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/SelfAssessmentOverview", model);
-        }
-
-        private IEnumerable<Competency> FilterCompetencies(IEnumerable<Competency> competencies, IEnumerable<Data.Models.Frameworks.CompetencyFlag> competencyFlags, SearchSelfAssessmentOvervieviewViewModel search)
-        {
-            var filteredCompetencies = competencies;
-            if (search != null)
-            {
-                var searchText = search.SearchText?.Trim() ?? string.Empty;
-                var filters = search.AppliedFilters?.Select(f => int.Parse(f.FilterValue)) ?? Enumerable.Empty<int>();
-                search.CompetencyFlags = competencyFlags.ToList();
-                filteredCompetencies = CompetencyFilterHelper.ApplyResponseStatusFilters(filteredCompetencies, filters, searchText);
-                CompetencyFilterHelper.UpdateRequirementsFilterDropdownOptionsVisibility(search, filteredCompetencies);
-                filteredCompetencies = CompetencyFilterHelper.ApplyRequirementsFilters(filteredCompetencies, filters);
-                filteredCompetencies = CompetencyFilterHelper.ApplyCompetencyGroupFilters(filteredCompetencies, search);
-            }
-            return filteredCompetencies;
         }
 
         [HttpPost]

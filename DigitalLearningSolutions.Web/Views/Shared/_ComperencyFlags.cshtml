@@ -5,7 +5,7 @@
   <div class="nhsuk-u-margin-bottom-3">
     @foreach (var flag in Model)
     {
-      <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
+      <span class="nhsuk-u-padding-right-2 @(flag == Model.First() ? ViewData["cssClass"]?.ToString() : String.Empty)">
         <strong class="nhsuk-tag @flag.FlagTagClass">
           @flag.FlagName
         </strong>

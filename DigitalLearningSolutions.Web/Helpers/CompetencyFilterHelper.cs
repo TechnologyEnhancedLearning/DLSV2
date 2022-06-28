@@ -10,7 +10,27 @@ namespace DigitalLearningSolutions.Web.Helpers
 {
     public class CompetencyFilterHelper
     {
-        public static IEnumerable<Competency> ApplyResponseStatusFilters(IEnumerable<Competency> competencies, IEnumerable<int> filters, string searchText = "")
+        public static IEnumerable<Competency> FilterCompetencies(IEnumerable<Competency> competencies, IEnumerable<Data.Models.Frameworks.CompetencyFlag> competencyFlags, SearchSelfAssessmentOvervieviewViewModel search)
+        {
+            var filteredCompetencies = competencies;
+            if (search != null)
+            {
+                var searchText = search.SearchText?.Trim() ?? string.Empty;
+                var filters = search.AppliedFilters?.Select(f => int.Parse(f.FilterValue)) ?? Enumerable.Empty<int>();
+                search.CompetencyFlags = competencyFlags.ToList();
+                ApplyResponseStatusFilters(ref filteredCompetencies, filters, searchText);
+                UpdateRequirementsFilterDropdownOptionsVisibility(search, filteredCompetencies);
+                ApplyRequirementsFilters(ref filteredCompetencies, filters);
+
+                foreach (var competency in filteredCompetencies)
+                    competency.CompetencyFlags = search.CompetencyFlags.Where(f => f.CompetencyId == competency.Id);
+
+                ApplyCompetencyGroupFilters(ref filteredCompetencies, search);
+            }
+            return filteredCompetencies;
+        }
+
+        private static void ApplyResponseStatusFilters(ref IEnumerable<Competency> competencies, IEnumerable<int> filters, string searchText = "")
         {
             var filteredCompetencies = competencies;
             var appliedResponseStatusFilters = filters.Where(f => IsResponseStatusFilter(f));
@@ -31,10 +51,10 @@ namespace DigitalLearningSolutions.Web.Helpers
                         && (!appliedResponseStatusFilters.Any() || responseStatusFilterMatchesAnyQuestion)
                     select c;
             }
-            return filteredCompetencies;
+            competencies = filteredCompetencies;
         }
 
-        public static IEnumerable<Competency> ApplyRequirementsFilters(IEnumerable<Competency> competencies, IEnumerable<int> filters)
+        private static void ApplyRequirementsFilters(ref IEnumerable<Competency> competencies, IEnumerable<int> filters)
         {
             var filteredCompetencies = competencies;
             var appliedRequirementsFilters = filters.Where(f => IsRequirementsFilter(f));
@@ -49,25 +69,21 @@ namespace DigitalLearningSolutions.Web.Helpers
                     where requirementsFilterMatchesAnyQuestion
                     select c;
             }
-            return filteredCompetencies;
+            competencies = filteredCompetencies;
         }
 
-        public static IEnumerable<Competency> ApplyCompetencyGroupFilters(IEnumerable<Competency> competencies, SearchSelfAssessmentOvervieviewViewModel search)
+        private static void ApplyCompetencyGroupFilters(ref IEnumerable<Competency> competencies, SearchSelfAssessmentOvervieviewViewModel search)
         {
             var filteredCompetencies = competencies;
             var appliedCompetencyGroupFilters = search.AppliedFilters?.Select(f => int.Parse(f.FilterValue)).Where(f => IsCompetencyGroupFilter(f)) ?? Enumerable.Empty<int>();
             if (appliedCompetencyGroupFilters.Any())
             {
-                foreach(var competency in filteredCompetencies)
-                {
-                    competency.CompetencyFlags = search.CompetencyFlags.Where(f => f.CompetencyId == competency.Id);
-                }
                 filteredCompetencies = competencies.Where(c => c.CompetencyFlags.Any(f => appliedCompetencyGroupFilters.Contains(f.FlagId)));
             }
-            return filteredCompetencies;
+            competencies = filteredCompetencies;
         }
 
-        public static void UpdateRequirementsFilterDropdownOptionsVisibility(SearchSelfAssessmentOvervieviewViewModel search, IEnumerable<Competency> competencies)
+        private static void UpdateRequirementsFilterDropdownOptionsVisibility(SearchSelfAssessmentOvervieviewViewModel search, IEnumerable<Competency> competencies)
         {
             var filteredQuestions = competencies.SelectMany(c => c.AssessmentQuestions);
             if (search != null)
@@ -100,12 +116,6 @@ namespace DigitalLearningSolutions.Web.Helpers
                 (int)SelfAssessmentCompetencyFilter.ConfirmationRequested
             };
             return responseStatusFilters.Contains(filter);
-        }
-
-        public static bool IsCompetencyGroupFilter(string filter)
-        {
-            int filterAsInteger;
-            return int.TryParse(filter, out filterAsInteger) && IsCompetencyGroupFilter(filterAsInteger);
         }
 
         public static bool IsCompetencyGroupFilter(int filter)
