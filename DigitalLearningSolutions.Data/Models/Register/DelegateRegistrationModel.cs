@@ -140,6 +140,7 @@
 
         public string? Answer6 { get; set; }
 
+        // TODO HEEDLS-980 Remove this when Alias is removed from delegate upload
         public string? AliasId { get; set; }
 
         public DateTime? NotifyDate { get; set; }
