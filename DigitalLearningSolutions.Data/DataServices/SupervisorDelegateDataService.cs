@@ -11,7 +11,10 @@
     {
         SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(Guid inviteHash);
 
-        IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email);
+        IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
+            int centreId,
+            IEnumerable<string?> emails
+        );
 
         void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int candidateId);
     }
@@ -56,7 +59,10 @@
             }
         }
 
-        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email)
+        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
+            int centreId,
+            IEnumerable<string?> emails
+        )
         {
             return connection.Query<SupervisorDelegate>(
                 @"SELECT
@@ -73,10 +79,10 @@
                     FROM SupervisorDelegates sd
                     INNER JOIN AdminUsers au ON sd.SupervisorAdminID = au.AdminID
                     WHERE au.CentreID = @centreId
-                      AND sd.DelegateEmail = @email
+                      AND sd.DelegateEmail IN @emails
                       AND sd.CandidateID IS NULL
                       AND sd.Removed IS NULL",
-                new { centreId, email }
+                new { centreId, emails }
             );
         }
 

@@ -258,9 +258,9 @@ namespace DigitalLearningSolutions.Data.Services
         private void SetUpSupervisorDelegateRelations(string emailAddress, int centreId, int delegateId)
         {
             var pendingSupervisorDelegateIds =
-                supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
                     centreId,
-                    emailAddress
+                    new List<string?> { emailAddress }
                 ).Select(supervisor => supervisor.ID).ToList();
 
             if (!pendingSupervisorDelegateIds.Any())

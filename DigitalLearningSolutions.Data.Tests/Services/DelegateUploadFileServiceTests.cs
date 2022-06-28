@@ -730,9 +730,9 @@
                     )
                     .MustHaveHappened();
                 A.CallTo(
-                    () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                    () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
                         A<int>._,
-                        A<string>._
+                        A<List<string?>>._
                     )
                 ).MustNotHaveHappened();
                 A.CallTo(
@@ -768,7 +768,10 @@
                 .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
             A.CallTo(
                 () =>
-                    supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(A<int>._, A<string>._)
+                    supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
+                        CentreId,
+                        A<IEnumerable<string?>>._
+                    )
             ).Returns(supervisorDelegates);
             A.CallTo(
                 () =>
@@ -787,9 +790,9 @@
                 )
                 .MustHaveHappened();
             A.CallTo(
-                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
                     CentreId,
-                    "email@test.com"
+                    A<IEnumerable<string?>>._
                 )
             ).MustHaveHappened();
             A.CallTo(

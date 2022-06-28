@@ -102,7 +102,6 @@ namespace DigitalLearningSolutions.Data.Services
             int? supervisorDelegateId = null
         )
         {
-            // TODO HEEDLS-899 sort out supervisor delegate stuff
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
@@ -166,7 +165,6 @@ namespace DigitalLearningSolutions.Data.Services
             var userAccountsAtCentre = userEntity.GetCentreAccountSet(internalDelegateRegistrationModel.Centre);
             var userHasAdminAccountAtCentre = userAccountsAtCentre?.CanLogIntoAdminAccount == true;
 
-            // TODO HEEDLS-899 sort out supervisor delegate stuff, this is just copied from the external registration
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
@@ -254,7 +252,6 @@ namespace DigitalLearningSolutions.Data.Services
                 registerJourneyContainsTermsAndConditions
             );
 
-            // TODO HEEDLS-899 sort out supervisor delegate stuff
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
@@ -503,11 +500,13 @@ namespace DigitalLearningSolutions.Data.Services
             DelegateRegistrationModel delegateRegistrationModel
         )
         {
+            var delegateEmails = new List<string?>
+                { delegateRegistrationModel.PrimaryEmail, delegateRegistrationModel.CentreSpecificEmail };
+
             return supervisorDelegateService
-                .GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                .GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
                     delegateRegistrationModel.Centre,
-                    // TODO HEEDLS-899 it's undecided at time of comment whether this should be matched on centre email or primary email
-                    delegateRegistrationModel.PrimaryEmail
+                    delegateEmails
                 ).Select(record => record.ID);
         }
 

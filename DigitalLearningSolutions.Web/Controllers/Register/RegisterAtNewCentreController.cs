@@ -54,7 +54,6 @@
                 return NotFound();
             }
 
-            // TODO HEEDLS-899 sort out supervisor delegate stuff, this is just copied from the external registration
             var supervisorDelegateRecord = centreId.HasValue && !string.IsNullOrEmpty(inviteId) &&
                                            Guid.TryParse(inviteId, out var inviteHash)
                 ? supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(inviteHash)
