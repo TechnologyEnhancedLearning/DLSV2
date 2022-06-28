@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -17,6 +18,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly ICentresDataService centresDataService;
         private readonly IConfiguration config;
         private readonly ICourseDataService courseDataService;
+        private readonly IUserDataService userDataService;
 
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ILogger<LearningPortalController> logger;
@@ -29,6 +31,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         public LearningPortalController(
             ICentresDataService centresDataService,
             ICourseDataService courseDataService,
+            IUserDataService userDataService,
             ISelfAssessmentService selfAssessmentService,
             ISupervisorService supervisorService,
             INotificationService notificationService,
@@ -42,6 +45,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         {
             this.centresDataService = centresDataService;
             this.courseDataService = courseDataService;
+            this.userDataService = userDataService;
             this.selfAssessmentService = selfAssessmentService;
             this.supervisorService = supervisorService;
             this.notificationService = notificationService;

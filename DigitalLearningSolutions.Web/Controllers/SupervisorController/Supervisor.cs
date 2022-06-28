@@ -13,7 +13,6 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
-    using DigitalLearningSolutions.Data.Enums;
 
     public partial class SupervisorController
     {
@@ -67,7 +66,7 @@
                     );
                 }
             );
-            
+
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
                 new SortOptions(sortBy, sortDirection),

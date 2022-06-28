@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
@@ -725,11 +726,11 @@
 
             TempData.Set(sessionAddSupervisor);
             var candidateId = User.GetCandidateIdKnownNotNull();
+            var delegateEntity = userDataService.GetDelegateById(candidateId);
             var supervisorDelegateId = supervisorService.AddSuperviseDelegate(
                 sessionAddSupervisor.SupervisorAdminId,
                 candidateId,
-                // TODO HEEDLS-899 This will have been broken by changes to the claims since it will be expecting centre specific emails
-                User.GetUserPrimaryEmail() ?? throw new InvalidOperationException(),
+                delegateEntity!.UserCentreDetails?.Email ?? delegateEntity.UserAccount.PrimaryEmail,
                 sessionAddSupervisor.SupervisorEmail ?? throw new InvalidOperationException(),
                 User.GetCentreId()
             );
