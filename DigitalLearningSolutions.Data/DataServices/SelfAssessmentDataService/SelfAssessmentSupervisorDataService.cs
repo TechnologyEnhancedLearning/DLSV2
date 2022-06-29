@@ -200,8 +200,7 @@
                         sar.ID,
                         sstrc.CompetencyGroupID,
                         sea.Vocabulary,
-                        sasv.SignedOff,
-                        sea.ReviewerCommentsLabel
+                        sasv.SignedOff
                     FROM SelfAssessmentResultSupervisorVerifications AS sasv
                     INNER JOIN SelfAssessmentResults AS sar
                         ON sasv.SelfAssessmentResultId = sar.ID

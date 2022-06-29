@@ -88,6 +88,7 @@ $light-blue: #8EBAFF;
   text-align: right;
   transform-origin: 100% 0;
   transform: translate(-100%) rotate(-45deg);
+  position: fixed;
 
   @include mq($until: tablet) {
     transform: translate(-100%) rotate(-60deg);
