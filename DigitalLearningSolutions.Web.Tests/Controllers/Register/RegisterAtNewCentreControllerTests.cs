@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
@@ -21,7 +22,7 @@
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Primitives;
     using Microsoft.FeatureManagement;
     using NUnit.Framework;
@@ -125,7 +126,9 @@
                 Centre = centreId,
                 CentreSpecificEmail = "centre email",
             };
-            A.CallTo(() => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId))
+            A.CallTo(
+                    () => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId)
+                )
                 .Returns(false);
             A.CallTo(() => userService.GetUserById(userAccount.Id)).Returns(
                 new UserEntity(userAccount, new List<AdminAccount>(), new[] { new DelegateAccount() })
@@ -135,9 +138,35 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId))
+            A.CallTo(
+                    () => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId)
+                )
                 .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public void PersonalInformationPost_with_null_centre_email_skips_email_validation()
+        {
+            // Given
+            const int centreId = 3;
+            controller.TempData.Set(new InternalDelegateRegistrationData());
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+            var model = new InternalPersonalInformationViewModel
+            {
+                Centre = centreId,
+                CentreSpecificEmail = null,
+            };
+            A.CallTo(() => userService.GetUserById(userAccount.Id)).Returns(
+                new UserEntity(userAccount, new List<AdminAccount>(), new[] { new DelegateAccount() })
+            );
+
+            // When
+            var result = controller.PersonalInformation(model);
+
+            // Then
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._)).MustNotHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
 
         [Test]
@@ -150,16 +179,80 @@
                 Centre = ControllerContextHelper.CentreId + 1,
                 CentreSpecificEmail = "centre email",
             };
-            A.CallTo(() => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId))
+            A.CallTo(
+                    () => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId)
+                )
                 .Returns(true);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId))
+            A.CallTo(
+                    () => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId)
+                )
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
+        }
+
+        [Test]
+        public void PersonalInformationPost_allows_inactive_account_at_centre()
+        {
+            // Given
+            controller.TempData.Set(new InternalDelegateRegistrationData());
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+            var inactiveDelegateAccount = UserTestHelper.GetDefaultDelegateAccount(
+                centreId: ControllerContextHelper.CentreId,
+                active: false
+            );
+            var model = new InternalPersonalInformationViewModel
+            {
+                Centre = ControllerContextHelper.CentreId,
+                CentreSpecificEmail = null,
+            };
+            A.CallTo(() => userService.GetUserById(userAccount.Id)).Returns(
+                new UserEntity(userAccount, new List<AdminAccount>(), new[] { inactiveDelegateAccount })
+            );
+
+            // When
+            var result = controller.PersonalInformation(model);
+
+            // Then
+            A.CallTo(() => userService.GetUserById(userAccount.Id)).MustHaveHappenedOnceExactly();
+            result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
+        }
+
+        [Test]
+        public void PersonalInformationPost_returns_validation_error_when_user_already_has_active_account()
+        {
+            // Given
+            controller.TempData.Set(new InternalDelegateRegistrationData());
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+            var activeDelegateAccount = UserTestHelper.GetDefaultDelegateAccount(
+                centreId: ControllerContextHelper.CentreId,
+                active: true
+            );
+            var model = new InternalPersonalInformationViewModel
+            {
+                Centre = ControllerContextHelper.CentreId,
+                CentreSpecificEmail = null,
+            };
+            A.CallTo(() => userService.GetUserById(userAccount.Id)).Returns(
+                new UserEntity(userAccount, new List<AdminAccount>(), new[] { activeDelegateAccount })
+            );
+
+            // When
+            var result = controller.PersonalInformation(model);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userService.GetUserById(userAccount.Id)).MustHaveHappenedOnceExactly();
+                var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
+                    .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
+                errorMessage.Should().Be("You are already registered at this centre");
+                controller.ModelState.IsValid.Should().BeFalse();
+            }
         }
 
         [Test]
@@ -291,6 +384,35 @@
                     )
                 )
                 .Throws(new DelegateCreationFailedException(DelegateCreationError.UnexpectedError));
+            A.CallTo(() => request.Headers).Returns(
+                new HeaderDictionary(
+                    new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }
+                )
+            );
+
+            // When
+            var result = await controller.SummaryPost();
+
+            // Then
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
+        }
+
+        [Test]
+        public async Task Summary_post_returns_500_error_with_active_account_already_exists_register_error()
+        {
+            // Given
+            var data = RegistrationDataHelper.GetDefaultInternalDelegateRegistrationData();
+            controller.TempData.Set(data);
+            A.CallTo(
+                    () => registrationService.CreateDelegateAccountForExistingUser(
+                        A<InternalDelegateRegistrationModel>._,
+                        A<int>._,
+                        A<string>._,
+                        A<bool>._,
+                        A<int?>._
+                    )
+                )
+                .Throws(new DelegateCreationFailedException(DelegateCreationError.ActiveAccountAlreadyExists));
             A.CallTo(() => request.Headers).Returns(
                 new HeaderDictionary(
                     new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }

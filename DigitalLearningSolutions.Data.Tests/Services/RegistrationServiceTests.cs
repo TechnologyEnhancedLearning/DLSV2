@@ -2,6 +2,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
@@ -535,9 +536,23 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .MustHaveHappened(1, Times.Exactly);
             A.CallTo(
                 () =>
-                    passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
+                    passwordDataService.SetPasswordByCandidateNumber(NewCandidateNumber, RegistrationModelTestHelper.PasswordHash)
             ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => registrationDataService.RegisterAdmin(centreManagerModel, userId))
+            A.CallTo(() => registrationDataService.RegisterAdmin(
+                    A<AdminAccountRegistrationModel>.That.Matches(
+                        m => m.UserId == userId
+                        && m.CentreSpecificEmail == centreManagerModel.CentreSpecificEmail
+                        && m.CentreId == centreManagerModel.Centre
+                        && m.CategoryId == centreManagerModel.CategoryId
+                        && m.IsCentreAdmin == centreManagerModel.IsCentreAdmin
+                        && m.IsCentreManager == centreManagerModel.IsCentreManager
+                        && m.IsContentManager == centreManagerModel.IsContentManager
+                        && m.IsContentCreator == centreManagerModel.IsContentCreator
+                        && m.IsTrainer == centreManagerModel.IsTrainer
+                        && m.ImportOnly == centreManagerModel.ImportOnly
+                        && m.IsSupervisor == centreManagerModel.IsSupervisor
+                        && m.IsNominatedSupervisor == centreManagerModel.IsNominatedSupervisor
+                        && m.Active == centreManagerModel.Active)))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustHaveHappenedOnceExactly();
@@ -606,7 +621,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
-            A.CallTo(() => registrationDataService.RegisterAdmin(model, A<int>._))
+            A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._))
                 .MustNotHaveHappened();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustNotHaveHappened();
@@ -845,85 +860,24 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_delegate_has_no_first_name()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(firstName: null);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
-
-            // When
-            var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
-            );
-
-            // Then
-            result.Error.Should().Be(AdminCreationError.UnexpectedError);
-        }
-
-        [Test]
-        public void PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_delegate_has_no_email()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: null);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
-
-            // When
-            var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
-            );
-
-            // Then
-            result.Error.Should().Be(AdminCreationError.UnexpectedError);
-        }
-
-        [Test]
         public void
-            PromoteDelegateToAdmin_throws_email_in_use_AdminCreationFailedException_if_active_admin_already_exists()
+            PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_active_admin_already_exists()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
+            const int userId = 2;
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount(userId: userId);
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
+
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
 
             // When
-            var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
-            );
+            Action action = () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, userId, 2);
 
             // Then
-            using (new AssertionScope())
-            {
-                UpdateToExistingAdminAccountMustNotHaveHappened();
-                result.Error.Should().Be(AdminCreationError.EmailAlreadyInUse);
-            }
-        }
-
-        [Test]
-        public void
-            PromoteDelegateToAdmin_throws_email_in_use_AdminCreationFailedException_if_inactive_admin_at_different_centre_already_exists()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var adminUser = UserTestHelper.GetDefaultAdminUser(centreId: 3, active: false);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
-
-            // When
-            var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                UpdateToExistingAdminAccountMustNotHaveHappened();
-                result.Error.Should().Be(AdminCreationError.EmailAlreadyInUse);
-            }
+            action.Should().Throw<AdminCreationFailedException>();
+            UpdateToExistingAdminAccountMustNotHaveHappened();
+            A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._))
+                .MustNotHaveHappened();
         }
 
         [Test]
@@ -931,24 +885,27 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const int categoryId = 1;
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var adminUser = UserTestHelper.GetDefaultAdminUser(active: false);
+            const int userId = 2;
+            const int centreId = 2;
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount(
+                active: false,
+                categoryId: categoryId,
+                userId: userId
+            );
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
+
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, 1);
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.ReactivateAdmin(adminUser.Id)).MustHaveHappenedOnceExactly();
-                A.CallTo(() => passwordDataService.SetPasswordByAdminId(adminUser.Id, delegateUser.Password!))
-                    .MustHaveHappenedOnceExactly();
+                A.CallTo(() => userDataService.ReactivateAdmin(adminAccount.Id)).MustHaveHappenedOnceExactly();
                 A.CallTo(
                     () => userDataService.UpdateAdminUserPermissions(
-                        adminUser.Id,
+                        adminAccount.Id,
                         adminRoles.IsCentreAdmin,
                         adminRoles.IsSupervisor,
                         adminRoles.IsNominatedSupervisor,
@@ -959,51 +916,47 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         categoryId
                     )
                 ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._)
+                ).MustNotHaveHappened();
             }
         }
 
         [Test]
-        public void PromoteDelegateToAdmin_calls_data_service_with_expected_value()
+        public void PromoteDelegateToAdmin_calls_data_service_with_expected_values_if_no_existing_admin()
         {
             // Given
-            const int userId = 123;
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            const int categoryId = 1;
+            const int userId = 2;
+            const int centreId = 2;
+            var activeAdminAtDifferentCentre = UserTestHelper.GetDefaultAdminAccount(centreId: 3, active: true);
+            var inactiveAdminAtDifferentCentre = UserTestHelper.GetDefaultAdminAccount(centreId: 4, active: false);
             var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
-
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(null);
-            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(userId);
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(
+                new[] { activeAdminAtDifferentCentre, inactiveAdminAtDifferentCentre }
+            );
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, 1, delegateUser.Id);
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, userId, centreId);
 
             // Then
-            using (new AssertionScope())
-            {
-                A.CallTo(
-                    () => registrationDataService.RegisterAdmin(
-                        A<AdminRegistrationModel>.That.Matches(
-                            a =>
-                                a.FirstName == delegateUser.FirstName &&
-                                a.LastName == delegateUser.LastName &&
-                                a.PrimaryEmail == delegateUser.EmailAddress &&
-                                a.Centre == delegateUser.CentreId &&
-                                a.PasswordHash == delegateUser.Password &&
-                                a.Active &&
-                                a.Approved &&
-                                a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
-                                !a.IsCentreManager &&
-                                a.IsContentManager == adminRoles.IsContentManager &&
-                                a.ImportOnly == adminRoles.IsCmsAdministrator &&
-                                a.IsContentCreator == adminRoles.IsContentCreator &&
-                                a.IsTrainer == adminRoles.IsTrainer &&
-                                a.IsSupervisor == adminRoles.IsSupervisor
-                        ),
-                        userId
+            A.CallTo(
+                () => registrationDataService.RegisterAdmin(
+                    A<AdminAccountRegistrationModel>.That.Matches(
+                        a =>
+                            a.CentreId == centreId &&
+                            a.Active &&
+                            a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
+                            !a.IsCentreManager &&
+                            a.IsContentManager == adminRoles.IsContentManager &&
+                            a.ImportOnly == adminRoles.IsCmsAdministrator &&
+                            a.IsContentCreator == adminRoles.IsContentCreator &&
+                            a.IsTrainer == adminRoles.IsTrainer &&
+                            a.IsSupervisor == adminRoles.IsSupervisor
                     )
-                ).MustHaveHappened();
-                UpdateToExistingAdminAccountMustNotHaveHappened();
-            }
+                )
+            ).MustHaveHappened();
+            UpdateToExistingAdminAccountMustNotHaveHappened();
         }
 
         [Test]
@@ -1035,6 +988,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         )
                 )
                 .MustHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
             approved.Should().BeTrue();
         }
 
@@ -1066,6 +1027,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         )
                 )
                 .MustHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
             approved.Should().BeTrue();
         }
 
@@ -1097,7 +1066,106 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         )
                 )
                 .MustHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
             approved.Should().BeFalse();
+        }
+
+        [Test]
+        public void
+            CreateDelegateAccountForExistingUser_throws_exception_if_user_already_has_active_delegate_at_centre()
+        {
+            // Given
+            const int userId = 2;
+            const int existingDelegateId = 5;
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+            var currentTime = DateTime.Now;
+            A.CallTo(() => clockService.UtcNow).Returns(currentTime);
+            GivenUserEntityExistsWithDelegate(userId, existingDelegateId, model.Centre, true);
+
+            // When
+            Action act = () => registrationService.CreateDelegateAccountForExistingUser(
+                model,
+                userId,
+                "::1",
+                false
+            );
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                            A<DelegateRegistrationModel>._,
+                            A<int>._,
+                            A<DateTime>._,
+                            A<IDbTransaction>._
+                        )
+                )
+                .MustNotHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
+            var expectedError =
+                "Could not create account for delegate on registration. " +
+                $"Failure: active delegate account with ID {existingDelegateId} already exists " +
+                $"at centre with ID {model.Centre} for user with ID {userId}";
+            act.Should().Throw<DelegateCreationFailedException>().WithMessage(expectedError);
+        }
+
+        [Test]
+        public void
+            CreateDelegateAccountForExistingUser_reregisters_delegate_if_user_already_has_inactive_delegate_at_centre()
+        {
+            // Given
+            const int userId = 2;
+            const int existingDelegateId = 5;
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+            var currentTime = DateTime.Now;
+            A.CallTo(() => clockService.UtcNow).Returns(currentTime);
+            GivenUserEntityExistsWithDelegate(userId, existingDelegateId, model.Centre, false);
+
+            // When
+            registrationService.CreateDelegateAccountForExistingUser(
+                model,
+                userId,
+                "::1",
+                false
+            );
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                            A<DelegateRegistrationModel>._,
+                            A<int>._,
+                            A<DateTime>._,
+                            A<IDbTransaction>._
+                        )
+                )
+                .MustNotHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>.That.Matches(
+                        d => d.Centre == model.Centre && d.Approved && d.Active && d.Answer1 == model.Answer1 &&
+                             d.Answer2 == model.Answer2 && d.Answer3 == model.Answer3 && d.Answer4 == model.Answer4 &&
+                             d.Answer5 == model.Answer5 && d.Answer6 == model.Answer6
+                    ),
+                    userId,
+                    existingDelegateId,
+                    currentTime
+                )
+            ).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -1228,7 +1296,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private void UpdateToExistingAdminAccountMustNotHaveHappened()
         {
             A.CallTo(() => userDataService.ReactivateAdmin(A<int>._)).MustNotHaveHappened();
-            A.CallTo(() => passwordDataService.SetPasswordByAdminId(A<int>._, A<string>._)).MustNotHaveHappened();
             A.CallTo(
                 () => userDataService.UpdateAdminUserPermissions(
                     A<int>._,
@@ -1242,6 +1309,30 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     A<int>._
                 )
             ).MustNotHaveHappened();
+        }
+
+        private void GivenUserEntityExistsWithDelegate(
+            int userId,
+            int delegateId,
+            int delegateCentreId,
+            bool delegateActiveStatus
+        )
+        {
+            A.CallTo(() => userService.GetUserById(userId)).Returns(
+                new UserEntity(
+                    new UserAccount(),
+                    new List<AdminAccount>(),
+                    new List<DelegateAccount>
+                    {
+                        UserTestHelper.GetDefaultDelegateAccount(
+                            delegateId,
+                            centreId: delegateCentreId,
+                            active: delegateActiveStatus,
+                            userId: userId
+                        ),
+                    }
+                )
+            );
         }
     }
 }

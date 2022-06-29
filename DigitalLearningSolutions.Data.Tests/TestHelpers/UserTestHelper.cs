@@ -398,7 +398,6 @@
             string? answer4 = null,
             string? answer5 = null,
             string? answer6 = null,
-            string? aliasId = null,
             bool active = true,
             bool hasBeenPromptedForPrn = false,
             string? professionalRegistrationNumber = null,
@@ -428,7 +427,6 @@
                 Answer4 = answer4,
                 Answer5 = answer5,
                 Answer6 = answer6,
-                AliasId = aliasId,
                 Active = active,
                 HasBeenPromptedForPrn = hasBeenPromptedForPrn,
                 ProfessionalRegistrationNumber = professionalRegistrationNumber,
@@ -591,14 +589,17 @@
             );
         }
 
-        public static void SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(this DbConnection connection, int adminId)
+        public static void SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(
+            this DbConnection connection,
+            int adminId
+        )
         {
             connection.Execute(
-                @"UPDATE AdminUsers SET
+                @"UPDATE AdminAccounts SET
                         Active = 0,
                         IsCentreManager = 1,
-                        UserAdmin = 1
-                    WHERE AdminID = @adminId",
+                        IsSuperAdmin = 1
+                    WHERE ID = @adminId",
                 new { adminId }
             );
         }
@@ -681,6 +682,33 @@
             await connection.ExecuteAsync(
                 @"UPDATE DelegateAccounts SET OldPassword = @oldPassword WHERE UserID = @userId;",
                 new { oldPassword = "old password", userId = user.Id }
+            );
+        }
+
+        public static async Task InsertUserCentreDetails(
+            this DbConnection connection,
+            int userId,
+            int centreId,
+            string? email,
+            DateTime? emailVerified = null
+        )
+        {
+            await connection.ExecuteAsync(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email, EmailVerified)
+                    VALUES (@userId, @centreId, @email, @emailVerified)",
+                new { userId, centreId, email, emailVerified }
+            );
+        }
+
+        public static (string? email, DateTime? emailVerified) GetEmailAndVerifiedDateFromUserCentreDetails(
+            this DbConnection connection,
+            int userId,
+            int centreId
+        )
+        {
+            return connection.QuerySingle<(string? email, DateTime? emailVerified)>(
+                $"SELECT Email, EmailVerified FROM UserCentreDetails WHERE CentreID = @centreId AND UserID = @userId",
+                new { centreId, userId }
             );
         }
     }

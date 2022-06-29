@@ -22,11 +22,13 @@
         private ICourseCategoriesDataService courseCategoriesDataService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             registrationService = A.Fake<IRegistrationService>();
@@ -35,7 +37,8 @@
                     courseCategoriesDataService,
                     centreContractAdminUsageService,
                     registrationService,
-                    new NullLogger<PromoteToAdminController>()
+                    new NullLogger<PromoteToAdminController>(),
+                    userService
                 )
                 .WithDefaultContext();
         }
@@ -52,9 +55,11 @@
                 IsTrainer = false,
                 IsContentCreator = false,
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole,
-                LearningCategory = 0
+                LearningCategory = 0,
+                UserId = 2,
+                CentreId = 101,
             };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._))
+            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._, A<int>._))
                 .DoesNothing();
 
             // When
@@ -70,7 +75,8 @@
                                     !a.IsContentManager
                             ),
                             null,
-                            delegateId
+                            formData.UserId,
+                            formData.CentreId
                         )
                 )
                 .MustHaveHappened();
@@ -90,37 +96,14 @@
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole,
                 LearningCategory = 0
             };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._))
-                .Throws(new AdminCreationFailedException(AdminCreationError.UnexpectedError));
+            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._, A<int>._))
+                .Throws(new AdminCreationFailedException());
 
             // When
             var result = controller.Index(formData, 1);
 
             // Then
             result.Should().BeStatusCodeResult().WithStatusCode(500);
-        }
-
-        [Test]
-        public void Summary_post_returns_redirect_to_index_with_email_in_use_register_error()
-        {
-            // Given
-            var formData = new AdminRolesFormData
-            {
-                IsCentreAdmin = true,
-                IsSupervisor = false,
-                IsTrainer = false,
-                IsContentCreator = false,
-                ContentManagementRole = ContentManagementRole.NoContentManagementRole,
-                LearningCategory = 0
-            };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int?>._, A<int>._))
-                .Throws(new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse));
-
-            // When
-            var result = controller.Index(formData, 1);
-
-            // Then
-            result.Should().BeViewResult().WithViewName("EmailInUse");
         }
     }
 }
