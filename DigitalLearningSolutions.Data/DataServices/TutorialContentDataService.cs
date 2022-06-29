@@ -227,7 +227,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                      AND Customisations.Active = 1
                      AND CustomisationTutorials.Status = 1
                      AND Sections.ArchivedDate IS NULL
-                     AND Tutorials.ArchivedDate IS NULL;",
+                     AND Tutorials.ArchivedDate IS NULL
+                     AND Applications.DefaultContentTypeID <> 4;",
                 new { candidateId, customisationId, sectionId, tutorialId }
             );
         }
@@ -259,7 +260,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                          AND Customisations.Active = 1
                          AND CustomisationTutorials.Status = 1
                          AND Sections.ArchivedDate IS NULL
-                         AND Tutorials.ArchivedDate IS NULL;",
+                         AND Tutorials.ArchivedDate IS NULL
+                         AND Applications.DefaultContentTypeID <> 4;",
                 new { customisationId, sectionId, tutorialId }
             );
         }
@@ -292,7 +294,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                          AND Customisations.Active = 1
                          AND Sections.ArchivedDate IS NULL
                          AND CustomisationTutorials.Status = 1
-                         AND Tutorials.ArchivedDate IS NULL;",
+                         AND Tutorials.ArchivedDate IS NULL
+                         AND Applications.DefaultContentTypeID <> 4;",
                     new { customisationId, sectionId, tutorialId }
                 );
             }
@@ -347,7 +350,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN Applications AS a ON c.ApplicationID = a.ApplicationID
                     INNER JOIN Sections AS s ON a.ApplicationID = s.ApplicationID
                     INNER JOIN Tutorials AS t ON s.SectionID = t.SectionID
-                    WHERE (c.CustomisationID = @customisationId)",
+                    WHERE (c.CustomisationID = @customisationId)
+                        AND a.DefaultContentTypeID <> 4",
                 new { customisationId }
             );
         }

@@ -369,7 +369,8 @@ namespace DigitalLearningSolutions.Data.DataServices
             return connection.QuerySingleOrDefault<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.ProgressID = @progressId
-                        AND ap.ArchivedDate IS NULL",
+                        AND ap.ArchivedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4",
                 new { progressId }
             );
         }
@@ -386,7 +387,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                                             cap.CentreID = @centreID AND
                                             cap.Active = 1)))
                         AND ca.CentreID = @centreId
-                        AND pr.CustomisationID = @customisationId",
+                        AND pr.CustomisationID = @customisationId
+                        AND ap.DefaultContentTypeID <> 4",
                 new { customisationId, centreId }
             );
         }
@@ -446,7 +448,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 @"SELECT cu.CustomisationName, ap.ApplicationName
                         FROM Customisations cu
                         JOIN Applications ap ON cu.ApplicationId = ap.ApplicationId
-                        WHERE cu.CustomisationId = @customisationId",
+                        WHERE cu.CustomisationId = @customisationId
+                            AND ap.DefaultContentTypeID <> 4",
                 new { customisationId }
             );
             if (names == null)
@@ -516,6 +519,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
                     INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
                     WHERE ap.ArchivedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4
                         AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND EXISTS (SELECT CentreApplicationID FROM CentreApplications
                                     WHERE (CentreID = @centreID AND ApplicationID = ap.ApplicationID))",
@@ -540,7 +544,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
                     WHERE ap.ArchivedDate IS NULL
                         AND ap.Debug = 0
-                        AND ap.BrandID = @brandId",
+                        AND ap.BrandID = @brandId
+                        AND ap.DefaultContentTypeID <> 4",
                 new { brandId }
             );
         }
@@ -560,9 +565,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN Customisations AS c ON c.CustomisationID = p.CustomisationId
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     WHERE cn.CentreID = @centreID
-                    AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    AND ap.ArchivedDate IS NULL
-                    AND ap.DefaultContentTypeID <> 4",
+                        AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                        AND ap.ArchivedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4",
                 new { centreId, categoryId }
             );
         }
@@ -709,12 +714,13 @@ namespace DigitalLearningSolutions.Data.DataServices
                         Applications.ApplicationID,
                         COUNT(Progress.ProgressID) AS NumRecentProgressRecords
                     FROM Applications
-                        INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
-                        INNER JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID
+                    INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
+                    INNER JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID
                     WHERE Applications.BrandID = @brandId
-                      AND Applications.Debug = 0
-                      AND Applications.ArchivedDate IS NULL
-                      AND Progress.SubmittedTime > @threeMonthsAgo
+                        AND Applications.Debug = 0
+                        AND Applications.ArchivedDate IS NULL
+                        AND Progress.SubmittedTime > @threeMonthsAgo
+                        AND Applications.DefaultContentTypeID <> 4
                     GROUP BY Applications.ApplicationID",
                 new
                     { brandId, threeMonthsAgo }

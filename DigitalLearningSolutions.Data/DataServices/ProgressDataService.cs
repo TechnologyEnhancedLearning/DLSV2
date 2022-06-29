@@ -428,7 +428,8 @@
                     FROM dbo.Sections AS s 
                     INNER JOIN dbo.Applications AS a ON a.ApplicationID = s.ApplicationID 
                     INNER JOIN dbo.Customisations AS c ON c.ApplicationID = a.ApplicationID
-                    WHERE s.SectionID = @sectionId AND c.CustomisationID = @customisationId",
+                    WHERE s.SectionID = @sectionId AND c.CustomisationID = @customisationId
+                        AND a.DefaultContentTypeID <> 4",
                 new { sectionId, customisationId }
             ).SingleOrDefault();
         }

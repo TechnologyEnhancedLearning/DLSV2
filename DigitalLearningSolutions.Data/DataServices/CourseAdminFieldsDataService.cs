@@ -69,6 +69,7 @@
                         ON cu.CourseField3PromptID = cp3.CoursePromptID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
                     WHERE ap.ArchivedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4
                         AND cu.CustomisationID = @customisationId",
                 new { customisationId }
             ).Single();
