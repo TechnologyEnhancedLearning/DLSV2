@@ -262,6 +262,7 @@
             {
 
                 string description;
+                string tagClass = string.Empty;
                 if (model.SelectedFilter < 0)
                 {
                     description = ((SelfAssessmentCompetencyFilter)model.SelectedFilter).GetDescription(model.IsSupervisorResultsReviewed);
@@ -270,8 +271,9 @@
                 {
                     var flag = frameworkService.GetCustomFlagsByFrameworkId(null, model.SelectedFilter).First();
                     description = $"{flag.FlagGroup}: {flag.FlagName}";
+                    tagClass = flag.FlagTagClass;
                 }
-                model.AppliedFilters.Add(new AppliedFilterViewModel(description, null, model.SelectedFilter.ToString()));
+                model.AppliedFilters.Add(new AppliedFilterViewModel(description, null, model.SelectedFilter.ToString(), tagClass));
             }
             TempData.Clear();
             TempData.Set<List<AppliedFilterViewModel>>(model.AppliedFilters);

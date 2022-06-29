@@ -75,7 +75,7 @@ namespace DigitalLearningSolutions.Web.Helpers
         private static void ApplyCompetencyGroupFilters(ref IEnumerable<Competency> competencies, SearchSelfAssessmentOvervieviewViewModel search)
         {
             var filteredCompetencies = competencies;
-            var appliedCompetencyGroupFilters = search.AppliedFilters?.Select(f => int.Parse(f.FilterValue)).Where(f => IsCompetencyGroupFilter(f)) ?? Enumerable.Empty<int>();
+            var appliedCompetencyGroupFilters = search.AppliedFilters?.Select(f => int.Parse(f.FilterValue)).Where(f => IsCompetencyFlagFilter(f)) ?? Enumerable.Empty<int>();
             if (appliedCompetencyGroupFilters.Any())
             {
                 filteredCompetencies = competencies.Where(c => c.CompetencyFlags.Any(f => appliedCompetencyGroupFilters.Contains(f.FlagId)));
@@ -118,7 +118,7 @@ namespace DigitalLearningSolutions.Web.Helpers
             return responseStatusFilters.Contains(filter);
         }
 
-        public static bool IsCompetencyGroupFilter(int filter)
+        public static bool IsCompetencyFlagFilter(int filter)
         {
             return filter > 0;
         }
