@@ -9,10 +9,13 @@
     {
         public DeactivateAdminViewModel() { }
 
-        public DeactivateAdminViewModel(AdminUser user, ReturnPageQuery returnPageQuery)
+        public DeactivateAdminViewModel(AdminEntity admin, ReturnPageQuery returnPageQuery)
         {
-            FullName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(user.FirstName, user.LastName);
-            EmailAddress = user.EmailAddress;
+            FullName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+                admin.UserAccount.FirstName,
+                admin.UserAccount.LastName
+            );
+            EmailAddress = admin.EmailForCentreNotifications;
             ReturnPageQuery = returnPageQuery;
         }
 

@@ -11,21 +11,21 @@
         public readonly bool CanShowDeactivateAdminButton;
 
         public SearchableAdminViewModel(
-            AdminUser adminUser,
-            AdminUser loggedInAdminUser,
+            AdminEntity admin,
+            AdminAccount loggedInAdminAccount,
             ReturnPageQuery returnPageQuery
         )
         {
-            Id = adminUser.Id;
-            Name = adminUser.SearchableName;
-            CategoryName = adminUser.CategoryName ?? "All";
-            EmailAddress = adminUser.EmailAddress;
-            IsLocked = adminUser.IsLocked;
+            Id = admin.AdminAccount.Id;
+            Name = admin.SearchableName;
+            CategoryName = admin.AdminAccount.CategoryName ?? "All";
+            EmailAddress = admin.EmailForCentreNotifications;
+            IsLocked = admin.UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold;
 
             CanShowDeactivateAdminButton =
-                UserPermissionsHelper.LoggedInAdminCanDeactivateUser(adminUser, loggedInAdminUser);
+                UserPermissionsHelper.LoggedInAdminCanDeactivateUser(admin.AdminAccount, loggedInAdminAccount);
 
-            Tags = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser);
+            Tags = FilterableTagHelper.GetCurrentTagsForAdmin(admin);
             ReturnPageQuery = returnPageQuery;
         }
 

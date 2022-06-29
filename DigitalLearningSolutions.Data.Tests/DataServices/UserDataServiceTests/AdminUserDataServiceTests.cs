@@ -54,6 +54,28 @@
         }
 
         [Test]
+        public void GetAdminsByCentreId_Returns_admin_list()
+        {
+            // Given
+            var expectedAdminEntity = UserTestHelper.GetDefaultAdminEntity();
+
+            // When
+            var returnedAdmins =
+                userDataService.GetAdminsByCentreId(expectedAdminEntity.AdminAccount.CentreId).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                returnedAdmins.Should().ContainEquivalentOf(expectedAdminEntity);
+                returnedAdmins.ForEach(
+                    admin => admin.AdminAccount.CentreId.Should().Be(expectedAdminEntity.AdminAccount.CentreId)
+                );
+                returnedAdmins.ForEach(admin => admin.AdminAccount.Active.Should().BeTrue());
+                returnedAdmins.ForEach(admin => admin.UserAccount.Active.Should().BeTrue());
+            }
+        }
+
+        [Test]
         public void GetAdminUserById_Returns_admin_user()
         {
             // Given
