@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.User;
@@ -13,7 +14,7 @@
         {
             var tags = new List<SearchableTagViewModel>();
 
-            if (admin.UserAccount.FailedLoginCount >= 5)
+            if (admin.UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold)
             {
                 tags.Add(new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsLocked));
             }

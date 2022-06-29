@@ -125,7 +125,7 @@
 
         public IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId)
         {
-            var sql = $@"{BaseAdminEntitySelectQuery} WHERE aa.centreID = @centreId";
+            var sql = $@"{BaseAdminEntitySelectQuery} WHERE aa.centreID = @centreId AND aa.Active = 1 AND u.Active = 1";
 
             return connection.Query<AdminAccount, UserAccount, UserCentreDetails, AdminEntity>(
                 sql,

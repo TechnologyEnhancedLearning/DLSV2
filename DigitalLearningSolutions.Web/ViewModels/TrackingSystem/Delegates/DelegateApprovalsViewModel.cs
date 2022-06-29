@@ -32,7 +32,7 @@
                 delegateEntity.UserAccount.FirstName,
                 delegateEntity.UserAccount.LastName
             );
-            Email = delegateEntity.UserCentreDetails?.Email ?? delegateEntity.UserAccount.PrimaryEmail;
+            Email = delegateEntity.EmailForCentreNotifications;
             DateRegistered = delegateEntity.DelegateAccount.DateRegistered;
             JobGroup = delegateEntity.UserAccount.JobGroupName;
             ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(

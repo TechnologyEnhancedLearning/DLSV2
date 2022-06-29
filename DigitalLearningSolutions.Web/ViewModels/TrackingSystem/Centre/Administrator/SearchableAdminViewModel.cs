@@ -19,8 +19,8 @@
             Id = admin.AdminAccount.Id;
             Name = admin.SearchableName;
             CategoryName = admin.AdminAccount.CategoryName ?? "All";
-            EmailAddress = admin.UserCentreDetails?.Email ?? admin.UserAccount.PrimaryEmail;
-            IsLocked = admin.UserAccount.FailedLoginCount >= 5;
+            EmailAddress = admin.EmailForCentreNotifications;
+            IsLocked = admin.UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold;
 
             CanShowDeactivateAdminButton =
                 UserPermissionsHelper.LoggedInAdminCanDeactivateUser(admin.AdminAccount, loggedInAdminAccount);

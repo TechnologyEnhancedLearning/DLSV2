@@ -7,7 +7,7 @@
 
     public partial class UserDataService
     {
-        private const string DelegateEntitySelectQuery =
+        private const string DelegateUserCardSelectQuery =
             @"SELECT
                 da.ID,
                 da.CandidateNumber,
@@ -48,7 +48,7 @@
         public DelegateUserCard? GetDelegateUserCardById(int id)
         {
             var user = connection.Query<DelegateUserCard>(
-                @$"{DelegateEntitySelectQuery}
+                @$"{DelegateUserCardSelectQuery}
                         WHERE da.ID = @id",
                 new { id }
             ).SingleOrDefault();
@@ -59,7 +59,7 @@
         public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId)
         {
             return connection.Query<DelegateUserCard>(
-                @$"{DelegateEntitySelectQuery}
+                @$"{DelegateUserCardSelectQuery}
                         WHERE da.CentreId = @centreId AND da.Approved = 1",
                 new { centreId }
             ).ToList();
@@ -68,7 +68,7 @@
         public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
         {
             return connection.Query<DelegateUserCard>(
-                @$"{DelegateEntitySelectQuery}
+                @$"{DelegateUserCardSelectQuery}
                         WHERE da.CentreId = @centreId
                         AND da.Approved = 1
                         AND da.Active = 1

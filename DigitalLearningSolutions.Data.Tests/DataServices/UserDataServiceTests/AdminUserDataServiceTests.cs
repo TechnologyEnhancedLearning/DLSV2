@@ -64,7 +64,15 @@
                 userDataService.GetAdminsByCentreId(expectedAdminEntity.AdminAccount.CentreId).ToList();
 
             // Then
-            returnedAdmins[0].Should().BeEquivalentTo(expectedAdminEntity);
+            using (new AssertionScope())
+            {
+                returnedAdmins.Should().ContainEquivalentOf(expectedAdminEntity);
+                returnedAdmins.ForEach(
+                    admin => admin.AdminAccount.CentreId.Should().Be(expectedAdminEntity.AdminAccount.CentreId)
+                );
+                returnedAdmins.ForEach(admin => admin.AdminAccount.Active.Should().BeTrue());
+                returnedAdmins.ForEach(admin => admin.UserAccount.Active.Should().BeTrue());
+            }
         }
 
         [Test]

@@ -15,7 +15,7 @@
                 admin.UserAccount.FirstName,
                 admin.UserAccount.LastName
             );
-            EmailAddress = admin.UserCentreDetails?.Email ?? admin.UserAccount.PrimaryEmail;
+            EmailAddress = admin.EmailForCentreNotifications;
             ReturnPageQuery = returnPageQuery;
         }
 
