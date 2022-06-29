@@ -77,6 +77,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         (string? primaryEmail, IEnumerable<(string centreName, string centreEmail)> centreEmails)
             GetUnverifiedEmailsForUser(int userId);
+
+        AdminEntity? GetAdminById(int adminId);
     }
 
     public class UserService : IUserService
@@ -346,6 +348,11 @@ namespace DigitalLearningSolutions.Data.Services
             return (unverifiedPrimaryEmail, unverifiedCentreEmails);
         }
 
+        public AdminEntity? GetAdminById(int adminId)
+        {
+            return userDataService.GetAdminById(adminId);
+        }
+
         public void UpdateUserDetailsAndCentreSpecificDetails(
             EditAccountDetailsData editAccountDetailsData,
             DelegateDetailsData? delegateDetailsData,
@@ -361,7 +368,8 @@ namespace DigitalLearningSolutions.Data.Services
                 groupsService.SynchroniseUserChangesWithGroups(
                     delegateDetailsData.DelegateId,
                     editAccountDetailsData,
-                    new RegistrationFieldAnswers(delegateDetailsData, editAccountDetailsData.JobGroupId)
+                    new RegistrationFieldAnswers(delegateDetailsData, editAccountDetailsData.JobGroupId),
+                    centreEmail
                 );
 
                 userDataService.UpdateDelegateUserCentrePrompts(

@@ -207,8 +207,7 @@
                                     d.Answer6 == data.Answer6 &&
                                     d.Active &&
                                     d.IsSelfRegistered &&
-                                    d.NotifyDate != null &&
-                                    d.AliasId == null
+                                    d.NotifyDate != null
                             ),
                             IpAddress,
                             false,

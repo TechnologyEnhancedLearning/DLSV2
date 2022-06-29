@@ -2,6 +2,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
@@ -747,8 +748,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    model.PrimaryEmail,
-                    NewCandidateNumber,
+                    A<int>._,
                     baseUrl,
                     model.NotifyDate!.Value,
                     "RegisterDelegateByCentre_Refactor"
@@ -780,8 +780,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    A<string>._,
-                    NewCandidateNumber,
+                    A<int>._,
                     A<string>._,
                     A<DateTime>._,
                     A<string>._
@@ -989,6 +988,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         )
                 )
                 .MustHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
             approved.Should().BeTrue();
         }
 
@@ -1020,6 +1027,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         )
                 )
                 .MustHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
             approved.Should().BeTrue();
         }
 
@@ -1051,7 +1066,106 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         )
                 )
                 .MustHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
             approved.Should().BeFalse();
+        }
+
+        [Test]
+        public void
+            CreateDelegateAccountForExistingUser_throws_exception_if_user_already_has_active_delegate_at_centre()
+        {
+            // Given
+            const int userId = 2;
+            const int existingDelegateId = 5;
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+            var currentTime = DateTime.Now;
+            A.CallTo(() => clockService.UtcNow).Returns(currentTime);
+            GivenUserEntityExistsWithDelegate(userId, existingDelegateId, model.Centre, true);
+
+            // When
+            Action act = () => registrationService.CreateDelegateAccountForExistingUser(
+                model,
+                userId,
+                "::1",
+                false
+            );
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                            A<DelegateRegistrationModel>._,
+                            A<int>._,
+                            A<DateTime>._,
+                            A<IDbTransaction>._
+                        )
+                )
+                .MustNotHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
+            var expectedError =
+                "Could not create account for delegate on registration. " +
+                $"Failure: active delegate account with ID {existingDelegateId} already exists " +
+                $"at centre with ID {model.Centre} for user with ID {userId}";
+            act.Should().Throw<DelegateCreationFailedException>().WithMessage(expectedError);
+        }
+
+        [Test]
+        public void
+            CreateDelegateAccountForExistingUser_reregisters_delegate_if_user_already_has_inactive_delegate_at_centre()
+        {
+            // Given
+            const int userId = 2;
+            const int existingDelegateId = 5;
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+            var currentTime = DateTime.Now;
+            A.CallTo(() => clockService.UtcNow).Returns(currentTime);
+            GivenUserEntityExistsWithDelegate(userId, existingDelegateId, model.Centre, false);
+
+            // When
+            registrationService.CreateDelegateAccountForExistingUser(
+                model,
+                userId,
+                "::1",
+                false
+            );
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                            A<DelegateRegistrationModel>._,
+                            A<int>._,
+                            A<DateTime>._,
+                            A<IDbTransaction>._
+                        )
+                )
+                .MustNotHaveHappened();
+            A.CallTo(
+                () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>.That.Matches(
+                        d => d.Centre == model.Centre && d.Approved && d.Active && d.Answer1 == model.Answer1 &&
+                             d.Answer2 == model.Answer2 && d.Answer3 == model.Answer3 && d.Answer4 == model.Answer4 &&
+                             d.Answer5 == model.Answer5 && d.Answer6 == model.Answer6
+                    ),
+                    userId,
+                    existingDelegateId,
+                    currentTime
+                )
+            ).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -1195,6 +1309,30 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     A<int>._
                 )
             ).MustNotHaveHappened();
+        }
+
+        private void GivenUserEntityExistsWithDelegate(
+            int userId,
+            int delegateId,
+            int delegateCentreId,
+            bool delegateActiveStatus
+        )
+        {
+            A.CallTo(() => userService.GetUserById(userId)).Returns(
+                new UserEntity(
+                    new UserAccount(),
+                    new List<AdminAccount>(),
+                    new List<DelegateAccount>
+                    {
+                        UserTestHelper.GetDefaultDelegateAccount(
+                            delegateId,
+                            centreId: delegateCentreId,
+                            active: delegateActiveStatus,
+                            userId: userId
+                        ),
+                    }
+                )
+            );
         }
     }
 }

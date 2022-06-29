@@ -68,7 +68,7 @@
             var result = myAccountController.Index(DlsSubApplication.Default);
 
             // Then
-            const string expectedReturnUrl = "%2fHome%2fWelcome";
+            const string expectedReturnUrl = "/Home/Welcome";
             result.As<ViewResult>().Model.As<MyAccountViewModel>().SwitchCentreReturnUrl.Should()
                 .BeEquivalentTo(expectedReturnUrl);
         }

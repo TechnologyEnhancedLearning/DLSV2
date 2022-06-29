@@ -264,6 +264,119 @@
             return new DelegateEntity(delegateAccount, userAccount, userCentreDetails);
         }
 
+        public static AdminEntity GetDefaultAdminEntity(
+            int adminId = 7,
+            int userId = 2,
+            int centreId = 2,
+            string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
+            bool centreActive = true,
+            bool active = true,
+            bool isCentreAdmin = true,
+            bool isCentreManager = true,
+            bool isContentCreator = false,
+            bool isContentManager = true,
+            bool publishToAll = true,
+            bool isReportsViewer = false,
+            bool isSuperAdmin = true,
+            int categoryId = 1,
+            string? categoryName = "Undefined",
+            bool isSupervisor = true,
+            bool isTrainer = true,
+            bool isFrameworkDeveloper = true,
+            bool importOnly = true,
+            bool isFrameworkContributor = false,
+            bool isLocalWorkforceManager = false,
+            bool isNominatedSupervisor = false,
+            bool isWorkforceContributor = false,
+            bool isWorkforceManager = false,
+            string firstName = "forename",
+            string lastName = "surname",
+            string primaryEmail = "test@gmail.com",
+            string passwordHash = "Password",
+            int jobGroupId = 10,
+            string jobGroupName = "Other",
+            string? professionalRegistrationNumber = null,
+            byte[]? profileImage = null,
+            int? resetPasswordId = null,
+            DateTime? termsAgreed = null,
+            int failedLoginCount = 0,
+            bool hasBeenPromptedForPrn = false,
+            int? learningHubAuthId = null,
+            bool hasDismissedLhLoginWarning = false,
+            DateTime? emailVerified = null,
+            DateTime? detailsLastChecked = null,
+            int? userCentreDetailsId = null,
+            string? centreSpecificEmail = null,
+            DateTime? centreSpecificEmailVerified = null
+        )
+        {
+            emailVerified ??= DateTime.Parse("2022-04-27 16:28:55.247");
+            detailsLastChecked ??= DateTime.Parse("2022-04-27 16:28:55.247");
+
+            var adminAccount = new AdminAccount
+            {
+                Id = adminId,
+                UserId = userId,
+                CentreId = centreId,
+                CentreName = centreName,
+                CentreActive = centreActive,
+                IsCentreAdmin = isCentreAdmin,
+                IsReportsViewer = isReportsViewer,
+                IsSuperAdmin = isSuperAdmin,
+                IsCentreManager = isCentreManager,
+                Active = active,
+                IsContentManager = isContentManager,
+                PublishToAll = publishToAll,
+                ImportOnly = importOnly,
+                IsContentCreator = isContentCreator,
+                IsSupervisor = isSupervisor,
+                IsTrainer = isTrainer,
+                CategoryId = categoryId,
+                CategoryName = categoryName,
+                IsFrameworkDeveloper = isFrameworkDeveloper,
+                IsFrameworkContributor = isFrameworkContributor,
+                IsWorkforceManager = isWorkforceManager,
+                IsWorkforceContributor = isWorkforceContributor,
+                IsLocalWorkforceManager = isLocalWorkforceManager,
+                IsNominatedSupervisor = isNominatedSupervisor,
+            };
+
+            var userAccount = new UserAccount
+            {
+                Id = userId,
+                PrimaryEmail = primaryEmail,
+                PasswordHash = passwordHash,
+                FirstName = firstName,
+                LastName = lastName,
+                JobGroupId = jobGroupId,
+                JobGroupName = jobGroupName,
+                ProfessionalRegistrationNumber = professionalRegistrationNumber,
+                ProfileImage = profileImage,
+                Active = active,
+                ResetPasswordId = resetPasswordId,
+                TermsAgreed = termsAgreed,
+                FailedLoginCount = failedLoginCount,
+                HasBeenPromptedForPrn = hasBeenPromptedForPrn,
+                LearningHubAuthId = learningHubAuthId,
+                HasDismissedLhLoginWarning = hasDismissedLhLoginWarning,
+                EmailVerified = emailVerified,
+                DetailsLastChecked = detailsLastChecked,
+            };
+
+            var userCentreDetails = userCentreDetailsId == null
+                ? null
+                : new UserCentreDetails
+                {
+                    Id = userCentreDetailsId.Value,
+                    UserId = userId,
+                    CentreId = centreId,
+                    Email = centreSpecificEmail,
+                    EmailVerified = centreSpecificEmailVerified,
+                };
+
+            return new AdminEntity(adminAccount, userAccount, userCentreDetails);
+        }
+
         public static DelegateUser GetDefaultDelegateUser(
             int id = 2,
             int centreId = 2,
@@ -285,7 +398,6 @@
             string? answer4 = null,
             string? answer5 = null,
             string? answer6 = null,
-            string? aliasId = null,
             bool active = true,
             bool hasBeenPromptedForPrn = false,
             string? professionalRegistrationNumber = null,
@@ -315,7 +427,6 @@
                 Answer4 = answer4,
                 Answer5 = answer5,
                 Answer6 = answer6,
-                AliasId = aliasId,
                 Active = active,
                 HasBeenPromptedForPrn = hasBeenPromptedForPrn,
                 ProfessionalRegistrationNumber = professionalRegistrationNumber,
@@ -478,7 +589,10 @@
             );
         }
 
-        public static void SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(this DbConnection connection, int adminId)
+        public static void SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(
+            this DbConnection connection,
+            int adminId
+        )
         {
             connection.Execute(
                 @"UPDATE AdminAccounts SET
@@ -568,6 +682,33 @@
             await connection.ExecuteAsync(
                 @"UPDATE DelegateAccounts SET OldPassword = @oldPassword WHERE UserID = @userId;",
                 new { oldPassword = "old password", userId = user.Id }
+            );
+        }
+
+        public static async Task InsertUserCentreDetails(
+            this DbConnection connection,
+            int userId,
+            int centreId,
+            string? email,
+            DateTime? emailVerified = null
+        )
+        {
+            await connection.ExecuteAsync(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email, EmailVerified)
+                    VALUES (@userId, @centreId, @email, @emailVerified)",
+                new { userId, centreId, email, emailVerified }
+            );
+        }
+
+        public static (string? email, DateTime? emailVerified) GetEmailAndVerifiedDateFromUserCentreDetails(
+            this DbConnection connection,
+            int userId,
+            int centreId
+        )
+        {
+            return connection.QuerySingle<(string? email, DateTime? emailVerified)>(
+                $"SELECT Email, EmailVerified FROM UserCentreDetails WHERE CentreID = @centreId AND UserID = @userId",
+                new { centreId, userId }
             );
         }
     }

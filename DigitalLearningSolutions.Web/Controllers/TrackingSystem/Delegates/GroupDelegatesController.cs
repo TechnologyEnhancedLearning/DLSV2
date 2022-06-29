@@ -127,12 +127,11 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
         public IActionResult AddDelegate(int groupId, int delegateId)
         {
-            var delegateUser = userService.GetDelegateUserById(delegateId);
             var adminId = User.GetAdminId();
 
             groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(
                 groupId,
-                delegateUser!,
+                delegateId,
                 adminId
             );
 

@@ -24,7 +24,6 @@
             bool active,
             string? professionalRegistrationNumber,
             bool approved = false,
-            string? aliasId = null,
             DateTime? notifyDate = null
         ) : base(
             firstName,
@@ -45,7 +44,6 @@
             Answer4 = answer4;
             Answer5 = answer5;
             Answer6 = answer6;
-            AliasId = aliasId;
             NotifyDate = notifyDate;
             IsSelfRegistered = isSelfRegistered;
         }
@@ -96,7 +94,6 @@
             row.Active!.Value,
             null,
             true,
-            row.AliasId,
             welcomeEmailDate
         ) { }
 
@@ -139,8 +136,6 @@
         public string? Answer5 { get; set; }
 
         public string? Answer6 { get; set; }
-
-        public string? AliasId { get; set; }
 
         public DateTime? NotifyDate { get; set; }
 

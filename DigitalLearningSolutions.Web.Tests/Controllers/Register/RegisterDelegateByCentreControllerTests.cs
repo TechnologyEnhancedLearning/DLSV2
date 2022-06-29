@@ -72,7 +72,6 @@
                 LastName = "User",
                 Centre = duplicateUser.CentreId,
                 PrimaryEmail = duplicateUser.EmailAddress,
-                Alias = "testUser",
             };
             A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
                 .Returns(false);
@@ -98,7 +97,6 @@
                 LastName = "User",
                 Centre = duplicateUser.CentreId + 1,
                 PrimaryEmail = duplicateUser.EmailAddress,
-                Alias = "testUser",
             };
             A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
                 .Returns(true);
@@ -113,66 +111,12 @@
         }
 
         [Test]
-        public void PersonalInformationPost_with_duplicate_alias_for_centre_fails_validation()
-        {
-            // Given
-            const string duplicateAlias = "alias1";
-            var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
-            var model = new PersonalInformationViewModel
-            {
-                FirstName = "Test",
-                LastName = "User",
-                Centre = duplicateUser.CentreId,
-                PrimaryEmail = "unique@email",
-                Alias = duplicateAlias,
-            };
-            A.CallTo(() => userDataService.GetAllDelegateUsersByUsername(duplicateAlias))
-                .Returns(new List<DelegateUser> { duplicateUser });
-
-            // When
-            var result = controller.PersonalInformation(model);
-
-            // Then
-            A.CallTo(() => userDataService.GetAllDelegateUsersByUsername(duplicateAlias)).MustHaveHappened();
-            result.Should().BeViewResult().WithDefaultViewName();
-        }
-
-        [Test]
-        public void PersonalInformationPost_with_duplicate_alias_for_different_centre_is_allowed()
-        {
-            // Given
-            const string duplicateAlias = "alias1";
-            controller.TempData.Set(new DelegateRegistrationByCentreData());
-            var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
-            var model = new PersonalInformationViewModel
-            {
-                FirstName = "Test",
-                LastName = "User",
-                Centre = duplicateUser.CentreId + 1,
-                PrimaryEmail = duplicateUser.EmailAddress,
-                Alias = duplicateAlias,
-            };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
-                .Returns(true);
-            A.CallTo(() => userDataService.GetAllDelegateUsersByUsername(duplicateAlias))
-                .Returns(new List<DelegateUser> { duplicateUser });
-
-            // When
-            var result = controller.PersonalInformation(model);
-
-            // Then
-            A.CallTo(() => userDataService.GetAllDelegateUsersByUsername(duplicateAlias)).MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
-        }
-
-        [Test]
         public void PersonalInformationPost_updates_tempdata_correctly()
         {
             // Given
             const string firstName = "Test";
             const string lastName = "User";
             const string primaryEmail = "test@email.com";
-            const string alias = "testuser";
 
             controller.TempData.Set(new DelegateRegistrationByCentreData());
             var model = new PersonalInformationViewModel
@@ -180,7 +124,6 @@
                 FirstName = firstName,
                 LastName = lastName,
                 PrimaryEmail = primaryEmail,
-                Alias = alias,
                 Centre = 1,
             };
             A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
@@ -194,7 +137,6 @@
             data.FirstName.Should().Be(firstName);
             data.LastName.Should().Be(lastName);
             data.PrimaryEmail.Should().Be(primaryEmail);
-            data.Alias.Should().Be(alias);
         }
 
         [Test]
@@ -383,7 +325,6 @@
                                     d.Answer4 == data.Answer4 &&
                                     d.Answer5 == data.Answer5 &&
                                     d.Answer6 == data.Answer6 &&
-                                    d.AliasId == data.Alias &&
                                     d.Active &&
                                     d.Approved &&
                                     !d.IsSelfRegistered &&

@@ -13,7 +13,6 @@
             @"SELECT
                 cd.CandidateID AS Id,
                 cd.CandidateNumber,
-                cd.AliasID,
                 ct.CentreName,
                 cd.CentreID,
                 cd.DateRegistered,
@@ -148,6 +147,23 @@
             ).SingleOrDefault();
         }
 
+        public IEnumerable<DelegateEntity> GetUnapprovedDelegatesByCentreId(int centreId)
+        {
+            var sql =
+                $@"{BaseDelegateEntitySelectQuery} WHERE da.Approved = 0 AND da.Active = 1 AND da.CentreID = @centreId";
+
+            return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, DelegateEntity>(
+                sql,
+                (delegateAccount, userAccount, userCentreDetails) => new DelegateEntity(
+                    delegateAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { centreId },
+                splitOn: "ID,ID"
+            );
+        }
+
         [Obsolete("New code should use GetDelegateById instead")]
         public DelegateUser? GetDelegateUserById(int id)
         {
@@ -158,29 +174,6 @@
             ).SingleOrDefault();
 
             return user;
-        }
-
-        public List<DelegateUser> GetDelegateUsersByUsername(string username)
-        {
-            var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateUserQuery}
-                    WHERE cd.Active = 1 AND
-                         (cd.CandidateNumber = @username OR cd.EmailAddress = @username)",
-                new { username }
-            ).ToList();
-
-            return users;
-        }
-
-        public List<DelegateUser> GetAllDelegateUsersByUsername(string username)
-        {
-            var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateUserQuery}
-                    WHERE cd.CandidateNumber = @username OR cd.EmailAddress = @username",
-                new { username }
-            ).ToList();
-
-            return users;
         }
 
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
@@ -194,6 +187,7 @@
             return users;
         }
 
+        [Obsolete("New code should use GetUnapprovedDelegatesByCentreId instead")]
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId)
         {
             var users = connection.Query<DelegateUser>(

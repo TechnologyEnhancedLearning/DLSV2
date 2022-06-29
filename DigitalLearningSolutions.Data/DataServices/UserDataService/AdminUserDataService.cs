@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
 
     public partial class UserDataService
@@ -80,6 +80,82 @@
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = aa.CategoryID
                     INNER JOIN Centres AS ce ON ce.CentreId = aa.CentreId";
 
+        private const string BaseAdminEntitySelectQuery =
+            @"SELECT
+                aa.ID,
+                aa.CentreID,
+                ce.CentreName,
+                ce.Active AS CentreActive,
+                aa.IsCentreAdmin,
+                aa.IsReportsViewer,
+                aa.IsSuperAdmin,
+                aa.IsCentreManager,
+                aa.Active,
+                aa.IsContentManager,
+                aa.PublishToAll,
+                aa.ImportOnly,
+                aa.IsContentCreator,
+                aa.IsSupervisor,
+                aa.IsTrainer,
+                aa.CategoryID,
+                CASE
+                    WHEN aa.CategoryID IS NULL THEN 'All'
+                    ELSE cc.CategoryName
+                END AS CategoryName,
+                aa.IsFrameworkDeveloper,
+                aa.IsFrameworkContributor,
+                aa.IsWorkforceManager,
+                aa.IsWorkforceContributor,
+                aa.IsLocalWorkforceManager,
+                aa.IsNominatedSupervisor,
+                aa.UserID,
+                u.ID,
+                u.PrimaryEmail,
+                u.PasswordHash,
+                u.FirstName,
+                u.LastName,
+                u.JobGroupID,
+                jg.JobGroupName,
+                u.ProfessionalRegistrationNumber,
+                u.ProfileImage,
+                u.Active,
+                u.ResetPasswordID,
+                u.TermsAgreed,
+                u.FailedLoginCount,
+                u.HasBeenPromptedForPrn,
+                u.LearningHubAuthID,
+                u.HasDismissedLhLoginWarning,
+                u.EmailVerified,
+                u.DetailsLastChecked,
+                ucd.ID,
+                ucd.UserID,
+                ucd.CentreID,
+                ucd.Email,
+                ucd.EmailVerified
+            FROM AdminAccounts AS aa
+            LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = aa.CategoryID
+            INNER JOIN Centres AS ce ON ce.CentreId = aa.CentreID
+            INNER JOIN Users AS u ON u.ID = aa.UserID
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID AND ucd.CentreId = aa.CentreID
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+
+        public AdminEntity? GetAdminById(int id)
+        {
+            var sql = $@"{BaseAdminEntitySelectQuery} WHERE aa.ID = @id";
+
+            return connection.Query<AdminAccount, UserAccount, UserCentreDetails, AdminEntity>(
+                sql,
+                (adminAccount, userAccount, userCentreDetails) => new AdminEntity(
+                    adminAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { id },
+                splitOn: "ID,ID"
+            ).SingleOrDefault();
+        }
+
+        [Obsolete("New code should use GetAdminById instead")]
         public AdminUser? GetAdminUserById(int id)
         {
             var user = connection.Query<AdminUser>(
@@ -179,9 +255,9 @@
         }
 
         /// <summary>
-        /// When we reactivate an admin, we must ensure the admin permissions are not
-        /// greater than basic levels. Otherwise, a basic admin would be able to
-        /// "create" admins with more permissions than themselves.
+        ///     When we reactivate an admin, we must ensure the admin permissions are not
+        ///     greater than basic levels. Otherwise, a basic admin would be able to
+        ///     "create" admins with more permissions than themselves.
         /// </summary>
         public void ReactivateAdmin(int adminId)
         {

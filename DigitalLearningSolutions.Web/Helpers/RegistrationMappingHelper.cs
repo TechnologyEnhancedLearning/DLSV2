@@ -95,7 +95,6 @@
                 true,
                 data.ProfessionalRegistrationNumber,
                 true,
-                data.Alias,
                 data.WelcomeEmailDate
             );
         }

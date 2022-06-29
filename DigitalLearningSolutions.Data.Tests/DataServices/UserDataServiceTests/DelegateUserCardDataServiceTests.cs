@@ -79,7 +79,6 @@
             userCard.SelfReg.Should().BeFalse();
             userCard.ExternalReg.Should().BeFalse();
             userCard.AdminId.Should().BeNull();
-            userCard.AliasId.Should().BeNull();
             userCard.JobGroupId.Should().Be(1);
         }
 

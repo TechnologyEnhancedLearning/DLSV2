@@ -23,6 +23,7 @@
     [Authorize]
     public class MyAccountController : Controller
     {
+        private const string SwitchCentreReturnUrl = "/Home/Welcome";
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IConfiguration config;
         private readonly IImageResizeService imageResizeService;
@@ -68,8 +69,7 @@
                     delegateAccount
                 );
 
-            var switchCentreReturnUrl =
-                StringHelper.GetLocalRedirectUrl(config, "/Home/Welcome");
+            var switchCentreReturnUrl = StringHelper.GetLocalRedirectUrl(config, SwitchCentreReturnUrl);
 
             var model = new MyAccountViewModel(
                 userEntity.UserAccount,

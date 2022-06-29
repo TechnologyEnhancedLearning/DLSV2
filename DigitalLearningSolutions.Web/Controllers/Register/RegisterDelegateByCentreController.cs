@@ -179,7 +179,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             data.SetWelcomeEmail(model);
             TempData.Set(data);
 
-            return RedirectToAction(data.ShouldSendEmail ? "Summary" : "Password");
+            return RedirectToAction("Password");
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
@@ -295,23 +295,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.PrimaryEmail),
                     "A user with this email is already registered at this centre"
-                );
-            }
-
-            if (model.Alias == null)
-            {
-                return;
-            }
-
-            // TODO HEEDLS-887 Check this behaviour is correct
-            var duplicateUsers = userDataService.GetAllDelegateUsersByUsername(model.Alias)
-                .Where(u => u.CentreId == model.Centre);
-
-            if (duplicateUsers.Count() != 0)
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.Alias),
-                    "A user with this alias is already registered at this centre"
                 );
             }
         }
