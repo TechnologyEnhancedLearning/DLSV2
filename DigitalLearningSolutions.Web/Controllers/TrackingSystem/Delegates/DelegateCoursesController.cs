@@ -59,7 +59,7 @@
                 CourseStatusFilterOptions.IsActive.FilterValue
             );
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
 
             var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId);
@@ -96,7 +96,7 @@
         [Route("AllCourseStatistics")]
         public IActionResult AllCourseStatistics()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
             var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId);
 
@@ -113,7 +113,7 @@
             string? existingFilterString = null
         )
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
             var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFile(
                 centreId,

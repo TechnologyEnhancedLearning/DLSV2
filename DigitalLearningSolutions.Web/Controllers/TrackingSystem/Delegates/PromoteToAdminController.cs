@@ -50,7 +50,7 @@
         [HttpGet]
         public IActionResult Index(int delegateId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
 
             if (delegateUser!.IsAdmin || !delegateUser.IsPasswordSet)

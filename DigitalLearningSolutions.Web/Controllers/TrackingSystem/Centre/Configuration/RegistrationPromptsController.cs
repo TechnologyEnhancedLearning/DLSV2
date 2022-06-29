@@ -45,7 +45,7 @@
         public IActionResult Index()
         {
             TempData.Clear();
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var customPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
@@ -67,7 +67,7 @@
         [Route("{promptNumber:int}/Edit")]
         public IActionResult EditRegistrationPrompt(int promptNumber)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var customPrompt = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId)
                 .CustomPrompts
@@ -276,7 +276,7 @@
             }
 
             if (centreRegistrationPromptsService.AddCentreRegistrationPrompt(
-                User.GetCentreId(),
+                User.GetCentreIdKnownNotNull(),
                 data.SelectPromptViewModel.CustomPromptId!.Value,
                 data.SelectPromptViewModel.Mandatory,
                 data.ConfigureAnswersViewModel.OptionsString
@@ -294,7 +294,7 @@
         public IActionResult RemoveRegistrationPrompt(int promptNumber)
         {
             var delegateWithAnswerCount =
-                userDataService.GetDelegateCountWithAnswerForPrompt(User.GetCentreId(), promptNumber);
+                userDataService.GetDelegateCountWithAnswerForPrompt(User.GetCentreIdKnownNotNull(), promptNumber);
 
             if (delegateWithAnswerCount == 0)
             {
@@ -303,7 +303,7 @@
 
             var promptName =
                 centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
-                    User.GetCentreId(),
+                    User.GetCentreIdKnownNotNull(),
                     promptNumber
                 );
 
@@ -331,7 +331,7 @@
         private IEnumerable<int> GetPromptIdsAlreadyAtUserCentre()
         {
             var existingPrompts =
-                centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(User.GetCentreId());
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(User.GetCentreIdKnownNotNull());
 
             return existingPrompts.CustomPrompts.Select(p => p.PromptId);
         }
@@ -347,7 +347,7 @@
             }
 
             centreRegistrationPromptsService.UpdateCentreRegistrationPrompt(
-                User.GetCentreId(),
+                User.GetCentreIdKnownNotNull(),
                 model.PromptNumber,
                 model.Mandatory,
                 model.OptionsString
@@ -442,7 +442,7 @@
 
         private IActionResult RemoveRegistrationPromptAndRedirect(int promptNumber)
         {
-            centreRegistrationPromptsService.RemoveCentreRegistrationPrompt(User.GetCentreId(), promptNumber);
+            centreRegistrationPromptsService.RemoveCentreRegistrationPrompt(User.GetCentreIdKnownNotNull(), promptNumber);
             return RedirectToAction("Index");
         }
 

@@ -39,7 +39,7 @@
         [Route("DownloadDelegates")]
         public IActionResult DownloadDelegates()
         {
-            var content = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(User.GetCentreId());
+            var content = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(User.GetCentreIdKnownNotNull());
             var fileName = $"DLS Delegates for Bulk Update {DateTime.Today:yyyy-MM-dd}.xlsx";
             return File(
                 content,
@@ -72,7 +72,7 @@
             {
                 var results = delegateUploadFileService.ProcessDelegatesFile(
                     model.DelegatesFile!,
-                    User.GetCentreId(),
+                    User.GetCentreIdKnownNotNull(),
                     model.GetWelcomeEmailDate()
                 );
                 var resultsModel = new BulkUploadResultsViewModel(results);

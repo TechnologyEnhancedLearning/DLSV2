@@ -34,7 +34,7 @@
         {
             period ??= Period.Fortnight;
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var regions = regionDataService.GetRegionsAlphabetical();
 

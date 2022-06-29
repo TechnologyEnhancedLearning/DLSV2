@@ -67,7 +67,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 EmailDelegateFilterCookieName
             );
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreId());
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreIdKnownNotNull());
             var delegateUsers = GetDelegateUserCards();
 
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
@@ -119,7 +119,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     EmailDelegateFilterCookieName
                 );
                 var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-                var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreId());
+                var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreIdKnownNotNull());
 
                 var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
                 var availableFilters = EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterModels(
@@ -155,7 +155,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         public IActionResult AllEmailDelegateItems(IEnumerable<int> selectedIds)
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreId());
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreIdKnownNotNull());
             var delegateUsers = GetDelegateUserCards();
 
             var model = new AllEmailDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts, selectedIds);
@@ -165,7 +165,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
         private IEnumerable<DelegateUserCard> GetDelegateUserCards()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             return userService.GetDelegateUserCardsForWelcomeEmail(centreId)
                 .OrderByDescending(card => card.DateRegistered);
         }
