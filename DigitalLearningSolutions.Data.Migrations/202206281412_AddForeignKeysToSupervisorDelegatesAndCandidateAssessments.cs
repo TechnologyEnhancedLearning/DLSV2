@@ -46,8 +46,11 @@
             Rename.Column("CandidateId_deprecated").OnTable("SupervisorDelegates").To("CandidateId");
             Rename.Column("CandidateId_deprecated").OnTable("CandidateAssessments").To("CandidateId");
 
-            // this will fail if there is null data, what do?
-            Alter.Table("SupervisorDelegates").AlterColumn("CandidateId").AsInt32().Nullable();
+            Alter.Table("SupervisorDelegates").AlterColumn("CandidateId").AsInt32().Nullable()
+                .ForeignKey("Candidates", "DelegateID");
+
+            Alter.Table("CandidateAssessments").AlterColumn("CandidateId").AsInt32().Nullable()
+                .ForeignKey("Candidates", "DelegateID");
         }
     }
 }

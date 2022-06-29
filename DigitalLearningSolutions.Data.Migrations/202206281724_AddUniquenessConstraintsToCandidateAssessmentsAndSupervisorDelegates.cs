@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Migrations
 {
     using FluentMigrator;
+    using FluentMigrator.SqlServer;
 
     [Migration(202206281724)]
     public class AddUniquenessConstraintsToCandidateAssessmentsAndSupervisorDelegates : Migration
@@ -9,6 +10,9 @@
         {
             Create.UniqueConstraint().OnTable("CandidateAssessments").Columns("DelegateUserId", "SelfAssessmentId");
             Create.UniqueConstraint().OnTable("SupervisorDelegates").Columns("SupervisorAdminId", "DelegateUserId");
+
+            Create.Index().OnTable("").WithOptions().UniqueNullsNotDistinct().OnColumn("DelegateUserId").Ascending()
+                .OnColumn("SelfAssessmentId").Ascending();
         }
 
         public override void Down()
