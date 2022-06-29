@@ -47,22 +47,6 @@
         }
 
         [Test]
-        public void SetPasswordByAdminId_should_set_password_correctly()
-        {
-            using var transaction = new TransactionScope();
-            // Given
-            const string? password = "hashedPassword";
-            const int adminId = 1;
-
-            // When
-            passwordDataService.SetPasswordByAdminId(adminId, password);
-            var result = userDataService.GetAdminUserById(1)!.Password;
-
-            // Then
-            result.Should().Be(password);
-        }
-
-        [Test]
         public async Task SetPasswordByUserIdAsync_sets_password_for_matching_user()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);

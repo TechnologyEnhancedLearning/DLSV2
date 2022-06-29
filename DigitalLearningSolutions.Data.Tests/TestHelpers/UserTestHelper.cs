@@ -595,11 +595,11 @@
         )
         {
             connection.Execute(
-                @"UPDATE AdminUsers SET
+                @"UPDATE AdminAccounts SET
                         Active = 0,
                         IsCentreManager = 1,
-                        UserAdmin = 1
-                    WHERE AdminID = @adminId",
+                        IsSuperAdmin = 1
+                    WHERE ID = @adminId",
                 new { adminId }
             );
         }

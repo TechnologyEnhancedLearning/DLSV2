@@ -372,21 +372,20 @@
 
             // Given
             var registrationModel =
-                RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel(
+                RegistrationModelTestHelper.GetDefaultCentreManagerAccountRegistrationModel(
                     categoryId: 1
                 );
 
             // When
-            var id = service.RegisterAdmin(registrationModel, 4046);
+            var id = service.RegisterAdmin(registrationModel);
 
             // Then
             var user = userDataService.GetAdminUserById(id)!;
             using (new AssertionScope())
             {
-                user.CentreId.Should().Be(registrationModel.Centre);
+                user.CentreId.Should().Be(registrationModel.CentreId);
                 user.IsCentreAdmin.Should().Be(registrationModel.IsCentreAdmin);
                 user.IsCentreManager.Should().Be(registrationModel.IsCentreManager);
-                user.Approved.Should().Be(registrationModel.Approved);
                 user.Active.Should().Be(registrationModel.Active);
                 user.IsContentCreator.Should().Be(registrationModel.IsContentCreator);
                 user.IsContentManager.Should().Be(registrationModel.IsContentManager);
@@ -404,12 +403,12 @@
 
             // Given
             var registrationModel =
-                RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel(
+                RegistrationModelTestHelper.GetDefaultCentreManagerAccountRegistrationModel(
                     categoryId: 1
                 );
 
             // When
-            var id = service.RegisterAdmin(registrationModel, 4046);
+            var id = service.RegisterAdmin(registrationModel);
 
             // Then
             var user = userDataService.GetAdminUserById(id)!;

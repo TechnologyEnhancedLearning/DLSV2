@@ -213,7 +213,7 @@
         }
 
         [Test]
-        public void ReactivateAdminUser_activates_user_and_resets_admin_permissions()
+        public void ReactivateAdmin_activates_user_and_resets_admin_permissions()
         {
             using var transaction = new TransactionScope();
             // Given
@@ -221,19 +221,19 @@
             connection.SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(adminId);
 
             // When
-            var deactivatedAdmin = userDataService.GetAdminUserById(adminId)!;
+            var deactivatedAdmin = userDataService.GetAdminById(adminId)!.AdminAccount;
             userDataService.ReactivateAdmin(adminId);
-            var reactivatedAdmin = userDataService.GetAdminUserById(adminId)!;
+            var reactivatedAdmin = userDataService.GetAdminById(adminId)!.AdminAccount;
 
             // Then
             using (new AssertionScope())
             {
                 deactivatedAdmin.Active.Should().Be(false);
                 deactivatedAdmin.IsCentreManager.Should().Be(true);
-                deactivatedAdmin.IsUserAdmin.Should().Be(true);
+                deactivatedAdmin.IsSuperAdmin.Should().Be(true);
                 reactivatedAdmin.Active.Should().Be(true);
                 reactivatedAdmin.IsCentreManager.Should().Be(false);
-                reactivatedAdmin.IsUserAdmin.Should().Be(false);
+                reactivatedAdmin.IsSuperAdmin.Should().Be(false);
             }
         }
 
