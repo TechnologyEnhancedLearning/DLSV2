@@ -11,7 +11,7 @@
 
     public partial class GroupsServiceTests
     {
-        private const int centreId = 1;
+        private const int CentreId = 1;
 
         [Test]
         public void AddCourseToGroup_adds_new_group_customisations_record()
@@ -30,7 +30,7 @@
                 adminId,
                 true,
                 adminId,
-                centreId
+                CentreId
             );
 
             // Then
@@ -63,7 +63,7 @@
                 adminId,
                 true,
                 adminId,
-                centreId
+                CentreId
             );
 
             // Then
@@ -109,7 +109,7 @@
                 adminId,
                 true,
                 adminId,
-                centreId
+                CentreId
             );
 
             // Then
@@ -155,7 +155,7 @@
                 adminId,
                 true,
                 adminId,
-                centreId
+                CentreId
             );
 
             // Then
@@ -200,7 +200,7 @@
                 adminId,
                 true,
                 null,
-                centreId
+                CentreId
             );
 
             // Then
@@ -246,7 +246,7 @@
                 adminId,
                 true,
                 supervisorId,
-                centreId
+                CentreId
             );
 
             // Then
@@ -294,7 +294,7 @@
                 adminId,
                 true,
                 adminId,
-                centreId
+                CentreId
             );
 
             // Then
@@ -344,7 +344,7 @@
                 adminId,
                 true,
                 adminId,
-                centreId
+                CentreId
             );
 
             // Then
@@ -391,7 +391,7 @@
                 adminId,
                 true,
                 supervisorId,
-                centreId
+                CentreId
             );
 
             // Then
@@ -429,7 +429,7 @@
                 1,
                 true,
                 1,
-                centreId
+                CentreId
             );
 
             // Then
@@ -469,7 +469,7 @@
                 1,
                 true,
                 1,
-                centreId
+                CentreId
             );
 
             // Then
@@ -504,7 +504,7 @@
                 1,
                 true,
                 1,
-                centreId
+                CentreId
             );
 
             // Then
@@ -541,7 +541,7 @@
                 1,
                 true,
                 1,
-                centreId
+                CentreId
             );
 
             // Then
@@ -590,7 +590,7 @@
                 1,
                 true,
                 1,
-                centreId
+                CentreId
             );
 
             // Then
@@ -627,7 +627,7 @@
                     A<int?>._
                 )
             ).Returns(groupCustomisationId);
-            A.CallTo(() => groupsDataService.GetGroupCourseIfVisibleToCentre(groupCustomisationId, centreId))
+            A.CallTo(() => groupsDataService.GetGroupCourseIfVisibleToCentre(groupCustomisationId, CentreId))
                 .Returns(null);
 
             // Then
@@ -639,7 +639,7 @@
                     adminId,
                     true,
                     adminId,
-                    centreId
+                    CentreId
                 )
             );
         }

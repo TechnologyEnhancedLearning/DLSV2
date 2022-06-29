@@ -29,8 +29,7 @@
 
         public string EmailForCentreNotifications => CentreEmailHelper.GetEmailForCentreNotifications(
             UserAccount.PrimaryEmail,
-            UserCentreDetails?.Email,
-            UserCentreDetails?.EmailVerified
+            UserCentreDetails?.Email
         );
     }
 }

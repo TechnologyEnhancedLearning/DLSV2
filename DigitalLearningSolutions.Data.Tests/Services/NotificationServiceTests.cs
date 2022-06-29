@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -39,6 +40,103 @@
                 featureManager,
                 userService
             );
+
+            A.CallTo(() => configuration["AppRootPath"]).Returns("https://new-tracking-system.com");
+            A.CallTo(() => configuration["CurrentSystemBaseUrl"])
+                .Returns("https://old-tracking-system.com");
+        }
+
+        [Test]
+        public void Trying_to_send_unlock_request_with_null_unlock_data_should_throw_an_exception()
+        {
+            // Given
+            A.CallTo(() => notificationDataService.GetUnlockData(A<int>._)).Returns(null);
+
+            // Then
+            Assert.ThrowsAsync<NotificationDataException>(async () => await notificationService.SendUnlockRequest(1));
+        }
+
+        [Test]
+        public void Throws_an_exception_when_tracking_system_base_url_is_null()
+        {
+            // Given
+            A.CallTo(() => featureManager.IsEnabledAsync(A<string>._)).Returns(false);
+            A.CallTo(() => configuration["CurrentSystemBaseUrl"]).Returns("");
+
+            // Then
+            Assert.ThrowsAsync<ConfigValueMissingException>(async () => await notificationService.SendUnlockRequest(1));
+        }
+
+        [Test]
+        public async Task Trying_to_send_unlock_request_sends_email()
+        {
+            // Given
+            A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
+                .Returns(true);
+
+            // When
+            await notificationService.SendUnlockRequest(1);
+
+            // Then
+            A.CallTo(
+                    () =>
+                        emailService.SendEmail(A<Email>._)
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public async Task Trying_to_send_unlock_makes_request_to_feature_manager_to_get_correct_url()
+        {
+            // Given
+            A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
+                .Returns(false);
+
+            // When
+            await notificationService.SendUnlockRequest(1);
+
+            // Then
+            A.CallTo(() => featureManager.IsEnabledAsync(A<string>._)).MustHaveHappened();
+        }
+
+        [Test]
+        public async Task Trying_to_send_unlock_request_send_email_with_correct_old_url()
+        {
+            // Given
+            A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
+                .Returns(false);
+
+            // When
+            await notificationService.SendUnlockRequest(1);
+
+            //Then
+            A.CallTo(
+                    () =>
+                        emailService.SendEmail(
+                            A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://old-tracking-system.com/Tracking/CourseDelegates"))
+                        )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public async Task Trying_to_send_unlock_request_send_email_with_correct_new_url()
+        {
+            // Given
+            A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
+                .Returns(true);
+
+            // When
+            await notificationService.SendUnlockRequest(1);
+
+            // Then
+            A.CallTo(
+                    () =>
+                        emailService.SendEmail(
+                            A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://new-tracking-system.com/TrackingSystem/Delegates/CourseDelegates"))
+                        )
+                )
+                .MustHaveHappened();
         }
 
         [Test]

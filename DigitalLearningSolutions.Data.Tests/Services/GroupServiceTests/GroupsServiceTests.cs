@@ -441,20 +441,23 @@
         {
             // Given
             const int groupId = 1;
+            const int delegateId = 2;
             const int addedByAdminId = 2;
             var dateTime = DateTime.UtcNow;
 
             GivenCurrentTimeIs(dateTime);
-            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(A<int>._)).Returns(new List<GroupCourse>());
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateId))
+                .Returns(UserTestHelper.GetDefaultDelegateUser(centreId: CentreId));
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(CentreId)).Returns(new List<GroupCourse>());
             A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
                 .DoesNothing();
 
             // When
-            groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(groupId, 2, addedByAdminId);
+            groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(groupId, delegateId, addedByAdminId);
 
             // Then
-            A.CallTo(() => groupsDataService.AddDelegateToGroup(2, 1, dateTime, 0)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(2)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.AddDelegateToGroup(delegateId, groupId, dateTime, 0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(CentreId)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -800,7 +803,7 @@
                 .Returns(new List<GroupDelegate> { reusableGroupDelegate });
 
             A.CallTo(
-                    () => groupsDataService.GetGroupCourseIfVisibleToCentre(groupCourse.GroupCustomisationId, centreId)
+                    () => groupsDataService.GetGroupCourseIfVisibleToCentre(groupCourse.GroupCustomisationId, CentreId)
                 )
                 .Returns(groupCourse);
         }

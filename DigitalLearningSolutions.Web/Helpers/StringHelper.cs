@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System;
-    using System.Web;
     using DigitalLearningSolutions.Data.Extensions;
     using Microsoft.Extensions.Configuration;
 
@@ -15,7 +14,7 @@
         public static string GetLocalRedirectUrl(IConfiguration config, string basicUrl)
         {
             var applicationPath = new Uri(config.GetAppRootPath()).AbsolutePath.TrimEnd('/');
-            return HttpUtility.UrlEncode(applicationPath + basicUrl);
+            return applicationPath + basicUrl;
         }
     }
 }

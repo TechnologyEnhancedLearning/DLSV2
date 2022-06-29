@@ -28,12 +28,9 @@
 
         public string? CentreEmail { get; set; }
 
-        public DateTime? CentreEmailVerified { get; set; }
-
         public string EmailForCentreNotifications => CentreEmailHelper.GetEmailForCentreNotifications(
             PrimaryEmail,
-            CentreEmail,
-            CentreEmailVerified
+            CentreEmail
         );
 
         public override string SearchableName
