@@ -34,7 +34,6 @@
                 Answer5 = null,
                 Answer6 = null,
                 Active = true,
-                AliasId = null,
                 JobGroupId = 1,
             },
             new DelegateUserCard
@@ -50,7 +49,6 @@
                 Answer5 = null,
                 Answer6 = null,
                 Active = true,
-                AliasId = null,
                 JobGroupId = 1,
             },
         };

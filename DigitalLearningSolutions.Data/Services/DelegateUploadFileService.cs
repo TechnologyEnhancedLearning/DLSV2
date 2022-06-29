@@ -130,7 +130,6 @@ namespace DigitalLearningSolutions.Data.Services
                 : null;
         }
 
-        // TODO HEEDLS-887 Check the removal of checking for other delegates with matching AliasID is correct
         private void ProcessPotentialUpdate(int centreId, DelegateTableRow delegateRow, DelegateUser delegateUser)
         {
             if (delegateRow.Email != delegateUser.EmailAddress &&
@@ -282,7 +281,6 @@ namespace DigitalLearningSolutions.Data.Services
                 "LastName",
                 "FirstName",
                 "DelegateID",
-                "AliasID",
                 "JobGroupID",
                 "Answer1",
                 "Answer2",

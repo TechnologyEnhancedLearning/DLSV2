@@ -86,35 +86,33 @@
                 headers[0].Should().Be("LastName");
                 headers[1].Should().Be("FirstName");
                 headers[2].Should().Be("DelegateID");
-                headers[3].Should().Be("AliasID");
-                headers[4].Should().Be("JobGroupID");
-                headers[5].Should().Be("Answer1");
-                headers[6].Should().Be("Answer2");
-                headers[7].Should().Be("Answer3");
-                headers[8].Should().Be("Answer4");
-                headers[9].Should().Be("Answer5");
-                headers[10].Should().Be("Answer6");
-                headers[11].Should().Be("Active");
-                headers[12].Should().Be("EmailAddress");
-                headers[13].Should().Be("HasPRN");
-                headers[14].Should().Be("PRN");
+                headers[3].Should().Be("JobGroupID");
+                headers[4].Should().Be("Answer1");
+                headers[5].Should().Be("Answer2");
+                headers[6].Should().Be("Answer3");
+                headers[7].Should().Be("Answer4");
+                headers[8].Should().Be("Answer5");
+                headers[9].Should().Be("Answer6");
+                headers[10].Should().Be("Active");
+                headers[11].Should().Be("EmailAddress");
+                headers[12].Should().Be("HasPRN");
+                headers[13].Should().Be("PRN");
                 table.RowCount().Should().Be(4);
                 var row = table.Row(2);
                 row.Cell(1).GetString().Should().Be("Person");
                 row.Cell(2).GetString().Should().Be("Fake");
                 row.Cell(3).GetString().Should().Be("TU67");
-                row.Cell(4).GetString().Should().BeEmpty();
-                row.Cell(5).GetString().Should().Be("1");
+                row.Cell(4).GetString().Should().Be("1");
+                row.Cell(5).GetString().Should().BeEmpty();
                 row.Cell(6).GetString().Should().BeEmpty();
                 row.Cell(7).GetString().Should().BeEmpty();
                 row.Cell(8).GetString().Should().BeEmpty();
                 row.Cell(9).GetString().Should().BeEmpty();
                 row.Cell(10).GetString().Should().BeEmpty();
-                row.Cell(11).GetString().Should().BeEmpty();
-                row.Cell(12).GetString().Should().Be("True");
-                row.Cell(13).GetString().Should().Be("Test@Test");
-                row.Cell(14).GetString().Should().Be("False");
-                row.Cell(15).GetString().Should().BeEmpty();
+                row.Cell(11).GetString().Should().Be("True");
+                row.Cell(12).GetString().Should().Be("Test@Test");
+                row.Cell(13).GetString().Should().Be("False");
+                row.Cell(14).GetString().Should().BeEmpty();
             }
         }
 
@@ -183,13 +181,6 @@
         {
             var row = GetSampleDelegateDataRow(emailAddress: $"test@{new string('x', 250)}");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongEmail);
-        }
-
-        [Test]
-        public void ProcessDelegateTable_has_too_long_alias_id_error_for_too_long_alias_id()
-        {
-            var row = GetSampleDelegateDataRow(aliasId: new string('x', 251));
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAliasId);
         }
 
         [Test]
@@ -371,11 +362,11 @@
         }
 
         [Test]
-        public void ProcessDelegateTable_calls_register_if_delegateId_and_aliasId_are_empty_email_is_unused()
+        public void ProcessDelegateTable_calls_register_if_delegateId_is_empty_and_email_is_unused()
         {
             // Given
             const string delegateId = "DELEGATE";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: string.Empty);
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
@@ -522,8 +513,7 @@
         {
             // Given
             const string delegateId = "DELEGATE";
-            const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
@@ -553,7 +543,6 @@
                                 model.Answer5 == row.Answer5 &&
                                 model.Answer6 == row.Answer6 &&
                                 model.PrimaryEmail == row.EmailAddress &&
-                                model.AliasId == aliasId &&
                                 model.NotifyDate == null
                         ),
                         false
@@ -570,8 +559,7 @@
             // Given
             var welcomeEmailDate = new DateTime(3000, 01, 01);
             const string delegateId = "DELEGATE";
-            const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
@@ -601,7 +589,6 @@
                                 model.Answer5 == row.Answer5 &&
                                 model.Answer6 == row.Answer6 &&
                                 model.PrimaryEmail == row.EmailAddress &&
-                                model.AliasId == aliasId &&
                                 model.NotifyDate == welcomeEmailDate
                         ),
                         false
@@ -618,8 +605,7 @@
             // Given
             var welcomeEmailDate = new DateTime(3000, 01, 01);
             const string delegateId = "DELEGATE";
-            const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
@@ -661,8 +647,7 @@
         {
             // Given
             const string delegateId = "DELEGATE";
-            const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
@@ -709,8 +694,7 @@
         )
         {
             // Given
-            const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
@@ -765,9 +749,8 @@
         {
             // Given
             const string candidateNumber = "DELEGATE";
-            const string aliasId = "ALIAS";
             const int newDelegateRecordId = 5;
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
             var supervisorDelegates = new List<SupervisorDelegate>
                 { new SupervisorDelegate { ID = 1 }, new SupervisorDelegate { ID = 2 } };
@@ -964,8 +947,7 @@
         {
             // Given
             const string delegateId = "DELEGATE";
-            const string aliasId = "ALIAS";
-            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, aliasId: aliasId);
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row, row, row, row, row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(
                 firstName: row.FirstName,
@@ -974,8 +956,7 @@
                 answer1: row.Answer1,
                 answer2: row.Answer2,
                 active: true,
-                jobGroupId: 1,
-                aliasId: aliasId
+                jobGroupId: 1
             );
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
@@ -994,7 +975,7 @@
         {
             // Given
             const string delegateId = "DELEGATE";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: string.Empty);
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row, row, row, row, row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
@@ -1021,7 +1002,7 @@
             const string updateDelegateId = "UPDATE ME";
             const string skipDelegateId = "SKIP ME";
             var errorRow = GetSampleDelegateDataRow(jobGroupId: string.Empty);
-            var registerRow = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: string.Empty);
+            var registerRow = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var updateRow = GetSampleDelegateDataRow(candidateNumber: updateDelegateId);
             var skipRow = GetSampleDelegateDataRow(candidateNumber: skipDelegateId);
             var data = new List<DelegateDataRow>
@@ -1120,7 +1101,6 @@
             string answer5 = "",
             string answer6 = "",
             string active = "True",
-            string aliasId = "",
             string jobGroupId = "1",
             bool? hasPrn = null,
             string? prn = null
@@ -1138,7 +1118,6 @@
                 answer4,
                 answer5,
                 answer6,
-                aliasId,
                 emailAddress,
                 hasPrn,
                 prn
@@ -1221,7 +1200,6 @@
                 string answer4,
                 string answer5,
                 string answer6,
-                string aliasId,
                 string emailAddress,
                 bool? hasPrn,
                 string? prn
@@ -1238,7 +1216,6 @@
                 Answer4 = answer4;
                 Answer5 = answer5;
                 Answer6 = answer6;
-                AliasID = aliasId;
                 EmailAddress = emailAddress;
                 HasPRN = hasPrn;
                 PRN = prn;
@@ -1255,7 +1232,6 @@
             public string Answer4 { get; }
             public string Answer5 { get; }
             public string Answer6 { get; }
-            public string AliasID { get; }
             public string EmailAddress { get; }
             public bool? HasPRN { get; }
             public string? PRN { get; }

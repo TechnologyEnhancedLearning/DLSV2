@@ -13,7 +13,6 @@
             @"SELECT
                 cd.CandidateID AS Id,
                 cd.CandidateNumber,
-                cd.AliasID,
                 ct.CentreName,
                 cd.CentreID,
                 cd.DateRegistered,

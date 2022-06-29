@@ -15,7 +15,6 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
-        public string? AliasId { get; set; }
 
         /// <summary>
         ///     This signifies that the user has either seen the PRN fields themselves

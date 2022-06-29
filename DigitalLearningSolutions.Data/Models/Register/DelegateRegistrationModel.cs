@@ -24,8 +24,7 @@
             bool active,
             string? professionalRegistrationNumber,
             bool approved = false,
-            DateTime? notifyDate = null,
-            string? aliasId = null
+            DateTime? notifyDate = null
         ) : base(
             firstName,
             lastName,
@@ -45,7 +44,6 @@
             Answer4 = answer4;
             Answer5 = answer5;
             Answer6 = answer6;
-            AliasId = aliasId;
             NotifyDate = notifyDate;
             IsSelfRegistered = isSelfRegistered;
         }
@@ -96,8 +94,7 @@
             row.Active!.Value,
             null,
             true,
-            welcomeEmailDate,
-            row.AliasId
+            welcomeEmailDate
         ) { }
 
         public DelegateRegistrationModel(
@@ -139,9 +136,6 @@
         public string? Answer5 { get; set; }
 
         public string? Answer6 { get; set; }
-
-        // TODO HEEDLS-980 Remove this when Alias is removed from delegate upload
-        public string? AliasId { get; set; }
 
         public DateTime? NotifyDate { get; set; }
 
