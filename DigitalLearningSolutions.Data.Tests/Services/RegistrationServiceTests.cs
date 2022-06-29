@@ -1323,7 +1323,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(
                     () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
                         A<int>._,
-                        A<List<string>>._
+                        A<List<string?>>._
                     )
                 )
                 .Returns(new List<SupervisorDelegate>());
