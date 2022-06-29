@@ -279,14 +279,5 @@
                 new { userId }
             );
         }
-
-        public AdminAccount? GetAdminAccountById(int id)
-        {
-            return connection.Query<AdminAccount>(
-                @$"{BaseSelectAdminAccountQuery}
-                    WHERE aa.ID = @id",
-                new { id }
-            ).SingleOrDefault();
-        }
     }
 }

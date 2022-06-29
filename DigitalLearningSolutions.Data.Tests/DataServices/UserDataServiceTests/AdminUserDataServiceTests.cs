@@ -221,9 +221,9 @@
             connection.SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(adminId);
 
             // When
-            var deactivatedAdmin = userDataService.GetAdminAccountById(adminId)!;
+            var deactivatedAdmin = userDataService.GetAdminById(adminId)!.AdminAccount;
             userDataService.ReactivateAdmin(adminId);
-            var reactivatedAdmin = userDataService.GetAdminAccountById(adminId)!;
+            var reactivatedAdmin = userDataService.GetAdminById(adminId)!.AdminAccount;
 
             // Then
             using (new AssertionScope())
