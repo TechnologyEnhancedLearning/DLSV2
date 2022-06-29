@@ -8,8 +8,6 @@
     {
         void SetPasswordByCandidateNumber(string candidateNumber, string passwordHash);
 
-        void SetPasswordByAdminId(int adminId, string passwordHash);
-
         Task SetPasswordByUserIdAsync(int userId, string passwordHash);
 
         Task SetOldPasswordsToNullByUserIdAsync(int userId);
@@ -33,16 +31,6 @@
                         INNER JOIN DelegateAccounts AS d ON d.UserID = Users.ID
                         WHERE d.CandidateNumber = @candidateNumber",
                 new { passwordHash, candidateNumber }
-            );
-        }
-
-        public void SetPasswordByAdminId(int adminId, string passwordHash)
-        {
-            connection.Query(
-                @"UPDATE AdminUsers SET
-                        Password = @passwordHash
-                    WHERE AdminID = @adminID",
-                new { passwordHash, adminId }
             );
         }
 

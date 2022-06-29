@@ -22,7 +22,6 @@
             delegateApprovalsController = new DelegateApprovalsController(delegateApprovalsService, userDataService)
                 .WithDefaultContext()
                 .WithMockUser(true);
-            ;
         }
 
         [Test]

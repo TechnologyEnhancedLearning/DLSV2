@@ -48,6 +48,38 @@
             INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
             LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID";
 
+        private const string BaseSelectAdminAccountQuery =
+            @"SELECT aa.ID,
+                        aa.CentreID,
+                        ce.CentreName,
+                        ce.Active AS CentreActive,
+                        aa.IsCentreAdmin,
+                        aa.IsReportsViewer,
+                        aa.IsSuperAdmin,
+                        aa.IsCentreManager,
+                        aa.Active,
+                        aa.IsContentManager,
+                        aa.PublishToAll,
+                        aa.ImportOnly,
+                        aa.IsContentCreator,
+                        aa.IsSupervisor,
+                        aa.IsTrainer,
+                        aa.CategoryID,
+                        CASE
+                            WHEN aa.CategoryID IS NULL THEN 'All'
+                            ELSE cc.CategoryName
+                        END AS CategoryName,
+                        aa.IsFrameworkDeveloper,
+                        aa.IsFrameworkContributor,
+                        aa.IsWorkforceManager,
+                        aa.IsWorkforceContributor,
+                        aa.IsLocalWorkforceManager,
+                        aa.IsNominatedSupervisor,
+                        aa.UserID
+                    FROM AdminAccounts AS aa
+                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = aa.CategoryID
+                    INNER JOIN Centres AS ce ON ce.CentreId = aa.CentreId";
+
         private const string BaseAdminEntitySelectQuery =
             @"SELECT
                 aa.ID,
@@ -123,6 +155,21 @@
             ).SingleOrDefault();
         }
 
+        public IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId)
+        {
+            var sql = $@"{BaseAdminEntitySelectQuery} WHERE aa.centreID = @centreId AND aa.Active = 1 AND u.Active = 1";
+
+            return connection.Query<AdminAccount, UserAccount, UserCentreDetails, AdminEntity>(
+                sql,
+                (adminAccount, userAccount, userCentreDetails) => new AdminEntity(
+                    adminAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { centreId }
+            );
+        }
+
         [Obsolete("New code should use GetAdminById instead")]
         public AdminUser? GetAdminUserById(int id)
         {
@@ -144,6 +191,7 @@
             ).SingleOrDefault();
         }
 
+        [Obsolete("New code should use GetAdminsByCentreId instead")]
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
             var users = connection.Query<AdminUser>(
@@ -230,11 +278,11 @@
         public void ReactivateAdmin(int adminId)
         {
             connection.Execute(
-                @"UPDATE AdminUsers SET
+                @"UPDATE AdminAccounts SET
                         Active = 1,
                         IsCentreManager = 0,
-                        UserAdmin = 0
-                    WHERE AdminID = @adminId",
+                        IsSuperAdmin = 0
+                    WHERE ID = @adminId",
                 new { adminId }
             );
         }
@@ -242,36 +290,7 @@
         public IEnumerable<AdminAccount> GetAdminAccountsByUserId(int userId)
         {
             return connection.Query<AdminAccount>(
-                @"SELECT aa.ID,
-                        aa.CentreID,
-                        ce.CentreName,
-                        ce.Active AS CentreActive,
-                        aa.IsCentreAdmin,
-                        aa.IsReportsViewer,
-                        aa.IsSuperAdmin,
-                        aa.IsCentreManager,
-                        aa.Active,
-                        aa.IsContentManager,
-                        aa.PublishToAll,
-                        aa.ImportOnly,
-                        aa.IsContentCreator,
-                        aa.IsSupervisor,
-                        aa.IsTrainer,
-                        aa.CategoryID,
-                        CASE
-                            WHEN aa.CategoryID IS NULL THEN 'All'
-                            ELSE cc.CategoryName
-                        END AS CategoryName,
-                        aa.IsFrameworkDeveloper,
-                        aa.IsFrameworkContributor,
-                        aa.IsWorkforceManager,
-                        aa.IsWorkforceContributor,
-                        aa.IsLocalWorkforceManager,
-                        aa.IsNominatedSupervisor,
-                        aa.UserID
-                    FROM AdminAccounts AS aa
-                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = aa.CategoryID
-                    INNER JOIN Centres AS ce ON ce.CentreId = aa.CentreId
+                @$"{BaseSelectAdminAccountQuery}
                     WHERE aa.UserID = @userId",
                 new { userId }
             );

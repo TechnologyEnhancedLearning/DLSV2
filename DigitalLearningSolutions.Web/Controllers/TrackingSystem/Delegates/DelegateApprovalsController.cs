@@ -37,7 +37,7 @@
 
             var delegates = delegateApprovalsService
                 .GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre(centreId)
-                .Select(d => new UnapprovedDelegate(d.delegateUser, d.prompts));
+                .Select(d => new UnapprovedDelegate(d.delegateEntity, d.prompts));
 
             var model = new DelegateApprovalsViewModel(delegates);
             return View(model);
@@ -65,8 +65,8 @@
         [Route("/TrackingSystem/Delegates/Reject")]
         public IActionResult DelegateRejectionPage(int delegateId)
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId);
-            var model = new RejectDelegateViewModel(delegateUser);
+            var delegateEntity = userDataService.GetDelegateById(delegateId);
+            var model = new RejectDelegateViewModel(delegateEntity);
             return View(model);
         }
 

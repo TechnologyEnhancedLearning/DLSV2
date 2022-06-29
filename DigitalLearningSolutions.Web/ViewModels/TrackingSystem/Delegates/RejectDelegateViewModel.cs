@@ -6,15 +6,15 @@
 
     public class RejectDelegateViewModel
     {
-        public RejectDelegateViewModel(DelegateUser delegateUser)
+        public RejectDelegateViewModel(DelegateEntity delegateEntity)
         {
-            Id = delegateUser.Id;
-            FullName = delegateUser.FirstName + " " + delegateUser.LastName;
-            Email = delegateUser.EmailAddress;
-            DateRegistered = delegateUser.DateRegistered;
+            Id = delegateEntity.DelegateAccount.Id;
+            FullName = delegateEntity.UserAccount.FirstName + " " + delegateEntity.UserAccount.LastName;
+            Email = delegateEntity.EmailForCentreNotifications;
+            DateRegistered = delegateEntity.DelegateAccount.DateRegistered;
             ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
-                delegateUser.HasBeenPromptedForPrn,
-                delegateUser.ProfessionalRegistrationNumber
+                delegateEntity.UserAccount.HasBeenPromptedForPrn,
+                delegateEntity.UserAccount.ProfessionalRegistrationNumber
             );
         }
 

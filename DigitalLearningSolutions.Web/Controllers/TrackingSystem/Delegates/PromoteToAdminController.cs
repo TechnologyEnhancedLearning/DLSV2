@@ -31,13 +31,15 @@
         private readonly ILogger<PromoteToAdminController> logger;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public PromoteToAdminController(
             IUserDataService userDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
             ICentreContractAdminUsageService centreContractAdminUsageService,
             IRegistrationService registrationService,
-            ILogger<PromoteToAdminController> logger
+            ILogger<PromoteToAdminController> logger,
+            IUserService userService
         )
         {
             this.userDataService = userDataService;
@@ -45,15 +47,18 @@
             this.centreContractAdminUsageService = centreContractAdminUsageService;
             this.registrationService = registrationService;
             this.logger = logger;
+            this.userService = userService;
         }
 
         [HttpGet]
         public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreIdKnownNotNull();
-            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
+            var userEntity = userService.GetUserById(userId);
 
-            if (delegateUser!.IsAdmin || !delegateUser.IsPasswordSet)
+            if (userEntity!.CentreAccountSetsByCentreId[centreId].CanLogIntoAdminAccount
+                || string.IsNullOrWhiteSpace(userEntity.UserAccount.PasswordHash))
             {
                 return NotFound();
             }
@@ -62,7 +67,15 @@
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
             var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
-            var model = new PromoteToAdminViewModel(delegateUser, centreId, categories, numberOfAdmins);
+            var model = new PromoteToAdminViewModel(
+                userEntity.UserAccount.FirstName,
+                userEntity.UserAccount.LastName,
+                delegateId,
+                userId,
+                centreId,
+                categories,
+                numberOfAdmins
+            );
             return View(model);
         }
 
@@ -74,23 +87,13 @@
                 registrationService.PromoteDelegateToAdmin(
                     formData.GetAdminRoles(),
                     AdminCategoryHelper.AdminCategoryToCategoryId(formData.LearningCategory),
-                    delegateId
+                    formData.UserId,
+                    formData.CentreId
                 );
             }
             catch (AdminCreationFailedException e)
             {
-                logger.LogError(e, "Error creating admin account for promoted delegate");
-                var error = e.Error;
-
-                if (error.Equals(AdminCreationError.UnexpectedError))
-                {
-                    return new StatusCodeResult(500);
-                }
-
-                if (error.Equals(AdminCreationError.EmailAlreadyInUse))
-                {
-                    return View("EmailInUse", delegateId);
-                }
+                logger.LogError(e, $"Error creating admin account for promoted delegate: {e.Message}");
 
                 return new StatusCodeResult(500);
             }

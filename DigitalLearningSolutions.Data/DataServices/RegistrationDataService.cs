@@ -16,6 +16,8 @@
             bool registerJourneyContainsTermsAndConditions
         );
 
+        int RegisterAdmin(AdminAccountRegistrationModel registrationModel);
+
         (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
@@ -29,8 +31,6 @@
             int delegateId,
             DateTime currentTime
         );
-
-        int RegisterAdmin(AdminRegistrationModel registrationModel, int userId);
     }
 
     public class RegistrationDataService : IRegistrationDataService
@@ -150,22 +150,22 @@
             transaction.Commit();
         }
 
-        public int RegisterAdmin(AdminRegistrationModel registrationModel, int userId)
+        public int RegisterAdmin(AdminAccountRegistrationModel registrationModel)
         {
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
 
             RegisterCentreDetailForExistingUser(
-                registrationModel.Centre,
+                registrationModel.CentreId,
                 registrationModel.CentreSpecificEmail,
-                userId,
+                registrationModel.UserId,
                 transaction
             );
 
             var adminValues = new
             {
-                userId,
-                centreID = registrationModel.Centre,
+                registrationModel.UserId,
+                centreID = registrationModel.CentreId,
                 categoryID = registrationModel.CategoryId,
                 isCentreAdmin = registrationModel.IsCentreAdmin,
                 isCentreManager = registrationModel.IsCentreManager,
@@ -220,7 +220,8 @@
                 FROM Notifications N INNER JOIN NotificationRoles NR
                 ON N.NotificationID = NR.NotificationID
                 WHERE RoleID IN @roles AND AutoOptIn = 1",
-                new { adminUserId, roles = registrationModel.GetNotificationRoles() }
+                new { adminUserId, roles = registrationModel.GetNotificationRoles() },
+                transaction
             );
 
             transaction.Commit();

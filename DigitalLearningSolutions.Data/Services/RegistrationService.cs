@@ -44,7 +44,7 @@ namespace DigitalLearningSolutions.Data.Services
             bool registerJourneyContainsTermsAndConditions
         );
 
-        void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId);
+        void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int userId, int centreId);
 
         string CreateAccountAndReturnCandidateNumber(
             DelegateRegistrationModel delegateRegistrationModel,
@@ -310,35 +310,29 @@ namespace DigitalLearningSolutions.Data.Services
 
             var userId = CreateDelegateAccountForAdmin(registrationModel, registerJourneyContainsTermsAndConditions);
 
-            registrationDataService.RegisterAdmin(registrationModel, userId);
+            var accountRegistrationModel = new AdminAccountRegistrationModel(registrationModel, userId);
+            registrationDataService.RegisterAdmin(accountRegistrationModel);
 
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
             transaction.Complete();
         }
 
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int delegateId)
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int userId, int centreId)
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+            var adminAtCentre = userDataService.GetAdminAccountsByUserId(userId)
+                .SingleOrDefault(a => a.CentreId == centreId);
 
-            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress) ||
-                string.IsNullOrWhiteSpace(delegateUser.FirstName) ||
-                string.IsNullOrWhiteSpace(delegateUser.Password))
+            if (adminAtCentre != null)
             {
-                throw new AdminCreationFailedException(
-                    "Delegate missing first name, email or password",
-                    AdminCreationError.UnexpectedError
-                );
-            }
+                if (adminAtCentre.Active)
+                {
+                    throw new AdminCreationFailedException("Active admin already exists for this user at this centre");
+                }
 
-            var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
-
-            if (adminUser?.Active == false && adminUser.CentreId == delegateUser.CentreId)
-            {
-                userDataService.ReactivateAdmin(adminUser.Id);
-                passwordDataService.SetPasswordByAdminId(adminUser.Id, delegateUser.Password);
+                userDataService.ReactivateAdmin(adminAtCentre.Id);
                 userDataService.UpdateAdminUserPermissions(
-                    adminUser.Id,
+                    adminAtCentre.Id,
                     adminRoles.IsCentreAdmin,
                     adminRoles.IsSupervisor,
                     adminRoles.IsNominatedSupervisor,
@@ -349,37 +343,25 @@ namespace DigitalLearningSolutions.Data.Services
                     categoryId
                 );
             }
-            else if (adminUser == null)
+            else
             {
-                var adminRegistrationModel = new AdminRegistrationModel(
-                    delegateUser.FirstName,
-                    delegateUser.LastName,
-                    delegateUser.EmailAddress,
+                var adminRegistrationModel = new AdminAccountRegistrationModel(
+                    userId,
                     null,
-                    delegateUser.CentreId,
-                    delegateUser.Password,
-                    true,
-                    true,
-                    delegateUser.ProfessionalRegistrationNumber,
-                    delegateUser.JobGroupId,
+                    centreId,
                     categoryId,
                     adminRoles.IsCentreAdmin,
                     false,
+                    adminRoles.IsContentManager,
+                    adminRoles.IsContentCreator,
+                    adminRoles.IsTrainer,
+                    adminRoles.ImportOnly,
                     adminRoles.IsSupervisor,
                     adminRoles.IsNominatedSupervisor,
-                    adminRoles.IsTrainer,
-                    adminRoles.IsContentCreator,
-                    adminRoles.IsCmsAdministrator,
-                    adminRoles.IsCmsManager,
-                    delegateUser.ProfileImage
+                    true
                 );
 
-                var userId = userDataService.GetUserIdFromDelegateId(delegateId);
-                registrationDataService.RegisterAdmin(adminRegistrationModel, userId);
-            }
-            else
-            {
-                throw new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse);
+                registrationDataService.RegisterAdmin(adminRegistrationModel);
             }
         }
 
