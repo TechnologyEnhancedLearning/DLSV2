@@ -59,9 +59,9 @@
         {
             var centreId = User.GetCentreId();
             var userId = User.GetUserIdKnownNotNull();
-            var userEntity = userService.GetUserById(userId)!;
+            var userEntity = userService.GetUserById(userId);
 
-            var adminAccount = userEntity.GetCentreAccountSet(centreId)?.AdminAccount;
+            var adminAccount = userEntity!.GetCentreAccountSet(centreId)?.AdminAccount;
             var delegateAccount = userEntity.GetCentreAccountSet(centreId)?.DelegateAccount;
 
             var customPrompts =
@@ -96,8 +96,8 @@
         {
             var centreId = User.GetCentreId();
             var userId = User.GetUserIdKnownNotNull();
-            var userEntity = userService.GetUserById(userId)!;
-            var delegateAccount = userEntity.GetCentreAccountSet(centreId)?.DelegateAccount;
+            var userEntity = userService.GetUserById(userId);
+            var delegateAccount = userEntity!.GetCentreAccountSet(centreId)?.DelegateAccount;
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             
