@@ -34,6 +34,7 @@
             return supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash);
         }
 
+        // TODO: HEEDLS-899 - Change name of method to AddUserIdToSupervisorDelegateRecords once HEEDLS-932 is merged
         public void AddDelegateIdToSupervisorDelegateRecords(IEnumerable<int> supervisorDelegateIds, int delegateId)
         {
             supervisorDelegateDataService.UpdateSupervisorDelegateRecordsCandidateId(supervisorDelegateIds, delegateId);
