@@ -258,10 +258,22 @@
 
         public IActionResult AddSelfAssessmentOverviewFilter(SearchSelfAssessmentOvervieviewViewModel model)
         {
-            string filterName = Enum.GetName(model.ResponseStatus.GetType(), model.ResponseStatus);
-            if (!model.AppliedFilters.Any(f => f.FilterValue == model.ResponseStatus.ToString()))
+            if (!model.AppliedFilters.Any(f => f.FilterValue == model.SelectedFilter.ToString()))
             {
-                model.AppliedFilters.Add(new AppliedFilterViewModel(model.ResponseStatus?.GetDescription(model.IsSupervisorResultsReviewed), null, model.ResponseStatus.ToString()));
+
+                string description;
+                string tagClass = string.Empty;
+                if (model.SelectedFilter < 0)
+                {
+                    description = ((SelfAssessmentCompetencyFilter)model.SelectedFilter).GetDescription(model.IsSupervisorResultsReviewed);
+                }
+                else
+                {
+                    var flag = frameworkService.GetCustomFlagsByFrameworkId(null, model.SelectedFilter).First();
+                    description = $"{flag.FlagGroup}: {flag.FlagName}";
+                    tagClass = flag.FlagTagClass;
+                }
+                model.AppliedFilters.Add(new AppliedFilterViewModel(description, null, model.SelectedFilter.ToString(), tagClass));
             }
             TempData.Clear();
             TempData.Set<List<AppliedFilterViewModel>>(model.AppliedFilters);
@@ -288,13 +300,15 @@
             var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
             selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, candidateId);
-            var competencies = FilterCompetencies(selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList(), searchModel);
-            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencies.Select(c => c.Id).ToArray());
+
+            var recentResults = selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList();
+            var competencyIds = recentResults.Select(c => c.Id).ToArray();
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+            var competencies = CompetencyFilterHelper.FilterCompetencies(recentResults, competencyFlags, searchModel);
 
             foreach (var competency in competencies)
             {
                 competency.QuestionLabel = assessment.QuestionLabel;
-                competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.Id);
                 foreach (var assessmentQuestion in competency.AssessmentQuestions)
                 {
                     if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
@@ -311,8 +325,8 @@
             }
 
             var searchViewModel = searchModel == null ?
-                new SearchSelfAssessmentOvervieviewViewModel(searchModel?.SearchText, assessment.Id, vocabulary, null)
-                : searchModel.Initialise(searchModel.AppliedFilters);
+                new SearchSelfAssessmentOvervieviewViewModel(searchModel?.SearchText, assessment.Id, vocabulary, null, null)
+                : searchModel.Initialise(searchModel.AppliedFilters, competencyFlags.ToList());
             var model = new SelfAssessmentOverviewViewModel
             {
                 SelfAssessment = assessment,
@@ -328,54 +342,6 @@
             }
             ViewBag.SupervisorSelfAssessmentReview = assessment.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/SelfAssessmentOverview", model);
-        }
-
-        private List<Competency> FilterCompetencies(List<Competency> competencies, SearchSelfAssessmentOvervieviewViewModel search)
-        {
-            var searchText = search?.SearchText?.Trim() ?? string.Empty;
-            IEnumerable<Competency> filteredCompetencies = competencies;
-            var filters = search?.AppliedFilters?.Select(f => Enum.Parse<SelfAssessmentCompetencyFilter>(f.FilterValue)) ?? Enumerable.Empty<SelfAssessmentCompetencyFilter>();
-            var appliedResponseStatusFilters = filters.Where(f => f.IsResponseStatusFilter());
-            var appliedRequirementsFilters = filters.Where(f => f.IsRequirementsFilter());
-
-            if (appliedResponseStatusFilters.Any() || searchText.Length > 0)
-            {
-                var wordsInSearchText = searchText.Split().Where(w => w != string.Empty);
-                filteredCompetencies = (
-                    from c in competencies
-                    let searchTextMatchesGroup = wordsInSearchText.Any(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                    let searchTextMatchesCompetencyDescription = wordsInSearchText.Any(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                    let searchTextMatchesCompetencyName = wordsInSearchText.Any(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                    let responseStatusFilterMatchesAnyQuestion =
-                           (filters.Contains(SelfAssessmentCompetencyFilter.RequiresSelfAssessment) && c.AssessmentQuestions.Any(q => q.ResultId == null))
-                        || (filters.Contains(SelfAssessmentCompetencyFilter.SelfAssessed) && c.AssessmentQuestions.Any(q => q.Verified == null && q.ResultId != null))
-                        || (filters.Contains(SelfAssessmentCompetencyFilter.ConfirmationRequested) && c.AssessmentQuestions.Any(q => q.Verified == null && q.Requested != null))
-                        || (filters.Contains(SelfAssessmentCompetencyFilter.Verified) && c.AssessmentQuestions.Any(q => q.Verified.HasValue))
-                    where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
-                        && (!appliedResponseStatusFilters.Any() || responseStatusFilterMatchesAnyQuestion)
-                    select c);
-            }
-
-            var filteredQuestions = filteredCompetencies.SelectMany(c => c.AssessmentQuestions);
-            if (search != null)
-            {
-                search.AnyQuestionMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 3);
-                search.AnyQuestionPartiallyMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 2);
-                search.AnyQuestionNotMeetingRequirements = filteredQuestions.Any(q => q.ResultRAG == 1);
-            }
-
-            if (appliedRequirementsFilters.Any())
-            {
-                filteredCompetencies = (
-                    from c in filteredCompetencies
-                    let requirementsFilterMatchesAnyQuestion =
-                           (filters.Contains(SelfAssessmentCompetencyFilter.MeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 3))
-                        || (filters.Contains(SelfAssessmentCompetencyFilter.PartiallyMeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 2))
-                        || (filters.Contains(SelfAssessmentCompetencyFilter.NotMeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 1))
-                    where requirementsFilterMatchesAnyQuestion
-                    select c);
-            }
-            return (filteredCompetencies.ToList());
         }
 
         [HttpPost]
