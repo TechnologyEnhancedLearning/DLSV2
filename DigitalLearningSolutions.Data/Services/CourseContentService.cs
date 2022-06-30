@@ -10,9 +10,13 @@
     public interface ICourseContentService
     {
         CourseContent? GetCourseContent(int candidateId, int customisationId);
+
         int? GetOrCreateProgressId(int candidateId, int customisationId, int centreId);
+
         void UpdateProgress(int progressId);
+
         string? GetCoursePassword(int customisationId);
+
         void LogPasswordSubmitted(int progressId);
     }
 
@@ -150,9 +154,11 @@
         public string? GetCoursePassword(int customisationId)
         {
             return connection.QueryFirstOrDefault<string?>(
-                @" SELECT Password FROM Customisations
-                    WHERE CustomisationID = @customisationId", new { customisationId }
-                );
+                @" SELECT Password FROM Customisations AS c
+                    INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    WHERE CustomisationID = @customisationId AND ap.DefaultContentTypeID <> 4",
+                new { customisationId }
+            );
         }
 
         public int? GetOrCreateProgressId(int candidateId, int customisationId, int centreId)
@@ -172,7 +178,7 @@
                     customisationId,
                     centreId,
                     EnrollmentMethodID = 1,
-                    EnrolledByAdminID = 0
+                    EnrolledByAdminID = 0,
                 },
                 commandType: CommandType.StoredProcedure
             );
@@ -184,22 +190,26 @@
                 case 1:
                     logger.LogError(
                         "Not enrolled candidate on course as progress already exists. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}"
+                    );
                     break;
                 case 100:
                     logger.LogError(
                         "Not enrolled candidate on course as customisation id doesn't match centre id. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}"
+                    );
                     break;
                 case 101:
                     logger.LogError(
                         "Not enrolled candidate on course as candidate id doesn't match centre id. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}"
+                    );
                     break;
                 default:
                     logger.LogError(
                         "Not enrolled candidate on course as stored procedure failed. " +
-                        $"Unknown error code: {errorCode}, candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                        $"Unknown error code: {errorCode}, candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}"
+                    );
                     break;
             }
 

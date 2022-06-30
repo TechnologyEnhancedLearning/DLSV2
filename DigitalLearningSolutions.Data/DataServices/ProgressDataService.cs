@@ -318,8 +318,10 @@
                         aa.[Status] AS AssessmentStatus
                     FROM AssessAttempts AS aa
                     INNER JOIN dbo.Customisations AS cu ON cu.CustomisationID = aa.CustomisationID
+                    INNER JOIN Applications AS a ON a.ApplicationID = cu.ApplicationID
                     LEFT JOIN Sections AS sec ON sec.ApplicationID = cu.ApplicationID AND sec.SectionNumber = aa.SectionNumber
-                    WHERE aa.ProgressID = @progressId",
+                    WHERE aa.ProgressID = @progressId
+                        AND a.DefaultContentTypeID <> 4",
                 new { progressId }
             );
         }
@@ -366,6 +368,7 @@
                         aspProgress AS asp1
                         INNER JOIN Progress AS p ON asp1.ProgressID = p.ProgressID
                         INNER JOIN Customisations AS cu ON p.CustomisationID = cu.CustomisationID
+                        INNER JOIN Applications AS a ON a.ApplicationID = cu.ApplicationID
                         INNER JOIN Sections AS s
                         INNER JOIN Tutorials AS t ON s.SectionID = t.SectionID
                         INNER JOIN CustomisationTutorials AS ct ON t.TutorialID = ct.TutorialID ON asp1.TutorialID = t.TutorialID
@@ -373,6 +376,7 @@
                     WHERE
                         (ct.CustomisationID = p.CustomisationID) AND (p.ProgressID = @progressId) AND (s.ArchivedDate IS NULL)
                         AND (ct.Status = 1 OR ct.DiagStatus = 1 OR cu.IsAssessed = 1)
+                        AND a.DefaultContentTypeID <> 4
                     GROUP BY
                         s.SectionID,
                         s.ApplicationID,
@@ -406,6 +410,7 @@
                         INNER JOIN Tutorials AS t
                         INNER JOIN CustomisationTutorials AS ct ON t.TutorialID = ct.TutorialID
                         INNER JOIN Customisations AS c ON ct.CustomisationID = c.CustomisationID ON p.CustomisationID = c.CustomisationID AND p.CustomisationID = ct.CustomisationID
+                        INNER JOIN Applications AS a ON a.ApplicationID = c.ApplicationID
                         INNER JOIN TutStatus AS ts
                         INNER JOIN aspProgress AS ap ON ts.TutStatusID = ap.TutStat ON P.ProgressID = ap.ProgressID AND t.TutorialID = ap.TutorialID
                     WHERE (t.SectionID = @sectionID)
@@ -413,6 +418,7 @@
                         AND (ct.Status = 1)
                         AND (c.Active = 1)
                         AND (t.ArchivedDate IS NULL)
+                        AND a.DefaultContentTypeID <> 4
                     ORDER BY t.TutorialID",
                 new { progressId, sectionId }
             );

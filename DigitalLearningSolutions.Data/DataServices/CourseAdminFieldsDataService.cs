@@ -121,10 +121,12 @@
             return connection.Query<string>(
                 @$"SELECT
                         cp.CoursePrompt
-                    FROM Customisations c
+                    FROM Customisations AS c
+                    INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     LEFT JOIN CoursePrompts cp
                         ON c.CourseField{promptNumber}PromptID = cp.CoursePromptID
-                    WHERE CustomisationID = @customisationId",
+                    WHERE CustomisationID = @customisationId
+                        AND ap.DefaultContentTypeID <> 4",
                 new { customisationId }
             ).Single();
         }
@@ -175,11 +177,14 @@
         {
             var result = connection.Query<(int, int, int)>(
                 @"SELECT
-                        CourseField1PromptID,
-                        CourseField2PromptID,
-                        CourseField3PromptID
-                    FROM Customisations
-                    WHERE CustomisationID = @customisationId",
+                        cu.CourseField1PromptID,
+                        cu.CourseField2PromptID,
+                        cu.CourseField3PromptID
+                    FROM Customisations AS cu
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+                    WHERE CustomisationID = @customisationId
+                        AND ap.ArchivedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4",
                 new { customisationId }
             ).Single();
 

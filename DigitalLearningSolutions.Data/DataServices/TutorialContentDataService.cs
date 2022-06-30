@@ -444,7 +444,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         WHERE ApplicationID IN (
                             SELECT ApplicationID
                             FROM Applications
-                            WHERE BrandID = @brandId)
+                            WHERE BrandID = @brandId
+                                AND DefaultContentTypeID <> 4)
                             )
                     AND AllowPreview = 1",
                 new { brandId }

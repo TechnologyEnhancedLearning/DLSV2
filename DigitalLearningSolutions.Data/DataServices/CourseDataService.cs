@@ -476,7 +476,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
                 INNER JOIN Customisations AS c ON c.CustomisationID = ct.CustomisationID
                 INNER JOIN Applications AS a ON a.ApplicationID = c.ApplicationID
-                WHERE ct.DiagStatus = 1 AND a.DiagAssess = 1 AND ct.CustomisationID = c.CustomisationID";
+                WHERE ct.DiagStatus = 1 AND a.DiagAssess = 1 AND ct.CustomisationID = c.CustomisationID
+                    AND a.ArchivedDate IS NULL AND a.DefaultContentTypeID <> 4";
 
             return connection.Query<CourseAssessmentDetails>(
                 $@"SELECT
@@ -581,12 +582,14 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             return connection.ExecuteScalar<bool>(
                 @"SELECT CASE WHEN EXISTS (
-                        SELECT CustomisationID
-                        FROM dbo.Customisations
-                        WHERE [ApplicationID] = @applicationID
-                        AND [CentreID] = @centreID
-                        AND [CustomisationName] = @customisationName
-                        AND [CustomisationID] != @customisationId)
+                        SELECT c.CustomisationID
+                        FROM dbo.Customisations AS c
+                        INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                        WHERE c.[ApplicationID] = @applicationID
+                            AND c.[CentreID] = @centreID
+                            AND c.[CustomisationName] = @customisationName
+                            AND c.[CustomisationID] != @customisationId
+                            AND ap.DefaultContentTypeID <> 4)
                     THEN CAST(1 AS BIT)
                     ELSE CAST(0 AS BIT) END",
                 new { customisationName, centreId, applicationId, customisationId }
@@ -840,8 +843,10 @@ namespace DigitalLearningSolutions.Data.DataServices
                     FROM Candidates AS ca
                     INNER JOIN Progress AS p ON p.CandidateID = ca.CandidateID
                     INNER JOIN Customisations cu ON cu.CustomisationID = p.CustomisationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
                     WHERE ca.CentreID = @centreId
-                        AND p.CustomisationID = @customisationId",
+                        AND p.CustomisationID = @customisationId
+                        AND ap.DefaultContentTypeID <> 4",
                 new { customisationId, centreId }
             );
         }
