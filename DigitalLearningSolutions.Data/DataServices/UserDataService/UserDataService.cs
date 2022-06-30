@@ -44,8 +44,6 @@
 
         DelegateUser? GetDelegateUserById(int id);
 
-        List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
-
         List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
 
         void UpdateUser(
@@ -120,10 +118,6 @@
             string? professionalRegistrationNumber,
             bool hasBeenPromptedForPrn
         );
-
-        bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails, IDbTransaction? transaction = null);
-
-        bool EmailIsInUseByOtherUser(int userId, string email, IDbTransaction? transaction = null);
 
         bool PrimaryEmailIsInUse(string email, IDbTransaction? transaction = null);
 

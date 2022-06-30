@@ -375,7 +375,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            A.CallTo(() => userDataService.AnyEmailsInSetAreAlreadyInUse(A<IEnumerable<string?>>._, null))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(A<string>._, null))
                 .Returns(true);
 
             // When

@@ -102,7 +102,8 @@
 
             // Then
             returnedDelegateEntities.Count.Should().Be(4);
-            returnedDelegateEntities.Select(d => d.DelegateAccount.Id).Should().BeEquivalentTo(new[] { 28, 16, 115768, 297514 });
+            returnedDelegateEntities.Select(d => d.DelegateAccount.Id).Should()
+                .BeEquivalentTo(new[] { 28, 16, 115768, 297514 });
         }
 
         [Test]
@@ -116,39 +117,6 @@
 
             // Then
             returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUsers);
-        }
-
-        [Test]
-        public void GetDelegateUsersByEmailAddress_Returns_delegate_user()
-        {
-            using (new TransactionScope())
-            {
-                using (new AssertionScope())
-                {
-                    // Given
-                    var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser(resetPasswordId: 1);
-                    connection.Execute("UPDATE Users SET ResetPasswordID = 1 WHERE ID = 61188");
-
-                    // When
-                    var returnedDelegateUsers = userDataService.GetDelegateUsersByEmailAddress("email@test.com");
-
-                    // Then
-                    returnedDelegateUsers.FirstOrDefault().Should().NotBeNull();
-                    returnedDelegateUsers.First().Id.Should().Be(expectedDelegateUser.Id);
-                    returnedDelegateUsers.First().CandidateNumber.Should().BeEquivalentTo
-                        (expectedDelegateUser.CandidateNumber);
-                    returnedDelegateUsers.First().CentreId.Should().Be(expectedDelegateUser.CentreId);
-                    returnedDelegateUsers.First().CentreName.Should().BeEquivalentTo(expectedDelegateUser.CentreName);
-                    returnedDelegateUsers.First().CentreActive.Should().Be(expectedDelegateUser.CentreActive);
-                    returnedDelegateUsers.First().EmailAddress.Should()
-                        .BeEquivalentTo(expectedDelegateUser.EmailAddress);
-                    returnedDelegateUsers.First().FirstName.Should().BeEquivalentTo(expectedDelegateUser.FirstName);
-                    returnedDelegateUsers.First().LastName.Should().BeEquivalentTo(expectedDelegateUser.LastName);
-                    returnedDelegateUsers.First().Password.Should().BeEquivalentTo(expectedDelegateUser.Password);
-                    returnedDelegateUsers.First().Approved.Should().Be(expectedDelegateUser.Approved);
-                    returnedDelegateUsers.First().ResetPasswordId.Should().Be(expectedDelegateUser.ResetPasswordId);
-                }
-            }
         }
 
         [Test]

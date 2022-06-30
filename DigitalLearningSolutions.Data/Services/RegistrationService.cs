@@ -357,7 +357,20 @@ namespace DigitalLearningSolutions.Data.Services
         {
             try
             {
-                ValidateRegistrationEmail(delegateRegistrationModel);
+                if (
+                    userDataService.PrimaryEmailIsInUse(delegateRegistrationModel.PrimaryEmail) ||
+                    (
+                        delegateRegistrationModel.CentreSpecificEmail != null &&
+                        userDataService.CentreSpecificEmailIsInUseAtCentre(
+                            delegateRegistrationModel.CentreSpecificEmail,
+                            delegateRegistrationModel.Centre
+                        )
+                    )
+                )
+                {
+                    throw new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse);
+                }
+
                 var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
                     registerJourneyContainsTermsAndConditions
@@ -392,7 +405,7 @@ namespace DigitalLearningSolutions.Data.Services
         {
             if (delegateRegistrationModel.CentreSpecificEmail != null)
             {
-                ValidateCentreEmail(userId, delegateRegistrationModel.CentreSpecificEmail);
+                ValidateCentreEmail(delegateRegistrationModel.CentreSpecificEmail, delegateRegistrationModel.Centre);
             }
 
             var currentTime = clockService.UtcNow;
@@ -411,7 +424,7 @@ namespace DigitalLearningSolutions.Data.Services
         {
             if (delegateRegistrationModel.CentreSpecificEmail != null)
             {
-                ValidateCentreEmail(userId, delegateRegistrationModel.CentreSpecificEmail);
+                ValidateCentreEmail(delegateRegistrationModel.CentreSpecificEmail, delegateRegistrationModel.Centre);
             }
 
             var currentTime = clockService.UtcNow;
@@ -423,23 +436,9 @@ namespace DigitalLearningSolutions.Data.Services
             );
         }
 
-        private void ValidateRegistrationEmail(RegistrationModel model)
+        private void ValidateCentreEmail(string centreEmail, int centreId)
         {
-            var emails =
-                (IEnumerable<string>)new[] { model.PrimaryEmail, model.CentreSpecificEmail }.Where(e => e != null);
-            if (userDataService.AnyEmailsInSetAreAlreadyInUse(emails))
-            {
-                var error = DelegateCreationError.EmailAlreadyInUse;
-                logger.LogError(
-                    $"Could not create account for delegate on registration. Failure: {error.Name}."
-                );
-                throw new DelegateCreationFailedException(error);
-            }
-        }
-
-        private void ValidateCentreEmail(int userId, string centreEmail)
-        {
-            if (userDataService.EmailIsInUseByOtherUser(userId, centreEmail))
+            if (userDataService.CentreSpecificEmailIsInUseAtCentre(centreEmail, centreId))
             {
                 var error = DelegateCreationError.EmailAlreadyInUse;
                 logger.LogError(

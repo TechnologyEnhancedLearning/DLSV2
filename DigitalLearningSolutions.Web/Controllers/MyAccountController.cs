@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -33,10 +34,12 @@
         private readonly ILogger<MyAccountController> logger;
         private readonly PromptsService promptsService;
         private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
 
         public MyAccountController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IUserService userService,
+            IUserDataService userDataService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
             PromptsService registrationPromptsService,
@@ -46,6 +49,7 @@
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.userService = userService;
+            this.userDataService = userDataService;
             this.imageResizeService = imageResizeService;
             this.jobGroupsDataService = jobGroupsDataService;
             promptsService = registrationPromptsService;
@@ -100,7 +104,7 @@
             var delegateAccount = userEntity!.GetCentreAccountSet(centreId)?.DelegateAccount;
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-            
+
             var customPrompts =
                 centreId != null
                     ? promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
@@ -147,6 +151,7 @@
         )
         {
             var userDelegateId = User.GetCandidateId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var userId = User.GetUserIdKnownNotNull();
 
             if (userDelegateId.HasValue)
@@ -174,10 +179,7 @@
             }
 
             var emailsValid = true;
-            if (!userService.NewEmailAddressIsValid(
-                    formData.Email!,
-                    userId
-                ))
+            if (formData.Email != User.GetUserPrimaryEmail() && userDataService.PrimaryEmailIsInUse(formData.Email!))
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
@@ -186,10 +188,11 @@
                 emailsValid = false;
             }
 
-            if (!string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) && !userService.NewEmailAddressIsValid(
-                    formData.CentreSpecificEmail,
-                    userId
-                ))
+            if (
+                // TODO HEEDLS-1002: CentreSpecificEmailIsInUseAtCentre always returns true if email is unchanged. Only do the check if email has changed.
+                !string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) &&
+                userDataService.CentreSpecificEmailIsInUseAtCentre(formData.CentreSpecificEmail, centreId)
+            )
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),

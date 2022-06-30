@@ -176,17 +176,6 @@
             return user;
         }
 
-        public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
-        {
-            var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateUserQuery}
-                    WHERE cd.EmailAddress = @emailAddress",
-                new { emailAddress }
-            ).ToList();
-
-            return users;
-        }
-
         [Obsolete("New code should use GetUnapprovedDelegatesByCentreId instead")]
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId)
         {

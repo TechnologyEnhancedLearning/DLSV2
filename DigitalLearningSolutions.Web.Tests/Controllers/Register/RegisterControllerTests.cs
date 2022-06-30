@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
@@ -36,7 +37,7 @@
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
-        private IUserService userService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -45,7 +46,7 @@
             cryptoService = A.Fake<ICryptoService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
-            userService = A.Fake<IUserService>();
+            userDataService = A.Fake<IUserDataService>();
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
@@ -56,7 +57,7 @@
                     jobGroupsDataService,
                     registrationService,
                     cryptoService,
-                    userService,
+                    userDataService,
                     promptsService,
                     featureManager,
                     supervisorDelegateService
@@ -146,7 +147,7 @@
                 jobGroupsDataService,
                 registrationService,
                 cryptoService,
-                userService,
+                userDataService,
                 promptsService,
                 featureManager,
                 supervisorDelegateService

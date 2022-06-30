@@ -73,14 +73,26 @@
                 Centre = duplicateUser.CentreId,
                 PrimaryEmail = duplicateUser.EmailAddress,
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
-                .Returns(false);
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        model.Centre.Value,
+                        null
+                    )
+                )
+                .Returns(true);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        model.Centre.Value,
+                        null
+                    )
+                )
                 .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
@@ -98,14 +110,26 @@
                 Centre = duplicateUser.CentreId + 1,
                 PrimaryEmail = duplicateUser.EmailAddress,
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
-                .Returns(true);
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        model.Centre.Value,
+                        null
+                    )
+                )
+                .Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        model.Centre.Value,
+                        null
+                    )
+                )
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
@@ -126,8 +150,14 @@
                 PrimaryEmail = primaryEmail,
                 Centre = 1,
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
-                .Returns(true);
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        model.Centre.Value,
+                        null
+                    )
+                )
+                .Returns(false);
 
             // When
             controller.PersonalInformation(model);
@@ -205,7 +235,7 @@
             controller.TempData.Set(new DelegateRegistrationByCentreData { PasswordHash = "hash" });
             var date = new DateTime(2200, 7, 7);
             var model = new WelcomeEmailViewModel
-                { ShouldSendEmail = true, Day = date.Day, Month = date.Month, Year = date.Year };
+            { ShouldSendEmail = true, Day = date.Day, Month = date.Month, Year = date.Year };
 
             // When
             controller.WelcomeEmail(model);
@@ -260,7 +290,11 @@
             const string sampleDelegateNumber = "CR7";
             var data = new DelegateRegistrationByCentreData
             {
-                FirstName = "Test", LastName = "User", PrimaryEmail = "test@mail.com", Centre = 5, JobGroup = 0,
+                FirstName = "Test",
+                LastName = "User",
+                PrimaryEmail = "test@mail.com",
+                Centre = 5,
+                JobGroup = 0,
                 WelcomeEmailDate = new DateTime(2200, 7, 7),
             };
             controller.TempData.Set(data);

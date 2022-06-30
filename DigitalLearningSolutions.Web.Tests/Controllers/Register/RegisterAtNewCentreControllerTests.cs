@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
@@ -40,6 +42,7 @@
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserService userService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -47,6 +50,7 @@
             centresDataService = A.Fake<ICentresDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userService = A.Fake<IUserService>();
+            userDataService = A.Fake<IUserDataService>();
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
@@ -58,7 +62,8 @@
                     promptsService,
                     registrationService,
                     supervisorDelegateService,
-                    userService
+                    userService,
+                    userDataService
                 )
                 .WithDefaultContext()
                 .WithMockRequestContext(request)
@@ -127,9 +132,13 @@
                 CentreSpecificEmail = "centre email",
             };
             A.CallTo(
-                    () => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId)
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        ControllerContextHelper.CentreId,
+                        A<IDbTransaction?>._
+                    )
                 )
-                .Returns(false);
+                .Returns(true);
             A.CallTo(() => userService.GetUserById(userAccount.Id)).Returns(
                 new UserEntity(userAccount, new List<AdminAccount>(), new[] { new DelegateAccount() })
             );
@@ -139,7 +148,11 @@
 
             // Then
             A.CallTo(
-                    () => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId)
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        ControllerContextHelper.CentreId,
+                        A<IDbTransaction?>._
+                    )
                 )
                 .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
@@ -165,7 +178,9 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._)).MustNotHaveHappened();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction?>._)
+            ).MustNotHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
 
@@ -180,16 +195,24 @@
                 CentreSpecificEmail = "centre email",
             };
             A.CallTo(
-                    () => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId)
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        ControllerContextHelper.CentreId,
+                        A<IDbTransaction?>._
+                    )
                 )
-                .Returns(true);
+                .Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
             A.CallTo(
-                    () => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId)
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        ControllerContextHelper.CentreId,
+                        A<IDbTransaction?>._
+                    )
                 )
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");

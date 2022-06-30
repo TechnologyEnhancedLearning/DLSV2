@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.IO;
     using System.Linq;
     using ClosedXML.Excel;
@@ -37,7 +38,6 @@
         private IRegistrationService registrationService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
-        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
@@ -48,7 +48,6 @@
             );
 
             userDataService = A.Fake<IUserDataService>(x => x.Strict());
-            userService = A.Fake<IUserService>(x => x.Strict());
             registrationService = A.Fake<IRegistrationService>(x => x.Strict());
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
             passwordResetService = A.Fake<IPasswordResetService>();
@@ -62,7 +61,6 @@
                 userDataService,
                 registrationService,
                 supervisorDelegateService,
-                userService,
                 passwordResetService,
                 configuration
             );
@@ -315,7 +313,8 @@
 
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(false);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(true);
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -327,13 +326,17 @@
         }
 
         [Test]
-        public void ProcessDelegateTable_has_does_not_check_email_if_delegate_found_by_delegateId_has_matching_email()
+        public void
+            ProcessDelegateTable_does_not_have_email_in_use_error_if_delegate_found_by_delegateId_has_matching_email()
         {
             // Given
             const string delegateId = "DELEGATE";
             var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row });
-            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(
+                candidateNumber: delegateId,
+                userCentreDetailsId: 1
+            );
 
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
@@ -343,6 +346,15 @@
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
 
             // Then
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        A<string>._,
+                        A<int>._,
+                        A<IDbTransaction?>._
+                    )
+                )
+                .MustNotHaveHappened();
+
             result.ProcessedCount.Should().Be(1);
             result.UpdatedCount.Should().Be(1);
         }
@@ -385,7 +397,8 @@
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
@@ -414,6 +427,8 @@
             var table = CreateTableFromData(new[] { row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             CallsToUserDataServiceUpdatesDoNothing();
@@ -580,7 +595,8 @@
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
@@ -628,7 +644,8 @@
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
@@ -676,7 +693,8 @@
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
@@ -720,7 +738,8 @@
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
@@ -769,7 +788,8 @@
                 { new SupervisorDelegate { ID = 1 }, new SupervisorDelegate { ID = 2 } };
             var supervisorDelegateIds = new List<int> { 1, 2 };
 
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
@@ -826,7 +846,8 @@
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: true.ToString(), prn: prn);
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
@@ -868,7 +889,8 @@
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: false.ToString());
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
@@ -901,43 +923,6 @@
         }
 
         [Test]
-        public void ProcessDelegateTable_successful_register_does_not_update_delegate_PRN_if_HasPRN_is_empty()
-        {
-            // Given
-            const string candidateNumber = "DELEGATE";
-            const int newDelegateRecordId = 5;
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
-            var table = CreateTableFromData(new[] { row });
-
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(
-                    () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
-                        A<DelegateRegistrationModel>._,
-                        false
-                    )
-                )
-                .Returns(NewDelegateIdAndCandidateNumber);
-            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(candidateNumber))
-                .Returns(UserTestHelper.GetDefaultDelegateEntity(newDelegateRecordId));
-
-            // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            A.CallTo(
-                    () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
-                        A<DelegateRegistrationModel>._,
-                        false
-                    )
-                )
-                .MustHaveHappened();
-            A.CallTo(
-                () =>
-                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
-            ).MustNotHaveHappened();
-        }
-
-        [Test]
         public void ProcessDelegateTable_counts_updated_correctly()
         {
             // Given
@@ -946,6 +931,8 @@
             var table = CreateTableFromData(new[] { row, row, row, row, row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             CallsToUserDataServiceUpdatesDoNothing();
@@ -993,7 +980,8 @@
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row, row, row, row, row });
 
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
@@ -1046,7 +1034,8 @@
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(updateDelegateId))
                 .Returns(updateDelegate);
 
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
 
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(

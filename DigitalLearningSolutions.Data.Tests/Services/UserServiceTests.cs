@@ -288,72 +288,6 @@
         }
 
         [Test]
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        public void NewEmailAddressIsValid_returns_negation_of_data_service_method(
-            bool dataServiceReturn,
-            bool expectedValue
-        )
-        {
-            // Given
-            const int userId = 2;
-            const string email = "email@test.com";
-            A.CallTo(() => userDataService.EmailIsInUseByOtherUser(userId, email, A<IDbTransaction?>._))
-                .Returns(dataServiceReturn);
-
-            // When
-            var result = userService.NewEmailAddressIsValid(email, userId);
-
-            // Then
-            result.Should().Be(expectedValue);
-        }
-
-        [Test]
-        public void IsDelegateEmailValidForCentre_should_return_false_if_user_at_centre_has_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
-                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email, centreId: 3) });
-
-            // When
-            var result = userService.IsDelegateEmailValidForCentre(email, 3);
-
-            // Then
-            result.Should().BeFalse();
-        }
-
-        [Test]
-        public void IsDelegateEmailValidForCentre_should_return_true_if_user_not_at_centre_has_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
-                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email, centreId: 4) });
-
-            // When
-            var result = userService.IsDelegateEmailValidForCentre(email, 3);
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void IsDelegateEmailValidForCentre_should_return_true_if_no_user_has_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
-                (new List<DelegateUser>());
-
-            // When
-            var result = userService.IsDelegateEmailValidForCentre(email, 3);
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
         public void ResetFailedLoginCountByUserId_resets_count()
         {
             // Given
@@ -414,7 +348,9 @@
             var testDelegates = new List<DelegateUserCard>
             {
                 new DelegateUserCard
-                    { FirstName = "include", Approved = true, SelfReg = false, Password = null, EmailAddress = "email" },
+                {
+                    FirstName = "include", Approved = true, SelfReg = false, Password = null, EmailAddress = "email"
+                },
                 new DelegateUserCard
                     { FirstName = "include", Approved = true, SelfReg = false, Password = "", EmailAddress = "email" },
                 new DelegateUserCard
@@ -817,27 +753,6 @@
 
             // Then
             result.Should().BeFalse();
-        }
-
-        [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void EmailIsInUse_returns_whether_email_is_in_use(bool isEmailInUse)
-        {
-            // Given
-            var email = "fake";
-            A.CallTo(
-                () => userDataService.AnyEmailsInSetAreAlreadyInUse(
-                    A<IEnumerable<string>>.That.IsSameSequenceAs(new[] { email }),
-                    null
-                )
-            ).Returns(isEmailInUse);
-
-            // When
-            var result = userService.EmailIsInUse(email);
-
-            // Then
-            result.Should().Be(isEmailInUse);
         }
 
         [Test]

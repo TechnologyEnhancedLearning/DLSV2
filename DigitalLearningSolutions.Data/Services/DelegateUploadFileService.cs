@@ -25,29 +25,26 @@ namespace DigitalLearningSolutions.Data.Services
 
     public class DelegateUploadFileService : IDelegateUploadFileService
     {
-        private readonly IConfiguration configuration;
         private readonly IJobGroupsDataService jobGroupsDataService;
-        private readonly IPasswordResetService passwordResetService;
+        private readonly IUserDataService userDataService;
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
-        private readonly IUserDataService userDataService;
-        private readonly IUserService userService;
+        private readonly IPasswordResetService passwordResetService;
+        private readonly IConfiguration configuration;
 
         public DelegateUploadFileService(
             IJobGroupsDataService jobGroupsDataService,
             IUserDataService userDataService,
             IRegistrationService registrationService,
             ISupervisorDelegateService supervisorDelegateService,
-            IUserService userService,
             IPasswordResetService passwordResetService,
             IConfiguration configuration
         )
         {
+            this.jobGroupsDataService = jobGroupsDataService;
             this.userDataService = userDataService;
             this.registrationService = registrationService;
             this.supervisorDelegateService = supervisorDelegateService;
-            this.jobGroupsDataService = jobGroupsDataService;
-            this.userService = userService;
             this.passwordResetService = passwordResetService;
             this.configuration = configuration;
         }
@@ -99,7 +96,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (string.IsNullOrEmpty(delegateRow.CandidateNumber))
             {
-                if (!userService.IsDelegateEmailValidForCentre(delegateRow.Email!, centreId))
+                if (userDataService.CentreSpecificEmailIsInUseAtCentre(delegateRow.Email!, centreId))
                 {
                     delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
                     return;
@@ -118,7 +115,7 @@ namespace DigitalLearningSolutions.Data.Services
                 }
 
                 if (delegateRow.Email != delegateEntity.UserAccount.PrimaryEmail &&
-                    !userService.IsDelegateEmailValidForCentre(delegateRow.Email!, centreId)
+                    userDataService.CentreSpecificEmailIsInUseAtCentre(delegateRow.Email!, centreId)
                 )
                 {
                     delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
