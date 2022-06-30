@@ -44,16 +44,16 @@
             IEnumerable<string?> emails
         )
         {
-            emails = emails.Where(e => !string.IsNullOrWhiteSpace(e)).ToList();
+            var nonNullEmails = emails.Where(e => !string.IsNullOrWhiteSpace(e)).ToList();
 
-            if (!emails.Any())
+            if (!nonNullEmails.Any())
             {
                 return new List<SupervisorDelegate>();
             }
 
             return supervisorDelegateDataService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
                 centreId,
-                emails!
+                nonNullEmails!
             );
         }
     }

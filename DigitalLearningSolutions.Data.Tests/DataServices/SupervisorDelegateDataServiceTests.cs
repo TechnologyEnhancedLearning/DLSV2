@@ -96,7 +96,6 @@
             const string delegateEmailForValidRecord = "primary@email.com";
             const string delegateEmailForRecordWithNonNullCandidateId = "kevin.whittaker@hee.nhs.uk";
             const string delegateEmailForRemovedRecord = "louis.theroux@gmail.com";
-            const string? nullDelegateEmail = null;
             var currentTime = DateTime.UtcNow;
 
             connection.Execute(
@@ -111,12 +110,11 @@
             // When
             var result = supervisorDelegateDataService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
                 centreId,
-                new List<string?>
+                new List<string>
                 {
                     delegateEmailForValidRecord,
                     delegateEmailForRecordWithNonNullCandidateId,
                     delegateEmailForRemovedRecord,
-                    nullDelegateEmail,
                 }
             ).ToList();
 
