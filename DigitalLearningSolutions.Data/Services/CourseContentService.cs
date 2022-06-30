@@ -10,9 +10,13 @@
     public interface ICourseContentService
     {
         CourseContent? GetCourseContent(int candidateId, int customisationId);
+
         int? GetOrCreateProgressId(int candidateId, int customisationId, int centreId);
+
         void UpdateProgress(int progressId);
+
         string? GetCoursePassword(int customisationId);
+
         void LogPasswordSubmitted(int progressId);
     }
 
@@ -61,7 +65,7 @@
                   )
                   SELECT Customisations.CustomisationID AS id,
                          Applications.ApplicationName,
-						 Applications.ApplicationInfo,
+                         Applications.ApplicationInfo,
                          Customisations.CustomisationName,
                          CustomisationDurations.AverageDuration,
                          Centres.CentreName,
@@ -85,7 +89,7 @@
                             THEN 0
                             ELSE CAST(SUM(aspProgress.TutStat) * 100 AS FLOAT) / (COUNT(Tutorials.TutorialID) * 2)
                          END) AS PercentComplete,
-						 COALESCE (Attempts.PLPasses, 0) AS PLPasses
+                         COALESCE (Attempts.PLPasses, 0) AS PLPasses
                     FROM Applications
                    INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
                    INNER JOIN Sections ON Sections.ApplicationID = Applications.ApplicationID
@@ -96,7 +100,7 @@
                     LEFT JOIN CustomisationDurations ON CustomisationDurations.CustomisationID = Customisations.CustomisationID
                     LEFT JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID AND Progress.CandidateID = @candidateId AND Progress.RemovedDate IS NULL AND Progress.SystemRefreshed = 0
                     LEFT JOIN aspProgress ON aspProgress.ProgressID = Progress.ProgressID AND aspProgress.TutorialID = Tutorials.TutorialID
-					LEFT JOIN (SELECT AssessAttempts.ProgressID,
+                    LEFT JOIN (SELECT AssessAttempts.ProgressID,
                             AssessAttempts.SectionNumber,
                             SUM(CAST(AssessAttempts.Status AS Integer)) AS PLPasses
                             FROM AssessAttempts
@@ -109,11 +113,12 @@
                      AND Sections.ArchivedDate IS NULL
                      AND Tutorials.ArchivedDate IS NULL
                      AND (CustomisationTutorials.Status = 1 OR CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
+                     AND Applications.DefaultContentTypeID <> 4
                    GROUP BY
                          Sections.SectionID,
                          Customisations.CustomisationID,
                          Applications.ApplicationName,
-						 Applications.ApplicationInfo,
+                         Applications.ApplicationInfo,
                          Customisations.CustomisationName,
                          Customisations.Password,
                          Progress.PasswordSubmitted,
@@ -123,7 +128,7 @@
                          Applications.IncludeCertification,
                          Progress.Completed,
                          Applications.AssessAttempts,
-						 Attempts.PLPasses,
+                         Attempts.PLPasses,
                          Customisations.IsAssessed,
                          Applications.PLAPassThreshold,
                          Customisations.DiagCompletionThreshold,
@@ -149,9 +154,11 @@
         public string? GetCoursePassword(int customisationId)
         {
             return connection.QueryFirstOrDefault<string?>(
-                @" SELECT Password FROM Customisations
-                    WHERE CustomisationID = @customisationId", new { customisationId }
-                );
+                @" SELECT Password FROM Customisations AS c
+                    INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    WHERE CustomisationID = @customisationId AND ap.DefaultContentTypeID <> 4",
+                new { customisationId }
+            );
         }
 
         public int? GetOrCreateProgressId(int candidateId, int customisationId, int centreId)
@@ -171,7 +178,7 @@
                     customisationId,
                     centreId,
                     EnrollmentMethodID = 1,
-                    EnrolledByAdminID = 0
+                    EnrolledByAdminID = 0,
                 },
                 commandType: CommandType.StoredProcedure
             );
@@ -183,22 +190,26 @@
                 case 1:
                     logger.LogError(
                         "Not enrolled candidate on course as progress already exists. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}"
+                    );
                     break;
                 case 100:
                     logger.LogError(
                         "Not enrolled candidate on course as customisation id doesn't match centre id. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}"
+                    );
                     break;
                 case 101:
                     logger.LogError(
                         "Not enrolled candidate on course as candidate id doesn't match centre id. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}"
+                    );
                     break;
                 default:
                     logger.LogError(
                         "Not enrolled candidate on course as stored procedure failed. " +
-                        $"Unknown error code: {errorCode}, candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                        $"Unknown error code: {errorCode}, candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}"
+                    );
                     break;
             }
 
@@ -209,8 +220,8 @@
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Progress
-	                    SET PasswordSubmitted = 1
-	                    WHERE Progress.ProgressID = @progressId",
+                        SET PasswordSubmitted = 1
+                        WHERE Progress.ProgressID = @progressId",
                 new { progressId }
             );
 
@@ -227,18 +238,18 @@
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Progress
-	                    SET LoginCount = (SELECT COALESCE(COUNT(*), 0)
-		                    FROM Sessions AS S
-		                    WHERE S.CandidateID = Progress.CandidateID
-		                      AND S.CustomisationID = Progress.CustomisationID
-		                      AND S.LoginTime >= Progress.FirstSubmittedTime),
+                        SET LoginCount = (SELECT COALESCE(COUNT(*), 0)
+                            FROM Sessions AS S
+                            WHERE S.CandidateID = Progress.CandidateID
+                              AND S.CustomisationID = Progress.CustomisationID
+                              AND S.LoginTime >= Progress.FirstSubmittedTime),
                             Duration = (SELECT COALESCE(SUM(S1.Duration), 0)
-		                    FROM Sessions AS S1
-		                    WHERE S1.CandidateID = Progress.CandidateID
-		                      AND S1.CustomisationID = Progress.CustomisationID
-		                      AND S1.LoginTime >= Progress.FirstSubmittedTime),
+                            FROM Sessions AS S1
+                            WHERE S1.CandidateID = Progress.CandidateID
+                              AND S1.CustomisationID = Progress.CustomisationID
+                              AND S1.LoginTime >= Progress.FirstSubmittedTime),
                             SubmittedTime = GETUTCDATE()
-	                    WHERE Progress.ProgressID = @progressId",
+                        WHERE Progress.ProgressID = @progressId",
                 new { progressId }
             );
 
