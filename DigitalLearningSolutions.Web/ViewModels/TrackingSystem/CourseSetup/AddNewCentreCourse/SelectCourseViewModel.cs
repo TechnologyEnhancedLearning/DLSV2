@@ -13,17 +13,19 @@
             SearchSortFilterPaginationResult<ApplicationDetails> result,
             IEnumerable<FilterModel> availableFilters,
             string? categoryFilterString,
-            string? topicFilterString
+            string? topicFilterString,
+            int? selectedApplicationId = null
         ) : base(
             result,
             true,
             availableFilters
         )
         {
-            ApplicationOptions = result.ItemsToDisplay.Select(a => new FilterableApplicationSelectListItemViewModel(a));
+            ApplicationOptions = result.ItemsToDisplay.Select(a => new FilterableApplicationSelectListItemViewModel(a, selectedApplicationId));
 
             CategoryFilterString = categoryFilterString;
             TopicFilterString = topicFilterString;
+            ApplicationId = selectedApplicationId;
         }
 
         public int? ApplicationId { get; set; }
