@@ -66,7 +66,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 
         private string? GetBannerText()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var bannerText = centresDataService.GetBannerText(centreId);
             return bannerText;
         }

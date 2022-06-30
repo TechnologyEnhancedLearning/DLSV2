@@ -43,7 +43,7 @@
 
         private static bool ProgressRecordIsAccessibleToUser(DelegateCourseInfo details, ClaimsPrincipal user)
         {
-            var centreId = user.GetCentreId();
+            var centreId = user.GetCentreIdKnownNotNull();
 
             if (details.DelegateCentreId != centreId)
             {

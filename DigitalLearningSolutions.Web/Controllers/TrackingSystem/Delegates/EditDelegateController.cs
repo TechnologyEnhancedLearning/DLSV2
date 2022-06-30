@@ -40,7 +40,7 @@
         [HttpGet]
         public IActionResult Index(int delegateId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var delegateEntity = userService.GetDelegateById(delegateId);
 
             if (delegateEntity == null || delegateEntity.DelegateAccount.CentreId != centreId)
@@ -60,7 +60,7 @@
         [HttpPost]
         public IActionResult Index(EditDelegateFormData formData, int delegateId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             promptsService.ValidateCentreRegistrationPrompts(formData, centreId, ModelState);
 

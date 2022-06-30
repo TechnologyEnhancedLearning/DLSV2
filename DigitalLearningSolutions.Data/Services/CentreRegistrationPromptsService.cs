@@ -13,32 +13,32 @@
 
     public interface ICentreRegistrationPromptsService
     {
-        public CentreRegistrationPrompts GetCentreRegistrationPromptsByCentreId(int centreId);
+        CentreRegistrationPrompts GetCentreRegistrationPromptsByCentreId(int centreId);
 
-        public IEnumerable<CentreRegistrationPrompt>
+        IEnumerable<CentreRegistrationPrompt>
             GetCentreRegistrationPromptsThatHaveOptionsByCentreId(int centreId);
 
-        public CentreRegistrationPromptsWithAnswers?
+        CentreRegistrationPromptsWithAnswers?
             GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
-                int centreId,
+                int? centreId,
                 DelegateAccount? delegateAccount
             );
 
-        public List<(DelegateEntity delegateEntity, List<CentreRegistrationPromptWithAnswer> prompts)>
+        List<(DelegateEntity delegateEntity, List<CentreRegistrationPromptWithAnswer> prompts)>
             GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegates(
                 int centreId,
                 IEnumerable<DelegateEntity> delegates
             );
 
-        public void UpdateCentreRegistrationPrompt(int centreId, int promptNumber, bool mandatory, string? options);
+        void UpdateCentreRegistrationPrompt(int centreId, int promptNumber, bool mandatory, string? options);
 
         List<(int id, string value)> GetCentreRegistrationPromptsAlphabeticalList();
 
-        public bool AddCentreRegistrationPrompt(int centreId, int promptId, bool mandatory, string? options);
+        bool AddCentreRegistrationPrompt(int centreId, int promptId, bool mandatory, string? options);
 
-        public void RemoveCentreRegistrationPrompt(int centreId, int promptNumber);
+        void RemoveCentreRegistrationPrompt(int centreId, int promptNumber);
 
-        public string GetCentreRegistrationPromptNameAndNumber(int centreId, int promptNumber);
+        string GetCentreRegistrationPromptNameAndNumber(int centreId, int promptNumber);
     }
 
     public class CentreRegistrationPromptsService : ICentreRegistrationPromptsService
@@ -75,16 +75,16 @@
 
         public CentreRegistrationPromptsWithAnswers?
             GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
-                int centreId,
+                int? centreId,
                 DelegateAccount? delegateAccount
             )
         {
-            if (delegateAccount == null)
+            if (centreId == null || delegateAccount == null)
             {
                 return null;
             }
 
-            var result = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(centreId);
+            var result = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(centreId.Value);
 
             return new CentreRegistrationPromptsWithAnswers(
                 result.CentreId,

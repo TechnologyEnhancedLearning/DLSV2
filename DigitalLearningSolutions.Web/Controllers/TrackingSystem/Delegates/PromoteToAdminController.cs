@@ -53,7 +53,7 @@
         [HttpGet]
         public IActionResult Index(int delegateId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var userId = userDataService.GetUserIdFromDelegateId(delegateId);
             var userEntity = userService.GetUserById(userId);
 
