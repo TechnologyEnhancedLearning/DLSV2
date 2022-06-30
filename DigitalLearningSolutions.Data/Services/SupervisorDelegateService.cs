@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Supervisor;
 
@@ -43,9 +44,16 @@
             IEnumerable<string?> emails
         )
         {
+            emails = emails.Where(e => !string.IsNullOrWhiteSpace(e)).ToList();
+
+            if (!emails.Any())
+            {
+                return new List<SupervisorDelegate>();
+            }
+
             return supervisorDelegateDataService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
                 centreId,
-                emails
+                emails!
             );
         }
     }

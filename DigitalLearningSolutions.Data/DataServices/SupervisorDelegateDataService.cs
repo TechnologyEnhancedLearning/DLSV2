@@ -13,7 +13,7 @@
 
         IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
             int centreId,
-            IEnumerable<string?> emails
+            IEnumerable<string> emails
         );
 
         void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int candidateId);
@@ -61,7 +61,7 @@
 
         public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
             int centreId,
-            IEnumerable<string?> emails
+            IEnumerable<string> emails
         )
         {
             return connection.Query<SupervisorDelegate>(
