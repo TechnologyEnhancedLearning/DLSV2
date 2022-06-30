@@ -730,7 +730,7 @@
             var supervisorDelegateId = supervisorService.AddSuperviseDelegate(
                 sessionAddSupervisor.SupervisorAdminId,
                 candidateId,
-                delegateEntity!.UserCentreDetails?.Email ?? delegateEntity.UserAccount.PrimaryEmail,
+                delegateEntity!.EmailForCentreNotifications,
                 sessionAddSupervisor.SupervisorEmail ?? throw new InvalidOperationException(),
                 User.GetCentreId()
             );

@@ -6,11 +6,11 @@
     using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
@@ -60,6 +60,33 @@
         }
 
         [Test]
+        public void GetSupervisorDelegateRecordByInviteHash_logs_error_and_returns_null_if_more_than_one_record_found()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            var currentTime = DateTime.UtcNow;
+
+            connection.Execute(
+                @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, Added,
+                                 NotificationSent, Removed, SupervisorEmail, AddedByDelegate, InviteHash)
+                    OUTPUT INSERTED.ID
+                    VALUES (1, 'delegate@email.com', null, @currentTime, @currentTime, null,
+                            'supervisor@email.com', 0, @inviteHashForFirstSupervisorDelegateRecord)",
+                new { currentTime, inviteHashForFirstSupervisorDelegateRecord }
+            );
+
+            // When
+            var result =
+                supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(
+                    inviteHashForFirstSupervisorDelegateRecord
+                );
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
         public void GetPendingSupervisorDelegateRecordsByEmailsAndCentre_returns_correct_records()
         {
             using var transaction = new TransactionScope();
@@ -94,8 +121,11 @@
             ).ToList();
 
             // Then
-            result.Count.Should().Be(1);
-            result.First().DelegateEmail.Should().Be(delegateEmailForValidRecord);
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(1);
+                result.First().DelegateEmail.Should().Be(delegateEmailForValidRecord);
+            }
         }
 
         [Test]
@@ -105,19 +135,28 @@
 
             // Given
             const int candidateId = 1;
+            var oldRecord =
+                supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(
+                    inviteHashForFirstSupervisorDelegateRecord
+                );
 
-            // When
+            // When;
             supervisorDelegateDataService.UpdateSupervisorDelegateRecordsCandidateId(
                 new List<int> { 6, 7, 8 },
                 1
             );
 
             // Then
-            var updatedRecord =
-                supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(
-                    inviteHashForFirstSupervisorDelegateRecord
-                );
-            updatedRecord!.CandidateID.Should().Be(candidateId);
+            using (new AssertionScope())
+            {
+                var updatedRecord =
+                    supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(
+                        inviteHashForFirstSupervisorDelegateRecord
+                    );
+                updatedRecord!.CandidateID.Should().Be(candidateId);
+                updatedRecord.ID.Should().Be(8);
+                oldRecord!.CandidateID.Should().NotBe(candidateId);
+            }
         }
     }
 }
