@@ -30,6 +30,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private const string NewCandidateNumber = "TU67";
         private const string RefactoredSystemBaseUrl = "refactoredUrl";
         private const string OldSystemBaseUrl = "oldUrl";
+        private static readonly (int, string) NewDelegateIdAndCandidateNumber = (2, NewCandidateNumber);
 
         private ICentresDataService centresDataService = null!;
         private IClockService clockService = null!;
@@ -71,7 +72,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         false
                     )
                 )
-                .Returns(NewCandidateNumber);
+                .Returns(NewDelegateIdAndCandidateNumber);
 
             registrationService = new RegistrationService(
                 registrationDataService,
@@ -297,13 +298,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
             GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
-            A.CallTo(
-                    () => userDataService.GetDelegateUserByCandidateNumber(
-                        NewCandidateNumber,
-                        RegistrationModelTestHelper.Centre
-                    )
-                )
-                .Returns(new DelegateUser { Id = 777 });
 
             // When
             registrationService.CreateDelegateAccountForNewUser(
@@ -318,7 +312,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(
                 () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
-                    777
+                    A<int>._
                 )
             ).MustHaveHappened();
         }
@@ -370,7 +364,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(
                     () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                         A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
-                        0
+                        A<int>._
                     )
                 )
                 .MustHaveHappened();
@@ -669,7 +663,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         false
                     )
                 )
-                .Returns(NewCandidateNumber);
+                .Returns(NewDelegateIdAndCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(
@@ -707,7 +701,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         false
                     )
                 )
-                .Returns(NewCandidateNumber);
+                .Returns(NewDelegateIdAndCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(
@@ -743,7 +737,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         false
                     )
                 )
-                .Returns(NewCandidateNumber);
+                .Returns(NewDelegateIdAndCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(
@@ -775,7 +769,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         false
                     )
                 )
-                .Returns(NewCandidateNumber);
+                .Returns(NewDelegateIdAndCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(
@@ -809,7 +803,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         false
                     )
                 )
-                .Returns(NewCandidateNumber);
+                .Returns((777, NewCandidateNumber));
             A.CallTo(
                     () => userDataService.GetDelegateUserByCandidateNumber(
                         NewCandidateNumber,
@@ -845,7 +839,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         false
                     )
                 )
-                .Returns(NewCandidateNumber);
+                .Returns(NewDelegateIdAndCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(

@@ -11,7 +11,7 @@
 
     public interface IRegistrationDataService
     {
-        string RegisterNewUserAndDelegateAccount(
+        (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions
         );
@@ -53,7 +53,7 @@
             this.logger = logger;
         }
 
-        public string RegisterNewUserAndDelegateAccount(
+        public (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions
         )
@@ -70,7 +70,7 @@
                 transaction
             );
 
-            var (_, candidateNumber) = RegisterDelegateAccountAndCentreDetailForExistingUser(
+            var (delegateId, candidateNumber) = RegisterDelegateAccountAndCentreDetailForExistingUser(
                 delegateRegistrationModel,
                 userIdToLinkDelegateAccountTo,
                 currentTime,
@@ -79,7 +79,7 @@
 
             transaction.Commit();
 
-            return candidateNumber;
+            return (delegateId, candidateNumber);
         }
 
         public (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(

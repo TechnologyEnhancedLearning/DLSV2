@@ -177,42 +177,27 @@ namespace DigitalLearningSolutions.Data.Services
         {
             var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
 
-            var errorCodeOrCandidateNumber = registrationService.CreateAccountAndReturnCandidateNumber(model, false);
-            switch (errorCodeOrCandidateNumber)
-            {
-                case "-1":
-                    delegateRow.Error = BulkUploadResult.ErrorReason.UnexpectedErrorForCreate;
-                    break;
-                case "-2":
-                case "-3":
-                case "-4":
-                    throw new ArgumentOutOfRangeException(
-                        nameof(errorCodeOrCandidateNumber),
-                        errorCodeOrCandidateNumber,
-                        "Unknown return value when creating delegate record."
-                    );
-                default:
-                    var newDelegateRecord =
-                        userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
-                    UpdateUserProfessionalRegistrationNumberIfNecessary(
-                        delegateRow.HasPrn,
-                        delegateRow.Prn,
-                        newDelegateRecord.Id
-                    );
-                    SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, newDelegateRecord.Id);
-                    if (welcomeEmailDate.HasValue)
-                    {
-                        passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                            newDelegateRecord.Id,
-                            configuration.GetAppRootPath(),
-                            welcomeEmailDate.Value,
-                            "DelegateBulkUpload_Refactor"
-                        );
-                    }
+            var (delegateId, _) = registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(model, false);
 
-                    delegateRow.RowStatus = RowStatus.Registered;
-                    break;
+            UpdateUserProfessionalRegistrationNumberIfNecessary(
+                delegateRow.HasPrn,
+                delegateRow.Prn,
+                delegateId
+            );
+
+            SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, delegateId);
+
+            if (welcomeEmailDate.HasValue)
+            {
+                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    delegateId,
+                    configuration.GetAppRootPath(),
+                    welcomeEmailDate.Value,
+                    "DelegateBulkUpload_Refactor"
+                );
             }
+
+            delegateRow.RowStatus = RowStatus.Registered;
         }
 
         private void UpdateUserProfessionalRegistrationNumberIfNecessary(

@@ -47,13 +47,13 @@
             var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
 
             // When
-            var candidateNumber = service.RegisterNewUserAndDelegateAccount(
+            var (delegateId, candidateNumber) = service.RegisterNewUserAndDelegateAccount(
                 delegateRegistrationModel,
                 false
             );
 
             // Then
-            var delegateEntity = userDataService.GetDelegateByCandidateNumber(candidateNumber);
+            var delegateEntity = userDataService.GetDelegateById(delegateId);
             using (new AssertionScope())
             {
                 delegateEntity!.UserAccount.FirstName.Should().Be(delegateRegistrationModel.FirstName);
@@ -85,13 +85,13 @@
             A.CallTo(() => clockService.UtcNow).Returns(dateTime);
 
             // When
-            var candidateNumber = service.RegisterNewUserAndDelegateAccount(
+            var (delegateId, candidateNumber) = service.RegisterNewUserAndDelegateAccount(
                 delegateRegistrationModel,
                 true
             );
 
             // Then
-            var delegateEntity = userDataService.GetDelegateByCandidateNumber(candidateNumber);
+            var delegateEntity = userDataService.GetDelegateById(delegateId);
             using (new AssertionScope())
             {
                 delegateEntity!.UserAccount.FirstName.Should().Be(delegateRegistrationModel.FirstName);
