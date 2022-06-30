@@ -17,6 +17,7 @@
                         SA.Description,
                         SA.IncludesSignposting,
                         SA.SupervisorResultsReview AS IsSupervisorResultsReviewed,
+                        SA.ReviewerCommentsLabel,
                         COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
                         COUNT(C.ID) AS NumberOfCompetencies,
                         CA.StartedDate,
@@ -38,6 +39,7 @@
                     WHERE CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
+                        SA.ReviewerCommentsLabel,
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
                         CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
@@ -57,6 +59,7 @@
                         SA.IncludesSignposting,
                         SA.SupervisorResultsReview AS IsSupervisorResultsReviewed,
                         SA.SupervisorSelfAssessmentReview,
+                        SA.ReviewerCommentsLabel,
                         SA.EnforceRoleRequirementsForSignOff,
                         COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
                         COUNT(C.ID) AS NumberOfCompetencies,
@@ -112,7 +115,8 @@
                         CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID, CA.UserBookmark, CA.UnprocessedUpdates,
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
-                        SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview, SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription",
+                        SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
+                        SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription",
                 new { candidateId, selfAssessmentId }
             );
         }
