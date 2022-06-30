@@ -97,17 +97,7 @@ namespace DigitalLearningSolutions.Data.Services
                 return;
             }
 
-            var delegateUserByCandidateNumber =
-                GetDelegateUserByCandidateNumberOrDefault(centreId, delegateRow.CandidateNumber);
-
-            if (!string.IsNullOrEmpty(delegateRow.CandidateNumber) && delegateUserByCandidateNumber == null)
-            {
-                delegateRow.Error = BulkUploadResult.ErrorReason.NoRecordForDelegateId;
-                return;
-            }
-
-            var userToUpdate = delegateUserByCandidateNumber;
-            if (userToUpdate == null)
+            if (string.IsNullOrEmpty(delegateRow.CandidateNumber))
             {
                 if (!userService.IsDelegateEmailValidForCentre(delegateRow.Email!, centreId))
                 {
@@ -119,33 +109,30 @@ namespace DigitalLearningSolutions.Data.Services
             }
             else
             {
-                ProcessPotentialUpdate(centreId, delegateRow, userToUpdate);
+                var delegateUserByCandidateNumber =
+                    userDataService.GetDelegateUserByCandidateNumber(delegateRow.CandidateNumber, centreId);
+
+                if (delegateUserByCandidateNumber == null)
+                {
+                    delegateRow.Error = BulkUploadResult.ErrorReason.NoRecordForDelegateId;
+                    return;
+                }
+
+                if (delegateRow.Email != delegateUserByCandidateNumber.EmailAddress &&
+                    !userService.IsDelegateEmailValidForCentre(delegateRow.Email!, centreId))
+                {
+                    delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
+                    return;
+                }
+
+                if (delegateRow.MatchesDelegateUser(delegateUserByCandidateNumber))
+                {
+                    delegateRow.RowStatus = RowStatus.Skipped;
+                    return;
+                }
+
+                UpdateDelegate(delegateRow, delegateUserByCandidateNumber);
             }
-        }
-
-        private DelegateUser? GetDelegateUserByCandidateNumberOrDefault(int centreId, string? candidateNumber)
-        {
-            return !string.IsNullOrEmpty(candidateNumber)
-                ? userDataService.GetDelegateUserByCandidateNumber(candidateNumber, centreId)
-                : null;
-        }
-
-        private void ProcessPotentialUpdate(int centreId, DelegateTableRow delegateRow, DelegateUser delegateUser)
-        {
-            if (delegateRow.Email != delegateUser.EmailAddress &&
-                !userService.IsDelegateEmailValidForCentre(delegateRow.Email!, centreId))
-            {
-                delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
-                return;
-            }
-
-            if (delegateRow.MatchesDelegateUser(delegateUser))
-            {
-                delegateRow.RowStatus = RowStatus.Skipped;
-                return;
-            }
-
-            UpdateDelegate(delegateRow, delegateUser);
         }
 
         // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
