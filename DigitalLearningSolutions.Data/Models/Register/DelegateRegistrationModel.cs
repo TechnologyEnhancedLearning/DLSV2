@@ -102,7 +102,6 @@
             InternalDelegateRegistrationModel internalDelegateRegistrationModel,
             bool approved = false,
             bool isSelfRegistered = true
-
         ) : base(
             userAccount.FirstName,
             userAccount.LastName,
@@ -125,21 +124,22 @@
             IsSelfRegistered = isSelfRegistered;
         }
 
-        public string? Answer1 { get; set; }
+        public string? Answer1 { get; }
 
-        public string? Answer2 { get; set; }
+        public string? Answer2 { get; }
 
-        public string? Answer3 { get; set; }
+        public string? Answer3 { get; }
 
-        public string? Answer4 { get; set; }
+        public string? Answer4 { get; }
 
-        public string? Answer5 { get; set; }
+        public string? Answer5 { get; }
 
-        public string? Answer6 { get; set; }
+        public string? Answer6 { get; }
 
-        public DateTime? NotifyDate { get; set; }
+        public DateTime? NotifyDate { get; }
 
-        public bool IsSelfRegistered { get; set; }
+        public bool IsSelfRegistered { get; }
+
 
         public bool IsExternalRegistered => !Approved;
     }

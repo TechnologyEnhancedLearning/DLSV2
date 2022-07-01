@@ -536,23 +536,30 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .MustHaveHappened(1, Times.Exactly);
             A.CallTo(
                 () =>
-                    passwordDataService.SetPasswordByCandidateNumber(NewCandidateNumber, RegistrationModelTestHelper.PasswordHash)
+                    passwordDataService.SetPasswordByCandidateNumber(
+                        NewCandidateNumber,
+                        RegistrationModelTestHelper.PasswordHash
+                    )
             ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => registrationDataService.RegisterAdmin(
-                    A<AdminAccountRegistrationModel>.That.Matches(
-                        m => m.UserId == userId
-                        && m.CentreSpecificEmail == centreManagerModel.CentreSpecificEmail
-                        && m.CentreId == centreManagerModel.Centre
-                        && m.CategoryId == centreManagerModel.CategoryId
-                        && m.IsCentreAdmin == centreManagerModel.IsCentreAdmin
-                        && m.IsCentreManager == centreManagerModel.IsCentreManager
-                        && m.IsContentManager == centreManagerModel.IsContentManager
-                        && m.IsContentCreator == centreManagerModel.IsContentCreator
-                        && m.IsTrainer == centreManagerModel.IsTrainer
-                        && m.ImportOnly == centreManagerModel.ImportOnly
-                        && m.IsSupervisor == centreManagerModel.IsSupervisor
-                        && m.IsNominatedSupervisor == centreManagerModel.IsNominatedSupervisor
-                        && m.Active == centreManagerModel.Active)))
+            A.CallTo(
+                    () => registrationDataService.RegisterAdmin(
+                        A<AdminAccountRegistrationModel>.That.Matches(
+                            m => m.UserId == userId
+                                 && m.CentreSpecificEmail == centreManagerModel.CentreSpecificEmail
+                                 && m.CentreId == centreManagerModel.Centre
+                                 && m.CategoryId == centreManagerModel.CategoryId
+                                 && m.IsCentreAdmin == centreManagerModel.IsCentreAdmin
+                                 && m.IsCentreManager == centreManagerModel.IsCentreManager
+                                 && m.IsContentManager == centreManagerModel.IsContentManager
+                                 && m.IsContentCreator == centreManagerModel.IsContentCreator
+                                 && m.IsTrainer == centreManagerModel.IsTrainer
+                                 && m.ImportOnly == centreManagerModel.ImportOnly
+                                 && m.IsSupervisor == centreManagerModel.IsSupervisor
+                                 && m.IsNominatedSupervisor == centreManagerModel.IsNominatedSupervisor
+                                 && m.Active == centreManagerModel.Active
+                        )
+                    )
+                )
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustHaveHappenedOnceExactly();

@@ -53,22 +53,22 @@
             RowStatus = RowStatus.NotYetProcessed;
         }
 
-        public int RowNumber { get; set; }
-        public string? CandidateNumber { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public int? JobGroupId { get; set; }
-        public bool? Active { get; set; }
-        public string? Answer1 { get; set; }
-        public string? Answer2 { get; set; }
-        public string? Answer3 { get; set; }
-        public string? Answer4 { get; set; }
-        public string? Answer5 { get; set; }
-        public string? Answer6 { get; set; }
-        public string? Email { get; set; }
-        public string? HasPrnRawValue { get; set; }
-        public bool? HasPrn { get; set; }
-        public string? Prn { get; set; }
+        public int RowNumber { get; }
+        public string? CandidateNumber { get; }
+        public string? FirstName { get; }
+        public string? LastName { get; }
+        public int? JobGroupId { get; }
+        public bool? Active { get; }
+        public string? Answer1 { get; }
+        public string? Answer2 { get; }
+        public string? Answer3 { get; }
+        public string? Answer4 { get; }
+        public string? Answer5 { get; }
+        public string? Answer6 { get; }
+        public string? Email { get; }
+        private string? HasPrnRawValue { get; }
+        public bool? HasPrn { get; }
+        public string? Prn { get; }
 
         public BulkUploadResult.ErrorReason? Error { get; set; }
         public RowStatus RowStatus { get; set; }

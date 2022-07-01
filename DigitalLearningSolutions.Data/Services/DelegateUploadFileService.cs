@@ -36,7 +36,7 @@ namespace DigitalLearningSolutions.Data.Services
         public DelegateUploadFileService(
             IJobGroupsDataService jobGroupsDataService,
             IUserDataService userDataService,
-            IRegistrationService registrationDataService,
+            IRegistrationService registrationService,
             ISupervisorDelegateService supervisorDelegateService,
             IUserService userService,
             IPasswordResetService passwordResetService,
@@ -44,7 +44,7 @@ namespace DigitalLearningSolutions.Data.Services
         )
         {
             this.userDataService = userDataService;
-            registrationService = registrationDataService;
+            this.registrationService = registrationService;
             this.supervisorDelegateService = supervisorDelegateService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
