@@ -11,10 +11,10 @@
 
         public override void Up()
         {
-            Create.Index(CandidateAssessmentsIndexName).OnTable("CandidateAssessments").WithOptions().UniqueNullsNotDistinct().OnColumn("DelegateUserId").Ascending()
-                .OnColumn("SelfAssessmentId").Ascending();
-            Create.Index(SupervisorDelegatesIndexName).OnTable("SupervisorDelegates").WithOptions().UniqueNullsNotDistinct().OnColumn("DelegateUserId").Ascending()
-                .OnColumn("SupervisorAdminId").Ascending();
+            Create.Index(CandidateAssessmentsIndexName).OnTable("CandidateAssessments").WithOptions().UniqueNullsNotDistinct().OnColumn("DelegateUserID").Ascending()
+                .OnColumn("SelfAssessmentID").Ascending();
+            Create.Index(SupervisorDelegatesIndexName).OnTable("SupervisorDelegates").WithOptions().UniqueNullsNotDistinct().OnColumn("DelegateUserID").Ascending()
+                .OnColumn("SupervisorAdminID").Ascending();
         }
 
         public override void Down()

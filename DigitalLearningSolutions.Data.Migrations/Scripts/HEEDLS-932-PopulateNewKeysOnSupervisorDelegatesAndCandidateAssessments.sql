@@ -1,13 +1,4 @@
 UPDATE SupervisorDelegates
-	SET DelegateUserID = (SELECT UserID FROM DelegateAccounts da WHERE da.CandidateNumber =
-							(SELECT CandidateNumber FROM Candidates c WHERE c.CandidateID = CandidateID))
-
-UPDATE CandidateAssessments
-	SET DelegateUserID = (SELECT UserID FROM DelegateAccounts da WHERE da.CandidateNumber =
-							(SELECT CandidateNumber FROM Candidates c WHERE c.CandidateID = CandidateID)),
-		CentreID = (SELECT CentreID FROM Candidates c WHERE c.CandidateID = CandidateID)
-
-UPDATE SupervisorDelegates
 	SET SupervisorDelegates.DelegateUserID = da.UserID
 	FROM Candidates c
 		JOIN DelegateAccounts da

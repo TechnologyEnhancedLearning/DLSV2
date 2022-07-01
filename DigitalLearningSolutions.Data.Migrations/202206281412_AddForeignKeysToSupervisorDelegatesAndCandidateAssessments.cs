@@ -9,48 +9,52 @@
         {
             // TODO HEEDLS-932 does the column name want to be capitalised?
             Alter.Table("SupervisorDelegates")
-                .AddColumn("DelegateUserId").AsInt32().Nullable()
+                .AddColumn("DelegateUserID").AsInt32().Nullable()
                 .ForeignKey("Users", "ID");
 
             Alter.Table("CandidateAssessments")
-                .AddColumn("DelegateUserId").AsInt32().Nullable()
+                .AddColumn("DelegateUserID").AsInt32().Nullable()
                 .ForeignKey("Users", "ID")
-                .AddColumn("CentreId").AsInt32().Nullable()
-                .ForeignKey("Centres", "ID");
+                .AddColumn("CentreID").AsInt32().Nullable()
+                .ForeignKey("Centres", "CentreID");
 
             // script to populate columns
+            Execute.Script("DigitalLearningSolutions.Data.Migrations/Scripts/HEEDLS-932-PopulateNewKeysOnSupervisorDelegatesAndCandidateAssessments.sql");
 
             // remove null option on columns
-            Alter.Table("SupervisorDelegates")
-                .AlterColumn("DelegateUserId").AsInt32().NotNullable();
             Alter.Table("CandidateAssessments")
-                .AlterColumn("DelegateUserId").AsInt32().NotNullable()
-                .AlterColumn("CentreId").AsInt32().NotNullable();
+                .AlterColumn("DelegateUserID").AsInt32().NotNullable()
+                .AlterColumn("CentreID").AsInt32().NotNullable();
 
             // remove constraints
             Delete.ForeignKey().FromTable("SupervisorDelegates").ForeignColumn("CandidateId")
-                .ToTable("Candidates").PrimaryColumn("CandidateId");
+                .ToTable("Candidates").PrimaryColumn("CandidateID");
             Alter.Table("SupervisorDelegates").AlterColumn("CandidateId").AsInt32().Nullable();
 
-            Delete.ForeignKey().FromTable("CandidateAssessments").ForeignColumn("CandidateId")
-                .ToTable("Candidates").PrimaryColumn("CandidateId");
-            Alter.Table("CandidateAssessments").AlterColumn("CandidateId").AsInt32().Nullable();
+            Delete.ForeignKey().FromTable("CandidateAssessments").ForeignColumn("CandidateID")
+                .ToTable("Candidates").PrimaryColumn("CandidateID");
+            Alter.Table("CandidateAssessments").AlterColumn("CandidateID").AsInt32().Nullable();
 
             // rename column
-            Rename.Column("CandidateId").OnTable("SupervisorDelegates").To("CandidateId_deprecated");
-            Rename.Column("CandidateId").OnTable("CandidateAssessments").To("CandidateId_deprecated");
+            Rename.Column("CandidateID").OnTable("SupervisorDelegates").To("CandidateID_deprecated");
+            Rename.Column("CandidateID").OnTable("CandidateAssessments").To("CandidateID_deprecated");
         }
 
         public override void Down()
         {
-            Rename.Column("CandidateId_deprecated").OnTable("SupervisorDelegates").To("CandidateId");
-            Rename.Column("CandidateId_deprecated").OnTable("CandidateAssessments").To("CandidateId");
+            Rename.Column("CandidateID_deprecated").OnTable("SupervisorDelegates").To("CandidateID");
+            Rename.Column("CandidateID_deprecated").OnTable("CandidateAssessments").To("CandidateID");
 
-            Alter.Table("SupervisorDelegates").AlterColumn("CandidateId").AsInt32().Nullable()
+            Alter.Table("SupervisorDelegates").AlterColumn("CandidateID").AsInt32().Nullable()
                 .ForeignKey("Candidates", "DelegateID");
 
-            Alter.Table("CandidateAssessments").AlterColumn("CandidateId").AsInt32().Nullable()
+            Alter.Table("CandidateAssessments").AlterColumn("CandidateID").AsInt32().Nullable()
                 .ForeignKey("Candidates", "DelegateID");
+
+            Delete.Column("DelegateUserID").FromTable("SupervisorDelegates");
+
+            Delete.Column("DelegateUserID").FromTable("CandidateAssessments");
+            Delete.Column("CentreID").FromTable("CandidateAssessments");
         }
     }
 }
