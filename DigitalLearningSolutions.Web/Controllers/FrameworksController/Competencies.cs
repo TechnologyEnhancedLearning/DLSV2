@@ -148,6 +148,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (newCompetencyId > 0)
             {
                 var newFrameworkCompetencyId = frameworkService.InsertFrameworkCompetency(newCompetencyId, frameworkCompetencyGroupId, adminId, frameworkId);
+                frameworkService.UpdateCompetencyFlags(frameworkId, newCompetencyId, selectedFlagIds);
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId, frameworkCompetencyId }) + "#fc-" + newFrameworkCompetencyId.ToString());
             }
             logger.LogWarning($"Attempt to add framework competency failed for admin {adminId}.");
