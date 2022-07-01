@@ -19,8 +19,8 @@
 
         public override void Down()
         {
-            Delete.Index(CandidateAssessmentsIndexName);
-            Delete.Index(SupervisorDelegatesIndexName);
+            Delete.Index(CandidateAssessmentsIndexName).OnTable("CandidateAssessments");
+            Delete.Index(SupervisorDelegatesIndexName).OnTable("SupervisorDelegates");
         }
     }
 }
