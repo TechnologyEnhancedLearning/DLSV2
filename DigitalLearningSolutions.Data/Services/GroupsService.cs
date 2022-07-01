@@ -44,6 +44,11 @@
             string? centreEmail
         );
 
+        void AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+            int delegateId,
+            RegistrationFieldAnswers registrationFieldAnswers
+        );
+
         void EnrolDelegateOnGroupCourses(
             DelegateUser delegateAccountWithOldDetails,
             AccountDetailsData newDetails,
@@ -215,6 +220,50 @@
                         delegateAccountWithOldDetails,
                         accountDetailsData,
                         centreEmail,
+                        groupToAddDelegateTo.GroupId
+                    );
+                }
+
+                transaction.Complete();
+            }
+        }
+
+        public void AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+            int delegateId,
+            RegistrationFieldAnswers registrationFieldAnswers
+        )
+        {
+            var newDelegateAccount = userDataService.GetDelegateById(delegateId)!;
+
+            var newLinkedFields = LinkedFieldHelper.GetNewLinkedFields(
+                registrationFieldAnswers,
+                jobGroupsDataService,
+                centreRegistrationPromptsService
+            );
+
+            var allSynchronisedGroupsAtCentre =
+                GetAddNewRegistrantsGroupsForCentre(newDelegateAccount.DelegateAccount.CentreId).ToList();
+
+            foreach (var linkedField in newLinkedFields)
+            {
+                var groupsToAddDelegateTo = allSynchronisedGroupsAtCentre.Where(
+                    g => g.LinkedToField == linkedField.LinkedFieldNumber &&
+                         GroupLabelMatchesAnswer(g.GroupLabel, linkedField.NewValue!, linkedField.LinkedFieldName)
+                );
+
+                using var transaction = new TransactionScope();
+
+                foreach (var groupToAddDelegateTo in groupsToAddDelegateTo)
+                {
+                    groupsDataService.AddDelegateToGroup(
+                        newDelegateAccount.DelegateAccount.Id,
+                        groupToAddDelegateTo.GroupId,
+                        clockService.UtcNow,
+                        1
+                    );
+
+                    EnrolNewDelegateOnGroupCourse(
+                        newDelegateAccount,
                         groupToAddDelegateTo.GroupId
                     );
                 }
@@ -499,6 +548,28 @@
             transaction.Complete();
         }
 
+        private void EnrolNewDelegateOnGroupCourse(
+            DelegateEntity newDelegateEntity,
+            int groupId,
+            int? addedByAdminId = null
+        )
+        {
+            var groupCourses = GetUsableGroupCoursesForCentre(groupId, newDelegateEntity.DelegateAccount.CentreId);
+            var fullName = newDelegateEntity.UserAccount.FirstName + " " + newDelegateEntity.UserAccount.LastName;
+
+            foreach (var groupCourse in groupCourses)
+            {
+                EnrolDelegateOnGroupCourse(
+                    newDelegateEntity.DelegateAccount.Id,
+                    newDelegateEntity.EmailForCentreNotifications,
+                    fullName,
+                    addedByAdminId,
+                    groupCourse,
+                    false
+                );
+            }
+        }
+
         private void EnrolDelegateOnGroupCourse(
             int delegateUserId,
             string delegateUserEmailAddress,
@@ -573,6 +644,12 @@
         {
             return groupsDataService.GetGroupsForCentre(centreId)
                 .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
+        }
+
+        private IEnumerable<Group> GetAddNewRegistrantsGroupsForCentre(int centreId)
+        {
+            return groupsDataService.GetGroupsForCentre(centreId)
+                .Where(g => g.ShouldAddNewRegistrantsToGroup);
         }
 
         private static bool GroupLabelMatchesAnswer(string groupLabel, string answer, string linkedFieldName)

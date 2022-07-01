@@ -58,6 +58,7 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IClockService clockService;
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
+        private readonly IGroupsService groupsService;
         private readonly ILogger<RegistrationService> logger;
         private readonly IPasswordDataService passwordDataService;
         private readonly IPasswordResetService passwordResetService;
@@ -77,7 +78,8 @@ namespace DigitalLearningSolutions.Data.Services
             IUserDataService userDataService,
             ILogger<RegistrationService> logger,
             IUserService userService,
-            IClockService clockService
+            IClockService clockService,
+            IGroupsService groupsService
         )
         {
             this.registrationDataService = registrationDataService;
@@ -92,6 +94,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.logger = logger;
             this.userService = userService;
             this.clockService = clockService;
+            this.groupsService = groupsService;
         }
 
         public (string candidateNumber, bool approved) CreateDelegateAccountForNewUser(
@@ -134,6 +137,11 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateUser.Id,
                 delegateRegistrationModel.ProfessionalRegistrationNumber,
                 true
+            );
+
+            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                delegateUser.Id,
+                delegateUser.GetRegistrationFieldAnswers()
             );
 
             if (supervisorDelegateRecordIdsMatchingDelegate.Any())
@@ -208,6 +216,15 @@ namespace DigitalLearningSolutions.Data.Services
                     candidateNumber = delegateAccountAtCentre.CandidateNumber;
                     ReregisterDelegateAccountForExistingUser(userId, delegateId, delegateRegistrationModel);
                 }
+
+                var delegateEntity = userDataService.GetDelegateById(
+                    delegateId
+                )!;
+
+                groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                    delegateId,
+                    delegateEntity.GetRegistrationFieldAnswers()
+                );
             }
             catch (DelegateCreationFailedException exception)
             {

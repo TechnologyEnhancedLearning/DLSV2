@@ -20,6 +20,7 @@
     {
         private IClockService clockService = null!;
         private SqlConnection connection = null!;
+        private IGroupsService groupsService = null!;
         private ILogger<IRegistrationDataService> logger = null!;
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
@@ -32,7 +33,8 @@
             userDataService = new UserDataService(connection);
             clockService = A.Fake<IClockService>();
             logger = A.Fake<ILogger<IRegistrationDataService>>();
-            service = new RegistrationDataService(connection, userDataService, clockService, logger);
+            groupsService = A.Fake<IGroupsService>();
+            service = new RegistrationDataService(connection, userDataService, clockService, logger, groupsService);
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }
 

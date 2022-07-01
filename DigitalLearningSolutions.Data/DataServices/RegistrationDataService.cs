@@ -39,18 +39,21 @@
         private readonly IDbConnection connection;
         private readonly ILogger<IRegistrationDataService> logger;
         private readonly IUserDataService userDataService;
+        private readonly IGroupsService groupsService;
 
         public RegistrationDataService(
             IDbConnection connection,
             IUserDataService userDataService,
             IClockService clockService,
-            ILogger<IRegistrationDataService> logger
+            ILogger<IRegistrationDataService> logger,
+            IGroupsService groupsService
         )
         {
             this.connection = connection;
             this.userDataService = userDataService;
             this.clockService = clockService;
             this.logger = logger;
+            this.groupsService = groupsService;
         }
 
         public string RegisterNewUserAndDelegateAccount(
@@ -111,7 +114,14 @@
                 transaction
             );
 
-            // TODO HEEDLS-874 deal with group assignment
+            var delegateEntity = userDataService.GetDelegateById(
+                delegateId
+            )!;
+
+            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                delegateId,
+                delegateEntity.GetRegistrationFieldAnswers()
+            );
 
             if (transactionShouldBeClosed)
             {
@@ -145,7 +155,14 @@
                 transaction
             );
 
-            // TODO HEEDLS-874 deal with group assignment
+            var delegateEntity = userDataService.GetDelegateById(
+                delegateId
+            )!;
+
+            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                delegateId,
+                delegateEntity.GetRegistrationFieldAnswers()
+            );
 
             transaction.Commit();
         }

@@ -81,5 +81,73 @@
 
             return changedLinkedFieldsWithAnswers;
         }
+
+        public static List<LinkedFieldChange> GetNewLinkedFields(
+            RegistrationFieldAnswers newAnswers,
+            IJobGroupsDataService jobGroupsDataService,
+            ICentreRegistrationPromptsService centreRegistrationPromptsService
+        )
+        {
+            var changedLinkedFieldsWithAnswers = new List<LinkedFieldChange>();
+
+            if (newAnswers.Answer1 != null)
+            {
+                var prompt1Name =
+                    centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(newAnswers.CentreId, RegistrationField.CentreRegistrationField1.Id);
+                changedLinkedFieldsWithAnswers.Add(
+                    new LinkedFieldChange(RegistrationField.CentreRegistrationField1.LinkedToFieldId, prompt1Name, null, newAnswers.Answer1)
+                );
+            }
+
+            if (newAnswers.Answer2 != null)
+            {
+                var prompt2Name =
+                    centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(newAnswers.CentreId, RegistrationField.CentreRegistrationField2.Id);
+                changedLinkedFieldsWithAnswers.Add(
+                    new LinkedFieldChange(RegistrationField.CentreRegistrationField2.LinkedToFieldId, prompt2Name, null, newAnswers.Answer2)
+                );
+            }
+
+            if (newAnswers.Answer3 != null)
+            {
+                var prompt3Name =
+                    centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(newAnswers.CentreId, RegistrationField.CentreRegistrationField3.Id);
+                changedLinkedFieldsWithAnswers.Add(
+                    new LinkedFieldChange(RegistrationField.CentreRegistrationField3.LinkedToFieldId, prompt3Name, null, newAnswers.Answer3)
+                );
+            }
+
+            var newJobGroup = jobGroupsDataService.GetJobGroupName(newAnswers.JobGroupId);
+            changedLinkedFieldsWithAnswers.Add(new LinkedFieldChange(RegistrationField.JobGroup.LinkedToFieldId, "Job group", null, newJobGroup));
+
+            if (newAnswers.Answer4 != null)
+            {
+                var prompt4Name =
+                    centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(newAnswers.CentreId, RegistrationField.CentreRegistrationField4.Id);
+                changedLinkedFieldsWithAnswers.Add(
+                    new LinkedFieldChange(RegistrationField.CentreRegistrationField4.LinkedToFieldId, prompt4Name, null, newAnswers.Answer4)
+                );
+            }
+
+            if (newAnswers.Answer5 != null)
+            {
+                var prompt5Name =
+                    centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(newAnswers.CentreId, RegistrationField.CentreRegistrationField5.Id);
+                changedLinkedFieldsWithAnswers.Add(
+                    new LinkedFieldChange(RegistrationField.CentreRegistrationField5.LinkedToFieldId, prompt5Name, null, newAnswers.Answer5)
+                );
+            }
+
+            if (newAnswers.Answer6 != null)
+            {
+                var prompt6Name =
+                    centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(newAnswers.CentreId, RegistrationField.CentreRegistrationField6.Id);
+                changedLinkedFieldsWithAnswers.Add(
+                    new LinkedFieldChange(RegistrationField.CentreRegistrationField6.LinkedToFieldId, prompt6Name, null, newAnswers.Answer6)
+                );
+            }
+
+            return changedLinkedFieldsWithAnswers;
+        }
     }
 }

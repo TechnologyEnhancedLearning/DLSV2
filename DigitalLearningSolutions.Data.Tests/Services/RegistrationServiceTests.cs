@@ -35,6 +35,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private IClockService clockService = null!;
         private IConfiguration config = null!;
         private IEmailService emailService = null!;
+        private IGroupsService groupsService = null!;
         private IPasswordDataService passwordDataService = null!;
         private IPasswordResetService passwordResetService = null!;
         private IRegistrationDataService registrationDataService = null!;
@@ -56,6 +57,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             userService = A.Fake<IUserService>();
             userDataService = A.Fake<IUserDataService>();
             clockService = A.Fake<IClockService>();
+            groupsService = A.Fake<IGroupsService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(OldSystemBaseUrl);
             A.CallTo(() => config["AppRootPath"]).Returns(RefactoredSystemBaseUrl);
@@ -84,7 +86,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 userDataService,
                 new NullLogger<RegistrationService>(),
                 userService,
-                clockService
+                clockService,
+                groupsService
             );
         }
 
