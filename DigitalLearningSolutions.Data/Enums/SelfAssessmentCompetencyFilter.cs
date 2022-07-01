@@ -2,12 +2,13 @@
 {
     public enum SelfAssessmentCompetencyFilter
     {
-        RequiresSelfAssessment = -1,
-        SelfAssessed = -2,
-        Verified = -3,
-        ConfirmationRequested = -4,
-        MeetingRequirements = -5,
-        PartiallyMeetingRequirements = -6,
-        NotMeetingRequirements = -7
+        RequiresSelfAssessment = -8,
+        SelfAssessed = -7,
+        ConfirmationRequested = -6,
+        Verified = -5, /* Confirmed */
+        ConfirmationRejected = -4,
+        MeetingRequirements = -3,
+        PartiallyMeetingRequirements = -2,
+        NotMeetingRequirements = -1
     }
 }
