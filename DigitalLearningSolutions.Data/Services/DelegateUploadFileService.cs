@@ -142,7 +142,7 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateRow.LastName!,
                     delegateRow.Email!,
                     delegateRow.JobGroupId!.Value,
-                    1 // TODO HEEDLS-887 This needs correcting to the correct UserId for the delegate record.
+                    delegateEntity.UserAccount.Id
                 );
 
                 userDataService.UpdateDelegateAccount(
