@@ -38,8 +38,30 @@
 </p>
 }
 
+@if (Model.CompetencyGroups.Any())
+{
+    foreach (var competencyGroup in Model.CompetencyGroups)
+    {
+        var questions = competencyGroup.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required);
+        var selfAssessedCount = questions.Count(q => q.ResultId.HasValue);
+        var verifiedCount = questions.Count(q => q.Verified.HasValue);
+
+        selfAssessedTotal += selfAssessedCount;
+        verifiedTotal += verifiedCount;
+        questionsTotal += questions.Count();
+    }
+}
+
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
+<h2>Overall Progress</h2>
+<p class="nhsuk-body-l">
+    <span class="score">Self assessed: @selfAssessedTotal / @questionsTotal</span>
+    @if (Model.SelfAssessment.IsSupervisorResultsReviewed)
+    {
+        <span class="score">Confirmed: @verifiedTotal / @questionsTotal</span>
+    }
+</p>
 <partial name="SelfAssessments/_SearchSelfAssessmentOverview" model="@Model.SearchViewModel" view-data="@(new ViewDataDictionary(ViewData) { { "parent", Model } })" />
 <partial name="_OverviewActionButtons.cshtml" model=Model />
 <p><span role="alert">@Model.CompetencyGroups.Sum(g => g.Count()) matching @Model.VocabPlural().ToLower()</span></p>
@@ -59,9 +81,6 @@
       { "selfAssessedCount", selfAssessedCount },
       { "verifiedCount", verifiedCount }
     };
-    selfAssessedTotal += selfAssessedCount;
-    verifiedTotal += verifiedCount;
-    questionsTotal += questions.Count();
     <div class="nhsuk-panel competency-group-panel nhsuk-u-padding-0">
       @{
         var expanderOpen = Model.CompetencyGroups.Count() == 1
@@ -167,15 +186,7 @@
 }
 @if (Model.SelfAssessment.IsSupervised)
 {
-    <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
-        <h2>Overall Progress</h2>
-        <p class="nhsuk-body-l">
-            <span class="score">Self assessed: @selfAssessedTotal / @questionsTotal</span>
-            @if (Model.SelfAssessment.IsSupervisorResultsReviewed)
-            {
-                <span class="score">Confirmed: @verifiedTotal / @questionsTotal</span>
-            }
-        </p>
+    <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">        
         <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
         <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
         @if (Model.AllQuestionsVerifiedOrNotRequired())
