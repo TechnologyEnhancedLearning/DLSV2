@@ -480,4 +480,4 @@ MigrationBackup/
 # End of https://www.gitignore.io/api/aspnetcore,visualstudio
 
 DigitalLearningSolutions.Web/logs/*
-*.lock
+DigitalLearningSolutions.Web/appsettings.Development.json
