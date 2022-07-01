@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 @model AppliedFilterViewModel
 
-<div class="nhsuk-tag nhsuk-tag--blue filter-tag word-break" data-filter-value="@Model.FilterValue">
+<div class="nhsuk-tag @(String.IsNullOrEmpty(Model.TagClass) ? "nhsuk-tag--blue" : Model.TagClass) filter-tag word-break" data-filter-value="@Model.FilterValue">
   @if(!string.IsNullOrEmpty(Model.FilterCategory))
   {
     @Model.FilterCategory<text>:</text>
