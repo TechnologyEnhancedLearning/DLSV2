@@ -109,34 +109,34 @@ namespace DigitalLearningSolutions.Data.Services
             }
             else
             {
-                var delegateUserByCandidateNumber =
-                    userDataService.GetDelegateUserByCandidateNumber(delegateRow.CandidateNumber, centreId);
+                var delegateEntity = userDataService.GetDelegateByCandidateNumber(delegateRow.CandidateNumber);
 
-                if (delegateUserByCandidateNumber == null)
+                if (delegateEntity == null)
                 {
                     delegateRow.Error = BulkUploadResult.ErrorReason.NoRecordForDelegateId;
                     return;
                 }
 
-                if (delegateRow.Email != delegateUserByCandidateNumber.EmailAddress &&
-                    !userService.IsDelegateEmailValidForCentre(delegateRow.Email!, centreId))
+                if (delegateRow.Email != delegateEntity.UserAccount.PrimaryEmail &&
+                    !userService.IsDelegateEmailValidForCentre(delegateRow.Email!, centreId)
+                )
                 {
                     delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
                     return;
                 }
 
-                if (delegateRow.MatchesDelegateUser(delegateUserByCandidateNumber))
+                if (delegateRow.MatchesDelegateEntity(delegateEntity))
                 {
                     delegateRow.RowStatus = RowStatus.Skipped;
                     return;
                 }
 
-                UpdateDelegate(delegateRow, delegateUserByCandidateNumber);
+                UpdateDelegate(delegateRow, delegateEntity);
             }
         }
 
         // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
-        private void UpdateDelegate(DelegateTableRow delegateRow, DelegateUser delegateUser)
+        private void UpdateDelegate(DelegateTableRow delegateRow, DelegateEntity delegateEntity)
         {
             try
             {
@@ -149,7 +149,7 @@ namespace DigitalLearningSolutions.Data.Services
                 );
 
                 userDataService.UpdateDelegateAccount(
-                    delegateUser.Id,
+                    delegateEntity.DelegateAccount.Id,
                     delegateRow.Active!.Value,
                     delegateRow.Answer1,
                     delegateRow.Answer2,
@@ -162,7 +162,7 @@ namespace DigitalLearningSolutions.Data.Services
                 UpdateUserProfessionalRegistrationNumberIfNecessary(
                     delegateRow.HasPrn,
                     delegateRow.Prn,
-                    delegateUser.Id
+                    delegateEntity.DelegateAccount.Id
                 );
 
                 delegateRow.RowStatus = RowStatus.Updated;

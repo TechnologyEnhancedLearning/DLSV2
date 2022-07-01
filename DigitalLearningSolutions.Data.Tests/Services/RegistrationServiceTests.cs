@@ -503,16 +503,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             const int userId = 123;
             var centreManagerModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
-            var delegateModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity();
 
             A.CallTo(
-                () => userDataService.GetDelegateUserByCandidateNumber(
-                    NewCandidateNumber,
-                    delegateModel.Centre
-                )
-            ).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateUser.Id)).Returns(userId);
+                () => userDataService.GetDelegateByCandidateNumber(NewCandidateNumber)
+            ).Returns(delegateEntity);
+            A.CallTo(() => userDataService.GetUserIdFromDelegateId(delegateEntity.DelegateAccount.Id)).Returns(userId);
 
             // When
             registrationService.RegisterCentreManager(
@@ -805,12 +801,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 )
                 .Returns((777, NewCandidateNumber));
             A.CallTo(
-                    () => userDataService.GetDelegateUserByCandidateNumber(
-                        NewCandidateNumber,
-                        RegistrationModelTestHelper.Centre
-                    )
+                    () => userDataService.GetDelegateByCandidateNumber(NewCandidateNumber)
                 )
-                .Returns(new DelegateUser { Id = 777 });
+                .Returns(UserTestHelper.GetDefaultDelegateEntity(777));
 
             // When
             registrationService.RegisterDelegateByCentre(

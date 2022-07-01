@@ -54,8 +54,8 @@
             passwordResetService = A.Fake<IPasswordResetService>();
             configuration = A.Fake<IConfiguration>();
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(A<string>._, A<int>._))
-                .Returns(UserTestHelper.GetDefaultDelegateUser());
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(A<string>._))
+                .Returns(UserTestHelper.GetDefaultDelegateEntity());
 
             delegateUploadFileService = new DelegateUploadFileService(
                 jobGroupsDataService,
@@ -289,7 +289,7 @@
             const string delegateId = "DELEGATE";
             var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row });
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId)).Returns(null);
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId)).Returns(null);
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -308,12 +308,12 @@
             const string delegateId = "DELEGATE";
             var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row });
-            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(
                 candidateNumber: delegateId,
-                emailAddress: "different@test.com"
+                primaryEmail: "different@test.com"
             );
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(false);
 
@@ -333,9 +333,9 @@
             const string delegateId = "DELEGATE";
             var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row });
-            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             CallsToUserDataServiceUpdatesDoNothing();
 
@@ -354,7 +354,7 @@
             const string delegateId = "DELEGATE";
             var row = GetSampleDelegateDataRow(candidateNumber: delegateId, prn: "PRN1234");
             var table = CreateTableFromData(new[] { row });
-            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(
                 firstName: row.FirstName,
                 lastName: row.LastName,
                 candidateNumber: delegateId,
@@ -366,7 +366,7 @@
                 professionalRegistrationNumber: row.PRN
             );
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
 
             // When
@@ -412,9 +412,9 @@
             const string delegateId = "DELEGATE";
             var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row });
-            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             CallsToUserDataServiceUpdatesDoNothing();
 
@@ -424,7 +424,7 @@
             // Then
             A.CallTo(
                     () => userDataService.UpdateDelegateAccount(
-                        candidateNumberDelegate.Id,
+                        candidateNumberDelegate.DelegateAccount.Id,
                         true,
                         row.Answer1,
                         row.Answer2,
@@ -447,9 +447,9 @@
             const string prn = "PRN1234";
             var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: true.ToString(), prn: prn);
             var table = CreateTableFromData(new[] { row });
-            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             A.CallTo(
                 () =>
@@ -463,7 +463,11 @@
             // Then
             A.CallTo(
                 () =>
-                    userDataService.UpdateDelegateProfessionalRegistrationNumber(candidateNumberDelegate.Id, prn, true)
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                        candidateNumberDelegate.DelegateAccount.Id,
+                        prn,
+                        true
+                    )
             ).MustHaveHappened();
             result.ProcessedCount.Should().Be(1);
             result.UpdatedCount.Should().Be(1);
@@ -476,9 +480,9 @@
             const string delegateId = "DELEGATE";
             var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: false.ToString());
             var table = CreateTableFromData(new[] { row });
-            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             A.CallTo(
                 () =>
@@ -492,7 +496,11 @@
             // Then
             A.CallTo(
                 () =>
-                    userDataService.UpdateDelegateProfessionalRegistrationNumber(candidateNumberDelegate.Id, null, true)
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                        candidateNumberDelegate.DelegateAccount.Id,
+                        null,
+                        true
+                    )
             ).MustHaveHappened();
             result.ProcessedCount.Should().Be(1);
             result.UpdatedCount.Should().Be(1);
@@ -506,9 +514,9 @@
             const string prn = "PRN1234";
             var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: null, prn: prn);
             var table = CreateTableFromData(new[] { row });
-            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             A.CallTo(
                 () =>
@@ -522,7 +530,11 @@
             // Then
             A.CallTo(
                 () =>
-                    userDataService.UpdateDelegateProfessionalRegistrationNumber(candidateNumberDelegate.Id, prn, true)
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                        candidateNumberDelegate.DelegateAccount.Id,
+                        prn,
+                        true
+                    )
             ).MustHaveHappened();
             result.ProcessedCount.Should().Be(1);
             result.UpdatedCount.Should().Be(1);
@@ -535,9 +547,9 @@
             const string delegateId = "DELEGATE";
             var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row });
-            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             A.CallTo(
                 () =>
@@ -551,7 +563,11 @@
             // Then
             A.CallTo(
                 () =>
-                    userDataService.UpdateDelegateProfessionalRegistrationNumber(candidateNumberDelegate.Id, null, false)
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                        candidateNumberDelegate.DelegateAccount.Id,
+                        null,
+                        false
+                    )
             ).MustHaveHappened();
             result.ProcessedCount.Should().Be(1);
             result.UpdatedCount.Should().Be(1);
@@ -764,8 +780,8 @@
             A.CallTo(
                 () => userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
             ).DoesNothing();
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
-                .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(candidateNumber))
+                .Returns(UserTestHelper.GetDefaultDelegateEntity(newDelegateRecordId));
             A.CallTo(
                 () =>
                     supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(A<int>._, A<string>._)
@@ -818,8 +834,8 @@
                     )
                 )
                 .Returns(NewDelegateIdAndCandidateNumber);
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
-                .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(candidateNumber))
+                .Returns(UserTestHelper.GetDefaultDelegateEntity(newDelegateRecordId));
             A.CallTo(
                 () =>
                     userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
@@ -860,8 +876,8 @@
                     )
                 )
                 .Returns(NewDelegateIdAndCandidateNumber);
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
-                .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(candidateNumber))
+                .Returns(UserTestHelper.GetDefaultDelegateEntity(newDelegateRecordId));
             A.CallTo(
                 () =>
                     userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
@@ -901,8 +917,8 @@
                     )
                 )
                 .Returns(NewDelegateIdAndCandidateNumber);
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
-                .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(candidateNumber))
+                .Returns(UserTestHelper.GetDefaultDelegateEntity(newDelegateRecordId));
 
             // When
             delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -928,9 +944,9 @@
             const string delegateId = "DELEGATE";
             var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row, row, row, row, row });
-            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             CallsToUserDataServiceUpdatesDoNothing();
 
@@ -949,7 +965,7 @@
             const string delegateId = "DELEGATE";
             var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row, row, row, row, row });
-            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(
                 firstName: row.FirstName,
                 lastName: row.LastName,
                 candidateNumber: delegateId,
@@ -959,7 +975,7 @@
                 jobGroupId: 1
             );
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
 
             // When
@@ -1014,8 +1030,8 @@
             };
             var table = CreateTableFromData(data);
 
-            var updateDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: updateDelegateId);
-            var skipDelegate = UserTestHelper.GetDefaultDelegateUser(
+            var updateDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: updateDelegateId);
+            var skipDelegate = UserTestHelper.GetDefaultDelegateEntity(
                 firstName: skipRow.FirstName,
                 lastName: skipRow.LastName,
                 candidateNumber: skipRow.DelegateID,
@@ -1025,9 +1041,9 @@
                 jobGroupId: 1
             );
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(skipDelegateId, CentreId))
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(skipDelegateId))
                 .Returns(skipDelegate);
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(updateDelegateId, CentreId))
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(updateDelegateId))
                 .Returns(updateDelegate);
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);

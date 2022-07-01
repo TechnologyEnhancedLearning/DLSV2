@@ -279,19 +279,6 @@
         }
 
         [Test]
-        public void GetDelegateUserByCandidateNumber_Returns_delegate_user()
-        {
-            // Given
-            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser();
-
-            // When
-            var returnedDelegateUser = userDataService.GetDelegateUserByCandidateNumber("SV1234", 2);
-
-            // Then
-            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUsers);
-        }
-
-        [Test]
         public void DeactivateDelegateUser_deactivates_delegate_user()
         {
             using var transaction = new TransactionScope();

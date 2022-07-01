@@ -78,8 +78,6 @@
 
         int GetNumberOfApprovedDelegatesAtCentre(int centreId);
 
-        DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId);
-
         void DeactivateDelegateUser(int delegateId);
 
         void UpdateUserDetails(string firstName, string surname, string primaryEmail, int jobGroupId, int userId);

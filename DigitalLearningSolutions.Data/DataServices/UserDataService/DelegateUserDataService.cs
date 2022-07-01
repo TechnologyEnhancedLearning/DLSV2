@@ -292,18 +292,6 @@
             );
         }
 
-        [Obsolete("New code should use GetDelegateByCandidateNumber instead")]
-        public DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId)
-        {
-            var user = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateUserQuery}
-                    WHERE cd.CandidateNumber = @candidateNumber AND cd.CentreId = @centreId",
-                new { candidateNumber, centreId }
-            ).SingleOrDefault();
-
-            return user;
-        }
-
         public void UpdateDelegateAccount(
             int delegateId,
             bool active,
