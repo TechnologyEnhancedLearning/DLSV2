@@ -243,7 +243,7 @@
                 delegateRegistrationModel.PrimaryEmail,
                 delegateRegistrationModel.JobGroup,
                 delegateRegistrationModel.Active,
-                PasswordHash = "temp",
+                PasswordHash = string.Empty,
                 ProfessionalRegistrationNumber = (string?)null,
                 TermsAgreed = registerJourneyContainsTermsAndConditions ? currentTime : (DateTime?)null,
                 DetailsLastChecked = currentTime,
