@@ -60,7 +60,7 @@
     }
   }
 </div>
-<partial name="_ComperencyFlags" model="Model.Competency.CompetencyFlags" />
+<partial name="_CompetencyFlags" model="Model.Competency.CompetencyFlags" />
 <form asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="@Model.CompetencyNumber" asp-route-competencyId="@Model.Competency.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID">
   @foreach (var question in @Model.Competency.AssessmentQuestions.Select((value, i) => new { i, value }))
   {
@@ -121,7 +121,7 @@
           <a class="nhsuk-back-link__link"
              asp-action="SelfAssessmentOverview"
              asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">
-            Return to @Model.VocabPlural()
+            Return to @Model.VocabPlural() home
           </a>
         </div>
         <div class="pagination-button-container">
