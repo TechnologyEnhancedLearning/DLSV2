@@ -31,8 +31,16 @@
                         1 AS IsSelfAssessment,
                         CA.SubmittedDate
                     FROM CandidateAssessments CA
-                        CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.IncludeRequirementsFilters, SA.SupervisorResultsReview,
-                        SA.ReviewerCommentsLabel,
+                        JOIN SelfAssessments SA
+                        ON CA.SelfAssessmentID = SA.ID
+                    INNER JOIN SelfAssessmentStructure AS SAS
+                        ON CA.SelfAssessmentID = SAS.SelfAssessmentID
+                    INNER JOIN Competencies AS C
+                        ON SAS.CompetencyID = C.ID
+                    WHERE CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
+                    GROUP BY
+                        CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
+                        SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
                         CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
