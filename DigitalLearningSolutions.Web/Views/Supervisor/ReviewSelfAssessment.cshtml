@@ -104,7 +104,7 @@
             <tr role="row" class="nhsuk-table__row first-row">
               <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
                 <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
-                <partial name="_ComperencyFlags" model="competency.CompetencyFlags" />
+                <partial name="_CompetencyFlags" model="competency.CompetencyFlags" />
                 @if (competency.Description != null && !competency.AlwaysShowDescription)
                 {
                   <details class="nhsuk-details">
@@ -135,14 +135,14 @@
               </td>
               <partial name="Shared/_AssessmentQuestionReviewCells"
                        model="competency.AssessmentQuestions.First()"
-                       view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }})" />
+                       view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }, { "ReviewerCommentsLabel", Model.DelegateSelfAssessment.ReviewerCommentsLabel} } )" />
             </tr>
             @foreach (var question in competency.AssessmentQuestions.Skip(1))
             {
               <tr role="row" class="nhsuk-table__row">
                 <partial name="Shared/_AssessmentQuestionReviewCells"
                          model="question"
-                         view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }})" />
+                         view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }, { "ReviewerCommentsLabel", Model.DelegateSelfAssessment.ReviewerCommentsLabel} } )" />
               </tr>
             }
           }
