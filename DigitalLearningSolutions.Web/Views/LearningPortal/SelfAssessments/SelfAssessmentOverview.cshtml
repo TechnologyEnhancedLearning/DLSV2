@@ -119,7 +119,7 @@
             }
           </style>
           <partial name="SelfAssessments/_OverviewTable"
-                   view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation }, { "selfAssessment", Model.SelfAssessment } })"
+                   view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation }, { "selfAssessment", Model.SelfAssessment }, { "ReviewerCommentsLabel", Model.SelfAssessment.ReviewerCommentsLabel } })"
                    model="competencyGroup" />
 
 
