@@ -6,19 +6,21 @@
     [Migration(202206281724)]
     public class AddUniquenessConstraintsToCandidateAssessmentsAndSupervisorDelegates : Migration
     {
+        private const string CandidateAssessmentsIndexName = "IX_CandidateAssessments_DelegateUserId_SelfAssessmentId";
+        private const string SupervisorDelegatesIndexName = "IX_SupervisorDelegates_DelegateUserId_SupervisorAdminId";
+
         public override void Up()
         {
-            Create.UniqueConstraint().OnTable("CandidateAssessments").Columns("DelegateUserId", "SelfAssessmentId");
-            Create.UniqueConstraint().OnTable("SupervisorDelegates").Columns("SupervisorAdminId", "DelegateUserId");
-
-            Create.Index().OnTable("").WithOptions().UniqueNullsNotDistinct().OnColumn("DelegateUserId").Ascending()
+            Create.Index(CandidateAssessmentsIndexName).OnTable("CandidateAssessments").WithOptions().UniqueNullsNotDistinct().OnColumn("DelegateUserId").Ascending()
                 .OnColumn("SelfAssessmentId").Ascending();
+            Create.Index(SupervisorDelegatesIndexName).OnTable("SupervisorDelegates").WithOptions().UniqueNullsNotDistinct().OnColumn("DelegateUserId").Ascending()
+                .OnColumn("SupervisorAdminId").Ascending();
         }
 
         public override void Down()
         {
-            Delete.UniqueConstraint().FromTable("CandidateAssessments").Columns("DelegateUserId", "SelfAssessmentId");
-            Delete.UniqueConstraint().FromTable("SupervisorDelegates").Columns("SupervisorAdminId", "DelegateUserId");
+            Delete.Index(CandidateAssessmentsIndexName);
+            Delete.Index(SupervisorDelegatesIndexName);
         }
     }
 }
