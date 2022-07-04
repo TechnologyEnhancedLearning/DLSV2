@@ -127,6 +127,10 @@
 
         bool EmailIsInUseByOtherUser(int userId, string email, IDbTransaction? transaction = null);
 
+        bool PrimaryEmailIsInUse(string email, IDbTransaction? transaction = null);
+
+        bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId, IDbTransaction? transaction = null);
+
         void DeleteAdminAccount(int adminId);
 
         int? GetUserIdFromUsername(string username);
