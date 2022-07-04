@@ -4,8 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -35,7 +35,7 @@
         private readonly GroupDelegate reusableGroupDelegate =
             GroupTestHelper.GetDefaultGroupDelegate(firstName: "newFirst", lastName: "newLast");
 
-        private readonly MyAccountDetailsData reusableMyAccountDetailsData =
+        private readonly EditAccountDetailsData reusableEditAccountDetailsData =
             UserTestHelper.GetDefaultAccountDetailsData();
 
         private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();
@@ -50,6 +50,7 @@
         private ILogger<IGroupsService> logger = null!;
         private IProgressDataService progressDataService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -63,11 +64,14 @@
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             logger = A.Fake<ILogger<IGroupsService>>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>(x => x.Strict());
+            userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
                 JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
             );
             A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
+            A.CallTo(() => userDataService.GetDelegateUserById(reusableDelegateDetails.Id))
+                .Returns(reusableDelegateDetails);
 
             DatabaseModificationsDoNothing();
 
@@ -80,7 +84,8 @@
                 progressDataService,
                 configuration,
                 centreRegistrationPromptsService,
-                logger
+                logger,
+                userDataService
             );
         }
 
@@ -436,21 +441,23 @@
         {
             // Given
             const int groupId = 1;
+            const int delegateId = 2;
             const int addedByAdminId = 2;
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var dateTime = DateTime.UtcNow;
 
             GivenCurrentTimeIs(dateTime);
-            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(A<int>._)).Returns(new List<GroupCourse>());
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateId))
+                .Returns(UserTestHelper.GetDefaultDelegateUser(centreId: CentreId));
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(CentreId)).Returns(new List<GroupCourse>());
             A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
                 .DoesNothing();
 
             // When
-            groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(groupId, delegateUser, addedByAdminId);
+            groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(groupId, delegateId, addedByAdminId);
 
             // Then
-            A.CallTo(() => groupsDataService.AddDelegateToGroup(2, 1, dateTime, 0)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(2)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.AddDelegateToGroup(delegateId, groupId, dateTime, 0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(CentreId)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -796,7 +803,7 @@
                 .Returns(new List<GroupDelegate> { reusableGroupDelegate });
 
             A.CallTo(
-                    () => groupsDataService.GetGroupCourseIfVisibleToCentre(groupCourse.GroupCustomisationId, centreId)
+                    () => groupsDataService.GetGroupCourseIfVisibleToCentre(groupCourse.GroupCustomisationId, CentreId)
                 )
                 .Returns(groupCourse);
         }
@@ -811,7 +818,11 @@
 
             if (centreRegistrationPrompts != null)
             {
-                A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(A<int>._))
+                A.CallTo(
+                        () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
+                            A<int>._
+                        )
+                    )
                     .Returns(centreRegistrationPrompts);
             }
 
@@ -848,9 +859,10 @@
                 if (!isJobGroup)
                 {
                     A.CallTo(
-                            () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
-                                groupGenerationDetails.CentreId
-                            )
+                            () => centreRegistrationPromptsService
+                                .GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
+                                    groupGenerationDetails.CentreId
+                                )
                         )
                         .MustHaveHappenedOnceExactly();
                     A.CallTo(() => groupsDataService.GetGroupsForCentre(groupGenerationDetails.CentreId))

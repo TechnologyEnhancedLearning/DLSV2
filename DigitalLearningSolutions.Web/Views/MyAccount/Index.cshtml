@@ -1,8 +1,5 @@
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
-@using Microsoft.Extensions.Configuration
 @model MyAccountViewModel
-
-@inject IConfiguration Configuration
 
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/myAccount.css")" asp-append-version="true">
 
@@ -19,22 +16,46 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl" id="app-page-heading">My account</h1>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-half">
+        <h1 class="nhsuk-heading-xl" id="app-page-heading">
+          My account
+        </h1>
+      </div>
+      <div class="nhsuk-grid-column-one-half heading-button-group">
+        <a
+          class="nhsuk-button nhsuk-button--secondary heading-button"
+          asp-controller="Login"
+          asp-action="ChooseACentre"
+          asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment"
+          asp-route-returnUrl="@Model.SwitchCentreReturnUrl"
+          role="button">
+          Switch centre
+        </a>
+      </div>
+    </div>
 
-    <partial name="_AccountSummaryCard" model="Model" />
 
     <partial name="_MyDetailsCard" model="Model" />
+
+    <partial name="_CentreSpecificDetailsCard" model="Model" />
   </div>
 </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <a class="nhsuk-button" asp-controller="NotificationPreferences" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
+    <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="MyAccount" asp-action="EditDetails" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
+      Edit details
+    </a>
+    <a class="nhsuk-button nhsuk-button--secondary left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="ChangePassword" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
+      Change password
+    </a>
+    <a class="nhsuk-button nhsuk-button--secondary" asp-controller="NotificationPreferences" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
       View notification preferences
     </a>
   </div>
 </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <partial name="_LogoutForm"/>
+    <partial name="_LogoutForm" />
   </div>
 </div>

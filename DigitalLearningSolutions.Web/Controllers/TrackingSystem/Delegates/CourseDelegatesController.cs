@@ -63,8 +63,8 @@
                 CourseDelegateAccountStatusFilterOptions.Active.FilterValue
             );
 
-            var centreId = User.GetCentreId();
-            var adminCategoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var adminCategoryId = User.GetAdminCategoryId();
 
             try
             {
@@ -114,7 +114,7 @@
         [Route("AllCourseDelegates/{customisationId:int}")]
         public IActionResult AllCourseDelegates(int customisationId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var courseDelegates = courseDelegatesService.GetCourseDelegatesForCentre(customisationId, centreId);
             var adminFields = courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId);
             var model = new AllCourseDelegatesViewModel(courseDelegates, adminFields.AdminFields);
@@ -131,7 +131,7 @@
             string? existingFilterString = null
         )
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(
                 customisationId,
                 centreId,

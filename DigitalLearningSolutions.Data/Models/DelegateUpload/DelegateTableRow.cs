@@ -46,7 +46,6 @@
             Answer4 = FindFieldValue("Answer4");
             Answer5 = FindFieldValue("Answer5");
             Answer6 = FindFieldValue("Answer6");
-            AliasId = FindFieldValue("AliasID");
             Email = FindFieldValue("EmailAddress")?.Trim();
             HasPrnRawValue = FindFieldValue("HasPRN");
             HasPrn = bool.TryParse(HasPrnRawValue, out var hasPrn) ? hasPrn : (bool?)null;
@@ -66,7 +65,6 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
-        public string? AliasId { get; set; }
         public string? Email { get; set; }
         public string? HasPrnRawValue { get; set; }
         public bool? HasPrn { get; set; }
@@ -116,10 +114,6 @@
             else if (Email.Any(char.IsWhiteSpace))
             {
                 Error = BulkUploadResult.ErrorReason.WhitespaceInEmail;
-            }
-            else if (AliasId != null && AliasId.Length > 250)
-            {
-                Error = BulkUploadResult.ErrorReason.TooLongAliasId;
             }
             else if (Answer1 != null && Answer1.Length > 100)
             {
@@ -171,11 +165,6 @@
 
         public bool MatchesDelegateUser(DelegateUser delegateUser)
         {
-            if (CandidateNumber != null && (delegateUser.AliasId ?? string.Empty) != AliasId)
-            {
-                return false;
-            }
-
             if ((delegateUser.FirstName ?? string.Empty) != FirstName)
             {
                 return false;

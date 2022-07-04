@@ -34,7 +34,6 @@
         private const string DelegateId = "ID";
         private const string Email = "Email";
         private const string ProfessionalRegistrationNumber = "Professional Registration Number";
-        private const string Alias = "Alias";
         private const string JobGroup = "Job group";
         private const string RegisteredDate = "Registered";
         private const string PasswordSet = "Password set";
@@ -102,7 +101,6 @@
                     x.LastName,
                     x.FirstName,
                     DelegateID = x.CandidateNumber,
-                    AliasID = x.AliasId,
                     JobGroupID = x.JobGroupId,
                     x.Answer1,
                     x.Answer2,
@@ -201,7 +199,6 @@
                     new DataColumn(DelegateId),
                     new DataColumn(Email),
                     new DataColumn(ProfessionalRegistrationNumber),
-                    new DataColumn(Alias),
                     new DataColumn(JobGroup),
                     new DataColumn(RegisteredDate),
                 }
@@ -243,11 +240,10 @@
                 delegateRecord.HasBeenPromptedForPrn,
                 delegateRecord.ProfessionalRegistrationNumber
             );
-            row[Alias] = delegateRecord.AliasId;
             row[JobGroup] = delegateRecord.JobGroupName;
             row[RegisteredDate] = delegateRecord.DateRegistered?.Date;
 
-            var delegateAnswers = delegateRecord.GetCentreAnswersData();
+            var delegateAnswers = delegateRecord.GetRegistrationFieldAnswers();
 
             foreach (var prompt in registrationPrompts.CustomPrompts)
             {

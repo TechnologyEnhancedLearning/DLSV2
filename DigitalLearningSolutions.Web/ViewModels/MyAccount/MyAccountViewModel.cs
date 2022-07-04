@@ -11,26 +11,28 @@
     public class MyAccountViewModel
     {
         public MyAccountViewModel(
-            AdminUser? adminUser,
-            DelegateUser? delegateUser,
+            UserAccount userAccount,
+            DelegateAccount? delegateAccount,
+            string? centreName,
+            string? centreEmail,
             CentreRegistrationPromptsWithAnswers? customPrompts,
-            DlsSubApplication dlsSubApplication
+            DlsSubApplication dlsSubApplication,
+            string switchCentreReturnUrl
         )
         {
-            FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
-            Surname = adminUser?.LastName ?? delegateUser?.LastName;
-            User = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
-            ProfilePicture = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
-            Centre = adminUser?.CentreName ?? delegateUser?.CentreName;
-            DelegateNumber = delegateUser?.CandidateNumber;
-            AliasId = delegateUser?.AliasId;
-            JobGroup = delegateUser?.JobGroupName;
-            ProfessionalRegistrationNumber = delegateUser == null
-                ? null
-                : PrnStringHelper.GetPrnDisplayString(
-                    delegateUser.HasBeenPromptedForPrn,
-                    delegateUser.ProfessionalRegistrationNumber
-                );
+            FirstName = userAccount.FirstName;
+            Surname = userAccount.LastName;
+            PrimaryEmail = userAccount.PrimaryEmail;
+            ProfilePicture = userAccount.ProfileImage;
+            Centre = centreName;
+            DelegateNumber = delegateAccount?.CandidateNumber;
+            JobGroup = userAccount.JobGroupName;
+            CentreEmail = centreEmail;
+            DateRegistered = delegateAccount?.DateRegistered.ToString(DateHelper.StandardDateFormat);
+            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
+                userAccount.HasBeenPromptedForPrn,
+                userAccount.ProfessionalRegistrationNumber
+            );
 
             DelegateRegistrationPrompts = new List<DelegateRegistrationPrompt>();
             if (customPrompts != null)
@@ -48,28 +50,33 @@
             }
 
             DlsSubApplication = dlsSubApplication;
+            SwitchCentreReturnUrl = switchCentreReturnUrl;
         }
 
         public string? Centre { get; set; }
 
-        public string? User { get; set; }
+        public string PrimaryEmail { get; set; }
 
         public string? DelegateNumber { get; set; }
 
-        public string? AliasId { get; set; }
+        public string FirstName { get; set; }
 
-        public string? FirstName { get; set; }
-
-        public string? Surname { get; set; }
+        public string Surname { get; set; }
 
         public byte[]? ProfilePicture { get; set; }
 
-        public string? JobGroup { get; set; }
+        public string JobGroup { get; set; }
 
-        public string? ProfessionalRegistrationNumber { get; set; }
+        public string ProfessionalRegistrationNumber { get; set; }
+
+        public string? CentreEmail { get; set; }
+
+        public string? DateRegistered { get; set; }
 
         public List<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
 
         public DlsSubApplication DlsSubApplication { get; set; }
+
+        public string SwitchCentreReturnUrl { get; set; }
     }
 }

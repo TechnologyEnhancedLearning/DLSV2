@@ -14,7 +14,7 @@
             DelegateId = groupDelegate.DelegateId;
             TitleName = groupDelegate.SearchableName;
             Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(groupDelegate.FirstName, groupDelegate.LastName);
-            EmailAddress = groupDelegate.EmailAddress;
+            EmailAddress = groupDelegate.CentreEmail ?? groupDelegate.PrimaryEmail;
             CandidateNumber = groupDelegate.CandidateNumber;
             ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
                 groupDelegate.HasBeenPromptedForPrn,

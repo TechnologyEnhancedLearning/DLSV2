@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.MyAccount
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -11,38 +12,49 @@
 
     public class MyAccountViewModelTests
     {
+        private const string SwitchCentreReturnUrl = "/MyAccount";
+
         [Test]
         public void MyAccountViewModel_AdminUser_and_DelegateUser_populates_expected_values()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
             var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
                 new List<CentreRegistrationPromptWithAnswer>
                 {
                     PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
                 }
             );
+            var centreEmail = "centre@gmail.com";
 
             // When
             var returnedModel = new MyAccountViewModel(
-                adminUser,
-                delegateUser,
+                userAccount,
+                delegateAccount,
+                delegateAccount.CentreName,
+                centreEmail,
                 customPrompts,
-                DlsSubApplication.Default
+                DlsSubApplication.Default,
+                SwitchCentreReturnUrl
             );
 
             // Then
             using (new AssertionScope())
             {
-                returnedModel.FirstName.Should().BeEquivalentTo(adminUser.FirstName);
-                returnedModel.Centre.Should().BeEquivalentTo(adminUser.CentreName);
-                returnedModel.Surname.Should().BeEquivalentTo(adminUser.LastName);
-                returnedModel.ProfilePicture.Should().BeEquivalentTo(adminUser.ProfileImage);
-                returnedModel.DelegateNumber.Should().BeEquivalentTo(delegateUser.CandidateNumber);
-                returnedModel.User.Should().BeEquivalentTo(adminUser.EmailAddress);
-                returnedModel.JobGroup.Should().BeEquivalentTo(delegateUser.JobGroupName);
+                returnedModel.FirstName.Should().BeEquivalentTo(userAccount.FirstName);
+                returnedModel.Centre.Should().BeEquivalentTo(delegateAccount.CentreName);
+                returnedModel.Surname.Should().BeEquivalentTo(userAccount.LastName);
+                returnedModel.ProfilePicture.Should().BeEquivalentTo(userAccount.ProfileImage);
+                returnedModel.DelegateNumber.Should().BeEquivalentTo(delegateAccount.CandidateNumber);
+                returnedModel.PrimaryEmail.Should().BeEquivalentTo(userAccount.PrimaryEmail);
+                returnedModel.JobGroup.Should().BeEquivalentTo(userAccount.JobGroupName);
                 returnedModel.DelegateRegistrationPrompts.Should().NotBeNullOrEmpty();
+                returnedModel.CentreEmail.Should().BeEquivalentTo(centreEmail);
+                returnedModel.DateRegistered.Should().BeEquivalentTo(
+                    delegateAccount.DateRegistered.ToString(DateHelper.StandardDateFormat)
+                );
+                returnedModel.SwitchCentreReturnUrl.Should().Be(SwitchCentreReturnUrl);
             }
         }
 
@@ -50,51 +62,35 @@
         public void MyAccountViewModel_AdminUser_no_DelegateUser_populates_expected_values()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+            var centreName = UserTestHelper.GetDefaultAdminUser().CentreName;
+            var centreEmail = "centre@gmail.com";
 
             // When
-            var returnedModel = new MyAccountViewModel(adminUser, null, null, DlsSubApplication.Default);
-
-            // Then
-            using (new AssertionScope())
-            {
-                returnedModel.FirstName.Should().BeEquivalentTo(adminUser.FirstName);
-                returnedModel.Centre.Should().BeEquivalentTo(adminUser.CentreName);
-                returnedModel.Surname.Should().BeEquivalentTo(adminUser.LastName);
-                returnedModel.ProfilePicture.Should().BeEquivalentTo(adminUser.ProfileImage);
-                returnedModel.DelegateNumber.Should().BeNull();
-                returnedModel.User.Should().BeEquivalentTo(adminUser.EmailAddress);
-                returnedModel.JobGroup.Should().BeNull();
-                returnedModel.DelegateRegistrationPrompts.Should().BeEmpty();
-            }
-        }
-
-        [Test]
-        public void MyAccountViewModel_DelegateUser_no_AdminUser_populates_expected_values()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
-                new List<CentreRegistrationPromptWithAnswer>
-                {
-                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
-                }
+            var returnedModel = new MyAccountViewModel(
+                userAccount,
+                null,
+                centreName,
+                centreEmail,
+                null,
+                DlsSubApplication.Default,
+                SwitchCentreReturnUrl
             );
 
-            // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
-
             // Then
             using (new AssertionScope())
             {
-                returnedModel.FirstName.Should().BeEquivalentTo(delegateUser.FirstName);
-                returnedModel.Centre.Should().BeEquivalentTo(delegateUser.CentreName);
-                returnedModel.Surname.Should().BeEquivalentTo(delegateUser.LastName);
-                returnedModel.ProfilePicture.Should().BeEquivalentTo(delegateUser.ProfileImage);
-                returnedModel.DelegateNumber.Should().BeEquivalentTo(delegateUser.CandidateNumber);
-                returnedModel.User.Should().BeEquivalentTo(delegateUser.EmailAddress);
-                returnedModel.JobGroup.Should().BeEquivalentTo(delegateUser.JobGroupName);
-                returnedModel.DelegateRegistrationPrompts.Should().NotBeNullOrEmpty();
+                returnedModel.FirstName.Should().BeEquivalentTo(userAccount.FirstName);
+                returnedModel.Centre.Should().BeEquivalentTo(centreName);
+                returnedModel.Surname.Should().BeEquivalentTo(userAccount.LastName);
+                returnedModel.ProfilePicture.Should().BeEquivalentTo(userAccount.ProfileImage);
+                returnedModel.DelegateNumber.Should().BeNull();
+                returnedModel.PrimaryEmail.Should().BeEquivalentTo(userAccount.PrimaryEmail);
+                returnedModel.JobGroup.Should().BeEquivalentTo(userAccount.JobGroupName);
+                returnedModel.DelegateRegistrationPrompts.Should().BeEmpty();
+                returnedModel.CentreEmail.Should().BeEquivalentTo(centreEmail);
+                returnedModel.DateRegistered.Should().BeNull();
+                returnedModel.SwitchCentreReturnUrl.Should().Be(SwitchCentreReturnUrl);
             }
         }
 
@@ -102,17 +98,26 @@
         public void MyAccountViewModel_CustomFields_ShouldBePopulated()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount(answer1: "1", answer2: "2");
             var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
                 new List<CentreRegistrationPromptWithAnswer>
                 {
-                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
-                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1, answer: "1"),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2, answer: "2"),
                 }
             );
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
+            var returnedModel = new MyAccountViewModel(
+                userAccount,
+                delegateAccount,
+                delegateAccount.CentreName,
+                null,
+                customPrompts,
+                DlsSubApplication.Default,
+                SwitchCentreReturnUrl
+            );
 
             // Then
             using (new AssertionScope())
@@ -121,13 +126,13 @@
                 returnedModel.DelegateRegistrationPrompts[0].PromptNumber.Should().Be(1);
                 returnedModel.DelegateRegistrationPrompts[0].Prompt.Should()
                     .BeEquivalentTo(customPrompts.CustomPrompts[0].PromptText);
-                returnedModel.DelegateRegistrationPrompts[0].Answer.Should().BeEquivalentTo(delegateUser.Answer1);
+                returnedModel.DelegateRegistrationPrompts[0].Answer.Should().BeEquivalentTo(delegateAccount.Answer1);
                 returnedModel.DelegateRegistrationPrompts[0].Mandatory.Should().BeFalse();
 
                 returnedModel.DelegateRegistrationPrompts[1].PromptNumber.Should().Be(2);
                 returnedModel.DelegateRegistrationPrompts[1].Prompt.Should()
                     .BeEquivalentTo(customPrompts.CustomPrompts[1].PromptText);
-                returnedModel.DelegateRegistrationPrompts[1].Answer.Should().BeEquivalentTo(delegateUser.Answer1);
+                returnedModel.DelegateRegistrationPrompts[1].Answer.Should().BeEquivalentTo(delegateAccount.Answer2);
                 returnedModel.DelegateRegistrationPrompts[1].Mandatory.Should().BeFalse();
             }
         }
@@ -136,16 +141,24 @@
         public void MyAccountViewModel_where_user_has_not_been_asked_for_prn_says_not_yet_provided()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(
+            var userAccount = UserTestHelper.GetDefaultUserAccount(
                 hasBeenPromptedForPrn: false,
                 professionalRegistrationNumber: null
             );
             var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
-                new List<CentreRegistrationPromptWithAnswer>{}
+                new List<CentreRegistrationPromptWithAnswer>()
             );
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
+            var returnedModel = new MyAccountViewModel(
+                userAccount,
+                null,
+                UserTestHelper.GetDefaultAdminAccount().CentreName,
+                null,
+                customPrompts,
+                DlsSubApplication.Default,
+                SwitchCentreReturnUrl
+            );
 
             // Then
             using (new AssertionScope())
@@ -158,7 +171,7 @@
         public void MyAccountViewModel_with_no_prn_should_show_not_registered()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(
+            var userAccount = UserTestHelper.GetDefaultUserAccount(
                 hasBeenPromptedForPrn: true,
                 professionalRegistrationNumber: null
             );
@@ -171,7 +184,15 @@
             );
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
+            var returnedModel = new MyAccountViewModel(
+                userAccount,
+                null,
+                UserTestHelper.GetDefaultAdminAccount().CentreName,
+                null,
+                customPrompts,
+                DlsSubApplication.Default,
+                SwitchCentreReturnUrl
+            );
 
             // Then
             using (new AssertionScope())
@@ -184,7 +205,7 @@
         public void MyAccountViewModel_with_prn_displays_prn()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(
+            var userAccount = UserTestHelper.GetDefaultUserAccount(
                 hasBeenPromptedForPrn: true,
                 professionalRegistrationNumber: "12345678"
             );
@@ -197,12 +218,20 @@
             );
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
+            var returnedModel = new MyAccountViewModel(
+                userAccount,
+                null,
+                UserTestHelper.GetDefaultAdminAccount().CentreName,
+                null,
+                customPrompts,
+                DlsSubApplication.Default,
+                SwitchCentreReturnUrl
+            );
 
             // Then
             using (new AssertionScope())
             {
-                returnedModel.ProfessionalRegistrationNumber.Should().Be(delegateUser.ProfessionalRegistrationNumber);
+                returnedModel.ProfessionalRegistrationNumber.Should().Be(userAccount.ProfessionalRegistrationNumber);
             }
         }
     }

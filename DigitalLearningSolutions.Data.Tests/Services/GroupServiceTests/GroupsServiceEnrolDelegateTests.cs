@@ -38,7 +38,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -78,7 +79,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -118,7 +120,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -158,7 +161,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -199,7 +203,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -239,7 +244,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -281,7 +287,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -320,7 +327,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -354,7 +362,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -388,7 +397,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -422,7 +432,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -458,7 +469,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -489,7 +501,8 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableMyAccountDetailsData,
+                reusableEditAccountDetailsData,
+                null,
                 8
             );
 
@@ -533,6 +546,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 oldDelegateDetails,
                 newAccountDetails,
+                null,
                 8
             );
 
@@ -588,6 +602,7 @@
             groupsService.EnrolDelegateOnGroupCourses(
                 oldDelegateDetails,
                 newAccountDetails,
+                null,
                 8
             );
 
@@ -608,5 +623,59 @@
                 )
             ).MustHaveHappened();
         }
+
+        [Test]
+        public void EnrolDelegateOnGroupCourses_sends_correct_email_with_centreEmail_not_null()
+        {
+            // Given
+            const string centreEmail = "test@email.com";
+            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(
+                customisationId: 13,
+                applicationName: "application",
+                customisationName: "customisation",
+                completeWithinMonths: 0
+            );
+            var oldDelegateDetails = UserTestHelper.GetDefaultDelegateUser(
+                firstName: "oldFirst",
+                lastName: "oldLast",
+                emailAddress: "oldEmail"
+            );
+            var newAccountDetails = UserTestHelper.GetDefaultAccountDetailsData(
+                firstName: "newFirst",
+                surname: "newLast",
+                email: "newEmail"
+            );
+            SetupEnrolProcessFakes(
+                GenericNewProgressId,
+                GenericRelatedTutorialId
+            );
+            SetUpAddDelegateEnrolProcessFakes(groupCourse);
+
+            // When
+            groupsService.EnrolDelegateOnGroupCourses(
+                oldDelegateDetails,
+                newAccountDetails,
+                centreEmail,
+                8
+            );
+
+            // Then
+            A.CallTo(
+                () => emailService.ScheduleEmail(
+                    A<Email>.That.Matches(
+                        e =>
+                            e.Bcc.IsNullOrEmpty()
+                            && e.Cc.IsNullOrEmpty()
+                            && e.To[0] == centreEmail
+                            && e.Subject == "New Learning Portal Course Enrolment"
+                            && e.Body.TextBody == genericEmailBodyText
+                            && e.Body.HtmlBody == genericEmailBodyHtml
+                    ),
+                    A<string>._,
+                    null
+                )
+            ).MustHaveHappened();
+        }
+
     }
 }

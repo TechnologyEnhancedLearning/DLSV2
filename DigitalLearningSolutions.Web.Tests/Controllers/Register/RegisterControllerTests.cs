@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -27,13 +26,13 @@
     {
         private const string IpAddress = "1.1.1.1";
         private const int SupervisorDelegateId = 1;
-
-        private PromptsService promptsService = null!;
         private ICentresDataService centresDataService = null!;
         private RegisterController controller = null!;
         private ICryptoService cryptoService = null!;
         private IFeatureManager featureManager = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+
+        private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
@@ -69,52 +68,26 @@
         }
 
         [Test]
-        public void PersonalInformationPost_with_existing_user_for_centre_fails_validation()
-        {
-            // Given
-            var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
-            var model = new PersonalInformationViewModel
-            {
-                FirstName = "Test",
-                LastName = "User",
-                Centre = duplicateUser.CentreId,
-                Email = duplicateUser.EmailAddress,
-            };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
-                .Returns(false);
-
-            // When
-            var result = controller.PersonalInformation(model);
-
-            // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
-                .MustHaveHappened();
-            result.Should().BeViewResult().WithDefaultViewName();
-        }
-
-        [Test]
-        public void PersonalInformationPost_with_existing_user_for_different_centre_is_allowed()
+        public void PersonalInformationPost_does_not_continue_to_next_page_with_invalid_model()
         {
             // Given
             controller.TempData.Set(new DelegateRegistrationData());
-            var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
             var model = new PersonalInformationViewModel
             {
                 FirstName = "Test",
                 LastName = "User",
-                Centre = duplicateUser.CentreId + 1,
-                Email = duplicateUser.EmailAddress,
+                Centre = 7,
+                PrimaryEmail = "primary@email",
+                CentreSpecificEmail = "centre@email",
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
-                .Returns(true);
+            controller.ModelState.AddModelError(nameof(PersonalInformationViewModel.PrimaryEmail), "error message");
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
-                .MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
+            result.Should().BeViewResult().ModelAs<PersonalInformationViewModel>();
+            controller.ModelState.IsValid.Should().BeFalse();
         }
 
         [Test]
@@ -165,6 +138,29 @@
         }
 
         [Test]
+        public void IndexGet_while_logged_in_redirects_to_register_at_new_centre_journey()
+        {
+            // Given
+            var authenticatedController = new RegisterController(
+                centresDataService,
+                jobGroupsDataService,
+                registrationService,
+                cryptoService,
+                userService,
+                promptsService,
+                featureManager,
+                supervisorDelegateService
+            ).WithDefaultContext().WithMockUser(true);
+
+            // When
+            var result = authenticatedController.Index();
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("RegisterAtNewCentre")
+                .WithActionName("Index");
+        }
+
+        [Test]
         public async Task Summary_post_registers_delegate_with_expected_values()
         {
             // Given
@@ -172,9 +168,10 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.RegisterDelegate(
+                    () => registrationService.CreateDelegateAccountForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
+                        A<bool>._,
                         A<bool>._,
                         A<int>._
                     )
@@ -192,12 +189,13 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.RegisterDelegate(
+                        registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>.That.Matches(
                                 d =>
                                     d.FirstName == data.FirstName &&
                                     d.LastName == data.LastName &&
-                                    d.Email == data.Email &&
+                                    d.PrimaryEmail == data.PrimaryEmail &&
+                                    d.CentreSpecificEmail == data.CentreSpecificEmail &&
                                     d.Centre == data.Centre &&
                                     d.JobGroup == data.JobGroup &&
                                     d.PasswordHash == data.PasswordHash &&
@@ -209,11 +207,11 @@
                                     d.Answer6 == data.Answer6 &&
                                     d.Active &&
                                     d.IsSelfRegistered &&
-                                    d.NotifyDate != null &&
-                                    d.AliasId == null
+                                    d.NotifyDate != null
                             ),
                             IpAddress,
                             false,
+                            true,
                             SupervisorDelegateId
                         )
                 )
@@ -235,10 +233,11 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.RegisterDelegate(
+                        registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
+                            true,
                             SupervisorDelegateId
                         )
                 )
@@ -260,10 +259,11 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.RegisterDelegate(
+                        registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
+                            true,
                             SupervisorDelegateId
                         )
                 )
@@ -285,10 +285,11 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.RegisterDelegate(
+                        registrationService.CreateDelegateAccountForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
+                            true,
                             SupervisorDelegateId
                         )
                 )
@@ -303,9 +304,10 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.RegisterDelegate(
+                    () => registrationService.CreateDelegateAccountForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
+                        A<bool>._,
                         A<bool>._,
                         A<int>._
                     )
@@ -331,9 +333,10 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.RegisterDelegate(
+                    () => registrationService.CreateDelegateAccountForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
+                        A<bool>._,
                         A<bool>._,
                         A<int>._
                     )

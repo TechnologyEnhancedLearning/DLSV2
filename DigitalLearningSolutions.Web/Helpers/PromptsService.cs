@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -19,6 +20,23 @@
         }
 
         public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
+            DelegateAccount? delegateAccount,
+            int centreId
+        )
+        {
+            return GetEditDelegateRegistrationPromptViewModelsForCentre(
+                centreId,
+                delegateAccount?.Answer1,
+                delegateAccount?.Answer2,
+                delegateAccount?.Answer3,
+                delegateAccount?.Answer4,
+                delegateAccount?.Answer5,
+                delegateAccount?.Answer6
+            );
+        }
+
+        [Obsolete("Use the method that takes a DelegateAccount instead of a DelegateUser as parameter")]
+        public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
             DelegateUser? delegateUser,
             int centreId
         )
@@ -31,6 +49,22 @@
                 delegateUser?.Answer4,
                 delegateUser?.Answer5,
                 delegateUser?.Answer6
+            );
+        }
+
+        public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
+            DelegateEntity? delegateEntity,
+            int centreId
+        )
+        {
+            return GetEditDelegateRegistrationPromptViewModelsForCentre(
+                centreId,
+                delegateEntity?.DelegateAccount.Answer1,
+                delegateEntity?.DelegateAccount.Answer2,
+                delegateEntity?.DelegateAccount.Answer3,
+                delegateEntity?.DelegateAccount.Answer4,
+                delegateEntity?.DelegateAccount.Answer5,
+                delegateEntity?.DelegateAccount.Answer6
             );
         }
 

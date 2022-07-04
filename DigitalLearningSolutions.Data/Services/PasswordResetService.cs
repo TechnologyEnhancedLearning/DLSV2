@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Auth;
@@ -15,6 +14,12 @@
 
     public interface IPasswordResetService
     {
+        Task<ResetPasswordWithUserDetails?> GetValidPasswordResetEntityAsync(
+            string emailAddress,
+            string resetHash,
+            TimeSpan expiryTime
+        );
+
         Task<bool> EmailAndResetPasswordHashAreValidAsync(
             string emailAddress,
             string resetHash,
@@ -22,19 +27,20 @@
         );
 
         Task GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
-        Task InvalidateResetPasswordForEmailAsync(string email);
-        void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl);
+
+        Task ResetPasswordAsync(ResetPasswordWithUserDetails passwordReset, string password);
+
+        void GenerateAndSendDelegateWelcomeEmail(int delegateId, string baseUrl);
 
         void GenerateAndScheduleDelegateWelcomeEmail(
-            string recipientEmailAddress,
-            string candidateNumber,
+            int delegateId,
             string baseUrl,
             DateTime deliveryDate,
             string addedByProcess
         );
 
         void SendWelcomeEmailsToDelegates(
-            IEnumerable<DelegateUser> delegateUsers,
+            IEnumerable<int> delegateId,
             DateTime deliveryDate,
             string baseUrl
         );
@@ -45,31 +51,42 @@
         private readonly IClockService clockService;
         private readonly IEmailService emailService;
         private readonly IPasswordResetDataService passwordResetDataService;
+        private readonly IPasswordService passwordService;
         private readonly IUserService userService;
 
         public PasswordResetService(
             IUserService userService,
             IPasswordResetDataService passwordResetDataService,
+            IPasswordService passwordService,
             IEmailService emailService,
             IClockService clockService
         )
         {
             this.userService = userService;
             this.passwordResetDataService = passwordResetDataService;
+            this.passwordService = passwordService;
             this.emailService = emailService;
             this.clockService = clockService;
         }
 
         public async Task GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
         {
-            (User? user, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
-            user ??= delegateUsers.FirstOrDefault() ??
-                     throw new UserAccountNotFoundException(
-                         "No user account could be found with the specified email address"
-                     );
+            var user = userService.GetUserByEmailAddress(emailAddress);
 
-            await InvalidateResetPasswordForEmailAsync(emailAddress);
-            string resetPasswordHash = GenerateResetPasswordHash(user);
+            if (user == null)
+            {
+                throw new UserAccountNotFoundException(
+                    "No user account could be found with the specified email address"
+                );
+            }
+
+            if (user.ResetPasswordId != null)
+            {
+                await passwordResetDataService.RemoveResetPasswordAsync(user.ResetPasswordId.Value);
+            }
+
+            var resetPasswordHash = GenerateResetPasswordHash(user);
+
             var resetPasswordEmail = GeneratePasswordResetEmail(
                 emailAddress,
                 resetPasswordHash,
@@ -79,57 +96,61 @@
             emailService.SendEmail(resetPasswordEmail);
         }
 
-        public async Task InvalidateResetPasswordForEmailAsync(string email)
+        public async Task ResetPasswordAsync(ResetPasswordWithUserDetails passwordReset, string password)
         {
-            var resetPasswordIds = userService.GetUsersByEmailAddress(email).GetDistinctResetPasswordIds();
-
-            foreach (var resetPasswordId in resetPasswordIds)
-            {
-                await passwordResetDataService.RemoveResetPasswordAsync(resetPasswordId);
-            }
+            await passwordResetDataService.RemoveResetPasswordAsync(passwordReset.Id);
+            await passwordService.ChangePasswordAsync(passwordReset.UserId, password!);
+            userService.ResetFailedLoginCountByUserId(passwordReset.UserId);
         }
 
-        public void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl)
+        public void GenerateAndSendDelegateWelcomeEmail(int delegateId, string baseUrl)
         {
-            var delegateUsers = userService.GetDelegateUsersByEmailAddress(emailAddress);
-            var delegateUser = delegateUsers.FirstOrDefault(d => d.CandidateNumber == candidateNumber) ??
-                               throw new UserAccountNotFoundException(
-                                   "No user account could be found with the specified email address and candidate number"
-                               );
+            var delegateEntity = userService.GetDelegateById(delegateId)!;
 
-            string setPasswordHash = GenerateResetPasswordHash(delegateUser);
+            var setPasswordHash = GenerateResetPasswordHash(delegateEntity.UserAccount);
             var welcomeEmail = GenerateWelcomeEmail(
-                emailAddress,
+                delegateEntity,
                 setPasswordHash,
-                baseUrl,
-                delegateUser
+                baseUrl
             );
             emailService.SendEmail(welcomeEmail);
         }
 
         public void GenerateAndScheduleDelegateWelcomeEmail(
-            string recipientEmailAddress,
-            string candidateNumber,
+            int delegateId,
             string baseUrl,
             DateTime deliveryDate,
             string addedByProcess
         )
         {
-            var delegateUsers = userService.GetDelegateUsersByEmailAddress(recipientEmailAddress);
-            var delegateUser = delegateUsers.FirstOrDefault(d => d.CandidateNumber == candidateNumber) ??
-                               throw new UserAccountNotFoundException(
-                                   "No user account could be found with the specified email address and candidate number"
-                               );
+            var delegateEntity = userService.GetDelegateById(delegateId)!;
 
-            string setPasswordHash = GenerateResetPasswordHash(delegateUser);
+            var setPasswordHash = GenerateResetPasswordHash(delegateEntity.UserAccount);
             var welcomeEmail = GenerateWelcomeEmail(
-                recipientEmailAddress,
+                delegateEntity,
                 setPasswordHash,
-                baseUrl,
-                delegateUser
+                baseUrl
             );
 
             emailService.ScheduleEmail(welcomeEmail, addedByProcess, deliveryDate);
+        }
+
+        public async Task<ResetPasswordWithUserDetails?> GetValidPasswordResetEntityAsync(
+            string emailAddress,
+            string resetHash,
+            TimeSpan expiryTime
+        )
+        {
+            var resetPasswordEntity =
+                await passwordResetDataService.FindMatchingResetPasswordEntityWithUserDetailsAsync(
+                    emailAddress,
+                    resetHash
+                );
+
+            return
+                resetPasswordEntity != null && resetPasswordEntity.IsStillValidAt(clockService.UtcNow, expiryTime)
+                    ? resetPasswordEntity
+                    : null;
         }
 
         public async Task<bool> EmailAndResetPasswordHashAreValidAsync(
@@ -138,48 +159,43 @@
             TimeSpan expiryTime
         )
         {
-            var matchingResetPasswordEntities =
-                await passwordResetDataService.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
-                    emailAddress,
-                    resetHash
-                );
-
-            return matchingResetPasswordEntities.Any(
-                resetPassword => resetPassword.IsStillValidAt(
-                    clockService.UtcNow,
-                    expiryTime
-                )
-            );
+            return await GetValidPasswordResetEntityAsync(emailAddress, resetHash, expiryTime) != null;
         }
 
         public void SendWelcomeEmailsToDelegates(
-            IEnumerable<DelegateUser> delegateUsers,
+            IEnumerable<int> delegateIds,
             DateTime deliveryDate,
             string baseUrl
         )
         {
             const string addedByProcess = "SendWelcomeEmail_Refactor";
-            var emails = delegateUsers.Select(
-                delegateUser =>
-                    GenerateWelcomeEmail(
-                        delegateUser.EmailAddress!,
-                        GenerateResetPasswordHash(delegateUser),
-                        baseUrl,
-                        delegateUser
-                    )
+            var emails = delegateIds.Select(
+                delegateId =>
+                {
+                    var delegateEntity = userService.GetDelegateById(delegateId)!;
+                    return GenerateWelcomeEmail(
+                        delegateEntity,
+                        GenerateResetPasswordHash(delegateEntity.UserAccount),
+                        baseUrl
+                    );
+                }
             );
             emailService.ScheduleEmails(emails, addedByProcess, deliveryDate);
         }
 
-        private string GenerateResetPasswordHash(User user)
+        private string GenerateResetPasswordHash(UserAccount user)
         {
-            string hash = Guid.NewGuid().ToString();
+            return GenerateResetPasswordHash(user.Id);
+        }
+
+        private string GenerateResetPasswordHash(int userId)
+        {
+            var hash = Guid.NewGuid().ToString();
 
             var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 clockService.UtcNow,
                 hash,
-                user.Id,
-                user is DelegateUser ? UserType.DelegateUser : UserType.AdminUser
+                userId
             );
 
             passwordResetDataService.CreatePasswordReset(resetPasswordCreateModel);
@@ -194,7 +210,7 @@
             string baseUrl
         )
         {
-            UriBuilder resetPasswordUrl = new UriBuilder(baseUrl);
+            var resetPasswordUrl = new UriBuilder(baseUrl);
             if (!resetPasswordUrl.Path.EndsWith('/'))
             {
                 resetPasswordUrl.Path += '/';
@@ -203,7 +219,7 @@
             resetPasswordUrl.Path += "ResetPassword";
             resetPasswordUrl.Query = $"code={resetHash}&email={emailAddress}";
 
-            string emailSubject = "Digital Learning Solutions Tracking System Password Reset";
+            var emailSubject = "Digital Learning Solutions Tracking System Password Reset";
 
             var body = new BodyBuilder
             {
@@ -224,36 +240,36 @@
             return new Email(emailSubject, body, emailAddress);
         }
 
-        private Email GenerateWelcomeEmail(
-            string emailAddress,
+        private static Email GenerateWelcomeEmail(
+            DelegateEntity delegateEntity,
             string setPasswordHash,
-            string baseUrl,
-            DelegateUser delegateUser
+            string baseUrl
         )
         {
-            UriBuilder setPasswordUrl = new UriBuilder(baseUrl);
+            var emailAddress = delegateEntity.EmailForCentreNotifications;
+            var setPasswordUrl = new UriBuilder(baseUrl);
             if (!setPasswordUrl.Path.EndsWith('/'))
             {
                 setPasswordUrl.Path += '/';
             }
 
-            setPasswordUrl.Path += "SetPassword";
+            setPasswordUrl.Path += "SetPassword"; // TODO: HEEDLS-901 The controller for this link has been deleted
             setPasswordUrl.Query = $"code={setPasswordHash}&email={emailAddress}";
 
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";
 
-            BodyBuilder body = new BodyBuilder
+            var body = new BodyBuilder
             {
-                TextBody = $@"Dear {delegateUser.FullName},
-                            An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateUser.CentreName}.
-                            You have been assigned the unique DLS delegate number {delegateUser.CandidateNumber}.
+                TextBody = $@"Dear {delegateEntity.UserAccount.FullName},
+                            An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateEntity.DelegateAccount.CentreName}.
+                            You have been assigned the unique DLS delegate number {delegateEntity.DelegateAccount.CandidateNumber}.
                             To complete your registration and access your Digital Learning Solutions content, please click: {setPasswordUrl.Uri}
                             Note that this link can only be used once and it will expire in three days.
                             Please don't reply to this email as it has been automatically generated.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
-                                <p>Dear {delegateUser.FullName},</p>
-                                <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateUser.CentreName}.</p>
-                                <p>You have been assigned the unique DLS delegate number {delegateUser.CandidateNumber}.</p>
+                                <p>Dear {delegateEntity.UserAccount.FullName},</p>
+                                <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateEntity.DelegateAccount.CentreName}.</p>
+                                <p>You have been assigned the unique DLS delegate number {delegateEntity.DelegateAccount.CandidateNumber}.</p>
                                 <p><a href=""{setPasswordUrl.Uri}"">Click here to complete your registration and access your Digital Learning Solutions content</a></p>
                                 <p>Note that this link can only be used once and it will expire in three days.</p>
                                 <p>Please don't reply to this email as it has been automatically generated.</p>

@@ -4,6 +4,17 @@
 
     public static class CustomClaimHelper
     {
+        public static int? GetUserId(this ClaimsPrincipal user)
+        {
+            var id = user.GetCustomClaimAsInt(CustomClaimTypes.UserId);
+            return id == 0 ? null : id;
+        }
+
+        public static int GetUserIdKnownNotNull(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserId);
+        }
+
         public static int? GetAdminId(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
@@ -25,19 +36,20 @@
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.LearnCandidateId);
         }
 
-        public static int GetCentreId(this ClaimsPrincipal user)
+        public static int? GetCentreId(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
+        }
+
+        public static int GetCentreIdKnownNotNull(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserCentreId);
         }
 
-        /// <summary>
-        ///     Returns the Admin Category ID or null if the ID is non-existent
-        ///     Also returns null if ID is zero to match the data service convention of not filtering on NULL category filter
-        /// </summary>
-        public static int? GetAdminCourseCategoryFilter(this ClaimsPrincipal user)
+        public static int? GetAdminCategoryId(this ClaimsPrincipal user)
         {
-            var categoryId = user.GetCustomClaimAsInt(CustomClaimTypes.AdminCategoryId);
-            return categoryId == 0 ? null : categoryId;
+            var adminCategory = user.GetCustomClaimAsRequiredInt(CustomClaimTypes.AdminCategoryId);
+            return AdminCategoryHelper.AdminCategoryToCategoryId(adminCategory);
         }
 
         public static string? GetCustomClaim(this ClaimsPrincipal user, string customClaimType)
@@ -45,7 +57,7 @@
             return user.FindFirst(customClaimType)?.Value;
         }
 
-        public static string? GetUserEmail(this ClaimsPrincipal user)
+        public static string? GetUserPrimaryEmail(this ClaimsPrincipal user)
         {
             return user.FindFirst(ClaimTypes.Email).Value;
         }

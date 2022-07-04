@@ -96,7 +96,7 @@
             const string sortBy = "Discipline";
             const string sortDirection = "The Sheltering Sky";
             const string filters = "Indiscipline";
-            var centreId = allDelegatesController.User.GetCentreId();
+            var centreId = allDelegatesController.User.GetCentreIdKnownNotNull();
 
             // When
             allDelegatesController.Export(searchString, sortBy, sortDirection, filters);

@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
@@ -32,19 +33,21 @@
 
         void AddDelegateToGroupAndEnrolOnGroupCourses(
             int groupId,
-            DelegateUser delegateUser,
+            int delegateId,
             int? addedByAdminId = null
         );
 
         void SynchroniseUserChangesWithGroups(
-            DelegateUser delegateAccountWithOldDetails,
-            AccountDetailsData newDelegateDetails,
-            CentreAnswersData newCentreAnswers
+            int delegateId,
+            AccountDetailsData accountDetailsData,
+            RegistrationFieldAnswers newDelegateDetails,
+            string? centreEmail
         );
 
         void EnrolDelegateOnGroupCourses(
             DelegateUser delegateAccountWithOldDetails,
             AccountDetailsData newDetails,
+            string? centreEmail,
             int groupId,
             int? addedByAdminId = null
         );
@@ -108,6 +111,7 @@
         private readonly ILogger<IGroupsService> logger;
         private readonly IProgressDataService progressDataService;
         private readonly ITutorialContentDataService tutorialContentDataService;
+        private readonly IUserDataService userDataService;
 
         public GroupsService(
             IGroupsDataService groupsDataService,
@@ -118,7 +122,8 @@
             IProgressDataService progressDataService,
             IConfiguration configuration,
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
-            ILogger<IGroupsService> logger
+            ILogger<IGroupsService> logger,
+            IUserDataService userDataService
         )
         {
             this.groupsDataService = groupsDataService;
@@ -130,6 +135,7 @@
             this.configuration = configuration;
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.logger = logger;
+            this.userDataService = userDataService;
         }
 
         public int AddDelegateGroup(
@@ -160,14 +166,17 @@
         }
 
         public void SynchroniseUserChangesWithGroups(
-            DelegateUser delegateAccountWithOldDetails,
-            AccountDetailsData newDelegateDetails,
-            CentreAnswersData newCentreAnswers
+            int delegateId,
+            AccountDetailsData accountDetailsData,
+            RegistrationFieldAnswers registrationFieldAnswers,
+            string? centreEmail
         )
         {
+            var delegateAccountWithOldDetails = userDataService.GetDelegateUserById(delegateId)!;
+
             var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldChanges(
-                delegateAccountWithOldDetails.GetCentreAnswersData(),
-                newCentreAnswers,
+                delegateAccountWithOldDetails.GetRegistrationFieldAnswers(),
+                registrationFieldAnswers,
                 jobGroupsDataService,
                 centreRegistrationPromptsService
             );
@@ -204,7 +213,8 @@
 
                     EnrolDelegateOnGroupCourses(
                         delegateAccountWithOldDetails,
-                        newDelegateDetails,
+                        accountDetailsData,
+                        centreEmail,
                         groupToAddDelegateTo.GroupId
                     );
                 }
@@ -216,6 +226,7 @@
         public void EnrolDelegateOnGroupCourses(
             DelegateUser delegateAccountWithOldDetails,
             AccountDetailsData newDetails,
+            string? centreEmail,
             int groupId,
             int? addedByAdminId = null
         )
@@ -227,7 +238,7 @@
             {
                 EnrolDelegateOnGroupCourse(
                     delegateAccountWithOldDetails.Id,
-                    newDetails.Email,
+                    centreEmail ?? newDetails.Email,
                     fullName,
                     addedByAdminId,
                     groupCourse,
@@ -254,24 +265,32 @@
 
         public void AddDelegateToGroupAndEnrolOnGroupCourses(
             int groupId,
-            DelegateUser delegateUser,
+            int delegateId,
             int? addedByAdminId = null
         )
         {
+            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+            var delegateEntity = userDataService.GetDelegateById(delegateId)!;
+
             using var transaction = new TransactionScope();
 
-            groupsDataService.AddDelegateToGroup(delegateUser.Id, groupId, clockService.UtcNow, 0);
+            groupsDataService.AddDelegateToGroup(delegateId, groupId, clockService.UtcNow, 0);
 
-            var accountDetailsData = new MyAccountDetailsData(
-                delegateUser.Id,
+            var accountDetailsData = new EditAccountDetailsData(
+                delegateId,
                 delegateUser.FirstName!,
                 delegateUser.LastName,
-                delegateUser.EmailAddress!
+                delegateUser.EmailAddress!,
+                delegateUser.JobGroupId,
+                delegateUser.ProfessionalRegistrationNumber,
+                delegateUser.HasBeenPromptedForPrn,
+                delegateUser.ProfileImage
             );
 
             EnrolDelegateOnGroupCourses(
                 delegateUser,
                 accountDetailsData,
+                delegateEntity.EmailForCentreNotifications,
                 groupId,
                 addedByAdminId
             );
@@ -419,7 +438,7 @@
                 var fullName = groupDelegate.FirstName + " " + groupDelegate.LastName;
                 EnrolDelegateOnGroupCourse(
                     groupDelegate.DelegateId,
-                    groupDelegate.EmailAddress,
+                    groupDelegate.EmailForCentreNotifications,
                     fullName,
                     addedByAdminId,
                     groupCourse,
@@ -435,7 +454,7 @@
             var isJobGroup = groupDetails.RegistrationField.Equals(RegistrationField.JobGroup);
             var linkedToField = groupDetails.RegistrationField.LinkedToFieldId;
 
-            (List<(int id, string name)> newGroupNames, string groupNamePrefix) = isJobGroup
+            var (newGroupNames, groupNamePrefix) = isJobGroup
                 ? GetJobGroupsAndPrefix()
                 : GetCentreRegistrationPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationField.Id);
 
@@ -482,7 +501,7 @@
 
         private void EnrolDelegateOnGroupCourse(
             int delegateUserId,
-            string? delegateUserEmailAddress,
+            string delegateUserEmailAddress,
             string delegateUserFullName,
             int? addedByAdminId,
             GroupCourse groupCourse,
@@ -539,18 +558,15 @@
                 }
             }
 
-            if (delegateUserEmailAddress != null)
-            {
-                var email = BuildEnrolmentEmail(
-                    delegateUserEmailAddress,
-                    delegateUserFullName,
-                    groupCourse,
-                    completeByDate
-                );
-                var addedByProcess =
-                    isAddCourseToGroup ? AddCourseToGroupAddedByProcess : AddDelegateToGroupAddedByProcess;
-                emailService.ScheduleEmail(email, addedByProcess);
-            }
+            var email = BuildEnrolmentEmail(
+                delegateUserEmailAddress,
+                delegateUserFullName,
+                groupCourse,
+                completeByDate
+            );
+            var addedByProcess =
+                isAddCourseToGroup ? AddCourseToGroupAddedByProcess : AddDelegateToGroupAddedByProcess;
+            emailService.ScheduleEmail(email, addedByProcess);
         }
 
         private IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)
@@ -603,7 +619,7 @@
             var baseUrl = configuration.GetAppRootPath();
             var linkToLearningPortal = baseUrl + "/LearningPortal/Current";
             var linkToCourse = baseUrl + "/LearningMenu/" + course.CustomisationId;
-            string emailBodyText = $@"
+            var emailBodyText = $@"
                 Dear {fullName}
                 This is an automated message to notify you that you have been enrolled on the course
                 {course.CourseName}
@@ -611,7 +627,7 @@
                 To login to the course directly click here:{linkToCourse}.
                 To login to the Learning Portal to access and complete your course click here:
                 {linkToLearningPortal}.";
-            string emailBodyHtml = $@"
+            var emailBodyHtml = $@"
                 <p>Dear {fullName}</p>
                 <p>This is an automated message to notify you that you have been enrolled on the course
                 <b>{course.CourseName}</b>

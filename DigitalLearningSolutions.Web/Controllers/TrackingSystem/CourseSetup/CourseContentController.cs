@@ -41,8 +41,8 @@
         [HttpGet]
         public IActionResult Index(int customisationId)
         {
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
             var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
@@ -67,8 +67,8 @@
         [Route("EditSection/{sectionId:int}")]
         public IActionResult EditSection(int customisationId, int sectionId)
         {
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryId = User.GetAdminCategoryId();
             var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,

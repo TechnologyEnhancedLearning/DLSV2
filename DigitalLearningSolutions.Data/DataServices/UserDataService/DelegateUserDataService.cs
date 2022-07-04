@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
@@ -8,11 +9,10 @@
 
     public partial class UserDataService
     {
-        private const string BaseSelectDelegateQuery =
+        private const string BaseSelectDelegateUserQuery =
             @"SELECT
                 cd.CandidateID AS Id,
                 cd.CandidateNumber,
-                cd.AliasID,
                 ct.CentreName,
                 cd.CentreID,
                 cd.DateRegistered,
@@ -40,10 +40,135 @@
             INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID";
 
+        private const string BaseSelectDelegateAccountQuery =
+            @"SELECT
+                da.ID,
+                da.Active,
+                da.CentreID,
+                ce.CentreName,
+                ce.Active AS CentreActive,
+                da.DateRegistered,
+                da.CandidateNumber,
+                da.Answer1,
+                da.Answer2,
+                da.Answer3,
+                da.Answer4,
+                da.Answer5,
+                da.Answer6,
+                da.Approved,
+                da.ExternalReg,
+                da.SelfReg,
+                da.OldPassword,
+                da.UserID,
+                da.CentreSpecificDetailsLastChecked
+            FROM DelegateAccounts AS da
+            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreId";
+
+        private const string BaseDelegateEntitySelectQuery =
+            @"SELECT
+                da.ID,
+                da.Active,
+                da.CentreID,
+                ce.CentreName,
+                ce.Active AS CentreActive,
+                da.DateRegistered,
+                da.CandidateNumber,
+                da.Answer1,
+                da.Answer2,
+                da.Answer3,
+                da.Answer4,
+                da.Answer5,
+                da.Answer6,
+                da.Approved,
+                da.ExternalReg,
+                da.SelfReg,
+                da.OldPassword,
+                da.UserID,
+                da.CentreSpecificDetailsLastChecked,
+                u.ID,
+                u.PrimaryEmail,
+                u.PasswordHash,
+                u.FirstName,
+                u.LastName,
+                u.JobGroupID,
+                jg.JobGroupName,
+                u.ProfessionalRegistrationNumber,
+                u.ProfileImage,
+                u.Active,
+                u.ResetPasswordID,
+                u.TermsAgreed,
+                u.FailedLoginCount,
+                u.HasBeenPromptedForPrn,
+                u.LearningHubAuthID,
+                u.HasDismissedLhLoginWarning,
+                u.EmailVerified,
+                u.DetailsLastChecked,
+                ucd.ID,
+                ucd.UserID,
+                ucd.CentreID,
+                ucd.Email,
+                ucd.EmailVerified
+            FROM DelegateAccounts AS da
+            INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
+            INNER JOIN Users AS u ON u.ID = da.UserID
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = u.ID
+            AND ucd.CentreId = da.CentreID
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+
+        public DelegateEntity? GetDelegateById(int id)
+        {
+            var sql = $@"{BaseDelegateEntitySelectQuery} WHERE da.ID = @id";
+
+            return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, DelegateEntity>(
+                sql,
+                (delegateAccount, userAccount, userCentreDetails) => new DelegateEntity(
+                    delegateAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { id },
+                splitOn: "ID,ID"
+            ).SingleOrDefault();
+        }
+
+        public DelegateEntity? GetDelegateByCandidateNumber(string candidateNumber)
+        {
+            var sql = $@"{BaseDelegateEntitySelectQuery} WHERE da.CandidateNumber = @candidateNumber";
+
+            return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, DelegateEntity>(
+                sql,
+                (delegateAccount, userAccount, userCentreDetails) => new DelegateEntity(
+                    delegateAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { candidateNumber },
+                splitOn: "ID,ID"
+            ).SingleOrDefault();
+        }
+
+        public IEnumerable<DelegateEntity> GetUnapprovedDelegatesByCentreId(int centreId)
+        {
+            var sql =
+                $@"{BaseDelegateEntitySelectQuery} WHERE da.Approved = 0 AND da.Active = 1 AND da.CentreID = @centreId";
+
+            return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, DelegateEntity>(
+                sql,
+                (delegateAccount, userAccount, userCentreDetails) => new DelegateEntity(
+                    delegateAccount,
+                    userAccount,
+                    userCentreDetails
+                ),
+                new { centreId },
+                splitOn: "ID,ID"
+            );
+        }
+
+        [Obsolete("New code should use GetDelegateById instead")]
         public DelegateUser? GetDelegateUserById(int id)
         {
             var user = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.CandidateId = @id",
                 new { id }
             ).SingleOrDefault();
@@ -51,33 +176,10 @@
             return user;
         }
 
-        public List<DelegateUser> GetDelegateUsersByUsername(string username)
-        {
-            List<DelegateUser> users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
-                    WHERE cd.Active = 1 AND
-                         (cd.CandidateNumber = @username OR cd.EmailAddress = @username OR cd.AliasID = @username)",
-                new { username }
-            ).ToList();
-
-            return users;
-        }
-
-        public List<DelegateUser> GetAllDelegateUsersByUsername(string username)
-        {
-            List<DelegateUser> users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
-                    WHERE cd.CandidateNumber = @username OR cd.EmailAddress = @username OR cd.AliasID = @username",
-                new { username }
-            ).ToList();
-
-            return users;
-        }
-
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
         {
-            List<DelegateUser> users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+            var users = connection.Query<DelegateUser>(
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.EmailAddress = @emailAddress",
                 new { emailAddress }
             ).ToList();
@@ -85,10 +187,11 @@
             return users;
         }
 
+        [Obsolete("New code should use GetUnapprovedDelegatesByCentreId instead")]
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId)
         {
-            List<DelegateUser> users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+            var users = connection.Query<DelegateUser>(
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE (cd.Approved = 0)
                     AND (cd.Active = 1)
                     AND (cd.CentreID = @centreId)",
@@ -98,40 +201,58 @@
             return users;
         }
 
-        public void UpdateDelegateUsers(
+        public void UpdateUser(
             string firstName,
             string surname,
-            string email,
+            string primaryEmail,
             byte[]? profileImage,
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
-            int[] ids
+            int jobGroupId,
+            DateTime detailsLastChecked,
+            int userId,
+            bool changeMadeBySameUser = false
         )
         {
             connection.Execute(
-                @"UPDATE Candidates
+                @"UPDATE Users
                         SET
                             FirstName = @firstName,
                             LastName = @surname,
-                            EmailAddress = @email,
-                            ProfileImage = @profileImage,
+                            PrimaryEmail = @primaryEmail,
+                            ProfileImage = (CASE WHEN @changeMadeBySameUser = 1 THEN @profileImage ELSE ProfileImage END),
                             ProfessionalRegistrationNumber = @professionalRegNumber,
-                            HasBeenPromptedForPrn = @hasBeenPromptedForPrn
-                        WHERE CandidateID in @ids",
-                new { firstName, surname, email, profileImage, ids, professionalRegNumber, hasBeenPromptedForPrn }
+                            HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
+                            JobGroupId = @jobGroupId,
+                            DetailsLastChecked = (CASE WHEN @changeMadeBySameUser = 1 THEN @detailsLastChecked ELSE DetailsLastChecked END)
+                        WHERE ID = @userId",
+                new
+                {
+                    firstName,
+                    surname,
+                    primaryEmail,
+                    profileImage,
+                    userId,
+                    professionalRegNumber,
+                    hasBeenPromptedForPrn,
+                    jobGroupId,
+                    detailsLastChecked,
+                    changeMadeBySameUser,
+                }
             );
         }
 
-        public void UpdateDelegateAccountDetails(string firstName, string surname, string email, int[] ids)
+        public void UpdateUserDetails(string firstName, string surname, string primaryEmail, int jobGroupId, int userId)
         {
             connection.Execute(
-                @"UPDATE Candidates
+                @"UPDATE Users
                         SET
                             FirstName = @firstName,
                             LastName = @surname,
-                            EmailAddress = @email
-                        WHERE CandidateID in @ids",
-                new { firstName, surname, email, ids }
+                            PrimaryEmail = @primaryEmail,
+                            JobGroupId = @jobGroupId
+                        WHERE ID = @userId",
+                new { firstName, surname, primaryEmail, jobGroupId, userId }
             );
         }
 
@@ -145,7 +266,7 @@
             );
         }
 
-        public void RemoveDelegateUser(int delegateId)
+        public void RemoveDelegateAccount(int delegateId)
         {
             using var transaction = new TransactionScope();
             connection.Execute(
@@ -156,8 +277,8 @@
                 DELETE FROM GroupDelegates
                     WHERE DelegateID = @delegateId
 
-                DELETE FROM Candidates
-                    WHERE CandidateID = @delegateId",
+                DELETE FROM DelegateAccounts
+                    WHERE ID = @delegateId",
                 new { delegateId }
             );
             transaction.Complete();
@@ -171,21 +292,11 @@
             );
         }
 
-        public DelegateUser? GetDelegateUserByAliasId(string aliasId, int centreId)
-        {
-            var user = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
-                    WHERE cd.AliasID = @aliasId AND cd.CentreId = @centreId",
-                new { aliasId, centreId }
-            ).SingleOrDefault();
-
-            return user;
-        }
-
+        [Obsolete("New code should use GetDelegateByCandidateNumber instead")]
         public DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId)
         {
             var user = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
+                @$"{BaseSelectDelegateUserQuery}
                     WHERE cd.CandidateNumber = @candidateNumber AND cd.CentreId = @centreId",
                 new { candidateNumber, centreId }
             ).SingleOrDefault();
@@ -193,44 +304,31 @@
             return user;
         }
 
-        public void UpdateDelegate(
+        public void UpdateDelegateAccount(
             int delegateId,
-            string firstName,
-            string lastName,
-            int jobGroupId,
             bool active,
             string? answer1,
             string? answer2,
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6,
-            string? aliasId,
-            string emailAddress
+            string? answer6
         )
         {
             connection.Execute(
                 @"UPDATE Candidates
                     SET
-                        FirstName = @firstName,
-                        LastName = @lastName,
-                        JobGroupID = @jobGroupId,
                         Active = @active,
                         Answer1 = @answer1,
                         Answer2 = @answer2,
                         Answer3 = @answer3,
                         Answer4 = @answer4,
                         Answer5 = @answer5,
-                        Answer6 = @answer6,
-                        AliasID = @aliasId,
-                        EmailAddress = @emailAddress
+                        Answer6 = @answer6
                     WHERE CandidateID = @delegateId",
                 new
                 {
                     delegateId,
-                    firstName,
-                    lastName,
-                    jobGroupId,
                     active,
                     answer1,
                     answer2,
@@ -238,8 +336,6 @@
                     answer4,
                     answer5,
                     answer6,
-                    aliasId,
-                    emailAddress,
                 }
             );
         }
@@ -271,15 +367,6 @@
                     SET HasDismissedLhLoginWarning = @status
                     WHERE CandidateID = @delegateId",
                 new { delegateId, status }
-            );
-        }
-
-        public IEnumerable<DelegateUser> GetDelegateUsersByAliasId(string aliasId)
-        {
-            return connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateQuery}
-                    WHERE cd.AliasID = @aliasId",
-                new { aliasId }
             );
         }
 
@@ -316,6 +403,22 @@
                         HasBeenPromptedForPrn = @hasBeenPromptedForPrn
                     WHERE CandidateID = @delegateId",
                 new { delegateId, professionalRegistrationNumber, hasBeenPromptedForPrn }
+            );
+        }
+
+        public IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId)
+        {
+            return connection.Query<DelegateAccount>(
+                @$"{BaseSelectDelegateAccountQuery} WHERE da.UserID = @userId",
+                new { userId }
+            );
+        }
+
+        public DelegateAccount? GetDelegateAccountById(int id)
+        {
+            return connection.QuerySingleOrDefault<DelegateAccount>(
+                @$"{BaseSelectDelegateAccountQuery} WHERE da.ID = @id",
+                new { id }
             );
         }
     }

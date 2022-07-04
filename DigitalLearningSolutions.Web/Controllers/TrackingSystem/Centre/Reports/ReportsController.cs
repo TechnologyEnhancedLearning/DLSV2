@@ -35,8 +35,8 @@
 
         public IActionResult Index()
         {
-            var centreId = User.GetCentreId();
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryIdFilter = User.GetAdminCategoryId();
 
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
@@ -72,8 +72,8 @@
         [Route("Data")]
         public IEnumerable<ActivityDataRowModel> GetGraphData()
         {
-            var centreId = User.GetCentreId();
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryIdFilter = User.GetAdminCategoryId();
 
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
@@ -87,8 +87,8 @@
         [Route("EditFilters")]
         public IActionResult EditFilters()
         {
-            var centreId = User.GetCentreId();
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryIdFilter = User.GetAdminCategoryId();
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
             var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
@@ -108,10 +108,10 @@
         [Route("EditFilters")]
         public IActionResult EditFilters(EditFiltersViewModel model)
         {
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var categoryIdFilter = User.GetAdminCategoryId();
             if (!ModelState.IsValid)
             {
-                var centreId = User.GetCentreId();
+                var centreId = User.GetCentreIdKnownNotNull();
                 var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
                 model.SetUpDropdowns(filterOptions, categoryIdFilter);
                 model.DataStart = activityService.GetActivityStartDateForCentre(centreId);
@@ -144,8 +144,8 @@
             ReportInterval reportInterval
         )
         {
-            var centreId = User.GetCentreId();
-            var adminCategoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var adminCategoryIdFilter = User.GetAdminCategoryId();
 
             var dateRange =
                 activityService.GetValidatedUsageStatsDateRange(startDate, endDate, centreId);
@@ -186,8 +186,8 @@
             ReportInterval reportInterval
         )
         {
-            var centreId = User.GetCentreId();
-            var adminCategoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var adminCategoryIdFilter = User.GetAdminCategoryId();
 
             var dateRange =
                 activityService.GetValidatedUsageStatsDateRange(startDate, endDate, centreId);

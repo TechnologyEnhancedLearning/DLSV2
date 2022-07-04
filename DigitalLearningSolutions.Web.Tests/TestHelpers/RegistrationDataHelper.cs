@@ -7,7 +7,8 @@
     {
         private const string FirstName = "Test";
         private const string LastName = "User";
-        private const string Email = "test@email.com";
+        private const string PrimaryEmail = "test@email.com";
+        private const string CentreSpecificEmail = "centre@email.com";
         private const int CentreId = 5;
         private const int JobGroupId = 10;
         private const string PasswordHash = "password hash";
@@ -22,14 +23,15 @@
             {
                 FirstName = FirstName,
                 LastName = LastName,
-                Email = Email,
+                PrimaryEmail = PrimaryEmail,
+                CentreSpecificEmail = CentreSpecificEmail,
                 Centre = CentreId,
                 JobGroup = JobGroupId,
                 PasswordHash = PasswordHash,
                 Answer1 = Answer1,
                 Answer2 = Answer2,
                 Answer3 = Answer3,
-                IsCentreSpecificRegistration = IsCentreSpecificRegistration
+                IsCentreSpecificRegistration = IsCentreSpecificRegistration,
             };
         }
 
@@ -39,17 +41,19 @@
             {
                 FirstName = FirstName,
                 LastName = LastName,
-                Email = Email,
+                PrimaryEmail = PrimaryEmail,
+                CentreSpecificEmail = CentreSpecificEmail,
                 Centre = CentreId,
                 JobGroup = JobGroupId,
-                PasswordHash = PasswordHash
+                PasswordHash = PasswordHash,
             };
         }
 
         public static DelegateRegistrationData GetDefaultDelegateRegistrationData(
             string? firstName = "Test",
             string? lastName = "Name",
-            string? email = "test@email.com",
+            string? primaryEmail = "test@email.com",
+            string? centreSpecificEmail = "centre@email.com",
             int? centre = 2,
             int? jobGroup = 1,
             string? passwordHash = "hash",
@@ -68,10 +72,40 @@
                 Id = Guid.NewGuid(),
                 FirstName = firstName,
                 LastName = lastName,
-                Email = email,
+                PrimaryEmail = primaryEmail,
+                CentreSpecificEmail = centreSpecificEmail,
                 Centre = centre,
                 JobGroup = jobGroup,
                 PasswordHash = passwordHash,
+                IsCentreSpecificRegistration = isCentreSpecificRegistration,
+                SupervisorDelegateId = supervisorDelegateId,
+                Answer1 = answer1,
+                Answer2 = answer2,
+                Answer3 = answer3,
+                Answer4 = answer4,
+                Answer5 = answer5,
+                Answer6 = answer6,
+            };
+        }
+
+        public static InternalDelegateRegistrationData GetDefaultInternalDelegateRegistrationData(
+            string? email = "test@email.com",
+            int? centre = 2,
+            bool isCentreSpecificRegistration = false,
+            int? supervisorDelegateId = 1,
+            string? answer1 = "answer1",
+            string? answer2 = "answer2",
+            string? answer3 = "answer3",
+            string? answer4 = "answer4",
+            string? answer5 = "answer5",
+            string? answer6 = "answer6"
+        )
+        {
+            return new InternalDelegateRegistrationData
+            {
+                Id = Guid.NewGuid(),
+                Email = email,
+                Centre = centre,
                 IsCentreSpecificRegistration = isCentreSpecificRegistration,
                 SupervisorDelegateId = supervisorDelegateId,
                 Answer1 = answer1,
@@ -86,7 +120,7 @@
         public static DelegateRegistrationByCentreData GetDefaultDelegateRegistrationByCentreData(
             string? firstName = "Test",
             string? lastName = "Name",
-            string? email = "test@email.com",
+            string? primaryEmail = "test@email.com",
             int? centre = 2,
             int? jobGroup = 1,
             string? passwordHash = "hash",
@@ -98,7 +132,6 @@
             string? answer4 = "answer4",
             string? answer5 = "answer5",
             string? answer6 = "answer6",
-            string? aliasId = "alias",
             DateTime? welcomeEmailDate = null
         )
         {
@@ -107,7 +140,7 @@
                 Id = Guid.NewGuid(),
                 FirstName = firstName,
                 LastName = lastName,
-                Email = email,
+                PrimaryEmail = primaryEmail,
                 Centre = centre,
                 JobGroup = jobGroup,
                 PasswordHash = passwordHash,
@@ -119,8 +152,7 @@
                 Answer4 = answer4,
                 Answer5 = answer5,
                 Answer6 = answer6,
-                Alias = aliasId,
-                WelcomeEmailDate = welcomeEmailDate
+                WelcomeEmailDate = welcomeEmailDate,
             };
         }
     }

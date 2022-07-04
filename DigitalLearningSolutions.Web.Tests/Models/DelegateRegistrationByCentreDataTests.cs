@@ -12,7 +12,6 @@
         private const string FirstName = "Test";
         private const string LastName = "User";
         private const string Email = "test@email.com";
-        private const string Alias = "testuser";
         private const int CentreId = 5;
 
         [Test]
@@ -24,8 +23,7 @@
                 FirstName = FirstName,
                 LastName = LastName,
                 Centre = CentreId,
-                Email = Email,
-                Alias = Alias
+                PrimaryEmail = Email,
             };
             var data = new DelegateRegistrationByCentreData();
 
@@ -35,9 +33,8 @@
             // Then
             data.FirstName.Should().Be(FirstName);
             data.LastName.Should().Be(LastName);
-            data.Email.Should().Be(Email);
+            data.PrimaryEmail.Should().Be(Email);
             data.Centre.Should().Be(CentreId);
-            data.Alias.Should().Be(Alias);
         }
 
         [Test]

@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -27,9 +28,11 @@
         private readonly IPasswordResetService passwordResetService;
         private readonly PromptsService promptsService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public ViewDelegateController(
             IUserDataService userDataService,
+            IUserService userService,
             PromptsService promptsService,
             ICourseService courseService,
             IPasswordResetService passwordResetService,
@@ -37,6 +40,7 @@
         )
         {
             this.userDataService = userDataService;
+            this.userService = userService;
             this.promptsService = promptsService;
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
@@ -45,15 +49,23 @@
 
         public IActionResult Index(int delegateId)
         {
-            var centreId = User.GetCentreId();
-            var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
 
-            var customFields = promptsService.GetDelegateRegistrationPromptsForCentre(centreId, delegateUser);
+            var delegateEntity = userService.GetDelegateById(delegateId)!;
+
+            if (delegateEntity == null)
+            {
+                return NotFound();
+            }
+
+            var delegateUserCard = new DelegateUserCard(delegateEntity);
+            var categoryIdFilter = User.GetAdminCategoryId();
+
+            var customFields = promptsService.GetDelegateRegistrationPromptsForCentre(centreId, delegateUserCard);
             var delegateCourses =
                 courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryIdFilter);
 
-            var model = new ViewDelegateViewModel(delegateUser, customFields, delegateCourses);
+            var model = new ViewDelegateViewModel(delegateUserCard, customFields, delegateCourses);
 
             return View(model);
         }
@@ -66,8 +78,7 @@
             var baseUrl = config.GetAppRootPath();
 
             passwordResetService.GenerateAndSendDelegateWelcomeEmail(
-                delegateUser.EmailAddress!,
-                delegateUser.CandidateNumber,
+                delegateId,
                 baseUrl
             );
 
@@ -89,7 +100,7 @@
         [Route("ReactivateDelegate")]
         public IActionResult ReactivateDelegate(int delegateId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
 
             if (delegateUser?.CentreId != centreId)

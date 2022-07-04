@@ -63,7 +63,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [Route("/TrackingSystem/Delegates/Register")]
         public IActionResult Index()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             SetCentreDelegateRegistrationData(centreId);
 
@@ -179,7 +179,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             data.SetWelcomeEmail(model);
             TempData.Set(data);
 
-            return RedirectToAction(data.ShouldSendEmail ? "Summary" : "Password");
+            return RedirectToAction("Password");
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
@@ -232,7 +232,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 var candidateNumber = registrationService.RegisterDelegateByCentre(
                     RegistrationMappingHelper.MapCentreRegistrationToDelegateRegistrationModel(data),
-                    baseUrl
+                    baseUrl,
+                    false
                 );
 
                 TempData.Clear();
@@ -284,32 +285,16 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private void ValidatePersonalInformation(PersonalInformationViewModel model)
         {
-            if (model.Email == null)
+            if (model.PrimaryEmail == null)
             {
                 return;
             }
 
-            if (!userService.IsDelegateEmailValidForCentre(model.Email, model.Centre!.Value))
+            if (!userService.IsDelegateEmailValidForCentre(model.PrimaryEmail, model.Centre!.Value))
             {
                 ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.Email),
+                    nameof(PersonalInformationViewModel.PrimaryEmail),
                     "A user with this email is already registered at this centre"
-                );
-            }
-
-            if (model.Alias == null)
-            {
-                return;
-            }
-
-            var duplicateUsers = userDataService.GetAllDelegateUsersByUsername(model.Alias)
-                .Where(u => u.CentreId == model.Centre);
-
-            if (duplicateUsers.Count() != 0)
-            {
-                ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.Alias),
-                    "A user with this alias is already registered at this centre"
                 );
             }
         }

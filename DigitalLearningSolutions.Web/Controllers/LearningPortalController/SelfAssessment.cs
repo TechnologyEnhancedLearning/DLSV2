@@ -528,7 +528,7 @@
 
             TempData.Set(sessionAddSupervisor);
             var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
-                User.GetCentreId(),
+                User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
                 User.GetCandidateIdKnownNotNull()
             );
@@ -718,9 +718,10 @@
             var supervisorDelegateId = supervisorService.AddSuperviseDelegate(
                 sessionAddSupervisor.SupervisorAdminId,
                 candidateId,
-                User.GetUserEmail() ?? throw new InvalidOperationException(),
+                // TODO HEEDLS-899 This will have been broken by changes to the claims since it will be expecting centre specific emails
+                User.GetUserPrimaryEmail() ?? throw new InvalidOperationException(),
                 sessionAddSupervisor.SupervisorEmail ?? throw new InvalidOperationException(),
-                User.GetCentreId()
+                User.GetCentreIdKnownNotNull()
             );
             supervisorService.InsertCandidateAssessmentSupervisor(
                 candidateId,

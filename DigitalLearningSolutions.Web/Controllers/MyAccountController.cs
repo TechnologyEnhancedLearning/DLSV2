@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
@@ -9,21 +10,27 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
 
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
     [TypeFilter(typeof(ValidateAllowedDlsSubApplication))]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
-    [Authorize]
+    [Authorize(Policy = CustomPolicies.BasicUser)]
     public class MyAccountController : Controller
     {
+        private const string SwitchCentreReturnUrl = "/Home/Welcome";
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
+        private readonly IConfiguration config;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly ILogger<MyAccountController> logger;
         private readonly PromptsService promptsService;
         private readonly IUserService userService;
 
@@ -32,7 +39,9 @@
             IUserService userService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
-            PromptsService registrationPromptsService
+            PromptsService registrationPromptsService,
+            ILogger<MyAccountController> logger,
+            IConfiguration config
         )
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
@@ -40,54 +49,83 @@
             this.imageResizeService = imageResizeService;
             this.jobGroupsDataService = jobGroupsDataService;
             promptsService = registrationPromptsService;
+            this.logger = logger;
+            this.config = config;
         }
 
+        // TODO HEEDLS-993 Sort out my account page for centreless user, only the minimum has been done to allow it to load
         [NoCaching]
-        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
-            var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetCandidateId();
-            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var centreId = User.GetCentreId();
+            var userId = User.GetUserIdKnownNotNull();
+            var userEntity = userService.GetUserById(userId);
+
+            var adminAccount = userEntity!.GetCentreAccountSet(centreId)?.AdminAccount;
+            var delegateAccount = userEntity.GetCentreAccountSet(centreId)?.DelegateAccount;
 
             var customPrompts =
-                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
-                    User.GetCentreId(),
-                    delegateUser
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
+                    centreId,
+                    delegateAccount
                 );
 
-            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts, dlsSubApplication);
+            var switchCentreReturnUrl = StringHelper.GetLocalRedirectUrl(config, SwitchCentreReturnUrl);
 
-            return View(model);
-        }
-
-        [NoCaching]
-        [HttpGet("EditDetails")]
-        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
-        public IActionResult EditDetails(DlsSubApplication dlsSubApplication)
-        {
-            var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetCandidateId();
-            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
-
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-            var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
-
-            var model = new MyAccountEditDetailsViewModel(
-                adminUser,
-                delegateUser,
-                jobGroups,
+            var model = new MyAccountViewModel(
+                userEntity.UserAccount,
+                delegateAccount,
+                adminAccount?.CentreName ?? delegateAccount?.CentreName,
+                centreId != null ? userService.GetCentreEmail(userId, centreId.Value) : null,
                 customPrompts,
-                dlsSubApplication
+                dlsSubApplication,
+                switchCentreReturnUrl
             );
 
             return View(model);
         }
 
+        // TODO HEEDLS-965 Sort out edit details for centreless user, only the minimum has been done to allow it to load
+        [NoCaching]
+        [HttpGet("EditDetails")]
+        public IActionResult EditDetails(
+            DlsSubApplication dlsSubApplication,
+            string? returnUrl = null,
+            bool isCheckDetailsRedirect = false
+        )
+        {
+            var centreId = User.GetCentreId();
+            var userId = User.GetUserIdKnownNotNull();
+            var userEntity = userService.GetUserById(userId);
+            var delegateAccount = userEntity!.GetCentreAccountSet(centreId)?.DelegateAccount;
+
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            
+            var customPrompts =
+                centreId != null
+                    ? promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
+                        delegateAccount,
+                        centreId.Value
+                    )
+                    : new List<EditDelegateRegistrationPromptViewModel>();
+
+            var model = new MyAccountEditDetailsViewModel(
+                userEntity.UserAccount,
+                delegateAccount,
+                jobGroups,
+                centreId != null ? userService.GetCentreEmail(userId, centreId.Value) : null,
+                customPrompts,
+                dlsSubApplication,
+                returnUrl,
+                isCheckDetailsRedirect
+            );
+
+            return View(model);
+        }
+
+        // TODO HEEDLS-965 Edit details post fails for centreless user, contains call to User.GetCentreIdKnownNotNull()
         [NoCaching]
         [HttpPost("EditDetails")]
-        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         public IActionResult EditDetails(
             MyAccountEditDetailsFormData formData,
             string action,
@@ -108,12 +146,12 @@
             DlsSubApplication dlsSubApplication
         )
         {
-            var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
+            var userId = User.GetUserIdKnownNotNull();
 
             if (userDelegateId.HasValue)
             {
-                promptsService.ValidateCentreRegistrationPrompts(formData, User.GetCentreId(), ModelState);
+                promptsService.ValidateCentreRegistrationPrompts(formData, User.GetCentreIdKnownNotNull(), ModelState);
             }
 
             if (formData.ProfileImageFile != null)
@@ -124,20 +162,10 @@
                 );
             }
 
-            if (formData.Password != null &&
-                !userService.IsPasswordValid(userAdminId, userDelegateId, formData.Password))
-            {
-                ModelState.AddModelError(
-                    nameof(MyAccountEditDetailsFormData.Password),
-                    CommonValidationErrorMessages.IncorrectPassword
-                );
-            }
-
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
                 ModelState,
                 formData.HasProfessionalRegistrationNumber,
-                formData.ProfessionalRegistrationNumber,
-                userDelegateId.HasValue
+                formData.ProfessionalRegistrationNumber
             );
 
             if (!ModelState.IsValid)
@@ -145,24 +173,53 @@
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
-            if (!userService.NewEmailAddressIsValid(formData.Email!, userAdminId, userDelegateId, User.GetCentreId()))
+            var emailsValid = true;
+            if (!userService.NewEmailAddressIsValid(
+                    formData.Email!,
+                    userId
+                ))
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
-                    "A user with this email is already registered at this centre"
+                    CommonValidationErrorMessages.EmailAlreadyInUse
                 );
+                emailsValid = false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) && !userService.NewEmailAddressIsValid(
+                    formData.CentreSpecificEmail,
+                    userId
+                ))
+            {
+                ModelState.AddModelError(
+                    nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),
+                    CommonValidationErrorMessages.EmailAlreadyInUse
+                );
+                emailsValid = false;
+            }
+
+            if (!emailsValid)
+            {
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }
 
-            var (accountDetailsData, centreAnswersData) = AccountDetailsDataHelper.MapToUpdateAccountData(
+            var (accountDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToEditAccountDetailsData(
                 formData,
-                userAdminId,
-                userDelegateId,
-                User.GetCentreId()
+                userId,
+                userDelegateId
             );
-            userService.UpdateUserAccountDetailsForAllVerifiedUsers(accountDetailsData, centreAnswersData);
+            userService.UpdateUserDetailsAndCentreSpecificDetails(
+                accountDetailsData,
+                delegateDetailsData,
+                formData.CentreSpecificEmail,
+                User.GetCentreIdKnownNotNull(),
+                true
+            );
 
-            return RedirectToAction("Index", new { dlsSubApplication = dlsSubApplication.UrlSegment });
+            return this.RedirectToReturnUrl(formData.ReturnUrl, logger) ?? RedirectToAction(
+                "Index",
+                new { dlsSubApplication = dlsSubApplication.UrlSegment }
+            );
         }
 
         private IActionResult ReturnToEditDetailsViewWithErrors(
@@ -172,12 +229,14 @@
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(formData, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
+                    formData,
+                    User.GetCentreIdKnownNotNull()
+                );
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);
         }
 
-        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         private IActionResult EditDetailsPostPreviewImage(
             MyAccountEditDetailsFormData formData,
             DlsSubApplication dlsSubApplication
@@ -190,7 +249,10 @@
             var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
+                    delegateUser,
+                    User.GetCentreIdKnownNotNull()
+                );
 
             if (!ModelState.IsValid)
             {
@@ -207,7 +269,6 @@
             return View(model);
         }
 
-        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         private IActionResult EditDetailsPostRemoveImage(
             MyAccountEditDetailsFormData formData,
             DlsSubApplication dlsSubApplication
@@ -223,7 +284,10 @@
             var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
+                    delegateUser,
+                    User.GetCentreIdKnownNotNull()
+                );
 
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);

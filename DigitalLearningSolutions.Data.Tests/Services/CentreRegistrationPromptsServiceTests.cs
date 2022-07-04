@@ -37,8 +37,14 @@
         public void GetCentreRegistrationPromptsByCentreId_Returns_Populated_CentreRegistrationPrompts()
         {
             // Given
-            var expectedPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: null, mandatory: true, promptId: 3);
-            var expectedPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2, "Department / team", null, true);
+            var expectedPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(
+                1,
+                options: null,
+                mandatory: true,
+                promptId: 3
+            );
+            var expectedPrompt2 =
+                PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2, "Department / team", null, true);
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt> { expectedPrompt1, expectedPrompt2 };
             var expectedPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(centreRegistrationPrompts);
             A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(29))
@@ -75,7 +81,8 @@
                 .Returns(PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult());
 
             // When
-            var result = centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId);
+            var result =
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId);
 
             // Then
             using (new AssertionScope())
@@ -87,11 +94,12 @@
         }
 
         [Test]
-        public void GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser_Returns_Populated_CentreRegistrationPrompts()
+        public void
+            GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount_Returns_Populated_CentreRegistrationPrompts()
         {
             // Given
             var answer1 = "Answer 1";
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(answer1: answer1);
+            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount(answer1: answer1);
             var expectedPrompt1 =
                 PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(
                     1,
@@ -102,7 +110,8 @@
                 );
             var expectedPrompt2 =
                 PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2, "Department / team", null, true);
-            var centreRegistrationPrompts = new List<CentreRegistrationPromptWithAnswer> { expectedPrompt1, expectedPrompt2 };
+            var centreRegistrationPrompts = new List<CentreRegistrationPromptWithAnswer>
+                { expectedPrompt1, expectedPrompt2 };
             var expectedCustomerPrompts =
                 PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(centreRegistrationPrompts);
             A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(29))
@@ -116,20 +125,23 @@
 
             // When
             var result =
-                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(29, delegateUser);
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
+                    29,
+                    delegateAccount
+                );
 
             // Then
             result.Should().BeEquivalentTo(expectedCustomerPrompts);
         }
 
         [Test]
-        public void GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers_Returns_Populated_Tuple()
+        public void GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegates_Returns_Populated_Tuple()
         {
             // Given
             const string answer1 = "Answer 1";
             const string answer2 = "Answer 2";
-            var delegateUser1 = UserTestHelper.GetDefaultDelegateUser(answer1: answer1);
-            var delegateUser2 = UserTestHelper.GetDefaultDelegateUser(answer1: answer2);
+            var delegateEntity1 = UserTestHelper.GetDefaultDelegateEntity(answer1: answer1);
+            var delegateEntity2 = UserTestHelper.GetDefaultDelegateEntity(answer1: answer2);
             var expectedPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(
                 1,
                 options: null,
@@ -155,10 +167,11 @@
                 );
 
             // When
-            var result = centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
-                29,
-                new[] { delegateUser1, delegateUser2 }
-            );
+            var result = centreRegistrationPromptsService
+                .GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegates(
+                    29,
+                    new[] { delegateEntity1, delegateEntity2 }
+                );
 
             // Then
             using (new AssertionScope())
@@ -166,13 +179,13 @@
                 result.Count.Should().Be(2);
 
                 var first = result.First();
-                first.Item1.Should().BeEquivalentTo(delegateUser1);
+                first.Item1.Should().BeEquivalentTo(delegateEntity1);
                 first.Item2.Count.Should().Be(2);
                 first.Item2[0].Should().BeEquivalentTo(expectedPrompt1);
                 first.Item2[1].Should().BeEquivalentTo(expectedPrompt2);
 
                 var second = result.Last();
-                second.Item1.Should().BeEquivalentTo(delegateUser2);
+                second.Item1.Should().BeEquivalentTo(delegateEntity2);
                 second.Item2.Count.Should().Be(2);
                 second.Item2[0].Should().BeEquivalentTo(expectedPrompt3);
                 second.Item2[1].Should().BeEquivalentTo(expectedPrompt2);
@@ -203,7 +216,8 @@
         public void UpdateCentreRegistrationPrompt_calls_data_service()
         {
             // Given
-            A.CallTo(() => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, 1, true, null)).DoesNothing();
+            A.CallTo(() => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, 1, true, null))
+                .DoesNothing();
 
             // When
             centreRegistrationPromptsService.UpdateCentreRegistrationPrompt(1, 1, true, null);
@@ -262,7 +276,8 @@
         }
 
         [Test]
-        public void AddCentreRegistrationPrompt_adds_prompt_at_lowest_possible_prompt_number_with_gaps_in_prompt_numbers()
+        public void
+            AddCentreRegistrationPrompt_adds_prompt_at_lowest_possible_prompt_number_with_gaps_in_prompt_numbers()
         {
             // Given
             A.CallTo
@@ -318,7 +333,15 @@
             var result = centreRegistrationPromptsService.AddCentreRegistrationPrompt(1, 1, true, null);
 
             // Then
-            A.CallTo(() => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, A<int>._, 1, true, null))
+            A.CallTo(
+                    () => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(
+                        1,
+                        A<int>._,
+                        1,
+                        true,
+                        null
+                    )
+                )
                 .MustNotHaveHappened();
             result.Should().BeFalse();
         }

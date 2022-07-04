@@ -19,9 +19,9 @@
     public class EditDelegateControllerTests
     {
         private const int DelegateId = 1;
-        private PromptsService promptsService = null!;
         private EditDelegateController controller = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private PromptsService promptsService = null!;
         private IUserService userService = null!;
 
         [SetUp]
@@ -40,7 +40,7 @@
         public void Index_returns_not_found_with_null_delegate()
         {
             // Given
-            A.CallTo(() => userService.GetUsersById(null, DelegateId)).Returns((null, null));
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(null);
 
             // When
             var result = controller.Index(DelegateId);
@@ -53,8 +53,8 @@
         public void Index_returns_not_found_with_delegate_at_different_centre()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(centreId: 4);
-            A.CallTo(() => userService.GetUsersById(null, DelegateId)).Returns((null, delegateUser));
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(DelegateId, centreId: 4);
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
 
             // When
             var result = controller.Index(DelegateId);
@@ -64,18 +64,59 @@
         }
 
         [Test]
+        public void Index_shows_centre_specific_email_if_not_null()
+        {
+            // Given
+            const string centreSpecificEmail = "centre@email.com";
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
+                DelegateId,
+                userCentreDetailsId: 1,
+                centreSpecificEmail: centreSpecificEmail
+            );
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
+
+            // When
+            var result = controller.Index(DelegateId);
+
+            // Then
+            result.As<ViewResult>().Model.As<EditDelegateViewModel>().CentreSpecificEmail.Should()
+                .Be(centreSpecificEmail);
+        }
+
+        [Test]
+        public void Index_shows_primary_email_if_centre_specific_email_is_null()
+        {
+            // Given
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(DelegateId, centreSpecificEmail: null);
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
+
+            // When
+            var result = controller.Index(DelegateId);
+
+            // Then
+            result.As<ViewResult>().Model.As<EditDelegateViewModel>().CentreSpecificEmail.Should()
+                .Be(delegateEntity.UserAccount.PrimaryEmail);
+        }
+
+        [Test]
         public void Index_post_returns_view_with_model_error_with_duplicate_email()
         {
             // Given
             const string email = "test@email.com";
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
+                DelegateId,
+                userCentreDetailsId: 1,
+                centreSpecificEmail: email
+            );
             var formData = new EditDelegateFormData
             {
                 JobGroupId = 1,
-                Email = email,
+                CentreSpecificEmail = email,
                 HasProfessionalRegistrationNumber = false,
             };
-            A.CallTo(() => userService.NewEmailAddressIsValid(email, null, DelegateId, A<int>._)).Returns(false);
-            A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
+
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
+            A.CallTo(() => userService.NewEmailAddressIsValid(email, delegateEntity.UserAccount.Id)).Returns(false);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -86,34 +127,7 @@
                 result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
                 AssertModelStateErrorIsExpected(
                     result,
-                    "A user with this email is already registered at this centre"
-                );
-            }
-        }
-
-        [Test]
-        public void Index_post_returns_view_with_model_error_with_duplicate_alias()
-        {
-            // Given
-            const string alias = "alias";
-            var formData = new EditDelegateFormData
-            {
-                JobGroupId = 1,
-                AliasId = alias,
-            };
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
-            A.CallTo(() => userService.NewAliasIsValid(alias, DelegateId, A<int>._)).Returns(false);
-
-            // When
-            var result = controller.Index(formData, DelegateId);
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
-                AssertModelStateErrorIsExpected(
-                    result,
-                    "A user with this alias is already registered at this centre"
+                    "This email is already in use"
                 );
             }
         }
@@ -128,8 +142,8 @@
                 HasProfessionalRegistrationNumber = true,
                 ProfessionalRegistrationNumber = "!&^£%&*^!%£",
             };
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
-            A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
+
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, 2)).Returns(true);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -142,20 +156,73 @@
                     result,
                     "Invalid professional registration number format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed"
                 );
+                A.CallTo(() => userService.GetDelegateById(A<int>._)).MustNotHaveHappened();
             }
         }
 
         [Test]
-        public void Index_post_calls_userService_and_redirects_with_no_validation_errors()
+        public void Index_post_calls_userServices_and_redirects_with_no_validation_errors()
         {
             // Given
+            const string centreSpecificEmail = "centre@email.com";
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
+                DelegateId,
+                userCentreDetailsId: 1,
+                centreSpecificEmail: centreSpecificEmail
+            );
             var formData = new EditDelegateFormData
             {
                 JobGroupId = 1,
                 HasProfessionalRegistrationNumber = false,
+                CentreSpecificEmail = centreSpecificEmail,
             };
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
-            A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
+
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
+            A.CallTo(() => userService.NewEmailAddressIsValid(centreSpecificEmail, delegateEntity.UserAccount.Id))
+                .Returns(true);
+
+            // When
+            var result = controller.Index(formData, DelegateId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userService.GetDelegateById(DelegateId)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => userService.NewEmailAddressIsValid(centreSpecificEmail, delegateEntity.UserAccount.Id))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => userService.UpdateUserDetailsAndCentreSpecificDetails(
+                        A<EditAccountDetailsData>._,
+                        A<DelegateDetailsData>._,
+                        centreSpecificEmail,
+                        delegateEntity.DelegateAccount.CentreId,
+                        false
+                    )
+                ).MustHaveHappened();
+                result.Should().BeRedirectToActionResult().WithControllerName("ViewDelegate").WithActionName("Index");
+            }
+        }
+
+        [Test]
+        public void Index_post_saves_centre_specific_email_as_null_if_same_as_primary_email_and_centre_email_is_null()
+        {
+            // Given
+            const string primaryEmail = "primary@email";
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
+                DelegateId,
+                primaryEmail: primaryEmail,
+                userCentreDetailsId: 1,
+                centreSpecificEmail: null
+            );
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
+
+            var formData = new EditDelegateFormData
+            {
+                JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
+                CentreSpecificEmail = primaryEmail,
+            };
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._)).Returns(true);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -164,9 +231,94 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => userService.UpdateUserAccountDetailsViaDelegateAccount(
-                        A<EditDelegateDetailsData>._,
-                        A<CentreAnswersData>._
+                    () => userService.UpdateUserDetailsAndCentreSpecificDetails(
+                        A<EditAccountDetailsData>._,
+                        A<DelegateDetailsData>._,
+                        null,
+                        delegateEntity.DelegateAccount.CentreId,
+                        false
+                    )
+                ).MustHaveHappened();
+                result.Should().BeRedirectToActionResult().WithControllerName("ViewDelegate").WithActionName("Index");
+            }
+        }
+
+        [Test]
+        public void
+            Index_post_saves_centre_specific_email_as_null_if_same_as_primary_email_and_user_has_no_centre_details()
+        {
+            // Given
+            const string primaryEmail = "primary@email";
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
+                DelegateId,
+                primaryEmail: primaryEmail,
+                userCentreDetailsId: null,
+                centreSpecificEmail: null
+            );
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
+
+            var formData = new EditDelegateFormData
+            {
+                JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
+                CentreSpecificEmail = primaryEmail,
+            };
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._)).Returns(true);
+
+            // When
+            var result = controller.Index(formData, DelegateId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                    () => userService.UpdateUserDetailsAndCentreSpecificDetails(
+                        A<EditAccountDetailsData>._,
+                        A<DelegateDetailsData>._,
+                        null,
+                        delegateEntity.DelegateAccount.CentreId,
+                        false
+                    )
+                ).MustHaveHappened();
+                result.Should().BeRedirectToActionResult().WithControllerName("ViewDelegate").WithActionName("Index");
+            }
+        }
+
+        [Test]
+        public void
+            Index_post_saves_centre_specific_email_as_given_value_if_same_as_primary_email_and_user_has_centre_details()
+        {
+            // Given
+            const string primaryEmail = "primary@email";
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
+                DelegateId,
+                primaryEmail: primaryEmail,
+                userCentreDetailsId: 1,
+                centreSpecificEmail: primaryEmail
+            );
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
+
+            var formData = new EditDelegateFormData
+            {
+                JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
+                CentreSpecificEmail = primaryEmail,
+            };
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._)).Returns(true);
+
+            // When
+            var result = controller.Index(formData, DelegateId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                    () => userService.UpdateUserDetailsAndCentreSpecificDetails(
+                        A<EditAccountDetailsData>._,
+                        A<DelegateDetailsData>._,
+                        primaryEmail,
+                        delegateEntity.DelegateAccount.CentreId,
+                        false
                     )
                 ).MustHaveHappened();
                 result.Should().BeRedirectToActionResult().WithControllerName("ViewDelegate").WithActionName("Index");

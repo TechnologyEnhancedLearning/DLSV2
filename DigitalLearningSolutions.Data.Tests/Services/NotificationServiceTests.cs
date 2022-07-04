@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -21,6 +22,7 @@
         private IFeatureManager featureManager = null!;
         private INotificationDataService notificationDataService = null!;
         private INotificationService notificationService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
@@ -29,22 +31,122 @@
             emailService = A.Fake<IEmailService>();
             featureManager = A.Fake<IFeatureManager>();
             notificationDataService = A.Fake<INotificationDataService>();
+            userService = A.Fake<IUserService>();
 
             notificationService = new NotificationService(
                 configuration,
                 notificationDataService,
                 emailService,
-                featureManager
+                featureManager,
+                userService
             );
+
+            A.CallTo(() => configuration["AppRootPath"]).Returns("https://new-tracking-system.com");
+            A.CallTo(() => configuration["CurrentSystemBaseUrl"])
+                .Returns("https://old-tracking-system.com");
+        }
+
+        [Test]
+        public void Trying_to_send_unlock_request_with_null_unlock_data_should_throw_an_exception()
+        {
+            // Given
+            A.CallTo(() => notificationDataService.GetUnlockData(A<int>._)).Returns(null);
+
+            // Then
+            Assert.ThrowsAsync<NotificationDataException>(async () => await notificationService.SendUnlockRequest(1));
+        }
+
+        [Test]
+        public void Throws_an_exception_when_tracking_system_base_url_is_null()
+        {
+            // Given
+            A.CallTo(() => featureManager.IsEnabledAsync(A<string>._)).Returns(false);
+            A.CallTo(() => configuration["CurrentSystemBaseUrl"]).Returns("");
+
+            // Then
+            Assert.ThrowsAsync<ConfigValueMissingException>(async () => await notificationService.SendUnlockRequest(1));
+        }
+
+        [Test]
+        public async Task Trying_to_send_unlock_request_sends_email()
+        {
+            // Given
+            A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
+                .Returns(true);
+
+            // When
+            await notificationService.SendUnlockRequest(1);
+
+            // Then
+            A.CallTo(
+                    () =>
+                        emailService.SendEmail(A<Email>._)
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public async Task Trying_to_send_unlock_makes_request_to_feature_manager_to_get_correct_url()
+        {
+            // Given
+            A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
+                .Returns(false);
+
+            // When
+            await notificationService.SendUnlockRequest(1);
+
+            // Then
+            A.CallTo(() => featureManager.IsEnabledAsync(A<string>._)).MustHaveHappened();
+        }
+
+        [Test]
+        public async Task Trying_to_send_unlock_request_send_email_with_correct_old_url()
+        {
+            // Given
+            A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
+                .Returns(false);
+
+            // When
+            await notificationService.SendUnlockRequest(1);
+
+            //Then
+            A.CallTo(
+                    () =>
+                        emailService.SendEmail(
+                            A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://old-tracking-system.com/Tracking/CourseDelegates"))
+                        )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public async Task Trying_to_send_unlock_request_send_email_with_correct_new_url()
+        {
+            // Given
+            A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
+                .Returns(true);
+
+            // When
+            await notificationService.SendUnlockRequest(1);
+
+            // Then
+            A.CallTo(
+                    () =>
+                        emailService.SendEmail(
+                            A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://new-tracking-system.com/TrackingSystem/Delegates/CourseDelegates"))
+                        )
+                )
+                .MustHaveHappened();
         }
 
         [Test]
         public void SendProgressCompletionNotification_calls_data_service_and_sends_email_to_correct_delegate_email()
         {
             // Given
+            const string delegateEmail = "delegate@email.com";
             var progress = ProgressTestHelper.GetDefaultDetailedCourseProgress();
 
-            SetUpSendProgressCompletionNotificationEmailFakes();
+            SetUpSendProgressCompletionNotificationEmailFakes(delegateEmail: delegateEmail);
 
             // When
             notificationService.SendProgressCompletionNotificationEmail(progress, 2, 3);
@@ -55,25 +157,10 @@
             A.CallTo(
                 () => emailService.SendEmail(
                     A<Email>.That.Matches(
-                        e => e.To.SequenceEqual(new[] { progress.DelegateEmail })
+                        e => e.To.SequenceEqual(new[] { delegateEmail })
                     )
                 )
             ).MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public void SendProgressCompletionNotification_does_not_send_email_if_delegate_email_is_null()
-        {
-            // Given
-            var progress = ProgressTestHelper.GetDefaultDetailedCourseProgress(delegateEmail: null);
-            SetUpSendProgressCompletionNotificationEmailFakes();
-
-            // When
-            notificationService.SendProgressCompletionNotificationEmail(progress, 2, 3);
-
-            // Then
-            A.CallTo(() => emailService.SendEmail(A<Email>._))
-                .MustNotHaveHappened();
         }
 
         [Test]
@@ -100,7 +187,7 @@
             const string adminEmail = "admin@email.com";
 
             var progress = ProgressTestHelper.GetDefaultDetailedCourseProgress();
-            SetUpSendProgressCompletionNotificationEmailFakes(adminEmail: adminEmail);
+            SetUpSendProgressCompletionNotificationEmailFakes(adminId: 1, adminEmail: adminEmail);
 
             // When
             notificationService.SendProgressCompletionNotificationEmail(progress, 2, 3);
@@ -265,7 +352,9 @@
         private void SetUpSendProgressCompletionNotificationEmailFakes(
             int centreId = 101,
             string courseName = "Example application - course name",
+            int? adminId = null,
             string? adminEmail = null,
+            string delegateEmail = "",
             int sessionId = 123
         )
         {
@@ -273,9 +362,25 @@
             {
                 CentreId = centreId,
                 CourseName = courseName,
-                AdminEmail = adminEmail,
+                AdminId = adminId,
                 SessionId = sessionId,
             };
+
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(
+                UserTestHelper.GetDefaultDelegateEntity(
+                    DelegateId,
+                    primaryEmail: delegateEmail
+                )
+            );
+            if (adminId != null && adminEmail != null)
+            {
+                A.CallTo(() => userService.GetAdminById(adminId.Value)).Returns(
+                    UserTestHelper.GetDefaultAdminEntity(
+                        adminId.Value,
+                        primaryEmail: adminEmail
+                    )
+                );
+            }
 
             A.CallTo(() => notificationDataService.GetProgressCompletionData(ProgressId, DelegateId, CustomisationId))
                 .Returns(progressCompletionData);

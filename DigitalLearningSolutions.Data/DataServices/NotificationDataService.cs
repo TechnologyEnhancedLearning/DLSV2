@@ -25,8 +25,7 @@
         {
             return connection.Query<UnlockData?>(
                 @"SELECT TOP (1)
-                        candidates.EmailAddress AS DelegateEmail,
-                        candidates.FirstName + ' ' + candidates.LastName AS DelegateName,
+                        candidates.CandidateID AS DelegateId,
                         centres.ContactForename,
                         COALESCE (centres.NotifyEmail, COALESCE (centres.ContactEmail, centres.pwEmail)) AS ContactEmail,
                         applications.ApplicationName + ' - ' + customisations.CustomisationName AS CourseName,
@@ -52,13 +51,13 @@
                 @"SELECT
                         centres.CentreID,
                         applications.ApplicationName + ' - ' + customisations.CustomisationName AS CourseName,
-                        (SELECT TOP (1) au.Email
+                        (SELECT TOP (1) au.AdminID
                             FROM AdminUsers AS au
                             INNER JOIN Progress AS p ON au.AdminID = p.EnrolledByAdminID
                             INNER JOIN NotificationUsers AS nu ON au.AdminID = nu.AdminUserID
                         WHERE nu.NotificationID = 6
                             AND p.ProgressID = @progressId
-                            AND au.Active = 1) AS AdminEmail,
+                            AND au.Active = 1) AS AdminId,
                         customisations.NotificationEmails AS CourseNotificationEmail,
                         (SELECT MAX(SessionID)
                             FROM Sessions

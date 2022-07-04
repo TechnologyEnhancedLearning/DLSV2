@@ -11,13 +11,15 @@
             return new AdminRegistrationModel(
                 data.FirstName!,
                 data.LastName!,
-                data.Email!,
+                data.PrimaryEmail!,
+                data.CentreSpecificEmail,
                 data.Centre!.Value,
                 data.PasswordHash!,
                 true,
                 true,
                 data.ProfessionalRegistrationNumber,
-                0,
+                data.JobGroup!.Value,
+                null,
                 true,
                 true,
                 false,
@@ -36,7 +38,8 @@
             return new DelegateRegistrationModel(
                 data.FirstName!,
                 data.LastName!,
-                data.Email!,
+                data.PrimaryEmail!,
+                data.CentreSpecificEmail,
                 data.Centre!.Value,
                 data.JobGroup!.Value,
                 data.PasswordHash!,
@@ -53,6 +56,23 @@
             );
         }
 
+        public static InternalDelegateRegistrationModel
+            MapInternalDelegateRegistrationDataToInternalDelegateRegistrationModel(
+                InternalDelegateRegistrationData data
+            )
+        {
+            return new InternalDelegateRegistrationModel(
+                data.Centre!.Value,
+                data.CentreSpecificEmail,
+                data.Answer1,
+                data.Answer2,
+                data.Answer3,
+                data.Answer4,
+                data.Answer5,
+                data.Answer6
+            );
+        }
+
         public static DelegateRegistrationModel MapCentreRegistrationToDelegateRegistrationModel(
             DelegateRegistrationByCentreData data
         )
@@ -60,7 +80,8 @@
             return new DelegateRegistrationModel(
                 data.FirstName!,
                 data.LastName!,
-                data.Email!,
+                data.PrimaryEmail!,
+                data.CentreSpecificEmail,
                 data.Centre!.Value,
                 data.JobGroup!.Value,
                 data.PasswordHash,
@@ -74,7 +95,6 @@
                 true,
                 data.ProfessionalRegistrationNumber,
                 true,
-                data.Alias,
                 data.WelcomeEmailDate
             );
         }

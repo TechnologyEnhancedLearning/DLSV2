@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Models
 {
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class AdminLoginDetails
     {
@@ -44,7 +45,7 @@
             PublishToAll = adminUser.PublishToAll;
             SummaryReports = adminUser.SummaryReports;
             IsUserAdmin = adminUser.IsUserAdmin;
-            CategoryId = adminUser.CategoryId;
+            CategoryId = AdminCategoryHelper.CategoryIdToAdminCategory(adminUser.CategoryId);
             IsSupervisor = adminUser.IsSupervisor;
             IsNominatedSupervisor = adminUser.IsNominatedSupervisor;
             IsTrainer = adminUser.IsTrainer;

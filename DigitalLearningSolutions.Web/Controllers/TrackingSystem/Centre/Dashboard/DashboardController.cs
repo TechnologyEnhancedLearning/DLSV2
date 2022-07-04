@@ -42,7 +42,7 @@
                 return RedirectToAction("Index", "SystemNotifications");
             }
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var dashboardInformation = dashboardInformationService.GetDashboardInformationForCentre(centreId, adminId);
 

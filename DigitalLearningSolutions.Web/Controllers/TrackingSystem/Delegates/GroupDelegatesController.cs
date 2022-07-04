@@ -47,7 +47,7 @@
         [Route("{page:int=1}")]
         public IActionResult Index(int groupId, int page = 1)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
             var groupDelegates = groupsService.GetGroupDelegates(groupId);
@@ -86,7 +86,7 @@
                 AddGroupDelegateCookieName
             );
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
             var delegateUsers = userService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
@@ -127,12 +127,11 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
         public IActionResult AddDelegate(int groupId, int delegateId)
         {
-            var delegateUser = userService.GetDelegateUserById(delegateId);
             var adminId = User.GetAdminId();
 
             groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(
                 groupId,
-                delegateUser!,
+                delegateId,
                 adminId
             );
 
@@ -145,7 +144,7 @@
         {
             var delegateUser = userService.GetDelegateUserById(delegateId);
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
             var model = new ConfirmDelegateAddedViewModel(delegateUser!, groupName!, groupId);
@@ -155,7 +154,7 @@
         [HttpGet("Add/SelectDelegate/AllItems")]
         public IActionResult SelectDelegateAllItems(int groupId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var jobGroups = jobGroupsService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId);
             var delegateUsers = userService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
@@ -174,7 +173,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
         public IActionResult RemoveGroupDelegate(int groupId, int delegateId, ReturnPageQuery returnPageQuery)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var groupName = groupsService.GetGroupName(groupId, centreId);
             var groupDelegates = groupsService.GetGroupDelegates(groupId).ToList();
             var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);

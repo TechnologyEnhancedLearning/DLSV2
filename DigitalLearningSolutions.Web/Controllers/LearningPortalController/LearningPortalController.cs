@@ -10,7 +10,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
-    [Authorize(Policy = CustomPolicies.UserOnly)]
+    [Authorize(Policy = CustomPolicies.UserDelegateOnly)]
     public partial class LearningPortalController : Controller
     {
         private readonly IActionPlanService actionPlanService;
@@ -69,7 +69,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 
         private string? GetBannerText()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var bannerText = centresDataService.GetBannerText(centreId);
             return bannerText;
         }

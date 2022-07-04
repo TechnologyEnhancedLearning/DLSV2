@@ -1,11 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
+    using FizzWare.NBuilder;
+    using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class UserVerificationServiceTests
@@ -24,337 +28,184 @@
         }
 
         [Test]
-        public void VerifyUsers_Returns_verified_admin_user()
+        public void VerifyUserEntity_returns_successful_result_when_password_matches_all_accounts()
         {
             // Given
-            A.CallTo(() => cryptoService.VerifyHashedPassword("Automatically Verified", A<string>._)).Returns(true);
-            var adminUser = UserTestHelper.GetDefaultAdminUser(password: "Automatically Verified");
-
-            // When
-            var (verifiedAdminUser, _) = userVerificationService.VerifyUsers(
-                "password",
-                adminUser,
-                new List<DelegateUser>()
-            );
-
-            // Then
-            Assert.AreEqual(adminUser, verifiedAdminUser);
-        }
-
-        [Test]
-        public void VerifyUsers_Does_not_return_unverified_admin_user()
-        {
-            // Given
-            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(false);
-
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-
-            // When
-            var (verifiedAdminUser, _) = userVerificationService.VerifyUsers(
-                "password",
-                adminUser,
-                new List<DelegateUser>()
-            );
-
-            // Then
-            Assert.IsNull(verifiedAdminUser);
-        }
-
-        [Test]
-        public void VerifyUsers_Returns_verified_delegate_users()
-        {
-            // Given
-            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(false);
-            A.CallTo(() => cryptoService.VerifyHashedPassword("Automatically Verified", A<string>._)).Returns(true);
-
-            var firstDelegateUser = UserTestHelper.GetDefaultDelegateUser(password: "Automatically Verified", id: 1);
-            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(password: "Fails Verification", id: 2);
-            var thirdDelegateUser = UserTestHelper.GetDefaultDelegateUser(password: "Automatically Verified", id: 3);
-
-            var delegateUsers = new List<DelegateUser>
-            {
-                firstDelegateUser,
-                secondDelegateUser,
-                thirdDelegateUser
-            };
-
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-
-            // When
-            var (_, verifiedDelegateUsers) = userVerificationService.VerifyUsers(
-                "password",
-                adminUser,
-                delegateUsers
-            );
-
-            // Then
-            Assert.Contains(firstDelegateUser, verifiedDelegateUsers);
-            Assert.Contains(thirdDelegateUser, verifiedDelegateUsers);
-        }
-
-        [Test]
-        public void VerifyUsers_Filters_out_unverified_delegate_users()
-        {
-            // Given
-            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(false);
-            A.CallTo(() => cryptoService.VerifyHashedPassword("Automatically Verified", A<string>._)).Returns(true);
-
-            var firstDelegateUser = UserTestHelper.GetDefaultDelegateUser(password: "Automatically Verified", id: 1);
-            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(password: "Fails Verification", id: 2);
-            var thirdDelegateUser = UserTestHelper.GetDefaultDelegateUser(password: "Automatically Verified", id: 3);
-
-            var delegateUsers = new List<DelegateUser>
-            {
-                firstDelegateUser,
-                secondDelegateUser,
-                thirdDelegateUser
-            };
-
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-
-            // When
-            var (_, verifiedDelegateUsers) = userVerificationService.VerifyUsers(
-                "password",
-                adminUser,
-                delegateUsers
-            );
-
-            // Then
-            Assert.IsFalse(verifiedDelegateUsers.Contains(secondDelegateUser));
-        }
-
-        [Test]
-        public void VerifyUsers_Returns_no_delegates_if_all_unverified()
-        {
-            // Given
-            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(false);
-
-            var firstDelegateUser = UserTestHelper.GetDefaultDelegateUser(1);
-            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var thirdDelegateUser = UserTestHelper.GetDefaultDelegateUser(3);
-
-            var delegateUsers = new List<DelegateUser>
-            {
-                firstDelegateUser,
-                secondDelegateUser,
-                thirdDelegateUser
-            };
-
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-
-            // When
-            var (_, verifiedDelegateUsers) = userVerificationService.VerifyUsers(
-                "password",
-                adminUser,
-                delegateUsers
-            );
-
-            // Then
-            Assert.IsEmpty(verifiedDelegateUsers);
-        }
-
-        [Test]
-        public void
-            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_nothing_when_delegate_email_is_empty()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: null);
-            var delegateUsers = new List<DelegateUser> { delegateUser };
-
-            // When
-            var returnedAdminUser = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
-                delegateUsers,
-                "password"
-            );
-
-            // Then
-            Assert.IsNull(returnedAdminUser);
-        }
-
-        [Test]
-        public void
-            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_nothing_when_no_admin_account_is_associated_with_delegate()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var delegateUsers = new List<DelegateUser> { delegateUser };
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(null);
-
-            // When
-            var returnedAdminUser = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
-                delegateUsers,
-                "password"
-            );
-
-            // Then
-            Assert.IsNull(returnedAdminUser);
-        }
-
-        [Test]
-        public void
-            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_nothing_when_admin_account_is_not_active()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var delegateUsers = new List<DelegateUser> { delegateUser };
-            var associatedAdminUser = UserTestHelper.GetDefaultAdminUser(active: false);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress!))
-                .Returns(associatedAdminUser);
-
-            // When
-            var returnedAdminUser = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
-                delegateUsers,
-                "password"
-            );
-
-            // Then
-            Assert.IsNull(returnedAdminUser);
-        }
-
-        [Test]
-        public void
-            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_nothing_when_admin_account_is_not_approved()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var delegateUsers = new List<DelegateUser> { delegateUser };
-            var associatedAdminUser = UserTestHelper.GetDefaultAdminUser(approved: false);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress!))
-                .Returns(associatedAdminUser);
-
-            // When
-            var returnedAdminUser = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
-                delegateUsers,
-                "password"
-            );
-
-            // Then
-            Assert.IsNull(returnedAdminUser);
-        }
-        [Test]
-        public void
-            GetVerifiedAdminUserAssociatedWithDelegateUser_Returns_verified_admin_account_associated_with_delegate_by_email()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var delegateUsers = new List<DelegateUser> { delegateUser };
-            var associatedAdminUser = UserTestHelper.GetDefaultAdminUser();
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress!))
-                .Returns(associatedAdminUser);
-            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
-
-            // When
-            var returnedAdminUser = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
-                delegateUsers,
-                "password"
-            );
-
-            // Then
-            Assert.AreEqual(associatedAdminUser, returnedAdminUser);
-        }
-
-        [Test]
-        public void GetVerifiedDelegateUsersAssociatedWithAdminUser_Returns_empty_list_when_admin_is_null()
-        {
-            // Given
-            AdminUser? adminUser = null;
             const string password = "password";
+            const string hashedPassword = "hashedpassword";
+            var delegateAccounts = Builder<DelegateAccount>.CreateListOfSize(5)
+                .All()
+                .With(da => da.OldPassword = hashedPassword)
+                .Build();
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(passwordHash: hashedPassword),
+                new List<AdminAccount>(),
+                delegateAccounts
+            );
+            A.CallTo(() => cryptoService.VerifyHashedPassword(hashedPassword, password)).Returns(true);
 
             // When
-            var returnedDelegates = userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
-                adminUser,
-                password
-            );
+            var result = userVerificationService.VerifyUserEntity(password, userEntity);
 
             // Then
-            Assert.IsEmpty(returnedDelegates);
+            using (new AssertionScope())
+            {
+                result.UserAccountPassedVerification.Should().BeTrue();
+                result.FailedVerificationDelegateAccountIds.Should().BeEmpty();
+                result.PassedVerificationDelegateAccountIds.Should()
+                    .BeEquivalentTo(delegateAccounts.Select(da => da.Id));
+                result.PasswordMatchesAllAccountPasswords.Should().BeTrue();
+                result.PasswordMatchesAtLeastOneAccountPassword.Should().BeTrue();
+            }
         }
 
         [Test]
-        public void
-            GetVerifiedDelegateUsersAssociatedWithAdminUser_Returns_empty_list_when_delegate_account_password_doesnt_match()
+        public void VerifyUserEntity_returns_successful_result_when_delegate_passwords_are_null()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var associatedDelegateUsers = new List<DelegateUser>
-                { UserTestHelper.GetDefaultDelegateUser(active: false) };
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(adminUser.EmailAddress!))
-                .Returns(associatedDelegateUsers);
+            const string password = "password";
+            const string hashedPassword = "hashedpassword";
+            var delegateAccounts = Builder<DelegateAccount>.CreateListOfSize(5)
+                .All()
+                .With(da => da.OldPassword = null)
+                .Build();
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(passwordHash: hashedPassword),
+                new List<AdminAccount>(),
+                delegateAccounts
+            );
+            A.CallTo(() => cryptoService.VerifyHashedPassword(hashedPassword, password)).Returns(true);
+
+            // When
+            var result = userVerificationService.VerifyUserEntity(password, userEntity);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.UserAccountPassedVerification.Should().BeTrue();
+                result.FailedVerificationDelegateAccountIds.Should().BeEmpty();
+                result.DelegateAccountsWithNoPassword.Should()
+                    .BeEquivalentTo(delegateAccounts.Select(da => da.Id));
+                result.PasswordMatchesAllAccountPasswords.Should().BeTrue();
+                result.PasswordMatchesAtLeastOneAccountPassword.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void VerifyUserEntity_returns_partially_successful_result_when_password_matches_some_delegate_accounts()
+        {
+            // Given
+            const string password = "password";
+            const string hashedPassword = "hashedPassword";
+            const string incorrectHashedPassword = "incorrectHashedPassword";
+            var delegateAccounts = Builder<DelegateAccount>.CreateListOfSize(5)
+                .TheFirst(2)
+                .With(da => da.OldPassword = hashedPassword)
+                .TheRest()
+                .With(da => da.OldPassword = incorrectHashedPassword)
+                .Build();
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(passwordHash: hashedPassword),
+                new List<AdminAccount>(),
+                delegateAccounts
+            );
+            A.CallTo(() => cryptoService.VerifyHashedPassword(hashedPassword, password)).Returns(true);
+            A.CallTo(() => cryptoService.VerifyHashedPassword(incorrectHashedPassword, password)).Returns(false);
+
+            // When
+            var result = userVerificationService.VerifyUserEntity(password, userEntity);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.UserAccountPassedVerification.Should().BeTrue();
+                result.FailedVerificationDelegateAccountIds.Should().HaveCount(3);
+                result.PassedVerificationDelegateAccountIds.Should().HaveCount(2);
+                result.PasswordMatchesAllAccountPasswords.Should().BeFalse();
+                result.PasswordMatchesAtLeastOneAccountPassword.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void VerifyUserEntity_returns_unsuccessful_result_when_password_matches_no_accounts()
+        {
+            // Given
+            const string password = "password";
+            const string hashedPassword = "hashedpassword";
+            var delegateAccounts = Builder<DelegateAccount>.CreateListOfSize(5)
+                .All()
+                .With(da => da.OldPassword = hashedPassword)
+                .Build();
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(passwordHash: hashedPassword),
+                new List<AdminAccount>(),
+                delegateAccounts
+            );
+            A.CallTo(() => cryptoService.VerifyHashedPassword(hashedPassword, password)).Returns(false);
+
+            // When
+            var result = userVerificationService.VerifyUserEntity(password, userEntity);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.UserAccountPassedVerification.Should().BeFalse();
+                result.FailedVerificationDelegateAccountIds.Should()
+                    .BeEquivalentTo(delegateAccounts.Select(da => da.Id));
+                result.PassedVerificationDelegateAccountIds.Should().BeEmpty();
+                result.PasswordMatchesAllAccountPasswords.Should().BeFalse();
+                result.PasswordMatchesAtLeastOneAccountPassword.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void IsPasswordValid_Returns_true_when_password_and_user_id_match()
+        {
+            // Given
+            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
+            var user = UserTestHelper.GetDefaultUserAccount();
+
+            // When
+            var isPasswordValid = userVerificationService.IsPasswordValid(user.PasswordHash, user.Id);
+
+            // Then
+            isPasswordValid.Should().BeTrue();
+        }
+
+        [Test]
+        public void IsPasswordValid_Returns_false_when_password_and_user_id_do_not_match()
+        {
+            // Given
             A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(false);
+            var user = UserTestHelper.GetDefaultUserAccount();
 
             // When
-            var returnedDelegates = userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
-                adminUser,
-                "password"
-            );
+            var isPasswordValid = userVerificationService.IsPasswordValid(user.PasswordHash, user.Id);
 
             // Then
-            Assert.IsEmpty(returnedDelegates);
+            isPasswordValid.Should().BeFalse();
         }
 
         [Test]
-        public void
-            GetVerifiedDelegateUsersAssociatedWithAdminUser_Returns_empty_list_when_delegate_account_found_is_not_active()
+        public void IsPasswordValid_Returns_false_when_password_is_null()
         {
-            // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var associatedDelegateUsers = new List<DelegateUser>
-                { UserTestHelper.GetDefaultDelegateUser(active: false) };
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(adminUser.EmailAddress!))
-                .Returns(associatedDelegateUsers);
-            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
-
             // When
-            var returnedDelegates = userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
-                adminUser,
-                "password"
-            );
+            var isPasswordValid = userVerificationService.IsPasswordValid(null, 1);
 
             // Then
-            Assert.IsEmpty(returnedDelegates);
+            isPasswordValid.Should().BeFalse();
+            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).MustNotHaveHappened();
         }
 
         [Test]
-        public void
-            GetVerifiedDelegateUsersAssociatedWithAdminUser_Returns_empty_list_when_delegate_account_found_is_not_approved()
+        public void IsPasswordValid_Returns_false_when_user_id_is_null()
         {
-            // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var associatedDelegateUsers = new List<DelegateUser>
-                { UserTestHelper.GetDefaultDelegateUser(approved: false) };
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(adminUser.EmailAddress!))
-                .Returns(associatedDelegateUsers);
-            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
-
             // When
-            var returnedDelegates = userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
-                adminUser,
-                "password"
-            );
+            var isPasswordValid = userVerificationService.IsPasswordValid("password", null);
 
             // Then
-            Assert.IsEmpty(returnedDelegates);
-        }
-
-        [Test]
-        public void
-            GetVerifiedDelegateUsersAssociatedWithAdminUser_Returns_verified_delegate_account_associated_with_admin_by_email()
-        {
-            // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var associatedDelegateUsers = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() };
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(adminUser.EmailAddress!))
-                .Returns(associatedDelegateUsers);
-            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
-
-            // When
-            var returnedDelegates = userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
-                adminUser,
-                "password"
-            );
-
-            // Then
-            Assert.AreEqual(associatedDelegateUsers, returnedDelegates);
+            isPasswordValid.Should().BeFalse();
+            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).MustNotHaveHappened();
         }
     }
 }

@@ -23,7 +23,7 @@
                 return;
             }
 
-            var centreId = controller.User.GetCentreId();
+            var centreId = controller.User.GetCentreIdKnownNotNull();
             var adminUserId = int.Parse(context.RouteData.Values["adminId"].ToString()!);
             var adminAccount = userDataService.GetAdminUserById(adminUserId);
 

@@ -70,7 +70,7 @@
             ReturnPageQuery? returnPageQuery
         )
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var delegateCourseProgress =
                 progressService.GetDetailedCourseProgress(progressId);
             var supervisors = userService.GetSupervisorsAtCentreForCategory(
@@ -98,7 +98,7 @@
         {
             if (!ModelState.IsValid)
             {
-                var supervisors = userService.GetSupervisorsAtCentre(User.GetCentreId());
+                var supervisors = userService.GetSupervisorsAtCentre(User.GetCentreIdKnownNotNull());
                 var model = new EditSupervisorViewModel(formData, progressId, accessedVia, supervisors);
                 return View(model);
             }

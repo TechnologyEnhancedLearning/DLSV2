@@ -90,7 +90,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Delegates/Groups/103/Courses/25/Remove?returnPageQuery=pageNumber%3D1",
             "Are you sure you would like to remove the course Practice Nurse Clinical Supervision - Demo from this group?"
         )]
-        [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
+        [InlineData("/TrackingSystem/Delegates/3/View", "Kevin Whittaker (Developer)")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]
         [InlineData(
             "/TrackingSystem/Delegates/3/SetPassword?returnPageQuery=pageNumber%3D1",
@@ -139,6 +139,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Resources", "Resources")]
         [InlineData("/SuperAdmin/Centres", "Centres")]
         [InlineData("/SuperAdmin/System/Faqs", "FAQs")]
+        [InlineData("/VerifyEmail/EmailChanged", "Verify your email address")]
+        [InlineData("/VerifyEmail/EmailNotVerified", "Verify your email address")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when
