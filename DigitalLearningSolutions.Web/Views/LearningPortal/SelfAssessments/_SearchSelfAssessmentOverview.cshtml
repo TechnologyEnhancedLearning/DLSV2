@@ -23,8 +23,8 @@
     @Html.DropDownListFor(m => m.SelectedFilter,
       Model.Filters.First().FilterOptions
         .Where(f => parent.SelfAssessment.IsSupervisorResultsReviewed
-                    || f.FilterValue == SelfAssessmentCompetencyFilter.RequiresSelfAssessment.ToString()
-                    || f.FilterValue == SelfAssessmentCompetencyFilter.SelfAssessed.ToString())
+                    || f.FilterValue == ((int)SelfAssessmentCompetencyFilter.RequiresSelfAssessment).ToString()
+                    || f.FilterValue == ((int)SelfAssessmentCompetencyFilter.SelfAssessed).ToString())
         .Select(f => new SelectListItem(
           text: f.DisplayText,
           value: f.FilterValue,
