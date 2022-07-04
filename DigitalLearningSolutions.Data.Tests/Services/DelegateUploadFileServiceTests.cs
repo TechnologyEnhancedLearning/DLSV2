@@ -514,6 +514,7 @@
                 () =>
                     userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
             ).DoesNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -945,43 +946,6 @@
                 () =>
                     userDataService.UpdateDelegateProfessionalRegistrationNumber(newDelegateRecordId, null, true)
             ).MustHaveHappened();
-        }
-
-        [Test]
-        public void ProcessDelegateTable_successful_register_does_not_update_delegate_PRN_if_HasPRN_is_empty()
-        {
-            // Given
-            const string candidateNumber = "DELEGATE";
-            const int newDelegateRecordId = 5;
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
-            var table = CreateTableFromData(new[] { row });
-
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(
-                    () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._,
-                        false
-                    )
-                )
-                .Returns(candidateNumber);
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
-                .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
-
-            // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            A.CallTo(
-                    () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._,
-                        false
-                    )
-                )
-                .MustHaveHappened();
-            A.CallTo(
-                () =>
-                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
-            ).MustNotHaveHappened();
         }
 
         [Test]

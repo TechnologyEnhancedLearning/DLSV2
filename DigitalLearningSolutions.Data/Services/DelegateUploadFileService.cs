@@ -175,8 +175,7 @@ namespace DigitalLearningSolutions.Data.Services
                 UpdateUserProfessionalRegistrationNumberIfNecessary(
                     delegateRow.HasPrn,
                     delegateRow.Prn,
-                    delegateUser.Id,
-                    true
+                    delegateUser.Id
                 );
 
                 delegateRow.RowStatus = RowStatus.Updated;
@@ -211,8 +210,7 @@ namespace DigitalLearningSolutions.Data.Services
                     UpdateUserProfessionalRegistrationNumberIfNecessary(
                         delegateRow.HasPrn,
                         delegateRow.Prn,
-                        newDelegateRecord.Id,
-                        false
+                        newDelegateRecord.Id
                     );
                     SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, newDelegateRecord.Id);
                     if (welcomeEmailDate.HasValue)
@@ -233,8 +231,7 @@ namespace DigitalLearningSolutions.Data.Services
         private void UpdateUserProfessionalRegistrationNumberIfNecessary(
             bool? delegateRowHasPrn,
             string? delegateRowPrn,
-            int delegateId,
-            bool isUpdate
+            int delegateId
         )
         {
             if (delegateRowPrn != null)

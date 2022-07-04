@@ -65,13 +65,6 @@
         {
             TempData.Clear();
 
-            return RedirectToAction("EditRegistrationPrompt", new { promptNumber });
-        }
-
-        [HttpGet]
-        [Route("{promptNumber:int}/Edit")]
-        public IActionResult EditRegistrationPrompt(int promptNumber)
-        {
             var centreId = User.GetCentreIdKnownNotNull();
 
             var customPrompt = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId)
