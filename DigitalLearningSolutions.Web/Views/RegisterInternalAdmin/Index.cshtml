@@ -1,0 +1,34 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model PersonalInformationViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Register" : "Register";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index">
+
+      @if (errorHasOccurred) {
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CentreSpecificEmail) })" />
+      }
+
+      <div class="nhsuk-u-margin-bottom-8">
+        <h1 class="nhsuk-heading-xl">Register</h1>
+
+        <p class="nhsuk-body-l">
+          Please enter your centre email to register as an admin at <b>@Model.CentreName</b>.
+        </p>
+      </div>
+
+      <vc:inset-text label="Primary email"
+                     text="@Model.PrimaryEmail"
+                     hint-text="This will be used for logging into the system. All communications will be sent to this email by default. You can change your primary email on the My Account page" />
+
+      <button class="nhsuk-button" type="submit">Next</button>
+    </form>
+
+    <vc:cancel-link asp-controller="Home" asp-action="Index" />
+  </div>
+</div>

@@ -6,8 +6,10 @@
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -29,6 +31,7 @@
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private RegisterAdminHelper registerAdminHelper = null!;
 
         [SetUp]
         public void Setup()
@@ -40,14 +43,15 @@
             registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
             userService = A.Fake<IUserService>();
+            registerAdminHelper = new RegisterAdminHelper(userDataService, centresDataService);
             controller = new RegisterAdminController(
                     centresDataService,
                     centresService,
                     cryptoService,
                     jobGroupsDataService,
                     registrationService,
-                    userDataService,
-                    userService
+                    userService,
+                    registerAdminHelper
                 )
                 .WithDefaultContext()
                 .WithMockTempData();
@@ -73,7 +77,7 @@
             var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeNotFoundResult();
         }
 
@@ -84,16 +88,16 @@
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("My centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((true, "email@email"));
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).Returns(new List<AdminUser>());
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -104,16 +108,16 @@
             // Given
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)).Returns((false, null));
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).Returns(new List<AdminUser>());
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -125,16 +129,16 @@
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, string.Empty));
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).Returns(new List<AdminUser>());
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -147,18 +151,21 @@
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, "email@email"));
 
-            var centreManagerAdmin = new AdminUser { CentreId = DefaultCentreId, IsCentreManager = true };
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId))
-                .Returns(new List<AdminUser> { centreManagerAdmin });
+            var centreManagerAdmin = UserTestHelper.GetDefaultAdminEntity(
+                centreId: DefaultCentreId,
+                isCentreManager: true
+            );
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId))
+                .Returns(new List<AdminEntity> { centreManagerAdmin });
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -170,16 +177,16 @@
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, "email@email"));
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).Returns(new List<AdminUser>());
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => userDataService.GetAdminUsersByCentreId(DefaultCentreId)).MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
             var data = controller.TempData.Peek<RegistrationData>()!;
             data.Centre.Should().Be(DefaultCentreId);
             result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
@@ -289,8 +296,12 @@
 
             A.CallTo(() => centresService.DoesEmailMatchCentre(centreEmailOrPrimaryIfNull, DefaultCentreId))
                 .Returns(true);
-            A.CallTo(() => registrationService.RegisterCentreManager(A<AdminRegistrationModel>._,
-                    false))
+            A.CallTo(
+                    () => registrationService.RegisterCentreManager(
+                        A<AdminRegistrationModel>._,
+                        false
+                    )
+                )
                 .DoesNothing();
 
             // When
