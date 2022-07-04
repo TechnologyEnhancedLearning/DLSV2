@@ -60,7 +60,7 @@
     }
   }
 </div>
-<partial name="_ComperencyFlags" model="Model.Competency.CompetencyFlags" />
+<partial name="_CompetencyFlags" model="Model.Competency.CompetencyFlags" />
 <form asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="@Model.CompetencyNumber" asp-route-competencyId="@Model.Competency.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID">
   @foreach (var question in @Model.Competency.AssessmentQuestions.Select((value, i) => new { i, value }))
   {
@@ -121,7 +121,7 @@
           <a class="nhsuk-back-link__link"
              asp-action="SelfAssessmentOverview"
              asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">
-            Return to @Model.VocabPlural()
+            Return to @Model.VocabPlural() home
           </a>
         </div>
         <div class="pagination-button-container">
@@ -148,7 +148,7 @@
          asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">
         <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
           <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-        </svg>Return to @Model.VocabPlural()
+        </svg>Return to @Model.VocabPlural() home
       </a>
     </div>
   }
