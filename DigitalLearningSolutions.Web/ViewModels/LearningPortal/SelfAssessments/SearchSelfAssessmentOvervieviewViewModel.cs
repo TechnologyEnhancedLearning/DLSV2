@@ -50,7 +50,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
             var filterOptions = (from f in allFilters
                                 let includeRejectedWhenSupervisorReviewed = f != SelfAssessmentCompetencyFilter.ConfirmationRejected || isSupervisorResultsReviewed
                                 where CompetencyFilterHelper.IsResponseStatusFilter((int)f) && includeRejectedWhenSupervisorReviewed
-                                select f).ToList();
+                                select f).ToList();           
             if (includeRequirementsFilters)
             {
                 if (AnyQuestionMeetingRequirements) filterOptions.Add(SelfAssessmentCompetencyFilter.MeetingRequirements);
@@ -59,7 +59,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
             }
 
             var dropdownFilterOptions = filterOptions.Select(
-                f => new FilterOptionModel(f.GetDescription(IsSupervisorResultsReviewed),
+                f => new FilterOptionModel(f.GetDescription(isSupervisorResultsReviewed),
                 ((int)f).ToString(),
                 FilterStatus.Default)).ToList();
 
@@ -81,6 +81,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
                     filterName: FilterBy,
                     filterOptions: dropdownFilterOptions)
             };
+            IsSupervisorResultsReviewed = isSupervisorResultsReviewed;
             AppliedFilters = appliedFilters ?? new List<AppliedFilterViewModel>();
             return this;
         }
