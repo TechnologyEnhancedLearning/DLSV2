@@ -17,5 +17,6 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public int? CompetencyGroupID { get; set; }
         public string? Vocabulary { get; set; }
         public bool SignedOff { get; set; }
+        public string? ReviewerCommentsLabel { get; set; }
     }
 }

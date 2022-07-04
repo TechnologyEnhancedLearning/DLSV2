@@ -25,6 +25,8 @@ namespace DigitalLearningSolutions.Web.Extensions
                     return "Self-assessed" + (isSupervisorResultReview ? " (confirmation not yet requested)" : "");
                 case SelfAssessmentCompetencyFilter.ConfirmationRequested:
                     return "Confirmation requested";
+                case SelfAssessmentCompetencyFilter.ConfirmationRejected:
+                    return "Confirmation rejected";
                 case SelfAssessmentCompetencyFilter.Verified:
                     return "Confirmed";
                 case SelfAssessmentCompetencyFilter.MeetingRequirements:
@@ -34,23 +36,8 @@ namespace DigitalLearningSolutions.Web.Extensions
                 case SelfAssessmentCompetencyFilter.NotMeetingRequirements:
                     return "Not meeting requirements";
                 default:
-                    return null;
+                    return status.ToString();
             }
-        }
-
-        public static bool IsRequirementsFilter(this SelfAssessmentCompetencyFilter filter)
-        {
-            return filter == SelfAssessmentCompetencyFilter.MeetingRequirements
-                || filter == SelfAssessmentCompetencyFilter.PartiallyMeetingRequirements
-                || filter == SelfAssessmentCompetencyFilter.NotMeetingRequirements;
-        }
-
-        public static bool IsResponseStatusFilter(this SelfAssessmentCompetencyFilter filter)
-        {
-            return filter == SelfAssessmentCompetencyFilter.RequiresSelfAssessment
-                || filter == SelfAssessmentCompetencyFilter.SelfAssessed
-                || filter == SelfAssessmentCompetencyFilter.Verified
-                || filter == SelfAssessmentCompetencyFilter.ConfirmationRequested;
         }
     }
 }
