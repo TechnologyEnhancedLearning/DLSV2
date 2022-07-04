@@ -1,12 +1,10 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 @model FilterableApplicationSelectListItemViewModel
 
-@{ var selected = Model.Selected ? "selected" : null; }
-
 <option value="@Model.ApplicationId.ToString()"
          class="searchable-element searchable-element-title"
          category-filter-value="@Model.CategoryFilter"
          topic-filter-value="@Model.TopicFilter"
-         selected="@selected">
+         selected="@Model.Selected">
   @Model.ApplicationName
 </option>
