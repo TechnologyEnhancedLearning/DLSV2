@@ -375,9 +375,9 @@
 
             if (centreRegistrationPromptsService.AddCentreRegistrationPrompt(
                 User.GetCentreIdKnownNotNull(),
-                data.SelectPromptViewModel.CustomPromptId!.Value,
-                data.SelectPromptViewModel.Mandatory,
-                data.ConfigureAnswersViewModel.OptionsString
+                data.SelectPromptData.CustomPromptId!.Value,
+                data.SelectPromptData.Mandatory,
+                data.ConfigureAnswersTempData.OptionsString
             ))
             {
                 multiPageFormService.ClearMultiPageFormData(

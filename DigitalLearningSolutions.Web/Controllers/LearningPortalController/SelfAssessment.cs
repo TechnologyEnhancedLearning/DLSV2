@@ -550,7 +550,7 @@
             if (!ModelState.IsValid)
             {
                 var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
-               User.GetCentreId(),
+               User.GetCentreIdKnownNotNull(),
                sessionAddSupervisor.SelfAssessmentID,
                User.GetCandidateIdKnownNotNull()
            );

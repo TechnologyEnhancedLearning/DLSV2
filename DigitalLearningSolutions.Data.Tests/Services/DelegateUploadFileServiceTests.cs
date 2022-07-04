@@ -256,7 +256,7 @@
         [Test]
         public void ProcessDelegateTable_has_invalid_PRN_characters_error_for_PRN_with_invalid_characters()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "^%£PRN");
+            var row = GetSampleDelegateDataRow(hasPrn: true.ToString(), prn: "^%£PRN");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnCharacters);
         }
 
@@ -514,7 +514,6 @@
                 () =>
                     userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
             ).DoesNothing();
-            ACallToUserDataServiceUpdatesDoNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -1300,7 +1299,7 @@
             public string Answer5 { get; }
             public string Answer6 { get; }
             public string EmailAddress { get; }
-            public bool? HasPRN { get; }
+            public string? HasPRN { get; }
             public string? PRN { get; }
         }
     }
