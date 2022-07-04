@@ -84,7 +84,7 @@
         {
             // Given
             A.CallTo(() => groupsService.GetGroupCentreId(A<int>._))
-                .Returns(delegateGroupsController.User.GetCentreId());
+                .Returns(delegateGroupsController.User.GetCentreIdKnownNotNull());
             A.CallTo(() => groupsService.GetGroupDelegates(A<int>._))
                 .Returns(new List<GroupDelegate> { new GroupDelegate() });
             const int groupId = 1;
@@ -106,7 +106,7 @@
         {
             // Given
             A.CallTo(() => groupsService.GetGroupCentreId(A<int>._))
-                .Returns(delegateGroupsController.User.GetCentreId());
+                .Returns(delegateGroupsController.User.GetCentreIdKnownNotNull());
             A.CallTo(() => groupsService.GetUsableGroupCoursesForCentre(A<int>._, A<int>._))
                 .Returns(new List<GroupCourse> { new GroupCourse() });
             const int groupId = 1;
@@ -128,7 +128,7 @@
         {
             // Given
             A.CallTo(() => groupsService.GetGroupCentreId(A<int>._))
-                .Returns(delegateGroupsController.User.GetCentreId());
+                .Returns(delegateGroupsController.User.GetCentreIdKnownNotNull());
             const int groupId = 1;
 
             // When
@@ -147,7 +147,7 @@
         {
             // Given
             A.CallTo(() => groupsService.GetGroupCentreId(A<int>._))
-                .Returns(delegateGroupsController.User.GetCentreId());
+                .Returns(delegateGroupsController.User.GetCentreIdKnownNotNull());
             var model = new ConfirmDeleteGroupViewModel
             {
                 DeleteEnrolments = false,
@@ -168,7 +168,7 @@
         {
             // Given
             A.CallTo(() => groupsService.GetGroupCentreId(A<int>._))
-                .Returns(delegateGroupsController.User.GetCentreId());
+                .Returns(delegateGroupsController.User.GetCentreIdKnownNotNull());
             var model = new ConfirmDeleteGroupViewModel
             {
                 DeleteEnrolments = true,

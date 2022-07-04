@@ -23,7 +23,7 @@
                 return;
             }
 
-            var centreId = controller.User.GetCentreId();
+            var centreId = controller.User.GetCentreIdKnownNotNull();
             var delegateUserId = int.Parse(context.RouteData.Values["delegateId"].ToString()!);
             var delegateAccount = userDataService.GetDelegateUserById(delegateUserId);
 

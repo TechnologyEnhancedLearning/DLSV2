@@ -36,7 +36,12 @@
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.LearnCandidateId);
         }
 
-        public static int GetCentreId(this ClaimsPrincipal user)
+        public static int? GetCentreId(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
+        }
+
+        public static int GetCentreIdKnownNotNull(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserCentreId);
         }

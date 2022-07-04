@@ -66,7 +66,7 @@
                 AdminFilterCookieName
             );
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var adminsAtCentre = userDataService.GetAdminsByCentreId(centreId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
@@ -101,7 +101,7 @@
         [Route("AllAdmins")]
         public IActionResult AllAdmins()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
 
             var adminsAtCentre = userDataService.GetAdminsByCentreId(centreId);
@@ -119,7 +119,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult EditAdminRoles(int adminId, ReturnPageQuery returnPageQuery)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var adminUser = userDataService.GetAdminUserById(adminId);
 
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);

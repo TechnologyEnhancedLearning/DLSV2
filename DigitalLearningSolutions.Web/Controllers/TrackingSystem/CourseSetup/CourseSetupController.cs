@@ -76,7 +76,7 @@
                 CourseStatusFilterOptions.IsActive.FilterValue
             );
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
 
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
@@ -114,7 +114,7 @@
         [Route("AllCourseStatistics")]
         public IActionResult AllCourseStatistics()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
@@ -149,7 +149,7 @@
         [Route("AddCourse/SelectCourseAllCourses")]
         public IActionResult SelectCourseAllCourses()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var adminCategoryFilter = User.GetAdminCategoryId();
 
             var applications = courseService
@@ -183,7 +183,7 @@
                 );
             }
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
 
             var selectedApplication =
@@ -212,7 +212,7 @@
         public IActionResult SetCourseDetails(SetCourseDetailsViewModel model)
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             CourseDetailsValidator.ValidateCustomisationName(
                 model,
@@ -404,7 +404,7 @@
             string? topicFilterString
         )
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId()!;
 
             var applications = courseService
@@ -505,7 +505,7 @@
         private Customisation GetCustomisationFromTempData(AddNewCentreCourseData data)
         {
             return new Customisation(
-                User.GetCentreId(),
+                User.GetCentreIdKnownNotNull(),
                 data!.Application!.ApplicationId,
                 data.SetCourseDetailsModel!.CustomisationName ?? string.Empty,
                 data.SetCourseDetailsModel.Password,

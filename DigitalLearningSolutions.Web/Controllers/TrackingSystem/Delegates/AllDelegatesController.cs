@@ -67,7 +67,7 @@
                 DelegateActiveStatusFilterOptions.IsActive.FilterValue
             );
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
@@ -109,7 +109,7 @@
         [Route("AllDelegateItems")]
         public IActionResult AllDelegateItems()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId);
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
@@ -127,7 +127,7 @@
             string? existingFilterString = null
         )
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var content = delegateDownloadFileService.GetAllDelegatesFileForCentre(
                 centreId,
                 searchString,

@@ -61,7 +61,7 @@
                 DelegateGroupsFilterCookieName
             );
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var groups = groupsService.GetGroupsForCentre(centreId).ToList();
             var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
             var availableFilters = DelegateGroupsViewModelFilterOptions
@@ -92,7 +92,7 @@
         [Route("AllDelegateGroups")]
         public IActionResult AllDelegateGroups()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var groups = groupsService.GetGroupsForCentre(centreId).ToList();
 
             var model = new AllDelegateGroupsViewModel(groups, GetRegistrationPromptsWithSetOptions(centreId));
@@ -115,7 +115,7 @@
             }
 
             groupsService.AddDelegateGroup(
-                User.GetCentreId(),
+                User.GetCentreIdKnownNotNull(),
                 model.GroupName!,
                 model.GroupDescription,
                 User.GetAdminId()!.Value
@@ -127,7 +127,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult EditDescription(int groupId, ReturnPageQuery returnPageQuery)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var group = groupsService.GetGroupAtCentreById(groupId, centreId);
 
             var model = new EditDelegateGroupDescriptionViewModel(group!, returnPageQuery);
@@ -143,7 +143,7 @@
                 return View(model);
             }
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             groupsService.UpdateGroupDescription(
                 groupId,
                 centreId,
@@ -157,7 +157,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult EditGroupName(int groupId, ReturnPageQuery returnPageQuery)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var group = groupsService.GetGroupAtCentreById(groupId, centreId);
 
             if (group?.LinkedToField != 0)
@@ -178,7 +178,7 @@
                 return View(model);
             }
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var group = groupsService.GetGroupAtCentreById(groupId, centreId);
 
             if (group?.LinkedToField != 0)
@@ -200,7 +200,7 @@
         public IActionResult DeleteGroup(int groupId, ReturnPageQuery returnPageQuery)
         {
             var delegates = groupsService.GetGroupDelegates(groupId);
-            var courses = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreId());
+            var courses = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreIdKnownNotNull());
 
             if (delegates.Any() || courses.Any())
             {
@@ -215,9 +215,9 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult ConfirmDeleteGroup(int groupId, ReturnPageQuery returnPageQuery)
         {
-            var groupLabel = groupsService.GetGroupName(groupId, User.GetCentreId())!;
+            var groupLabel = groupsService.GetGroupName(groupId, User.GetCentreIdKnownNotNull())!;
             var delegateCount = groupsService.GetGroupDelegates(groupId).Count();
-            var courseCount = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreId()).Count();
+            var courseCount = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreIdKnownNotNull()).Count();
 
             var model = new ConfirmDeleteGroupViewModel
             {
@@ -263,7 +263,7 @@
             }
 
             var adminId = User.GetAdminIdKnownNotNull()!;
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var registrationField = (RegistrationField)model.RegistrationFieldOptionId;
 
             var fieldIsValid = centreRegistrationPromptsService
@@ -299,7 +299,7 @@
 
         private IEnumerable<SelectListItem> GetRegistrationFieldOptionsSelectList(int? selectedId = null)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var centreCustomPrompts = centreRegistrationPromptsService
                 .GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId);

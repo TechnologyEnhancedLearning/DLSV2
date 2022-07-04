@@ -117,5 +117,64 @@
             result.Should().HaveCount(1);
             result[0].centreEmail.Should().BeEquivalentTo("unverified@centre.email");
         }
+
+        [Test]
+        [TestCase("test@gmail.com", true)]
+        [TestCase("not_an_email_in_the_database", false)]
+        public void PrimaryEmailIsInUse_returns_expected_value(string email, bool expectedResult)
+        {
+            // When
+            var result = userDataService.PrimaryEmailIsInUse(email);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        [TestCase("centre@email.com", true)]
+        [TestCase("not_an_email_in_the_database", false)]
+        public void CentreSpecificEmailIsInUseAtCentre_returns_expected_value(string email, bool expectedResult)
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int centreId = 2;
+
+            if (expectedResult)
+            {
+                connection.Execute(
+                    @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                    VALUES (1, @centreId, @email)",
+                    new { centreId, email }
+                );
+            }
+
+            // When
+            var result = userDataService.CentreSpecificEmailIsInUseAtCentre(email, centreId);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        public void CentreSpecificEmailIsInUseAtCentre_returns_false_when_email_is_in_use_at_different_centre()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const string email = "centre@email.com";
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                VALUES (1, 2, @email)",
+                new { email }
+            );
+
+            // When
+            var result = userDataService.CentreSpecificEmailIsInUseAtCentre(email, 3);
+
+            // Then
+            result.Should().BeFalse();
+        }
     }
 }

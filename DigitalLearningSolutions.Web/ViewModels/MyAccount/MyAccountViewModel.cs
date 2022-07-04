@@ -13,7 +13,7 @@
         public MyAccountViewModel(
             UserAccount userAccount,
             DelegateAccount? delegateAccount,
-            string centreName,
+            string? centreName,
             string? centreEmail,
             CentreRegistrationPromptsWithAnswers? customPrompts,
             DlsSubApplication dlsSubApplication,
@@ -53,7 +53,7 @@
             SwitchCentreReturnUrl = switchCentreReturnUrl;
         }
 
-        public string Centre { get; set; }
+        public string? Centre { get; set; }
 
         public string PrimaryEmail { get; set; }
 

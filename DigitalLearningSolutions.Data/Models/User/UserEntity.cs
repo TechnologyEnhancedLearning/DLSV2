@@ -52,9 +52,14 @@
             }
         }
 
-        public CentreAccountSet? GetCentreAccountSet(int centreId)
+        public CentreAccountSet? GetCentreAccountSet(int? centreId)
         {
-            CentreAccountSetsByCentreId.TryGetValue(centreId, out var centreAccountSet);
+            if (centreId == null)
+            {
+                return null;
+            }
+
+            CentreAccountSetsByCentreId.TryGetValue(centreId.Value, out var centreAccountSet);
             return centreAccountSet;
         }
 

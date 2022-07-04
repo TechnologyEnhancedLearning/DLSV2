@@ -63,7 +63,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [Route("/TrackingSystem/Delegates/Register")]
         public IActionResult Index()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             SetCentreDelegateRegistrationData(centreId);
 

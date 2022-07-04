@@ -33,7 +33,7 @@
 
         public IActionResult Index()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var delegates = delegateApprovalsService
                 .GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre(centreId)
@@ -47,7 +47,7 @@
         [Route("/TrackingSystem/Delegates/Approve")]
         public IActionResult ApproveDelegate(int delegateId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             delegateApprovalsService.ApproveDelegate(delegateId, centreId);
             return RedirectToAction("Index", "DelegateApprovals");
         }
@@ -56,7 +56,7 @@
         [Route("/TrackingSystem/Delegates/Approve/All")]
         public IActionResult ApproveDelegatesForCentre()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(centreId);
             return RedirectToAction("Index", "DelegateApprovals");
         }
@@ -74,7 +74,7 @@
         [Route("/TrackingSystem/Delegates/ConfirmReject")]
         public IActionResult RejectDelegate(int delegateId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             delegateApprovalsService.RejectDelegate(delegateId, centreId);
             return RedirectToAction("Index", "DelegateApprovals");
         }

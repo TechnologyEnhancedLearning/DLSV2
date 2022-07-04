@@ -15,6 +15,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     [TypeFilter(typeof(ValidateAllowedDlsSubApplication))]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
+    [Authorize(Policy = CustomPolicies.CentreUser)]
     public class NotificationPreferencesController : Controller
     {
         private readonly INotificationPreferencesService notificationPreferencesService;
@@ -47,7 +48,6 @@ namespace DigitalLearningSolutions.Web.Controllers
             return View(model);
         }
 
-        [Authorize]
         [HttpGet]
         [Route("/{dlsSubApplication}/NotificationPreferences/Edit/{userType}")]
         [Route("/NotificationPreferences/Edit/{userType}", Order = 1)]
@@ -70,7 +70,6 @@ namespace DigitalLearningSolutions.Web.Controllers
             return View(model);
         }
 
-        [Authorize]
         [HttpPost]
         [Route("/{dlsSubApplication}/NotificationPreferences/Edit/{userType}")]
         [Route("/NotificationPreferences/Edit/{userType}", Order = 1)]
