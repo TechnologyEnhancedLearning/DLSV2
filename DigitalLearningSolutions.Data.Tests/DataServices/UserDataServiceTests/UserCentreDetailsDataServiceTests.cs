@@ -155,5 +155,26 @@
             // Then
             result.Should().Be(expectedResult);
         }
+
+        [Test]
+        public void CentreSpecificEmailIsInUseAtCentre_returns_false_when_email_is_in_use_at_different_centre()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const string email = "centre@email.com";
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                VALUES (1, 2, @email)",
+                new { email }
+            );
+
+            // When
+            var result = userDataService.CentreSpecificEmailIsInUseAtCentre(email, 3);
+
+            // Then
+            result.Should().BeFalse();
+        }
     }
 }
