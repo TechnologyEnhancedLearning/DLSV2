@@ -262,5 +262,16 @@
                 new { userId, updatedCount }
             );
         }
+
+        public bool PrimaryEmailIsInUse(string email, IDbTransaction? transaction = null)
+        {
+            return connection.QueryFirst<int>(
+                @"SELECT COUNT(*)
+                    FROM Users
+                    WHERE PrimaryEmail = @email",
+                new { email },
+                transaction
+            ) > 0;
+        }
     }
 }
