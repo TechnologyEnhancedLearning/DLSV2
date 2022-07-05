@@ -127,6 +127,28 @@
             );
         }
 
+        public bool PrimaryEmailIsInUse(string email, IDbTransaction? transaction = null)
+        {
+            return connection.QueryFirst<int>(
+                @"SELECT COUNT(*)
+                    FROM Users
+                    WHERE PrimaryEmail = @email",
+                new { email },
+                transaction
+            ) > 0;
+        }
+
+        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId, IDbTransaction? transaction = null)
+        {
+            return connection.QueryFirst<int>(
+                @"SELECT COUNT(*)
+                    FROM UserCentreDetails
+                    WHERE CentreId = @centreId AND Email = @email",
+                new { email, centreId },
+                transaction
+            ) > 0;
+        }
+
         public string? GetCentreEmail(int userId, int centreId)
         {
             return connection.Query<string?>(
