@@ -20,6 +20,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     public partial class FrameworksController
     {
+        private static List<Catalogue> Catalogues { get; set; }
+
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting")]
         public IActionResult EditCompetencyLearningResources(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId)
         {
@@ -29,9 +31,12 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource/{page=1:int}")]
-        public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, string searchText, int page)
+        public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, int? catalogueId, string searchText, int page)
         {
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
+            Catalogues = Catalogues ?? (await this.learningHubApiClient.GetCatalogues())?.Catalogues;
+            model.Catalogues = Catalogues;
+            model.CatalogueId = catalogueId;
             if (frameworkCompetencyGroupId.HasValue)
             {
                 var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
@@ -44,7 +49,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 try
                 {
                     var offset = (int?)((model.Page - 1) * CompetencyResourceSignpostingViewModel.ItemsPerPage);
-                    model.SearchResult = await this.learningHubApiClient.SearchResource(model.SearchText ?? String.Empty, offset, CompetencyResourceSignpostingViewModel.ItemsPerPage);
+                    model.SearchResult = await this.learningHubApiClient.SearchResource(model.SearchText ?? String.Empty, catalogueId, offset, CompetencyResourceSignpostingViewModel.ItemsPerPage);
                     model.LearningHubApiError = model.SearchResult == null;
                 }
                 catch (Exception)

@@ -46,10 +46,25 @@
     <div class="nhsuk-grid-column-three-quarters">
       <div class="search-box-container" id="search">
         @Html.LabelFor(m => m.SearchText, "Search", new { @class = "nhsuk-u-visually-hidden", @for = "search-field" })
-        @Html.TextBoxFor(m => m.SearchText, new { @class = "search-box", id = "search-field", name = "searchString", type = "search", placeholder = "Search", autocomplete = "off" })
+        @Html.TextBoxFor(m => m.SearchText, new { @class = "search-box nhsuk-input", id = "search-field", name = "searchString", type = "search", placeholder = "Search", autocomplete = "off" })
         <button class="nhsuk-button sort-submit" type="submit" asp-route-page="1" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
           Search
         </button>
+      </div>
+      <div class="filter-value-container">
+        @Html.DropDownListFor(c => c.CatalogueId,
+          Model.Catalogues
+            .Select(c => new SelectListItem(
+              text: c.Name,
+              value: c.Id.ToString(),
+              selected: c.Id == (Model.CatalogueId ?? Model.Catalogues?.FirstOrDefault()?.Id))
+            ),
+          new
+          {
+            @class = "nhsuk-select nhsuk-u-margin-bottom-4",
+            aria_label = "Catalogue filter",
+            style = "border-radius: 4px;"
+          })
       </div>
     </div>
   </div>
