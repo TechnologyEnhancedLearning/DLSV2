@@ -55,6 +55,28 @@
         }
 
         [Test]
+        public void GetDelegateById_returns_delegate_with_correct_adminId()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            var adminId = connection.QuerySingle<int>(
+                @"INSERT INTO AdminAccounts (
+                           UserID,
+                           CentreID,
+                           Active)
+                    OUTPUT Inserted.ID
+                    VALUES (61188, 2, 1)"
+            );
+
+            // When
+            var returnedDelegateEntity = userDataService.GetDelegateById(2);
+
+            // Then
+            returnedDelegateEntity!.AdminId.Should().Be(adminId);
+        }
+
+        [Test]
         public void GetDelegateByCandidateNumber_returns_delegate_with_null_user_centre_details()
         {
             // Given
