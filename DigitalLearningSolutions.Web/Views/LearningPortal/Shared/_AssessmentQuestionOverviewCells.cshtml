@@ -1,6 +1,12 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
 @model AssessmentQuestion
-
+@{
+    string commentsLinkText = "View notes";
+    if(ViewData["ReviewerCommentsLabel"] != null)
+    {
+        commentsLinkText = ViewData["ReviewerCommentsLabel"].ToString();
+    }
+}
 
 <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
   <span class="nhsuk-table-responsive__heading">Questions </span>
@@ -24,7 +30,7 @@
              asp-action="SupervisorComments" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]"
              asp-route-competencyNumber="@ViewData["competencyNumber"]"
              asp-route-resultId="@Model.ResultId">
-            View notes
+            @commentsLinkText
           </a>
         </div>
       </div>

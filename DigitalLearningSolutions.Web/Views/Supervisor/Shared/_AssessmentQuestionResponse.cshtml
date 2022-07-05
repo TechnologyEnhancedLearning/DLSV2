@@ -12,7 +12,7 @@ else
     : Model.ResultRAG == 1 ? "red"
     : Model.ResultRAG == 2 ? "yellow"
     : "green";
-  string hiddenTagText = !isVerifiedOrVerificationNotRequired ? "not yet confirmed"
+  string hiddenTagText = !isVerifiedOrVerificationNotRequired ? "requires self assessment"
     : Model.ResultRAG == 0 ? "role expectations not specified"
     : Model.ResultRAG == 1 ? "not meeting role expectations"
     : Model.ResultRAG == 2 ? "partially meeting role expectations"
@@ -24,17 +24,17 @@ else
     {
       if (levelDescriptor.LevelValue == Model.Result)
       {
-<span class="nhsuk-tag nhsuk-tag--@(tagColour)">
-  @levelDescriptor.LevelLabel  <span class="nhsuk-u-visually-hidden">(@(hiddenTagText))</span>
-</span>
+        <span class="nhsuk-tag nhsuk-tag--@(tagColour)">
+          @levelDescriptor.LevelLabel  <span class="nhsuk-u-visually-hidden">(@(hiddenTagText))</span>
+        </span>
         break;
       }
     }
   }
   else
   {
-<span class="nhsuk-tag nhsuk-tag--@(tagColour)">
-  @Model.Result/@Model.MaxValue <span class="nhsuk-u-visually-hidden">(@(hiddenTagText))</span>
-</span>
+    <span class="nhsuk-tag nhsuk-tag--@(tagColour)">
+      @Model.Result/@Model.MaxValue <span class="nhsuk-u-visually-hidden">(@(hiddenTagText))</span>
+    </span>
   }
 }

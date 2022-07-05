@@ -5,7 +5,18 @@
 {
   foreach (var frameworkCompetencyGroup in Model.FrameworkCompetencyGroups)
   {
-    <partial name="../Shared/_CompetencyGroupCard.cshtml" model="new CompetencyGroupCardViewModel { CanModify = Model.DetailFramework.UserRole > 1, FrameworkCompetencyGroup =frameworkCompetencyGroup }" view-data='@new ViewDataDictionary(ViewData) { { "VocabSingular", @Model.VocabSingular() }, {"VocabPlural", @Model.VocabPlural()  }, {"GroupCount", @Model.FrameworkCompetencyGroups.Count()  } }' />
+    <partial name="../Shared/_CompetencyGroupCard.cshtml" model="new CompetencyGroupCardViewModel
+      {
+        CanModify = Model.DetailFramework.UserRole > 1,
+        FrameworkCompetencyGroup =frameworkCompetencyGroup,
+        CompetencyFlags = Model.CompetencyFlags
+      }"
+      view-data='@new ViewDataDictionary(ViewData)
+      {
+        { "VocabSingular", @Model.VocabSingular() },
+        { "VocabPlural", @Model.VocabPlural() },
+        { "GroupCount", @Model.FrameworkCompetencyGroups.Count() }
+      }' />
   }
 }
 else
@@ -47,7 +58,18 @@ else
 
       foreach (var frameworkCompetency in Model.FrameworkCompetencies)
       {
-        <partial name="../Shared/_CompetencyCard.cshtml" model="new CompetencyCardViewModel { CanModify = Model.DetailFramework.UserRole > 1, FrameworkCompetencyGroupId = null, FrameworkCompetency = frameworkCompetency}" view-data='@new ViewDataDictionary(ViewData) { { "VocabSingular", @Model.VocabSingular() }, {"VocabPlural", @Model.VocabPlural()  } }' />
+        <partial name="../Shared/_CompetencyCard.cshtml" model="new CompetencyCardViewModel()
+            {
+              CanModify = Model.DetailFramework.UserRole > 1,
+              FrameworkCompetencyGroupId = null,
+              FrameworkCompetency = frameworkCompetency,
+              CompetencyFlags = Model.CompetencyFlags.Where(c => c.CompetencyId == frameworkCompetency.CompetencyID)
+            }"
+            view-data='@new ViewDataDictionary(ViewData)
+              {
+                { "VocabSingular", @Model.VocabSingular() },
+                {"VocabPlural", @Model.VocabPlural()  }
+              }' />
       }
 
     }
@@ -58,7 +80,7 @@ else
       <div class="nhsuk-grid-column-full">
         <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add @Model.VocabSingular().ToLower() group</a>
         <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add ungrouped @Model.VocabSingular().ToLower()</a>
-        <a class="nhsuk-button nhsuk-button--secondary" asp-action="ImportCompetencies" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Import @Model.VocabPlural().ToLower() from Excel</a>
+        <a class="nhsuk-button nhsuk-button--secondary" asp-action="ImportCompetencies" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="@(ViewContext.RouteData.Values["tabname"])">Import @Model.VocabPlural().ToLower() from Excel</a>
       </div>
     </div>
   }

@@ -15,14 +15,18 @@ namespace DigitalLearningSolutions.Web.Extensions
             }
         }
 
-        public static string GetDescription(this SelfAssessmentCompetencyFilter status)
+        public static string GetDescription(this SelfAssessmentCompetencyFilter status, bool isSupervisorResultReview = false)
         {
             switch (status)
             {
-                case SelfAssessmentCompetencyFilter.NotYetResponded:
-                    return "Not yet responded";
+                case SelfAssessmentCompetencyFilter.RequiresSelfAssessment:
+                    return "Requires self assessment";
                 case SelfAssessmentCompetencyFilter.SelfAssessed:
-                    return "Self-assessed";
+                    return "Self-assessed" + (isSupervisorResultReview ? " (confirmation not yet requested)" : "");
+                case SelfAssessmentCompetencyFilter.ConfirmationRequested:
+                    return "Confirmation requested";
+                case SelfAssessmentCompetencyFilter.ConfirmationRejected:
+                    return "Confirmation rejected";
                 case SelfAssessmentCompetencyFilter.Verified:
                     return "Confirmed";
                 case SelfAssessmentCompetencyFilter.MeetingRequirements:
@@ -32,22 +36,8 @@ namespace DigitalLearningSolutions.Web.Extensions
                 case SelfAssessmentCompetencyFilter.NotMeetingRequirements:
                     return "Not meeting requirements";
                 default:
-                    return null;
+                    return status.ToString();
             }
-        }
-
-        public static bool IsRequirementsFilter(this SelfAssessmentCompetencyFilter filter)
-        {
-            return filter == SelfAssessmentCompetencyFilter.MeetingRequirements
-                || filter == SelfAssessmentCompetencyFilter.PartiallyMeetingRequirements
-                || filter == SelfAssessmentCompetencyFilter.NotMeetingRequirements;
-        }
-
-        public static bool IsResponseStatusFilter(this SelfAssessmentCompetencyFilter filter)
-        {
-            return filter == SelfAssessmentCompetencyFilter.NotYetResponded
-                || filter == SelfAssessmentCompetencyFilter.SelfAssessed
-                || filter == SelfAssessmentCompetencyFilter.Verified;
         }
     }
 }

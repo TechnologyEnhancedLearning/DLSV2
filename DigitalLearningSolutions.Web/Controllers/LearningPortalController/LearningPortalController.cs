@@ -23,6 +23,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly INotificationService notificationService;
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly ISupervisorService supervisorService;
+        private readonly IFrameworkService frameworkService;
         private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
@@ -31,6 +32,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             ICourseDataService courseDataService,
             ISelfAssessmentService selfAssessmentService,
             ISupervisorService supervisorService,
+            IFrameworkService frameworkService,
             INotificationService notificationService,
             IFrameworkNotificationService frameworkNotificationService,
             ILogger<LearningPortalController> logger,
@@ -44,6 +46,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.courseDataService = courseDataService;
             this.selfAssessmentService = selfAssessmentService;
             this.supervisorService = supervisorService;
+            this.frameworkService = frameworkService;
             this.notificationService = notificationService;
             this.frameworkNotificationService = frameworkNotificationService;
             this.logger = logger;

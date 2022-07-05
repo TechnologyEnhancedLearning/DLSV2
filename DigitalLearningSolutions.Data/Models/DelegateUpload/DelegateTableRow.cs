@@ -47,7 +47,8 @@
             Answer5 = FindFieldValue("Answer5");
             Answer6 = FindFieldValue("Answer6");
             Email = FindFieldValue("EmailAddress")?.Trim();
-            HasPrn = bool.TryParse(FindFieldValue("HasPRN"), out var hasPrn) ? hasPrn : (bool?)null;
+            HasPrnRawValue = FindFieldValue("HasPRN");
+            HasPrn = bool.TryParse(HasPrnRawValue, out var hasPrn) ? hasPrn : (bool?)null;
             Prn = FindNullableFieldValue("PRN");
             RowStatus = RowStatus.NotYetProcessed;
         }
@@ -65,6 +66,7 @@
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
         public string? Email { get; set; }
+        public string? HasPrnRawValue { get; set; }
         public bool? HasPrn { get; set; }
         public string? Prn { get; set; }
 
@@ -137,9 +139,17 @@
             {
                 Error = BulkUploadResult.ErrorReason.TooLongAnswer6;
             }
+            else if (!string.IsNullOrWhiteSpace(HasPrnRawValue) && !bool.TryParse(HasPrnRawValue, out _))
+            {
+                Error = BulkUploadResult.ErrorReason.InvalidHasPrnValue;
+            }
             else if (HasPrn.HasValue && HasPrn.Value && string.IsNullOrEmpty(Prn))
             {
                 Error = BulkUploadResult.ErrorReason.HasPrnButMissingPrnValue;
+            }
+            else if (HasPrn.HasValue && !HasPrn.Value && !string.IsNullOrEmpty(Prn))
+            {
+                Error = BulkUploadResult.ErrorReason.PrnButHasPrnIsFalse;
             }
             else if (!string.IsNullOrEmpty(Prn) && (Prn.Length < 5 || Prn.Length > 20))
             {
@@ -215,10 +225,12 @@
                 return false;
             }
 
-            return DelegateDownloadFileService.GetHasPrnForDelegate(
+            var delegateUserHasPrn = DelegateDownloadFileService.GetHasPrnForDelegate(
                 delegateUser.HasBeenPromptedForPrn,
                 delegateUser.ProfessionalRegistrationNumber
-            ) == HasPrn;
+            );
+
+            return delegateUserHasPrn == HasPrn || HasPrn == null;
         }
     }
 }

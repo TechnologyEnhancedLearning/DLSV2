@@ -242,29 +242,43 @@
         [Test]
         public void ProcessDelegateTable_has_missing_PRN_error_for_HasPRN_true_with_missing_PRN()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true);
+            var row = GetSampleDelegateDataRow(hasPrn: true.ToString());
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.HasPrnButMissingPrnValue);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_false_HasPRN_error_for_PRN_with_value_and_false_HasPRN()
+        {
+            var row = GetSampleDelegateDataRow(hasPrn: false.ToString(), prn: "PRN1234");
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.PrnButHasPrnIsFalse);
         }
 
         [Test]
         public void ProcessDelegateTable_has_invalid_PRN_characters_error_for_PRN_with_invalid_characters()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "^%£PRN");
+            var row = GetSampleDelegateDataRow(hasPrn: true.ToString(), prn: "^%£PRN");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnCharacters);
         }
 
         [Test]
         public void ProcessDelegateTable_has_invalid_PRN_length_error_for_PRN_too_short()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "PRN1");
+            var row = GetSampleDelegateDataRow(hasPrn: true.ToString(), prn: "PRN1");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnLength);
         }
 
         [Test]
         public void ProcessDelegateTable_has_invalid_PRN_length_error_for_PRN_too_long()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true, prn: "PRNAboveAllowedLength");
+            var row = GetSampleDelegateDataRow(hasPrn: true.ToString(), prn: "PRNAboveAllowedLength");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnLength);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_invalid_HasPRN_error_for_HasPRN_not_parsable_to_bool()
+        {
+            var row = GetSampleDelegateDataRow(hasPrn: "ThisDoesNotMatchTRUE");
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidHasPrnValue);
         }
 
         [Test]
@@ -337,7 +351,7 @@
         {
             // Given
             const string delegateId = "DELEGATE";
-            var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, prn: "PRN1234");
             var table = CreateTableFromData(new[] { row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(
                 firstName: row.FirstName,
@@ -346,7 +360,9 @@
                 answer1: row.Answer1,
                 answer2: row.Answer2,
                 active: true,
-                jobGroupId: 1
+                jobGroupId: 1,
+                hasBeenPromptedForPrn: true,
+                professionalRegistrationNumber: row.PRN
             );
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
@@ -377,6 +393,9 @@
                     )
                 )
                 .Returns(delegateId);
+            A.CallTo(
+                () => userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -426,7 +445,7 @@
             // Given
             const string delegateId = "DELEGATE";
             const string prn = "PRN1234";
-            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: true, prn: prn);
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: true.ToString(), prn: prn);
             var table = CreateTableFromData(new[] { row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
 
@@ -455,7 +474,7 @@
         {
             // Given
             const string delegateId = "DELEGATE";
-            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: false);
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: false.ToString());
             var table = CreateTableFromData(new[] { row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
 
@@ -480,7 +499,37 @@
         }
 
         [Test]
-        public void ProcessDelegateTable_update_resets_delegate_PRN_if_HasPRN_is_empty()
+        public void ProcessDelegateTable_update_updates_delegate_PRN_if_HasPRN_is_null_and_PRN_has_value()
+        {
+            // Given
+            const string delegateId = "DELEGATE";
+            const string prn = "PRN1234";
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, hasPrn: null, prn: prn);
+            var table = CreateTableFromData(new[] { row });
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateUser(candidateNumber: delegateId);
+
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(delegateId, CentreId))
+                .Returns(candidateNumberDelegate);
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
+            CallsToUserDataServiceUpdatesDoNothing();
+
+            // When
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+
+            // Then
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(candidateNumberDelegate.Id, prn, true)
+            ).MustHaveHappened();
+            result.ProcessedCount.Should().Be(1);
+            result.UpdatedCount.Should().Be(1);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_update_updates_delegate_PRN_if_HasPRN_is_empty_and_PRN_does_not_have_value()
         {
             // Given
             const string delegateId = "DELEGATE";
@@ -502,8 +551,8 @@
             // Then
             A.CallTo(
                 () =>
-                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, null, false)
-            ).MustHaveHappenedOnceExactly();
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(candidateNumberDelegate.Id, null, false)
+            ).MustHaveHappened();
             result.ProcessedCount.Should().Be(1);
             result.UpdatedCount.Should().Be(1);
         }
@@ -524,6 +573,9 @@
                     )
                 )
                 .Returns(delegateId);
+            A.CallTo(
+                () => userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -570,6 +622,9 @@
                     )
                 )
                 .Returns(delegateId);
+            A.CallTo(
+                () => userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, welcomeEmailDate);
@@ -617,6 +672,9 @@
                 )
                 .Returns(delegateId);
             A.CallTo(
+                () => userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
+            A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                     A<int>._,
                     A<string>._,
@@ -658,6 +716,9 @@
                     )
                 )
                 .Returns(delegateId);
+            A.CallTo(
+                () => userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                     A<int>._,
@@ -764,6 +825,9 @@
                     )
                 )
                 .Returns(candidateNumber);
+            A.CallTo(
+                () => userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
             A.CallTo(
@@ -807,7 +871,7 @@
             const string candidateNumber = "DELEGATE";
             const int newDelegateRecordId = 5;
             const string prn = "PRN1234";
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: true, prn: prn);
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: true.ToString(), prn: prn);
             var table = CreateTableFromData(new[] { row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
@@ -849,7 +913,7 @@
             // Given
             const string candidateNumber = "DELEGATE";
             const int newDelegateRecordId = 5;
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: false);
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: false.ToString());
             var table = CreateTableFromData(new[] { row });
 
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
@@ -882,43 +946,6 @@
                 () =>
                     userDataService.UpdateDelegateProfessionalRegistrationNumber(newDelegateRecordId, null, true)
             ).MustHaveHappened();
-        }
-
-        [Test]
-        public void ProcessDelegateTable_successful_register_does_not_update_delegate_PRN_if_HasPRN_is_empty()
-        {
-            // Given
-            const string candidateNumber = "DELEGATE";
-            const int newDelegateRecordId = 5;
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
-            var table = CreateTableFromData(new[] { row });
-
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(
-                    () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._,
-                        false
-                    )
-                )
-                .Returns(candidateNumber);
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
-                .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
-
-            // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            A.CallTo(
-                    () => registrationService.CreateAccountAndReturnCandidateNumber(
-                        A<DelegateRegistrationModel>._,
-                        false
-                    )
-                )
-                .MustHaveHappened();
-            A.CallTo(
-                () =>
-                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
-            ).MustNotHaveHappened();
         }
 
         [Test]
@@ -986,6 +1013,9 @@
                     )
                 )
                 .Returns(delegateId);
+            A.CallTo(
+                () => userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
@@ -1102,7 +1132,7 @@
             string answer6 = "",
             string active = "True",
             string jobGroupId = "1",
-            bool? hasPrn = null,
+            string? hasPrn = null,
             string? prn = null
         )
         {
@@ -1201,7 +1231,7 @@
                 string answer5,
                 string answer6,
                 string emailAddress,
-                bool? hasPrn,
+                string? hasPrn,
                 string? prn
             )
             {
@@ -1233,7 +1263,7 @@
             public string Answer5 { get; }
             public string Answer6 { get; }
             public string EmailAddress { get; }
-            public bool? HasPRN { get; }
+            public string? HasPRN { get; }
             public string? PRN { get; }
         }
     }

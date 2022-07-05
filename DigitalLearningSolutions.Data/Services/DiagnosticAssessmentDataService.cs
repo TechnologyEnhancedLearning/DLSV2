@@ -163,6 +163,7 @@
                         AND CustomisationTutorials.DiagStatus = 1
                         AND Tutorials.DiagAssessOutOf > 0
                         AND Tutorials.ArchivedDate IS NULL
+                        AND Applications.DefaultContentTypeID <> 4
                     ORDER BY
                         Tutorials.OrderByNumber,
                         id;",
@@ -227,6 +228,7 @@
                         AND Sections.SectionID = @sectionId
                         AND Sections.ArchivedDate IS NULL
                         AND Sections.DiagAssessPath IS NOT NULL
+                        AND Applications.DefaultContentTypeID <> 4
                     ORDER BY
                         Tutorials.OrderByNumber,
                         Tutorials.TutorialID",

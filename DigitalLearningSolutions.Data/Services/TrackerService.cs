@@ -101,6 +101,18 @@
                         );
                     }
 
+                    if (action == TrackerEndpointAction.StoreAspAssessNoSession)
+                    {
+                        return trackerActionService.StoreAspAssessNoSession(
+                            query.Version,
+                            query.SectionId,
+                            query.Score,
+                            query.CandidateId,
+                            query.CustomisationId,
+                            sessionVariables[TrackerEndpointSessionVariable.LmSessionId]
+                        );
+                    }
+
                     throw new ArgumentOutOfRangeException();
                 }
 

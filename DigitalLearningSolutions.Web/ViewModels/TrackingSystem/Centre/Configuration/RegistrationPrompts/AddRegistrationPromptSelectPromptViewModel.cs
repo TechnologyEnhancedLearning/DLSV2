@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts
 {
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
@@ -8,6 +9,12 @@
     {
         public AddRegistrationPromptSelectPromptViewModel()
         { }
+
+        public AddRegistrationPromptSelectPromptViewModel(AddRegistrationPromptSelectPromptData data)
+        {
+            CustomPromptId = data.CustomPromptId;
+            Mandatory = data.Mandatory;
+        }
 
         public AddRegistrationPromptSelectPromptViewModel(int customPromptId, bool mandatory)
         {

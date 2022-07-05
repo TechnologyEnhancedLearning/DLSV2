@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
@@ -10,7 +11,7 @@
 
         void StopDelegateSession(int candidateId);
 
-        void UpdateDelegateSessionDuration(int sessionId);
+        void UpdateDelegateSessionDuration(int sessionId, DateTime currentUtcTime);
 
         int StartAdminSession(int adminId);
 
@@ -51,12 +52,12 @@
             connection.Query(StopSessionsSql, new { candidateId });
         }
 
-        public void UpdateDelegateSessionDuration(int sessionId)
+        public void UpdateDelegateSessionDuration(int sessionId, DateTime currentUtcTime)
         {
             connection.Query(
-                @"UPDATE Sessions SET Duration = DATEDIFF(minute, LoginTime, GetUTCDate())
+                @"UPDATE Sessions SET Duration = DATEDIFF(minute, LoginTime, @currentUtcTime)
                    WHERE [SessionID] = @sessionId AND Active = 1;",
-                new { sessionId }
+                new { sessionId, currentUtcTime }
             );
         }
 

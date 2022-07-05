@@ -19,6 +19,7 @@
         public string? ProfessionalGroup { get; set; }
         public string? QuestionLabel { get; set; }
         public string? DescriptionLabel { get; set; }
+        public string? ReviewerCommentsLabel { get; set; }
         public string? SubGroup { get; set; }
         public string? RoleProfile { get; set; }
         public int SignOffRequested { get; set; }

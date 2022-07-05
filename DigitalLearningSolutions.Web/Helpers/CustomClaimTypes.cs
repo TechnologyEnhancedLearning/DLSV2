@@ -15,6 +15,7 @@
         public const string LearnUserAuthenticated = "learnUserAuthenticated";
         public const string AdminCategoryId = "AdminCategoryID";
         public const string IsSupervisor = "IsSupervisor";
+        public const string IsNominatedSupervisor = "IsNominatedSupervisor";
         public const string IsTrainer = "IsTrainer";
         public const string IsFrameworkDeveloper = "IsFrameworkDeveloper";
         public const string IsFrameworkContributor = "IsFrameworkContributor";

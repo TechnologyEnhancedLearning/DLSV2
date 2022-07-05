@@ -115,6 +115,7 @@
 
                    WHERE Customisations.CustomisationID = @customisationId
                          AND Applications.IncludeCertification = 1
+                         AND Applications.DefaultContentTypeID <> 4
                    GROUP BY
                          Customisations.CustomisationID,
                          Applications.ApplicationName,
