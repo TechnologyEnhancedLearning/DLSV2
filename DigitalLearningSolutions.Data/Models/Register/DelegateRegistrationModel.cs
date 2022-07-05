@@ -22,6 +22,7 @@
             string? answer6,
             bool isSelfRegistered,
             bool active,
+            bool activeUser,
             string? professionalRegistrationNumber,
             bool approved = false,
             DateTime? notifyDate = null
@@ -46,6 +47,7 @@
             Answer6 = answer6;
             NotifyDate = notifyDate;
             IsSelfRegistered = isSelfRegistered;
+            ActiveUser = activeUser;
         }
 
         public DelegateRegistrationModel(
@@ -57,6 +59,7 @@
             int jobGroup,
             string? passwordHash,
             bool active,
+            bool activeUser,
             bool approved,
             string? professionalRegistrationNumber
         ) : base(
@@ -70,7 +73,10 @@
             approved,
             professionalRegistrationNumber,
             jobGroup
-        ) { }
+        )
+        {
+            ActiveUser = activeUser;
+        }
 
         public DelegateRegistrationModel(
             DelegateTableRow row,
@@ -79,8 +85,8 @@
         ) : this(
             row.FirstName!,
             row.LastName!,
-            row.Email!,
-            null,
+            Guid.NewGuid().ToString(),
+            row.Email,
             centreId,
             row.JobGroupId!.Value,
             null,
@@ -92,10 +98,12 @@
             row.Answer6,
             false,
             row.Active!.Value,
-            null,
+            false,
+            row.Prn,
             true,
             welcomeEmailDate
-        ) { }
+        )
+        { }
 
         public DelegateRegistrationModel(
             UserAccount userAccount,
@@ -122,6 +130,7 @@
             Answer5 = internalDelegateRegistrationModel.Answer5;
             Answer6 = internalDelegateRegistrationModel.Answer6;
             IsSelfRegistered = isSelfRegistered;
+            ActiveUser = true;
         }
 
         public string? Answer1 { get; }
@@ -140,6 +149,7 @@
 
         public bool IsSelfRegistered { get; }
 
+        public bool ActiveUser { get; }
 
         public bool IsExternalRegistered => !Approved;
     }

@@ -242,9 +242,9 @@
                 delegateRegistrationModel.LastName,
                 delegateRegistrationModel.PrimaryEmail,
                 delegateRegistrationModel.JobGroup,
-                delegateRegistrationModel.Active,
+                delegateRegistrationModel.ActiveUser,
+                delegateRegistrationModel.ProfessionalRegistrationNumber,
                 PasswordHash = string.Empty,
-                ProfessionalRegistrationNumber = (string?)null,
                 TermsAgreed = registerJourneyContainsTermsAndConditions ? currentTime : (DateTime?)null,
                 DetailsLastChecked = currentTime,
             };
@@ -271,7 +271,7 @@
                         @lastName,
                         @jobGroup,
                         @professionalRegistrationNumber,
-                        @active,
+                        @activeUser,
                         @termsAgreed,
                         @detailsLastChecked
                     )",

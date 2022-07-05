@@ -331,11 +331,13 @@
         {
             // Given
             const string delegateId = "DELEGATE";
-            var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
+            const string email = "centre@email.com";
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, emailAddress: email);
             var table = CreateTableFromData(new[] { row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(
                 candidateNumber: delegateId,
-                userCentreDetailsId: 1
+                userCentreDetailsId: 1,
+                centreSpecificEmail: email
             );
 
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
@@ -431,6 +433,7 @@
                 .Returns(false);
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
+
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
@@ -464,6 +467,8 @@
             var table = CreateTableFromData(new[] { row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             A.CallTo(
@@ -497,6 +502,8 @@
             var table = CreateTableFromData(new[] { row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             A.CallTo(
@@ -531,6 +538,8 @@
             var table = CreateTableFromData(new[] { row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             A.CallTo(
@@ -564,6 +573,8 @@
             var table = CreateTableFromData(new[] { row });
             var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
 
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
+                .Returns(false);
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
                 .Returns(candidateNumberDelegate);
             A.CallTo(
@@ -594,6 +605,7 @@
             // Given
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
+            Guid primaryEmailIsGuid;
 
             A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
                 .Returns(false);
@@ -625,8 +637,15 @@
                                 model.Answer4 == row.Answer4 &&
                                 model.Answer5 == row.Answer5 &&
                                 model.Answer6 == row.Answer6 &&
-                                model.PrimaryEmail == row.EmailAddress &&
-                                model.NotifyDate == null
+                                model.ProfessionalRegistrationNumber == row.PRN &&
+                                model.CentreSpecificEmail == row.EmailAddress &&
+                                Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
+                                model.NotifyDate == null &&
+                                model.IsSelfRegistered == false &&
+                                model.ActiveUser == false &&
+                                model.Active == true &&
+                                model.Approved == true &&
+                                model.PasswordHash == null
                         ),
                         false
                     )
@@ -643,6 +662,7 @@
             var welcomeEmailDate = new DateTime(3000, 01, 01);
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
+            Guid primaryEmailIsGuid;
 
             A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
                 .Returns(false);
@@ -674,7 +694,9 @@
                                 model.Answer4 == row.Answer4 &&
                                 model.Answer5 == row.Answer5 &&
                                 model.Answer6 == row.Answer6 &&
-                                model.PrimaryEmail == row.EmailAddress &&
+                                model.ProfessionalRegistrationNumber == row.PRN &&
+                                model.CentreSpecificEmail == row.EmailAddress &&
+                                Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
                                 model.NotifyDate == welcomeEmailDate
                         ),
                         false
@@ -1187,6 +1209,15 @@
                     A<string>._
                 )
             ).DoesNothing();
+            A.CallTo(
+                () => userDataService.SetCentreEmail(
+                    A<int>._,
+                    A<int>._,
+                    A<string>._,
+                    A<IDbTransaction?>._
+                )
+            ).DoesNothing();
+
             A.CallTo(
                 () =>
                     userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)

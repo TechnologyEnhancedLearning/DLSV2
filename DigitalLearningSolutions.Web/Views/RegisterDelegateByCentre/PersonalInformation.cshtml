@@ -1,5 +1,5 @@
-@using DigitalLearningSolutions.Web.ViewModels.Register
-@model PersonalInformationViewModel
+@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
+@model DelegatePersonalInformationViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register delegate" : "Register delegate";
@@ -13,7 +13,7 @@
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="PersonalInformation">
       @if (errorHasOccurred) {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail) })" />
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.CentreSpecificEmail) })" />
       }
 
       <div class="nhsuk-u-margin-bottom-8">
@@ -43,7 +43,7 @@
                      autocomplete="family-name"
                      css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input asp-for="PrimaryEmail"
+      <vc:text-input asp-for="CentreSpecificEmail"
                      label="Email"
                      populate-with-current-value="true"
                      type="text"

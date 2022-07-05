@@ -494,6 +494,7 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.PasswordHash!,
                 true,
                 true,
+                true,
                 registrationModel.ProfessionalRegistrationNumber
             );
 

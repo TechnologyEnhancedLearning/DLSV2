@@ -114,17 +114,18 @@ namespace DigitalLearningSolutions.Data.Services
                     return;
                 }
 
-                if (delegateRow.Email != delegateEntity.UserAccount.PrimaryEmail &&
+                if (delegateRow.MatchesDelegateEntity(delegateEntity))
+                {
+                    delegateRow.RowStatus = RowStatus.Skipped;
+                    return;
+                }
+
+                if (
+                    delegateRow.Email != delegateEntity.UserCentreDetails?.Email &&
                     userDataService.CentreSpecificEmailIsInUseAtCentre(delegateRow.Email!, centreId)
                 )
                 {
                     delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
-                    return;
-                }
-
-                if (delegateRow.MatchesDelegateEntity(delegateEntity))
-                {
-                    delegateRow.RowStatus = RowStatus.Skipped;
                     return;
                 }
 
@@ -140,7 +141,7 @@ namespace DigitalLearningSolutions.Data.Services
                 userDataService.UpdateUserDetails(
                     delegateRow.FirstName!,
                     delegateRow.LastName!,
-                    delegateRow.Email!,
+                    delegateEntity.UserAccount.PrimaryEmail,
                     delegateRow.JobGroupId!.Value,
                     delegateEntity.UserAccount.Id
                 );
@@ -161,6 +162,15 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateRow.Prn,
                     delegateEntity.DelegateAccount.Id
                 );
+
+                if (delegateRow.Email != delegateEntity.UserAccount.PrimaryEmail)
+                {
+                    userDataService.SetCentreEmail(
+                        delegateEntity.UserAccount.Id,
+                        delegateEntity.DelegateAccount.CentreId,
+                        delegateRow.Email
+                    );
+                }
 
                 delegateRow.RowStatus = RowStatus.Updated;
             }

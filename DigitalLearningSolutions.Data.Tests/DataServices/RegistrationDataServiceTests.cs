@@ -44,7 +44,14 @@
             A.CallTo(() => clockService.UtcNow).Returns(dateTime);
 
             // Given
-            var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
+            var delegateRegistrationModel =
+                RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                    centre: 3,
+                    activeUser: false,
+                    active: true,
+                    approved: true,
+                    isSelfRegistered: false
+                );
 
             // When
             var (delegateId, candidateNumber) = service.RegisterNewUserAndDelegateAccount(
@@ -59,8 +66,10 @@
                 delegateEntity!.UserAccount.FirstName.Should().Be(delegateRegistrationModel.FirstName);
                 delegateEntity.UserAccount.LastName.Should().Be(delegateRegistrationModel.LastName);
                 delegateEntity.UserAccount.PrimaryEmail.Should().Be(delegateRegistrationModel.PrimaryEmail);
+                delegateEntity.UserAccount.PasswordHash.Should().BeEmpty();
                 delegateEntity.UserAccount.TermsAgreed.Should().BeNull();
                 delegateEntity.UserAccount.DetailsLastChecked.Should().Be(dateTime);
+                delegateEntity.UserAccount.Active.Should().BeFalse();
                 delegateEntity.DelegateAccount.CentreId.Should().Be(delegateRegistrationModel.Centre);
                 delegateEntity.DelegateAccount.Answer1.Should().Be(delegateRegistrationModel.Answer1);
                 delegateEntity.DelegateAccount.Answer2.Should().Be(delegateRegistrationModel.Answer2);
@@ -68,6 +77,9 @@
                 delegateEntity.DelegateAccount.Answer4.Should().Be(delegateRegistrationModel.Answer4);
                 delegateEntity.DelegateAccount.Answer5.Should().Be(delegateRegistrationModel.Answer5);
                 delegateEntity.DelegateAccount.Answer6.Should().Be(delegateRegistrationModel.Answer6);
+                delegateEntity.DelegateAccount.Approved.Should().BeTrue();
+                delegateEntity.DelegateAccount.Active.Should().BeTrue();
+                delegateEntity.DelegateAccount.SelfReg.Should().BeFalse();
                 candidateNumber.Should().Be("TU67");
                 delegateEntity.DelegateAccount.CandidateNumber.Should().Be("TU67");
                 delegateEntity.DelegateAccount.CentreSpecificDetailsLastChecked.Should().Be(dateTime);
