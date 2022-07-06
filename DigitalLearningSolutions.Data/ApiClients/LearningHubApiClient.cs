@@ -100,9 +100,9 @@
         )
         {
             var textQueryString = GetQueryString("text", text);
-            var catalogueIdString = GetQueryString("catalogueId", catalogueId.ToString());
-            var offSetQueryString = GetQueryString("offset", offset.ToString());
-            var limitQueryString = GetQueryString("limit", limit.ToString());
+            var catalogueIdString = GetQueryString("catalogueId", catalogueId?.ToString());
+            var offSetQueryString = GetQueryString("offset", offset?.ToString());
+            var limitQueryString = GetQueryString("limit", limit?.ToString());
 
             var queryStrings = new List<string> { textQueryString, catalogueIdString, offSetQueryString, limitQueryString };
 

@@ -40,7 +40,10 @@
                       asp-controller="SignpostingSso"
                       asp-action="ViewResource"
                       asp-route-resourceReferenceId="@Model.ReferenceId">Preview</a>
-                  <button class="nhsuk-button small-edit-button" asp-action="AddCompetencyLearningResourceSummary" asp-route-SelectedCatalogue="@catalogue">
+                  <button class="nhsuk-button small-edit-button"
+                      asp-action="AddCompetencyLearningResourceSummary"
+                      asp-route-catalogueId="@parent.CatalogueId"
+                      asp-route-SelectedCatalogue="@catalogue">
                     Select
                   </button>
                 </dd>

@@ -1,8 +1,15 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyResourceSignpostingViewModel
 @{
-  ViewData["Title"] = "Add Competency Learning Resource";
-  ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Add Competency Learning Resource";
+    ViewData["Application"] = "Framework Service";
+    var dropdownItems = Model.Catalogues
+          .Select(c => new SelectListItem(
+            text: c.Name,
+            value: c.Id.ToString(),
+            selected: c.Id == Model.CatalogueId)
+          ).ToList();
+    dropdownItems.Insert(0, new SelectListItem("Any", "null", !Model.CatalogueId.HasValue));
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -16,18 +23,31 @@
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
         <li class="nhsuk-breadcrumb__item">
-          <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a>
+          <a class="nhsuk-breadcrumb__link trigger-loader"
+             asp-action="ViewFrameworks"
+             asp-route-tabname="Mine">Frameworks</a>
         </li>
         <li class="nhsuk-breadcrumb__item">
-          <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a>
+          <a class="nhsuk-breadcrumb__link trigger-loader"
+             asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId"
+             asp-route-frameworkId="@Model.FrameworkId"
+             asp-route-tabname="Structure">Framework Structure</a>
         </li>
         <li class="nhsuk-breadcrumb__item">
-          <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Signposting</a>
+          <a class="nhsuk-breadcrumb__link trigger-loader"
+             asp-action="EditCompetencyLearningResources"
+             asp-route-frameworkId="@Model.FrameworkId"
+             asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+             asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Signposting</a>
         </li>
         <li class="nhsuk-breadcrumb__item">Add Resource</li>
       </ol>
       <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Back to Signposting</a>
+        <a class="nhsuk-breadcrumb__backlink"
+           asp-action="EditCompetencyLearningResources"
+           asp-route-frameworkId="@Model.FrameworkId"
+           asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+           asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Back to Signposting</a>
       </p>
     </div>
   </nav>
@@ -52,13 +72,7 @@
         </button>
       </div>
       <div class="filter-value-container">
-        @Html.DropDownListFor(c => c.CatalogueId,
-          Model.Catalogues
-            .Select(c => new SelectListItem(
-              text: c.Name,
-              value: c.Id.ToString(),
-              selected: c.Id == (Model.CatalogueId ?? Model.Catalogues?.FirstOrDefault()?.Id))
-            ),
+        @Html.DropDownListFor(c => c.CatalogueId, dropdownItems,
           new
           {
             @class = "nhsuk-select nhsuk-u-margin-bottom-4",
@@ -81,6 +95,7 @@
 <form method="get">
   <partial name="PaginatedPage/_BottomPaginationNavWithAlert" model="Model" />
   @Html.Hidden("SearchText", Model.SearchText)
+  @Html.Hidden("CatalogueId", Model.CatalogueId)
 </form>
 <div class="nhsuk-back-link nhsuk-u-margin-left-1 nhsuk-u-margin-top-6">
   <a class="nhsuk-back-link__link" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
