@@ -169,8 +169,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            model.ClearDateIfNotSendEmail();
-
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -238,7 +236,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
                 TempData.Clear();
                 TempData.Add("delegateNumber", candidateNumber);
-                TempData.Add("emailSent", data.ShouldSendEmail);
                 TempData.Add("passwordSet", data.IsPasswordSet);
                 return RedirectToAction("Confirmation");
             }
@@ -264,8 +261,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public IActionResult Confirmation()
         {
             var delegateNumber = (string?)TempData.Peek("delegateNumber");
-            var emailSent = (bool)TempData.Peek("emailSent");
-            var passwordSet = (bool)TempData.Peek("passwordSet");
             TempData.Clear();
 
             if (delegateNumber == null)
@@ -273,7 +268,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return RedirectToAction("Index");
             }
 
-            var viewModel = new ConfirmationViewModel(delegateNumber, emailSent, passwordSet);
+            var viewModel = new ConfirmationViewModel(delegateNumber);
             return View(viewModel);
         }
 

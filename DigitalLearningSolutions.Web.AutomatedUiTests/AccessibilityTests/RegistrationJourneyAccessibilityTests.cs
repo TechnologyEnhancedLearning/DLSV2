@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
+    using System;
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures;
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
+    using DocumentFormat.OpenXml.ExtendedProperties;
     using FluentAssertions;
     using Selenium.Axe;
     using Xunit;
@@ -70,7 +72,10 @@
             Driver.SubmitForm();
 
             var welcomeEmailResult = new AxeBuilder(Driver).Analyze();
-            Driver.SetCheckboxState("ShouldSendEmail", false);
+            var today = DateTime.Today;
+            Driver.FillTextInput("Day", today.Day.ToString());
+            Driver.FillTextInput("Month", today.Month.ToString());
+            Driver.FillTextInput("Year", today.Year.ToString());
             Driver.SubmitForm();
 
             var passwordResult = new AxeBuilder(Driver).Analyze();
@@ -83,7 +88,7 @@
             // then
             registerResult.Violations.Should().BeEmpty();
             learnerInformationResult.Violations.Should().BeEmpty();
-            CheckWelcomeEmailViolations(welcomeEmailResult);
+            welcomeEmailResult.Violations.Should().BeEmpty();
             passwordResult.Violations.Should().BeEmpty();
             summaryResult.Violations.Should().BeEmpty();
         }
@@ -111,19 +116,6 @@
             registerResult.Violations.Should().BeEmpty();
             learnerInformationResult.Violations.Should().BeEmpty();
             summaryResult.Violations.Should().BeEmpty();
-        }
-
-        private static void CheckWelcomeEmailViolations(AxeResult welcomeEmailResult)
-        {
-            // Expect an axe violation caused by having an aria-expanded attribute on an input
-            // The target #ShouldSendEmail is an nhs-tested component so ignore this violation
-            welcomeEmailResult.Violations.Should().HaveCount(1);
-            var violation = welcomeEmailResult.Violations[0];
-
-            violation.Id.Should().Be("aria-allowed-attr");
-            violation.Nodes.Should().HaveCount(1);
-            violation.Nodes[0].Target.Should().HaveCount(1);
-            violation.Nodes[0].Target[0].Selector.Should().Be("#ShouldSendEmail");
         }
     }
 }

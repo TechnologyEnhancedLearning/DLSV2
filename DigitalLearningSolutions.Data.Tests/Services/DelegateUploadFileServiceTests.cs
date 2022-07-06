@@ -28,6 +28,7 @@
     public class DelegateUploadFileServiceTests
     {
         private const int CentreId = 101;
+        private static DateTime Today = DateTime.Today;
         public const string TestDelegateUploadRelativeFilePath = "\\TestData\\DelegateUploadTest.xlsx";
         private IConfiguration configuration = null!;
         private static readonly (int, string) NewDelegateIdAndCandidateNumber = (5, "DELEGATE");
@@ -290,7 +291,7 @@
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId)).Returns(null);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
@@ -317,7 +318,7 @@
                 .Returns(true);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
@@ -345,7 +346,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             A.CallTo(
@@ -384,7 +385,7 @@
                 .Returns(candidateNumberDelegate);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             AssertCreateOrUpdateDelegateWereNotCalled();
@@ -413,7 +414,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             result.ProcessedCount.Should().Be(1);
@@ -437,7 +438,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             A.CallTo(
@@ -453,6 +454,9 @@
                     )
                 )
                 .MustHaveHappened();
+
+            AssertSendWelcomeEmailWasNotCalled();
+
             result.ProcessedCount.Should().Be(1);
             result.UpdatedCount.Should().Be(1);
         }
@@ -478,7 +482,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             A.CallTo(
@@ -513,7 +517,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             A.CallTo(
@@ -549,7 +553,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             A.CallTo(
@@ -584,7 +588,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             A.CallTo(
@@ -621,7 +625,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             A.CallTo(
@@ -640,7 +644,7 @@
                                 model.ProfessionalRegistrationNumber == row.PRN &&
                                 model.CentreSpecificEmail == row.EmailAddress &&
                                 Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
-                                model.NotifyDate == null &&
+                                model.NotifyDate == Today &&
                                 model.IsSelfRegistered == false &&
                                 model.UserIsActive == false &&
                                 model.CentreAccountIsActive == true &&
@@ -651,6 +655,9 @@
                     )
                 )
                 .MustHaveHappened();
+
+            AssertSendWelcomeEmailWasCalled();
+
             result.ProcessedCount.Should().Be(1);
             result.RegisteredCount.Should().Be(1);
         }
@@ -754,51 +761,6 @@
         }
 
         [Test]
-        public void ProcessDelegateTable_does_not_call_generate_welcome_email_when_welcomeEmailDate_is_not_populated()
-        {
-            // Given
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
-            var table = CreateTableFromData(new[] { row });
-
-            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
-                .Returns(false);
-            A.CallTo(
-                    () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
-                        A<DelegateRegistrationModel>._,
-                        false
-                    )
-                )
-                .Returns(NewDelegateIdAndCandidateNumber);
-            A.CallTo(
-                () => userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
-            ).DoesNothing();
-            A.CallTo(
-                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    A<int>._,
-                    A<string>._,
-                    A<DateTime>._,
-                    A<string>._
-                )
-            ).DoesNothing();
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            A.CallTo(
-                    () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                        A<int>._,
-                        A<string>._,
-                        A<DateTime>._,
-                        A<string>._
-                    )
-                )
-                .MustNotHaveHappened();
-            result.ProcessedCount.Should().Be(1);
-            result.RegisteredCount.Should().Be(1);
-        }
-
-        [Test]
         public void ProcessDelegateTable_successful_register_updates_supervisor_delegates()
         {
             // Given
@@ -834,7 +796,7 @@
             ).DoesNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             A.CallTo(
@@ -885,7 +847,7 @@
             ).DoesNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             A.CallTo(
@@ -928,7 +890,7 @@
             ).DoesNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             A.CallTo(
@@ -960,7 +922,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             result.ProcessedCount.Should().Be(5);
@@ -988,7 +950,7 @@
                 .Returns(candidateNumberDelegate);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             result.ProcessedCount.Should().Be(5);
@@ -1016,7 +978,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             result.ProcessedCount.Should().Be(5);
@@ -1069,7 +1031,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             using (new AssertionScope())
@@ -1091,7 +1053,7 @@
             var table = CreateTableFromData(new[] { row });
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
@@ -1184,6 +1146,30 @@
             result.RegisteredCount.Should().Be(0);
             result.SkippedCount.Should().Be(0);
             result.Errors.Should().HaveCount(1);
+        }
+
+        private void AssertSendWelcomeEmailWasCalled()
+        {
+            A.CallTo(
+                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    A<int>._,
+                    A<string>._,
+                    A<DateTime>._,
+                    A<string>._
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        private void AssertSendWelcomeEmailWasNotCalled()
+        {
+            A.CallTo(
+                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    A<int>._,
+                    A<string>._,
+                    A<DateTime>._,
+                    A<string>._
+                )
+            ).MustNotHaveHappened();
         }
 
         private void CallsToUserDataServiceUpdatesDoNothing()

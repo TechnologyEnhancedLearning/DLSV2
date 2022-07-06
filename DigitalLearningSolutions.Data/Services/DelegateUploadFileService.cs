@@ -20,7 +20,7 @@ namespace DigitalLearningSolutions.Data.Services
 
     public interface IDelegateUploadFileService
     {
-        public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime? welcomeEmailDate = null);
+        public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime welcomeEmailDate);
     }
 
     public class DelegateUploadFileService : IDelegateUploadFileService
@@ -49,7 +49,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.configuration = configuration;
         }
 
-        public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime? welcomeEmailDate)
+        public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime welcomeEmailDate)
         {
             var table = OpenDelegatesTable(file);
             return ProcessDelegatesTable(table, centreId, welcomeEmailDate);
@@ -69,7 +69,7 @@ namespace DigitalLearningSolutions.Data.Services
             return table;
         }
 
-        internal BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime? welcomeEmailDate = null)
+        internal BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime welcomeEmailDate)
         {
             var jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical().Select(item => item.id).ToList();
             var delegateRows = table.Rows().Skip(1).Select(row => new DelegateTableRow(table, row)).ToList();
@@ -84,7 +84,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         private void ProcessDelegateRow(
             int centreId,
-            DateTime? welcomeEmailDate,
+            DateTime welcomeEmailDate,
             DelegateTableRow delegateRow,
             IEnumerable<int> jobGroupIds
         )
@@ -179,7 +179,7 @@ namespace DigitalLearningSolutions.Data.Services
             }
         }
 
-        private void RegisterDelegate(DelegateTableRow delegateRow, DateTime? welcomeEmailDate, int centreId)
+        private void RegisterDelegate(DelegateTableRow delegateRow, DateTime welcomeEmailDate, int centreId)
         {
             var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
 
@@ -193,15 +193,12 @@ namespace DigitalLearningSolutions.Data.Services
 
             SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, delegateId);
 
-            if (welcomeEmailDate.HasValue)
-            {
-                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    delegateId,
-                    configuration.GetAppRootPath(),
-                    welcomeEmailDate.Value,
-                    "DelegateBulkUpload_Refactor"
-                );
-            }
+            passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                delegateId,
+                configuration.GetAppRootPath(),
+                welcomeEmailDate,
+                "DelegateBulkUpload_Refactor"
+            );
 
             delegateRow.RowStatus = RowStatus.Registered;
         }
