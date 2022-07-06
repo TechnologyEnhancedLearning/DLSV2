@@ -266,7 +266,7 @@
                 setPasswordUrl.Path += '/';
             }
 
-            setPasswordUrl.Path += "SetPassword"; // TODO: HEEDLS-901 The controller for this link has been deleted
+            setPasswordUrl.Path += "CompleteRegistration"; // TODO: HEEDLS-974 Create controller for this link
             setPasswordUrl.Query = $"code={registrationConfirmationHash}&email={emailAddress}";
 
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";
