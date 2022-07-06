@@ -55,6 +55,50 @@
         }
 
         [Test]
+        public void GetDelegateById_returns_delegate_with_correct_adminId()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            var adminId = connection.QuerySingle<int>(
+                @"INSERT INTO AdminAccounts (
+                           UserID,
+                           CentreID,
+                           Active)
+                    OUTPUT Inserted.ID
+                    VALUES (61188, 2, 1)"
+            );
+
+            // When
+            var returnedDelegateEntity = userDataService.GetDelegateById(2);
+
+            // Then
+            returnedDelegateEntity!.AdminId.Should().Be(adminId);
+        }
+
+        [Test]
+        public void GetDelegateById_does_not_return_id_for_inactive_admin()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            var adminId = connection.QuerySingle<int>(
+                @"INSERT INTO AdminAccounts (
+                           UserID,
+                           CentreID,
+                           Active)
+                    OUTPUT Inserted.ID
+                    VALUES (61188, 2, 0)"
+            );
+
+            // When
+            var returnedDelegateEntity = userDataService.GetDelegateById(2);
+
+            // Then
+            returnedDelegateEntity!.AdminId.Should().BeNull();
+        }
+
+        [Test]
         public void GetDelegateByCandidateNumber_returns_delegate_with_null_user_centre_details()
         {
             // Given
@@ -102,7 +146,8 @@
 
             // Then
             returnedDelegateEntities.Count.Should().Be(4);
-            returnedDelegateEntities.Select(d => d.DelegateAccount.Id).Should().BeEquivalentTo(new[] { 28, 16, 115768, 297514 });
+            returnedDelegateEntities.Select(d => d.DelegateAccount.Id).Should()
+                .BeEquivalentTo(new[] { 28, 16, 115768, 297514 });
         }
 
         [Test]

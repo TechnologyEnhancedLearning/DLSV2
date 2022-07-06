@@ -107,7 +107,13 @@
                 ucd.UserID,
                 ucd.CentreID,
                 ucd.Email,
-                ucd.EmailVerified
+                ucd.EmailVerified,
+                (SELECT ID
+                    FROM AdminAccounts aa
+                        WHERE aa.UserID = da.UserID
+                            AND aa.CentreID = da.CentreID
+                            AND aa.Active = 1
+                ) AS AdminID
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
             INNER JOIN Users AS u ON u.ID = da.UserID
@@ -119,15 +125,16 @@
         {
             var sql = $@"{BaseDelegateEntitySelectQuery} WHERE da.ID = @id";
 
-            return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, DelegateEntity>(
+            return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, int?, DelegateEntity>(
                 sql,
-                (delegateAccount, userAccount, userCentreDetails) => new DelegateEntity(
+                (delegateAccount, userAccount, userCentreDetails, adminId) => new DelegateEntity(
                     delegateAccount,
                     userAccount,
-                    userCentreDetails
+                    userCentreDetails,
+                    adminId
                 ),
                 new { id },
-                splitOn: "ID,ID"
+                splitOn: "ID,ID,AdminID"
             ).SingleOrDefault();
         }
 
