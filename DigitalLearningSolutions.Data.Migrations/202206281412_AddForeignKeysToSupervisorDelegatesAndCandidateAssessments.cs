@@ -39,12 +39,10 @@
                 .AlterColumn("DelegateUserID").AsInt32().NotNullable()
                 .AlterColumn("CentreID").AsInt32().NotNullable();
 
-            Delete.ForeignKey().FromTable("SupervisorDelegates").ForeignColumn("CandidateID")
-                .ToTable("Candidates").PrimaryColumn("CandidateID");
+            Delete.ForeignKey("FK_SupervisorDelegates_CandidateID_Candidates_CandidateID").OnTable("SupervisorDelegates");
             Alter.Table("SupervisorDelegates").AlterColumn("CandidateID").AsInt32().Nullable();
 
-            Delete.ForeignKey().FromTable("CandidateAssessments").ForeignColumn("CandidateID")
-                .ToTable("Candidates").PrimaryColumn("CandidateID");
+            Delete.ForeignKey("FK_CandidateAssessments_CandidateID_Candidates_CandidateID").OnTable("CandidateAssessments");
             Alter.Table("CandidateAssessments").AlterColumn("CandidateID").AsInt32().Nullable();
 
             Rename.Column("CandidateID").OnTable("SupervisorDelegates").To("CandidateID_deprecated");
