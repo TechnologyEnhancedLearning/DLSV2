@@ -5,6 +5,22 @@
     [Migration(202206281412)]
     public class AddForeignKeysToSupervisorDelegatesAndCandidateAssessments : Migration
     {
+        private const string ColumnPopulationSql =
+            @"UPDATE SupervisorDelegates
+                SET SupervisorDelegates.DelegateUserID = da.UserID
+                FROM Candidates c
+                    JOIN DelegateAccounts da
+                    ON c.CandidateNumber = da.CandidateNumber
+	                WHERE c.CandidateID = SupervisorDelegates.CandidateID
+
+              UPDATE CandidateAssessments
+	            SET CandidateAssessments.DelegateUserID = da.UserID,
+		            CandidateAssessments.CentreID = c.CentreID
+	            FROM Candidates c
+		            JOIN DelegateAccounts da
+		            ON c.CandidateNumber = da.CandidateNumber
+	                WHERE c.CandidateID = CandidateAssessments.CandidateID";
+
         public override void Up()
         {
             Alter.Table("SupervisorDelegates")
@@ -17,17 +33,15 @@
                 .AddColumn("CentreID").AsInt32().Nullable()
                 .ForeignKey("Centres", "CentreID");
 
-            Execute.Script(
-                "DigitalLearningSolutions.Data.Migrations/Scripts/HEEDLS-932-PopulateNewKeysOnSupervisorDelegatesAndCandidateAssessments.sql"
-            );
+            Execute.Sql(ColumnPopulationSql);
 
             Alter.Table("CandidateAssessments")
                 .AlterColumn("DelegateUserID").AsInt32().NotNullable()
                 .AlterColumn("CentreID").AsInt32().NotNullable();
 
-            Delete.ForeignKey().FromTable("SupervisorDelegates").ForeignColumn("CandidateId")
+            Delete.ForeignKey().FromTable("SupervisorDelegates").ForeignColumn("CandidateID")
                 .ToTable("Candidates").PrimaryColumn("CandidateID");
-            Alter.Table("SupervisorDelegates").AlterColumn("CandidateId").AsInt32().Nullable();
+            Alter.Table("SupervisorDelegates").AlterColumn("CandidateID").AsInt32().Nullable();
 
             Delete.ForeignKey().FromTable("CandidateAssessments").ForeignColumn("CandidateID")
                 .ToTable("Candidates").PrimaryColumn("CandidateID");
@@ -43,9 +57,9 @@
             Rename.Column("CandidateID_deprecated").OnTable("CandidateAssessments").To("CandidateID");
 
             Alter.Table("SupervisorDelegates").AlterColumn("CandidateID").AsInt32().Nullable()
-                .ForeignKey("DelegateAccounts", "ID");
-            Alter.Table("CandidateAssessments").AlterColumn("CandidateID").AsInt32().Nullable()
-                .ForeignKey("DelegateAccounts", "ID");
+                .ForeignKey("FK_SupervisorDelegates_CandidateID_Candidates_CandidateID", "DelegateAccounts", "ID");
+            Alter.Table("CandidateAssessments").AlterColumn("CandidateID").AsInt32().NotNullable()
+                .ForeignKey("FK_CandidateAssessments_CandidateID_Candidates_CandidateID", "DelegateAccounts", "ID");
 
             Delete.ForeignKey().FromTable("SupervisorDelegates").ForeignColumn("DelegateUserID")
                 .ToTable("Users").PrimaryColumn("ID");
