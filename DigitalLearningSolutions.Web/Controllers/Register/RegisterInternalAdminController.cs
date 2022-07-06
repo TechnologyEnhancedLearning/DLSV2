@@ -1,7 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -9,6 +12,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [Authorize(Policy = CustomPolicies.BasicUser)]
@@ -17,25 +21,35 @@
         private readonly ICentresDataService centresDataService;
         private readonly ICentresService centresService;
         private readonly IUserDataService userDataService;
+        private readonly IRegistrationService registrationService;
+        private readonly IDelegateApprovalsService delegateApprovalsService;
+        private readonly IFeatureManager featureManager;
         private readonly RegisterAdminHelper registerAdminHelper;
 
         public RegisterInternalAdminController(
             ICentresDataService centresDataService,
             ICentresService centresService,
             IUserDataService userDataService,
+            IRegistrationService registrationService,
+            IDelegateApprovalsService delegateApprovalsService,
+            IFeatureManager featureManager,
             RegisterAdminHelper registerAdminHelper
         )
         {
             this.centresDataService = centresDataService;
             this.centresService = centresService;
             this.userDataService = userDataService;
+            this.registrationService = registrationService;
+            this.delegateApprovalsService = delegateApprovalsService;
+            this.featureManager = featureManager;
             this.registerAdminHelper = registerAdminHelper;
         }
 
         [HttpGet]
         public IActionResult Index(int? centreId = null)
         {
-            if (!centreId.HasValue || centresDataService.GetCentreName(centreId.Value) == null)
+            var centreName = centreId == null ? null : centresDataService.GetCentreName(centreId.Value);
+            if (centreName == null)
             {
                 return NotFound();
             }
@@ -45,10 +59,10 @@
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
-            var model = new PersonalInformationViewModel
+            var model = new InternalAdminInformationViewModel
             {
                 Centre = centreId,
-                CentreName = centresDataService.GetCentreName(centreId.Value),
+                CentreName = centreName,
                 PrimaryEmail = User.GetUserPrimaryEmailKnownNotNull(),
             };
 
@@ -56,11 +70,55 @@
         }
 
         [HttpPost]
-        public IActionResult Index(PersonalInformationViewModel model)
+        public async Task<IActionResult> Index(InternalAdminInformationViewModel model)
         {
-            if (!CanProceedWithRegistration(model))
+            var userId = User.GetUserIdKnownNotNull();
+
+            RegistrationEmailValidator.ValidateEmailsForInternalAdminRegistration(
+                userId,
+                model,
+                ModelState,
+                userDataService,
+                centresService
+            );
+
+            if (!ModelState.IsValid)
             {
-                return new StatusCodeResult(500);
+                model.CentreName = centresDataService.GetCentreName(model.Centre!.Value);
+                model.PrimaryEmail = User.GetUserPrimaryEmailKnownNotNull();
+                return View(model);
+            }
+
+            registrationService.CreateCentreManagerForExistingUser(
+                userId,
+                model.Centre!.Value,
+                model.CentreSpecificEmail
+            );
+
+            var delegateAccount = userDataService.GetDelegateAccountsByUserId(userId)
+                .SingleOrDefault(da => da.CentreId == model.Centre);
+
+            if (delegateAccount == null)
+            {
+                registrationService.CreateDelegateAccountForExistingUser(
+                    new InternalDelegateRegistrationModel(
+                        model.Centre!.Value,
+                        model.CentreSpecificEmail,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    ),
+                    userId,
+                    Request.GetUserIpAddressFromRequest(),
+                    await featureManager.IsEnabledAsync("RefactoredTrackingSystem")
+                );
+            }
+            else if (!delegateAccount.Approved)
+            {
+                delegateApprovalsService.ApproveDelegate(delegateAccount.Id, delegateAccount.CentreId);
             }
 
             return RedirectToAction("Confirmation");
@@ -70,19 +128,6 @@
         public IActionResult Confirmation()
         {
             return View();
-        }
-
-        private bool CanProceedWithRegistration(PersonalInformationViewModel model)
-        {
-            return model.Centre.HasValue &&
-                   registerAdminHelper.IsRegisterAdminAllowed(model.Centre.Value) &&
-                   (model.CentreSpecificEmail != null &&
-                    centresService.DoesEmailMatchCentre(model.CentreSpecificEmail, model.Centre.Value) ||
-                    centresService.DoesEmailMatchCentre(model.PrimaryEmail!, model.Centre.Value)) &&
-                   (model.CentreSpecificEmail == null || !userDataService.EmailIsInUseByOtherUser(
-                       User.GetUserIdKnownNotNull(),
-                       model.CentreSpecificEmail
-                   ));
         }
     }
 }

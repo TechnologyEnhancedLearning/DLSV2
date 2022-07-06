@@ -6,7 +6,6 @@
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -79,95 +78,6 @@
             // Then
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void IndexGet_with_centre_autoregistered_true_shows_AccessDenied_error()
-        {
-            // Given
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("My centre");
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .Returns((true, "email@email"));
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
-
-            // When
-            var result = controller.Index(DefaultCentreId);
-
-            // Then
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
-                .WithActionName("AccessDenied");
-        }
-
-        [Test]
-        public void IndexGet_with_centre_autoregisteremail_null_shows_AccessDenied_error()
-        {
-            // Given
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)).Returns((false, null));
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
-
-            // When
-            var result = controller.Index(DefaultCentreId);
-
-            // Then
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
-                .WithActionName("AccessDenied");
-        }
-
-        [Test]
-        public void IndexGet_with_centre_autoregisteremail_empty_shows_AccessDenied_error()
-        {
-            // Given
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .Returns((false, string.Empty));
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
-
-            // When
-            var result = controller.Index(DefaultCentreId);
-
-            // Then
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
-                .WithActionName("AccessDenied");
-        }
-
-        [Test]
-        public void IndexGet_with_centre_with_active_centre_manager_shows_AccessDenied_error()
-        {
-            // Given
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .Returns((false, "email@email"));
-
-            var centreManagerAdmin = UserTestHelper.GetDefaultAdminEntity(
-                centreId: DefaultCentreId,
-                isCentreManager: true
-            );
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId))
-                .Returns(new List<AdminEntity> { centreManagerAdmin });
-
-            // When
-            var result = controller.Index(DefaultCentreId);
-
-            // Then
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
-                .WithActionName("AccessDenied");
         }
 
         [Test]

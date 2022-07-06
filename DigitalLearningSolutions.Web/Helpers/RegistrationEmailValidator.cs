@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -33,6 +34,39 @@
         )
         {
             ValidateEmailAddresses(true, model, modelState, userService, centresDataService);
+        }
+
+        public static void ValidateEmailsForInternalAdminRegistration(
+            int userId,
+            InternalAdminInformationViewModel model,
+            ModelStateDictionary modelState,
+            IUserDataService userDataService,
+            ICentresService centresService
+        )
+        {
+            if (model.CentreSpecificEmail == null || !modelState.HasError(model.CentreSpecificEmail))
+            {
+                if (model.CentreSpecificEmail != null &&
+                    userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail, model.Centre!.Value) &&
+                    model.CentreSpecificEmail != userDataService.GetCentreEmail(userId, model.Centre.Value))
+                {
+                    modelState.AddModelError(
+                        nameof(PersonalInformationViewModel.CentreSpecificEmail),
+                        DuplicateEmailErrorMessage
+                    );
+                }
+
+                if (!centresService.DoesEmailMatchCentre(model.PrimaryEmail!, model.Centre!.Value) &&
+                    (model.CentreSpecificEmail == null ||
+                     !centresService.DoesEmailMatchCentre(model.CentreSpecificEmail, model.Centre.Value)
+                    ))
+                {
+                    modelState.AddModelError(
+                        nameof(PersonalInformationViewModel.CentreSpecificEmail),
+                        WrongEmailForCentreErrorMessage
+                    );
+                }
+            }
         }
 
         private static void ValidateEmailAddresses(
