@@ -60,7 +60,9 @@
                 da.SelfReg,
                 da.OldPassword,
                 da.UserID,
-                da.CentreSpecificDetailsLastChecked
+                da.CentreSpecificDetailsLastChecked,
+                da.RegistrationConfirmationHash,
+                da.RegistrationConfirmationHashCreationDateTime
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreId";
 

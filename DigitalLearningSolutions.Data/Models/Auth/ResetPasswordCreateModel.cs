@@ -1,7 +1,6 @@
 namespace DigitalLearningSolutions.Data.Models.Auth
 {
     using System;
-    using DigitalLearningSolutions.Data.Enums;
 
     public class ResetPasswordCreateModel
     {
