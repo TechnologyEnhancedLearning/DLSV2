@@ -542,8 +542,8 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             }
 
             var existingId = (int)connection.ExecuteScalar(
-                @"SELECT COALESCE ((SELECT ID FROM CompetencyGroups WHERE [Name] = @groupName), 0) AS CompetencyGroupID",
-                new { groupName }
+                @"SELECT COALESCE ((SELECT ID FROM CompetencyGroups WHERE [Name] = @groupName AND Description = @groupDescription), 0) AS CompetencyGroupID",
+                new { groupName, groupDescription }
             );
             if (existingId > 0)
             {
@@ -565,8 +565,8 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             }
 
             existingId = (int)connection.ExecuteScalar(
-                @"SELECT COALESCE ((SELECT ID FROM CompetencyGroups WHERE [Name] = @groupName), 0) AS CompetencyGroupID",
-                new { groupName }
+                @"SELECT COALESCE ((SELECT TOP(1) ID FROM CompetencyGroups WHERE [Name] = @groupName AND Description = @groupDescription), 0) AS CompetencyGroupID",
+                new { groupName, groupDescription }
             );
             return existingId;
         }
@@ -850,7 +850,7 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
         public void RemoveCustomFlag(int flagId)
         {
             connection.Execute(
-                @"DELETE FROM CompetencyFlags WHERE FlagID = @flagId", new { flagId}
+                @"DELETE FROM CompetencyFlags WHERE FlagID = @flagId", new { flagId }
             );
             connection.Execute(
                 @"DELETE FROM Flags WHERE ID = @flagId", new { flagId }
