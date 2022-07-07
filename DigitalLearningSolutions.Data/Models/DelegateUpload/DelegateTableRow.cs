@@ -215,7 +215,7 @@
                 return false;
             }
 
-            if (delegateEntity.UserAccount.PrimaryEmail != Email && delegateEntity.UserCentreDetails?.Email != Email)
+            if (delegateEntity.EmailForCentreNotifications != Email)
             {
                 return false;
             }

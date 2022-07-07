@@ -5,11 +5,11 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
 
-    public class DelegatePersonalInformationViewModel : InternalPersonalInformationViewModel
+    public class RegisterDelegatePersonalInformationViewModel : InternalPersonalInformationViewModel
     {
-        public DelegatePersonalInformationViewModel() { }
+        public RegisterDelegatePersonalInformationViewModel() { }
 
-        public DelegatePersonalInformationViewModel(RegistrationData data)
+        public RegisterDelegatePersonalInformationViewModel(RegistrationData data)
         {
             FirstName = data.FirstName;
             LastName = data.LastName;

@@ -29,5 +29,13 @@
                 WelcomeEmailDate = null;
             }
         }
+
+        public void SetPersonalInformation(RegisterDelegatePersonalInformationViewModel model)
+        {
+            Centre = model.Centre;
+            CentreSpecificEmail = model.CentreSpecificEmail;
+            FirstName = model.FirstName;
+            LastName = model.LastName;
+        }
     }
 }

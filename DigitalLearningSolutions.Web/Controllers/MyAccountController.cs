@@ -179,6 +179,8 @@
             }
 
             var emailsValid = true;
+            // TODO HEEDLS-1002: This won't work if the user changes their email, then edits their details again (keeping their email the same)
+            // because User.GetUserPrimaryEmail() is only updated on login. Check that the Email is in use BY ANOTHER USER.
             if (formData.Email != User.GetUserPrimaryEmail() && userDataService.PrimaryEmailIsInUse(formData.Email!))
             {
                 ModelState.AddModelError(
@@ -189,7 +191,7 @@
             }
 
             if (
-                // TODO HEEDLS-1002: CentreSpecificEmailIsInUseAtCentre always returns true if email is unchanged. Only do the check if email has changed.
+                // TODO HEEDLS-1002: Check that the CentreSpecificEmail is in use BY ANOTHER USER
                 !string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) &&
                 userDataService.CentreSpecificEmailIsInUseAtCentre(formData.CentreSpecificEmail, centreId)
             )

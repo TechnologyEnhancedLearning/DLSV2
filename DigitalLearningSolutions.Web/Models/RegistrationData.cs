@@ -40,14 +40,6 @@
             LastName = model.LastName;
         }
 
-        public void SetPersonalInformation(DelegatePersonalInformationViewModel model)
-        {
-            Centre = model.Centre;
-            CentreSpecificEmail = model.CentreSpecificEmail;
-            FirstName = model.FirstName;
-            LastName = model.LastName;
-        }
-
         public virtual void SetLearnerInformation(LearnerInformationViewModel model)
         {
             JobGroup = model.JobGroup;

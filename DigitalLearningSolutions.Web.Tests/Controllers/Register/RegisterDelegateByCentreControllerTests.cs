@@ -66,7 +66,7 @@
         {
             // Given
             var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
-            var model = new DelegatePersonalInformationViewModel
+            var model = new RegisterDelegatePersonalInformationViewModel
             {
                 FirstName = "Test",
                 LastName = "User",
@@ -103,7 +103,7 @@
             // Given
             controller.TempData.Set(new DelegateRegistrationByCentreData());
             var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
-            var model = new DelegatePersonalInformationViewModel
+            var model = new RegisterDelegatePersonalInformationViewModel
             {
                 FirstName = "Test",
                 LastName = "User",
@@ -143,7 +143,7 @@
             const string email = "test@email.com";
 
             controller.TempData.Set(new DelegateRegistrationByCentreData());
-            var model = new DelegatePersonalInformationViewModel
+            var model = new RegisterDelegatePersonalInformationViewModel
             {
                 FirstName = firstName,
                 LastName = lastName,
@@ -360,7 +360,7 @@
                                     d.Answer5 == data.Answer5 &&
                                     d.Answer6 == data.Answer6 &&
                                     d.Active &&
-                                    !d.ActiveUser &&
+                                    !d.UserIsActive &&
                                     d.Approved &&
                                     !d.IsSelfRegistered &&
                                     d.NotifyDate == data.WelcomeEmailDate &&

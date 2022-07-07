@@ -357,16 +357,15 @@ namespace DigitalLearningSolutions.Data.Services
         {
             try
             {
-                if (
-                    userDataService.PrimaryEmailIsInUse(delegateRegistrationModel.PrimaryEmail) ||
-                    (
-                        delegateRegistrationModel.CentreSpecificEmail != null &&
-                        userDataService.CentreSpecificEmailIsInUseAtCentre(
-                            delegateRegistrationModel.CentreSpecificEmail,
-                            delegateRegistrationModel.Centre
-                        )
-                    )
-                )
+                var primaryEmailIsInvalid = userDataService.PrimaryEmailIsInUse(delegateRegistrationModel.PrimaryEmail);
+                var centreSpecificEmailIsInvalid =
+                    delegateRegistrationModel.CentreSpecificEmail != null &&
+                    userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        delegateRegistrationModel.CentreSpecificEmail,
+                        delegateRegistrationModel.Centre
+                    );
+
+                if (primaryEmailIsInvalid || centreSpecificEmailIsInvalid)
                 {
                     throw new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse);
                 }

@@ -90,6 +90,7 @@
                 formData.CentreSpecificEmail = null;
             }
 
+            // TODO HEEDLS-1002: Check that the CentreSpecificEmail is in use BY ANOTHER USER
             if (
                 formData.CentreSpecificEmail != null &&
                 formData.CentreSpecificEmail != delegateEntity.UserCentreDetails?.Email &&

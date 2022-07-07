@@ -295,9 +295,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void Registering_delegate_should_add_CandidateId_to_all_SupervisorDelegate_records_found_by_email()
         {
             // Given
+            const int delegateId = 777;
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
             GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+
+            A.CallTo(
+                () => registrationDataService.RegisterNewUserAndDelegateAccount(model, A<bool>._)
+            ).Returns((delegateId, "CANDIDATE_NUMBER"));
 
             // When
             registrationService.CreateDelegateAccountForNewUser(
@@ -312,7 +317,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(
                 () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
-                    A<int>._
+                    delegateId
                 )
             ).MustHaveHappened();
         }
@@ -343,10 +348,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void Registering_delegate_should_send_SupervisorDelegate_email_for_matching_id_record_only()
+        [TestCase(2, false)]
+        [TestCase(0, true)]
+        public void Registering_delegate_should_send_SupervisorDelegate_email_if_necessary(
+            int supervisorDelegateId,
+            bool expectedEmailToBeSent
+        )
         {
             // Given
-            const int supervisorDelegateId = 2;
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
             GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
@@ -362,20 +371,66 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // Then
             A.CallTo(
-                    () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
-                        A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
-                        A<int>._
+                    () => emailService.SendEmail(
+                        A<Email>.That.Matches(
+                            e =>
+                                e.To[0] == ApproverEmail &&
+                                e.Cc.IsNullOrEmpty() &&
+                                e.Bcc.IsNullOrEmpty() &&
+                                e.Subject == "Digital Learning Solutions Registration Requires Approval"
+                        )
                     )
                 )
-                .MustHaveHappened();
+                .MustHaveHappened(expectedEmailToBeSent ? 1 : 0, Times.Exactly);
         }
 
         [Test]
-        public void Error_when_registering_delegate_with_duplicate_email()
+        public void Error_when_registering_delegate_with_duplicate_primary_email()
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(A<string>._, null))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(model.PrimaryEmail, null))
+                .Returns(true);
+
+            // When
+            Action act = () => registrationService.CreateDelegateAccountForNewUser(
+                model,
+                string.Empty,
+                false,
+                false
+            );
+
+            // Then
+            act.Should().Throw<DelegateCreationFailedException>();
+            A.CallTo(
+                () =>
+                    registrationDataService.RegisterNewUserAndDelegateAccount(
+                        A<DelegateRegistrationModel>._,
+                        false
+                    )
+            ).MustNotHaveHappened();
+            A.CallTo(
+                () =>
+                    emailService.SendEmail(A<Email>._)
+            ).MustNotHaveHappened();
+            A.CallTo(
+                () =>
+                    passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Error_when_registering_delegate_with_duplicate_centre_specific_email()
+        {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        model.Centre,
+                        null
+                    )
+                )
                 .Returns(true);
 
             // When

@@ -21,8 +21,8 @@
             string? answer5,
             string? answer6,
             bool isSelfRegistered,
-            bool active,
-            bool activeUser,
+            bool delegateIsActive,
+            bool userIsActive,
             string? professionalRegistrationNumber,
             bool approved = false,
             DateTime? notifyDate = null
@@ -33,7 +33,7 @@
             centreSpecificEmail,
             centre,
             passwordHash,
-            active,
+            delegateIsActive,
             approved,
             professionalRegistrationNumber,
             jobGroup
@@ -47,7 +47,7 @@
             Answer6 = answer6;
             NotifyDate = notifyDate;
             IsSelfRegistered = isSelfRegistered;
-            ActiveUser = activeUser;
+            UserIsActive = userIsActive;
         }
 
         public DelegateRegistrationModel(
@@ -58,8 +58,8 @@
             int centre,
             int jobGroup,
             string? passwordHash,
-            bool active,
-            bool activeUser,
+            bool delegateIsActive,
+            bool userIsActive,
             bool approved,
             string? professionalRegistrationNumber
         ) : base(
@@ -69,13 +69,13 @@
             centreSpecificEmail,
             centre,
             passwordHash,
-            active,
+            delegateIsActive,
             approved,
             professionalRegistrationNumber,
             jobGroup
         )
         {
-            ActiveUser = activeUser;
+            UserIsActive = userIsActive;
         }
 
         public DelegateRegistrationModel(
@@ -102,8 +102,7 @@
             row.Prn,
             true,
             welcomeEmailDate
-        )
-        { }
+        ) { }
 
         public DelegateRegistrationModel(
             UserAccount userAccount,
@@ -130,7 +129,7 @@
             Answer5 = internalDelegateRegistrationModel.Answer5;
             Answer6 = internalDelegateRegistrationModel.Answer6;
             IsSelfRegistered = isSelfRegistered;
-            ActiveUser = true;
+            UserIsActive = true;
         }
 
         public string? Answer1 { get; }
@@ -149,7 +148,7 @@
 
         public bool IsSelfRegistered { get; }
 
-        public bool ActiveUser { get; }
+        public bool UserIsActive { get; }
 
         public bool IsExternalRegistered => !Approved;
     }

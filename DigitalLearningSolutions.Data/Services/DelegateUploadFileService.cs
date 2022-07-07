@@ -133,7 +133,6 @@ namespace DigitalLearningSolutions.Data.Services
             }
         }
 
-        // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
         private void UpdateDelegate(DelegateTableRow delegateRow, DelegateEntity delegateEntity)
         {
             try
@@ -163,7 +162,7 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateEntity.DelegateAccount.Id
                 );
 
-                if (delegateRow.Email != delegateEntity.UserAccount.PrimaryEmail)
+                if (delegateRow.Email != delegateEntity.EmailForCentreNotifications)
                 {
                     userDataService.SetCentreEmail(
                         delegateEntity.UserAccount.Id,
