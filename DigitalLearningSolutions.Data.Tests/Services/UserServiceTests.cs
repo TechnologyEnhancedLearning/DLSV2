@@ -810,17 +810,17 @@
             A.CallTo(() => configuration["MonthsToPromptUserDetailsCheck"]).Returns("6");
             A.CallTo(() => clockService.UtcNow).Returns(now);
             var userEntity = new UserEntity(
-                UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday, active: false),
+                UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday),
                 new List<AdminAccount>(),
                 new List<DelegateAccount>
-                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: sevenMonthsAgo) }
+                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: sevenMonthsAgo, active: false) }
             );
 
             // When
             var result = userService.ShouldForceDetailsCheck(userEntity, 2);
 
             // Then
-            result.Should().BeTrue();
+            result.Should().BeFalse();
         }
 
         [Test]
