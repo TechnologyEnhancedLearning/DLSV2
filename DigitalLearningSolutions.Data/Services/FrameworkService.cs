@@ -245,8 +245,6 @@
         void RemoveCustomFlag(int flagId);
         void RemoveCollaboratorFromFramework(int frameworkId, int id);
 
-        bool CheckFrameworkCompenciesToDelete(int frameworkCompetencyId);
-
         void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
 
         void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
@@ -1140,25 +1138,6 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             );
         }
 
-        public bool CheckFrameworkCompenciesToDelete(int frameworkCompetencyGroupId)
-        {
-            var frameworkCompetenciesToDelete = connection.ExecuteScalar(
-                @"SELECT FrameworkCompetencyGroups.ID
-                FROM FrameworkCompetencyGroups
-                INNER JOIN FrameworkCompetencies
-                ON FrameworkCompetencyGroups.ID = FrameworkCompetencies.FrameworkCompetencyGroupID
-                WHERE FrameworkCompetencyGroups.ID = @frameworkCompetencyGroupId",
-                new { frameworkCompetencyGroupId }
-            );
-
-            if (frameworkCompetenciesToDelete != null)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId)
         {
             if ((frameworkCompetencyGroupId < 1) | (adminId < 1))
@@ -1177,7 +1156,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 new { adminId, frameworkCompetencyGroupId }
             );
 
-            
+
             connection.Execute(
                 @"DELETE FROM FrameworkCompetencies
                 WHERE FrameworkCompetencyGroupID = @frameworkCompetencyGroupId",
