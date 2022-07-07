@@ -315,7 +315,7 @@ namespace DigitalLearningSolutions.Data.Services
                 return true;
             }
 
-            return delegateAccount != null &&
+            return delegateAccount is { Active: true } &&
                    (delegateAccount.CentreSpecificDetailsLastChecked == null ||
                     delegateAccount.CentreSpecificDetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now);
         }

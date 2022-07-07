@@ -414,7 +414,9 @@
             var testDelegates = new List<DelegateUserCard>
             {
                 new DelegateUserCard
-                    { FirstName = "include", Approved = true, SelfReg = false, Password = null, EmailAddress = "email" },
+                {
+                    FirstName = "include", Approved = true, SelfReg = false, Password = null, EmailAddress = "email"
+                },
                 new DelegateUserCard
                     { FirstName = "include", Approved = true, SelfReg = false, Password = "", EmailAddress = "email" },
                 new DelegateUserCard
@@ -785,6 +787,30 @@
             A.CallTo(() => clockService.UtcNow).Returns(now);
             var userEntity = new UserEntity(
                 UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: sevenMonthsAgo) }
+            );
+
+            // When
+            var result = userService.ShouldForceDetailsCheck(userEntity, 2);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void
+            ShouldForceDetailsCheck_returns_false_when_delegate_account_details_last_checked_is_beyond_threshold_but_inactive()
+        {
+            // Given
+            var now = new DateTime(2022, 5, 5);
+            var yesterday = now.AddDays(-1);
+            var sevenMonthsAgo = now.AddMonths(-7);
+            A.CallTo(() => configuration["MonthsToPromptUserDetailsCheck"]).Returns("6");
+            A.CallTo(() => clockService.UtcNow).Returns(now);
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday, active: false),
                 new List<AdminAccount>(),
                 new List<DelegateAccount>
                     { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: sevenMonthsAgo) }
