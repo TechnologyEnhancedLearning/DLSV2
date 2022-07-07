@@ -184,14 +184,22 @@
                 )
             ).Returns(("candidate", true, true));
 
+            A.CallTo(
+                    () => userDataService.SetCentreEmail(
+                        DefaultUserId,
+                        DefaultCentreId,
+                        centreSpecificEmail,
+                        A<IDbTransaction?>._
+                    )
+                )
+                .DoesNothing();
             A.CallTo(() => delegateApprovalsService.ApproveDelegate(DefaultDelegateId, DefaultCentreId)).DoesNothing();
 
-
-                A.CallTo(() => request.Headers).Returns(
-                    new HeaderDictionary(
-                        new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues("1.1.1.1") } }
-                    )
-                );
+            A.CallTo(() => request.Headers).Returns(
+                new HeaderDictionary(
+                    new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues("1.1.1.1") } }
+                )
+            );
 
             // When
             var result = await controller.Index(model);
@@ -227,6 +235,18 @@
                     A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._))
                         .MustHaveHappenedOnceExactly();
                 }
+
+                if (centreSpecificEmail != null)
+                {
+                    A.CallTo(
+                        () => userDataService.SetCentreEmail(
+                            DefaultUserId,
+                            DefaultCentreId,
+                            centreSpecificEmail,
+                            A<IDbTransaction?>._
+                        )
+                    ).MustHaveHappenedOnceExactly();
+                }
             }
             else
             {
@@ -240,6 +260,8 @@
                     )
                 ).MustHaveHappenedOnceExactly();
                 A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._)).MustNotHaveHappened();
+                A.CallTo(() => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._))
+                    .MustNotHaveHappened();
             }
 
             result.Should().BeRedirectToActionResult().WithActionName("Confirmation");

@@ -64,6 +64,7 @@
                 Centre = centreId,
                 CentreName = centreName,
                 PrimaryEmail = User.GetUserPrimaryEmailKnownNotNull(),
+                CentreSpecificEmail = userDataService.GetCentreEmail(User.GetUserIdKnownNotNull(), centreId.Value),
             };
 
             return View(model);
@@ -116,9 +117,16 @@
                     await featureManager.IsEnabledAsync("RefactoredTrackingSystem")
                 );
             }
-            else if (!delegateAccount.Approved)
+            else
             {
-                delegateApprovalsService.ApproveDelegate(delegateAccount.Id, delegateAccount.CentreId);
+                if (model.CentreSpecificEmail != null)
+                {
+                    userDataService.SetCentreEmail(userId, model.Centre.Value, model.CentreSpecificEmail);
+                }
+                if (!delegateAccount.Approved)
+                {
+                    delegateApprovalsService.ApproveDelegate(delegateAccount.Id, delegateAccount.CentreId);
+                }
             }
 
             return RedirectToAction("Confirmation");
