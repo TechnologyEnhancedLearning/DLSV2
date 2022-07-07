@@ -61,7 +61,9 @@
                 )
                 .WithDefaultContext()
                 .WithMockRequestContext(request)
-                .WithMockUser(true, userId: DefaultUserId);
+                .WithMockUser(true, userId: DefaultUserId)
+                .WithMockServices()
+                .WithMockTempData();
         }
 
         [Test]
@@ -138,7 +140,7 @@
         )
         {
             // Given
-            var model = GetDefaultInternalAdminInformationViewModel();
+            var model = GetDefaultInternalAdminInformationViewModel(centreSpecificEmail);
             if (centreSpecificEmail != null)
             {
                 A.CallTo(
@@ -200,6 +202,7 @@
                     new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues("1.1.1.1") } }
                 )
             );
+            A.CallTo(() => featureManager.IsEnabledAsync(A<string>._)).Returns(false);
 
             // When
             var result = await controller.Index(model);
