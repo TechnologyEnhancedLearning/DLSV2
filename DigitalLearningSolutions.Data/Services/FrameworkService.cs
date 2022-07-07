@@ -850,7 +850,7 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
         public void RemoveCustomFlag(int flagId)
         {
             connection.Execute(
-                @"DELETE FROM CompetencyFlags WHERE FlagID = @flagId", new { flagId}
+                @"DELETE FROM CompetencyFlags WHERE FlagID = @flagId", new { flagId }
             );
             connection.Execute(
                 @"DELETE FROM Flags WHERE ID = @flagId", new { flagId }
