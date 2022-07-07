@@ -121,7 +121,7 @@ namespace DigitalLearningSolutions.Data.Services
                 }
 
                 if (
-                    delegateRow.Email != delegateEntity.UserCentreDetails?.Email &&
+                    delegateRow.Email != delegateEntity.EmailForCentreNotifications &&
                     userDataService.CentreSpecificEmailIsInUseAtCentre(delegateRow.Email!, centreId)
                 )
                 {
