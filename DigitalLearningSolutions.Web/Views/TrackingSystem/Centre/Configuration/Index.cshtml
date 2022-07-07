@@ -1,7 +1,5 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Models.Enums
+﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
-@using Microsoft.Extensions.Configuration
 @model CentreConfigurationViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/centreConfiguration.css")" asp-append-version="true">
@@ -18,7 +16,7 @@
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    <h1 id="page-heading" class="nhsuk-heading-xl">Centre configuration</h1>
+    <h1 id="page-heading" class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
     <div class="nhsuk-card nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
       <div class="nhsuk-card__content basic-card-content">

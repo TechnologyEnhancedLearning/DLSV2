@@ -1,17 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
 
     public class RegistrationPromptAnswersViewModel : IValidatableObject
     {
         public RegistrationPromptAnswersViewModel() { }
 
         public RegistrationPromptAnswersViewModel(
-            string optionsString,
+            string? optionsString,
             string? answer = null,
             bool includeAnswersTableCaption = false
         )
@@ -21,6 +21,14 @@
             IncludeAnswersTableCaption = includeAnswersTableCaption;
         }
 
+        public RegistrationPromptAnswersViewModel(AddRegistrationPromptTempData tempData)
+        {
+            PromptName = tempData.SelectPromptData.PromptName;
+            OptionsString = tempData.ConfigureAnswersTempData.OptionsString;
+            Answer = tempData.ConfigureAnswersTempData.Answer;
+            IncludeAnswersTableCaption = tempData.ConfigureAnswersTempData.IncludeAnswersTableCaption;
+        }
+
         public string? OptionsString { get; set; }
 
         [Required(ErrorMessage = "Enter a response")]
@@ -28,6 +36,8 @@
         public string? Answer { get; set; }
 
         public bool IncludeAnswersTableCaption { get; set; }
+
+        public string? PromptName { get; set; }
 
         private IEnumerable<string> ComparableOptions => NewlineSeparatedStringListHelper
             .SplitNewlineSeparatedList(OptionsString)

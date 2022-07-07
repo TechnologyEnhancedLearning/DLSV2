@@ -1,13 +1,8 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 @model ConfirmationViewModel
 
 @{
-  ViewData["Title"] = "Register Delegate - Confirmation";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
+  ViewData["Title"] = "Register delegate - Confirmation";
 }
 
 @section NavMenuItems {
@@ -21,7 +16,7 @@
     </h1>
     @if (Model.EmailWillBeSent) {
       <p class="nhsuk-body-l">
-        A welcome message will be sent to the email address provided, on the date specified, inviting the delegate to set their password and confirm their registration.
+        A welcome message will be sent to the email provided, on the date specified, inviting the delegate to set their password and confirm their registration.
       </p>
     } else {
       if (Model.PasswordSet) {

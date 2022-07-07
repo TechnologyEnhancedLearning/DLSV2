@@ -31,8 +31,10 @@
             BadFormatEmail,
             WhitespaceInEmail,
             HasPrnButMissingPrnValue,
+            PrnButHasPrnIsFalse,
             InvalidPrnLength,
             InvalidPrnCharacters,
+            InvalidHasPrnValue
         }
 
         public BulkUploadResult() { }

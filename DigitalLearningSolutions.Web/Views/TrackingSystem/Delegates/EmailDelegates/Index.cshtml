@@ -1,13 +1,11 @@
-@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
-@using Microsoft.Extensions.Configuration
 @model EmailDelegatesViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/emailDelegates.css")" asp-append-version="true">
 
 @{
-  ViewData["Title"] = "Send welcome messages";
   var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Send welcome messages" : "Send welcome messages";
   var exampleDate = DateTime.Today;
   var hintTextLines = new List<string> {
     $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}",
@@ -55,7 +53,7 @@
           </fieldset>
         </div>
         <vc:date-input id="welcome-email-date"
-                       label="Deliver email on or after:"
+                       label="Deliver email on or after"
                        day-id="@nameof(Model.Day)"
                        month-id="@nameof(Model.Month)"
                        year-id="@nameof(Model.Year)"
@@ -72,5 +70,4 @@
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
 @section scripts {
   <script src="@Url.Content("~/js/trackingSystem/emailDelegates.js")" asp-append-version="true"></script>
-}
-}
+}}

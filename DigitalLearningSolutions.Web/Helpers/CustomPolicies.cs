@@ -66,7 +66,8 @@
         {
             return policy.RequireAssertion(
                 context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
-                           && context.User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true
+                           && (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true
+                           || context.User.GetCustomClaimAsBool(CustomClaimTypes.IsNominatedSupervisor) == true)
             );
         }
 

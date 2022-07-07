@@ -12,8 +12,7 @@
 
 .course-dropdown {
   @extend .input-with-submit-button;
-  display: flex;
-  flex: 1;
+  width: 100%;
 }
 
 .course-submit {

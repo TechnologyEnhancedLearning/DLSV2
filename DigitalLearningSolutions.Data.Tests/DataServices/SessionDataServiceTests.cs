@@ -6,11 +6,13 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     internal class SessionDataServiceTests
     {
         private const int TwoMinutesInMilliseconds = 120 * 1000;
+        private readonly DateTime currentTime = new DateTime(2022, 06, 14, 11, 12, 13, 14);
         private SessionDataService sessionDataService = null!;
         private SessionTestHelper sessionTestHelper = null!;
 
@@ -111,7 +113,7 @@
 
                 // When
                 const int sessionId = 473;
-                sessionDataService.UpdateDelegateSessionDuration(sessionId);
+                sessionDataService.UpdateDelegateSessionDuration(sessionId, currentTime);
 
                 // Then
                 var updatedSessions = sessionTestHelper.GetCandidateSessions(candidateId).ToList();
@@ -123,7 +125,7 @@
 
                 var activeSession = updatedSessions.First(session => session.SessionId == sessionId);
                 activeSession.LoginTime.AddMinutes(activeSession.Duration)
-                    .Should().BeCloseTo(DateTime.UtcNow, TwoMinutesInMilliseconds);
+                    .Should().BeCloseTo(currentTime, TwoMinutesInMilliseconds);
             }
         }
 
@@ -138,7 +140,7 @@
 
                 // When
                 const int sessionId = 468;
-                sessionDataService.UpdateDelegateSessionDuration(sessionId);
+                sessionDataService.UpdateDelegateSessionDuration(sessionId, currentTime);
 
                 // Then
                 var updatedSessions = sessionTestHelper.GetCandidateSessions(candidateId);
@@ -186,6 +188,45 @@
 
             // Then
             result.Should().BeFalse();
+        }
+
+        [Test]
+        public void GetSessionBySessionId_gets_session_correctly()
+        {
+            // Given
+            const int sessionId = 1;
+
+            // When
+            var result = sessionDataService.GetSessionById(sessionId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                var expectedLoginTime = new DateTime(2010, 9, 22, 6, 52, 9, 540);
+                result!.SessionId.Should().Be(1);
+                result.CandidateId.Should().Be(1);
+                result.CustomisationId.Should().Be(100);
+                result.LoginTime.Should().Be(expectedLoginTime);
+                result.Duration.Should().Be(51);
+                result.Active.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void AddTutorialTimeToSessionDuration_should_add_input_time_correctly_to_correct_record()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int sessionId = 1;
+
+            // When
+            sessionDataService.AddTutorialTimeToSessionDuration(1, 12);
+
+            // Then
+            var result = sessionDataService.GetSessionById(sessionId);
+            result!.Duration.Should().Be(63);
         }
     }
 }

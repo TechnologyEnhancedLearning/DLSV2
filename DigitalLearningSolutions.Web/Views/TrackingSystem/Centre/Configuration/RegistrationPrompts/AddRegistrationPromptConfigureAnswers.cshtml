@@ -1,7 +1,5 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
+﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts
-@using Microsoft.Extensions.Configuration
 @model RegistrationPromptAnswersViewModel
 
 @{
@@ -16,6 +14,7 @@
     }
 
     <h1 class="nhsuk-heading-xl">Configure responses</h1>
+    <vc:field-name-value-display display-name="Prompt" field-value="@Model.PromptName" />
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="AddRegistrationPromptConfigureAnswers">
       <div class="hidden-submit">
@@ -23,6 +22,7 @@
       </div>
 
       <input type="hidden" asp-for="OptionsString" />
+      <input type="hidden" asp-for="PromptName"/>
 
       @if (string.IsNullOrEmpty(Model.OptionsString)) {
         <partial name="_NoConfiguredAnswers" />
@@ -38,7 +38,7 @@
                        spell-check="true"
                        autocomplete=""
                        hint-text=""
-                       css-class="nhsuk-u-width-one-half nhsuk-u-font-weight-bold" />
+                       css-class="nhsuk-u-width-one-half" />
         <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.AddPromptAction">Add</button>
       </div>
 

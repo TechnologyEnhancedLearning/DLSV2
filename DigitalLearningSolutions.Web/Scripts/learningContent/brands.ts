@@ -6,7 +6,8 @@ const brandId = brandIdHidden?.value.trim();
 const filterEnabled = document.getElementsByClassName('filter-container').length > 0;
 
 // eslint-disable-next-line no-new
-new SearchSortFilterAndPaginate(`Home/LearningContent/${brandId}/AllBrandCourses`,
+new SearchSortFilterAndPaginate(
+  `Home/LearningContent/${brandId}/AllBrandCourses`,
   false,
   true,
   filterEnabled,
@@ -14,4 +15,5 @@ new SearchSortFilterAndPaginate(`Home/LearningContent/${brandId}/AllBrandCourses
   undefined,
   undefined,
   undefined,
-  'courses-heading');
+  'courses-heading',
+);

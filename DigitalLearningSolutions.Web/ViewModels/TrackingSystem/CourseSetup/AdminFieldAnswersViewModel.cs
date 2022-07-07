@@ -2,14 +2,14 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Helpers;
 
     public class AdminFieldAnswersViewModel
     {
         public AdminFieldAnswersViewModel() { }
 
         public AdminFieldAnswersViewModel(
-            string optionsString,
+            string? optionsString,
             string? answer = null,
             bool includeAnswersTableCaption = false
         )

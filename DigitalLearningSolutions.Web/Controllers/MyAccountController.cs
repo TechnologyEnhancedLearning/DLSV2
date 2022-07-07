@@ -149,7 +149,7 @@
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
-                    "A user with this email address is already registered at this centre"
+                    "A user with this email is already registered at this centre"
                 );
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
             }

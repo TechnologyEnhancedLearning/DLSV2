@@ -1,11 +1,12 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Data.Extensions
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.ApplicationSelector
 @using Microsoft.Extensions.Configuration
 @model ApplicationSelectorViewModel
 
 @{
-  ViewData["Title"] = "Switch Application";
+  ViewData["Title"] = "Switch application";
 }
 
 <div class="nhsuk-grid-row nhsuk-card-group">
@@ -34,20 +35,37 @@
               <a class="nhsuk-card__link" asp-controller="Dashboard" asp-action="Index">Tracking System</a>
             </feature>
             <feature name="@(FeatureFlags.RefactoredTrackingSystem)" negate="true">
-              <a class="nhsuk-card__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/dashboard">Tracking System</a>
+              <a class="nhsuk-card__link" href="@Configuration.GetCurrentSystemBaseUrl()/tracking/dashboard">Tracking System</a>
             </feature>
           </h2>
           <p class="nhsuk-card__description">Manage and distribute learning to your organisation and access reports.</p>
         </div>
       </div>
     </div>
+    <feature name="@(FeatureFlags.ShowAppCardForLegacyTrackingSystem)">
+      <feature name="@(FeatureFlags.RefactoredTrackingSystem)">
+        <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+          <div class="nhsuk-card nhsuk-card--clickable">
+            <div class="nhsuk-card__content">
+              <h2 class="nhsuk-card__heading nhsuk-heading-m">
+                <a class="nhsuk-card__link" href="@Configuration.GetCurrentSystemBaseUrl()/tracking/dashboard">Legacy Tracking System</a>
+              </h2>
+              <p class="nhsuk-card__description">
+                Access the old Tracking System if you can't find the functionality you need in the new one.
+                Please raise a ticket to tell us about any missing functionality, too.
+              </p>
+            </div>
+          </div>
+        </div>
+      </feature>
+    </feature>
   }
   @if (Model.ContentManagementSystemAccess) {
     <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
           <h2 class="nhsuk-card__heading nhsuk-heading-m">
-            <a class="nhsuk-card__link" href="@Configuration["CurrentSystemBaseUrl"]/cms/courses">Content Management System</a>
+            <a class="nhsuk-card__link" href="@Configuration.GetCurrentSystemBaseUrl()/cms/courses">Content Management System</a>
           </h2>
           <p class="nhsuk-card__description">Import and manage learning content that's delivered through the Digital Learning Solutions platform.</p>
         </div>
@@ -71,7 +89,7 @@
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
           <h2 class="nhsuk-card__heading nhsuk-heading-m">
-            <a class="nhsuk-card__link" href="@Configuration["CurrentSystemBaseUrl"]/cms/contentcreator">Content Creator</a>
+            <a class="nhsuk-card__link" href="@Configuration.GetCurrentSystemBaseUrl()/cms/contentcreator">Content Creator</a>
           </h2>
           <p class="nhsuk-card__description">Create interactive elearning and assessments.</p>
         </div>
@@ -99,7 +117,7 @@
               <a class="nhsuk-card__link" asp-controller="Admins" asp-action="Index">Super admin</a>
             </feature>
             <feature name="@(FeatureFlags.RefactoredSuperAdminInterface)" negate="true">
-              <a class="nhsuk-card__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/admin-adminusers">Super admin</a>
+              <a class="nhsuk-card__link" href="@Configuration.GetCurrentSystemBaseUrl()/tracking/admin-adminusers">Super admin</a>
             </feature>
           </h2>
           <p class="nhsuk-card__description">Manage content and settings across the whole system.</p>

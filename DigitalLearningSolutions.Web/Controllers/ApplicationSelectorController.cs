@@ -20,7 +20,7 @@
             var trackingSystemAccess = User.HasCentreAdminPermissions();
             var contentManagementSystemAccess =
                 User.GetCustomClaimAsBool(CustomClaimTypes.UserAuthenticatedCm) ?? false;
-            var superviseAccess = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
+            var superviseAccess = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) | User.GetCustomClaimAsBool(CustomClaimTypes.IsNominatedSupervisor) ?? false;
             var contentCreatorAccess = User.GetCustomClaimAsBool(CustomClaimTypes.UserContentCreator) ?? false;
             var frameworksAccess = User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) |
                 User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) |

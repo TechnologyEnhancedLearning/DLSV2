@@ -6,5 +6,7 @@
         GetObjectiveArrayCc,
         StoreDiagnosticJson,
         StoreAspProgressV2,
+        StoreAspProgressNoSession,
+        StoreAspAssessNoSession,
     }
 }

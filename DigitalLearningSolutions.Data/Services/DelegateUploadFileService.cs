@@ -25,13 +25,13 @@ namespace DigitalLearningSolutions.Data.Services
 
     public class DelegateUploadFileService : IDelegateUploadFileService
     {
+        private readonly IConfiguration configuration;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IPasswordResetService passwordResetService;
         private readonly IRegistrationDataService registrationDataService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
-        private readonly IPasswordResetService passwordResetService;
-        private readonly IConfiguration configuration;
 
         public DelegateUploadFileService(
             IJobGroupsDataService jobGroupsDataService,
@@ -216,7 +216,8 @@ namespace DigitalLearningSolutions.Data.Services
                         "Unknown return value when creating delegate record."
                     );
                 default:
-                    var newDelegateRecord = userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
+                    var newDelegateRecord =
+                        userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
                     UpdateUserProfessionalRegistrationNumberIfNecessary(
                         delegateRow.HasPrn,
                         delegateRow.Prn,
@@ -233,19 +234,32 @@ namespace DigitalLearningSolutions.Data.Services
                             "DelegateBulkUpload_Refactor"
                         );
                     }
+
                     delegateRow.RowStatus = RowStatus.Registered;
                     break;
             }
         }
 
-        private void UpdateUserProfessionalRegistrationNumberIfNecessary(bool? delegateRowHasPrn, string? delegateRowPrn, int delegateId)
+        private void UpdateUserProfessionalRegistrationNumberIfNecessary(
+            bool? delegateRowHasPrn,
+            string? delegateRowPrn,
+            int delegateId
+        )
         {
-            if (delegateRowHasPrn.HasValue)
+            if (delegateRowPrn != null)
             {
                 userDataService.UpdateDelegateProfessionalRegistrationNumber(
                     delegateId,
-                    delegateRowHasPrn.Value ? delegateRowPrn : null,
+                    delegateRowPrn,
                     true
+                );
+            }
+            else
+            {
+                userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                    delegateId,
+                    null,
+                    delegateRowHasPrn.HasValue
                 );
             }
         }
@@ -287,7 +301,7 @@ namespace DigitalLearningSolutions.Data.Services
                 "Active",
                 "EmailAddress",
                 "HasPRN",
-                "PRN"
+                "PRN",
             }.OrderBy(x => x);
             var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
             return actualHeaders.SequenceEqual(expectedHeaders);

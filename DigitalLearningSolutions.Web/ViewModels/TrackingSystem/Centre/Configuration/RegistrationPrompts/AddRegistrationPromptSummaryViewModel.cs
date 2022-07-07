@@ -1,20 +1,22 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
 
     public class AddRegistrationPromptSummaryViewModel
     {
         public AddRegistrationPromptSummaryViewModel(
-            AddRegistrationPromptData data,
+            AddRegistrationPromptTempData tempData,
             string promptName
         )
         {
             PromptName = promptName;
-            Mandatory = data.SelectPromptViewModel.Mandatory ? "Yes" : "No";
+            Mandatory = tempData.SelectPromptData.Mandatory ? "Yes" : "No";
             Answers = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(
-                data.ConfigureAnswersViewModel.OptionsString
+                tempData.ConfigureAnswersTempData.OptionsString
             );
         }
 

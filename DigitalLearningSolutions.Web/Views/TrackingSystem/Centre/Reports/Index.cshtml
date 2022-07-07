@@ -1,7 +1,5 @@
-@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
-@using Microsoft.Extensions.Configuration
 @model ReportsViewModel
 
 @{
@@ -18,7 +16,7 @@
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    <h1 id="page-heading" class="nhsuk-heading-xl">Centre reports</h1>
+    <h1 id="page-heading" class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
     @if (Model.HasActivity) {
       <span class="nhsuk-body-l">View reports for <span class="nhsuk-u-font-weight-bold">@Model.ReportsFilterModel.CourseCategoryName</span> courses.</span>
@@ -65,7 +63,7 @@
       </a>
     } else {
       var place = Model.Category == "All" ? "at this centre" : $"for course category {Model.Category}";
-      <p class="nhsuk-body-l">
+      <p class="nhsuk-body-l" id="no-activity-message">
         There has not yet been any activity @place.
       </p>
     }

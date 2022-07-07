@@ -184,27 +184,11 @@
         }
 
         [Test]
-        public async Task No_user_account_found_should_render_basic_form_with_error()
+        public async Task Invalid_credentials_should_render_basic_form_with_error()
         {
             // Given
             A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
-                new LoginResult(LoginAttemptResult.InvalidUsername)
-            );
-
-            // When
-            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
-
-            // Then
-            result.Should().BeViewResult().WithViewName("Index").ModelAs<LoginViewModel>();
-            Assert.IsFalse(controller.ModelState.IsValid);
-        }
-
-        [Test]
-        public async Task Bad_password_should_render_basic_form_with_error()
-        {
-            // Given
-            A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
-                new LoginResult(LoginAttemptResult.InvalidPassword)
+                new LoginResult(LoginAttemptResult.InvalidCredentials)
             );
 
             // When

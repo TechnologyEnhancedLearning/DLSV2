@@ -138,7 +138,7 @@
         public static readonly CourseDelegatesSortByOption LastUpdatedDate = new CourseDelegatesSortByOption(
             2,
             nameof(LastUpdatedDate),
-            "Last updated date",
+            "Last access",
             nameof(CourseDelegate.LastUpdated)
         );
 

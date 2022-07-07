@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.SelfAssessments
 {
+    using DigitalLearningSolutions.Data.Models.Frameworks;
     using System;
     using System.Collections.Generic;
 
@@ -21,5 +22,6 @@
         public DateTime? Requested { get; set; }
         public bool? SignedOff { get; set; }
         public List<AssessmentQuestion> AssessmentQuestions { get; set; } = new List<AssessmentQuestion>();
+        public IEnumerable<CompetencyFlag> CompetencyFlags { get; set; } = new List<CompetencyFlag>();
     }
 }

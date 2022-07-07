@@ -14,9 +14,9 @@
     public class PasswordDataServiceTests
     {
         private const string PasswordHashNotYetInDb = "I haven't used this password before!";
+        private SqlConnection connection = null!;
         private PasswordDataService passwordDataService = null!;
         private UserDataService userDataService = null!;
-        private SqlConnection connection = null!;
 
         [SetUp]
         public void Setup()
@@ -45,6 +45,22 @@
             {
                 transaction.Dispose();
             }
+        }
+
+        [Test]
+        public void SetPasswordByAdminId_should_set_password_correctly()
+        {
+            using var transaction = new TransactionScope();
+            // Given
+            const string? password = "hashedPassword";
+            const int adminId = 1;
+
+            // When
+            passwordDataService.SetPasswordByAdminId(adminId, password);
+            var result = userDataService.GetAdminUserById(1)!.Password;
+
+            // Then
+            result.Should().Be(password);
         }
 
         [Test]

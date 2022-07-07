@@ -25,7 +25,11 @@ namespace DigitalLearningSolutions.Data.Services
 
         string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
 
-        void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
+        void RegisterCentreManager(
+            AdminRegistrationModel registrationModel,
+            int jobGroupId,
+            bool registerJourneyContainsTermsAndConditions
+        );
 
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId);
     }
@@ -35,7 +39,6 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly ICentresDataService centresDataService;
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
-        private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ILogger<RegistrationService> logger;
         private readonly IPasswordDataService passwordDataService;
         private readonly IPasswordResetService passwordResetService;
@@ -51,7 +54,6 @@ namespace DigitalLearningSolutions.Data.Services
             ICentresDataService centresDataService,
             IConfiguration config,
             ISupervisorDelegateService supervisorDelegateService,
-            IFrameworkNotificationService frameworkNotificationService,
             IUserDataService userDataService,
             ILogger<RegistrationService> logger
         )
@@ -64,7 +66,6 @@ namespace DigitalLearningSolutions.Data.Services
             this.userDataService = userDataService;
             this.config = config;
             this.supervisorDelegateService = supervisorDelegateService;
-            this.frameworkNotificationService = frameworkNotificationService;
             this.userDataService = userDataService;
             this.logger = logger;
         }
@@ -133,19 +134,6 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
-        {
-            using var transaction = new TransactionScope();
-
-            CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
-
-            registrationDataService.RegisterAdmin(registrationModel);
-
-            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
-
-            transaction.Complete();
-        }
-
         public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
@@ -162,33 +150,58 @@ namespace DigitalLearningSolutions.Data.Services
 
             var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
 
-            if (adminUser != null)
+            if (adminUser?.Active == false && adminUser.CentreId == delegateUser.CentreId)
+            {
+                userDataService.ReactivateAdmin(adminUser.Id);
+                userDataService.UpdateAdminUser(
+                    delegateUser.FirstName,
+                    delegateUser.LastName,
+                    delegateUser.EmailAddress,
+                    delegateUser.ProfileImage,
+                    adminUser.Id
+                );
+                passwordDataService.SetPasswordByAdminId(adminUser.Id, delegateUser.Password);
+                userDataService.UpdateAdminUserPermissions(
+                    adminUser.Id,
+                    adminRoles.IsCentreAdmin,
+                    adminRoles.IsSupervisor,
+                    adminRoles.IsNominatedSupervisor,
+                    adminRoles.IsTrainer,
+                    adminRoles.IsContentCreator,
+                    adminRoles.IsContentManager,
+                    adminRoles.ImportOnly,
+                    categoryId
+                );
+            }
+            else if (adminUser == null)
+            {
+                var adminRegistrationModel = new AdminRegistrationModel(
+                    delegateUser.FirstName,
+                    delegateUser.LastName,
+                    delegateUser.EmailAddress,
+                    delegateUser.CentreId,
+                    delegateUser.Password,
+                    true,
+                    true,
+                    delegateUser.ProfessionalRegistrationNumber,
+                    categoryId,
+                    adminRoles.IsCentreAdmin,
+                    false,
+                    adminRoles.IsSupervisor,
+                    adminRoles.IsNominatedSupervisor,
+                    adminRoles.IsTrainer,
+                    adminRoles.IsContentCreator,
+                    adminRoles.IsCmsAdministrator,
+                    adminRoles.IsCmsManager,
+                    delegateUser.ProfileImage
+                );
+
+                registrationDataService.RegisterAdmin(adminRegistrationModel, false);
+            }
+            else
             {
                 throw new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse);
             }
-
-            var adminRegistrationModel = new AdminRegistrationModel(
-                delegateUser.FirstName,
-                delegateUser.LastName,
-                delegateUser.EmailAddress,
-                delegateUser.CentreId,
-                delegateUser.Password,
-                true,
-                true,
-                delegateUser.ProfessionalRegistrationNumber,
-                categoryId,
-                adminRoles.IsCentreAdmin,
-                false,
-                adminRoles.IsSupervisor,
-                adminRoles.IsNominatedSupervisor,
-                adminRoles.IsTrainer,
-                adminRoles.IsContentCreator,
-                adminRoles.IsCmsAdministrator,
-                adminRoles.IsCmsManager,
-                delegateUser.ProfileImage
-            );
-
-            registrationDataService.RegisterAdmin(adminRegistrationModel);
         }
 
         public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
@@ -241,6 +254,23 @@ namespace DigitalLearningSolutions.Data.Services
             transaction.Complete();
 
             return candidateNumber;
+        }
+
+        public void RegisterCentreManager(
+            AdminRegistrationModel registrationModel,
+            int jobGroupId,
+            bool registerJourneyContainsTermsAndConditions
+        )
+        {
+            using var transaction = new TransactionScope();
+
+            CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
+
+            registrationDataService.RegisterAdmin(registrationModel, registerJourneyContainsTermsAndConditions);
+
+            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
+
+            transaction.Complete();
         }
 
         private string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)

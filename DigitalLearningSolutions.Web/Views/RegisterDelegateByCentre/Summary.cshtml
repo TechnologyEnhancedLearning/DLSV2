@@ -1,13 +1,8 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 @model SummaryViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Summary" : "Register Delegate - Summary";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
+  ViewData["Title"] = errorHasOccurred ? "Error: Register delegate - Summary" : "Register delegate - Summary";
 }
 
 @section NavMenuItems {
@@ -56,7 +51,7 @@
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="PersonalInformation">
-            Change<span class="nhsuk-u-visually-hidden"> email address</span>
+            Change<span class="nhsuk-u-visually-hidden"> email</span>
           </a>
         </dd>
       </div>

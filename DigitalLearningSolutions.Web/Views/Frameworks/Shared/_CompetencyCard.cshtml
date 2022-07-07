@@ -3,14 +3,15 @@
 
 <div id="fc-@Model.FrameworkCompetency.Id" class="nhsuk-card nhsuk-u-margin-bottom-5 nhsuk-u-margin-left-3">
   <div class="nhsuk-card__content">
+    <partial name="_CompetencyFlags" model="Model.CompetencyFlags" />
     @if (Model.FrameworkCompetency.Description != null)
     {
       <h4>
         @Model.FrameworkCompetency.Name
       </h4>
-    <p class="nhsuk-body">
-      @(Html.Raw(Model.FrameworkCompetency.Description))
-    </p>
+      <p class="nhsuk-body">
+        @(Html.Raw(Model.FrameworkCompetency.Description))
+      </p>
   }
   else
   {

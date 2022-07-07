@@ -56,7 +56,7 @@
         public bool ReceiveNotificationEmails { get; set; }
 
         [Required(ErrorMessage = "Enter an email for receiving the notifications")]
-        [MaxLength(500, ErrorMessage = "Email address must be 500 characters or fewer")]
+        [MaxLength(500, ErrorMessage = "Email must be 500 characters or fewer")]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? NotificationEmails { get; set; }

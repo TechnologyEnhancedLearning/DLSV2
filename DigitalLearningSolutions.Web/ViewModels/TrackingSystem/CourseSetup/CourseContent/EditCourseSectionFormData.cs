@@ -24,6 +24,6 @@
 
         public string SectionName { get; set; }
         public bool ShowDiagnostic { get; set; }
-        public IEnumerable<CourseTutorialViewModel> Tutorials { get; set; }
+        public IEnumerable<CourseTutorialViewModel>? Tutorials { get; set; }
     }
 }

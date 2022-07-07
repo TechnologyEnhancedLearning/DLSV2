@@ -14,10 +14,12 @@
 
     public class SessionService : ISessionService
     {
+        private readonly IClockService clockService;
         private readonly ISessionDataService sessionDataService;
 
-        public SessionService(ISessionDataService sessionDataService)
+        public SessionService(IClockService clockService, ISessionDataService sessionDataService)
         {
+            this.clockService = clockService;
             this.sessionDataService = sessionDataService;
         }
 
@@ -26,7 +28,7 @@
             var currentSessionId = httpContextSession.GetInt32($"SessionID-{customisationId}");
             if (currentSessionId != null)
             {
-                sessionDataService.UpdateDelegateSessionDuration(currentSessionId.Value);
+                sessionDataService.UpdateDelegateSessionDuration(currentSessionId.Value, clockService.UtcNow);
             }
             else
             {

@@ -114,5 +114,23 @@
                 }
             );
         }
+
+        [Test]
+        public void GetFilterOptions_excludes_category_option_if_passed_no_categories()
+        {
+            // When
+            var result =
+                DelegateCourseStatisticsViewModelFilterOptions.GetFilterOptions(new string[] { }, filterableTopics);
+
+            // Then
+            result.Should().BeEquivalentTo(
+                new List<FilterModel>
+                {
+                    expectedTopicsFilterViewModel,
+                    expectedStatusFilterViewModel,
+                    expectedHasAdminFieldsFilterViewModel,
+                }
+            );
+        }
     }
 }

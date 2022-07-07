@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures
 {
     using System;
+    using System.Data.SqlClient;
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
     using OpenQA.Selenium;
 

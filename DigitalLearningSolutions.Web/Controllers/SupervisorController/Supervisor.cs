@@ -13,7 +13,6 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
-    using DigitalLearningSolutions.Data.Enums;
 
     public partial class SupervisorController
     {
@@ -49,6 +48,7 @@
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
             var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
+            var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
             var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
                 supervisor =>
                 {
@@ -61,11 +61,12 @@
                             searchString,
                             sortBy,
                             sortDirection
-                        )
+                        ),
+                        isSupervisor
                     );
                 }
             );
-            
+
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                 new SearchOptions(searchString),
                 new SortOptions(sortBy, sortDirection),
@@ -153,6 +154,17 @@
             }
         }
 
+        public IActionResult ConfirmSupervise(int supervisorDelegateId)
+        {
+            var adminId = GetAdminID();
+            if (supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, 0, adminId))
+            {
+                frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, adminId, 0);
+            }
+
+            return RedirectToAction("MyStaffList");
+        }
+
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {
@@ -205,7 +217,8 @@
                     return supervisor;
                 }
             );
-            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts);
+            var isSupervisor = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
+            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts, isSupervisor);
             return View("AllStaffList", model);
         }
 
@@ -218,8 +231,7 @@
             var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
                 selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId).ToList()
             );
-            var delegateSelfAssessment =
-                supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, adminId);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, adminId);
             var model = new ReviewSelfAssessmentViewModel()
             {
                 SupervisorDelegateDetail = superviseDelegate,
@@ -227,6 +239,13 @@
                 CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup),
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed
             };
+
+            var flags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(reviewedCompetencies.Select(c => c.Id).ToArray());
+            foreach (var competency in reviewedCompetencies)
+            {
+                competency.CompetencyFlags = flags.Where(f => f.CompetencyId == competency.Id);
+            };
+
             if (superviseDelegate.CandidateID != null)
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(
@@ -335,8 +354,10 @@
                 "Supervisor",
                 new
                 {
-                    supervisorDelegateId = supervisorDelegateId, candidateAssessmentId = candidateAssessmentId,
-                    viewMode = "View", resultId = resultId
+                    supervisorDelegateId = supervisorDelegateId,
+                    candidateAssessmentId = candidateAssessmentId,
+                    viewMode = "View",
+                    resultId = resultId
                 }
             );
         }
@@ -363,11 +384,9 @@
             {
                 DelegateSelfAssessment = delegateSelfAssessment,
                 SupervisorDelegate = supervisorDelegate,
-                SupervisorName = supervisorDelegate.SupervisorName,
                 Competency = competency,
                 ResultSupervisorVerificationId = assessmentQuestion.SelfAssessmentResultSupervisorVerificationId,
                 SupervisorComments = assessmentQuestion.SupervisorComments,
-                Verified = assessmentQuestion.Verified,
                 SignedOff = assessmentQuestion.SignedOff != null ? (bool)assessmentQuestion.SignedOff : false
             };
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
@@ -433,7 +452,8 @@
                 "Supervisor",
                 new
                 {
-                    supervisorDelegateId = supervisorDelegateId, candidateAssessmentId = candidateAssessmentId,
+                    supervisorDelegateId = supervisorDelegateId,
+                    candidateAssessmentId = candidateAssessmentId,
                     viewMode = "Review"
                 }
             );
@@ -631,11 +651,26 @@
         [HttpPost]
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/SupervisorRole")]
         public IActionResult EnrolDelegateSetSupervisorRole(
+            EnrolDelegateSupervisorRoleViewModel model,
             int supervisorDelegateId,
             int selfAssessmentSupervisorRoleId
         )
         {
             SessionEnrolOnRoleProfile sessionEnrolOnRoleProfile = TempData.Peek<SessionEnrolOnRoleProfile>();
+            if (!ModelState.IsValid)
+            {
+                ModelState.ClearErrorsForAllFieldsExcept("SelfAssessmentSupervisorRoleId");
+                var supervisorDelegate =
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                var roleProfile = supervisorService.GetRoleProfileById((int)sessionEnrolOnRoleProfile.SelfAssessmentID);
+                var supervisorRoles =
+                    supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value);
+                model.SupervisorDelegateDetail = supervisorDelegate;
+                model.RoleProfile = roleProfile;
+                model.SelfAssessmentSupervisorRoles = supervisorRoles;
+                return View("EnrolDelegateSupervisorRole", model);
+            }
+
             sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId = selfAssessmentSupervisorRoleId;
             TempData.Set(sessionEnrolOnRoleProfile);
             return RedirectToAction(
@@ -696,7 +731,7 @@
                     completeByDate
                 );
             }
-
+            TempData.Clear();
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
         }
 
@@ -780,7 +815,8 @@
                 "Supervisor",
                 new
                 {
-                    supervisorDelegateId = supervisorDelegateId, candidateAssessmentId = candidateAssessmentId,
+                    supervisorDelegateId = supervisorDelegateId,
+                    candidateAssessmentId = candidateAssessmentId,
                     viewMode = "Review"
                 }
             );

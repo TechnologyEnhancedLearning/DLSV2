@@ -131,7 +131,26 @@
                     expectedTopicsFilterViewModel,
                     expectedStatusFilterViewModel,
                     expectedVisibilityFilterViewModel,
-                    expectedHasAdminFieldsFilterViewModel
+                    expectedHasAdminFieldsFilterViewModel,
+                }
+            );
+        }
+
+        [Test]
+        public void GetFilterOptions_excludes_category_option_if_passed_no_categories()
+        {
+            // When
+            var result =
+                CourseStatisticsViewModelFilterOptions.GetFilterOptions(new string[] { }, filterableTopics);
+
+            // Then
+            result.Should().BeEquivalentTo(
+                new List<FilterModel>
+                {
+                    expectedTopicsFilterViewModel,
+                    expectedStatusFilterViewModel,
+                    expectedVisibilityFilterViewModel,
+                    expectedHasAdminFieldsFilterViewModel,
                 }
             );
         }

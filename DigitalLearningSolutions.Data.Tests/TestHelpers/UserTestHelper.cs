@@ -177,6 +177,22 @@
             return users.Single();
         }
 
+        public static async Task<DateTime?> GetTCAgreedByAdminIdAsync(
+            this DbConnection connection,
+            int adminId
+        )
+        {
+            var users = await connection.QueryAsync<DateTime?>(
+                @"SELECT
+                        TCAgreed
+                    FROM AdminUsers
+                    WHERE AdminId = @adminId",
+                new { adminId }
+            );
+
+            return users.SingleOrDefault();
+        }
+
         public static MyAccountDetailsData GetDefaultAccountDetailsData(
             int? adminId = null,
             int? delegateId = null,
@@ -212,6 +228,18 @@
         )
         {
             return new CentreAnswersData(centreId, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6);
+        }
+
+        public static void SetAdminToInactiveWithCentreManagerAndSuperAdminPermissions(this DbConnection connection, int adminId)
+        {
+            connection.Execute(
+                @"UPDATE AdminUsers SET
+                        Active = 0,
+                        IsCentreManager = 1,
+                        UserAdmin = 1
+                    WHERE AdminID = @adminId",
+                new { adminId }
+            );
         }
 
         public static void GivenDelegateUserIsInDatabase(DelegateUser user, SqlConnection sqlConnection)
