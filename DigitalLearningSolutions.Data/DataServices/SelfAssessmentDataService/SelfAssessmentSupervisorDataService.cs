@@ -187,30 +187,32 @@
         {
             return connection.Query<SupervisorComment>(
                 @"SELECT
-                        sar.AssessmentQuestionID,
-                        sea.Name,
-                        sasv.Comments,
-                        sar.CandidateID,
-                        sar.CompetencyID,
-                        com.Name as CompetencyName,
-                        sar.SelfAssessmentID,
-                        sasv.CandidateAssessmentSupervisorID,
-                        sasv.SelfAssessmentResultId,
-                        sasv.Verified,
-                        sar.ID,
-                        sstrc.CompetencyGroupID,
-                        sea.Vocabulary,
-                        sasv.SignedOff,
-                        sea.ReviewerCommentsLabel
-                    FROM SelfAssessmentResultSupervisorVerifications AS sasv
-                    INNER JOIN SelfAssessmentResults AS sar
-                        ON sasv.SelfAssessmentResultId = sar.ID
-                    INNER JOIN SelfAssessments AS sea
-                        ON sar.SelfAssessmentID = sea.ID
-                    INNER JOIN SelfAssessmentStructure AS sstrc
-                        ON sar.CompetencyID = sstrc.CompetencyID 
-                    INNER JOIN Competencies AS com
-                        ON sar.CompetencyID = com.ID
+                    sar.AssessmentQuestionID,
+                    sea.Name,
+                    au.Forename + ' ' + au.Surname As SupervisorName,
+                    sasr.RoleName,
+                    sasv.Comments,
+                    sar.CandidateID,
+                    sar.CompetencyID,
+                    com.Name AS CompetencyName,
+                    sar.SelfAssessmentID,
+                    sasv.CandidateAssessmentSupervisorID,
+                    sasv.SelfAssessmentResultId,
+                    sasv.Verified,
+                    sar.ID,
+                    sstrc.CompetencyGroupID, 
+                    sea.Vocabulary,
+                    sasv.SignedOff,
+                    sea.ReviewerCommentsLabel
+                    FROM   SelfAssessmentResultSupervisorVerifications AS sasv INNER JOIN
+                    SelfAssessmentResults AS sar ON sasv.SelfAssessmentResultId = sar.ID INNER JOIN
+                    SelfAssessments AS sea ON sar.SelfAssessmentID = sea.ID INNER JOIN
+                    SelfAssessmentStructure AS sstrc ON sar.CompetencyID = sstrc.CompetencyID INNER JOIN
+                    Competencies AS com ON sar.CompetencyID = com.ID INNER JOIN
+                    CandidateAssessmentSupervisors AS cas ON sasv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
+                    SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
+                    AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID INNER JOIN
+                    SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
                     WHERE (sar.CandidateID = @candidateId) AND (sasv.SelfAssessmentResultId = @resultId)",
                 new { candidateId, resultId }
             ).FirstOrDefault();
