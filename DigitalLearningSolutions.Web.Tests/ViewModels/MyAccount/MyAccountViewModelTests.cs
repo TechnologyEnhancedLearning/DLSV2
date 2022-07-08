@@ -20,6 +20,7 @@
             // Given
             var userAccount = UserTestHelper.GetDefaultUserAccount();
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
+            var centreId = delegateAccount.CentreId;
             var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
                 new List<CentreRegistrationPromptWithAnswer>
                 {
@@ -27,14 +28,17 @@
                 }
             );
             var centreEmail = "centre@gmail.com";
+            var allCentreSpecificEmails = new List<(string centreName, string? centreSpecificEmail)>();
 
             // When
             var returnedModel = new MyAccountViewModel(
                 userAccount,
                 delegateAccount,
+                centreId,
                 delegateAccount.CentreName,
                 centreEmail,
                 customPrompts,
+                allCentreSpecificEmails,
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -42,18 +46,20 @@
             // Then
             using (new AssertionScope())
             {
+                returnedModel.CentreId.Should().Be(centreId);
                 returnedModel.FirstName.Should().BeEquivalentTo(userAccount.FirstName);
-                returnedModel.Centre.Should().BeEquivalentTo(delegateAccount.CentreName);
+                returnedModel.CentreName.Should().BeEquivalentTo(delegateAccount.CentreName);
                 returnedModel.Surname.Should().BeEquivalentTo(userAccount.LastName);
                 returnedModel.ProfilePicture.Should().BeEquivalentTo(userAccount.ProfileImage);
                 returnedModel.DelegateNumber.Should().BeEquivalentTo(delegateAccount.CandidateNumber);
                 returnedModel.PrimaryEmail.Should().BeEquivalentTo(userAccount.PrimaryEmail);
                 returnedModel.JobGroup.Should().BeEquivalentTo(userAccount.JobGroupName);
                 returnedModel.DelegateRegistrationPrompts.Should().NotBeNullOrEmpty();
-                returnedModel.CentreEmail.Should().BeEquivalentTo(centreEmail);
+                returnedModel.CentreSpecificEmail.Should().BeEquivalentTo(centreEmail);
                 returnedModel.DateRegistered.Should().BeEquivalentTo(
                     delegateAccount.DateRegistered.ToString(DateHelper.StandardDateFormat)
                 );
+                returnedModel.AllCentreSpecificEmails.Should().BeEquivalentTo(allCentreSpecificEmails);
                 returnedModel.SwitchCentreReturnUrl.Should().Be(SwitchCentreReturnUrl);
             }
         }
@@ -65,14 +71,19 @@
             var userAccount = UserTestHelper.GetDefaultUserAccount();
             var centreName = UserTestHelper.GetDefaultAdminUser().CentreName;
             var centreEmail = "centre@gmail.com";
+            int? centreId = null;
+            var allCentreSpecificEmails = new List<(string centreName, string? centreSpecificEmail)>
+                { ("centre", "email") };
 
             // When
             var returnedModel = new MyAccountViewModel(
                 userAccount,
                 null,
+                centreId,
                 centreName,
                 centreEmail,
                 null,
+                allCentreSpecificEmails,
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -80,16 +91,18 @@
             // Then
             using (new AssertionScope())
             {
+                returnedModel.CentreId.Should().Be(centreId);
                 returnedModel.FirstName.Should().BeEquivalentTo(userAccount.FirstName);
-                returnedModel.Centre.Should().BeEquivalentTo(centreName);
+                returnedModel.CentreName.Should().BeEquivalentTo(centreName);
                 returnedModel.Surname.Should().BeEquivalentTo(userAccount.LastName);
                 returnedModel.ProfilePicture.Should().BeEquivalentTo(userAccount.ProfileImage);
                 returnedModel.DelegateNumber.Should().BeNull();
                 returnedModel.PrimaryEmail.Should().BeEquivalentTo(userAccount.PrimaryEmail);
                 returnedModel.JobGroup.Should().BeEquivalentTo(userAccount.JobGroupName);
                 returnedModel.DelegateRegistrationPrompts.Should().BeEmpty();
-                returnedModel.CentreEmail.Should().BeEquivalentTo(centreEmail);
+                returnedModel.CentreSpecificEmail.Should().BeEquivalentTo(centreEmail);
                 returnedModel.DateRegistered.Should().BeNull();
+                returnedModel.AllCentreSpecificEmails.Should().BeEquivalentTo(allCentreSpecificEmails);
                 returnedModel.SwitchCentreReturnUrl.Should().Be(SwitchCentreReturnUrl);
             }
         }
@@ -112,9 +125,11 @@
             var returnedModel = new MyAccountViewModel(
                 userAccount,
                 delegateAccount,
+                delegateAccount.CentreId,
                 delegateAccount.CentreName,
                 null,
                 customPrompts,
+                new List<(string centreName, string? centreSpecificEmail)>(),
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -153,9 +168,11 @@
             var returnedModel = new MyAccountViewModel(
                 userAccount,
                 null,
+                1,
                 UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
+                new List<(string centreName, string? centreSpecificEmail)>(),
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -187,9 +204,11 @@
             var returnedModel = new MyAccountViewModel(
                 userAccount,
                 null,
+                1,
                 UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
+                new List<(string centreName, string? centreSpecificEmail)>(),
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -221,9 +240,11 @@
             var returnedModel = new MyAccountViewModel(
                 userAccount,
                 null,
+                1,
                 UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
+                new List<(string centreName, string? centreSpecificEmail)>(),
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );

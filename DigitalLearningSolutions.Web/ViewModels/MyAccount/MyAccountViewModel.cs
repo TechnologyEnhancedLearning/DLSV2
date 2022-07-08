@@ -13,21 +13,24 @@
         public MyAccountViewModel(
             UserAccount userAccount,
             DelegateAccount? delegateAccount,
+            int? centreId,
             string? centreName,
-            string? centreEmail,
+            string? centreSpecificEmail,
             CentreRegistrationPromptsWithAnswers? customPrompts,
+            List<(string centreName, string? centreSpecificEmail)> allCentreSpecificEmails,
             DlsSubApplication dlsSubApplication,
             string switchCentreReturnUrl
         )
         {
+            CentreId = centreId;
             FirstName = userAccount.FirstName;
             Surname = userAccount.LastName;
             PrimaryEmail = userAccount.PrimaryEmail;
             ProfilePicture = userAccount.ProfileImage;
-            Centre = centreName;
+            CentreName = centreName;
             DelegateNumber = delegateAccount?.CandidateNumber;
             JobGroup = userAccount.JobGroupName;
-            CentreEmail = centreEmail;
+            CentreSpecificEmail = centreSpecificEmail;
             DateRegistered = delegateAccount?.DateRegistered.ToString(DateHelper.StandardDateFormat);
             ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
                 userAccount.HasBeenPromptedForPrn,
@@ -49,11 +52,13 @@
                     .ToList();
             }
 
+            AllCentreSpecificEmails = allCentreSpecificEmails;
             DlsSubApplication = dlsSubApplication;
             SwitchCentreReturnUrl = switchCentreReturnUrl;
         }
 
-        public string? Centre { get; set; }
+        public int? CentreId { get; set; }
+        public string? CentreName { get; set; }
 
         public string PrimaryEmail { get; set; }
 
@@ -69,11 +74,13 @@
 
         public string ProfessionalRegistrationNumber { get; set; }
 
-        public string? CentreEmail { get; set; }
+        public string? CentreSpecificEmail { get; set; }
 
         public string? DateRegistered { get; set; }
 
         public List<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
+
+        public List<(string centreName, string? centreSpecificEmail)> AllCentreSpecificEmails { get; set; }
 
         public DlsSubApplication DlsSubApplication { get; set; }
 

@@ -21,8 +21,6 @@ namespace DigitalLearningSolutions.Data.Services
 
         DelegateUser? GetDelegateUserById(int delegateId);
 
-        public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
-
         List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
 
         void UpdateUserDetailsAndCentreSpecificDetails(
@@ -72,6 +70,8 @@ namespace DigitalLearningSolutions.Data.Services
         UserAccount? GetUserByEmailAddress(string emailAddress);
 
         string? GetCentreEmail(int userId, int centreId);
+
+        IEnumerable<(string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(int userId);
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
 
@@ -127,13 +127,6 @@ namespace DigitalLearningSolutions.Data.Services
             }
 
             return (adminUser, delegateUser);
-        }
-
-        public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
-        {
-            return string.IsNullOrWhiteSpace(emailAddress)
-                ? new List<DelegateUser>()
-                : userDataService.GetDelegateUsersByEmailAddress(emailAddress);
         }
 
         public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
@@ -323,6 +316,11 @@ namespace DigitalLearningSolutions.Data.Services
         public string? GetCentreEmail(int userId, int centreId)
         {
             return userDataService.GetCentreEmail(userId, centreId);
+        }
+
+        public IEnumerable<(string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(int userId)
+        {
+            return userDataService.GetAllCentreEmailsForUser(userId);
         }
 
         public (string? primaryEmail, IEnumerable<(string centreName, string centreEmail)> centreEmails)
