@@ -378,6 +378,7 @@
             var delegateSelfAssessment =
                 supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
             var assessmentQuestion = GetLevelDescriptorsForAssessmentQuestion(competency.AssessmentQuestions.First());
+            competency.CompetencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyId(competency.Id);
             var model = new ReviewCompetencySelfAsessmentViewModel()
             {
                 DelegateSelfAssessment = delegateSelfAssessment,
