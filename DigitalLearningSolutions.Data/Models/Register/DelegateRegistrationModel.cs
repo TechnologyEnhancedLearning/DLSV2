@@ -21,7 +21,8 @@
             string? answer5,
             string? answer6,
             bool isSelfRegistered,
-            bool active,
+            bool centreAccountIsActive,
+            bool userIsActive,
             string? professionalRegistrationNumber,
             bool approved = false,
             DateTime? notifyDate = null
@@ -32,7 +33,7 @@
             centreSpecificEmail,
             centre,
             passwordHash,
-            active,
+            centreAccountIsActive,
             approved,
             professionalRegistrationNumber,
             jobGroup
@@ -46,6 +47,7 @@
             Answer6 = answer6;
             NotifyDate = notifyDate;
             IsSelfRegistered = isSelfRegistered;
+            UserIsActive = userIsActive;
         }
 
         public DelegateRegistrationModel(
@@ -56,7 +58,8 @@
             int centre,
             int jobGroup,
             string? passwordHash,
-            bool active,
+            bool centreAccountIsActive,
+            bool userIsActive,
             bool approved,
             string? professionalRegistrationNumber
         ) : base(
@@ -66,11 +69,14 @@
             centreSpecificEmail,
             centre,
             passwordHash,
-            active,
+            centreAccountIsActive,
             approved,
             professionalRegistrationNumber,
             jobGroup
-        ) { }
+        )
+        {
+            UserIsActive = userIsActive;
+        }
 
         public DelegateRegistrationModel(
             DelegateTableRow row,
@@ -79,8 +85,8 @@
         ) : this(
             row.FirstName!,
             row.LastName!,
-            row.Email!,
-            null,
+            Guid.NewGuid().ToString(),
+            row.Email,
             centreId,
             row.JobGroupId!.Value,
             null,
@@ -92,7 +98,8 @@
             row.Answer6,
             false,
             row.Active!.Value,
-            null,
+            false,
+            row.Prn,
             true,
             welcomeEmailDate
         ) { }
@@ -102,7 +109,6 @@
             InternalDelegateRegistrationModel internalDelegateRegistrationModel,
             bool approved = false,
             bool isSelfRegistered = true
-
         ) : base(
             userAccount.FirstName,
             userAccount.LastName,
@@ -123,23 +129,26 @@
             Answer5 = internalDelegateRegistrationModel.Answer5;
             Answer6 = internalDelegateRegistrationModel.Answer6;
             IsSelfRegistered = isSelfRegistered;
+            UserIsActive = true;
         }
 
-        public string? Answer1 { get; set; }
+        public string? Answer1 { get; }
 
-        public string? Answer2 { get; set; }
+        public string? Answer2 { get; }
 
-        public string? Answer3 { get; set; }
+        public string? Answer3 { get; }
 
-        public string? Answer4 { get; set; }
+        public string? Answer4 { get; }
 
-        public string? Answer5 { get; set; }
+        public string? Answer5 { get; }
 
-        public string? Answer6 { get; set; }
+        public string? Answer6 { get; }
 
-        public DateTime? NotifyDate { get; set; }
+        public DateTime? NotifyDate { get; }
 
-        public bool IsSelfRegistered { get; set; }
+        public bool IsSelfRegistered { get; }
+
+        public bool UserIsActive { get; }
 
         public bool IsExternalRegistered => !Approved;
     }

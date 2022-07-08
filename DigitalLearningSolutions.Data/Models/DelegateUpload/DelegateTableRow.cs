@@ -53,22 +53,22 @@
             RowStatus = RowStatus.NotYetProcessed;
         }
 
-        public int RowNumber { get; set; }
-        public string? CandidateNumber { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public int? JobGroupId { get; set; }
-        public bool? Active { get; set; }
-        public string? Answer1 { get; set; }
-        public string? Answer2 { get; set; }
-        public string? Answer3 { get; set; }
-        public string? Answer4 { get; set; }
-        public string? Answer5 { get; set; }
-        public string? Answer6 { get; set; }
-        public string? Email { get; set; }
-        public string? HasPrnRawValue { get; set; }
-        public bool? HasPrn { get; set; }
-        public string? Prn { get; set; }
+        public int RowNumber { get; }
+        public string? CandidateNumber { get; }
+        public string? FirstName { get; }
+        public string? LastName { get; }
+        public int? JobGroupId { get; }
+        public bool? Active { get; }
+        public string? Answer1 { get; }
+        public string? Answer2 { get; }
+        public string? Answer3 { get; }
+        public string? Answer4 { get; }
+        public string? Answer5 { get; }
+        public string? Answer6 { get; }
+        public string? Email { get; }
+        private string? HasPrnRawValue { get; }
+        public bool? HasPrn { get; }
+        public string? Prn { get; }
 
         public BulkUploadResult.ErrorReason? Error { get; set; }
         public RowStatus RowStatus { get; set; }
@@ -163,74 +163,74 @@
             return !Error.HasValue;
         }
 
-        public bool MatchesDelegateUser(DelegateUser delegateUser)
+        public bool MatchesDelegateEntity(DelegateEntity delegateEntity)
         {
-            if ((delegateUser.FirstName ?? string.Empty) != FirstName)
+            if (delegateEntity.UserAccount.FirstName != FirstName)
             {
                 return false;
             }
 
-            if (delegateUser.LastName != LastName)
+            if (delegateEntity.UserAccount.LastName != LastName)
             {
                 return false;
             }
 
-            if (delegateUser.JobGroupId != JobGroupId!.Value)
+            if (delegateEntity.UserAccount.JobGroupId != JobGroupId!.Value)
             {
                 return false;
             }
 
-            if (delegateUser.Active != Active!.Value)
+            if (delegateEntity.DelegateAccount.Active != Active!.Value)
             {
                 return false;
             }
 
-            if ((delegateUser.Answer1 ?? string.Empty) != Answer1)
+            if ((delegateEntity.DelegateAccount.Answer1 ?? string.Empty) != Answer1)
             {
                 return false;
             }
 
-            if ((delegateUser.Answer2 ?? string.Empty) != Answer2)
+            if ((delegateEntity.DelegateAccount.Answer2 ?? string.Empty) != Answer2)
             {
                 return false;
             }
 
-            if ((delegateUser.Answer3 ?? string.Empty) != Answer3)
+            if ((delegateEntity.DelegateAccount.Answer3 ?? string.Empty) != Answer3)
             {
                 return false;
             }
 
-            if ((delegateUser.Answer4 ?? string.Empty) != Answer4)
+            if ((delegateEntity.DelegateAccount.Answer4 ?? string.Empty) != Answer4)
             {
                 return false;
             }
 
-            if ((delegateUser.Answer5 ?? string.Empty) != Answer5)
+            if ((delegateEntity.DelegateAccount.Answer5 ?? string.Empty) != Answer5)
             {
                 return false;
             }
 
-            if ((delegateUser.Answer6 ?? string.Empty) != Answer6)
+            if ((delegateEntity.DelegateAccount.Answer6 ?? string.Empty) != Answer6)
             {
                 return false;
             }
 
-            if ((delegateUser.EmailAddress ?? string.Empty) != Email)
+            if (delegateEntity.EmailForCentreNotifications != Email)
             {
                 return false;
             }
 
-            if (delegateUser.ProfessionalRegistrationNumber != Prn)
+            if (delegateEntity.UserAccount.ProfessionalRegistrationNumber != Prn)
             {
                 return false;
             }
 
-            var delegateUserHasPrn = DelegateDownloadFileService.GetHasPrnForDelegate(
-                delegateUser.HasBeenPromptedForPrn,
-                delegateUser.ProfessionalRegistrationNumber
+            var userHasPrn = DelegateDownloadFileService.GetHasPrnForDelegate(
+                delegateEntity.UserAccount.HasBeenPromptedForPrn,
+                delegateEntity.UserAccount.ProfessionalRegistrationNumber
             );
 
-            return delegateUserHasPrn == HasPrn || HasPrn == null;
+            return userHasPrn == HasPrn || HasPrn == null;
         }
     }
 }

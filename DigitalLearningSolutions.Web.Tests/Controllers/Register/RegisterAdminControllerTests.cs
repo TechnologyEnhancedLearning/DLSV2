@@ -28,7 +28,6 @@
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
-        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -39,15 +38,13 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
-            userService = A.Fake<IUserService>();
             controller = new RegisterAdminController(
                     centresDataService,
                     centresService,
                     cryptoService,
                     jobGroupsDataService,
                     registrationService,
-                    userDataService,
-                    userService
+                    userDataService
                 )
                 .WithDefaultContext()
                 .WithMockTempData();
@@ -289,8 +286,12 @@
 
             A.CallTo(() => centresService.DoesEmailMatchCentre(centreEmailOrPrimaryIfNull, DefaultCentreId))
                 .Returns(true);
-            A.CallTo(() => registrationService.RegisterCentreManager(A<AdminRegistrationModel>._,
-                    false))
+            A.CallTo(
+                    () => registrationService.RegisterCentreManager(
+                        A<AdminRegistrationModel>._,
+                        false
+                    )
+                )
                 .DoesNothing();
 
             // When
@@ -307,7 +308,7 @@
                                 a.CentreSpecificEmail == data.CentreSpecificEmail &&
                                 a.Centre == data.Centre.Value &&
                                 a.PasswordHash == data.PasswordHash! &&
-                                a.Active &&
+                                a.CentreAccountIsActive &&
                                 a.Approved &&
                                 a.IsCentreAdmin &&
                                 a.IsCentreManager &&

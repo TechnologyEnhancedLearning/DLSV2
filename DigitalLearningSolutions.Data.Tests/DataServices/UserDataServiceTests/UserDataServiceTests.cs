@@ -81,5 +81,17 @@
             // Then
             result.Should().Be(2);
         }
+
+        [Test]
+        [TestCase("test@gmail.com", true)]
+        [TestCase("not_an_email_in_the_database", false)]
+        public void PrimaryEmailIsInUse_returns_expected_value(string email, bool expectedResult)
+        {
+            // When
+            var result = userDataService.PrimaryEmailIsInUse(email);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
     }
 }

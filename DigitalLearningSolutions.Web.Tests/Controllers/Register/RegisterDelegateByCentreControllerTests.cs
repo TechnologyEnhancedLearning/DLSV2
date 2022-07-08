@@ -66,21 +66,33 @@
         {
             // Given
             var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
-            var model = new PersonalInformationViewModel
+            var model = new RegisterDelegatePersonalInformationViewModel
             {
                 FirstName = "Test",
                 LastName = "User",
                 Centre = duplicateUser.CentreId,
-                PrimaryEmail = duplicateUser.EmailAddress,
+                CentreSpecificEmail = duplicateUser.EmailAddress,
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
-                .Returns(false);
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        model.Centre.Value,
+                        null
+                    )
+                )
+                .Returns(true);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        model.Centre.Value,
+                        null
+                    )
+                )
                 .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
@@ -91,21 +103,33 @@
             // Given
             controller.TempData.Set(new DelegateRegistrationByCentreData());
             var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
-            var model = new PersonalInformationViewModel
+            var model = new RegisterDelegatePersonalInformationViewModel
             {
                 FirstName = "Test",
                 LastName = "User",
                 Centre = duplicateUser.CentreId + 1,
-                PrimaryEmail = duplicateUser.EmailAddress,
+                CentreSpecificEmail = duplicateUser.EmailAddress,
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
-                .Returns(true);
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        model.Centre.Value,
+                        null
+                    )
+                )
+                .Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        model.Centre.Value,
+                        null
+                    )
+                )
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
@@ -116,18 +140,24 @@
             // Given
             const string firstName = "Test";
             const string lastName = "User";
-            const string primaryEmail = "test@email.com";
+            const string email = "test@email.com";
 
             controller.TempData.Set(new DelegateRegistrationByCentreData());
-            var model = new PersonalInformationViewModel
+            var model = new RegisterDelegatePersonalInformationViewModel
             {
                 FirstName = firstName,
                 LastName = lastName,
-                PrimaryEmail = primaryEmail,
+                CentreSpecificEmail = email,
                 Centre = 1,
             };
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.PrimaryEmail!, model.Centre.Value))
-                .Returns(true);
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail!,
+                        model.Centre.Value,
+                        null
+                    )
+                )
+                .Returns(false);
 
             // When
             controller.PersonalInformation(model);
@@ -136,7 +166,7 @@
             var data = controller.TempData.Peek<DelegateRegistrationByCentreData>()!;
             data.FirstName.Should().Be(firstName);
             data.LastName.Should().Be(lastName);
-            data.PrimaryEmail.Should().Be(primaryEmail);
+            data.CentreSpecificEmail.Should().Be(email);
         }
 
         [Test]
@@ -205,7 +235,7 @@
             controller.TempData.Set(new DelegateRegistrationByCentreData { PasswordHash = "hash" });
             var date = new DateTime(2200, 7, 7);
             var model = new WelcomeEmailViewModel
-                { ShouldSendEmail = true, Day = date.Day, Month = date.Month, Year = date.Year };
+            { ShouldSendEmail = true, Day = date.Day, Month = date.Month, Year = date.Year };
 
             // When
             controller.WelcomeEmail(model);
@@ -260,7 +290,11 @@
             const string sampleDelegateNumber = "CR7";
             var data = new DelegateRegistrationByCentreData
             {
-                FirstName = "Test", LastName = "User", PrimaryEmail = "test@mail.com", Centre = 5, JobGroup = 0,
+                FirstName = "Test",
+                LastName = "User",
+                PrimaryEmail = "test@mail.com",
+                Centre = 5,
+                JobGroup = 0,
                 WelcomeEmailDate = new DateTime(2200, 7, 7),
             };
             controller.TempData.Set(data);
@@ -315,7 +349,7 @@
                                 d =>
                                     d.FirstName == data.FirstName &&
                                     d.LastName == data.LastName &&
-                                    d.PrimaryEmail == data.PrimaryEmail &&
+                                    d.CentreSpecificEmail == data.CentreSpecificEmail &&
                                     d.Centre == data.Centre &&
                                     d.JobGroup == data.JobGroup &&
                                     d.PasswordHash == data.PasswordHash &&
@@ -325,7 +359,8 @@
                                     d.Answer4 == data.Answer4 &&
                                     d.Answer5 == data.Answer5 &&
                                     d.Answer6 == data.Answer6 &&
-                                    d.Active &&
+                                    d.CentreAccountIsActive &&
+                                    !d.UserIsActive &&
                                     d.Approved &&
                                     !d.IsSelfRegistered &&
                                     d.NotifyDate == data.WelcomeEmailDate &&

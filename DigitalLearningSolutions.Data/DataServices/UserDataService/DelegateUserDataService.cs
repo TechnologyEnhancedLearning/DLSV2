@@ -183,17 +183,6 @@
             return user;
         }
 
-        public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
-        {
-            var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateUserQuery}
-                    WHERE cd.EmailAddress = @emailAddress",
-                new { emailAddress }
-            ).ToList();
-
-            return users;
-        }
-
         [Obsolete("New code should use GetUnapprovedDelegatesByCentreId instead")]
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId)
         {
@@ -297,18 +286,6 @@
                 @"SELECT COUNT(*) FROM Candidates WHERE Active = 1 AND Approved = 1 AND CentreID = @centreId",
                 new { centreId }
             );
-        }
-
-        [Obsolete("New code should use GetDelegateByCandidateNumber instead")]
-        public DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId)
-        {
-            var user = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateUserQuery}
-                    WHERE cd.CandidateNumber = @candidateNumber AND cd.CentreId = @centreId",
-                new { candidateNumber, centreId }
-            ).SingleOrDefault();
-
-            return user;
         }
 
         public void UpdateDelegateAccount(

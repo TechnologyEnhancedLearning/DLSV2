@@ -9,7 +9,7 @@
             string? centreSpecificEmail,
             int centre,
             string? passwordHash,
-            bool active,
+            bool centreAccountIsActive,
             bool approved,
             string? professionalRegistrationNumber,
             int jobGroupId,
@@ -30,7 +30,7 @@
             centreSpecificEmail,
             centre,
             passwordHash,
-            active,
+            centreAccountIsActive,
             approved,
             professionalRegistrationNumber,
             jobGroupId
