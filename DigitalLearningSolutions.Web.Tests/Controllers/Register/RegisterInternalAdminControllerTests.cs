@@ -35,7 +35,7 @@
         private IRegistrationService registrationService = null!;
         private IDelegateApprovalsService delegateApprovalsService = null!;
         private IFeatureManager featureManager = null!;
-        private RegisterAdminHelper registerAdminHelper = null!;
+        private IRegisterAdminHelper registerAdminHelper = null!;
         private RegisterInternalAdminController controller = null!;
         private HttpRequest request = null!;
 
@@ -48,7 +48,7 @@
             registrationService = A.Fake<IRegistrationService>();
             delegateApprovalsService = A.Fake<IDelegateApprovalsService>();
             featureManager = A.Fake<IFeatureManager>();
-            registerAdminHelper = new RegisterAdminHelper(userDataService, centresDataService);
+            registerAdminHelper = A.Fake<IRegisterAdminHelper>();
             request = A.Fake<HttpRequest>();
             controller = new RegisterInternalAdminController(
                     centresDataService,
@@ -91,22 +91,34 @@
         }
 
         [Test]
-        public void IndexGet_with_allowed_admin_registration_returns_view_model()
+        public void IndexGet_with_not_allowed_admin_registration_returns_access_denied()
         {
             // Given
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .Returns((false, "email@email"));
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
+            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).Returns(false);
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
+            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
+                .WithActionName("AccessDenied");
+        }
+
+        [Test]
+        public void IndexGet_with_allowed_admin_registration_returns_view_model()
+        {
+            // Given
+            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
+            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).Returns(true);
+
+            // When
+            var result = controller.Index(DefaultCentreId);
+
+            // Then
+            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeViewResult().ModelAs<InternalAdminInformationViewModel>();
         }
 

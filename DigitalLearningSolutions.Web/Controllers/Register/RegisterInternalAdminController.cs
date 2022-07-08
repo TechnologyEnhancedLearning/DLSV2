@@ -24,7 +24,7 @@
         private readonly IRegistrationService registrationService;
         private readonly IDelegateApprovalsService delegateApprovalsService;
         private readonly IFeatureManager featureManager;
-        private readonly RegisterAdminHelper registerAdminHelper;
+        private readonly IRegisterAdminHelper registerAdminHelper;
 
         public RegisterInternalAdminController(
             ICentresDataService centresDataService,
@@ -33,7 +33,7 @@
             IRegistrationService registrationService,
             IDelegateApprovalsService delegateApprovalsService,
             IFeatureManager featureManager,
-            RegisterAdminHelper registerAdminHelper
+            IRegisterAdminHelper registerAdminHelper
         )
         {
             this.centresDataService = centresDataService;
@@ -123,6 +123,7 @@
                 {
                     userDataService.SetCentreEmail(userId, model.Centre.Value, model.CentreSpecificEmail);
                 }
+
                 if (!delegateAccount.Approved)
                 {
                     delegateApprovalsService.ApproveDelegate(delegateAccount.Id, delegateAccount.CentreId);

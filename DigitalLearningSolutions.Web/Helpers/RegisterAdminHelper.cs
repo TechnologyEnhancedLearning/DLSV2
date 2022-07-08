@@ -4,7 +4,11 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
 
-    public class RegisterAdminHelper
+    public interface IRegisterAdminHelper
+    {
+        bool IsRegisterAdminAllowed(int centreId);
+    }
+    public class RegisterAdminHelper : IRegisterAdminHelper
     {
         private readonly IUserDataService userDataService;
         private readonly ICentresDataService centresDataService;
@@ -21,9 +25,11 @@
         public bool IsRegisterAdminAllowed(int centreId)
         {
             var admins = userDataService.GetAdminsByCentreId(centreId);
+            var centre = centresDataService.GetCentreDetailsById(centreId);
             var hasCentreManagerAdmin = admins.Any(admin => admin.AdminAccount.IsCentreManager);
             var (autoRegistered, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
-            return !hasCentreManagerAdmin && !autoRegistered && !string.IsNullOrWhiteSpace(autoRegisterManagerEmail);
+            return centre!.Active && !hasCentreManagerAdmin && !autoRegistered &&
+                   !string.IsNullOrWhiteSpace(autoRegisterManagerEmail);
         }
     }
 }

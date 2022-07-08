@@ -23,7 +23,7 @@
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly IUserService userService;
-        private readonly RegisterAdminHelper registerAdminHelper;
+        private readonly IRegisterAdminHelper registerAdminHelper;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
@@ -32,7 +32,7 @@
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
             IUserService userService,
-            RegisterAdminHelper registerAdminHelper
+            IRegisterAdminHelper registerAdminHelper
         )
         {
             this.centresDataService = centresDataService;

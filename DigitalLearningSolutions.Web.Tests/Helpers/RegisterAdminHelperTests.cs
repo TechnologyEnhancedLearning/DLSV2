@@ -16,7 +16,7 @@
         private const string DefaultCentreEmail = "centre@email.com";
         private IUserDataService userDataService;
         private ICentresDataService centresDataService;
-        private RegisterAdminHelper registerAdminHelper;
+        private IRegisterAdminHelper registerAdminHelper;
 
         [SetUp]
         public void Setup()
@@ -112,6 +112,8 @@
                 .Returns(new List<AdminEntity>());
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, DefaultCentreEmail));
+            A.CallTo(() => centresDataService.GetCentreDetailsById(DefaultCentreId))
+                .Returns(CentreTestHelper.GetDefaultCentre(active: true));
 
             // When
             var result = registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId);
@@ -120,6 +122,7 @@
             A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .MustHaveHappenedOnceExactly();
+            A.CallTo(() => centresDataService.GetCentreDetailsById(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeTrue();
         }
     }
