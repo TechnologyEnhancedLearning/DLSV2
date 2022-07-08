@@ -46,7 +46,7 @@
                   name="@nameof(Model.ApplicationId)"
                   value="@Model.ApplicationId">
 
-            <option id="default-option" disabled selected=@(Model.ApplicationId != null ? "" : "selected")>@defaultOptionText</option>
+            <option id="default-option" disabled selected=@(Model.ApplicationId == null)>@defaultOptionText</option>
             @foreach (var item in Model.ApplicationOptions) {
               <partial name="AddNewCentreCourse/_SelectCourseFilterableSelectListItem" model="@item" />
             }
