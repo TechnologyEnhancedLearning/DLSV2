@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
-    using System;
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures;
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
-    using DocumentFormat.OpenXml.ExtendedProperties;
     using FluentAssertions;
     using Selenium.Axe;
     using Xunit;
@@ -72,10 +70,10 @@
             Driver.SubmitForm();
 
             var welcomeEmailResult = new AxeBuilder(Driver).Analyze();
-            var today = DateTime.Today;
-            Driver.FillTextInput("Day", today.Day.ToString());
-            Driver.FillTextInput("Month", today.Month.ToString());
-            Driver.FillTextInput("Year", today.Year.ToString());
+
+            Driver.FillTextInput("Day", "1");
+            Driver.FillTextInput("Month", "1");
+            Driver.FillTextInput("Year", "3000"); // The date must be in the future for the form to submit successfully
             Driver.SubmitForm();
 
             var passwordResult = new AxeBuilder(Driver).Analyze();

@@ -1,11 +1,13 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
+﻿@using DigitalLearningSolutions.Data.Services
+@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 @model WelcomeEmailViewModel
+@inject IClockService ClockService
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register delegate - Welcome email" : "Register delegate - Welcome email";
   const string dateInputId = "welcome-email-date";
-  var exampleDate = DateTime.Today;
+  var exampleDate = ClockService.UtcToday;
   var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
 }
 

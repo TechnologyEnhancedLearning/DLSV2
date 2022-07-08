@@ -28,7 +28,7 @@
     public class DelegateUploadFileServiceTests
     {
         private const int CentreId = 101;
-        private static DateTime Today = DateTime.Today;
+        private static readonly DateTime WelcomeEmailDate = new DateTime(3000, 1, 1);
         public const string TestDelegateUploadRelativeFilePath = "\\TestData\\DelegateUploadTest.xlsx";
         private IConfiguration configuration = null!;
         private static readonly (int, string) NewDelegateIdAndCandidateNumber = (5, "DELEGATE");
@@ -291,7 +291,7 @@
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId)).Returns(null);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
@@ -318,7 +318,7 @@
                 .Returns(true);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
@@ -346,7 +346,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -385,7 +385,7 @@
                 .Returns(candidateNumberDelegate);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             AssertCreateOrUpdateDelegateWereNotCalled();
@@ -414,7 +414,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             result.ProcessedCount.Should().Be(1);
@@ -438,7 +438,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -482,7 +482,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -517,7 +517,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -553,7 +553,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -588,7 +588,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -625,7 +625,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -644,7 +644,7 @@
                                 model.ProfessionalRegistrationNumber == row.PRN &&
                                 model.CentreSpecificEmail == row.EmailAddress &&
                                 Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
-                                model.NotifyDate == Today &&
+                                model.NotifyDate == WelcomeEmailDate &&
                                 model.IsSelfRegistered == false &&
                                 model.UserIsActive == false &&
                                 model.CentreAccountIsActive == true &&
@@ -666,7 +666,6 @@
         public void ProcessDelegateTable_calls_register_with_expected_values_when_welcomeEmailDate_is_populated()
         {
             // Given
-            var welcomeEmailDate = new DateTime(3000, 01, 01);
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
             Guid primaryEmailIsGuid;
@@ -685,7 +684,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, welcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -704,7 +703,7 @@
                                 model.ProfessionalRegistrationNumber == row.PRN &&
                                 model.CentreSpecificEmail == row.EmailAddress &&
                                 Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
-                                model.NotifyDate == welcomeEmailDate
+                                model.NotifyDate == WelcomeEmailDate
                         ),
                         false
                     )
@@ -796,7 +795,7 @@
             ).DoesNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -847,7 +846,7 @@
             ).DoesNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -890,7 +889,7 @@
             ).DoesNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -922,7 +921,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             result.ProcessedCount.Should().Be(5);
@@ -950,7 +949,7 @@
                 .Returns(candidateNumberDelegate);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             result.ProcessedCount.Should().Be(5);
@@ -978,7 +977,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             result.ProcessedCount.Should().Be(5);
@@ -1031,7 +1030,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             using (new AssertionScope())
@@ -1053,7 +1052,7 @@
             var table = CreateTableFromData(new[] { row });
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, Today);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);

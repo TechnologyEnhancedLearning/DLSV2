@@ -1,11 +1,13 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+﻿@using DigitalLearningSolutions.Data.Services
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model UploadDelegatesViewModel
+@inject IClockService ClockService
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Bulk upload/update delegates" : "Bulk upload/update delegates";
   const string dateInputId = "welcome-email-date";
-  var exampleDate = DateTime.Today;
+  var exampleDate = ClockService.UtcToday;
   var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
 }
 
