@@ -58,10 +58,17 @@
             modelState.AddModelError(nameof(PersonalInformationViewModel.CentreSpecificEmail), DefaultErrorMessage);
 
             // When
-            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, modelState, userService);
+            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(
+                model,
+                modelState,
+                userDataService
+            );
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(A<string>._)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(A<string>._, A<IDbTransaction>._)).MustNotHaveHappened();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction>._)
+            ).MustNotHaveHappened();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(A<int>._)).MustNotHaveHappened();
             modelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
                 .Be(ModelValidationState.Invalid);
@@ -80,15 +87,32 @@
             // Given
             var model = GetDefaultPersonalInformationViewModel();
 
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(true);
-            A.CallTo(() => userService.EmailIsInUse(DefaultCentreSpecificEmail)).Returns(true);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail, A<IDbTransaction>._)).Returns(true);
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    DefaultCentreSpecificEmail,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).Returns(true);
 
             // When
-            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, modelState, userService);
+            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(
+                model,
+                modelState,
+                userDataService
+            );
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.EmailIsInUse(DefaultCentreSpecificEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail, A<IDbTransaction>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    DefaultCentreSpecificEmail,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(A<int>._)).MustNotHaveHappened();
             modelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
                 .Be(ModelValidationState.Invalid);
@@ -110,15 +134,33 @@
             // Given
             var model = GetDefaultPersonalInformationViewModel();
 
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(false);
-            A.CallTo(() => userService.EmailIsInUse(DefaultCentreSpecificEmail)).Returns(false);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail, A<IDbTransaction>._))
+                .Returns(false);
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    DefaultCentreSpecificEmail,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).Returns(false);
 
             // When
-            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, modelState, userService);
+            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(
+                model,
+                modelState,
+                userDataService
+            );
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.EmailIsInUse(DefaultCentreSpecificEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail, A<IDbTransaction>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    DefaultCentreSpecificEmail,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(A<int>._)).MustNotHaveHappened();
             modelState.ValidationState.Should().Be(ModelValidationState.Valid);
         }
@@ -139,12 +181,15 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 modelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(A<string>._)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(A<string>._, A<IDbTransaction>._)).MustNotHaveHappened();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction>._)
+            ).MustNotHaveHappened();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .MustHaveHappenedOnceExactly();
             modelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
@@ -164,8 +209,14 @@
             // Given
             var model = GetDefaultPersonalInformationViewModel();
 
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(true);
-            A.CallTo(() => userService.EmailIsInUse(DefaultCentreSpecificEmail)).Returns(true);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail, A<IDbTransaction>._)).Returns(true);
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    DefaultCentreSpecificEmail,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).Returns(true);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, DifferentCentreEmail));
 
@@ -173,13 +224,20 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 modelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.EmailIsInUse(DefaultCentreSpecificEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail, A<IDbTransaction>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    DefaultCentreSpecificEmail,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .MustHaveHappenedOnceExactly();
             modelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
@@ -203,7 +261,8 @@
             // Given
             var model = GetDefaultPersonalInformationViewModel(centreSpecificEmail: null);
 
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(false);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail, A<IDbTransaction>._))
+                .Returns(false);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, DifferentCentreEmail));
 
@@ -211,12 +270,13 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 modelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail, A<IDbTransaction>._))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .MustHaveHappenedOnceExactly();
             modelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
@@ -234,8 +294,15 @@
             // Given
             var model = GetDefaultPersonalInformationViewModel();
 
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(false);
-            A.CallTo(() => userService.EmailIsInUse(DefaultCentreSpecificEmail)).Returns(false);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail, A<IDbTransaction>._))
+                .Returns(false);
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    DefaultCentreSpecificEmail,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).Returns(false);
             A.CallTo(
                 () => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)
             ).Returns((false, DifferentCentreEmail));
@@ -244,13 +311,20 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 modelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.EmailIsInUse(DefaultCentreSpecificEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail, A<IDbTransaction>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    DefaultCentreSpecificEmail,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .MustHaveHappenedOnceExactly();
             modelState[nameof(PersonalInformationViewModel.CentreSpecificEmail)].ValidationState.Should()
@@ -272,7 +346,8 @@
             // Given
             var model = GetDefaultPersonalInformationViewModel(primaryEmail, null);
 
-            A.CallTo(() => userService.EmailIsInUse(primaryEmail)).Returns(false);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(primaryEmail, A<IDbTransaction>._))
+                .Returns(false);
             A.CallTo(
                 () => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)
             ).Returns((false, DefaultPrimaryEmail));
@@ -281,12 +356,13 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 modelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(primaryEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(primaryEmail, A<IDbTransaction>._))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .MustHaveHappenedOnceExactly();
             modelState.ValidationState.Should().Be(ModelValidationState.Valid);
@@ -303,8 +379,14 @@
             // Given
             var model = GetDefaultPersonalInformationViewModel(primaryEmail);
 
-            A.CallTo(() => userService.EmailIsInUse(primaryEmail)).Returns(false);
-            A.CallTo(() => userService.EmailIsInUse(DefaultCentreSpecificEmail)).Returns(false);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(primaryEmail, A<IDbTransaction>._)).Returns(false);
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    DefaultCentreSpecificEmail,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).Returns(false);
             A.CallTo(
                 () => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)
             ).Returns((false, DefaultPrimaryEmail));
@@ -313,13 +395,20 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 modelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(primaryEmail)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.EmailIsInUse(DefaultCentreSpecificEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(primaryEmail, A<IDbTransaction>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    DefaultCentreSpecificEmail,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .MustHaveHappenedOnceExactly();
             modelState.ValidationState.Should().Be(ModelValidationState.Valid);
@@ -336,8 +425,15 @@
             // Given
             var model = GetDefaultPersonalInformationViewModel(centreSpecificEmail: centreSpecificEmail);
 
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).Returns(false);
-            A.CallTo(() => userService.EmailIsInUse(centreSpecificEmail)).Returns(false);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail, A<IDbTransaction>._))
+                .Returns(false);
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    centreSpecificEmail,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).Returns(false);
             A.CallTo(
                 () => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)
             ).Returns((false, DefaultCentreSpecificEmail));
@@ -346,13 +442,20 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 modelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 
             // Then
-            A.CallTo(() => userService.EmailIsInUse(DefaultPrimaryEmail)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.EmailIsInUse(centreSpecificEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail, A<IDbTransaction>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    centreSpecificEmail,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .MustHaveHappenedOnceExactly();
             modelState.ValidationState.Should().Be(ModelValidationState.Valid);

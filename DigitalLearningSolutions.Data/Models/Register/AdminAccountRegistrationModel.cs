@@ -49,7 +49,7 @@
             ImportOnly = model.ImportOnly;
             IsSupervisor = model.IsSupervisor;
             IsNominatedSupervisor = model.IsNominatedSupervisor;
-            Active = model.Active;
+            Active = model.CentreAccountIsActive;
         }
 
         public int UserId { get; set; }

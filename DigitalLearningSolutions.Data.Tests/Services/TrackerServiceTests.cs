@@ -14,6 +14,15 @@
         private const string DefaultProgressText = "Test progress text";
         private const string DefaultSessionId = "312";
 
+        private readonly TrackerEndpointQueryParams defaultStoreAspAssessQueryParams = new TrackerEndpointQueryParams
+        {
+            Version = 1,
+            CandidateId = 456,
+            CustomisationId = 1,
+            Score = 1,
+            SectionId = 3,
+        };
+
         private readonly TrackerEndpointQueryParams defaultStoreAspProgressQueryParams = new TrackerEndpointQueryParams
         {
             ProgressId = 101,
@@ -245,6 +254,44 @@
                         query.TutorialId!.Value,
                         query.TutorialTime!.Value,
                         query.TutorialStatus!.Value,
+                        query.CandidateId!.Value,
+                        query.CustomisationId!.Value,
+                        DefaultSessionId
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void ProcessQuery_with_StoreAspAssessNoSession_action_passes_query_params()
+        {
+            // Given
+            var query = defaultStoreAspAssessQueryParams;
+            query.Action = "StoreAspAssessNoSession";
+
+            var expectedResponse = TrackerEndpointResponse.Success;
+
+            A.CallTo(
+                () => actionService.StoreAspAssessNoSession(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<string>._
+                )
+            ).Returns(expectedResponse);
+
+            // When
+            var result = trackerService.ProcessQuery(query, sessionVariablesForStoreAspProgressNoSession);
+
+            // Then
+            result.Should().Be(expectedResponse);
+            A.CallTo(
+                    () => actionService.StoreAspAssessNoSession(
+                        query.Version!.Value,
+                        query.SectionId!.Value,
+                        query.Score!.Value,
                         query.CandidateId!.Value,
                         query.CustomisationId!.Value,
                         DefaultSessionId

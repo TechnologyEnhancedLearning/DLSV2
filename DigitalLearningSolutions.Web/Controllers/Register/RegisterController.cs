@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
@@ -29,14 +30,14 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
-        private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
 
         public RegisterController(
             ICentresDataService centresDataService,
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
             ICryptoService cryptoService,
-            IUserService userService,
+            IUserDataService userDataService,
             PromptsService promptsService,
             IFeatureManager featureManager,
             ISupervisorDelegateService supervisorDelegateService
@@ -46,7 +47,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
-            this.userService = userService;
+            this.userDataService = userDataService;
             this.promptsService = promptsService;
             this.featureManager = featureManager;
             this.supervisorDelegateService = supervisorDelegateService;
@@ -94,7 +95,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             // Check this email and centre combination doesn't already exist in case we were redirected
             // back here by the user trying to submit the final page of the form
-            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, ModelState, userService);
+            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, ModelState, userDataService);
 
             return View(model);
         }
@@ -103,7 +104,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
-            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, ModelState, userService);
+            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, ModelState, userDataService);
 
             var data = TempData.Peek<DelegateRegistrationData>()!;
 

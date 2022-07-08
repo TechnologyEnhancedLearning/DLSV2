@@ -39,7 +39,8 @@
                             ON progress.CustomisationID = customisations.CustomisationID
                         INNER JOIN Applications AS applications
                             ON customisations.ApplicationID = applications.ApplicationID
-                    WHERE  (progress.ProgressID = @progressID)",
+                    WHERE  (progress.ProgressID = @progressID)
+                        AND applications.DefaultContentTypeID <> 4",
                 new { progressId }
             ).FirstOrDefault();
         }
@@ -71,7 +72,8 @@
                             ON progress.CustomisationID = customisations.CustomisationID
                         INNER JOIN Applications AS applications
                             ON customisations.ApplicationID = applications.ApplicationID
-                    WHERE (progress.ProgressID = @progressId)",
+                    WHERE (progress.ProgressID = @progressId) AND applications.ArchivedDate IS NULL
+                        AND applications.DefaultContentTypeID <> 4",
                 new { progressId, candidateId, customisationId }
             );
         }

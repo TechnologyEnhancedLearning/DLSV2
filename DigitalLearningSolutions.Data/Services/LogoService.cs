@@ -39,7 +39,7 @@
 
                          LEFT JOIN Brands
                          ON Applications.BrandID = Brands.BrandID
-                   WHERE Centres.CentreID = @centreId;",
+                   WHERE Centres.CentreID = @centreId AND (Applications.DefaultContentTypeId <> 4 OR Applications.DefaultContentTypeId IS NULL);",
                     new { centreId, customisationId });
             }
             catch (DataException e)

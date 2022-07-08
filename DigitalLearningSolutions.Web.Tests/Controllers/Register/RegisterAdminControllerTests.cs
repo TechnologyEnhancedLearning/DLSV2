@@ -28,7 +28,6 @@
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
-        private IUserService userService = null!;
         private IRegisterAdminHelper registerAdminHelper = null!;
 
         [SetUp]
@@ -40,7 +39,6 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
-            userService = A.Fake<IUserService>();
             registerAdminHelper = A.Fake<IRegisterAdminHelper>();
             controller = new RegisterAdminController(
                     centresDataService,
@@ -48,7 +46,7 @@
                     cryptoService,
                     jobGroupsDataService,
                     registrationService,
-                    userService,
+                    userDataService,
                     registerAdminHelper
                 )
                 .WithDefaultContext()
@@ -238,7 +236,7 @@
                                 a.CentreSpecificEmail == data.CentreSpecificEmail &&
                                 a.Centre == data.Centre.Value &&
                                 a.PasswordHash == data.PasswordHash! &&
-                                a.Active &&
+                                a.CentreAccountIsActive &&
                                 a.Approved &&
                                 a.IsCentreAdmin &&
                                 a.IsCentreManager &&

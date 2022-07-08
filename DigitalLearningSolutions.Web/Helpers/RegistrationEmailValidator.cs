@@ -20,20 +20,20 @@
         public static void ValidateEmailAddressesForDelegateRegistration(
             PersonalInformationViewModel model,
             ModelStateDictionary modelState,
-            IUserService userService
+            IUserDataService userDataService
         )
         {
-            ValidateEmailAddresses(false, model, modelState, userService);
+            ValidateEmailAddresses(false, model, modelState, userDataService);
         }
 
         public static void ValidateEmailAddressesForAdminRegistration(
             PersonalInformationViewModel model,
             ModelStateDictionary modelState,
-            IUserService userService,
+            IUserDataService userDataService,
             ICentresDataService centresDataService
         )
         {
-            ValidateEmailAddresses(true, model, modelState, userService, centresDataService);
+            ValidateEmailAddresses(true, model, modelState, userDataService, centresDataService);
         }
 
         public static void ValidateEmailsForInternalAdminRegistration(
@@ -73,7 +73,7 @@
             bool isRegisterAdminJourney,
             PersonalInformationViewModel model,
             ModelStateDictionary modelState,
-            IUserService userService,
+            IUserDataService userDataService,
             ICentresDataService? centresDataService = null
         )
         {
@@ -91,7 +91,7 @@
 
             if (primaryEmailIsValidAndNotNull)
             {
-                if (userService.EmailIsInUse(model.PrimaryEmail))
+                if (userDataService.PrimaryEmailIsInUse(model.PrimaryEmail))
                 {
                     modelState.AddModelError(
                         nameof(PersonalInformationViewModel.PrimaryEmail),
@@ -113,7 +113,7 @@
 
             if (centreSpecificEmailIsValidAndNotNull)
             {
-                if (userService.EmailIsInUse(model.CentreSpecificEmail))
+                if (userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail, model.Centre!.Value))
                 {
                     modelState.AddModelError(
                         nameof(PersonalInformationViewModel.CentreSpecificEmail),

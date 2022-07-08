@@ -545,6 +545,22 @@
             return users.Single();
         }
 
+        public static async Task<DateTime?> GetTCAgreedByAdminIdAsync(
+            this DbConnection connection,
+            int adminId
+        )
+        {
+            var users = await connection.QueryAsync<DateTime?>(
+                @"SELECT
+                        TCAgreed
+                    FROM AdminUsers
+                    WHERE AdminId = @adminId",
+                new { adminId }
+            );
+
+            return users.SingleOrDefault();
+        }
+
         public static EditAccountDetailsData GetDefaultAccountDetailsData(
             int userId = 2,
             string firstName = "firstname",

@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Web.ViewModels.Register;
+    using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
 
     public class RegistrationData
     {
@@ -30,7 +31,7 @@
 
         public string? PasswordHash { get; set; }
 
-        public virtual void SetPersonalInformation(PersonalInformationViewModel model)
+        public void SetPersonalInformation(PersonalInformationViewModel model)
         {
             Centre = model.Centre;
             PrimaryEmail = model.PrimaryEmail;
@@ -42,7 +43,9 @@
         public virtual void SetLearnerInformation(LearnerInformationViewModel model)
         {
             JobGroup = model.JobGroup;
-            ProfessionalRegistrationNumber = model.HasProfessionalRegistrationNumber == true ? model.ProfessionalRegistrationNumber : null;
+            ProfessionalRegistrationNumber = model.HasProfessionalRegistrationNumber == true
+                ? model.ProfessionalRegistrationNumber
+                : null;
             HasProfessionalRegistrationNumber = model.HasProfessionalRegistrationNumber;
         }
     }

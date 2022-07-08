@@ -78,7 +78,7 @@
       </div>
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Confirmer comments
+          @(Model.SupervisorComment.ReviewerCommentsLabel == null ? "Reviewer comments": Model.SupervisorComment.ReviewerCommentsLabel.ToString())
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.SupervisorComment.Comments

@@ -1,10 +1,12 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
 @model AssessmentQuestion
 @{
-  var actionLinkText = Model.Requested != null && Model.Verified == null ? "Confirm" : "View";
-  if (!String.IsNullOrEmpty(Model.SupportingComments) || !String.IsNullOrEmpty(Model.SupervisorComments))
-  {
-    actionLinkText += " (comments)";
+    var actionLinkText = Model.Requested != null && Model.Verified == null ? "Confirm" : "View";
+    if (!String.IsNullOrEmpty(Model.SupportingComments) || !String.IsNullOrEmpty(Model.SupervisorComments))
+    {
+        var commentStr = ViewData["ReviewerCommentsLabel"] ?? "comments";
+        string commentString = commentStr.ToString();
+        actionLinkText += " (" + commentString.ToLower() + ")";
   }
 }
 

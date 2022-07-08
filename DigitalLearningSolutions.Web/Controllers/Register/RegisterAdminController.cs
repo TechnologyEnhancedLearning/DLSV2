@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
@@ -22,7 +23,7 @@
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
-        private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
         private readonly IRegisterAdminHelper registerAdminHelper;
 
         public RegisterAdminController(
@@ -31,7 +32,7 @@
             ICryptoService cryptoService,
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
-            IUserService userService,
+            IUserDataService userDataService,
             IRegisterAdminHelper registerAdminHelper
         )
         {
@@ -40,7 +41,7 @@
             this.cryptoService = cryptoService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
-            this.userService = userService;
+            this.userDataService = userDataService;
             this.registerAdminHelper = registerAdminHelper;
         }
 
@@ -78,7 +79,7 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 ModelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 
@@ -94,7 +95,7 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 ModelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 
@@ -246,8 +247,11 @@
                    (data.CentreSpecificEmail != null &&
                     centresService.DoesEmailMatchCentre(data.CentreSpecificEmail, data.Centre.Value) ||
                     centresService.DoesEmailMatchCentre(data.PrimaryEmail, data.Centre.Value)) &&
-                   !userService.EmailIsInUse(data.PrimaryEmail) &&
-                   (data.CentreSpecificEmail == null || !userService.EmailIsInUse(data.CentreSpecificEmail));
+                   !userDataService.PrimaryEmailIsInUse(data.PrimaryEmail) &&
+                   (data.CentreSpecificEmail == null || !userDataService.CentreSpecificEmailIsInUseAtCentre(
+                       data.CentreSpecificEmail,
+                       data.Centre.Value
+                   ));
         }
 
         private void SetCentreName(PersonalInformationViewModel model)

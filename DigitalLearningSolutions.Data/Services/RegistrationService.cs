@@ -48,7 +48,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int userId, int centreId);
 
-        string CreateAccountAndReturnCandidateNumber(
+        (int delegateId, string candidateNumber) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions
         );
@@ -115,7 +115,7 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateRegistrationModel.Centre
             );
 
-            var candidateNumber = CreateAccountAndReturnCandidateNumber(
+            var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
                 registerJourneyContainsTermsAndConditions
             );
@@ -124,16 +124,8 @@ namespace DigitalLearningSolutions.Data.Services
                 candidateNumber,
                 delegateRegistrationModel.PasswordHash!
             );
-
-            // We know this will give us a non-null user.
-            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
-            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
-                candidateNumber,
-                delegateRegistrationModel.Centre
-            )!;
-
             userDataService.UpdateDelegateProfessionalRegistrationNumber(
-                delegateUser.Id,
+                delegateId,
                 delegateRegistrationModel.ProfessionalRegistrationNumber,
                 true
             );
@@ -142,7 +134,7 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     supervisorDelegateRecordIdsMatchingDelegate,
-                    delegateUser.Id
+                    delegateId
                 );
             }
 
@@ -251,7 +243,7 @@ namespace DigitalLearningSolutions.Data.Services
         {
             using var transaction = new TransactionScope();
 
-            var candidateNumber = CreateAccountAndReturnCandidateNumber(
+            var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
                 registerJourneyContainsTermsAndConditions
             );
@@ -259,13 +251,6 @@ namespace DigitalLearningSolutions.Data.Services
             // TODO HEEDLS-899 sort out supervisor delegate stuff
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
-
-            // We know this will give us a non-null user.
-            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
-            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
-                candidateNumber,
-                delegateRegistrationModel.Centre
-            )!;
 
             if (delegateRegistrationModel.PasswordHash != null)
             {
@@ -277,7 +262,7 @@ namespace DigitalLearningSolutions.Data.Services
             else if (delegateRegistrationModel.NotifyDate.HasValue)
             {
                 passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    delegateUser.Id,
+                    delegateId,
                     baseUrl,
                     delegateRegistrationModel.NotifyDate.Value,
                     "RegisterDelegateByCentre_Refactor"
@@ -285,7 +270,7 @@ namespace DigitalLearningSolutions.Data.Services
             }
 
             userDataService.UpdateDelegateProfessionalRegistrationNumber(
-                delegateUser.Id,
+                delegateId,
                 delegateRegistrationModel.ProfessionalRegistrationNumber,
                 true
             );
@@ -294,7 +279,7 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     supervisorDelegateRecordIdsMatchingDelegate,
-                    delegateUser.Id
+                    delegateId
                 );
             }
 
@@ -401,18 +386,32 @@ namespace DigitalLearningSolutions.Data.Services
             }
         }
 
-        public string CreateAccountAndReturnCandidateNumber(
+        public (int delegateId, string candidateNumber) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions
         )
         {
             try
             {
-                ValidateRegistrationEmail(delegateRegistrationModel);
-                return registrationDataService.RegisterNewUserAndDelegateAccount(
+                var primaryEmailIsInvalid = userDataService.PrimaryEmailIsInUse(delegateRegistrationModel.PrimaryEmail);
+                var centreSpecificEmailIsInvalid =
+                    delegateRegistrationModel.CentreSpecificEmail != null &&
+                    userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        delegateRegistrationModel.CentreSpecificEmail,
+                        delegateRegistrationModel.Centre
+                    );
+
+                if (primaryEmailIsInvalid || centreSpecificEmailIsInvalid)
+                {
+                    throw new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse);
+                }
+
+                var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
                     registerJourneyContainsTermsAndConditions
                 );
+
+                return (delegateId, candidateNumber);
             }
             catch (DelegateCreationFailedException exception)
             {
@@ -441,7 +440,7 @@ namespace DigitalLearningSolutions.Data.Services
         {
             if (delegateRegistrationModel.CentreSpecificEmail != null)
             {
-                ValidateCentreEmail(userId, delegateRegistrationModel.CentreSpecificEmail);
+                ValidateCentreEmail(delegateRegistrationModel.CentreSpecificEmail, delegateRegistrationModel.Centre);
             }
 
             var currentTime = clockService.UtcNow;
@@ -460,7 +459,7 @@ namespace DigitalLearningSolutions.Data.Services
         {
             if (delegateRegistrationModel.CentreSpecificEmail != null)
             {
-                ValidateCentreEmail(userId, delegateRegistrationModel.CentreSpecificEmail);
+                ValidateCentreEmail(delegateRegistrationModel.CentreSpecificEmail, delegateRegistrationModel.Centre);
             }
 
             var currentTime = clockService.UtcNow;
@@ -472,23 +471,9 @@ namespace DigitalLearningSolutions.Data.Services
             );
         }
 
-        private void ValidateRegistrationEmail(RegistrationModel model)
+        private void ValidateCentreEmail(string centreEmail, int centreId)
         {
-            var emails =
-                (IEnumerable<string>)new[] { model.PrimaryEmail, model.CentreSpecificEmail }.Where(e => e != null);
-            if (userDataService.AnyEmailsInSetAreAlreadyInUse(emails))
-            {
-                var error = DelegateCreationError.EmailAlreadyInUse;
-                logger.LogError(
-                    $"Could not create account for delegate on registration. Failure: {error.Name}."
-                );
-                throw new DelegateCreationFailedException(error);
-            }
-        }
-
-        private void ValidateCentreEmail(int userId, string centreEmail)
-        {
-            if (userDataService.EmailIsInUseByOtherUser(userId, centreEmail))
+            if (userDataService.CentreSpecificEmailIsInUseAtCentre(centreEmail, centreId))
             {
                 var error = DelegateCreationError.EmailAlreadyInUse;
                 logger.LogError(
@@ -544,35 +529,29 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.PasswordHash!,
                 true,
                 true,
+                true,
                 registrationModel.ProfessionalRegistrationNumber
             );
 
             try
             {
-                var candidateNumber =
-                    registrationDataService.RegisterNewUserAndDelegateAccount(
-                        delegateRegistrationModel,
-                        registerJourneyContainsTermsAndConditions
-                    );
+                var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
+                    delegateRegistrationModel,
+                    registerJourneyContainsTermsAndConditions
+                );
+
                 passwordDataService.SetPasswordByCandidateNumber(
                     candidateNumber,
                     delegateRegistrationModel.PasswordHash!
                 );
 
-                // We know this will give us a non-null user.
-                // If the delegate hadn't successfully been added we would have errored out of this method earlier.
-                var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
-                    candidateNumber,
-                    delegateRegistrationModel.Centre
-                )!;
-
                 userDataService.UpdateDelegateProfessionalRegistrationNumber(
-                    delegateUser.Id,
+                    delegateId,
                     registrationModel.ProfessionalRegistrationNumber,
                     true
                 );
 
-                return userDataService.GetUserIdFromDelegateId(delegateUser.Id);
+                return userDataService.GetUserIdFromDelegateId(delegateId);
             }
             catch (Exception exception)
             {

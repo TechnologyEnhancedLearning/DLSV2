@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
+    using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Helpers;
+    using System.Collections.Generic;
 
     public class SelfAssessmentCompetencyViewModel
     {

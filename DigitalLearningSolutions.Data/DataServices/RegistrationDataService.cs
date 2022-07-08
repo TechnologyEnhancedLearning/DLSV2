@@ -11,7 +11,7 @@
 
     public interface IRegistrationDataService
     {
-        string RegisterNewUserAndDelegateAccount(
+        (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions
         );
@@ -53,7 +53,7 @@
             this.logger = logger;
         }
 
-        public string RegisterNewUserAndDelegateAccount(
+        public (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions
         )
@@ -70,7 +70,7 @@
                 transaction
             );
 
-            var (_, candidateNumber) = RegisterDelegateAccountAndCentreDetailForExistingUser(
+            var (delegateId, candidateNumber) = RegisterDelegateAccountAndCentreDetailForExistingUser(
                 delegateRegistrationModel,
                 userIdToLinkDelegateAccountTo,
                 currentTime,
@@ -79,7 +79,7 @@
 
             transaction.Commit();
 
-            return candidateNumber;
+            return (delegateId, candidateNumber);
         }
 
         public (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(
@@ -242,9 +242,9 @@
                 delegateRegistrationModel.LastName,
                 delegateRegistrationModel.PrimaryEmail,
                 delegateRegistrationModel.JobGroup,
-                delegateRegistrationModel.Active,
-                PasswordHash = "temp",
-                ProfessionalRegistrationNumber = (string?)null,
+                delegateRegistrationModel.UserIsActive,
+                delegateRegistrationModel.ProfessionalRegistrationNumber,
+                PasswordHash = string.Empty,
                 TermsAgreed = registerJourneyContainsTermsAndConditions ? currentTime : (DateTime?)null,
                 DetailsLastChecked = currentTime,
             };
@@ -271,7 +271,7 @@
                         @lastName,
                         @jobGroup,
                         @professionalRegistrationNumber,
-                        @active,
+                        @userIsActive,
                         @termsAgreed,
                         @detailsLastChecked
                     )",
@@ -337,7 +337,7 @@
                 delegateRegistrationModel.Answer5,
                 delegateRegistrationModel.Answer6,
                 delegateRegistrationModel.Approved,
-                delegateRegistrationModel.Active,
+                delegateRegistrationModel.CentreAccountIsActive,
                 delegateRegistrationModel.IsExternalRegistered,
                 delegateRegistrationModel.IsSelfRegistered,
                 CentreSpecificDetailsLastChecked = currentTime,
@@ -379,7 +379,7 @@
                         @answer5,
                         @answer6,
                         @approved,
-                        @active,
+                        @centreAccountIsActive,
                         @isExternalRegistered,
                         @isSelfRegistered,
                         @centreSpecificDetailsLastChecked
@@ -415,7 +415,7 @@
                 delegateRegistrationModel.Answer5,
                 delegateRegistrationModel.Answer6,
                 delegateRegistrationModel.Approved,
-                delegateRegistrationModel.Active,
+                delegateRegistrationModel.CentreAccountIsActive,
                 CentreSpecificDetailsLastChecked = currentTime,
             };
 
@@ -428,7 +428,7 @@
                             Answer5 = @answer5,
                             Answer6 = @answer6,
                             Approved = @approved,
-                            Active = @active,
+                            Active = @centreAccountIsActive,
                             CentreSpecificDetailsLastChecked = @centreSpecificDetailsLastChecked
                         WHERE ID = @delegateId",
                 newDelegateValues,

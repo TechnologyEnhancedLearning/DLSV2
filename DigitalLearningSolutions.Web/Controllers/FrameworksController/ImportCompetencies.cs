@@ -6,8 +6,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     public partial class FrameworksController
     {
-        [Route("/Framework/{frameworkId}/Structure/Import")]
-        public IActionResult ImportCompetencies(int frameworkId)
+        [Route("/Framework/{frameworkId}/{tabname}/Import")]
+        public IActionResult ImportCompetencies(int frameworkId, string tabname)
         {
             var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);

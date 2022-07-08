@@ -14,6 +14,11 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.ModelBinders;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditRegistrationPrompt;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -206,6 +211,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
+            services.AddScoped<IMultiPageFormService, MultiPageFormService>();
             services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IPasswordResetService, PasswordResetService>();
@@ -220,7 +226,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<ISessionService, SessionService>();
-            services.AddScoped<IStoreAspProgressService, StoreAspProgressService>();
+            services.AddScoped<IStoreAspService, StoreAspService>();
             services.AddScoped<ISupervisorDelegateService, SupervisorDelegateService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
             services.AddScoped<IDashboardInformationService, DashboardInformationService>();
@@ -250,6 +256,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<ILearningLogItemsDataService, LearningLogItemsDataService>();
             services.AddScoped<ILearningResourceReferenceDataService, LearningResourceReferenceDataService>();
+            services.AddScoped<IMultiPageFormDataService, MultiPageFormDataService>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
@@ -291,17 +298,12 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<InternalDelegateRegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationByCentreData>>();
-            services.AddScoped<RedirectEmptySessionData<AddRegistrationPromptData>>();
-            services.AddScoped<RedirectEmptySessionData<EditRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<List<ChooseACentreAccountViewModel>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
             services.AddScoped<RedirectEmptySessionData<BulkUploadResult>>();
-            services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
-            services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
             services.AddScoped<RedirectEmptySessionData<EditLearningPathwayDefaultsData>>();
-            services.AddScoped<RedirectEmptySessionData<AddNewCentreCourseData>>();
             services.AddScoped<VerifyAdminUserCanManageCourse>();
             services.AddScoped<VerifyAdminUserCanViewCourse>();
             services.AddScoped<VerifyAdminUserCanAccessGroup>();
@@ -312,7 +314,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyDelegateCanAccessActionPlanResource>();
             services.AddScoped<VerifyDelegateAccessedViaValidRoute>();
             services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
-            services.AddScoped<AddNewCentreCourseData>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
