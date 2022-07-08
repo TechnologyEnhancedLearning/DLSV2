@@ -57,7 +57,10 @@
                 asp-action="SearchLearningResources"
                 asp-route-frameworkId="@Model.FrameworkId"
                 asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-                asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
+                asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
+                asp-route-searchText=""
+                asp-route-catalogueId="null"
+                asp-route-page="1">
           Restart search
         </button>
       </div>
@@ -69,14 +72,11 @@
   @Html.HiddenFor(m => m.FrameworkCompetencyGroupId)
   @Html.HiddenFor(m => m.FrameworkCompetencyId)
   @Html.HiddenFor(m => m.ReferenceId)
-  @Html.HiddenFor(m => m.SearchText)
   @Html.HiddenFor(m => m.Resource.Title)
   @Html.HiddenFor(m => m.Resource.ResourceType)
   @Html.HiddenFor(m => m.Resource.Description)
   @Html.HiddenFor(m => m.Link)
   @Html.HiddenFor(m => m.SelectedCatalogue)
-  @Html.HiddenFor(m => m.CatalogueId)
-  @Html.HiddenFor(m => m.Page)
   @Html.HiddenFor(m => m.Rating)
 </form>
 <div class="nhsuk-back-link nhsuk-u-margin-left-1">
