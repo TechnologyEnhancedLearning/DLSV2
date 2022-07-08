@@ -4,16 +4,16 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
 
-    public interface IRegisterAdminHelper
+    public interface IRegisterAdminService
     {
         bool IsRegisterAdminAllowed(int centreId);
     }
-    public class RegisterAdminHelper : IRegisterAdminHelper
+    public class RegisterAdminService : IRegisterAdminService
     {
         private readonly IUserDataService userDataService;
         private readonly ICentresDataService centresDataService;
 
-        public RegisterAdminHelper(
+        public RegisterAdminService(
             IUserDataService userDataService,
             ICentresDataService centresDataService
         )

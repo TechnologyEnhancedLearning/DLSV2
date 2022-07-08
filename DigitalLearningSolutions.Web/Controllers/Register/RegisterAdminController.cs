@@ -24,7 +24,7 @@
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
-        private readonly IRegisterAdminHelper registerAdminHelper;
+        private readonly IRegisterAdminService registerAdminService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
@@ -33,7 +33,7 @@
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
             IUserDataService userDataService,
-            IRegisterAdminHelper registerAdminHelper
+            IRegisterAdminService registerAdminService
         )
         {
             this.centresDataService = centresDataService;
@@ -42,7 +42,7 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.userDataService = userDataService;
-            this.registerAdminHelper = registerAdminHelper;
+            this.registerAdminService = registerAdminService;
         }
 
         public IActionResult Index(int? centreId = null)
@@ -57,7 +57,7 @@
                 return NotFound();
             }
 
-            if (!registerAdminHelper.IsRegisterAdminAllowed(centreId.Value))
+            if (!registerAdminService.IsRegisterAdminAllowed(centreId.Value))
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
@@ -243,7 +243,7 @@
         private bool CanProceedWithRegistration(RegistrationData data)
         {
             return data.Centre.HasValue && data.PrimaryEmail != null &&
-                   registerAdminHelper.IsRegisterAdminAllowed(data.Centre.Value) &&
+                   registerAdminService.IsRegisterAdminAllowed(data.Centre.Value) &&
                    (data.CentreSpecificEmail != null &&
                     centresService.DoesEmailMatchCentre(data.CentreSpecificEmail, data.Centre.Value) ||
                     centresService.DoesEmailMatchCentre(data.PrimaryEmail, data.Centre.Value)) &&

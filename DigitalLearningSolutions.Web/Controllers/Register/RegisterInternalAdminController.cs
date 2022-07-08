@@ -24,7 +24,7 @@
         private readonly IRegistrationService registrationService;
         private readonly IDelegateApprovalsService delegateApprovalsService;
         private readonly IFeatureManager featureManager;
-        private readonly IRegisterAdminHelper registerAdminHelper;
+        private readonly IRegisterAdminService registerAdminService;
 
         public RegisterInternalAdminController(
             ICentresDataService centresDataService,
@@ -33,7 +33,7 @@
             IRegistrationService registrationService,
             IDelegateApprovalsService delegateApprovalsService,
             IFeatureManager featureManager,
-            IRegisterAdminHelper registerAdminHelper
+            IRegisterAdminService registerAdminService
         )
         {
             this.centresDataService = centresDataService;
@@ -42,7 +42,7 @@
             this.registrationService = registrationService;
             this.delegateApprovalsService = delegateApprovalsService;
             this.featureManager = featureManager;
-            this.registerAdminHelper = registerAdminHelper;
+            this.registerAdminService = registerAdminService;
         }
 
         [HttpGet]
@@ -54,7 +54,7 @@
                 return NotFound();
             }
 
-            if (!registerAdminHelper.IsRegisterAdminAllowed(centreId.Value))
+            if (!registerAdminService.IsRegisterAdminAllowed(centreId.Value))
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }

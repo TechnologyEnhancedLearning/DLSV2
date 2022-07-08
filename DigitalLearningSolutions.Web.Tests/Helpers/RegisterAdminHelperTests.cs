@@ -16,14 +16,14 @@
         private const string DefaultCentreEmail = "centre@email.com";
         private IUserDataService userDataService = null!;
         private ICentresDataService centresDataService = null!;
-        private IRegisterAdminHelper registerAdminHelper = null!;
+        private IRegisterAdminService registerAdminService = null!;
 
         [SetUp]
         public void Setup()
         {
             userDataService = A.Fake<IUserDataService>();
             centresDataService = A.Fake<ICentresDataService>();
-            registerAdminHelper = new RegisterAdminHelper(userDataService, centresDataService);
+            registerAdminService = new RegisterAdminService(userDataService, centresDataService);
         }
 
         [Test]
@@ -35,7 +35,7 @@
                 .Returns((true, DefaultCentreEmail));
 
             // When
-            var result = registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId);
+            var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId);
 
             // Then
             A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
@@ -53,7 +53,7 @@
                 .Returns((false, null));
 
             // When
-            var result = registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId);
+            var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId);
 
             // Then
             A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
@@ -71,7 +71,7 @@
                 .Returns((false, "   "));
 
             // When
-            var result = registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId);
+            var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId);
 
             // Then
             A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
@@ -95,7 +95,7 @@
                 .Returns((false, DefaultCentreEmail));
 
             // When
-            var result = registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId);
+            var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId);
 
             // Then
             A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
@@ -116,7 +116,7 @@
                 .Returns(CentreTestHelper.GetDefaultCentre(active: false));
 
             // When
-            var result = registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId);
+            var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId);
 
             // Then
             A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
@@ -138,7 +138,7 @@
                 .Returns(CentreTestHelper.GetDefaultCentre(active: true));
 
             // When
-            var result = registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId);
+            var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId);
 
             // Then
             A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();

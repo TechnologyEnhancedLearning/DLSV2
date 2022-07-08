@@ -35,7 +35,7 @@
         private IRegistrationService registrationService = null!;
         private IDelegateApprovalsService delegateApprovalsService = null!;
         private IFeatureManager featureManager = null!;
-        private IRegisterAdminHelper registerAdminHelper = null!;
+        private IRegisterAdminService registerAdminService = null!;
         private RegisterInternalAdminController controller = null!;
         private HttpRequest request = null!;
 
@@ -48,7 +48,7 @@
             registrationService = A.Fake<IRegistrationService>();
             delegateApprovalsService = A.Fake<IDelegateApprovalsService>();
             featureManager = A.Fake<IFeatureManager>();
-            registerAdminHelper = A.Fake<IRegisterAdminHelper>();
+            registerAdminService = A.Fake<IRegisterAdminService>();
             request = A.Fake<HttpRequest>();
             controller = new RegisterInternalAdminController(
                     centresDataService,
@@ -57,7 +57,7 @@
                     registrationService,
                     delegateApprovalsService,
                     featureManager,
-                    registerAdminHelper
+                    registerAdminService
                 )
                 .WithDefaultContext()
                 .WithMockRequestContext(request)
@@ -95,14 +95,14 @@
         {
             // Given
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
-            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).Returns(false);
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).Returns(false);
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -112,13 +112,13 @@
         {
             // Given
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
-            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).Returns(true);
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).Returns(true);
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeViewResult().ModelAs<InternalAdminInformationViewModel>();
         }
 

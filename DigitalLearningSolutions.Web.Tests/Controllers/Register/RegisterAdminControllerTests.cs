@@ -28,7 +28,7 @@
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
-        private IRegisterAdminHelper registerAdminHelper = null!;
+        private IRegisterAdminService registerAdminService = null!;
 
         [SetUp]
         public void Setup()
@@ -39,7 +39,7 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
-            registerAdminHelper = A.Fake<IRegisterAdminHelper>();
+            registerAdminService = A.Fake<IRegisterAdminService>();
             controller = new RegisterAdminController(
                     centresDataService,
                     centresService,
@@ -47,7 +47,7 @@
                     jobGroupsDataService,
                     registrationService,
                     userDataService,
-                    registerAdminHelper
+                    registerAdminService
                 )
                 .WithDefaultContext()
                 .WithMockTempData();
@@ -82,14 +82,14 @@
         {
             // Given
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
-            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).Returns(false);
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).Returns(false);
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -99,14 +99,14 @@
         {
             // Given
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
-            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).Returns(true);
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).Returns(true);
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
             var data = controller.TempData.Peek<RegistrationData>()!;
             data.Centre.Should().Be(DefaultCentreId);
             result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
@@ -206,7 +206,7 @@
                 HasProfessionalRegistrationNumber = true,
             };
             controller.TempData.Set(data);
-            A.CallTo(() => registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId)).Returns(true);
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).Returns(true);
             if (centreSpecificEmail != null)
             {
                 A.CallTo(() => userDataService.GetAdminUserByEmailAddress(centreSpecificEmail)).Returns(null);
