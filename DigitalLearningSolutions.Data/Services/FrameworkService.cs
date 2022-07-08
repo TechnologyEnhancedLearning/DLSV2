@@ -1207,7 +1207,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 {
                     logger.LogWarning(
                         "Not deleting competency group as db update failed. " +
-                        $"competencyGroupId: { competencyGroupId }, adminId: { adminId }"
+                        $"competencyGroupId: {competencyGroupId}, adminId: {adminId}"
                     );
                 }
             }
