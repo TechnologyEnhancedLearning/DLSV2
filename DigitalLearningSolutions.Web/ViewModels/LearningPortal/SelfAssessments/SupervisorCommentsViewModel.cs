@@ -5,7 +5,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
     public class SupervisorCommentsViewModel
     {
-        public SelfAssessmentSupervisor? SelfAssessmentSupervisor { get; set; }
         public SupervisorComment? SupervisorComment { get; set; }
         public AssessmentQuestion AssessmentQuestion { get; set; }
 
