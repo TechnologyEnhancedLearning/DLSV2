@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -62,7 +63,7 @@
             var userEntity = userService.GetUserById(userId);
 
             var adminAccount = userEntity!.GetCentreAccountSet(centreId)?.AdminAccount;
-            var delegateAccount = userEntity.GetCentreAccountSet(centreId)?.DelegateAccount;
+            var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
 
             var customPrompts =
                 centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
@@ -97,10 +98,10 @@
             var centreId = User.GetCentreId();
             var userId = User.GetUserIdKnownNotNull();
             var userEntity = userService.GetUserById(userId);
-            var delegateAccount = userEntity!.GetCentreAccountSet(centreId)?.DelegateAccount;
+            var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-            
+
             var customPrompts =
                 centreId != null
                     ? promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
@@ -291,6 +292,13 @@
 
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);
+        }
+
+        private static DelegateAccount? GetDelegateAccountIfActive(UserEntity? user, int? centreId)
+        {
+            var delegateAccount = user?.GetCentreAccountSet(centreId)?.DelegateAccount;
+
+            return delegateAccount is { Active: true } ? delegateAccount : null;
         }
     }
 }
