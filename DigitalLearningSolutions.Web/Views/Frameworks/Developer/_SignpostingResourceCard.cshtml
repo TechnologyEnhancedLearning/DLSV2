@@ -58,6 +58,7 @@
         @Html.HiddenFor(m => m.FrameworkCompetencyId)
         @Html.Hidden("ReferenceId", Model.ReferenceId)
         @Html.Hidden("CatalogueId", parent.CatalogueId)
+        @Html.Hidden("Page", parent.Page)
         @Html.Hidden("Resource.Title", Model.Resource?.Title)
         @Html.Hidden("Resource.ResourceType", Model.Resource?.ResourceType)
         @Html.HiddenFor(m => m.Resource.Description)

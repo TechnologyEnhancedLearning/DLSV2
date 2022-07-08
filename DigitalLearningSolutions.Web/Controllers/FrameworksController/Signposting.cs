@@ -37,6 +37,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             Catalogues = Catalogues ?? (await this.learningHubApiClient.GetCatalogues())?.Catalogues;
             model.Catalogues = Catalogues;
             model.CatalogueId = catalogueId;
+            model.Page = Math.Max(page, 1);
             if (frameworkCompetencyGroupId.HasValue)
             {
                 var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
@@ -44,7 +45,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             if (searchText?.Trim().Length > 1)
             {
-                model.Page = Math.Max(page, 1);
                 model.SearchText = searchText;
                 try
                 {

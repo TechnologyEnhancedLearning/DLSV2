@@ -60,9 +60,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
             Resource = resource;
         }
 
-        public CompetencyResourceSummaryViewModel(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId, int? catalogueId = null) : base(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
+        public CompetencyResourceSummaryViewModel(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId) : base(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
         {
-            CatalogueId = catalogueId;
         }
     }
 }
