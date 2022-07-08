@@ -643,7 +643,7 @@
                                 model.NotifyDate == null &&
                                 model.IsSelfRegistered == false &&
                                 model.UserIsActive == false &&
-                                model.Active == true &&
+                                model.CentreAccountIsActive == true &&
                                 model.Approved == true &&
                                 model.PasswordHash == null
                         ),

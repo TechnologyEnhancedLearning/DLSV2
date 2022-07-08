@@ -21,7 +21,7 @@
             string? answer5,
             string? answer6,
             bool isSelfRegistered,
-            bool delegateIsActive,
+            bool centreAccountIsActive,
             bool userIsActive,
             string? professionalRegistrationNumber,
             bool approved = false,
@@ -33,7 +33,7 @@
             centreSpecificEmail,
             centre,
             passwordHash,
-            delegateIsActive,
+            centreAccountIsActive,
             approved,
             professionalRegistrationNumber,
             jobGroup
@@ -58,7 +58,7 @@
             int centre,
             int jobGroup,
             string? passwordHash,
-            bool delegateIsActive,
+            bool centreAccountIsActive,
             bool userIsActive,
             bool approved,
             string? professionalRegistrationNumber
@@ -69,7 +69,7 @@
             centreSpecificEmail,
             centre,
             passwordHash,
-            delegateIsActive,
+            centreAccountIsActive,
             approved,
             professionalRegistrationNumber,
             jobGroup

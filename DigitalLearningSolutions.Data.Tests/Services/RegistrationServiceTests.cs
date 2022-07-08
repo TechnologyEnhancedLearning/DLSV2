@@ -601,7 +601,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                                  && m.ImportOnly == centreManagerModel.ImportOnly
                                  && m.IsSupervisor == centreManagerModel.IsSupervisor
                                  && m.IsNominatedSupervisor == centreManagerModel.IsNominatedSupervisor
-                                 && m.Active == centreManagerModel.Active
+                                 && m.Active == centreManagerModel.CentreAccountIsActive
                         )
                     )
                 )
@@ -1206,9 +1206,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(
                 () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
                     A<DelegateRegistrationModel>.That.Matches(
-                        d => d.Centre == model.Centre && d.Approved && d.Active && d.Answer1 == model.Answer1 &&
-                             d.Answer2 == model.Answer2 && d.Answer3 == model.Answer3 && d.Answer4 == model.Answer4 &&
-                             d.Answer5 == model.Answer5 && d.Answer6 == model.Answer6
+                        d => d.Centre == model.Centre
+                             && d.Approved
+                             && d.CentreAccountIsActive
+                             && d.Answer1 == model.Answer1
+                             && d.Answer2 == model.Answer2
+                             && d.Answer3 == model.Answer3
+                             && d.Answer4 == model.Answer4
+                             && d.Answer5 == model.Answer5
+                             && d.Answer6 == model.Answer6
                     ),
                     userId,
                     existingDelegateId,

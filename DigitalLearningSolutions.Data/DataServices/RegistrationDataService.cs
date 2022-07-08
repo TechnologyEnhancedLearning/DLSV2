@@ -337,7 +337,7 @@
                 delegateRegistrationModel.Answer5,
                 delegateRegistrationModel.Answer6,
                 delegateRegistrationModel.Approved,
-                delegateRegistrationModel.Active,
+                delegateRegistrationModel.CentreAccountIsActive,
                 delegateRegistrationModel.IsExternalRegistered,
                 delegateRegistrationModel.IsSelfRegistered,
                 CentreSpecificDetailsLastChecked = currentTime,
@@ -379,7 +379,7 @@
                         @answer5,
                         @answer6,
                         @approved,
-                        @active,
+                        @centreAccountIsActive,
                         @isExternalRegistered,
                         @isSelfRegistered,
                         @centreSpecificDetailsLastChecked
@@ -415,7 +415,7 @@
                 delegateRegistrationModel.Answer5,
                 delegateRegistrationModel.Answer6,
                 delegateRegistrationModel.Approved,
-                delegateRegistrationModel.Active,
+                delegateRegistrationModel.CentreAccountIsActive,
                 CentreSpecificDetailsLastChecked = currentTime,
             };
 
@@ -428,7 +428,7 @@
                             Answer5 = @answer5,
                             Answer6 = @answer6,
                             Approved = @approved,
-                            Active = @active,
+                            Active = @centreAccountIsActive,
                             CentreSpecificDetailsLastChecked = @centreSpecificDetailsLastChecked
                         WHERE ID = @delegateId",
                 newDelegateValues,

@@ -308,7 +308,7 @@
                                 a.CentreSpecificEmail == data.CentreSpecificEmail &&
                                 a.Centre == data.Centre.Value &&
                                 a.PasswordHash == data.PasswordHash! &&
-                                a.Active &&
+                                a.CentreAccountIsActive &&
                                 a.Approved &&
                                 a.IsCentreAdmin &&
                                 a.IsCentreManager &&

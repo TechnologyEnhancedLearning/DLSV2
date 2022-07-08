@@ -206,7 +206,7 @@
                                     d.Answer4 == data.Answer4 &&
                                     d.Answer5 == data.Answer5 &&
                                     d.Answer6 == data.Answer6 &&
-                                    d.Active &&
+                                    d.CentreAccountIsActive &&
                                     d.IsSelfRegistered &&
                                     d.NotifyDate != null
                             ),

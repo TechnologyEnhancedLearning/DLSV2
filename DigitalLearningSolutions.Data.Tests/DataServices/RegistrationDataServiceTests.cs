@@ -286,7 +286,7 @@
                 delegateAfterUpdate.Answer4.Should().Be(delegateRegistrationModel.Answer4);
                 delegateAfterUpdate.Answer5.Should().Be(delegateRegistrationModel.Answer5);
                 delegateAfterUpdate.Answer6.Should().Be(delegateRegistrationModel.Answer6);
-                delegateAfterUpdate.Active.Should().Be(delegateRegistrationModel.Active);
+                delegateAfterUpdate.Active.Should().Be(delegateRegistrationModel.CentreAccountIsActive);
                 delegateAfterUpdate.Approved.Should().Be(delegateRegistrationModel.Approved);
                 delegateAfterUpdate.ExternalReg.Should().Be(delegateBeforeUpdate.ExternalReg);
                 delegateAfterUpdate.SelfReg.Should().Be(delegateBeforeUpdate.SelfReg);
