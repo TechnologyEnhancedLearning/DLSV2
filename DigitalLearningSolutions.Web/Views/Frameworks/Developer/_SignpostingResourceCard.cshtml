@@ -23,12 +23,15 @@
     </div>
     @if (Model.Catalogues.Count() > 0)
     {
-      <div class="nhsuk-u-font-weight-bold nhsuk-u-margin-left-1 nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2">
-        Catalogues
-      </div>
       <form method="post" role="search" asp-controller="Frameworks">
         <div class="nhsuk-card__content nhsuk-u-margin-1 nhsuk-u-padding-0">
           <dl class="nhsuk-summary-list">
+            <div class="nhsuk-summary-list__row">
+              <dt class="nhsuk-summary-list__key">
+                Catalogues
+              </dt>
+              <dd class="nhsuk-summary-list__value"></dd>
+            </div>
             @foreach(var catalogue in Model.Catalogues)
             {
               <div class="nhsuk-summary-list__row">
