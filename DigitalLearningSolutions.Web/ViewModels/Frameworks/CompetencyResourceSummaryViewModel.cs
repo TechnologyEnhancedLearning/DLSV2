@@ -11,7 +11,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
     public class CompetencyResourceSummaryViewModel : BaseSignpostingViewModel
     {
         private string _Link;
-        private string _Catalog;
         private int _ReferenceId;
         public int ReferenceId
         {
@@ -47,6 +46,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
             }
         }
         public string SelectedCatalogue { get; set; }
+        public int? CatalogueId { get; set; }
         public decimal? Rating { get; set; }
         public string NameOfCompetency { get; set; }
         public string SearchText { get; set; }
@@ -60,8 +60,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
             Resource = resource;
         }
 
-        public CompetencyResourceSummaryViewModel(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId) : base(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
+        public CompetencyResourceSummaryViewModel(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId, int? catalogueId = null) : base(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
         {
+            CatalogueId = catalogueId;
         }
     }
 }

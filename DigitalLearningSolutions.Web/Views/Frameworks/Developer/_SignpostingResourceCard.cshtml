@@ -42,7 +42,6 @@
                       asp-route-resourceReferenceId="@Model.ReferenceId">Preview</a>
                   <button class="nhsuk-button small-edit-button"
                       asp-action="AddCompetencyLearningResourceSummary"
-                      asp-route-catalogueId="@parent.CatalogueId"
                       asp-route-SelectedCatalogue="@catalogue">
                     Select
                   </button>
@@ -55,6 +54,7 @@
         @Html.HiddenFor(m => m.FrameworkCompetencyGroupId)
         @Html.HiddenFor(m => m.FrameworkCompetencyId)
         @Html.Hidden("ReferenceId", Model.ReferenceId)
+        @Html.Hidden("CatalogueId", parent.CatalogueId)
         @Html.Hidden("Resource.Title", Model.Resource?.Title)
         @Html.Hidden("Resource.ResourceType", Model.Resource?.ResourceType)
         @Html.HiddenFor(m => m.Resource.Description)
