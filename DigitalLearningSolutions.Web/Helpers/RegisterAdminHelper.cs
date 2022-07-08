@@ -28,7 +28,7 @@
             var centre = centresDataService.GetCentreDetailsById(centreId);
             var hasCentreManagerAdmin = admins.Any(admin => admin.AdminAccount.IsCentreManager);
             var (autoRegistered, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
-            return centre!.Active && !hasCentreManagerAdmin && !autoRegistered &&
+            return centre?.Active == true && !hasCentreManagerAdmin && !autoRegistered &&
                    !string.IsNullOrWhiteSpace(autoRegisterManagerEmail);
         }
     }

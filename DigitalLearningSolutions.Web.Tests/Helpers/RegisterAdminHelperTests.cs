@@ -14,9 +14,9 @@
     {
         private const int DefaultCentreId = 7;
         private const string DefaultCentreEmail = "centre@email.com";
-        private IUserDataService userDataService;
-        private ICentresDataService centresDataService;
-        private IRegisterAdminHelper registerAdminHelper;
+        private IUserDataService userDataService = null!;
+        private ICentresDataService centresDataService = null!;
+        private IRegisterAdminHelper registerAdminHelper = null!;
 
         [SetUp]
         public void Setup()
@@ -101,6 +101,28 @@
             A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .MustHaveHappenedOnceExactly();
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void IsRegisterAdminAllowed_with_inactive_centre_returns_false()
+        {
+            // Given
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId))
+                .Returns(new List<AdminEntity>());
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .Returns((false, DefaultCentreEmail));
+            A.CallTo(() => centresDataService.GetCentreDetailsById(DefaultCentreId))
+                .Returns(CentreTestHelper.GetDefaultCentre(active: false));
+
+            // When
+            var result = registerAdminHelper.IsRegisterAdminAllowed(DefaultCentreId);
+
+            // Then
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => centresDataService.GetCentreDetailsById(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
         }
 
