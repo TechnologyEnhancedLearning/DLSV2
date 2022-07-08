@@ -540,9 +540,8 @@
                 );
                 return -2;
             }
-
             var existingId = (int)connection.ExecuteScalar(
-                @"SELECT COALESCE ((SELECT ID FROM CompetencyGroups WHERE [Name] = @groupName AND Description = @groupDescription), 0) AS CompetencyGroupID",
+                @"SELECT COALESCE ((SELECT TOP(1)ID FROM CompetencyGroups WHERE [Name] = @groupName AND (@groupDescription IS NULL OR Description = @groupDescription)), 0) AS CompetencyGroupID",
                 new { groupName, groupDescription }
             );
             if (existingId > 0)
@@ -565,7 +564,7 @@
             }
 
             existingId = (int)connection.ExecuteScalar(
-                @"SELECT COALESCE ((SELECT TOP(1) ID FROM CompetencyGroups WHERE [Name] = @groupName AND Description = @groupDescription), 0) AS CompetencyGroupID",
+                @"SELECT COALESCE ((SELECT TOP(1)ID FROM CompetencyGroups WHERE [Name] = @groupName AND (@groupDescription IS NULL OR Description = @groupDescription)), 0) AS CompetencyGroupID",
                 new { groupName, groupDescription }
             );
             return existingId;
