@@ -1,16 +1,16 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
+﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.Helpers;
     using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class RegisterAdminHelperTests
+    public class RegisterAdminServiceTests
     {
         private const int DefaultCentreId = 7;
         private const string DefaultCentreEmail = "centre@email.com";
