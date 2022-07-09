@@ -176,5 +176,89 @@
             // Then
             result.Should().BeFalse();
         }
+
+        [Test]
+        public void GetAllCentreEmailsForUser_returns_centre_email_list()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const int delegateOnlyCentreId = 2;
+            const int adminOnlyCentreId = 3;
+            const int adminAndDelegateCentreId = 101;
+            const int nullCentreEmailCentreId = 4;
+            const string delegateOnlyCentreEmail = "centre2@email.com";
+            const string adminOnlyCentreEmail = "centre3@email.com";
+            const string adminAndDelegateCentreEmail = "centre101@email.com";
+            var delegateOnlyCentreName = connection.Query<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @delegateOnlyCentreId",
+                new { delegateOnlyCentreId }
+            ).SingleOrDefault();
+            var adminOnlyCentreName = connection.Query<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @adminOnlyCentreId",
+                new { adminOnlyCentreId }
+            ).SingleOrDefault();
+            var adminAndDelegateCentreName = connection.Query<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @adminAndDelegateCentreId",
+                new { adminAndDelegateCentreId }
+            ).SingleOrDefault();
+            var nullCentreEmailCentreName = connection.Query<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @nullCentreEmailCentreId",
+                new { nullCentreEmailCentreId }
+            ).SingleOrDefault();
+
+            connection.Execute(
+                @"INSERT INTO AdminAccounts (UserID, CentreID) VALUES (@userId, @adminOnlyCentreId)",
+                new { userId, adminOnlyCentreId }
+            );
+            connection.Execute(
+                @"INSERT INTO AdminAccounts (UserID, CentreID) VALUES (@userId, @nullCentreEmailCentreId)",
+                new { userId, nullCentreEmailCentreId }
+            );
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)VALUES (@userId, @delegateOnlyCentreId, @delegateOnlyCentreEmail)",
+                new { userId, delegateOnlyCentreId, delegateOnlyCentreEmail }
+            );
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                VALUES (@userId, @adminOnlyCentreId, @adminOnlyCentreEmail)",
+                new { userId, adminOnlyCentreId, adminOnlyCentreEmail }
+            );
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                VALUES (@userId, @adminAndDelegateCentreId, @adminAndDelegateCentreEmail)",
+                new { userId, adminAndDelegateCentreId, adminAndDelegateCentreEmail }
+            );
+
+            // When
+            var result = userDataService.GetAllCentreEmailsForUser(1).ToList();
+
+            // Then
+            result.Count.Should().Be(4);
+            result.Should().ContainEquivalentOf((delegateOnlyCentreName, delegateOnlyCentreEmail));
+            result.Should().ContainEquivalentOf((adminOnlyCentreName, adminOnlyCentreEmail));
+            result.Should().ContainEquivalentOf((adminAndDelegateCentreName, adminAndDelegateCentreEmail));
+            result.Should().ContainEquivalentOf((nullCentreEmailCentreName, (string?)null));
+        }
+
+        [Test]
+        public void GetAllCentreEmailsForUser_returns_empty_list_when_user_has_no_centre_accounts()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 777;
+            connection.Execute(@"DELETE FROM DelegateAccounts WHERE UserID = @userId", new { userId });
+            connection.Execute(@"DELETE FROM AdminAccounts WHERE UserID = @userId", new { userId });
+
+            // When
+            var result = userDataService.GetAllCentreEmailsForUser(userId);
+
+            // Then
+            result.Should().BeEmpty();
+        }
     }
 }
