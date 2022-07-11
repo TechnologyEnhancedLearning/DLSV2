@@ -287,72 +287,6 @@
         }
 
         [Test]
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        public void NewEmailAddressIsValid_returns_negation_of_data_service_method(
-            bool dataServiceReturn,
-            bool expectedValue
-        )
-        {
-            // Given
-            const int userId = 2;
-            const string email = "email@test.com";
-            A.CallTo(() => userDataService.EmailIsInUseByOtherUser(userId, email, A<IDbTransaction?>._))
-                .Returns(dataServiceReturn);
-
-            // When
-            var result = userService.NewEmailAddressIsValid(email, userId);
-
-            // Then
-            result.Should().Be(expectedValue);
-        }
-
-        [Test]
-        public void IsDelegateEmailValidForCentre_should_return_false_if_user_at_centre_has_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
-                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email, centreId: 3) });
-
-            // When
-            var result = userService.IsDelegateEmailValidForCentre(email, 3);
-
-            // Then
-            result.Should().BeFalse();
-        }
-
-        [Test]
-        public void IsDelegateEmailValidForCentre_should_return_true_if_user_not_at_centre_has_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
-                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email, centreId: 4) });
-
-            // When
-            var result = userService.IsDelegateEmailValidForCentre(email, 3);
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void IsDelegateEmailValidForCentre_should_return_true_if_no_user_has_email()
-        {
-            // Given
-            const string email = "email@test.com";
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
-                (new List<DelegateUser>());
-
-            // When
-            var result = userService.IsDelegateEmailValidForCentre(email, 3);
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
         public void ResetFailedLoginCountByUserId_resets_count()
         {
             // Given
@@ -799,18 +733,20 @@
         }
 
         [Test]
-        public void ShouldForceDetailsCheck_returns_false_when_all_details_are_valid_or_below_threshold()
+        public void
+            ShouldForceDetailsCheck_returns_false_when_delegate_account_details_last_checked_is_beyond_threshold_but_inactive()
         {
             // Given
             var now = new DateTime(2022, 5, 5);
             var yesterday = now.AddDays(-1);
+            var sevenMonthsAgo = now.AddMonths(-7);
             A.CallTo(() => configuration["MonthsToPromptUserDetailsCheck"]).Returns("6");
             A.CallTo(() => clockService.UtcNow).Returns(now);
             var userEntity = new UserEntity(
                 UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday),
                 new List<AdminAccount>(),
                 new List<DelegateAccount>
-                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: yesterday) }
+                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: sevenMonthsAgo, active: false) }
             );
 
             // When
@@ -845,24 +781,25 @@
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void EmailIsInUse_returns_whether_email_is_in_use(bool isEmailInUse)
+        public void ShouldForceDetailsCheck_returns_false_when_all_details_are_valid_or_below_threshold()
         {
             // Given
-            var email = "fake";
-            A.CallTo(
-                () => userDataService.AnyEmailsInSetAreAlreadyInUse(
-                    A<IEnumerable<string>>.That.IsSameSequenceAs(new[] { email }),
-                    null
-                )
-            ).Returns(isEmailInUse);
+            var now = new DateTime(2022, 5, 5);
+            var yesterday = now.AddDays(-1);
+            A.CallTo(() => configuration["MonthsToPromptUserDetailsCheck"]).Returns("6");
+            A.CallTo(() => clockService.UtcNow).Returns(now);
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: yesterday) }
+            );
 
             // When
-            var result = userService.EmailIsInUse(email);
+            var result = userService.ShouldForceDetailsCheck(userEntity, 2);
 
             // Then
-            result.Should().Be(isEmailInUse);
+            result.Should().BeFalse();
         }
 
         [Test]

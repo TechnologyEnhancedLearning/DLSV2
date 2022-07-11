@@ -25,29 +25,26 @@ namespace DigitalLearningSolutions.Data.Services
 
     public class DelegateUploadFileService : IDelegateUploadFileService
     {
-        private readonly IConfiguration configuration;
         private readonly IJobGroupsDataService jobGroupsDataService;
-        private readonly IPasswordResetService passwordResetService;
+        private readonly IUserDataService userDataService;
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
-        private readonly IUserDataService userDataService;
-        private readonly IUserService userService;
+        private readonly IPasswordResetService passwordResetService;
+        private readonly IConfiguration configuration;
 
         public DelegateUploadFileService(
             IJobGroupsDataService jobGroupsDataService,
             IUserDataService userDataService,
-            IRegistrationService registrationDataService,
+            IRegistrationService registrationService,
             ISupervisorDelegateService supervisorDelegateService,
-            IUserService userService,
             IPasswordResetService passwordResetService,
             IConfiguration configuration
         )
         {
-            this.userDataService = userDataService;
-            registrationService = registrationDataService;
-            this.supervisorDelegateService = supervisorDelegateService;
             this.jobGroupsDataService = jobGroupsDataService;
-            this.userService = userService;
+            this.userDataService = userDataService;
+            this.registrationService = registrationService;
+            this.supervisorDelegateService = supervisorDelegateService;
             this.passwordResetService = passwordResetService;
             this.configuration = configuration;
         }
@@ -97,19 +94,9 @@ namespace DigitalLearningSolutions.Data.Services
                 return;
             }
 
-            var delegateUserByCandidateNumber =
-                GetDelegateUserByCandidateNumberOrDefault(centreId, delegateRow.CandidateNumber);
-
-            if (!string.IsNullOrEmpty(delegateRow.CandidateNumber) && delegateUserByCandidateNumber == null)
+            if (string.IsNullOrEmpty(delegateRow.CandidateNumber))
             {
-                delegateRow.Error = BulkUploadResult.ErrorReason.NoRecordForDelegateId;
-                return;
-            }
-
-            var userToUpdate = delegateUserByCandidateNumber;
-            if (userToUpdate == null)
-            {
-                if (!userService.IsDelegateEmailValidForCentre(delegateRow.Email!, centreId))
+                if (userDataService.CentreSpecificEmailIsInUseAtCentre(delegateRow.Email!, centreId))
                 {
                     delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
                     return;
@@ -119,50 +106,47 @@ namespace DigitalLearningSolutions.Data.Services
             }
             else
             {
-                ProcessPotentialUpdate(centreId, delegateRow, userToUpdate);
+                var delegateEntity = userDataService.GetDelegateByCandidateNumber(delegateRow.CandidateNumber);
+
+                if (delegateEntity == null)
+                {
+                    delegateRow.Error = BulkUploadResult.ErrorReason.NoRecordForDelegateId;
+                    return;
+                }
+
+                if (delegateRow.MatchesDelegateEntity(delegateEntity))
+                {
+                    delegateRow.RowStatus = RowStatus.Skipped;
+                    return;
+                }
+
+                if (
+                    delegateRow.Email != delegateEntity.EmailForCentreNotifications &&
+                    userDataService.CentreSpecificEmailIsInUseAtCentre(delegateRow.Email!, centreId)
+                )
+                {
+                    delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
+                    return;
+                }
+
+                UpdateDelegate(delegateRow, delegateEntity);
             }
         }
 
-        private DelegateUser? GetDelegateUserByCandidateNumberOrDefault(int centreId, string? candidateNumber)
-        {
-            return !string.IsNullOrEmpty(candidateNumber)
-                ? userDataService.GetDelegateUserByCandidateNumber(candidateNumber, centreId)
-                : null;
-        }
-
-        private void ProcessPotentialUpdate(int centreId, DelegateTableRow delegateRow, DelegateUser delegateUser)
-        {
-            if (delegateRow.Email != delegateUser.EmailAddress &&
-                !userService.IsDelegateEmailValidForCentre(delegateRow.Email!, centreId))
-            {
-                delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
-                return;
-            }
-
-            if (delegateRow.MatchesDelegateUser(delegateUser))
-            {
-                delegateRow.RowStatus = RowStatus.Skipped;
-                return;
-            }
-
-            UpdateDelegate(delegateRow, delegateUser);
-        }
-
-        // TODO HEEDLS-887 Make sure this logic is correct with the new account structure
-        private void UpdateDelegate(DelegateTableRow delegateRow, DelegateUser delegateUser)
+        private void UpdateDelegate(DelegateTableRow delegateRow, DelegateEntity delegateEntity)
         {
             try
             {
                 userDataService.UpdateUserDetails(
                     delegateRow.FirstName!,
                     delegateRow.LastName!,
-                    delegateRow.Email!,
+                    delegateEntity.UserAccount.PrimaryEmail,
                     delegateRow.JobGroupId!.Value,
-                    1 // TODO HEEDLS-887 This needs correcting to the correct UserId for the delegate record.
+                    delegateEntity.UserAccount.Id
                 );
 
                 userDataService.UpdateDelegateAccount(
-                    delegateUser.Id,
+                    delegateEntity.DelegateAccount.Id,
                     delegateRow.Active!.Value,
                     delegateRow.Answer1,
                     delegateRow.Answer2,
@@ -175,8 +159,17 @@ namespace DigitalLearningSolutions.Data.Services
                 UpdateUserProfessionalRegistrationNumberIfNecessary(
                     delegateRow.HasPrn,
                     delegateRow.Prn,
-                    delegateUser.Id
+                    delegateEntity.DelegateAccount.Id
                 );
+
+                if (delegateRow.Email != delegateEntity.EmailForCentreNotifications)
+                {
+                    userDataService.SetCentreEmail(
+                        delegateEntity.UserAccount.Id,
+                        delegateEntity.DelegateAccount.CentreId,
+                        delegateRow.Email
+                    );
+                }
 
                 delegateRow.RowStatus = RowStatus.Updated;
             }
@@ -190,42 +183,27 @@ namespace DigitalLearningSolutions.Data.Services
         {
             var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
 
-            var errorCodeOrCandidateNumber = registrationService.CreateAccountAndReturnCandidateNumber(model, false);
-            switch (errorCodeOrCandidateNumber)
-            {
-                case "-1":
-                    delegateRow.Error = BulkUploadResult.ErrorReason.UnexpectedErrorForCreate;
-                    break;
-                case "-2":
-                case "-3":
-                case "-4":
-                    throw new ArgumentOutOfRangeException(
-                        nameof(errorCodeOrCandidateNumber),
-                        errorCodeOrCandidateNumber,
-                        "Unknown return value when creating delegate record."
-                    );
-                default:
-                    var newDelegateRecord =
-                        userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
-                    UpdateUserProfessionalRegistrationNumberIfNecessary(
-                        delegateRow.HasPrn,
-                        delegateRow.Prn,
-                        newDelegateRecord.Id
-                    );
-                    SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, newDelegateRecord.Id);
-                    if (welcomeEmailDate.HasValue)
-                    {
-                        passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                            newDelegateRecord.Id,
-                            configuration.GetAppRootPath(),
-                            welcomeEmailDate.Value,
-                            "DelegateBulkUpload_Refactor"
-                        );
-                    }
+            var (delegateId, _) = registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(model, false);
 
-                    delegateRow.RowStatus = RowStatus.Registered;
-                    break;
+            UpdateUserProfessionalRegistrationNumberIfNecessary(
+                delegateRow.HasPrn,
+                delegateRow.Prn,
+                delegateId
+            );
+
+            SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, delegateId);
+
+            if (welcomeEmailDate.HasValue)
+            {
+                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    delegateId,
+                    configuration.GetAppRootPath(),
+                    welcomeEmailDate.Value,
+                    "DelegateBulkUpload_Refactor"
+                );
             }
+
+            delegateRow.RowStatus = RowStatus.Registered;
         }
 
         private void UpdateUserProfessionalRegistrationNumberIfNecessary(

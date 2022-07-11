@@ -25,7 +25,6 @@
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
-        private readonly IUserService userService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
@@ -33,8 +32,7 @@
             ICryptoService cryptoService,
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
-            IUserDataService userDataService,
-            IUserService userService
+            IUserDataService userDataService
         )
         {
             this.centresDataService = centresDataService;
@@ -43,7 +41,6 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.userDataService = userDataService;
-            this.userService = userService;
         }
 
         public IActionResult Index(int? centreId = null)
@@ -80,7 +77,7 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 ModelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 
@@ -96,7 +93,7 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 ModelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 

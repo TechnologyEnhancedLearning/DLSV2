@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -19,27 +19,27 @@
         public static void ValidateEmailAddressesForDelegateRegistration(
             PersonalInformationViewModel model,
             ModelStateDictionary modelState,
-            IUserService userService
+            IUserDataService userDataService
         )
         {
-            ValidateEmailAddresses(false, model, modelState, userService);
+            ValidateEmailAddresses(false, model, modelState, userDataService);
         }
 
         public static void ValidateEmailAddressesForAdminRegistration(
             PersonalInformationViewModel model,
             ModelStateDictionary modelState,
-            IUserService userService,
+            IUserDataService userDataService,
             ICentresDataService centresDataService
         )
         {
-            ValidateEmailAddresses(true, model, modelState, userService, centresDataService);
+            ValidateEmailAddresses(true, model, modelState, userDataService, centresDataService);
         }
 
         private static void ValidateEmailAddresses(
             bool isRegisterAdminJourney,
             PersonalInformationViewModel model,
             ModelStateDictionary modelState,
-            IUserService userService,
+            IUserDataService userDataService,
             ICentresDataService? centresDataService = null
         )
         {
@@ -57,7 +57,7 @@
 
             if (primaryEmailIsValidAndNotNull)
             {
-                if (userService.EmailIsInUse(model.PrimaryEmail))
+                if (userDataService.PrimaryEmailIsInUse(model.PrimaryEmail))
                 {
                     modelState.AddModelError(
                         nameof(PersonalInformationViewModel.PrimaryEmail),
@@ -79,7 +79,7 @@
 
             if (centreSpecificEmailIsValidAndNotNull)
             {
-                if (userService.EmailIsInUse(model.CentreSpecificEmail))
+                if (userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail, model.Centre!.Value))
                 {
                     modelState.AddModelError(
                         nameof(PersonalInformationViewModel.CentreSpecificEmail),

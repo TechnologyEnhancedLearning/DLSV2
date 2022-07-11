@@ -3,7 +3,9 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -33,10 +35,12 @@
         private readonly ILogger<MyAccountController> logger;
         private readonly PromptsService promptsService;
         private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
 
         public MyAccountController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IUserService userService,
+            IUserDataService userDataService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
             PromptsService registrationPromptsService,
@@ -46,6 +50,7 @@
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.userService = userService;
+            this.userDataService = userDataService;
             this.imageResizeService = imageResizeService;
             this.jobGroupsDataService = jobGroupsDataService;
             promptsService = registrationPromptsService;
@@ -61,7 +66,7 @@
             var userEntity = userService.GetUserById(userId);
 
             var adminAccount = userEntity!.GetCentreAccountSet(centreId)?.AdminAccount;
-            var delegateAccount = userEntity.GetCentreAccountSet(centreId)?.DelegateAccount;
+            var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
 
             var customPrompts =
                 centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
@@ -102,7 +107,7 @@
             var centreId = User.GetCentreId();
             var userId = User.GetUserIdKnownNotNull();
             var userEntity = userService.GetUserById(userId);
-            var delegateAccount = userEntity!.GetCentreAccountSet(centreId)?.DelegateAccount;
+            var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
 
@@ -152,6 +157,7 @@
         )
         {
             var userDelegateId = User.GetCandidateId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var userId = User.GetUserIdKnownNotNull();
 
             if (userDelegateId.HasValue)
@@ -179,10 +185,9 @@
             }
 
             var emailsValid = true;
-            if (!userService.NewEmailAddressIsValid(
-                    formData.Email!,
-                    userId
-                ))
+            // TODO HEEDLS-1002: This won't work if the user changes their email, then edits their details again (keeping their email the same)
+            // because User.GetUserPrimaryEmail() is only updated on login. Check that the Email is in use BY ANOTHER USER.
+            if (formData.Email != User.GetUserPrimaryEmail() && userDataService.PrimaryEmailIsInUse(formData.Email!))
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
@@ -191,10 +196,11 @@
                 emailsValid = false;
             }
 
-            if (!string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) && !userService.NewEmailAddressIsValid(
-                    formData.CentreSpecificEmail,
-                    userId
-                ))
+            if (
+                // TODO HEEDLS-1002: Check that the CentreSpecificEmail is in use BY ANOTHER USER
+                !string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) &&
+                userDataService.CentreSpecificEmailIsInUseAtCentre(formData.CentreSpecificEmail, centreId)
+            )
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),
@@ -296,6 +302,13 @@
 
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);
+        }
+
+        private static DelegateAccount? GetDelegateAccountIfActive(UserEntity? user, int? centreId)
+        {
+            var delegateAccount = user?.GetCentreAccountSet(centreId)?.DelegateAccount;
+
+            return delegateAccount is { Active: true } ? delegateAccount : null;
         }
     }
 }

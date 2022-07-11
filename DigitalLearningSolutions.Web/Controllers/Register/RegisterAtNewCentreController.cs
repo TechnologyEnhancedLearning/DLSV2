@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
@@ -29,6 +30,7 @@
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
 
         public RegisterAtNewCentreController(
             ICentresDataService centresDataService,
@@ -36,7 +38,8 @@
             PromptsService promptsService,
             IRegistrationService registrationService,
             ISupervisorDelegateService supervisorDelegateService,
-            IUserService userService
+            IUserService userService,
+            IUserDataService userDataService
         )
         {
             this.centresDataService = centresDataService;
@@ -45,6 +48,7 @@
             this.registrationService = registrationService;
             this.supervisorDelegateService = supervisorDelegateService;
             this.userService = userService;
+            this.userDataService = userDataService;
         }
 
         public IActionResult Index(int? centreId = null, string? inviteId = null)
@@ -296,9 +300,9 @@
 
         private void ValidateEmailAddress(InternalPersonalInformationViewModel model)
         {
-            if (model.CentreSpecificEmail != null && !userService.NewEmailAddressIsValid(
+            if (model.CentreSpecificEmail != null && userDataService.CentreSpecificEmailIsInUseAtCentre(
                 model.CentreSpecificEmail,
-                User.GetUserIdKnownNotNull()
+                User.GetCentreIdKnownNotNull()
             ))
             {
                 ModelState.AddModelError(

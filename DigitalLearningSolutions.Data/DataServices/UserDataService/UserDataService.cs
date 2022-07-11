@@ -44,8 +44,6 @@
 
         DelegateUser? GetDelegateUserById(int id);
 
-        List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
-
         List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
 
         void UpdateUser(
@@ -77,8 +75,6 @@
         void RemoveDelegateAccount(int delegateId);
 
         int GetNumberOfApprovedDelegatesAtCentre(int centreId);
-
-        DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId);
 
         void DeactivateDelegateUser(int delegateId);
 
@@ -122,10 +118,6 @@
             string? professionalRegistrationNumber,
             bool hasBeenPromptedForPrn
         );
-
-        bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails, IDbTransaction? transaction = null);
-
-        bool EmailIsInUseByOtherUser(int userId, string email, IDbTransaction? transaction = null);
 
         bool PrimaryEmailIsInUse(string email, IDbTransaction? transaction = null);
 
@@ -263,6 +255,17 @@
                         WHERE ID = @userId",
                 new { userId, updatedCount }
             );
+        }
+
+        public bool PrimaryEmailIsInUse(string email, IDbTransaction? transaction = null)
+        {
+            return connection.QueryFirst<int>(
+                @"SELECT COUNT(*)
+                    FROM Users
+                    WHERE PrimaryEmail = @email",
+                new { email },
+                transaction
+            ) > 0;
         }
     }
 }

@@ -76,7 +76,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            var model = new PersonalInformationViewModel(data);
+            var model = new RegisterDelegatePersonalInformationViewModel(data);
 
             ValidatePersonalInformation(model);
 
@@ -85,7 +85,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpPost]
-        public IActionResult PersonalInformation(PersonalInformationViewModel model)
+        public IActionResult PersonalInformation(RegisterDelegatePersonalInformationViewModel model)
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
@@ -283,17 +283,17 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             TempData.Set(centreDelegateRegistrationData);
         }
 
-        private void ValidatePersonalInformation(PersonalInformationViewModel model)
+        private void ValidatePersonalInformation(RegisterDelegatePersonalInformationViewModel model)
         {
-            if (model.PrimaryEmail == null)
+            if (model.CentreSpecificEmail == null)
             {
                 return;
             }
 
-            if (!userService.IsDelegateEmailValidForCentre(model.PrimaryEmail, model.Centre!.Value))
+            if (userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail, model.Centre!.Value))
             {
                 ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.PrimaryEmail),
+                    nameof(RegisterDelegatePersonalInformationViewModel.CentreSpecificEmail),
                     "A user with this email is already registered at this centre"
                 );
             }

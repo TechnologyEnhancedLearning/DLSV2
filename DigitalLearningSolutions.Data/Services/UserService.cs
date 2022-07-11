@@ -31,12 +31,6 @@ namespace DigitalLearningSolutions.Data.Services
             bool changeMadeBySameUser
         );
 
-        bool NewEmailAddressIsValid(string emailAddress, int userId);
-
-        bool IsDelegateEmailValidForCentre(string email, int centreId);
-
-        bool EmailIsInUse(string email);
-
         void ResetFailedLoginCount(UserAccount userAccount);
 
         void ResetFailedLoginCountByUserId(int userId);
@@ -132,24 +126,6 @@ namespace DigitalLearningSolutions.Data.Services
         public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
         {
             return userDataService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
-        }
-
-        public bool NewEmailAddressIsValid(string emailAddress, int userId)
-        {
-            return !userDataService.EmailIsInUseByOtherUser(userId, emailAddress);
-        }
-
-        public bool IsDelegateEmailValidForCentre(string email, int centreId)
-        {
-            var duplicateUsers = userDataService.GetDelegateUsersByEmailAddress(email)
-                .Where(u => u.CentreId == centreId);
-
-            return !duplicateUsers.Any();
-        }
-
-        public bool EmailIsInUse(string email)
-        {
-            return userDataService.AnyEmailsInSetAreAlreadyInUse(new[] { email });
         }
 
         public void ResetFailedLoginCount(UserAccount userAccount)
@@ -308,7 +284,7 @@ namespace DigitalLearningSolutions.Data.Services
                 return true;
             }
 
-            return delegateAccount != null &&
+            return delegateAccount is { Active: true } &&
                    (delegateAccount.CentreSpecificDetailsLastChecked == null ||
                     delegateAccount.CentreSpecificDetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now);
         }

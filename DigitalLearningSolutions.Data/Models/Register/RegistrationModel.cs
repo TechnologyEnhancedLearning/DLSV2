@@ -9,7 +9,7 @@
             string? centreSpecificEmail,
             int centre,
             string? passwordHash,
-            bool active,
+            bool centreAccountIsActive,
             bool approved,
             string? professionalRegistrationNumber,
             int jobGroupId
@@ -21,7 +21,7 @@
             CentreSpecificEmail = centreSpecificEmail;
             Centre = centre;
             PasswordHash = passwordHash;
-            Active = active;
+            CentreAccountIsActive = centreAccountIsActive;
             Approved = approved;
             ProfessionalRegistrationNumber = professionalRegistrationNumber;
             JobGroup = jobGroupId;
@@ -41,7 +41,7 @@
 
         public bool Approved { get; set; }
 
-        public bool Active { get; set; }
+        public bool CentreAccountIsActive { get; set; }
 
         public string? ProfessionalRegistrationNumber { get; set; }
 
