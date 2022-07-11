@@ -44,6 +44,8 @@ namespace DigitalLearningSolutions.Data.Services
             bool registerJourneyContainsTermsAndConditions
         );
 
+        void CreateCentreManagerForExistingUser(int userId, int centreId, string? centreSpecificEmail);
+
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int userId, int centreId);
 
         (int delegateId, string candidateNumber) CreateAccountAndReturnCandidateNumberAndDelegateId(
@@ -298,6 +300,40 @@ namespace DigitalLearningSolutions.Data.Services
             var accountRegistrationModel = new AdminAccountRegistrationModel(registrationModel, userId);
             registrationDataService.RegisterAdmin(accountRegistrationModel);
 
+            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
+
+            transaction.Complete();
+        }
+
+        public void CreateCentreManagerForExistingUser(int userId, int centreId, string? centreSpecificEmail)
+        {
+            using var transaction = new TransactionScope();
+
+            var userAccount = userDataService.GetUserAccountById(userId)!;
+            var registrationModel = new AdminRegistrationModel(
+                userAccount.FirstName,
+                userAccount.LastName,
+                userAccount.PrimaryEmail,
+                centreSpecificEmail,
+                centreId,
+                userAccount.PasswordHash,
+                true,
+                true,
+                userAccount.ProfessionalRegistrationNumber,
+                userAccount.JobGroupId,
+                null,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                userAccount.ProfileImage
+            );
+
+            registrationDataService.RegisterAdmin(new AdminAccountRegistrationModel(registrationModel, userId));
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
             transaction.Complete();

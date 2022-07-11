@@ -282,6 +282,7 @@ namespace DigitalLearningSolutions.Web
         {
             services.AddScoped<PromptsService>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
+            services.AddScoped<IRegisterAdminService, RegisterAdminService>();
         }
 
         private static void RegisterHttpClients(IServiceCollection services)

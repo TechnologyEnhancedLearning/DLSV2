@@ -1,0 +1,14 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model PersonalInformationViewModel
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Admin registration complete</h1>
+
+    <p class="nhsuk-body-l">
+      Your email address matched details stored with the centre, so your centre manager account has successfully been created.
+    </p>
+
+    <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
+  </div>
+</div>
