@@ -1,15 +1,19 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Notifications;
 
     public interface INotificationDataService
     {
         UnlockData? GetUnlockData(int progressId);
 
         ProgressCompletionData? GetProgressCompletionData(int progressId, int candidateId, int customisationId);
+
+        IEnumerable<Recipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId);
     }
 
     public class NotificationDataService : INotificationDataService
@@ -77,6 +81,17 @@
                         AND applications.DefaultContentTypeID <> 4",
                 new { progressId, candidateId, customisationId }
             );
+        }
+        public IEnumerable<Recipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId)
+        {
+            return connection.Query<Recipient>(
+
+                @"SELECT au.Forename as FirstName, au.Surname as LastName, au.Email
+                    FROM     NotificationUsers AS nu INNER JOIN
+                         AdminUsers AS au ON nu.AdminUserID = au.AdminID AND au.Active = 1 
+                    WHERE  (nu.NotificationID = @notificationId) AND (au.CentreID = @centreId OR c.CentreID = @centreId)",
+                new { notificationId, centreId }
+                );
         }
     }
 }

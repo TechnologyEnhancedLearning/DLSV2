@@ -39,6 +39,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private IRegistrationService registrationService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
+        private INotificationDataService notificationDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -50,6 +51,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             centresDataService = A.Fake<ICentresDataService>();
             config = A.Fake<IConfiguration>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
+            notificationDataService = A.Fake<NotificationDataService>();
             userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(OldSystemBaseUrl);
@@ -72,6 +74,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 config,
                 supervisorDelegateService,
                 userDataService,
+                notificationDataService,
                 new NullLogger<RegistrationService>()
             );
         }
