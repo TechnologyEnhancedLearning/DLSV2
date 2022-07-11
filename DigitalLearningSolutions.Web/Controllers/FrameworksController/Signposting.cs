@@ -32,7 +32,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
-            Catalogues = Catalogues ?? (await this.learningHubApiClient.GetCatalogues())?.Catalogues;
+            Catalogues = Catalogues ?? (await this.learningHubApiClient.GetCatalogues())?.Catalogues?.OrderBy(c => c.Name).ToList();
             model.Catalogues = Catalogues;
             model.Page = Math.Max(page, 1);
             model.CatalogueId = Request.Query.ContainsKey("catalogueId") ? catalogueId
