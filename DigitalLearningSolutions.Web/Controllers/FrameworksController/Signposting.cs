@@ -1,13 +1,9 @@
 ﻿using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DigitalLearningSolutions.Data.ApiClients;
-using System.Net.Http;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using DigitalLearningSolutions.Web.Extensions;
 using DigitalLearningSolutions.Data.Models.Frameworks;
@@ -21,6 +17,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
     public partial class FrameworksController
     {
         private static List<Catalogue> Catalogues { get; set; }
+        private const string SignpostingFilter = "SignpostingCatalogueIdFilter";
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting")]
         public IActionResult EditCompetencyLearningResources(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId)
@@ -33,11 +30,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource/{page=1:int}")]
         public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, int? catalogueId, string searchText, int page)
         {
+            
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
             Catalogues = Catalogues ?? (await this.learningHubApiClient.GetCatalogues())?.Catalogues;
             model.Catalogues = Catalogues;
-            model.CatalogueId = catalogueId;
             model.Page = Math.Max(page, 1);
+            model.CatalogueId = Request.Query.ContainsKey("catalogueId") ? catalogueId
+                : TempData[SignpostingFilter] != null ? (int?)int.Parse(TempData[SignpostingFilter].ToString())
+                : null;
+            TempData[SignpostingFilter] = model.CatalogueId;
+
             if (frameworkCompetencyGroupId.HasValue)
             {
                 var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
