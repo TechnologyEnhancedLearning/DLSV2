@@ -244,9 +244,7 @@
         {
             return data.Centre.HasValue && data.PrimaryEmail != null &&
                    registerAdminService.IsRegisterAdminAllowed(data.Centre.Value) &&
-                   (data.CentreSpecificEmail != null &&
-                    centresService.DoesEmailMatchCentre(data.CentreSpecificEmail, data.Centre.Value) ||
-                    centresService.DoesEmailMatchCentre(data.PrimaryEmail, data.Centre.Value)) &&
+                   centresService.DoEmailsMatchCentre(data.PrimaryEmail, data.CentreSpecificEmail, data.Centre.Value) &&
                    !userDataService.PrimaryEmailIsInUse(data.PrimaryEmail) &&
                    (data.CentreSpecificEmail == null || !userDataService.CentreSpecificEmailIsInUseAtCentre(
                        data.CentreSpecificEmail,

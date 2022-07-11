@@ -536,17 +536,14 @@
         }
 
         [Test]
-        [TestCase(null, true, false)]
-        [TestCase(null, false, false)]
-        [TestCase(DefaultCentreSpecificEmail, false, false)]
-        [TestCase(DefaultCentreSpecificEmail, false, true)]
-        [TestCase(DefaultCentreSpecificEmail, true, false)]
-        [TestCase(DefaultCentreSpecificEmail, true, true)]
+        [TestCase(null, true)]
+        [TestCase(null, false)]
+        [TestCase(DefaultCentreSpecificEmail, true)]
+        [TestCase(DefaultCentreSpecificEmail, false)]
         public void
             ValidateEmailsForInternalAdminRegistration_adds_wrong_email_error_on_centre_email_if_neither_email_matches_centre(
                 string? centreSpecificEmail,
-                bool primaryEmailMatchesCentre,
-                bool centreSpecificEmailMatchesCentre
+                bool emailMatchesCentre
             )
         {
             // Given
@@ -560,10 +557,14 @@
                 )
             ).Returns(false);
 
-            A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultPrimaryEmail, DefaultCentreId))
-                .Returns(primaryEmailMatchesCentre);
-            A.CallTo(() => centresService.DoesEmailMatchCentre(DefaultCentreSpecificEmail, DefaultCentreId))
-                .Returns(centreSpecificEmailMatchesCentre);
+            A.CallTo(
+                    () => centresService.DoEmailsMatchCentre(
+                        DefaultPrimaryEmail,
+                        centreSpecificEmail,
+                        DefaultCentreId
+                    )
+                )
+                .Returns(emailMatchesCentre);
 
             // When
             RegistrationEmailValidator.ValidateEmailsForInternalAdminRegistration(
@@ -575,7 +576,7 @@
             );
 
             // Then
-            if (primaryEmailMatchesCentre || centreSpecificEmailMatchesCentre)
+            if (emailMatchesCentre)
             {
                 modelState.ValidationState.Should().Be(ModelValidationState.Valid);
             }

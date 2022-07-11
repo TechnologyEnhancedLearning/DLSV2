@@ -47,7 +47,10 @@
             if (model.CentreSpecificEmail == null || !modelState.HasError(model.CentreSpecificEmail))
             {
                 if (model.CentreSpecificEmail != null &&
-                    userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail, model.Centre!.Value) &&
+                    userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail,
+                        model.Centre!.Value
+                    ) &&
                     model.CentreSpecificEmail != userDataService.GetCentreEmail(userId, model.Centre.Value))
                 {
                     modelState.AddModelError(
@@ -56,10 +59,11 @@
                     );
                 }
 
-                if (!centresService.DoesEmailMatchCentre(model.PrimaryEmail!, model.Centre!.Value) &&
-                    (model.CentreSpecificEmail == null ||
-                     !centresService.DoesEmailMatchCentre(model.CentreSpecificEmail, model.Centre.Value)
-                    ))
+                if (!centresService.DoEmailsMatchCentre(
+                    model.PrimaryEmail,
+                    model.CentreSpecificEmail,
+                    model.Centre!.Value
+                ))
                 {
                     modelState.AddModelError(
                         nameof(PersonalInformationViewModel.CentreSpecificEmail),
