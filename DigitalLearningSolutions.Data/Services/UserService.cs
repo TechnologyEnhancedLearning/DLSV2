@@ -65,6 +65,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         string? GetCentreEmail(int userId, int centreId);
 
+        IEnumerable<(string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(int userId);
+
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
 
         (string? primaryEmail, IEnumerable<(string centreName, string centreEmail)> centreEmails)
@@ -290,6 +292,11 @@ namespace DigitalLearningSolutions.Data.Services
         public string? GetCentreEmail(int userId, int centreId)
         {
             return userDataService.GetCentreEmail(userId, centreId);
+        }
+
+        public IEnumerable<(string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(int userId)
+        {
+            return userDataService.GetAllCentreEmailsForUser(userId);
         }
 
         public (string? primaryEmail, IEnumerable<(string centreName, string centreEmail)> centreEmails)

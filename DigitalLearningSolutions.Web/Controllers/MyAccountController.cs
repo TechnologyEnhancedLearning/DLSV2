@@ -58,7 +58,6 @@
             this.config = config;
         }
 
-        // TODO HEEDLS-993 Sort out my account page for centreless user, only the minimum has been done to allow it to load
         [NoCaching]
         public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
@@ -75,14 +74,20 @@
                     delegateAccount
                 );
 
+            var allCentreSpecificEmails = centreId == null
+                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                : new List<(string centreName, string? centreSpecificEmail)>();
+
             var switchCentreReturnUrl = StringHelper.GetLocalRedirectUrl(config, SwitchCentreReturnUrl);
 
             var model = new MyAccountViewModel(
                 userEntity.UserAccount,
                 delegateAccount,
+                centreId,
                 adminAccount?.CentreName ?? delegateAccount?.CentreName,
                 centreId != null ? userService.GetCentreEmail(userId, centreId.Value) : null,
                 customPrompts,
+                allCentreSpecificEmails,
                 dlsSubApplication,
                 switchCentreReturnUrl
             );

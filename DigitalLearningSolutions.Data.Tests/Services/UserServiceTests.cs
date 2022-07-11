@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
-    using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
@@ -755,6 +754,30 @@
 
             // Then
             result.Should().BeFalse();
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void GetAllCentreEmailsForUser_returns_centre_email_list(bool isEmpty)
+        {
+            // Given
+            const int userId = 1;
+            const string centreName = "centre name";
+            const string centreEmail = "centre@email.com";
+
+            var centreEmailList = new List<(string centreName, string? centreEmail)> { (centreName, centreEmail) };
+            A.CallTo(() => userDataService.GetAllCentreEmailsForUser(userId)).Returns(
+                isEmpty ? new List<(string centreName, string? centreSpecificEmail)>() : centreEmailList
+            );
+
+            // When
+            var result = userService.GetAllCentreEmailsForUser(userId);
+
+            // Then
+            result.Should().BeEquivalentTo(
+                isEmpty ? new List<(string centreName, string? centreEmail)>() : centreEmailList
+            );
         }
 
         [Test]
