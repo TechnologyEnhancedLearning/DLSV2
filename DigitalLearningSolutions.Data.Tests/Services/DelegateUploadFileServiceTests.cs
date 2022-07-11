@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.Supervisor;
@@ -455,7 +456,14 @@
                 )
                 .MustHaveHappened();
 
-            AssertSendWelcomeEmailWasNotCalled();
+            A.CallTo(
+                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    A<int>._,
+                    A<string>._,
+                    A<DateTime>._,
+                    A<string>._
+                )
+            ).MustNotHaveHappened();
 
             result.ProcessedCount.Should().Be(1);
             result.UpdatedCount.Should().Be(1);
@@ -629,34 +637,40 @@
 
             // Then
             A.CallTo(
-                    () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
-                        A<DelegateRegistrationModel>.That.Matches(
-                            model =>
-                                model.FirstName == row.FirstName &&
-                                model.LastName == row.LastName &&
-                                model.JobGroup.ToString() == row.JobGroupID &&
-                                model.Answer1 == row.Answer1 &&
-                                model.Answer2 == row.Answer2 &&
-                                model.Answer3 == row.Answer3 &&
-                                model.Answer4 == row.Answer4 &&
-                                model.Answer5 == row.Answer5 &&
-                                model.Answer6 == row.Answer6 &&
-                                model.ProfessionalRegistrationNumber == row.PRN &&
-                                model.CentreSpecificEmail == row.EmailAddress &&
-                                Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
-                                model.NotifyDate == WelcomeEmailDate &&
-                                model.IsSelfRegistered == false &&
-                                model.UserIsActive == false &&
-                                model.CentreAccountIsActive == true &&
-                                model.Approved == true &&
-                                model.PasswordHash == null
-                        ),
-                        false
-                    )
+                () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
+                    A<DelegateRegistrationModel>.That.Matches(
+                        model =>
+                            model.FirstName == row.FirstName &&
+                            model.LastName == row.LastName &&
+                            model.JobGroup.ToString() == row.JobGroupID &&
+                            model.Answer1 == row.Answer1 &&
+                            model.Answer2 == row.Answer2 &&
+                            model.Answer3 == row.Answer3 &&
+                            model.Answer4 == row.Answer4 &&
+                            model.Answer5 == row.Answer5 &&
+                            model.Answer6 == row.Answer6 &&
+                            model.ProfessionalRegistrationNumber == row.PRN &&
+                            model.CentreSpecificEmail == row.EmailAddress &&
+                            Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
+                            model.NotifyDate == WelcomeEmailDate &&
+                            model.IsSelfRegistered == false &&
+                            model.UserIsActive == false &&
+                            model.CentreAccountIsActive == true &&
+                            model.Approved == true &&
+                            model.PasswordHash == null
+                    ),
+                    false
                 )
-                .MustHaveHappened();
+            ).MustHaveHappened();
 
-            AssertSendWelcomeEmailWasCalled();
+            A.CallTo(
+                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    NewDelegateIdAndCandidateNumber.Item1,
+                    configuration.GetAppRootPath(),
+                    WelcomeEmailDate,
+                    "DelegateBulkUpload_Refactor"
+                )
+            ).MustHaveHappenedOnceExactly();
 
             result.ProcessedCount.Should().Be(1);
             result.RegisteredCount.Should().Be(1);
@@ -1145,30 +1159,6 @@
             result.RegisteredCount.Should().Be(0);
             result.SkippedCount.Should().Be(0);
             result.Errors.Should().HaveCount(1);
-        }
-
-        private void AssertSendWelcomeEmailWasCalled()
-        {
-            A.CallTo(
-                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    A<int>._,
-                    A<string>._,
-                    A<DateTime>._,
-                    A<string>._
-                )
-            ).MustHaveHappenedOnceExactly();
-        }
-
-        private void AssertSendWelcomeEmailWasNotCalled()
-        {
-            A.CallTo(
-                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    A<int>._,
-                    A<string>._,
-                    A<DateTime>._,
-                    A<string>._
-                )
-            ).MustNotHaveHappened();
         }
 
         private void CallsToUserDataServiceUpdatesDoNothing()
