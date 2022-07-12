@@ -726,7 +726,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND Applications.DefaultContentTypeID <> 4
                     GROUP BY Applications.ApplicationID",
                 new
-                    { brandId, threeMonthsAgo }
+                { brandId, threeMonthsAgo }
             );
             return query.ToDictionary<dynamic?, int, int>(
                 entry => entry.ApplicationID,
