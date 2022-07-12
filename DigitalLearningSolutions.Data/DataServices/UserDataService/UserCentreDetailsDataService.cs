@@ -139,5 +139,23 @@
                 new { userId }
             );
         }
+
+        public int? GetUserIdForCentreEmailRegistrationConfirmationHashPair(
+            string centreSpecificEmail,
+            string registrationConfirmationHash
+        )
+        {
+            var matchingUserIds = connection.Query<int>(
+                @"SELECT ucd.UserID
+                    FROM UserCentreDetails AS ucd
+                    INNER JOIN DelegateAccounts AS da ON da.UserID = ucd.UserID
+                    WHERE ucd.Email = @centreSpecificEmail
+                        AND ucd.CentreID = da.CentreID
+                        AND da.RegistrationConfirmationHash = @registrationConfirmationHash",
+                new { centreSpecificEmail, registrationConfirmationHash }
+            ).ToList();
+
+            return matchingUserIds.Any() ? matchingUserIds.Single() : (int?)null;
+        }
     }
 }

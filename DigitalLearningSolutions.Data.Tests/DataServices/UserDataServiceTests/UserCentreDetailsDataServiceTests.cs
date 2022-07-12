@@ -194,5 +194,40 @@
             // Then
             result.Should().BeEmpty();
         }
+
+        [Test]
+        [TestCase(null)]
+        [TestCase(1)]
+        public void GetUserIdForCentreEmailRegistrationConfirmationHashPair_returns_user_id_if_it_exists(int? userId)
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const string email = "centre@email.com";
+            const string confirmationHash = "hash";
+            const int centreId = 3;
+
+            if (userId != null)
+            {
+                connection.Execute(
+                    @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES (@userId, @centreId, @email)",
+                    new { userId, centreId, email }
+                );
+
+                connection.Execute(
+                    @"INSERT INTO DelegateAccounts
+                            (UserID, CentreID, RegistrationConfirmationHash, DateRegistered, CandidateNumber)
+                        VALUES (@userId, @centreId, @confirmationHash, GETDATE(), 'CN1001')",
+                    new { userId, centreId, confirmationHash }
+                );
+            }
+
+            // When
+            var result =
+                userDataService.GetUserIdForCentreEmailRegistrationConfirmationHashPair(email, confirmationHash);
+
+            // Then
+            result.Should().Be(userId);
+        }
     }
 }
