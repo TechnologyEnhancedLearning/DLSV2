@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
+﻿namespace DigitalLearningSolutions.Web.Tests.Services
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
@@ -13,7 +13,6 @@
     {
         private IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
         private IDiagnosticAssessmentService diagnosticAssessmentService;
-        private DiagnosticAssessmentTestHelper diagnosticAssessmentTestHelper;
         private const int CustomisationId = 1;
         private const int CandidateId = 2;
         private const int SectionId = 3;
@@ -21,11 +20,9 @@
         [SetUp]
         public void Setup()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<DiagnosticAssessmentService>>();
             diagnosticAssessmentDataService = A.Fake<IDiagnosticAssessmentDataService>();
             diagnosticAssessmentService = new DiagnosticAssessmentService(logger, diagnosticAssessmentDataService);
-            diagnosticAssessmentTestHelper = new DiagnosticAssessmentTestHelper(connection);
         }
 
         [Test]
