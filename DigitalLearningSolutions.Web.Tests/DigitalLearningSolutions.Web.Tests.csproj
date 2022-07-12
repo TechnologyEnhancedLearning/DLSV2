@@ -21,4 +21,28 @@
     <ProjectReference Include="..\DigitalLearningSolutions.Web\DigitalLearningSolutions.Web.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestData\AllDelegatesExportTest.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\EvaluationSummaryDownloadTest.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TestData\ActivityDataDownloadTest.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\CourseDelegateExportAllDataDownloadTest.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\CourseDelegateExportCurrentDataDownloadTest.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\DelegateUploadTest.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

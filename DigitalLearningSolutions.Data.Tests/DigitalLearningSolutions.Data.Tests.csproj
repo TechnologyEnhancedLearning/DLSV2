@@ -15,21 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="TestData\ActivityDataDownloadTest.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\CourseDelegateExportAllDataDownloadTest.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\CourseDelegateExportCurrentDataDownloadTest.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\DelegateUploadTest.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="FluentMigrator" Version="3.2.9" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.9" />
     <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.2.9" />
@@ -47,19 +32,6 @@
         <ProjectReference Include="..\DigitalLearningSolutions.Data.Migrations\DigitalLearningSolutions.Data.Migrations.csproj" />
         <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
         <ProjectReference Include="..\DigitalLearningSolutions.Web\DigitalLearningSolutions.Web.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Update="TestData\AllDelegatesExportTest.xlsx">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="TestData\EvaluationSummaryDownloadTest.xlsx">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Services\GroupServiceTests" />
     </ItemGroup>
 
 </Project>
