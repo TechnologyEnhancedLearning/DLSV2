@@ -11,9 +11,8 @@
 
     internal class DiagnosticAssessmentServiceTests
     {
-        private IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
-        private IDiagnosticAssessmentService diagnosticAssessmentService;
-        private DiagnosticAssessmentTestHelper diagnosticAssessmentTestHelper;
+        private IDiagnosticAssessmentDataService diagnosticAssessmentDataService = null!;
+        private IDiagnosticAssessmentService diagnosticAssessmentService = null!;
         private const int CustomisationId = 1;
         private const int CandidateId = 2;
         private const int SectionId = 3;
@@ -21,11 +20,9 @@
         [SetUp]
         public void Setup()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<DiagnosticAssessmentService>>();
             diagnosticAssessmentDataService = A.Fake<IDiagnosticAssessmentDataService>();
             diagnosticAssessmentService = new DiagnosticAssessmentService(logger, diagnosticAssessmentDataService);
-            diagnosticAssessmentTestHelper = new DiagnosticAssessmentTestHelper(connection);
         }
 
         [Test]
