@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Collections.Generic;
     using System.Data;
@@ -43,7 +43,7 @@
             @", rp.CreatedDate,
                  (SELECT BrandName
                  FROM    Brands
-                 WHERE (BrandID = rp.BrandID)) AS Brand, 
+                 WHERE (BrandID = rp.BrandID)) AS Brand,
                  (SELECT [Name]
                  FROM    SelfAssessments AS rp2
                  WHERE (ID = rp.ParentSelfAssessmentID)) AS ParentSelfAssessment,
@@ -51,13 +51,13 @@
                  FROM  AdminUsers
                  WHERE (AdminID = rp.CreatedByAdminID)) AS Owner,
                  rp.Archived,
-                 rp.LastEdit, 
+                 rp.LastEdit,
                  (SELECT ProfessionalGroup
                  FROM    NRPProfessionalGroups
-                 WHERE (ID = rp.NRPProfessionalGroupID)) AS NRPProfessionalGroup, 
+                 WHERE (ID = rp.NRPProfessionalGroupID)) AS NRPProfessionalGroup,
                  (SELECT SubGroup
                  FROM    NRPSubGroups
-                 WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup, 
+                 WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup,
                  (SELECT RoleProfile
                  FROM    NRPRoles
                  WHERE (ID = rp.NRPRoleID)) AS NRPRole, rpr.ID AS SelfAssessmentReviewID";
@@ -105,7 +105,7 @@
         public RoleProfileBase GetRoleProfileBaseById(int roleProfileId, int adminId)
         {
             return connection.Query<RoleProfileBase>(
-                $@"SELECT {SelfAssessmentBaseFields} 
+                $@"SELECT {SelfAssessmentBaseFields}
                       FROM {SelfAssessmentBaseTables}
                       WHERE (rp.ID = @roleProfileId)",
                 new { roleProfileId, adminId }
@@ -161,7 +161,7 @@
         public RoleProfileBase? GetRoleProfileByName(string roleProfileName, int adminId)
         {
             return connection.Query<RoleProfileBase>(
-                $@"SELECT {SelfAssessmentBaseFields} 
+                $@"SELECT {SelfAssessmentBaseFields}
                       FROM {SelfAssessmentBaseTables}
                       WHERE (rp.Name = @roleProfileName)",
                 new { roleProfileName, adminId }

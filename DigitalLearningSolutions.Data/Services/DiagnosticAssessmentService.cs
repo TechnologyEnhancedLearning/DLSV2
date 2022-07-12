@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
     using Microsoft.Extensions.Logging;
 
@@ -14,16 +15,13 @@
 
     public class DiagnosticAssessmentService : IDiagnosticAssessmentService
     {
-        private readonly IDbConnection connection;
         private readonly ILogger<DiagnosticAssessmentService> logger;
         private readonly IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
 
         public DiagnosticAssessmentService(
-            IDbConnection connection,
             ILogger<DiagnosticAssessmentService> logger,
             IDiagnosticAssessmentDataService diagnosticAssessmentDataService)
         {
-            this.connection = connection;
             this.logger = logger;
             this.diagnosticAssessmentDataService = diagnosticAssessmentDataService;
         }

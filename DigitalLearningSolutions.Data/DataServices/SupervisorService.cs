@@ -1,15 +1,13 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.Supervisor;
-    using DigitalLearningSolutions.Data.Models.Common;
-    using Microsoft.Extensions.Logging;
-    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.RoleProfiles;
-    using System;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
+    using Microsoft.Extensions.Logging;
 
     public interface ISupervisorService
     {

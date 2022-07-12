@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System.Linq;
     using System.Transactions;

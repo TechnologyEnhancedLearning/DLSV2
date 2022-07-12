@@ -10,6 +10,7 @@ namespace DigitalLearningSolutions.Data.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
 
     public interface IImportCompetenciesFromFileService

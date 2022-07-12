@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services.DiagnosticAssessmentDataServiceTests
+﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.DiagnosticAssessmentDataServiceTests
 {
     using System.Transactions;
     using FluentAssertions;

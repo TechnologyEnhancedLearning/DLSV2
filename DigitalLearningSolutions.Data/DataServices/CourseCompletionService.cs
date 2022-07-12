@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Data;
     using Dapper;

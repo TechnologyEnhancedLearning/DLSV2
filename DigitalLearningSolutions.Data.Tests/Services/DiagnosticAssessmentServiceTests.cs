@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -24,7 +25,7 @@
             var connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<DiagnosticAssessmentService>>();
             diagnosticAssessmentDataService = A.Fake<IDiagnosticAssessmentDataService>();
-            diagnosticAssessmentService = new DiagnosticAssessmentService(connection, logger, diagnosticAssessmentDataService);
+            diagnosticAssessmentService = new DiagnosticAssessmentService(logger, diagnosticAssessmentDataService);
             diagnosticAssessmentTestHelper = new DiagnosticAssessmentTestHelper(connection);
         }
 

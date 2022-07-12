@@ -1,19 +1,17 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Transactions;
-    using Dapper;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Frameworks;
-    using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
-    using NUnit.Framework;
     using FluentAssertions;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Logging;
+    using NUnit.Framework;
+
     public class FrameworkServiceTests
     {
         private FrameworkService frameworkService;

@@ -1,11 +1,11 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System;
     using System.Linq;
     using System.Transactions;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CourseContent;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
