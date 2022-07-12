@@ -812,6 +812,8 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             return connection.Query<CourseDelegateForExport>(
                 $@"SELECT
+                        ap.ApplicationName,
+                        cu.CustomisationName,
                         ca.CandidateID AS DelegateId,
                         ca.CandidateNumber,
                         ca.FirstName AS DelegateFirstName,
