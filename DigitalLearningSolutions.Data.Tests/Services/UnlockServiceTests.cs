@@ -3,7 +3,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;

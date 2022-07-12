@@ -4,8 +4,9 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Centres;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;

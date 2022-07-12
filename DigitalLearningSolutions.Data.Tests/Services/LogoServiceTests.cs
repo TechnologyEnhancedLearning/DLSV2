@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;

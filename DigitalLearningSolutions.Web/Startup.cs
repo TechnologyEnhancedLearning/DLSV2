@@ -21,12 +21,13 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditRegistrationPrompt;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.ModelBinders;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;

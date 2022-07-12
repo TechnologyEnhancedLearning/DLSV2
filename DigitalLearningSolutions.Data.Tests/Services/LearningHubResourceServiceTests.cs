@@ -7,7 +7,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;

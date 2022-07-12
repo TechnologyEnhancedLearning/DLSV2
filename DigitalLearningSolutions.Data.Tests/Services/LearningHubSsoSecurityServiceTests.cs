@@ -2,7 +2,8 @@
 {
     using System;
     using System.Security.Cryptography;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;

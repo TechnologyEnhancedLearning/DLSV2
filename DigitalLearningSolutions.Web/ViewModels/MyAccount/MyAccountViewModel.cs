@@ -27,7 +27,7 @@
             JobGroup = delegateUser?.JobGroupName;
             ProfessionalRegistrationNumber = delegateUser == null
                 ? null
-                : PrnStringHelper.GetPrnDisplayString(
+                : PrnHelper.GetPrnDisplayString(
                     delegateUser.HasBeenPromptedForPrn,
                     delegateUser.ProfessionalRegistrationNumber
                 );

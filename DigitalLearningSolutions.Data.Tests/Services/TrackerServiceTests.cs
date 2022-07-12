@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Tracker;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Logging;

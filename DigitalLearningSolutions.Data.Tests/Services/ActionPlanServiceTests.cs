@@ -8,7 +8,8 @@
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.LearningResources;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;

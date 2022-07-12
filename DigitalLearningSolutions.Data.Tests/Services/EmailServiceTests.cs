@@ -5,8 +5,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models.Email;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using MailKit.Net.Smtp;
     using MailKit.Security;

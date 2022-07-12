@@ -5,8 +5,9 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
@@ -420,7 +421,7 @@
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
-            /* Course progress doesn't get updated if the auth token expires by the end of the tutorials. 
+            /* Course progress doesn't get updated if the auth token expires by the end of the tutorials.
               Some tutorials are longer than the default auth token lifetime of 1 hour, so we set the auth expiry to 8 hours.
               See HEEDLS-637 and HEEDLS-674 for more details */
             if (tutorialInformation.AverageTutorialDuration >= MinimumTutorialAverageTimeToIncreaseAuthExpiry)

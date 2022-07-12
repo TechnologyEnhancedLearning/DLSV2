@@ -2,8 +2,8 @@
 {
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 

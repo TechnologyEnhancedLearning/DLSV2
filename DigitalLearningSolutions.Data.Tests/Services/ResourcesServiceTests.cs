@@ -4,7 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Support;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;

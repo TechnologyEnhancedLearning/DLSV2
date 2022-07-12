@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Services;
     using NUnit.Framework;
 
     public class CryptoServiceTests

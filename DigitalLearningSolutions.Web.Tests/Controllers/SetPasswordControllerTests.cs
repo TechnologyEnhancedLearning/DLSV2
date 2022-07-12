@@ -2,10 +2,10 @@
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.SetPassword;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using FakeItEasy;

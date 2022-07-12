@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate
 {
-    using DigitalLearningSolutions.Data.Services;
-
     /// <summary>
     /// Defines the options to be used by the <see cref="SearchSortFilterPaginateService"/>.
     /// When SearchOptions, SortOptions or FilterOptions is null, that portion of the functionality

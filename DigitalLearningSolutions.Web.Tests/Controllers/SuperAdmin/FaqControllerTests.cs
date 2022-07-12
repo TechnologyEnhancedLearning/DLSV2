@@ -4,8 +4,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Support;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.SuperAdmin;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs;
     using FakeItEasy;
     using FizzWare.NBuilder;

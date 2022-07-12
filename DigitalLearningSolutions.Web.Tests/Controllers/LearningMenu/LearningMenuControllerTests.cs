@@ -1,8 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningMenu
 {
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.LearningMenuController;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using Microsoft.AspNetCore.Authentication;

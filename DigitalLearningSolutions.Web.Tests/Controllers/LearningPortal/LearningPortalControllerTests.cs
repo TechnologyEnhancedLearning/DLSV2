@@ -2,9 +2,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 {
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using Microsoft.AspNetCore.Http;

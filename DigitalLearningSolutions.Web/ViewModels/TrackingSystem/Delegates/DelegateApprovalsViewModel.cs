@@ -35,7 +35,7 @@
             Email = delegateUser.EmailAddress;
             DateRegistered = delegateUser.DateRegistered;
             JobGroup = delegateUser.JobGroupName;
-            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
+            ProfessionalRegistrationNumber = PrnHelper.GetPrnDisplayString(
                 delegateUser.HasBeenPromptedForPrn,
                 delegateUser.ProfessionalRegistrationNumber
             );

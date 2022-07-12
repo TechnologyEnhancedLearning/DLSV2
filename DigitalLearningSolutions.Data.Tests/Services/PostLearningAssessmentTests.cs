@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Transactions;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.PostLearningAssessment;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;

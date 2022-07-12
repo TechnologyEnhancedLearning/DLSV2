@@ -12,7 +12,7 @@
             FullName = delegateUser.FirstName + " " + delegateUser.LastName;
             Email = delegateUser.EmailAddress;
             DateRegistered = delegateUser.DateRegistered;
-            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
+            ProfessionalRegistrationNumber = PrnHelper.GetPrnDisplayString(
                 delegateUser.HasBeenPromptedForPrn,
                 delegateUser.ProfessionalRegistrationNumber
             );

@@ -5,7 +5,7 @@
     using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public interface IRegistrationDataService
     {
@@ -137,8 +137,8 @@
             connection.Execute(
                 @"INSERT INTO NotificationUsers (NotificationId, AdminUserId)
                 SELECT N.NotificationId, @adminUserId
-                FROM Notifications N INNER JOIN NotificationRoles NR 
-                ON N.NotificationID = NR.NotificationID 
+                FROM Notifications N INNER JOIN NotificationRoles NR
+                ON N.NotificationID = NR.NotificationID
                 WHERE RoleID IN @roles AND AutoOptIn = 1",
                 new { adminUserId, roles = registrationModel.GetNotificationRoles() }
             );

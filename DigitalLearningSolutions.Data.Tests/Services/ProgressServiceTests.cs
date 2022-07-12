@@ -8,8 +8,9 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Progress;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
@@ -39,7 +40,7 @@
                 progressDataService,
                 notificationService,
                 learningLogItemsDataService,
-                clockService, 
+                clockService,
                 courseAdminFieldsService
             );
         }

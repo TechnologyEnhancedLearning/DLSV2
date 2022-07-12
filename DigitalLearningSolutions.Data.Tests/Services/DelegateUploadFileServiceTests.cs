@@ -11,8 +11,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.Supervisor;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -28,7 +28,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     {
         private const int CentreId = 101;
         public const string TestDelegateUploadRelativeFilePath = "\\TestData\\DelegateUploadTest.xlsx";
-        
+
         private DelegateUploadFileService delegateUploadFileService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IPasswordResetService passwordResetService = null!;
@@ -1007,7 +1007,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             const string prn = "PRN1234";
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, hasPrn: true.ToString(), prn: prn);
             var table = CreateTableFromData(new[] { row });
-            
+
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
                 .Returns(candidateNumber);
