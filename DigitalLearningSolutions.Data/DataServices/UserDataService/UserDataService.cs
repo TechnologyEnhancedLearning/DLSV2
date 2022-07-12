@@ -154,7 +154,7 @@
 
         IEnumerable<(int centreId, string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(int userId);
 
-        int? GetUserIdForCentreEmailRegistrationConfirmationHashPair(
+        (int? userId, string? centreName) GetUserIdAndCentreNameForCentreEmailRegistrationConfirmationHashPair(
             string centreSpecificEmail,
             string registrationConfirmationHash
         );

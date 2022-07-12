@@ -198,7 +198,9 @@
         [Test]
         [TestCase(null)]
         [TestCase(1)]
-        public void GetUserIdForCentreEmailRegistrationConfirmationHashPair_returns_user_id_if_it_exists(int? userId)
+        public void GetUserIdAndCentreNameForCentreEmailRegistrationConfirmationHashPair_returns_user_id_if_it_exists(
+            int? userId
+        )
         {
             using var transaction = new TransactionScope();
 
@@ -206,6 +208,12 @@
             const string email = "centre@email.com";
             const string confirmationHash = "hash";
             const int centreId = 3;
+            var centreName = userId == null
+                ? null
+                : connection.Query<string>(
+                    @"SELECT CentreName FROM Centres WHERE CentreID = @centreId",
+                    new { centreId }
+                ).SingleOrDefault();
 
             if (userId != null)
             {
@@ -224,10 +232,13 @@
 
             // When
             var result =
-                userDataService.GetUserIdForCentreEmailRegistrationConfirmationHashPair(email, confirmationHash);
+                userDataService.GetUserIdAndCentreNameForCentreEmailRegistrationConfirmationHashPair(
+                    email,
+                    confirmationHash
+                );
 
             // Then
-            result.Should().Be(userId);
+            result.Should().Be((userId, centreName));
         }
     }
 }

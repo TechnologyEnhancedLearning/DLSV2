@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Mvc;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
@@ -24,14 +25,22 @@
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
-            var userId = userDataService.GetUserIdForCentreEmailRegistrationConfirmationHashPair(email, code);
+            var (userId, centreName) =
+                userDataService.GetUserIdAndCentreNameForCentreEmailRegistrationConfirmationHashPair(email, code);
 
-            if (userId == null)
+            if (userId == null || centreName == null)
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
             var userAccount = userDataService.GetUserAccountByEmailAddress(email);
+            var model = new ClaimAccountViewModel
+            {
+                CentreName = centreName,
+                CentreSpecificEmail = email,
+                UserExists = userAccount != null,
+                UserActive = userAccount?.Active ?? false,
+            };
             return RedirectToAction("AccessDenied", "LearningSolutions");
         }
     }
