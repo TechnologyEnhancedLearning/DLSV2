@@ -1029,6 +1029,23 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
             // Then
             A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    model.CentreSpecificEmail!,
+                    model.Centre,
+                    A<IDbTransaction>._
+                )
+            ).MustHaveHappenedOnceExactly();
+
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).MustNotHaveHappened();
+
+            A.CallTo(
                     () =>
                         registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
                             A<DelegateRegistrationModel>.That.Matches(d => d.Approved),
@@ -1038,6 +1055,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                         )
                 )
                 .MustHaveHappened();
+
             A.CallTo(
                 () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
                     A<DelegateRegistrationModel>._,
@@ -1067,6 +1085,23 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // Then
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    model.CentreSpecificEmail!,
+                    model.Centre,
+                    A<IDbTransaction>._
+                )
+            ).MustHaveHappenedOnceExactly();
+
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).MustNotHaveHappened();
+
             A.CallTo(
                     () =>
                         registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
@@ -1106,6 +1141,23 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // Then
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    model.CentreSpecificEmail!,
+                    model.Centre,
+                    A<IDbTransaction>._
+                )
+            ).MustHaveHappenedOnceExactly();
+
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).MustNotHaveHappened();
+
             A.CallTo(
                     () =>
                         registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
@@ -1195,6 +1247,23 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
             // Then
             A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    A<string>._,
+                    A<int>._,
+                    A<IDbTransaction>._
+                )
+            ).MustNotHaveHappened();
+
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    model.CentreSpecificEmail!,
+                    model.Centre,
+                    userId,
+                    A<IDbTransaction>._
+                )
+            ).MustHaveHappenedOnceExactly();
+
+            A.CallTo(
                     () =>
                         registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
                             A<DelegateRegistrationModel>._,
@@ -1204,6 +1273,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                         )
                 )
                 .MustNotHaveHappened();
+
             A.CallTo(
                 () => registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
                     A<DelegateRegistrationModel>.That.Matches(

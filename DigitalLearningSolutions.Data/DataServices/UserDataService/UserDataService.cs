@@ -121,7 +121,16 @@
 
         bool PrimaryEmailIsInUse(string email, IDbTransaction? transaction = null);
 
+        bool PrimaryEmailIsInUseByOtherUser(string email, int userId, IDbTransaction? transaction = null);
+
         bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId, IDbTransaction? transaction = null);
+
+        bool CentreSpecificEmailIsInUseAtCentreByOtherUser(
+            string email,
+            int centreId,
+            int userId,
+            IDbTransaction? transaction = null
+        );
 
         void DeleteAdminAccount(int adminId);
 
@@ -259,11 +268,22 @@
 
         public bool PrimaryEmailIsInUse(string email, IDbTransaction? transaction = null)
         {
+            return PrimaryEmailIsInUseQuery(email, null, transaction);
+        }
+
+        public bool PrimaryEmailIsInUseByOtherUser(string email, int userId, IDbTransaction? transaction = null)
+        {
+            return PrimaryEmailIsInUseQuery(email, userId, transaction);
+        }
+
+        private bool PrimaryEmailIsInUseQuery(string email, int? userId, IDbTransaction? transaction = null)
+        {
             return connection.QueryFirst<int>(
-                @"SELECT COUNT(*)
+                @$"SELECT COUNT(*)
                     FROM Users
-                    WHERE PrimaryEmail = @email",
-                new { email },
+                    WHERE PrimaryEmail = @email
+                    {(userId == null ? "" : "AND Id <> @userId")}",
+                new { email, userId },
                 transaction
             ) > 0;
         }

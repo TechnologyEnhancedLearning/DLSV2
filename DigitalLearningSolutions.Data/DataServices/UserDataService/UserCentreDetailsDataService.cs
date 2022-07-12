@@ -84,11 +84,32 @@
 
         public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId, IDbTransaction? transaction = null)
         {
+            return CentreSpecificEmailIsInUseAtCentreQuery(email, centreId, null, transaction);
+        }
+
+        public bool CentreSpecificEmailIsInUseAtCentreByOtherUser(
+            string email,
+            int centreId,
+            int userId,
+            IDbTransaction? transaction = null
+        )
+        {
+            return CentreSpecificEmailIsInUseAtCentreQuery(email, centreId, userId, transaction);
+        }
+
+        private bool CentreSpecificEmailIsInUseAtCentreQuery(
+            string email,
+            int centreId,
+            int? userId,
+            IDbTransaction? transaction = null
+        )
+        {
             return connection.QueryFirst<int>(
-                @"SELECT COUNT(*)
+                @$"SELECT COUNT(*)
                     FROM UserCentreDetails
-                    WHERE CentreId = @centreId AND Email = @email",
-                new { email, centreId },
+                    WHERE CentreId = @centreId AND Email = @email
+                    {(userId == null ? "" : "AND UserId <> @userId")}",
+                new { email, centreId, userId },
                 transaction
             ) > 0;
         }

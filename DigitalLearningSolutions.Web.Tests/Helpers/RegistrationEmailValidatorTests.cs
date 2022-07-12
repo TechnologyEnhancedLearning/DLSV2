@@ -501,14 +501,13 @@
             var model = GetDefaultAdminInformationViewModel();
 
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     DefaultCentreSpecificEmail,
                     DefaultCentreId,
+                    DefaultUserId,
                     A<IDbTransaction?>._
                 )
             ).Returns(true);
-            A.CallTo(() => userDataService.GetCentreEmail(DefaultUserId, DefaultCentreId))
-                .Returns("another.centre@email");
 
             // When
             RegistrationEmailValidator.ValidateEmailsForInternalAdminRegistration(
@@ -521,14 +520,17 @@
 
             // Then
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     DefaultCentreSpecificEmail,
                     DefaultCentreId,
+                    DefaultUserId,
                     A<IDbTransaction?>._
                 )
             ).MustHaveHappenedOnceExactly();
+
             modelState[nameof(PersonalInformationViewModel.CentreSpecificEmail)].ValidationState.Should()
                 .Be(ModelValidationState.Invalid);
+
             AssertModelStateErrorIsExpected(
                 nameof(PersonalInformationViewModel.CentreSpecificEmail),
                 DuplicateEmailErrorMessage
@@ -550,9 +552,10 @@
             var model = GetDefaultAdminInformationViewModel(centreSpecificEmail: centreSpecificEmail);
 
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     DefaultCentreSpecificEmail,
                     DefaultCentreId,
+                    DefaultUserId,
                     A<IDbTransaction?>._
                 )
             ).Returns(false);
