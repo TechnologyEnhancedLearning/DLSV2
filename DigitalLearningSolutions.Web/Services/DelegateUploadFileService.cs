@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("DigitalLearningSolutions.Data.Tests")]
+[assembly: InternalsVisibleTo("DigitalLearningSolutions.Web.Tests")]
 
 namespace DigitalLearningSolutions.Web.Services
 {
