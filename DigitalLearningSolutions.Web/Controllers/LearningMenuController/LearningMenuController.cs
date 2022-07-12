@@ -5,8 +5,9 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
@@ -28,7 +29,7 @@
         private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
         private readonly IPostLearningAssessmentService postLearningAssessmentService;
         private readonly ICourseCompletionService courseCompletionService;
-        private readonly IClockService clockService;
+        private readonly IClockUtility clockUtility;
 
         public LearningMenuController(
             ILogger<LearningMenuController> logger,
@@ -41,7 +42,7 @@
             IPostLearningAssessmentService postLearningAssessmentService,
             ISessionService sessionService,
             ICourseCompletionService courseCompletionService,
-            IClockService clockService
+            IClockUtility clockUtility
         )
         {
             this.logger = logger;
@@ -54,7 +55,7 @@
             this.diagnosticAssessmentService = diagnosticAssessmentService;
             this.postLearningAssessmentService = postLearningAssessmentService;
             this.courseCompletionService = courseCompletionService;
-            this.clockService = clockService;
+            this.clockUtility = clockUtility;
         }
 
         [Route("/LearningMenu/{customisationId:int}")]
@@ -420,7 +421,7 @@
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
-            /* Course progress doesn't get updated if the auth token expires by the end of the tutorials. 
+            /* Course progress doesn't get updated if the auth token expires by the end of the tutorials.
               Some tutorials are longer than the default auth token lifetime of 1 hour, so we set the auth expiry to 8 hours.
               See HEEDLS-637 and HEEDLS-674 for more details */
             if (tutorialInformation.AverageTutorialDuration >= MinimumTutorialAverageTimeToIncreaseAuthExpiry)
@@ -554,8 +555,8 @@
             var authProperties = new AuthenticationProperties
             {
                 AllowRefresh = true,
-                IssuedUtc = clockService.UtcNow,
-                ExpiresUtc = clockService.UtcNow.AddHours(8)
+                IssuedUtc = clockUtility.UtcNow,
+                ExpiresUtc = clockUtility.UtcNow.AddHours(8)
             };
             await HttpContext.SignInAsync("Identity.Application", User, authProperties);
         }

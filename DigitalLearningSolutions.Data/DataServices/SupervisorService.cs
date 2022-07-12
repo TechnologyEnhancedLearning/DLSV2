@@ -6,6 +6,7 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.RoleProfiles;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using Microsoft.Extensions.Logging;
 

@@ -2,7 +2,6 @@ namespace DigitalLearningSolutions.Web.ViewComponents
 {
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;

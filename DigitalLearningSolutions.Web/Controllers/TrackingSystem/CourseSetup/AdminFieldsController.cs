@@ -7,12 +7,12 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

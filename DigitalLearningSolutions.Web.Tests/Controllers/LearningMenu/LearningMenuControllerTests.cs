@@ -1,8 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningMenu
 {
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.LearningMenuController;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using Microsoft.AspNetCore.Authentication;
@@ -20,7 +21,7 @@
         private const int TutorialId = 842;
         private ISession httpContextSession = null!;
         private IAuthenticationService authenticationService = null!;
-        private IClockService clockService = null!;
+        private IClockUtility clockUtility = null!;
         private IConfiguration config = null!;
         private IConfigDataService configDataService = null!;
         private LearningMenuController controller = null!;
@@ -45,7 +46,7 @@
             diagnosticAssessmentService = A.Fake<IDiagnosticAssessmentService>();
             postLearningAssessmentService = A.Fake<IPostLearningAssessmentService>();
             courseCompletionService = A.Fake<ICourseCompletionService>();
-            clockService = A.Fake<IClockService>();
+            clockUtility = A.Fake<IClockUtility>();
 
             controller = new LearningMenuController(
                     logger,
@@ -58,7 +59,7 @@
                     postLearningAssessmentService,
                     sessionService,
                     courseCompletionService,
-                    clockService
+                    clockUtility
                 ).WithDefaultContext()
                 .WithMockHttpContextSession()
                 .WithMockUser(true, CentreId, adminId: null, delegateId: CandidateId)
