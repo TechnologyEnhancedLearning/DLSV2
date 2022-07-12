@@ -33,13 +33,11 @@
         private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
-        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
-            userService = A.Fake<IUserService>();
             userDataService = A.Fake<IUserDataService>();
             promptsService = A.Fake<PromptsService>();
             cryptoService = A.Fake<ICryptoService>();
@@ -48,7 +46,6 @@
 
             controller = new RegisterDelegateByCentreController(
                     jobGroupsDataService,
-                    userService,
                     promptsService,
                     cryptoService,
                     userDataService,
