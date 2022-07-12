@@ -15,7 +15,7 @@
     public class EvaluationSummaryServiceTests
     {
         public const string EvaluationSummaryDownloadRelativeFilePath =
-            "\\TestData\\EvaluationSummaryDownloadTest.xlsx";
+            "/TestData/EvaluationSummaryDownloadTest.xlsx";
 
         private IEvaluationSummaryDataService evaluationSummaryDataService = null!;
         private IEvaluationSummaryService evaluationSummaryService = null!;

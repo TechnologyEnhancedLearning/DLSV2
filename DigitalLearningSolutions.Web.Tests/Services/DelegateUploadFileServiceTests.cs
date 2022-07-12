@@ -28,7 +28,7 @@
     public class DelegateUploadFileServiceTests
     {
         private const int CentreId = 101;
-        public const string TestDelegateUploadRelativeFilePath = "\\TestData\\DelegateUploadTest.xlsx";
+        public const string TestDelegateUploadRelativeFilePath = "/TestData/DelegateUploadTest.xlsx";
         private IConfiguration configuration = null!;
         private static readonly (int, string) NewDelegateIdAndCandidateNumber = (5, "DELEGATE");
 

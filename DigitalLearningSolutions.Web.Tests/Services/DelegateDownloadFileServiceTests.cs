@@ -17,7 +17,7 @@
 
     public class DelegateDownloadFileServiceTests
     {
-        public const string TestAllDelegatesExportRelativeFilePath = "\\TestData\\AllDelegatesExportTest.xlsx";
+        public const string TestAllDelegatesExportRelativeFilePath = "/TestData/AllDelegatesExportTest.xlsx";
 
         private readonly List<DelegateUserCard> delegateUserCards = new List<DelegateUserCard>
         {
