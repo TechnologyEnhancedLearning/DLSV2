@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.Tests.Services
+ï»¿namespace DigitalLearningSolutions.Web.Tests.Services
 {
     using System;
     using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
     public class DelegateUploadFileServiceTests
     {
         private const int CentreId = 101;
-        public const string TestDelegateUploadRelativeFilePath = "\\TestData\\DelegateUploadTest.xlsx";
+        public const string TestDelegateUploadRelativeFilePath = "/TestData/DelegateUploadTest.xlsx";
 
         private DelegateUploadFileService delegateUploadFileService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
@@ -265,7 +265,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         [Test]
         public void ProcessDelegateTable_has_invalid_PRN_characters_error_for_PRN_with_invalid_characters()
         {
-            var row = GetSampleDelegateDataRow(hasPrn: true.ToString(), prn: "^%£PRN");
+            var row = GetSampleDelegateDataRow(hasPrn: true.ToString(), prn: "^%ï¿½PRN");
             Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidPrnCharacters);
         }
 
