@@ -44,14 +44,18 @@
             ICentresService centresService
         )
         {
-            if (model.CentreSpecificEmail == null || !modelState.HasError(model.CentreSpecificEmail))
+            if (model.CentreSpecificEmail == null ||
+                !modelState.HasError(nameof(InternalAdminInformationViewModel.CentreSpecificEmail)))
             {
                 if (model.CentreSpecificEmail != null &&
-                    userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail, model.Centre!.Value) &&
+                    userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        model.CentreSpecificEmail,
+                        model.Centre!.Value
+                    ) &&
                     model.CentreSpecificEmail != userDataService.GetCentreEmail(userId, model.Centre.Value))
                 {
                     modelState.AddModelError(
-                        nameof(PersonalInformationViewModel.CentreSpecificEmail),
+                        nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
                         DuplicateEmailErrorMessage
                     );
                 }
@@ -62,7 +66,7 @@
                     ))
                 {
                     modelState.AddModelError(
-                        nameof(PersonalInformationViewModel.CentreSpecificEmail),
+                        nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
                         WrongEmailForCentreErrorMessage
                     );
                 }
