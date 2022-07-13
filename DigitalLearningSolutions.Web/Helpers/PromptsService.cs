@@ -70,23 +70,7 @@
         }
 
         public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
-            MyAccountEditDetailsFormData formData,
-            int centreId
-        )
-        {
-            return GetEditDelegateRegistrationPromptViewModelsForCentre(
-                centreId,
-                formData.Answer1,
-                formData.Answer2,
-                formData.Answer3,
-                formData.Answer4,
-                formData.Answer5,
-                formData.Answer6
-            );
-        }
-
-        public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
-            EditDelegateFormData formData,
+            EditAccountDetailsFormDataBase formData,
             int centreId
         )
         {
