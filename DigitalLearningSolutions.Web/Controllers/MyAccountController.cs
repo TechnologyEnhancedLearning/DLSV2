@@ -156,13 +156,15 @@
             DlsSubApplication dlsSubApplication
         )
         {
-            var userDelegateId = User.GetCandidateId();
             var centreId = User.GetCentreIdKnownNotNull();
             var userId = User.GetUserIdKnownNotNull();
+            var userEntity = userService.GetUserById(userId);
 
-            if (userDelegateId.HasValue)
+            var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
+
+            if (delegateAccount != null)
             {
-                promptsService.ValidateCentreRegistrationPrompts(formData, User.GetCentreIdKnownNotNull(), ModelState);
+                promptsService.ValidateCentreRegistrationPrompts(formData, centreId, ModelState);
             }
 
             if (formData.ProfileImageFile != null)
@@ -217,13 +219,13 @@
             var (accountDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToEditAccountDetailsData(
                 formData,
                 userId,
-                userDelegateId
+                delegateAccount?.Id
             );
             userService.UpdateUserDetailsAndCentreSpecificDetails(
                 accountDetailsData,
                 delegateDetailsData,
                 formData.CentreSpecificEmail,
-                User.GetCentreIdKnownNotNull(),
+                centreId,
                 true
             );
 
