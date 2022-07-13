@@ -23,5 +23,7 @@
         public bool SelfReg { get; set; }
         public string? OldPassword { get; set; }
         public DateTime? CentreSpecificDetailsLastChecked { get; set; }
+        public string? RegistrationConfirmationHash { get; set; }
+        public DateTime? RegistrationConfirmationHashCreationDateTime { get; set; }
     }
 }

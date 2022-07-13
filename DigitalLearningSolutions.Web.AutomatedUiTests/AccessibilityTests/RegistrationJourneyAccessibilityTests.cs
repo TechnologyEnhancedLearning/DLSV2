@@ -70,7 +70,10 @@
             Driver.SubmitForm();
 
             var welcomeEmailResult = new AxeBuilder(Driver).Analyze();
-            Driver.SetCheckboxState("ShouldSendEmail", false);
+
+            Driver.FillTextInput("Day", "1");
+            Driver.FillTextInput("Month", "1");
+            Driver.FillTextInput("Year", "3000"); // The date must be in the future for the form to submit successfully
             Driver.SubmitForm();
 
             var passwordResult = new AxeBuilder(Driver).Analyze();
@@ -83,7 +86,7 @@
             // then
             registerResult.Violations.Should().BeEmpty();
             learnerInformationResult.Violations.Should().BeEmpty();
-            CheckWelcomeEmailViolations(welcomeEmailResult);
+            welcomeEmailResult.Violations.Should().BeEmpty();
             passwordResult.Violations.Should().BeEmpty();
             summaryResult.Violations.Should().BeEmpty();
         }
@@ -111,19 +114,6 @@
             registerResult.Violations.Should().BeEmpty();
             learnerInformationResult.Violations.Should().BeEmpty();
             summaryResult.Violations.Should().BeEmpty();
-        }
-
-        private static void CheckWelcomeEmailViolations(AxeResult welcomeEmailResult)
-        {
-            // Expect an axe violation caused by having an aria-expanded attribute on an input
-            // The target #ShouldSendEmail is an nhs-tested component so ignore this violation
-            welcomeEmailResult.Violations.Should().HaveCount(1);
-            var violation = welcomeEmailResult.Violations[0];
-
-            violation.Id.Should().Be("aria-allowed-attr");
-            violation.Nodes.Should().HaveCount(1);
-            violation.Nodes[0].Target.Should().HaveCount(1);
-            violation.Nodes[0].Target[0].Selector.Should().Be("#ShouldSendEmail");
         }
     }
 }

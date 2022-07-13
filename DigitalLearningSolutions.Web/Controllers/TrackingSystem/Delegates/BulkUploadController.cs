@@ -21,14 +21,17 @@
     {
         private readonly IDelegateDownloadFileService delegateDownloadFileService;
         private readonly IDelegateUploadFileService delegateUploadFileService;
+        private readonly IClockService clockService;
 
         public BulkUploadController(
             IDelegateDownloadFileService delegateDownloadFileService,
-            IDelegateUploadFileService delegateUploadFileService
+            IDelegateUploadFileService delegateUploadFileService,
+            IClockService clockService
         )
         {
             this.delegateDownloadFileService = delegateDownloadFileService;
             this.delegateUploadFileService = delegateUploadFileService;
+            this.clockService = clockService;
         }
 
         public IActionResult Index()
@@ -39,8 +42,11 @@
         [Route("DownloadDelegates")]
         public IActionResult DownloadDelegates()
         {
-            var content = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(User.GetCentreIdKnownNotNull());
-            var fileName = $"DLS Delegates for Bulk Update {DateTime.Today:yyyy-MM-dd}.xlsx";
+            var content =
+                delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(
+                    User.GetCentreIdKnownNotNull()
+                );
+            var fileName = $"DLS Delegates for Bulk Update {clockService.UtcToday:yyyy-MM-dd}.xlsx";
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),
@@ -65,8 +71,6 @@
             {
                 return View("StartUpload", model);
             }
-
-            model.ClearDateIfNotSendEmail();
 
             try
             {
