@@ -250,18 +250,6 @@
                     A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._))
                         .MustHaveHappenedOnceExactly();
                 }
-
-                if (centreSpecificEmail != null)
-                {
-                    A.CallTo(
-                        () => userDataService.SetCentreEmail(
-                            DefaultUserId,
-                            DefaultCentreId,
-                            centreSpecificEmail,
-                            A<IDbTransaction?>._
-                        )
-                    ).MustHaveHappenedOnceExactly();
-                }
             }
             else
             {
