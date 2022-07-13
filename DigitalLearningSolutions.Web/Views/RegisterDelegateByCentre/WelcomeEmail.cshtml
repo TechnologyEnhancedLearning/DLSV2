@@ -1,14 +1,13 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
+﻿@using DigitalLearningSolutions.Data.Utilities
+@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 @model WelcomeEmailViewModel
+@inject IClockUtility ClockUtility
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register delegate - Welcome email" : "Register delegate - Welcome email";
   const string dateInputId = "welcome-email-date";
-  var exampleDate = DateTime.Today;
-  var emailDateCss = "nhsuk-checkboxes__conditional"
-                     + (Model.ShouldSendEmail ? "" : " nhsuk-checkboxes__conditional--hidden")
-                     + (errorHasOccurred ? " nhsuk-u-padding-left-5" : "");
+  var exampleDate = ClockUtility.UtcToday;
   var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
 }
 
@@ -25,29 +24,13 @@
     <h1 class="nhsuk-heading-xl">Welcome email</h1>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="WelcomeEmail">
-      <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional nhsuk-u-margin-bottom-4">
-        <div class="nhsuk-checkboxes__item">
-          <input class="nhsuk-checkboxes__input"
-                 id="ShouldSendEmail"
-                 name="ShouldSendEmail"
-                 asp-for="ShouldSendEmail"
-                 type="checkbox"
-                 value="true"
-                 aria-controls="@dateInputId"
-                 aria-expanded="@(Model.ShouldSendEmail ? "true" : "false")">
-          <label class="nhsuk-label nhsuk-checkboxes__label" for="ShouldSendEmail">
-            Send welcome email to registered delegate
-          </label>
-        </div>
-
-        <vc:date-input id="@dateInputId"
-                       label="Deliver email on or after"
-                       day-id="Day"
-                       month-id="Month"
-                       year-id="Year"
-                       css-class="@emailDateCss"
-                       hint-text-lines="@hintTextLines" />
-      </div>
+      <vc:date-input id="@dateInputId"
+                     label="Send welcome email to registered delegate, to be delivered on or after"
+                     day-id="Day"
+                     month-id="Month"
+                     year-id="Year"
+                     css-class="@(errorHasOccurred ? " nhsuk-u-padding-left-5 nhsuk-u-margin-bottom-3" : "")"
+                     hint-text-lines="@hintTextLines" />
 
       <a class="nhsuk-button nhsuk-button--secondary" asp-controller="RegisterDelegateByCentre" asp-action="LearnerInformation" role="button">Back</a>
       <button class="nhsuk-button" type="submit">Next</button>

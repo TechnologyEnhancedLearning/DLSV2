@@ -52,12 +52,14 @@
         private readonly IClockUtility clockUtility;
         private readonly IEmailService emailService;
         private readonly IPasswordResetDataService passwordResetDataService;
+        private readonly IRegistrationConfirmationDataService registrationConfirmationDataService;
         private readonly IPasswordService passwordService;
         private readonly IUserService userService;
 
         public PasswordResetService(
             IUserService userService,
             IPasswordResetDataService passwordResetDataService,
+            IRegistrationConfirmationDataService registrationConfirmationDataService,
             IPasswordService passwordService,
             IEmailService emailService,
             IClockUtility clockUtility
@@ -65,6 +67,7 @@
         {
             this.userService = userService;
             this.passwordResetDataService = passwordResetDataService;
+            this.registrationConfirmationDataService = registrationConfirmationDataService;
             this.passwordService = passwordService;
             this.emailService = emailService;
             this.clockUtility = clockUtility;
@@ -86,7 +89,7 @@
                 await passwordResetDataService.RemoveResetPasswordAsync(user.ResetPasswordId.Value);
             }
 
-            var resetPasswordHash = GenerateResetPasswordHash(user);
+            var resetPasswordHash = GenerateResetPasswordHash(user.Id);
 
             var resetPasswordEmail = GeneratePasswordResetEmail(
                 emailAddress,
@@ -108,10 +111,10 @@
         {
             var delegateEntity = userService.GetDelegateById(delegateId)!;
 
-            var setPasswordHash = GenerateResetPasswordHash(delegateEntity.UserAccount);
+            var registrationConfirmationHash = GenerateRegistrationConfirmationHash(delegateId);
             var welcomeEmail = GenerateWelcomeEmail(
                 delegateEntity,
-                setPasswordHash,
+                registrationConfirmationHash,
                 baseUrl
             );
             emailService.SendEmail(welcomeEmail);
@@ -126,10 +129,10 @@
         {
             var delegateEntity = userService.GetDelegateById(delegateId)!;
 
-            var setPasswordHash = GenerateResetPasswordHash(delegateEntity.UserAccount);
+            var registrationConfirmationHash = GenerateRegistrationConfirmationHash(delegateId);
             var welcomeEmail = GenerateWelcomeEmail(
                 delegateEntity,
-                setPasswordHash,
+                registrationConfirmationHash,
                 baseUrl
             );
 
@@ -176,17 +179,12 @@
                     var delegateEntity = userService.GetDelegateById(delegateId)!;
                     return GenerateWelcomeEmail(
                         delegateEntity,
-                        GenerateResetPasswordHash(delegateEntity.UserAccount),
+                        GenerateRegistrationConfirmationHash(delegateId),
                         baseUrl
                     );
                 }
             );
             emailService.ScheduleEmails(emails, addedByProcess, deliveryDate);
-        }
-
-        private string GenerateResetPasswordHash(UserAccount user)
-        {
-            return GenerateResetPasswordHash(user.Id);
         }
 
         private string GenerateResetPasswordHash(int userId)
@@ -200,6 +198,21 @@
             );
 
             passwordResetDataService.CreatePasswordReset(resetPasswordCreateModel);
+
+            return hash;
+        }
+
+        private string GenerateRegistrationConfirmationHash(int delegateId)
+        {
+            var hash = Guid.NewGuid().ToString();
+
+            var registrationConfirmationModel = new RegistrationConfirmationModel(
+                clockUtility.UtcNow,
+                hash,
+                delegateId
+            );
+
+            registrationConfirmationDataService.SetRegistrationConfirmation(registrationConfirmationModel);
 
             return hash;
         }
@@ -243,7 +256,7 @@
 
         private static Email GenerateWelcomeEmail(
             DelegateEntity delegateEntity,
-            string setPasswordHash,
+            string registrationConfirmationHash,
             string baseUrl
         )
         {
@@ -254,8 +267,8 @@
                 setPasswordUrl.Path += '/';
             }
 
-            setPasswordUrl.Path += "SetPassword"; // TODO: HEEDLS-901 The controller for this link has been deleted
-            setPasswordUrl.Query = $"code={setPasswordHash}&email={emailAddress}";
+            setPasswordUrl.Path += "CompleteRegistration"; // TODO: HEEDLS-974 Create controller for this link
+            setPasswordUrl.Query = $"code={registrationConfirmationHash}&email={emailAddress}";
 
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";
 

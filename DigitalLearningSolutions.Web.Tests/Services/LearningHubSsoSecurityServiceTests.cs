@@ -21,8 +21,8 @@
         [SetUp]
         public void Setup()
         {
-            var clockService = A.Fake<IClockUtility>();
-            A.CallTo(() => clockService.UtcNow).Returns(new DateTime(2021, 12, 9, 8, 30, 45));
+            var clockUtility = A.Fake<IClockUtility>();
+            A.CallTo(() => clockUtility.UtcNow).Returns(new DateTime(2021, 12, 9, 8, 30, 45));
             A.CallTo(() => Config["LearningHubSSO:SecretKey"]).Returns("where the wild rose blooms");
         }
 
@@ -203,6 +203,7 @@
             private bool Called { get; set; }
 
             public DateTime UtcNow => GetNow();
+            public DateTime UtcToday => GetNow().Date;
 
             private DateTime GetNow()
             {

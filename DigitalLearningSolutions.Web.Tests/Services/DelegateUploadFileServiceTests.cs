@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.Supervisor;
@@ -28,6 +29,7 @@
     public class DelegateUploadFileServiceTests
     {
         private const int CentreId = 101;
+        private static readonly DateTime WelcomeEmailDate = new DateTime(3000, 1, 1);
         public const string TestDelegateUploadRelativeFilePath = "/TestData/DelegateUploadTest.xlsx";
         private IConfiguration configuration = null!;
         private static readonly (int, string) NewDelegateIdAndCandidateNumber = (5, "DELEGATE");
@@ -290,7 +292,7 @@
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId)).Returns(null);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
@@ -317,7 +319,7 @@
                 .Returns(true);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);
@@ -345,7 +347,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -384,7 +386,7 @@
                 .Returns(candidateNumberDelegate);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             AssertCreateOrUpdateDelegateWereNotCalled();
@@ -413,7 +415,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             result.ProcessedCount.Should().Be(1);
@@ -437,7 +439,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -453,6 +455,16 @@
                     )
                 )
                 .MustHaveHappened();
+
+            A.CallTo(
+                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    A<int>._,
+                    A<string>._,
+                    A<DateTime>._,
+                    A<string>._
+                )
+            ).MustNotHaveHappened();
+
             result.ProcessedCount.Should().Be(1);
             result.UpdatedCount.Should().Be(1);
         }
@@ -478,7 +490,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -513,7 +525,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -549,7 +561,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -584,7 +596,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -621,36 +633,45 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
-                    () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
-                        A<DelegateRegistrationModel>.That.Matches(
-                            model =>
-                                model.FirstName == row.FirstName &&
-                                model.LastName == row.LastName &&
-                                model.JobGroup.ToString() == row.JobGroupID &&
-                                model.Answer1 == row.Answer1 &&
-                                model.Answer2 == row.Answer2 &&
-                                model.Answer3 == row.Answer3 &&
-                                model.Answer4 == row.Answer4 &&
-                                model.Answer5 == row.Answer5 &&
-                                model.Answer6 == row.Answer6 &&
-                                model.ProfessionalRegistrationNumber == row.PRN &&
-                                model.CentreSpecificEmail == row.EmailAddress &&
-                                Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
-                                model.NotifyDate == null &&
-                                model.IsSelfRegistered == false &&
-                                model.UserIsActive == false &&
-                                model.CentreAccountIsActive == true &&
-                                model.Approved == true &&
-                                model.PasswordHash == null
-                        ),
-                        false
-                    )
+                () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
+                    A<DelegateRegistrationModel>.That.Matches(
+                        model =>
+                            model.FirstName == row.FirstName &&
+                            model.LastName == row.LastName &&
+                            model.JobGroup.ToString() == row.JobGroupID &&
+                            model.Answer1 == row.Answer1 &&
+                            model.Answer2 == row.Answer2 &&
+                            model.Answer3 == row.Answer3 &&
+                            model.Answer4 == row.Answer4 &&
+                            model.Answer5 == row.Answer5 &&
+                            model.Answer6 == row.Answer6 &&
+                            model.ProfessionalRegistrationNumber == row.PRN &&
+                            model.CentreSpecificEmail == row.EmailAddress &&
+                            Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
+                            model.NotifyDate == WelcomeEmailDate &&
+                            model.IsSelfRegistered == false &&
+                            model.UserIsActive == false &&
+                            model.CentreAccountIsActive == true &&
+                            model.Approved == true &&
+                            model.PasswordHash == null
+                    ),
+                    false
                 )
-                .MustHaveHappened();
+            ).MustHaveHappened();
+
+            A.CallTo(
+                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    NewDelegateIdAndCandidateNumber.Item1,
+                    configuration.GetAppRootPath(),
+                    WelcomeEmailDate,
+                    "DelegateBulkUpload_Refactor"
+                )
+            ).MustHaveHappenedOnceExactly();
+
             result.ProcessedCount.Should().Be(1);
             result.RegisteredCount.Should().Be(1);
         }
@@ -659,7 +680,6 @@
         public void ProcessDelegateTable_calls_register_with_expected_values_when_welcomeEmailDate_is_populated()
         {
             // Given
-            var welcomeEmailDate = new DateTime(3000, 01, 01);
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
             Guid primaryEmailIsGuid;
@@ -678,7 +698,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, welcomeEmailDate);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -697,7 +717,7 @@
                                 model.ProfessionalRegistrationNumber == row.PRN &&
                                 model.CentreSpecificEmail == row.EmailAddress &&
                                 Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
-                                model.NotifyDate == welcomeEmailDate
+                                model.NotifyDate == WelcomeEmailDate
                         ),
                         false
                     )
@@ -754,51 +774,6 @@
         }
 
         [Test]
-        public void ProcessDelegateTable_does_not_call_generate_welcome_email_when_welcomeEmailDate_is_not_populated()
-        {
-            // Given
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
-            var table = CreateTableFromData(new[] { row });
-
-            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId, null))
-                .Returns(false);
-            A.CallTo(
-                    () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
-                        A<DelegateRegistrationModel>._,
-                        false
-                    )
-                )
-                .Returns(NewDelegateIdAndCandidateNumber);
-            A.CallTo(
-                () => userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
-            ).DoesNothing();
-            A.CallTo(
-                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    A<int>._,
-                    A<string>._,
-                    A<DateTime>._,
-                    A<string>._
-                )
-            ).DoesNothing();
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            A.CallTo(
-                    () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                        A<int>._,
-                        A<string>._,
-                        A<DateTime>._,
-                        A<string>._
-                    )
-                )
-                .MustNotHaveHappened();
-            result.ProcessedCount.Should().Be(1);
-            result.RegisteredCount.Should().Be(1);
-        }
-
-        [Test]
         public void ProcessDelegateTable_successful_register_updates_supervisor_delegates()
         {
             // Given
@@ -834,7 +809,7 @@
             ).DoesNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -885,7 +860,7 @@
             ).DoesNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -928,7 +903,7 @@
             ).DoesNothing();
 
             // When
-            delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -960,7 +935,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             result.ProcessedCount.Should().Be(5);
@@ -988,7 +963,7 @@
                 .Returns(candidateNumberDelegate);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             result.ProcessedCount.Should().Be(5);
@@ -1016,7 +991,7 @@
             ).DoesNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             result.ProcessedCount.Should().Be(5);
@@ -1069,7 +1044,7 @@
             CallsToUserDataServiceUpdatesDoNothing();
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             using (new AssertionScope())
@@ -1091,7 +1066,7 @@
             var table = CreateTableFromData(new[] { row });
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
 
             // Then
             AssertBulkUploadResultHasOnlyOneError(result);

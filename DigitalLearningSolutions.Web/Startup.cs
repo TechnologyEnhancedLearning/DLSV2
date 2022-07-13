@@ -14,11 +14,6 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.ModelBinders;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditRegistrationPrompt;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
@@ -263,6 +258,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
             services.AddScoped<IPasswordResetDataService, PasswordResetDataService>();
+            services.AddScoped<IRegistrationConfirmationDataService, RegistrationConfirmationDataService>();
             services.AddScoped<IProgressDataService, ProgressDataService>();
             services.AddScoped<IRegionDataService, RegionDataService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();

@@ -25,6 +25,7 @@
         private IEmailService emailService = null!;
         private IPasswordResetDataService passwordResetDataService = null!;
         private PasswordResetService passwordResetService = null!;
+        private IRegistrationConfirmationDataService registrationConfirmationDataService = null!;
         private IPasswordService passwordService = null!;
         private IUserService userService = null!;
 
@@ -35,6 +36,7 @@
             emailService = A.Fake<IEmailService>();
             clockUtility = A.Fake<IClockUtility>();
             passwordResetDataService = A.Fake<IPasswordResetDataService>();
+            registrationConfirmationDataService = A.Fake<IRegistrationConfirmationDataService>();
             passwordService = A.Fake<IPasswordService>();
 
             A.CallTo(() => userService.GetUserByEmailAddress(A<string>._))
@@ -43,6 +45,7 @@
             passwordResetService = new PasswordResetService(
                 userService,
                 passwordResetDataService,
+                registrationConfirmationDataService,
                 passwordService,
                 emailService,
                 clockUtility

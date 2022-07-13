@@ -1,13 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
     using System;
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
@@ -213,36 +211,23 @@
         }
 
         [Test]
-        public void WelcomeEmailPost_with_ShouldSendEmail_false_updates_tempdata_correctly()
-        {
-            // Given
-            controller.TempData.Set(new DelegateRegistrationByCentreData());
-            var model = new WelcomeEmailViewModel { ShouldSendEmail = false, Day = 7, Month = 7, Year = 2200 };
-
-            // When
-            controller.WelcomeEmail(model);
-
-            // Then
-            var data = controller.TempData.Peek<DelegateRegistrationByCentreData>()!;
-            data.ShouldSendEmail.Should().BeFalse();
-            data.WelcomeEmailDate.Should().BeNull();
-        }
-
-        [Test]
-        public void WelcomeEmailPost_with_ShouldSendEmail_true_updates_tempdata_correctly()
+        public void WelcomeEmailPost_updates_tempdata_correctly()
         {
             // Given
             controller.TempData.Set(new DelegateRegistrationByCentreData { PasswordHash = "hash" });
             var date = new DateTime(2200, 7, 7);
             var model = new WelcomeEmailViewModel
-            { ShouldSendEmail = true, Day = date.Day, Month = date.Month, Year = date.Year };
+            {
+                Day = date.Day,
+                Month = date.Month,
+                Year = date.Year,
+            };
 
             // When
             controller.WelcomeEmail(model);
 
             // Then
             var data = controller.TempData.Peek<DelegateRegistrationByCentreData>()!;
-            data.ShouldSendEmail.Should().BeTrue();
             data.WelcomeEmailDate.Should().Be(date);
             data.IsPasswordSet.Should().BeFalse();
             data.PasswordHash.Should().BeNull();
@@ -313,10 +298,8 @@
 
             // Then
             var delegateNumber = (string?)controller.TempData.Peek("delegateNumber");
-            var emailSent = (bool)controller.TempData.Peek("emailSent");
             var passwordSet = (bool)controller.TempData.Peek("passwordSet");
             delegateNumber.Should().Be(sampleDelegateNumber);
-            emailSent.Should().Be(data.ShouldSendEmail);
             passwordSet.Should().Be(data.IsPasswordSet);
         }
 
