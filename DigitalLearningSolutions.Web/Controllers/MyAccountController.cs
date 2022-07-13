@@ -164,7 +164,7 @@
 
             if (delegateAccount != null)
             {
-                promptsService.ValidateCentreRegistrationPrompts(formData, User.GetCentreIdKnownNotNull(), ModelState);
+                promptsService.ValidateCentreRegistrationPrompts(formData, centreId, ModelState);
             }
 
             if (formData.ProfileImageFile != null)
@@ -225,7 +225,7 @@
                 accountDetailsData,
                 delegateDetailsData,
                 formData.CentreSpecificEmail,
-                User.GetCentreIdKnownNotNull(),
+                centreId,
                 true
             );
 
