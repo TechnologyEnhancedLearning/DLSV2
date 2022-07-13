@@ -35,7 +35,7 @@
             Email = delegateEntity.EmailForCentreNotifications;
             DateRegistered = delegateEntity.DelegateAccount.DateRegistered;
             JobGroup = delegateEntity.UserAccount.JobGroupName;
-            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
+            ProfessionalRegistrationNumber = PrnHelper.GetPrnDisplayString(
                 delegateEntity.UserAccount.HasBeenPromptedForPrn,
                 delegateEntity.UserAccount.ProfessionalRegistrationNumber
             );

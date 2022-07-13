@@ -15,12 +15,13 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.ModelBinders;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.ModelBinders;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;
@@ -177,7 +178,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentreRegistrationPromptsService, CentreRegistrationPromptsService>();
             services.AddScoped<ICentresService, CentresService>();
             services.AddScoped<ICertificateService, CertificateService>();
-            services.AddScoped<IClockService, ClockService>();
+            services.AddScoped<IClockUtility, ClockUtility>();
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<IConfigDataService, ConfigDataService>();
             services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
