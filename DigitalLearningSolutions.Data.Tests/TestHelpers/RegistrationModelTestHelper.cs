@@ -147,6 +147,7 @@
             bool isSelfRegistered = true,
             DateTime? notifyDate = null,
             bool active = true,
+            bool activeUser = true,
             bool approved = false,
             string? professionalRegistrationNumber = "PRN1234",
             string? centreSpecificEmail = "testuser@weekends.com"
@@ -168,6 +169,7 @@
                 answer6,
                 isSelfRegistered,
                 active,
+                activeUser,
                 professionalRegistrationNumber,
                 approved,
                 notifyDate

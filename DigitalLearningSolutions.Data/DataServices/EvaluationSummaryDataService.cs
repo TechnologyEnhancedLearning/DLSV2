@@ -78,7 +78,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND (@endDate IS NULL OR e.EvaluatedDate <= @endDate)
                         AND (@jobGroupId IS NULL OR e.JobGroupID = @jobGroupId)
                         AND (@customisationId IS NULL OR e.CustomisationID = @customisationId)
-                        AND (@courseCategoryId IS NULL OR a.CourseCategoryId = @courseCategoryId)",
+                        AND (@courseCategoryId IS NULL OR a.CourseCategoryId = @courseCategoryId)
+                        AND a.DefaultContentTypeID <> 4",
                 new
                 {
                     centreId,

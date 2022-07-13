@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.MyAccount
 {
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -34,6 +36,7 @@
         private PromptsService promptsService = null!;
         private IUrlHelper urlHelper = null!;
         private IUserService userService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -41,6 +44,7 @@
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             config = A.Fake<IConfiguration>();
             userService = A.Fake<IUserService>();
+            userDataService = A.Fake<IUserDataService>();
             imageResizeService = A.Fake<ImageResizeService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             promptsService = new PromptsService(centreRegistrationPromptsService);
@@ -57,6 +61,7 @@
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
+                userDataService,
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
@@ -80,6 +85,7 @@
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
+                userDataService,
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
@@ -99,8 +105,11 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(A<string>._, A<IDbTransaction?>._))
                 .MustNotHaveHappened();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction?>._)
+            ).MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
         }
 
@@ -111,6 +120,7 @@
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
+                userDataService,
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
@@ -123,6 +133,13 @@
                 (() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(2)).Returns(
                 PromptsTestHelper.GetDefaultCentreRegistrationPrompts(customPromptLists, 2)
             );
+            var testUserEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new AdminAccount[] { },
+                new[] { UserTestHelper.GetDefaultDelegateAccount() }
+            );
+            A.CallTo
+                (() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
             var formData = new MyAccountEditDetailsFormData();
             var expectedPrompt = new EditDelegateRegistrationPromptViewModel(
                 1,
@@ -142,27 +159,32 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(A<string>._, A<IDbTransaction?>._))
                 .MustNotHaveHappened();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction?>._)
+            ).MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
             myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Answer1)].ValidationState.Should().Be
                 (ModelValidationState.Invalid);
         }
 
         [Test]
-        public void EditDetailsPostSave_for_admin_user_with_missing_delegate_answers_doesnt_fail_validation()
+        public void EditDetailsPostSave_for_admin_only_user_with_missing_delegate_answers_doesnt_fail_validation_or_update_delegate()
         {
             // Given
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
+                userDataService,
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
                 logger,
                 config
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(Email, null)).Returns(false);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(Email, 2, null)).Returns(false);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
@@ -173,11 +195,20 @@
                     )
                 )
                 .DoesNothing();
+            var testUserEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new[] { UserTestHelper.GetDefaultAdminAccount() },
+                new DelegateAccount[] {  }
+            );
+            A.CallTo
+                (() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
+            const string centreSpecificEmail = "centre@email.com";
             var model = new MyAccountEditDetailsFormData
             {
                 FirstName = "Test",
                 LastName = "User",
                 Email = Email,
+                CentreSpecificEmail = centreSpecificEmail,
                 JobGroupId = 1,
                 HasProfessionalRegistrationNumber = false,
             };
@@ -188,11 +219,19 @@
             var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).MustHaveHappened();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(Email, A<IDbTransaction>._)).MustHaveHappened();
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        centreSpecificEmail,
+                        2,
+                        A<IDbTransaction>._
+                    )
+                )
+                .MustHaveHappened();
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
-                        A<DelegateDetailsData>._,
+                        null,
                         A<string?>._,
                         A<int>._,
                         true
@@ -214,6 +253,7 @@
             var myAccountController = new MyAccountController(
                     centreRegistrationPromptsService,
                     userService,
+                    userDataService,
                     imageResizeService,
                     jobGroupsDataService,
                     promptsService,
@@ -222,7 +262,9 @@
                 ).WithDefaultContext()
                 .WithMockUser(true, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(Email, A<IDbTransaction?>._)).Returns(false);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(Email, 2, A<IDbTransaction?>._))
+                .Returns(false);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
@@ -258,6 +300,7 @@
             var myAccountController = new MyAccountController(
                     centreRegistrationPromptsService,
                     userService,
+                    userDataService,
                     imageResizeService,
                     jobGroupsDataService,
                     promptsService,
@@ -266,7 +309,9 @@
                 ).WithDefaultContext()
                 .WithMockUser(true, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(Email, A<IDbTransaction?>._)).Returns(false);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(Email, 2, A<IDbTransaction?>._))
+                .Returns(false);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
@@ -307,6 +352,7 @@
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
+                userDataService,
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
@@ -341,8 +387,11 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(A<string>._, A<IDbTransaction?>._))
                 .MustNotHaveHappened();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction?>._)
+            ).MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
             myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.ProfileImageFile)].ValidationState
                 .Should().Be(ModelValidationState.Invalid);
@@ -355,6 +404,7 @@
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
+                userDataService,
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,

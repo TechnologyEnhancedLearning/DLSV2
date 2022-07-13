@@ -19,12 +19,12 @@
 
         [Required(ErrorMessage = "Delegates update file is required")]
         [AllowedExtensions(new[] { ".xlsx" }, "Delegates update file must be in xlsx format")]
-        [MaxFileSize(5*1024*1024, "Maximum allowed file size is 5MB")]
+        [MaxFileSize(5 * 1024 * 1024, "Maximum allowed file size is 5MB")]
         public IFormFile? DelegatesFile { get; set; }
 
-        public DateTime? GetWelcomeEmailDate()
+        public DateTime GetWelcomeEmailDate()
         {
-            return ShouldSendEmail ? new DateTime(Year!.Value, Month!.Value, Day!.Value) : (DateTime?)null;
+            return new DateTime(Year!.Value, Month!.Value, Day!.Value);
         }
     }
 }

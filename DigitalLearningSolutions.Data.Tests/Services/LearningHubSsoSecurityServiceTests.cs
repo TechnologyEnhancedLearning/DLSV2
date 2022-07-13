@@ -202,6 +202,7 @@
             private bool Called { get; set; }
 
             public DateTime UtcNow => GetNow();
+            public DateTime UtcToday => GetNow().Date;
 
             private DateTime GetNow()
             {

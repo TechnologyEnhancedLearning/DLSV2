@@ -13,25 +13,23 @@
         {
             FirstName = data.FirstName;
             LastName = data.LastName;
-            PrimaryEmail = data.PrimaryEmail;
+            CentreSpecificEmail = data.CentreSpecificEmail;
             IsPasswordSet = data.IsPasswordSet;
-            if (data.ShouldSendEmail)
-            {
-                WelcomeEmailDate = data.WelcomeEmailDate!.Value.ToString(DateHelper.StandardDateFormat);
-            }
+            WelcomeEmailDate = data.WelcomeEmailDate!.Value.ToString(DateHelper.StandardDateFormat);
             ProfessionalRegistrationNumber = data.ProfessionalRegistrationNumber ?? "Not professionally registered";
             HasProfessionalRegistrationNumber = data.HasProfessionalRegistrationNumber;
         }
 
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public string? PrimaryEmail { get; set; }
+        public string? CentreSpecificEmail { get; set; }
         public bool IsPasswordSet { get; set; }
         public string? WelcomeEmailDate { get; set; }
-        public bool ShouldSendEmail => WelcomeEmailDate != null;
         public string? JobGroup { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
         public bool? HasProfessionalRegistrationNumber { get; set; }
-        public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; } = new List<DelegateRegistrationPrompt>();
+
+        public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; } =
+            new List<DelegateRegistrationPrompt>();
     }
 }

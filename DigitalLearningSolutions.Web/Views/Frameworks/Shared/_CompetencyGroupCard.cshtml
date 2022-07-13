@@ -27,7 +27,13 @@
           
           foreach (var frameworkCompetency in Model.FrameworkCompetencyGroup.FrameworkCompetencies)
           {
-            <partial name="_CompetencyCard.cshtml" model="new CompetencyCardViewModel { CanModify = Model.CanModify, FrameworkCompetencyGroupId = Model.FrameworkCompetencyGroup.ID, FrameworkCompetency = frameworkCompetency}" />
+            <partial name="_CompetencyCard.cshtml" model="new CompetencyCardViewModel
+              {
+                CanModify = Model.CanModify,
+                FrameworkCompetencyGroupId = Model.FrameworkCompetencyGroup.ID,
+                FrameworkCompetency = frameworkCompetency,
+                CompetencyFlags =  Model.CompetencyFlags.Where(c => c.CompetencyId == frameworkCompetency.CompetencyID)
+              }" />
           }
         }
         else

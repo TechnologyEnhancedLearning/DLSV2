@@ -3,7 +3,9 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -33,10 +35,12 @@
         private readonly ILogger<MyAccountController> logger;
         private readonly PromptsService promptsService;
         private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
 
         public MyAccountController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IUserService userService,
+            IUserDataService userDataService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
             PromptsService registrationPromptsService,
@@ -46,6 +50,7 @@
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.userService = userService;
+            this.userDataService = userDataService;
             this.imageResizeService = imageResizeService;
             this.jobGroupsDataService = jobGroupsDataService;
             promptsService = registrationPromptsService;
@@ -53,7 +58,6 @@
             this.config = config;
         }
 
-        // TODO HEEDLS-993 Sort out my account page for centreless user, only the minimum has been done to allow it to load
         [NoCaching]
         public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
@@ -62,7 +66,7 @@
             var userEntity = userService.GetUserById(userId);
 
             var adminAccount = userEntity!.GetCentreAccountSet(centreId)?.AdminAccount;
-            var delegateAccount = userEntity.GetCentreAccountSet(centreId)?.DelegateAccount;
+            var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
 
             var customPrompts =
                 centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateAccount(
@@ -70,14 +74,20 @@
                     delegateAccount
                 );
 
+            var allCentreSpecificEmails = centreId == null
+                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                : new List<(string centreName, string? centreSpecificEmail)>();
+
             var switchCentreReturnUrl = StringHelper.GetLocalRedirectUrl(config, SwitchCentreReturnUrl);
 
             var model = new MyAccountViewModel(
                 userEntity.UserAccount,
                 delegateAccount,
+                centreId,
                 adminAccount?.CentreName ?? delegateAccount?.CentreName,
                 centreId != null ? userService.GetCentreEmail(userId, centreId.Value) : null,
                 customPrompts,
+                allCentreSpecificEmails,
                 dlsSubApplication,
                 switchCentreReturnUrl
             );
@@ -97,10 +107,10 @@
             var centreId = User.GetCentreId();
             var userId = User.GetUserIdKnownNotNull();
             var userEntity = userService.GetUserById(userId);
-            var delegateAccount = userEntity!.GetCentreAccountSet(centreId)?.DelegateAccount;
+            var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-            
+
             var customPrompts =
                 centreId != null
                     ? promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
@@ -146,12 +156,15 @@
             DlsSubApplication dlsSubApplication
         )
         {
-            var userDelegateId = User.GetCandidateId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var userId = User.GetUserIdKnownNotNull();
+            var userEntity = userService.GetUserById(userId);
 
-            if (userDelegateId.HasValue)
+            var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
+
+            if (delegateAccount != null)
             {
-                promptsService.ValidateCentreRegistrationPrompts(formData, User.GetCentreIdKnownNotNull(), ModelState);
+                promptsService.ValidateCentreRegistrationPrompts(formData, centreId, ModelState);
             }
 
             if (formData.ProfileImageFile != null)
@@ -174,10 +187,9 @@
             }
 
             var emailsValid = true;
-            if (!userService.NewEmailAddressIsValid(
-                    formData.Email!,
-                    userId
-                ))
+            // TODO HEEDLS-1002: This won't work if the user changes their email, then edits their details again (keeping their email the same)
+            // because User.GetUserPrimaryEmail() is only updated on login. Check that the Email is in use BY ANOTHER USER.
+            if (formData.Email != User.GetUserPrimaryEmail() && userDataService.PrimaryEmailIsInUse(formData.Email!))
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
@@ -186,10 +198,11 @@
                 emailsValid = false;
             }
 
-            if (!string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) && !userService.NewEmailAddressIsValid(
-                    formData.CentreSpecificEmail,
-                    userId
-                ))
+            if (
+                // TODO HEEDLS-1002: Check that the CentreSpecificEmail is in use BY ANOTHER USER
+                !string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) &&
+                userDataService.CentreSpecificEmailIsInUseAtCentre(formData.CentreSpecificEmail, centreId)
+            )
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),
@@ -206,13 +219,13 @@
             var (accountDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToEditAccountDetailsData(
                 formData,
                 userId,
-                userDelegateId
+                delegateAccount?.Id
             );
             userService.UpdateUserDetailsAndCentreSpecificDetails(
                 accountDetailsData,
                 delegateDetailsData,
                 formData.CentreSpecificEmail,
-                User.GetCentreIdKnownNotNull(),
+                centreId,
                 true
             );
 
@@ -291,6 +304,13 @@
 
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);
+        }
+
+        private static DelegateAccount? GetDelegateAccountIfActive(UserEntity? user, int? centreId)
+        {
+            var delegateAccount = user?.GetCentreAccountSet(centreId)?.DelegateAccount;
+
+            return delegateAccount is { Active: true } ? delegateAccount : null;
         }
     }
 }

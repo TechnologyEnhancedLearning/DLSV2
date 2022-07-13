@@ -21,8 +21,6 @@ namespace DigitalLearningSolutions.Data.Services
 
         DelegateUser? GetDelegateUserById(int delegateId);
 
-        public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
-
         List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
 
         void UpdateUserDetailsAndCentreSpecificDetails(
@@ -32,12 +30,6 @@ namespace DigitalLearningSolutions.Data.Services
             int centreId,
             bool changeMadeBySameUser
         );
-
-        bool NewEmailAddressIsValid(string emailAddress, int userId);
-
-        bool IsDelegateEmailValidForCentre(string email, int centreId);
-
-        bool EmailIsInUse(string email);
 
         void ResetFailedLoginCount(UserAccount userAccount);
 
@@ -72,6 +64,8 @@ namespace DigitalLearningSolutions.Data.Services
         UserAccount? GetUserByEmailAddress(string emailAddress);
 
         string? GetCentreEmail(int userId, int centreId);
+
+        IEnumerable<(string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(int userId);
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
 
@@ -129,34 +123,9 @@ namespace DigitalLearningSolutions.Data.Services
             return (adminUser, delegateUser);
         }
 
-        public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
-        {
-            return string.IsNullOrWhiteSpace(emailAddress)
-                ? new List<DelegateUser>()
-                : userDataService.GetDelegateUsersByEmailAddress(emailAddress);
-        }
-
         public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
         {
             return userDataService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
-        }
-
-        public bool NewEmailAddressIsValid(string emailAddress, int userId)
-        {
-            return !userDataService.EmailIsInUseByOtherUser(userId, emailAddress);
-        }
-
-        public bool IsDelegateEmailValidForCentre(string email, int centreId)
-        {
-            var duplicateUsers = userDataService.GetDelegateUsersByEmailAddress(email)
-                .Where(u => u.CentreId == centreId);
-
-            return !duplicateUsers.Any();
-        }
-
-        public bool EmailIsInUse(string email)
-        {
-            return userDataService.AnyEmailsInSetAreAlreadyInUse(new[] { email });
         }
 
         public void ResetFailedLoginCount(UserAccount userAccount)
@@ -315,7 +284,7 @@ namespace DigitalLearningSolutions.Data.Services
                 return true;
             }
 
-            return delegateAccount != null &&
+            return delegateAccount is { Active: true } &&
                    (delegateAccount.CentreSpecificDetailsLastChecked == null ||
                     delegateAccount.CentreSpecificDetailsLastChecked.Value.AddMonths(monthThresholdToForceCheck) < now);
         }
@@ -323,6 +292,11 @@ namespace DigitalLearningSolutions.Data.Services
         public string? GetCentreEmail(int userId, int centreId)
         {
             return userDataService.GetCentreEmail(userId, centreId);
+        }
+
+        public IEnumerable<(string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(int userId)
+        {
+            return userDataService.GetAllCentreEmailsForUser(userId);
         }
 
         public (string? primaryEmail, IEnumerable<(string centreName, string centreEmail)> centreEmails)

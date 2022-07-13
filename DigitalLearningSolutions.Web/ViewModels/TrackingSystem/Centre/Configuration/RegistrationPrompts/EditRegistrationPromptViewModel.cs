@@ -1,7 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditRegistrationPrompt;
 
     public class EditRegistrationPromptViewModel : RegistrationPromptAnswersViewModel
     {
@@ -31,6 +32,17 @@
             Mandatory = centreRegistrationPrompt.Mandatory;
             OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(centreRegistrationPrompt.Options);
             IncludeAnswersTableCaption = true;
+        }
+
+        public EditRegistrationPromptViewModel(EditRegistrationPromptTempData tempData) : base(
+            tempData.OptionsString,
+            tempData.Answer,
+            tempData.IncludeAnswersTableCaption
+        )
+        {
+            Prompt = tempData.Prompt;
+            PromptNumber = tempData.PromptNumber;
+            Mandatory = tempData.Mandatory;
         }
 
         public int PromptNumber { get; set; }

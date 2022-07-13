@@ -22,6 +22,7 @@
           My account
         </h1>
       </div>
+      @{ var switchCentreButtonText = Model.CentreId == null ? "Choose centre" : "Switch centre"; }
       <div class="nhsuk-grid-column-one-half heading-button-group">
         <a
           class="nhsuk-button nhsuk-button--secondary heading-button"
@@ -30,7 +31,7 @@
           asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment"
           asp-route-returnUrl="@Model.SwitchCentreReturnUrl"
           role="button">
-          Switch centre
+          @switchCentreButtonText
         </a>
       </div>
     </div>
@@ -38,7 +39,14 @@
 
     <partial name="_MyDetailsCard" model="Model" />
 
-    <partial name="_CentreSpecificDetailsCard" model="Model" />
+    @if (Model.CentreId == null) {
+      if (Model.AllCentreSpecificEmails.Any()) {
+        <partial name="_CentreEmailsCard" model="Model" />
+      }
+    } else {
+      <partial name="_CentreSpecificDetailsCard" model="Model" />
+    }
+
   </div>
 </div>
 <div class="nhsuk-grid-row">
@@ -49,9 +57,11 @@
     <a class="nhsuk-button nhsuk-button--secondary left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="ChangePassword" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
       Change password
     </a>
-    <a class="nhsuk-button nhsuk-button--secondary" asp-controller="NotificationPreferences" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
-      View notification preferences
-    </a>
+    @if (Model.CentreId != null) {
+      <a class="nhsuk-button nhsuk-button--secondary" asp-controller="NotificationPreferences" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
+        View notification preferences
+      </a>
+    }
   </div>
 </div>
 <div class="nhsuk-grid-row">

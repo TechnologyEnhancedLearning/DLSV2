@@ -1,7 +1,7 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
+﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Helpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;

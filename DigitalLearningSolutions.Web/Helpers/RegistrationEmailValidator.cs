@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -19,27 +20,60 @@
         public static void ValidateEmailAddressesForDelegateRegistration(
             PersonalInformationViewModel model,
             ModelStateDictionary modelState,
-            IUserService userService
+            IUserDataService userDataService
         )
         {
-            ValidateEmailAddresses(false, model, modelState, userService);
+            ValidateEmailAddresses(false, model, modelState, userDataService);
         }
 
         public static void ValidateEmailAddressesForAdminRegistration(
             PersonalInformationViewModel model,
             ModelStateDictionary modelState,
-            IUserService userService,
+            IUserDataService userDataService,
             ICentresDataService centresDataService
         )
         {
-            ValidateEmailAddresses(true, model, modelState, userService, centresDataService);
+            ValidateEmailAddresses(true, model, modelState, userDataService, centresDataService);
+        }
+
+        public static void ValidateEmailsForInternalAdminRegistration(
+            int userId,
+            InternalAdminInformationViewModel model,
+            ModelStateDictionary modelState,
+            IUserDataService userDataService,
+            ICentresService centresService
+        )
+        {
+            if (model.CentreSpecificEmail == null || !modelState.HasError(model.CentreSpecificEmail))
+            {
+                if (model.CentreSpecificEmail != null &&
+                    userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail, model.Centre!.Value) &&
+                    model.CentreSpecificEmail != userDataService.GetCentreEmail(userId, model.Centre.Value))
+                {
+                    modelState.AddModelError(
+                        nameof(PersonalInformationViewModel.CentreSpecificEmail),
+                        DuplicateEmailErrorMessage
+                    );
+                }
+
+                if (!centresService.DoesEmailMatchCentre(model.PrimaryEmail!, model.Centre!.Value) &&
+                    (model.CentreSpecificEmail == null ||
+                     !centresService.DoesEmailMatchCentre(model.CentreSpecificEmail, model.Centre.Value)
+                    ))
+                {
+                    modelState.AddModelError(
+                        nameof(PersonalInformationViewModel.CentreSpecificEmail),
+                        WrongEmailForCentreErrorMessage
+                    );
+                }
+            }
         }
 
         private static void ValidateEmailAddresses(
             bool isRegisterAdminJourney,
             PersonalInformationViewModel model,
             ModelStateDictionary modelState,
-            IUserService userService,
+            IUserDataService userDataService,
             ICentresDataService? centresDataService = null
         )
         {
@@ -57,7 +91,7 @@
 
             if (primaryEmailIsValidAndNotNull)
             {
-                if (userService.EmailIsInUse(model.PrimaryEmail))
+                if (userDataService.PrimaryEmailIsInUse(model.PrimaryEmail))
                 {
                     modelState.AddModelError(
                         nameof(PersonalInformationViewModel.PrimaryEmail),
@@ -79,7 +113,7 @@
 
             if (centreSpecificEmailIsValidAndNotNull)
             {
-                if (userService.EmailIsInUse(model.CentreSpecificEmail))
+                if (userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail, model.Centre!.Value))
                 {
                     modelState.AddModelError(
                         nameof(PersonalInformationViewModel.CentreSpecificEmail),

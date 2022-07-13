@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.Progress;
+    using DigitalLearningSolutions.Data.Models.Tracker;
 
     public interface IProgressService
     {
@@ -37,7 +38,12 @@
             int tutorialStatus
         );
 
-        void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress);
+        void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress);
+
+        public SectionAndApplicationDetailsForAssessAttempts? GetSectionAndApplicationDetailsForAssessAttempts(
+            int sectionId,
+            int customisationId
+        );
     }
 
     public class ProgressService : IProgressService
@@ -134,7 +140,6 @@
             var progress = progressDataService.GetProgressByProgressId(progressId);
 
             var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
-            
 
             if (progress == null || courseInfo == null)
             {
@@ -189,7 +194,7 @@
             progressDataService.UpdateAspProgressTutStat(tutorialId, progressId, tutorialStatus);
         }
 
-        public void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress)
+        public void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress)
         {
             if (progress.Completed != null)
             {
@@ -208,6 +213,14 @@
                     numLearningLogItemsAffected
                 );
             }
+        }
+
+        public SectionAndApplicationDetailsForAssessAttempts? GetSectionAndApplicationDetailsForAssessAttempts(
+            int sectionId,
+            int customisationId
+        )
+        {
+            return progressDataService.GetSectionAndApplicationDetailsForAssessAttempts(sectionId, customisationId);
         }
     }
 }

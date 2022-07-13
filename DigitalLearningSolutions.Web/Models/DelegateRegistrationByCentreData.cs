@@ -14,20 +14,20 @@
 
         public DateTime? WelcomeEmailDate { get; set; }
 
-        public bool ShouldSendEmail => WelcomeEmailDate.HasValue;
         public bool IsPasswordSet => PasswordHash != null;
 
         public void SetWelcomeEmail(WelcomeEmailViewModel model)
         {
-            if (model.ShouldSendEmail)
-            {
-                WelcomeEmailDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
-                PasswordHash = null;
-            }
-            else
-            {
-                WelcomeEmailDate = null;
-            }
+            WelcomeEmailDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
+            PasswordHash = null;
+        }
+
+        public void SetPersonalInformation(RegisterDelegatePersonalInformationViewModel model)
+        {
+            Centre = model.Centre;
+            CentreSpecificEmail = model.CentreSpecificEmail;
+            FirstName = model.FirstName;
+            LastName = model.LastName;
         }
     }
 }

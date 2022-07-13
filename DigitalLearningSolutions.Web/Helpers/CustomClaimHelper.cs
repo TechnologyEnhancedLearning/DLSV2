@@ -62,6 +62,11 @@
             return user.FindFirst(ClaimTypes.Email).Value;
         }
 
+        public static string GetUserPrimaryEmailKnownNotNull(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsRequiredString(ClaimTypes.Email);
+        }
+
         public static int? GetCustomClaimAsInt(this ClaimsPrincipal user, string customClaimType)
         {
             var customClaimString = user.GetCustomClaim(customClaimType);
@@ -103,6 +108,12 @@
         {
             var customClaimString = user.GetCustomClaim(customClaimType);
             return int.Parse(customClaimString);
+        }
+
+        // Should only be used for claims we know not be null from the authorization policy
+        public static string GetCustomClaimAsRequiredString(this ClaimsPrincipal user, string customClaimType)
+        {
+            return user.GetCustomClaim(customClaimType)!;
         }
 
         public static bool IsDelegateOnlyAccount(this ClaimsPrincipal user)

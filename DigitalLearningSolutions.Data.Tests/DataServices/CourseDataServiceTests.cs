@@ -535,7 +535,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Then
             using (new AssertionScope())
             {
-                result.Should().HaveCount(65);
+                result.Should().HaveCount(61);
                 result.First().Should().BeEquivalentTo(expectedFirstApplication);
             }
         }
