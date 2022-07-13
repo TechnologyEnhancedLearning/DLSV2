@@ -34,7 +34,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailUsername)).Returns("username");
             A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailPassword)).Returns("password");
             A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailServer)).Returns("smtp.example.com");
-            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailFromAddress)).Returns("test@example.com");
+            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailFromAddress))
+                .Returns("test@example.com");
 
             var logger = A.Fake<ILogger<EmailService>>();
             emailService = new EmailService(emailDataService, configDataService, smtpClientFactory, logger);
@@ -61,8 +62,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             emailService.SendEmail(EmailTestHelper.GetDefaultEmail());
 
             // Then
-            A.CallTo(() =>
-                    smtpClient.Authenticate("username", "password", default)
+            A.CallTo(
+                    () =>
+                        smtpClient.Authenticate("username", "password", default)
                 )
                 .MustHaveHappened();
         }
@@ -74,13 +76,14 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             emailService.SendEmail(EmailTestHelper.GetDefaultEmail());
 
             // Then
-            A.CallTo(() =>
-                    smtpClient.Connect(
-                        "smtp.example.com",
-                        25,
-                        SecureSocketOptions.Auto,
-                        default
-                    )
+            A.CallTo(
+                    () =>
+                        smtpClient.Connect(
+                            "smtp.example.com",
+                            25,
+                            SecureSocketOptions.Auto,
+                            default
+                        )
                 )
                 .MustHaveHappened();
         }
@@ -92,14 +95,16 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             emailService.SendEmail(EmailTestHelper.GetDefaultEmail());
 
             // Then
-            A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.From.ToString() == "test@example.com"
-                        ),
-                        default,
-                        null
-                    )
+            A.CallTo(
+                    () =>
+                        smtpClient.Send(
+                            A<MimeMessage>.That.Matches(
+                                m =>
+                                    m.From.ToString() == "test@example.com"
+                            ),
+                            default,
+                            null
+                        )
                 )
                 .MustHaveHappened();
         }
@@ -111,14 +116,16 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             emailService.SendEmail(EmailTestHelper.GetDefaultEmail());
 
             // Then
-            A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.Subject.ToString() == "Test Subject Line"
-                        ),
-                        default,
-                        null
-                    )
+            A.CallTo(
+                    () =>
+                        smtpClient.Send(
+                            A<MimeMessage>.That.Matches(
+                                m =>
+                                    m.Subject.ToString() == "Test Subject Line"
+                            ),
+                            default,
+                            null
+                        )
                 )
                 .MustHaveHappened();
         }
@@ -130,14 +137,16 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             emailService.SendEmail(EmailTestHelper.GetDefaultEmail());
 
             // Then
-            A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.TextBody.ToString() == "Test body"
-                        ),
-                        default,
-                        null
-                    )
+            A.CallTo(
+                    () =>
+                        smtpClient.Send(
+                            A<MimeMessage>.That.Matches(
+                                m =>
+                                    m.TextBody.ToString() == "Test body"
+                            ),
+                            default,
+                            null
+                        )
                 )
                 .MustHaveHappened();
         }
@@ -146,16 +155,30 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         public void The_email_HTML_body_is_correct()
         {
             // When
-            emailService.SendEmail(EmailTestHelper.GetDefaultEmail());
+            const string htmlBody = "<body style= 'font-family: Calibri; font-size: small;'>" +
+                                    "<p>Test Body</p>" +
+                                    "</body>";
+            emailService.SendEmail(
+                EmailTestHelper.GetDefaultEmail(
+                    body: new BodyBuilder
+                    {
+                        TextBody = "Test body",
+                        HtmlBody = htmlBody,
+                    }
+                )
+            );
 
             // Then
-            A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.HtmlBody.ToString() == EmailTestHelper.DefaultHtmlBody),
-                        default,
-                        null
-                    )
+            A.CallTo(
+                    () =>
+                        smtpClient.Send(
+                            A<MimeMessage>.That.Matches(
+                                m =>
+                                    m.HtmlBody.ToString() == htmlBody
+                            ),
+                            default,
+                            null
+                        )
                 )
                 .MustHaveHappened();
         }
@@ -167,14 +190,16 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             emailService.SendEmail(EmailTestHelper.GetDefaultEmail());
 
             // Then
-            A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.To.ToString() == "recipient@example.com"
-                        ),
-                        default,
-                        null
-                    )
+            A.CallTo(
+                    () =>
+                        smtpClient.Send(
+                            A<MimeMessage>.That.Matches(
+                                m =>
+                                    m.To.ToString() == "recipient@example.com"
+                            ),
+                            default,
+                            null
+                        )
                 )
                 .MustHaveHappened();
         }
@@ -183,17 +208,21 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         public void The_recipient_email_addresses_are_correct()
         {
             // When
-            emailService.SendEmail(EmailTestHelper.GetDefaultEmail(new [] { "recipient1@example.com", "recipient2@example.com" }));
+            emailService.SendEmail(
+                EmailTestHelper.GetDefaultEmail(new[] { "recipient1@example.com", "recipient2@example.com" })
+            );
 
             // Then
-            A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.To.ToString() == "recipient1@example.com, recipient2@example.com"
-                        ),
-                        default,
-                        null
-                    )
+            A.CallTo(
+                    () =>
+                        smtpClient.Send(
+                            A<MimeMessage>.That.Matches(
+                                m =>
+                                    m.To.ToString() == "recipient1@example.com, recipient2@example.com"
+                            ),
+                            default,
+                            null
+                        )
                 )
                 .MustHaveHappened();
         }
@@ -205,14 +234,16 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             emailService.SendEmail(EmailTestHelper.GetDefaultEmail());
 
             // Then
-            A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.Cc.ToString() == "cc@example.com"
-                        ),
-                        default,
-                        null
-                    )
+            A.CallTo(
+                    () =>
+                        smtpClient.Send(
+                            A<MimeMessage>.That.Matches(
+                                m =>
+                                    m.Cc.ToString() == "cc@example.com"
+                            ),
+                            default,
+                            null
+                        )
                 )
                 .MustHaveHappened();
         }
@@ -224,14 +255,16 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             emailService.SendEmail(EmailTestHelper.GetDefaultEmail(cc: new[] { "cc1@example.com", "cc2@example.com" }));
 
             // Then
-            A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.Cc.ToString() == "cc1@example.com, cc2@example.com"
-                        ),
-                        default,
-                        null
-                    )
+            A.CallTo(
+                    () =>
+                        smtpClient.Send(
+                            A<MimeMessage>.That.Matches(
+                                m =>
+                                    m.Cc.ToString() == "cc1@example.com, cc2@example.com"
+                            ),
+                            default,
+                            null
+                        )
                 )
                 .MustHaveHappened();
         }
@@ -243,14 +276,16 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             emailService.SendEmail(EmailTestHelper.GetDefaultEmail());
 
             // Then
-            A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.Bcc.ToString() == "bcc@example.com"
-                        ),
-                        default,
-                        null
-                    )
+            A.CallTo(
+                    () =>
+                        smtpClient.Send(
+                            A<MimeMessage>.That.Matches(
+                                m =>
+                                    m.Bcc.ToString() == "bcc@example.com"
+                            ),
+                            default,
+                            null
+                        )
                 )
                 .MustHaveHappened();
         }
@@ -259,17 +294,21 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         public void The_bcc_email_addresses_are_correct()
         {
             // When
-            emailService.SendEmail(EmailTestHelper.GetDefaultEmail(bcc: new [] { "bcc1@example.com", "bcc2@example.com" }));
+            emailService.SendEmail(
+                EmailTestHelper.GetDefaultEmail(bcc: new[] { "bcc1@example.com", "bcc2@example.com" })
+            );
 
             // Then
-            A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.Bcc.ToString() == "bcc1@example.com, bcc2@example.com"
-                        ),
-                        default,
-                        null
-                    )
+            A.CallTo(
+                    () =>
+                        smtpClient.Send(
+                            A<MimeMessage>.That.Matches(
+                                m =>
+                                    m.Bcc.ToString() == "bcc1@example.com, bcc2@example.com"
+                            ),
+                            default,
+                            null
+                        )
                 )
                 .MustHaveHappened();
         }
