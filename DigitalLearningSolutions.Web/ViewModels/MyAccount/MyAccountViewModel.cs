@@ -32,7 +32,7 @@
             JobGroup = userAccount.JobGroupName;
             CentreSpecificEmail = centreSpecificEmail;
             DateRegistered = delegateAccount?.DateRegistered.ToString(DateHelper.StandardDateFormat);
-            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
+            ProfessionalRegistrationNumber = PrnHelper.GetPrnDisplayString(
                 userAccount.HasBeenPromptedForPrn,
                 userAccount.ProfessionalRegistrationNumber
             );

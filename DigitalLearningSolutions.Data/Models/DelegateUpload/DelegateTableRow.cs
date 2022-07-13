@@ -5,8 +5,9 @@
     using System.Linq;
     using System.Text.RegularExpressions;
     using ClosedXML.Excel;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public enum RowStatus
     {
@@ -225,7 +226,7 @@
                 return false;
             }
 
-            var userHasPrn = DelegateDownloadFileService.GetHasPrnForDelegate(
+            var userHasPrn = PrnHelper.GetHasPrnForDelegate(
                 delegateEntity.UserAccount.HasBeenPromptedForPrn,
                 delegateEntity.UserAccount.ProfessionalRegistrationNumber
             );

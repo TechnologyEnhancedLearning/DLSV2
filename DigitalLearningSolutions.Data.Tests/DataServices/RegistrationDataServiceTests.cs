@@ -7,8 +7,9 @@
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -18,7 +19,7 @@
 
     public class RegistrationDataServiceTests
     {
-        private IClockService clockService = null!;
+        private IClockUtility clockUtility = null!;
         private SqlConnection connection = null!;
         private ILogger<IRegistrationDataService> logger = null!;
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
@@ -30,9 +31,9 @@
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
             userDataService = new UserDataService(connection);
-            clockService = A.Fake<IClockService>();
+            clockUtility = A.Fake<IClockUtility>();
             logger = A.Fake<ILogger<IRegistrationDataService>>();
-            service = new RegistrationDataService(connection, userDataService, clockService, logger);
+            service = new RegistrationDataService(connection, userDataService, clockUtility, logger);
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }
 
@@ -41,7 +42,7 @@
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var dateTime = new DateTime(2022, 6, 16, 9, 41, 30);
-            A.CallTo(() => clockService.UtcNow).Returns(dateTime);
+            A.CallTo(() => clockUtility.UtcNow).Returns(dateTime);
 
             // Given
             var delegateRegistrationModel =
@@ -94,7 +95,7 @@
             // Given
             var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
             var dateTime = new DateTime(2022, 6, 16, 9, 41, 30);
-            A.CallTo(() => clockService.UtcNow).Returns(dateTime);
+            A.CallTo(() => clockUtility.UtcNow).Returns(dateTime);
 
             // When
             var (delegateId, candidateNumber) = service.RegisterNewUserAndDelegateAccount(
