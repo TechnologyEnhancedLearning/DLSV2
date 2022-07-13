@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EditDelegate;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     public class PromptsService
@@ -69,23 +70,7 @@
         }
 
         public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
-            MyAccountEditDetailsFormData formData,
-            int centreId
-        )
-        {
-            return GetEditDelegateRegistrationPromptViewModelsForCentre(
-                centreId,
-                formData.Answer1,
-                formData.Answer2,
-                formData.Answer3,
-                formData.Answer4,
-                formData.Answer5,
-                formData.Answer6
-            );
-        }
-
-        public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
-            EditDetailsFormData formData,
+            EditAccountDetailsFormDataBase formData,
             int centreId
         )
         {
@@ -192,6 +177,24 @@
 
         public void ValidateCentreRegistrationPrompts(
             EditDetailsFormData formData,
+            int centreId,
+            ModelStateDictionary modelState
+        )
+        {
+            ValidateCentreRegistrationPrompts(
+                centreId,
+                formData.Answer1,
+                formData.Answer2,
+                formData.Answer3,
+                formData.Answer4,
+                formData.Answer5,
+                formData.Answer6,
+                modelState
+            );
+        }
+
+        public void ValidateCentreRegistrationPrompts(
+            EditDelegateFormData formData,
             int centreId,
             ModelStateDictionary modelState
         )
