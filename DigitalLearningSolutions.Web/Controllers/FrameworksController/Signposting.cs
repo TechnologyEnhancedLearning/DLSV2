@@ -33,12 +33,18 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
             Catalogues = Catalogues ?? (await this.learningHubApiClient.GetCatalogues())?.Catalogues?.OrderBy(c => c.Name).ToList();
+            if (catalogueId.HasValue)
+            {
+                Response.Cookies.SetSignpostingCookie(new { CatalogueId = catalogueId });
+            }
+            else
+            {
+                catalogueId = Request.Cookies.RetrieveSignpostingFromCookie()?.CatalogueId ?? 0;
+            }
+
+            model.CatalogueId = catalogueId;
             model.Catalogues = Catalogues;
             model.Page = Math.Max(page, 1);
-            model.CatalogueId = Request.Query.ContainsKey("catalogueId") ? catalogueId
-                : TempData[SignpostingFilter] != null ? (int?)int.Parse(TempData[SignpostingFilter].ToString())
-                : null;
-            TempData[SignpostingFilter] = model.CatalogueId;
 
             if (frameworkCompetencyGroupId.HasValue)
             {
@@ -51,7 +57,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 try
                 {
                     var offset = (int?)((model.Page - 1) * CompetencyResourceSignpostingViewModel.ItemsPerPage);
-                    model.SearchResult = await this.learningHubApiClient.SearchResource(model.SearchText ?? String.Empty, catalogueId, offset, CompetencyResourceSignpostingViewModel.ItemsPerPage);
+                    model.SearchResult = await this.learningHubApiClient.SearchResource(
+                        model.SearchText ?? String.Empty,
+                        catalogueId > 0 ? catalogueId : null,
+                        offset,
+                        CompetencyResourceSignpostingViewModel.ItemsPerPage);
                     model.LearningHubApiError = model.SearchResult == null;
                 }
                 catch (Exception)

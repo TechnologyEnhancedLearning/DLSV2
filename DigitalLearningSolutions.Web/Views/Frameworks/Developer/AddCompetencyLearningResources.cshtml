@@ -9,7 +9,7 @@
             value: c.Id.ToString(),
             selected: c.Id == Model.CatalogueId)
           ).ToList();
-    dropdownItems.Insert(0, new SelectListItem("Any catalogue", "null", !Model.CatalogueId.HasValue));
+    dropdownItems.Insert(0, new SelectListItem("Any catalogue", "0", !Model.CatalogueId.HasValue));
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
