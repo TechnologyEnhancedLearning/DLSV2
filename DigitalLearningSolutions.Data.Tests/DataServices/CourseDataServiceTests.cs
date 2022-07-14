@@ -1007,6 +1007,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Given
             var expectedFirstRecord = new CourseDelegateForExport
             {
+                CustomisationName = "Standard",
+                ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
                 IsDelegateActive = true,
                 CandidateNumber = "PC97",
                 CompleteBy = null,
