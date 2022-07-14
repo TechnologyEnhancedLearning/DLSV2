@@ -134,8 +134,8 @@ namespace DigitalLearningSolutions.Data.Services
             );
 
             groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
-                delegateUser.Id,
-                delegateUser.GetRegistrationFieldAnswers()
+                delegateId,
+                delegateRegistrationModel.GetRegistrationFieldAnswers()
             );
 
             if (supervisorDelegateRecordIdsMatchingDelegate.Any())

@@ -151,5 +151,19 @@
         public bool UserIsActive { get; }
 
         public bool IsExternalRegistered => !Approved;
+
+        public RegistrationFieldAnswers GetRegistrationFieldAnswers()
+        {
+            return new RegistrationFieldAnswers(
+                Centre,
+                JobGroup,
+                Answer1,
+                Answer2,
+                Answer3,
+                Answer4,
+                Answer5,
+                Answer6
+            );
+        }
     }
 }
