@@ -496,5 +496,27 @@
             // Then
             result.Should().BeEquivalentTo(UserTestHelper.GetDefaultDelegateAccount());
         }
+
+        [Test]
+        [TestCase(null)]
+        [TestCase("hash")]
+        public void SetRegistrationConfirmationHash_sets_hash(string? hash)
+        {
+            using var transaction = new TransactionScope();
+
+            // When
+            const int userId = 1;
+            const int centreId = 101;
+            userDataService.SetRegistrationConfirmationHash(userId, centreId, hash);
+            var result = connection.Query<string>(
+                @"SELECT RegistrationConfirmationHash
+                    FROM DelegateAccounts
+                    WHERE UserID = @userId AND CentreID = @centreId",
+                new { userId, centreId }
+            ).SingleOrDefault();
+
+            // Then
+            result.Should().Be(hash);
+        }
     }
 }

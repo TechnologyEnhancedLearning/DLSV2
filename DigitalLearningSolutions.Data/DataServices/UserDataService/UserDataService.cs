@@ -141,6 +141,8 @@
 
         DelegateAccount? GetDelegateAccountById(int id);
 
+        void SetPrimaryEmailAndActivate(int userId, string email);
+
         void SetCentreEmail(
             int userId,
             int centreId,
@@ -159,6 +161,8 @@
                 string centreSpecificEmail,
                 string registrationConfirmationHash
             );
+
+        void SetRegistrationConfirmationHash(int userId, int centreId, string? hash);
     }
 
     public partial class UserDataService : IUserDataService
@@ -272,6 +276,14 @@
                 new { email },
                 transaction
             ) > 0;
+        }
+
+        public void SetPrimaryEmailAndActivate(int userId, string email)
+        {
+            connection.Execute(
+                @"UPDATE Users SET PrimaryEmail = @email, Active = 1 WHERE ID = @userId",
+                new { email, userId }
+            );
         }
     }
 }

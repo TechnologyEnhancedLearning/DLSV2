@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.UserDataServiceTests
 {
     using System;
+    using System.Transactions;
+    using Dapper;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -92,6 +94,23 @@
 
             // Then
             result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        public void SetPrimaryEmailAndActivate_sets_primary_email_and_activates_user()
+        {
+            using var transaction = new TransactionScope();
+
+            // When
+            const int userId = 2;
+            const string primaryEmail = "primary@email.com";
+            connection.Execute(@"UPDATE Users SET Active = 0 WHERE ID = @userId", new { userId });
+            userDataService.SetPrimaryEmailAndActivate(userId, primaryEmail);
+            var result = userDataService.GetUserAccountById(userId);
+
+            // Then
+            result!.PrimaryEmail.Should().Be(primaryEmail);
+            result.Active.Should().BeTrue();
         }
     }
 }

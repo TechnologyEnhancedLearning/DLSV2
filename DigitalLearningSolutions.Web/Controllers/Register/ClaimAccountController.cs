@@ -46,6 +46,8 @@
 
             var model = new ClaimAccountViewModel
             {
+                UserId = userId.Value,
+                CentreId = centreId.Value,
                 CentreName = centreName,
                 CentreSpecificEmail = email,
                 RegistrationConfirmationHash = code,
@@ -77,6 +79,9 @@
                 return NotFound();
             }
 
+            userDataService.SetPrimaryEmailAndActivate(model.UserId, model.CentreSpecificEmail);
+            userDataService.SetCentreEmail(model.UserId, model.CentreId, null);
+            userDataService.SetRegistrationConfirmationHash(model.UserId, model.CentreId, null);
             return RedirectToAction("Confirmation");
         }
 

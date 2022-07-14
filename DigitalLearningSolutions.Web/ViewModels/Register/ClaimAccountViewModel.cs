@@ -2,6 +2,8 @@
 {
     public class ClaimAccountViewModel
     {
+        public int UserId { get; set; }
+        public int CentreId { get; set; }
         public string CentreName { get; set; } = null!;
         public string CentreSpecificEmail { get; set; } = null!;
         public string RegistrationConfirmationHash { get; set; } = null!;
