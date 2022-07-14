@@ -16,6 +16,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
@@ -51,7 +52,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             centresDataService = A.Fake<ICentresDataService>();
             config = A.Fake<IConfiguration>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
-            notificationDataService = A.Fake<NotificationDataService>();
+            notificationDataService = A.Fake<INotificationDataService>();
             userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(OldSystemBaseUrl);
@@ -154,17 +155,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () =>
-                    emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval" &&
-                                e.Body.TextBody.Contains(OldSystemBaseUrl + "/tracking/approvedelegates")
-                        )
+                notificationDataService.GetAdminRecipientsForCentreNotification(
+                    model.Centre,
+                    4
                     )
-            ).MustHaveHappened();
+                ).MustHaveHappened();
         }
 
         [Test]
@@ -179,17 +174,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () =>
-                    emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval" &&
-                                e.Body.TextBody.Contains(RefactoredSystemBaseUrl + "/TrackingSystem/Delegates/Approve")
-                        )
+                notificationDataService.GetAdminRecipientsForCentreNotification(
+                    model.Centre,
+                    4
                     )
-            ).MustHaveHappened();
+                ).MustHaveHappened();
         }
 
         [Test]
