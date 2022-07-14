@@ -151,7 +151,16 @@
             string? topicFilterString = null
         )
         {
-            var model = GetSelectCourseViewModel(categoryFilterString, topicFilterString);
+            var data = multiPageFormService.GetMultiPageFormData<AddNewCentreCourseTempData>(
+                MultiPageFormDataFeature.AddNewCourse,
+                TempData
+            );
+
+            var model = GetSelectCourseViewModel(
+                categoryFilterString ?? data.CategoryFilter,
+                topicFilterString ?? data.TopicFilter,
+                data.Application?.ApplicationId
+            );
 
             return View("AddNewCentreCourse/SelectCourse", model);
         }
@@ -205,7 +214,8 @@
             var selectedApplication =
                 courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId)
                     .Single(ap => ap.ApplicationId == applicationId);
-
+            data.CategoryFilter = categoryFilterString;
+            data.TopicFilter = topicFilterString;
             data!.SetApplicationAndResetModels(selectedApplication);
 
             multiPageFormService.SetMultiPageFormData(data, MultiPageFormDataFeature.AddNewCourse, TempData);
@@ -508,7 +518,8 @@
 
         private SelectCourseViewModel GetSelectCourseViewModel(
             string? categoryFilterString,
-            string? topicFilterString
+            string? topicFilterString,
+            int? selectedApplicationId = null
         )
         {
             var centreId = User.GetCentreIdKnownNotNull();
@@ -551,7 +562,8 @@
                 result,
                 availableFilters,
                 categoryFilterString,
-                topicFilterString
+                topicFilterString,
+                selectedApplicationId
             );
         }
 
