@@ -1,13 +1,9 @@
 ﻿using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DigitalLearningSolutions.Data.ApiClients;
-using System.Net.Http;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using DigitalLearningSolutions.Web.Extensions;
 using DigitalLearningSolutions.Data.Models.Frameworks;
@@ -20,6 +16,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     public partial class FrameworksController
     {
+        private static List<Catalogue> Catalogues { get; set; }
+        private const string SignpostingFilter = "SignpostingCatalogueIdFilter";
+
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting")]
         public IActionResult EditCompetencyLearningResources(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId)
         {
@@ -29,9 +28,24 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource/{page=1:int}")]
-        public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, string searchText, int page)
+        public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, int? catalogueId, string searchText, int page)
         {
+            
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
+            Catalogues = Catalogues ?? (await this.learningHubApiClient.GetCatalogues())?.Catalogues?.OrderBy(c => c.Name).ToList();
+            if (catalogueId.HasValue)
+            {
+                Response.Cookies.SetSignpostingCookie(new { CatalogueId = catalogueId });
+            }
+            else
+            {
+                catalogueId = Request.Cookies.RetrieveSignpostingFromCookie()?.CatalogueId ?? 0;
+            }
+
+            model.CatalogueId = catalogueId;
+            model.Catalogues = Catalogues;
+            model.Page = Math.Max(page, 1);
+
             if (frameworkCompetencyGroupId.HasValue)
             {
                 var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
@@ -39,12 +53,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             if (searchText?.Trim().Length > 1)
             {
-                model.Page = Math.Max(page, 1);
                 model.SearchText = searchText;
                 try
                 {
                     var offset = (int?)((model.Page - 1) * CompetencyResourceSignpostingViewModel.ItemsPerPage);
-                    model.SearchResult = await this.learningHubApiClient.SearchResource(model.SearchText ?? String.Empty, offset, CompetencyResourceSignpostingViewModel.ItemsPerPage);
+                    model.SearchResult = await this.learningHubApiClient.SearchResource(
+                        model.SearchText ?? String.Empty,
+                        catalogueId > 0 ? catalogueId : null,
+                        offset,
+                        CompetencyResourceSignpostingViewModel.ItemsPerPage);
                     model.LearningHubApiError = model.SearchResult == null;
                 }
                 catch (Exception)

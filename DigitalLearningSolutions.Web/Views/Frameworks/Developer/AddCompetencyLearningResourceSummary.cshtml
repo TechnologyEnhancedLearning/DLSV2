@@ -4,7 +4,6 @@
 @{
   ViewData["Title"] = "Add Competency Learning Resource Summary";
   ViewData["Application"] = "Framework Service";
-  var parent = (CompetencyResourceSignpostingViewModel)ViewData["parent"];
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 
@@ -58,7 +57,10 @@
                 asp-action="SearchLearningResources"
                 asp-route-frameworkId="@Model.FrameworkId"
                 asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-                asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
+                asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
+                asp-route-searchText=""
+                asp-route-catalogueId="0"
+                asp-route-page="1">
           Restart search
         </button>
       </div>
@@ -70,7 +72,6 @@
   @Html.HiddenFor(m => m.FrameworkCompetencyGroupId)
   @Html.HiddenFor(m => m.FrameworkCompetencyId)
   @Html.HiddenFor(m => m.ReferenceId)
-  @Html.HiddenFor(m => m.SearchText)
   @Html.HiddenFor(m => m.Resource.Title)
   @Html.HiddenFor(m => m.Resource.ResourceType)
   @Html.HiddenFor(m => m.Resource.Description)
@@ -79,12 +80,14 @@
   @Html.HiddenFor(m => m.Rating)
 </form>
 <div class="nhsuk-back-link nhsuk-u-margin-left-1">
-  <a class="nhsuk-back-link__link" asp-action="SearchLearningResources"
+  <a class="nhsuk-back-link__link"
+     asp-action="SearchLearningResources"
      asp-route-frameworkId="@Model.FrameworkId"
      asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
      asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
      asp-route-searchText="@Model.SearchText"
-     asp-route-page="1">
+     asp-route-catalogueId="@Model.CatalogueId"
+     asp-route-page="@Model.Page">
     <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
     </svg>
