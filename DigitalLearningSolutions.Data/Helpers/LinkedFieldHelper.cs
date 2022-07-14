@@ -18,33 +18,6 @@
         {
             var changedLinkedFieldsWithAnswers = new List<LinkedFieldChange>();
 
-            if (newAnswers.Answer1 != oldAnswers.Answer1)
-            {
-                var prompt1Name =
-                    centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(oldAnswers.CentreId, RegistrationField.CentreRegistrationField1.Id);
-                changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(RegistrationField.CentreRegistrationField1.LinkedToFieldId, prompt1Name, oldAnswers.Answer1, newAnswers.Answer1)
-                );
-            }
-
-            if (newAnswers.Answer2 != oldAnswers.Answer2)
-            {
-                var prompt2Name =
-                    centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(oldAnswers.CentreId, RegistrationField.CentreRegistrationField2.Id);
-                changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(RegistrationField.CentreRegistrationField2.LinkedToFieldId, prompt2Name, oldAnswers.Answer2, newAnswers.Answer2)
-                );
-            }
-
-            if (newAnswers.Answer3 != oldAnswers.Answer3)
-            {
-                var prompt3Name =
-                    centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(oldAnswers.CentreId, RegistrationField.CentreRegistrationField3.Id);
-                changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(RegistrationField.CentreRegistrationField3.LinkedToFieldId, prompt3Name, oldAnswers.Answer3, newAnswers.Answer3)
-                );
-            }
-
             if (newAnswers.JobGroupId != oldAnswers.JobGroupId)
             {
                 var oldJobGroup = jobGroupsDataService.GetJobGroupName(oldAnswers.JobGroupId);
@@ -52,32 +25,7 @@
                 changedLinkedFieldsWithAnswers.Add(new LinkedFieldChange(RegistrationField.JobGroup.LinkedToFieldId, "Job group", oldJobGroup, newJobGroup));
             }
 
-            if (newAnswers.Answer4 != oldAnswers.Answer4)
-            {
-                var prompt4Name =
-                    centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(oldAnswers.CentreId, RegistrationField.CentreRegistrationField4.Id);
-                changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(RegistrationField.CentreRegistrationField4.LinkedToFieldId, prompt4Name, oldAnswers.Answer4, newAnswers.Answer4)
-                );
-            }
-
-            if (newAnswers.Answer5 != oldAnswers.Answer5)
-            {
-                var prompt5Name =
-                    centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(oldAnswers.CentreId, RegistrationField.CentreRegistrationField5.Id);
-                changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(RegistrationField.CentreRegistrationField5.LinkedToFieldId, prompt5Name, oldAnswers.Answer5, newAnswers.Answer5)
-                );
-            }
-
-            if (newAnswers.Answer6 != oldAnswers.Answer6)
-            {
-                var prompt6Name =
-                    centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(oldAnswers.CentreId, RegistrationField.CentreRegistrationField6.Id);
-                changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(RegistrationField.CentreRegistrationField6.LinkedToFieldId, prompt6Name, oldAnswers.Answer6, newAnswers.Answer6)
-                );
-            }
+            AddCustomPromptLinkedFields(changedLinkedFieldsWithAnswers, oldAnswers, newAnswers, centreRegistrationPromptsService);
 
             return changedLinkedFieldsWithAnswers;
         }
@@ -88,66 +36,86 @@
             ICentreRegistrationPromptsService centreRegistrationPromptsService
         )
         {
-            var changedLinkedFieldsWithAnswers = new List<LinkedFieldChange>();
+            var linkedFieldsWithAnswers = new List<LinkedFieldChange>();
 
-            if (newAnswers.Answer1 != null)
+            var newJobGroup = jobGroupsDataService.GetJobGroupName(newAnswers.JobGroupId);
+            linkedFieldsWithAnswers.Add(new LinkedFieldChange(RegistrationField.JobGroup.LinkedToFieldId, "Job group", null, newJobGroup));
+
+            var blankAnswers = new RegistrationFieldAnswers(
+                newAnswers.CentreId,
+                0, // TODO HEEDLS-874 how should this be handled?
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            );
+            AddCustomPromptLinkedFields(linkedFieldsWithAnswers, newAnswers, blankAnswers, centreRegistrationPromptsService);
+
+            return linkedFieldsWithAnswers;
+        }
+
+        private static void AddCustomPromptLinkedFields(
+            List<LinkedFieldChange> linkedFieldChanges,
+            RegistrationFieldAnswers oldAnswers,
+            RegistrationFieldAnswers newAnswers,
+            ICentreRegistrationPromptsService centreRegistrationPromptsService
+        )
+        {
+            if (newAnswers.Answer1 != oldAnswers.Answer1)
             {
                 var prompt1Name =
                     centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(newAnswers.CentreId, RegistrationField.CentreRegistrationField1.Id);
-                changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(RegistrationField.CentreRegistrationField1.LinkedToFieldId, prompt1Name, null, newAnswers.Answer1)
+                linkedFieldChanges.Add(
+                    new LinkedFieldChange(RegistrationField.CentreRegistrationField1.LinkedToFieldId, prompt1Name, oldAnswers.Answer1, newAnswers.Answer1)
                 );
             }
 
-            if (newAnswers.Answer2 != null)
+            if (newAnswers.Answer2 != oldAnswers.Answer2)
             {
                 var prompt2Name =
                     centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(newAnswers.CentreId, RegistrationField.CentreRegistrationField2.Id);
-                changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(RegistrationField.CentreRegistrationField2.LinkedToFieldId, prompt2Name, null, newAnswers.Answer2)
+                linkedFieldChanges.Add(
+                    new LinkedFieldChange(RegistrationField.CentreRegistrationField2.LinkedToFieldId, prompt2Name, oldAnswers.Answer2, newAnswers.Answer2)
                 );
             }
 
-            if (newAnswers.Answer3 != null)
+            if (newAnswers.Answer3 != oldAnswers.Answer3)
             {
                 var prompt3Name =
                     centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(newAnswers.CentreId, RegistrationField.CentreRegistrationField3.Id);
-                changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(RegistrationField.CentreRegistrationField3.LinkedToFieldId, prompt3Name, null, newAnswers.Answer3)
+                linkedFieldChanges.Add(
+                    new LinkedFieldChange(RegistrationField.CentreRegistrationField3.LinkedToFieldId, prompt3Name, oldAnswers.Answer3, newAnswers.Answer3)
                 );
             }
 
-            var newJobGroup = jobGroupsDataService.GetJobGroupName(newAnswers.JobGroupId);
-            changedLinkedFieldsWithAnswers.Add(new LinkedFieldChange(RegistrationField.JobGroup.LinkedToFieldId, "Job group", null, newJobGroup));
-
-            if (newAnswers.Answer4 != null)
+            if (newAnswers.Answer4 != oldAnswers.Answer4)
             {
                 var prompt4Name =
                     centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(newAnswers.CentreId, RegistrationField.CentreRegistrationField4.Id);
-                changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(RegistrationField.CentreRegistrationField4.LinkedToFieldId, prompt4Name, null, newAnswers.Answer4)
+                linkedFieldChanges.Add(
+                    new LinkedFieldChange(RegistrationField.CentreRegistrationField4.LinkedToFieldId, prompt4Name, oldAnswers.Answer4, newAnswers.Answer4)
                 );
             }
 
-            if (newAnswers.Answer5 != null)
+            if (newAnswers.Answer5 != oldAnswers.Answer5)
             {
                 var prompt5Name =
                     centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(newAnswers.CentreId, RegistrationField.CentreRegistrationField5.Id);
-                changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(RegistrationField.CentreRegistrationField5.LinkedToFieldId, prompt5Name, null, newAnswers.Answer5)
+                linkedFieldChanges.Add(
+                    new LinkedFieldChange(RegistrationField.CentreRegistrationField5.LinkedToFieldId, prompt5Name, oldAnswers.Answer5, newAnswers.Answer5)
                 );
             }
 
-            if (newAnswers.Answer6 != null)
+            if (newAnswers.Answer6 != oldAnswers.Answer6)
             {
                 var prompt6Name =
                     centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(newAnswers.CentreId, RegistrationField.CentreRegistrationField6.Id);
-                changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(RegistrationField.CentreRegistrationField6.LinkedToFieldId, prompt6Name, null, newAnswers.Answer6)
+                linkedFieldChanges.Add(
+                    new LinkedFieldChange(RegistrationField.CentreRegistrationField6.LinkedToFieldId, prompt6Name, oldAnswers.Answer6, newAnswers.Answer6)
                 );
             }
-
-            return changedLinkedFieldsWithAnswers;
         }
     }
 }
