@@ -198,7 +198,7 @@
         [Test]
         [TestCase(null)]
         [TestCase(1)]
-        public void GetUserIdAndCentreNameForCentreEmailRegistrationConfirmationHashPair_returns_user_id_if_it_exists(
+        public void GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair_returns_user_id_if_it_exists(
             int? userId
         )
         {
@@ -232,13 +232,13 @@
 
             // When
             var result =
-                userDataService.GetUserIdAndCentreNameForCentreEmailRegistrationConfirmationHashPair(
+                userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
                     email,
                     confirmationHash
                 );
 
             // Then
-            result.Should().Be((userId, centreName));
+            result.Should().Be((userId, userId == null ? (int?)null : centreId, centreName));
         }
     }
 }

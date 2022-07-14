@@ -154,10 +154,11 @@
 
         IEnumerable<(int centreId, string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(int userId);
 
-        (int? userId, string? centreName) GetUserIdAndCentreNameForCentreEmailRegistrationConfirmationHashPair(
-            string centreSpecificEmail,
-            string registrationConfirmationHash
-        );
+        (int? userId, int? centreId, string? centreName)
+            GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                string centreSpecificEmail,
+                string registrationConfirmationHash
+            );
     }
 
     public partial class UserDataService : IUserDataService

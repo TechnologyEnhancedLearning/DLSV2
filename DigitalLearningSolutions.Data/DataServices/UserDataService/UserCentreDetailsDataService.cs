@@ -140,13 +140,14 @@
             );
         }
 
-        public (int? userId, string? centreName) GetUserIdAndCentreNameForCentreEmailRegistrationConfirmationHashPair(
-            string centreSpecificEmail,
-            string registrationConfirmationHash
-        )
+        public (int? userId, int? centreId, string? centreName)
+            GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                string centreSpecificEmail,
+                string registrationConfirmationHash
+            )
         {
-            var matchingUserAndCentreIds = connection.Query<(int, string)>(
-                @"SELECT ucd.UserID, c.CentreName
+            var matchingUserAndCentreIds = connection.Query<(int, int, string)>(
+                @"SELECT ucd.UserID, c.CentreID, c.CentreName
                     FROM UserCentreDetails AS ucd
                     INNER JOIN DelegateAccounts AS da ON da.UserID = ucd.UserID
                     INNER JOIN Centres AS c ON c.CentreID = ucd.CentreID
@@ -156,7 +157,9 @@
                 new { centreSpecificEmail, registrationConfirmationHash }
             ).ToList();
 
-            return matchingUserAndCentreIds.Any() ? matchingUserAndCentreIds.Single() : ((int?)null, (string?)null);
+            return matchingUserAndCentreIds.Any()
+                ? matchingUserAndCentreIds.Single()
+                : ((int?)null, (int?)null, (string?)null);
         }
     }
 }
