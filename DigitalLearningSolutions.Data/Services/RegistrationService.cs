@@ -107,6 +107,8 @@ namespace DigitalLearningSolutions.Data.Services
             int? supervisorDelegateId = null
         )
         {
+            using var transaction = new TransactionScope();
+
             // TODO HEEDLS-899 sort out supervisor delegate stuff
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
@@ -146,6 +148,8 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
+            transaction.Complete();
+
             SendDelegateNeedsApprovalEmailIfNecessary(delegateRegistrationModel, refactoredTrackingSystemEnabled);
 
             return (candidateNumber, delegateRegistrationModel.Approved);
@@ -160,6 +164,7 @@ namespace DigitalLearningSolutions.Data.Services
                 int? supervisorDelegateId = null
             )
         {
+            using var transaction = new TransactionScope();
             var userEntity = userService.GetUserById(userId)!;
 
             var delegateRegistrationModel =
@@ -219,6 +224,8 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateId,
                     delegateEntity.GetRegistrationFieldAnswers()
                 );
+
+                transaction.Complete();
             }
             catch (DelegateCreationFailedException exception)
             {
