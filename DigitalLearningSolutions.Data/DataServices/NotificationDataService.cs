@@ -84,14 +84,15 @@
         }
         public IEnumerable<Recipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId)
         {
-            return connection.Query<Recipient>(
+            var recipients = connection.Query<Recipient>(
 
                 @"SELECT au.Forename as FirstName, au.Surname as LastName, au.Email
                     FROM     NotificationUsers AS nu INNER JOIN
                          AdminUsers AS au ON nu.AdminUserID = au.AdminID AND au.Active = 1 
-                    WHERE  (nu.NotificationID = @notificationId) AND (au.CentreID = @centreId OR c.CentreID = @centreId)",
+                    WHERE  (nu.NotificationID = @notificationId) AND (au.CentreID = @centreId)",
                 new { notificationId, centreId }
                 );
+            return recipients;
         }
     }
 }
