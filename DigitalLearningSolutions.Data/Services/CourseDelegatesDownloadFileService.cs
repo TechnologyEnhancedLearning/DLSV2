@@ -33,6 +33,7 @@
 
     public class CourseDelegatesDownloadFileService : ICourseDelegatesDownloadFileService
     {
+        private const string CourseName = "Course name";
         private const string LastName = "Last name";
         private const string FirstName = "First name";
         private const string Email = "Email";
@@ -321,7 +322,7 @@
         )
         {
             dataTable.Columns.AddRange(
-                new[] { new DataColumn(LastName), new DataColumn(FirstName), new DataColumn(Email) }
+                new[] { new DataColumn(CourseName), new DataColumn(LastName), new DataColumn(FirstName), new DataColumn(Email) }
             );
 
             foreach (var prompt in registrationRegistrationPrompts.CustomPrompts)
@@ -397,6 +398,7 @@
             DataRow row
         )
         {
+            row[CourseName] = courseDelegate.CourseName;
             row[LastName] = courseDelegate.DelegateLastName;
             row[FirstName] = courseDelegate.DelegateFirstName;
             row[Email] = courseDelegate.DelegateEmail;
@@ -414,7 +416,6 @@
                         courseDelegate.DelegateRegistrationPrompts[prompt.RegistrationField.Id - 1];
                 }
             }
-
             row[DelegateId] = courseDelegate.CandidateNumber;
             row[Enrolled] = courseDelegate.Enrolled.Date;
             row[LastAccessed] = courseDelegate.LastUpdated.Date;
