@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
-@model FileInputViewModel
+@model TextInputViewModel
 
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
-  <label class="nhsuk-label" for="@Model.Name">
+  <label class="nhsuk-label" for="@Model.Id">
     @Model.Label
   </label>
   @if (Model.HintText != null) {
@@ -11,13 +11,20 @@
     </div>
   }
   @if (Model.HasError) {
-    <span class="nhsuk-error-message" id="@Model.Name-error">
-      <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
-    </span>
+    <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+      @foreach (var errorMessage in Model.ErrorMessages) {
+        <span class="error-message--margin-bottom-1 nhsuk-error-message">
+          <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
+        </span>
+      }
+    </div>
   }
   <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
          id="@Model.Id"
          name="@Model.Name"
-         type="file"
+         value="@Model.Value"
+         type="@Model.Type"
+         spellcheck="@Model.SpellCheck"
+         autocomplete="@Model.Autocomplete"
          aria-describedby="@Model.Name-error @Model.Name-hint" />
 </div>

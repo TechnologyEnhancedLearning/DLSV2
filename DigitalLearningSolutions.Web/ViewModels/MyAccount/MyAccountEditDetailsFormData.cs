@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
@@ -19,6 +20,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             DelegateAccount? delegateAccount,
             List<(int id, string name)> jobGroups,
             string? centreSpecificEmail,
+            List<(int centreId, string centreName, string? centreSpecificEmail)> allCentreSpecificEmails,
             string? returnUrl,
             bool isCheckDetailRedirect
         )
@@ -45,6 +47,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer6 = delegateAccount?.Answer6;
 
             CentreSpecificEmail = centreSpecificEmail;
+            AllCentreSpecificEmails = allCentreSpecificEmails;
             ReturnUrl = returnUrl;
             IsSelfRegistrationOrEdit = true;
             IsCheckDetailRedirect = isCheckDetailRedirect;
@@ -71,6 +74,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             ReturnUrl = formData.ReturnUrl;
             IsSelfRegistrationOrEdit = true;
             IsCheckDetailRedirect = formData.IsCheckDetailRedirect;
+            AllCentreSpecificEmailsDictionary = formData.AllCentreSpecificEmailsDictionary;
         }
 
         public byte[]? ProfileImage { get; set; }
@@ -83,5 +87,23 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public string? ReturnUrl { get; set; }
 
         public bool IsCheckDetailRedirect { get; set; }
+
+        public List<(int centreId, string centreName, string? centreSpecificEmail)>? AllCentreSpecificEmails
+        {
+            get;
+            set;
+        }
+
+        public Dictionary<string, string?>? AllCentreSpecificEmailsDictionary { get; set; }
+
+        public Dictionary<int, string?> CentreSpecificEmailsByCentreId =>
+            AllCentreSpecificEmailsDictionary != null
+                ? AllCentreSpecificEmailsDictionary.Where(
+                    row => Int32.TryParse(row.Key, out _)
+                ).ToDictionary(
+                    row => Int32.Parse(row.Key),
+                    row => row.Value
+                )
+                : new Dictionary<int, string?>();
     }
 }

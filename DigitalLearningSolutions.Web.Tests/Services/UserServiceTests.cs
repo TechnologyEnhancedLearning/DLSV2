@@ -746,7 +746,12 @@
                 UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday),
                 new List<AdminAccount>(),
                 new List<DelegateAccount>
-                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: sevenMonthsAgo, active: false) }
+                {
+                    UserTestHelper.GetDefaultDelegateAccount(
+                        centreSpecificDetailsLastChecked: sevenMonthsAgo,
+                        active: false
+                    )
+                }
             );
 
             // When
@@ -763,12 +768,14 @@
         {
             // Given
             const int userId = 1;
+            const int centreId = 1;
             const string centreName = "centre name";
             const string centreEmail = "centre@email.com";
 
-            var centreEmailList = new List<(string centreName, string? centreEmail)> { (centreName, centreEmail) };
+            var centreEmailList = new List<(int centreId, string centreName, string? centreEmail)>
+                { (centreId, centreName, centreEmail) };
             A.CallTo(() => userDataService.GetAllCentreEmailsForUser(userId)).Returns(
-                isEmpty ? new List<(string centreName, string? centreSpecificEmail)>() : centreEmailList
+                isEmpty ? new List<(int centreId, string centreName, string? centreSpecificEmail)>() : centreEmailList
             );
 
             // When
@@ -776,7 +783,7 @@
 
             // Then
             result.Should().BeEquivalentTo(
-                isEmpty ? new List<(string centreName, string? centreEmail)>() : centreEmailList
+                isEmpty ? new List<(int centreId, string centreName, string? centreEmail)>() : centreEmailList
             );
         }
 

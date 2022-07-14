@@ -98,6 +98,7 @@
                 formData,
                 new List<(int id, string name)>(),
                 new List<EditDelegateRegistrationPromptViewModel>(),
+                new List<(int, string, string?)>(),
                 DlsSubApplication.Default
             );
             myAccountController.ModelState.AddModelError(nameof(MyAccountEditDetailsFormData.Email), "Required");
@@ -153,6 +154,7 @@
                 formData,
                 new List<(int id, string name)>(),
                 new List<EditDelegateRegistrationPromptViewModel> { expectedPrompt },
+                new List<(int, string, string?)>(),
                 DlsSubApplication.Default
             );
 
@@ -171,7 +173,8 @@
         }
 
         [Test]
-        public void EditDetailsPostSave_for_admin_only_user_with_missing_delegate_answers_doesnt_fail_validation_or_update_delegate()
+        public void
+            EditDetailsPostSave_for_admin_only_user_with_missing_delegate_answers_doesnt_fail_validation_or_update_delegate()
         {
             // Given
             var myAccountController = new MyAccountController(
@@ -199,7 +202,7 @@
             var testUserEntity = new UserEntity(
                 UserTestHelper.GetDefaultUserAccount(),
                 new[] { UserTestHelper.GetDefaultAdminAccount() },
-                new DelegateAccount[] {  }
+                new DelegateAccount[] { }
             );
             A.CallTo
                 (() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
@@ -381,6 +384,7 @@
                 formData,
                 new List<(int id, string name)>(),
                 new List<EditDelegateRegistrationPromptViewModel> { expectedPrompt },
+                new List<(int, string, string?)>(),
                 DlsSubApplication.Default
             );
 

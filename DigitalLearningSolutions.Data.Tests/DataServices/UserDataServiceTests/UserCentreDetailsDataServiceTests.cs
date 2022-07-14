@@ -172,10 +172,13 @@
 
             // Then
             result.Count.Should().Be(4);
-            result.Should().ContainEquivalentOf((delegateOnlyCentreName, delegateOnlyCentreEmail));
-            result.Should().ContainEquivalentOf((adminOnlyCentreName, adminOnlyCentreEmail));
-            result.Should().ContainEquivalentOf((adminAndDelegateCentreName, adminAndDelegateCentreEmail));
-            result.Should().ContainEquivalentOf((nullCentreEmailCentreName, (string?)null));
+            result.Should()
+                .ContainEquivalentOf((delegateOnlyCentreId, delegateOnlyCentreName, delegateOnlyCentreEmail));
+            result.Should().ContainEquivalentOf((adminOnlyCentreId, adminOnlyCentreName, adminOnlyCentreEmail));
+            result.Should().ContainEquivalentOf(
+                (adminAndDelegateCentreId, adminAndDelegateCentreName, adminAndDelegateCentreEmail)
+            );
+            result.Should().ContainEquivalentOf((nullCentreEmailCentreId, nullCentreEmailCentreName, (string?)null));
         }
 
         [Test]
