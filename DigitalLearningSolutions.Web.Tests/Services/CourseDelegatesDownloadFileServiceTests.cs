@@ -26,6 +26,8 @@
         {
             new CourseDelegateForExport
             {
+                ApplicationName = "Course One",
+                CustomisationName = "v1",
                 CandidateNumber = "TM68",
                 DelegateFirstName = "Philip",
                 DelegateLastName = "Barber",
@@ -54,6 +56,8 @@
             },
             new CourseDelegateForExport
             {
+                ApplicationName = "Course One",
+                CustomisationName = "v1",
                 CandidateNumber = "ES1",
                 DelegateFirstName = "Jonathan",
                 DelegateLastName = "Bennett",
@@ -82,6 +86,8 @@
             },
             new CourseDelegateForExport
             {
+                ApplicationName = "Course One",
+                CustomisationName = "v1",
                 CandidateNumber = "NB8",
                 DelegateFirstName = "Erik",
                 DelegateLastName = "Griffin",
@@ -106,6 +112,66 @@
                 Answer2 = null,
                 LoginCount = 1,
                 Duration = 1,
+                DiagnosticScore = 0,
+            },
+            new CourseDelegateForExport
+            {
+                ApplicationName = "Course Two",
+                CustomisationName = "v1",
+                CandidateNumber = "TM68",
+                DelegateFirstName = "Philip",
+                DelegateLastName = "Barber",
+                DelegateEmail = "mtc@.o",
+                IsDelegateActive = true,
+                IsProgressLocked = false,
+                LastUpdated = new DateTime(2018, 03, 08),
+                Enrolled = new DateTime(2012, 05, 24),
+                CompleteBy = null,
+                RemovedDate = null,
+                Completed = null,
+                AllAttempts = 1,
+                AttemptsPassed = 0,
+                RegistrationAnswer1 = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                RegistrationAnswer2 = "xxxxxxx",
+                RegistrationAnswer3 = null,
+                RegistrationAnswer4 = null,
+                RegistrationAnswer5 = null,
+                RegistrationAnswer6 = null,
+                Answer1 = null,
+                Answer2 = null,
+                Answer3 = null,
+                LoginCount = 2,
+                Duration = 0,
+                DiagnosticScore = 0,
+            },
+            new CourseDelegateForExport
+            {
+                ApplicationName = "Course Two",
+                CustomisationName = "v1",
+                CandidateNumber = "ES1",
+                DelegateFirstName = "Jonathan",
+                DelegateLastName = "Bennett",
+                DelegateEmail = "slumrdaiehn.b@g",
+                IsDelegateActive = true,
+                IsProgressLocked = false,
+                LastUpdated = new DateTime(2018, 03, 08),
+                Enrolled = new DateTime(2010, 09, 22),
+                CompleteBy = null,
+                RemovedDate = null,
+                Completed = new DateTime(2018, 03, 08),
+                AllAttempts = 1,
+                AttemptsPassed = 1,
+                RegistrationAnswer1 = "Senior Implementation and Business Change Manager",
+                RegistrationAnswer2 = "test2",
+                RegistrationAnswer3 = null,
+                RegistrationAnswer4 = null,
+                RegistrationAnswer5 = null,
+                RegistrationAnswer6 = null,
+                Answer1 = null,
+                Answer2 = null,
+                Answer3 = null,
+                LoginCount = 2,
+                Duration = 0,
                 DiagnosticScore = 0,
             },
         };
@@ -143,7 +209,7 @@
             );
 
             A.CallTo(() => courseDataService.GetDelegatesOnCourseForExport(customisationId, centreId))
-                .Returns(courseDelegates);
+                .Returns(courseDelegates.Where(c => c.ApplicationName == "Course One"));
 
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt>
             {
@@ -193,17 +259,17 @@
                     Courses = new[]
                     {
                         new CourseStatisticsWithAdminFieldResponseCounts
-                            { ApplicationName = "Course One", CustomisationId = 1 },
+                            { ApplicationName = "Course One", CustomisationName = "v1", CustomisationId = 1 },
                         new CourseStatisticsWithAdminFieldResponseCounts
-                            { ApplicationName = "Course Two", CustomisationId = 2 },
+                            { ApplicationName = "Course Two", CustomisationName = "v1", CustomisationId = 2 },
                     },
                 }
             );
 
             A.CallTo(() => courseDataService.GetDelegatesOnCourseForExport(1, centreId))
-                .Returns(courseDelegates);
+                .Returns(courseDelegates.Where(c => c.ApplicationName == "Course One"));
             A.CallTo(() => courseDataService.GetDelegatesOnCourseForExport(2, centreId))
-                .Returns(courseDelegates.Where(c => c.CandidateNumber != "NB8"));
+                .Returns(courseDelegates.Where(c => c.ApplicationName == "Course Two"));
 
             var centreRegistrationPrompts = new List<CentreRegistrationPrompt>
             {

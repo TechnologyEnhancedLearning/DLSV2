@@ -142,20 +142,17 @@ def extractEmailAddressFromCommitDetails(commitDetails) {
 }
 
 def getSlackUserByEmailAddress(emailAddress) {
-	return getSlackUsers()[emailAddress.toLowerCase()] ?: '@SteVes'
+	return getSlackUsers()[emailAddress.toLowerCase()] ?: '@SteJac'
 }
 
 def getSlackUsers() {
 	return [
-		'stella.veski@softwire.com':'@SteVes',
-		'stellaveski@gmail.com':'@SteVes',
-		'alexander.jackson@dorsetsoftware.com':'@AleJac',
-		'daniel.bloxham@softwire.com':'@DanBlo',
 		'david.may-miller@softwire.com':'@DavMay',
 		'jonathan.bloxsom@softwire.com':'@JonBlo',
 		'stephen.jackson@softwire.com':'@SteJac',
-		'ibrahimmunir14@gmail.com' : '@IbrMun',
 		'olivia.zorn@softwire.com':'@OliZor',
-		'showkath.marripadu@softwire.com':'@ShoMar',
+		'simon.brent@softwire.com':'@SimBre',
+		'vlad.nicolaescu@softwire.com':'@VlaNic',
+		'kevin.whittaker@hee.nhs.uk':'@KevWhi',
 	]
 }

@@ -18,6 +18,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
@@ -44,6 +45,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private INotificationDataService notificationDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -56,6 +58,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             config = A.Fake<IConfiguration>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
             userService = A.Fake<IUserService>();
+            notificationDataService = A.Fake<INotificationDataService>();
             userDataService = A.Fake<IUserDataService>();
             clockUtility = A.Fake<IClockUtility>();
 
@@ -84,6 +87,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 config,
                 supervisorDelegateService,
                 userDataService,
+                notificationDataService,
                 new NullLogger<RegistrationService>(),
                 userService,
                 clockUtility
@@ -184,17 +188,11 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             // Then
             A.CallTo(
                 () =>
-                    emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval" &&
-                                e.Body.TextBody.Contains(OldSystemBaseUrl + "/tracking/approvedelegates")
-                        )
+                notificationDataService.GetAdminRecipientsForCentreNotification(
+                    model.Centre,
+                    4
                     )
-            ).MustHaveHappened();
+                ).MustHaveHappened();
         }
 
         [Test]
@@ -214,17 +212,11 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             // Then
             A.CallTo(
                 () =>
-                    emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval" &&
-                                e.Body.TextBody.Contains(RefactoredSystemBaseUrl + "/TrackingSystem/Delegates/Approve")
-                        )
+                notificationDataService.GetAdminRecipientsForCentreNotification(
+                    model.Centre,
+                    4
                     )
-            ).MustHaveHappened();
+                ).MustHaveHappened();
         }
 
         [Test]

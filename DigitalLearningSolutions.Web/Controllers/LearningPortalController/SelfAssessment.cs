@@ -227,8 +227,6 @@
             var model = new SupervisorCommentsViewModel
             {
                 SupervisorComment = supervisorComment,
-                SelfAssessmentSupervisor =
-                    selfAssessmentService.GetSupervisorForSelfAssessmentId(selfAssessmentId, candidateId),
                 AssessmentQuestion = new AssessmentQuestion
                 {
                     Verified = supervisorComment.Verified,
@@ -336,7 +334,7 @@
                 SupervisorSignOffs = supervisorSignOffs,
                 SearchViewModel = searchViewModel
             };
-            if(searchModel != null)
+            if (searchModel != null)
             {
                 searchModel.IsSupervisorResultsReviewed = assessment.IsSupervisorResultsReviewed;
             }
