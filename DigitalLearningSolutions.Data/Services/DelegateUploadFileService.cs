@@ -30,6 +30,7 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IPasswordResetService passwordResetService;
+        private readonly IGroupsService groupsService;
         private readonly IConfiguration configuration;
 
         public DelegateUploadFileService(
@@ -38,7 +39,8 @@ namespace DigitalLearningSolutions.Data.Services
             IRegistrationService registrationService,
             ISupervisorDelegateService supervisorDelegateService,
             IPasswordResetService passwordResetService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            IGroupsService groupsService
         )
         {
             this.jobGroupsDataService = jobGroupsDataService;
@@ -47,6 +49,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.supervisorDelegateService = supervisorDelegateService;
             this.passwordResetService = passwordResetService;
             this.configuration = configuration;
+            this.groupsService = groupsService;
         }
 
         public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime welcomeEmailDate)
@@ -189,6 +192,11 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateRow.HasPrn,
                 delegateRow.Prn,
                 delegateId
+            );
+
+            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                delegateId,
+                model.GetRegistrationFieldAnswers()
             );
 
             SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, delegateId);

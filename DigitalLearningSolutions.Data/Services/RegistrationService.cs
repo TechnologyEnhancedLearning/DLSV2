@@ -265,6 +265,11 @@ namespace DigitalLearningSolutions.Data.Services
                 registerJourneyContainsTermsAndConditions
             );
 
+            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                delegateId,
+                delegateRegistrationModel.GetRegistrationFieldAnswers()
+            );
+
             // TODO HEEDLS-899 sort out supervisor delegate stuff
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
