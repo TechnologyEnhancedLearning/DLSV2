@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
 {
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -20,6 +19,7 @@
         [NoWhitespace(ErrorMessage = CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? CentreSpecificEmail { get; set; }
 
+        [Required(ErrorMessage = "Select a job group")]
         public int? JobGroupId { get; set; }
 
         public string? Answer1 { get; set; }
@@ -39,13 +39,5 @@
         public bool? HasProfessionalRegistrationNumber { get; set; }
 
         public bool IsSelfRegistrationOrEdit { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (!JobGroupId.HasValue)
-            {
-                yield return new ValidationResult("Select a job group", new[] { nameof(JobGroupId) });
-            }
-        }
     }
 }
