@@ -8,22 +8,15 @@
     /// </summary>
     public class NoWhitespaceAttribute : ValidationAttribute
     {
-        private readonly string errorMessage;
-
-        public NoWhitespaceAttribute(string errorMessage)
-        {
-            this.errorMessage = errorMessage;
-        }
-
-        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
+        public override bool IsValid(object? value)
         {
             switch (value)
             {
                 case null:
                 case string strValue when !strValue.Any(char.IsWhiteSpace):
-                    return ValidationResult.Success;
+                    return true;
                 default:
-                    return new ValidationResult(errorMessage);
+                    return false;
             }
         }
     }
