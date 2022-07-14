@@ -298,7 +298,7 @@
         private const string FrameworkTables =
             @"Frameworks AS FW LEFT OUTER JOIN
              FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId
-LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL";
+            LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL";
 
         private const string AssessmentQuestionFields =
             @"SELECT AQ.ID, AQ.Question, AQ.MinValue, AQ.MaxValue, AQ.AssessmentQuestionInputTypeID, AQI.InputTypeName, AQ.AddedByAdminId, CASE WHEN AQ.AddedByAdminId = @adminId THEN 1 ELSE 0 END AS UserIsOwner, AQ.CommentsPrompt, AQ.CommentsHint";
@@ -540,10 +540,9 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
                 );
                 return -2;
             }
-
             var existingId = (int)connection.ExecuteScalar(
-                @"SELECT COALESCE ((SELECT ID FROM CompetencyGroups WHERE [Name] = @groupName), 0) AS CompetencyGroupID",
-                new { groupName }
+                @"SELECT COALESCE ((SELECT TOP(1)ID FROM CompetencyGroups WHERE [Name] = @groupName AND (@groupDescription IS NULL OR Description = @groupDescription)), 0) AS CompetencyGroupID",
+                new { groupName, groupDescription }
             );
             if (existingId > 0)
             {
@@ -565,8 +564,8 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             }
 
             existingId = (int)connection.ExecuteScalar(
-                @"SELECT COALESCE ((SELECT ID FROM CompetencyGroups WHERE [Name] = @groupName), 0) AS CompetencyGroupID",
-                new { groupName }
+                @"SELECT COALESCE ((SELECT TOP(1)ID FROM CompetencyGroups WHERE [Name] = @groupName AND (@groupDescription IS NULL OR Description = @groupDescription)), 0) AS CompetencyGroupID",
+                new { groupName, groupDescription }
             );
             return existingId;
         }
@@ -850,7 +849,7 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
         public void RemoveCustomFlag(int flagId)
         {
             connection.Execute(
-                @"DELETE FROM CompetencyFlags WHERE FlagID = @flagId", new { flagId}
+                @"DELETE FROM CompetencyFlags WHERE FlagID = @flagId", new { flagId }
             );
             connection.Execute(
                 @"DELETE FROM Flags WHERE ID = @flagId", new { flagId }
@@ -1140,10 +1139,11 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
 
         public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId)
         {
-            if ((frameworkCompetencyGroupId < 1) | (adminId < 1) | (competencyGroupId < 1))
+            if ((frameworkCompetencyGroupId < 1) | (adminId < 1))
             {
                 logger.LogWarning(
-                    $"Not deleting framework competency group as it failed server side validation. AdminId: {adminId}, frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, competencyGroupId: {competencyGroupId}"
+                    $"Not deleting framework competency group as it failed server side validation. AdminId: {adminId}," +
+                    $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId},"
                 );
                 return;
             }
@@ -1154,15 +1154,25 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                     WHERE ID = @frameworkCompetencyGroupId",
                 new { adminId, frameworkCompetencyGroupId }
             );
-            var numberOfAffectedRows = connection.Execute(
-                @"DELETE FROM FrameworkCompetencyGroups WHERE ID = @frameworkCompetencyGroupId",
+
+
+            connection.Execute(
+                @"DELETE FROM FrameworkCompetencies
+                WHERE FrameworkCompetencyGroupID = @frameworkCompetencyGroupId",
                 new { frameworkCompetencyGroupId }
             );
+
+            var numberOfAffectedRows = connection.Execute(
+                @"DELETE FROM FrameworkCompetencyGroups
+                WHERE ID = @frameworkCompetencyGroupId",
+                new { frameworkCompetencyGroupId }
+            );
+
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not deleting framework competency group as db update failed. " +
-                    $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, competencyGroupId: {competencyGroupId}, adminId: {adminId}"
+                    $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, adminId: {adminId}"
                 );
             }
 
