@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -159,6 +160,23 @@
             DlsSubApplication dlsSubApplication
         )
         {
+            // Custom Validate functions are not called if the ModelState is invalid due to attribute validation.
+            // This form potentially (if the user is not logged in to a centre) contains the ability to edit all the user's centre-specific emails,
+            // which are validated by a Validate function, so in order to display error messages for them if some other field is ALSO invalid,
+            // we must manually call formData.Validate() here.
+            if (!ModelState.IsValid)
+            {
+                var validationResults = formData.Validate(new ValidationContext(formData));
+
+                foreach (var error in validationResults)
+                {
+                    foreach (var memberName in error.MemberNames)
+                    {
+                        ModelState.AddModelError(memberName, error.ErrorMessage);
+                    }
+                }
+            }
+
             var centreId = User.GetCentreId();
             var userId = User.GetUserIdKnownNotNull();
             var userEntity = userService.GetUserById(userId);

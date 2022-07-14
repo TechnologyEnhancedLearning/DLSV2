@@ -105,5 +105,54 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
                     row => row.Value
                 )
                 : new Dictionary<int, string?>();
+
+        private bool HasValidated { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var validationResults = new List<ValidationResult>();
+
+            if (HasValidated)
+            {
+                return validationResults;
+            }
+
+            if (AllCentreSpecificEmailsDictionary != null)
+            {
+                var maxLengthAttribute = new MaxLengthAttribute(255);
+                var emailAddressAttribute = new EmailAddressAttribute();
+                var noWhitespaceAttribute = new NoWhitespaceAttribute();
+
+                foreach (var (centreIdString, centreEmail) in AllCentreSpecificEmailsDictionary)
+                {
+                    var memberName = $"{nameof(AllCentreSpecificEmailsDictionary)}_{centreIdString}";
+
+                    if (!maxLengthAttribute.IsValid(centreEmail))
+                    {
+                        validationResults.Add(
+                            new ValidationResult(CommonValidationErrorMessages.TooLongEmail, new[] { memberName })
+                        );
+                    }
+
+                    if (!emailAddressAttribute.IsValid(centreEmail))
+                    {
+                        validationResults.Add(
+                            new ValidationResult(CommonValidationErrorMessages.InvalidEmail, new[] { memberName })
+                        );
+                    }
+
+                    if (!noWhitespaceAttribute.IsValid(centreEmail))
+                    {
+                        validationResults.Add(
+                            new ValidationResult(CommonValidationErrorMessages.WhitespaceInEmail, new[] { memberName })
+                        );
+                    }
+                }
+            }
+
+            HasValidated = true;
+
+            return validationResults;
+        }
     }
 }
