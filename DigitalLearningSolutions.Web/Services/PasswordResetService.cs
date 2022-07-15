@@ -267,7 +267,7 @@
                 setPasswordUrl.Path += '/';
             }
 
-            setPasswordUrl.Path += "CompleteRegistration"; // TODO: HEEDLS-974 Create controller for this link
+            setPasswordUrl.Path += "ClaimAccount/CompleteRegistration";
             setPasswordUrl.Query = $"code={registrationConfirmationHash}&email={emailAddress}";
 
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";
