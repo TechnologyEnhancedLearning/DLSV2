@@ -2,7 +2,7 @@
 @model FileInputViewModel
 
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
-  <label class="nhsuk-label" for="@Model.Name">
+  <label class="nhsuk-label" for="@Model.Id">
     @Model.Label
   </label>
   @if (Model.HintText != null) {
