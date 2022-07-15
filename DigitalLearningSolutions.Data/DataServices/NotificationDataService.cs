@@ -13,7 +13,7 @@
 
         ProgressCompletionData? GetProgressCompletionData(int progressId, int candidateId, int customisationId);
 
-        IEnumerable<Recipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId);
+        IEnumerable<NotificationRecipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId);
     }
 
     public class NotificationDataService : INotificationDataService
@@ -82,13 +82,13 @@
                 new { progressId, candidateId, customisationId }
             );
         }
-        public IEnumerable<Recipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId)
+        public IEnumerable<NotificationRecipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId)
         {
-            var recipients = connection.Query<Recipient>(
+            var recipients = connection.Query<NotificationRecipient>(
 
                 @"SELECT au.Forename as FirstName, au.Surname as LastName, au.Email
                     FROM     NotificationUsers AS nu INNER JOIN
-                         AdminUsers AS au ON nu.AdminUserID = au.AdminID AND au.Active = 1 
+                         AdminUsers AS au ON nu.AdminUserID = au.AdminID AND au.Active = 1
                     WHERE  (nu.NotificationID = @notificationId) AND (au.CentreID = @centreId)",
                 new { notificationId, centreId }
                 );
