@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Helpers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
@@ -25,7 +26,9 @@
                 changedLinkedFieldsWithAnswers.Add(new LinkedFieldChange(RegistrationField.JobGroup.LinkedToFieldId, "Job group", oldJobGroup, newJobGroup));
             }
 
-            AddCustomPromptLinkedFields(changedLinkedFieldsWithAnswers, oldAnswers, newAnswers, centreRegistrationPromptsService);
+            changedLinkedFieldsWithAnswers = changedLinkedFieldsWithAnswers.Concat(
+                AddCustomPromptLinkedFields(oldAnswers, newAnswers, centreRegistrationPromptsService)
+            ).ToList();
 
             return changedLinkedFieldsWithAnswers;
         }
@@ -51,18 +54,21 @@
                 null,
                 null
             );
-            AddCustomPromptLinkedFields(linkedFieldsWithAnswers, blankAnswers, newAnswers, centreRegistrationPromptsService);
+            linkedFieldsWithAnswers = linkedFieldsWithAnswers.Concat(
+                AddCustomPromptLinkedFields(blankAnswers, newAnswers, centreRegistrationPromptsService)
+            ).ToList();
 
             return linkedFieldsWithAnswers;
         }
 
-        private static void AddCustomPromptLinkedFields(
-            List<LinkedFieldChange> linkedFieldChanges,
+        private static IEnumerable<LinkedFieldChange> AddCustomPromptLinkedFields(
             RegistrationFieldAnswers oldAnswers,
             RegistrationFieldAnswers newAnswers,
             ICentreRegistrationPromptsService centreRegistrationPromptsService
         )
         {
+            var linkedFieldChanges = new List<LinkedFieldChange>();
+
             if (newAnswers.Answer1 != oldAnswers.Answer1)
             {
                 var prompt1Name =
@@ -116,6 +122,8 @@
                     new LinkedFieldChange(RegistrationField.CentreRegistrationField6.LinkedToFieldId, prompt6Name, oldAnswers.Answer6, newAnswers.Answer6)
                 );
             }
+
+            return linkedFieldChanges;
         }
     }
 }
