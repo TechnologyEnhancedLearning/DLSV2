@@ -86,7 +86,7 @@ namespace DigitalLearningSolutions.Data.Services
             }
 
             transaction.Complete();
-            
+
             return new BulkUploadResult(delegateRows);
         }
 
@@ -190,8 +190,6 @@ namespace DigitalLearningSolutions.Data.Services
         private void RegisterDelegate(DelegateTableRow delegateRow, DateTime welcomeEmailDate, int centreId)
         {
             var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
-
-            using var transaction = new TransactionScope();
 
             var (delegateId, _) = registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(model, false);
 

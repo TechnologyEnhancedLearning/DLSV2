@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Transactions;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -385,6 +386,40 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     )
                 )
                 .MustHaveHappened(expectedEmailToBeSent ? 1 : 0, Times.Exactly);
+        }
+
+        [Test]
+        public void CreateDelegateAccountForNewUser_adds_new_delegate_to_groups()
+        {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            var expectedAnswers = model.GetRegistrationFieldAnswers();
+
+            // When
+            registrationService.CreateDelegateAccountForNewUser(
+                model,
+                string.Empty,
+                false,
+                false
+            );
+
+            // Then
+            A.CallTo(
+                () => groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                    NewDelegateIdAndCandidateNumber.Item1,
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        answers =>
+                            answers.Answer1 == expectedAnswers.Answer1 &&
+                            answers.Answer2 == expectedAnswers.Answer2 &&
+                            answers.Answer3 == expectedAnswers.Answer3 &&
+                            answers.Answer4 == expectedAnswers.Answer4 &&
+                            answers.Answer5 == expectedAnswers.Answer5 &&
+                            answers.Answer6 == expectedAnswers.Answer6 &&
+                            answers.JobGroupId == model.JobGroup &&
+                            answers.CentreId == model.Centre
+                    )
+                )
+            ).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -1127,6 +1162,59 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 )
             ).MustNotHaveHappened();
             approved.Should().BeFalse();
+        }
+
+        [Test]
+        public void CreateDelegateAccountForExistingUser_adds_new_delegate_to_groups()
+        {
+
+            // Given
+            const int userId = 2;
+            const int delegateId = 2;
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
+                7,
+                answer1: "a",
+                answer2: "b",
+                answer3: "c",
+                answer4: "d",
+                answer5: "e",
+                answer6: null
+            );
+            var expectedAnswers = delegateEntity.GetRegistrationFieldAnswers();
+            A.CallTo(
+                () => registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>._,
+                    A<int>._,
+                    A<DateTime>._,
+                    A<IDbTransaction?>._
+                )
+            ).Returns((delegateId, "fake"));
+            A.CallTo(() => userDataService.GetDelegateById(delegateId)).Returns(delegateEntity);
+
+            // When
+            var (_, approved, _) = registrationService.CreateDelegateAccountForExistingUser(
+                model,
+                userId,
+                "987.654.321.100",
+                false
+            );
+
+            // Then
+            A.CallTo(
+                    () =>
+                        groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(delegateId, A<RegistrationFieldAnswers>.That.Matches(answers =>
+                            answers.Answer1 == expectedAnswers.Answer1 &&
+                            answers.Answer2 == expectedAnswers.Answer2 &&
+                            answers.Answer3 == expectedAnswers.Answer3 &&
+                            answers.Answer4 == expectedAnswers.Answer4 &&
+                            answers.Answer5 == expectedAnswers.Answer5 &&
+                            answers.Answer6 == expectedAnswers.Answer6 &&
+                            answers.JobGroupId == delegateEntity.UserAccount.JobGroupId &&
+                            answers.CentreId == delegateEntity.DelegateAccount.CentreId
+                        ))
+                )
+                .MustHaveHappened();
         }
 
         [Test]

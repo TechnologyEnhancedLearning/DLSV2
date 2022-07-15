@@ -13,6 +13,7 @@
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
@@ -40,6 +41,7 @@
         private IRegistrationService registrationService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
+        private IGroupsService groupsService = null!;
 
         [SetUp]
         public void SetUp()
@@ -53,6 +55,7 @@
             registrationService = A.Fake<IRegistrationService>(x => x.Strict());
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
             passwordResetService = A.Fake<IPasswordResetService>();
+            groupsService = A.Fake<IGroupsService>();
             configuration = A.Fake<IConfiguration>();
 
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(A<string>._))
@@ -64,7 +67,8 @@
                 registrationService,
                 supervisorDelegateService,
                 passwordResetService,
-                configuration
+                configuration,
+                groupsService
             );
         }
 
@@ -671,6 +675,22 @@
                     "DelegateBulkUpload_Refactor"
                 )
             ).MustHaveHappenedOnceExactly();
+
+            A.CallTo(
+                () => groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                    NewDelegateIdAndCandidateNumber.Item1,
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        answers =>
+                            answers.Answer1 == row.Answer1 &&
+                            answers.Answer2 == row.Answer2 &&
+                            answers.Answer3 == row.Answer3 &&
+                            answers.Answer4 == row.Answer4 &&
+                            answers.Answer5 == row.Answer5 &&
+                            answers.Answer6 == row.Answer6 &&
+                            answers.JobGroupId.ToString() == row.JobGroupID &&
+                            answers.CentreId == CentreId
+                        ))
+                ).MustHaveHappenedOnceExactly();
 
             result.ProcessedCount.Should().Be(1);
             result.RegisteredCount.Should().Be(1);
