@@ -43,7 +43,7 @@
 
             var blankAnswers = new RegistrationFieldAnswers(
                 newAnswers.CentreId,
-                0, // TODO HEEDLS-874 how should this be handled?
+                0,
                 null,
                 null,
                 null,
