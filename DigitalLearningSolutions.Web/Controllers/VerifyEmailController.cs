@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.VerifyEmail;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

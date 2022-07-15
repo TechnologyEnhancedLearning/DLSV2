@@ -2,9 +2,9 @@
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Signposting;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using FakeItEasy;

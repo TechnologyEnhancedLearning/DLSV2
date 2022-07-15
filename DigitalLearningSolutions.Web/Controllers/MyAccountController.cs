@@ -6,12 +6,12 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
@@ -156,13 +156,15 @@
             DlsSubApplication dlsSubApplication
         )
         {
-            var userDelegateId = User.GetCandidateId();
             var centreId = User.GetCentreIdKnownNotNull();
             var userId = User.GetUserIdKnownNotNull();
+            var userEntity = userService.GetUserById(userId);
 
-            if (userDelegateId.HasValue)
+            var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
+
+            if (delegateAccount != null)
             {
-                promptsService.ValidateCentreRegistrationPrompts(formData, User.GetCentreIdKnownNotNull(), ModelState);
+                promptsService.ValidateCentreRegistrationPrompts(formData, centreId, ModelState);
             }
 
             if (formData.ProfileImageFile != null)
@@ -217,13 +219,13 @@
             var (accountDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToEditAccountDetailsData(
                 formData,
                 userId,
-                userDelegateId
+                delegateAccount?.Id
             );
             userService.UpdateUserDetailsAndCentreSpecificDetails(
                 accountDetailsData,
                 delegateDetailsData,
                 formData.CentreSpecificEmail,
-                User.GetCentreIdKnownNotNull(),
+                centreId,
                 true
             );
 

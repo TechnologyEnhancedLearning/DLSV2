@@ -3,10 +3,11 @@
     using System;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -21,14 +22,17 @@
     {
         private readonly IDelegateDownloadFileService delegateDownloadFileService;
         private readonly IDelegateUploadFileService delegateUploadFileService;
+        private readonly IClockUtility clockUtility;
 
         public BulkUploadController(
             IDelegateDownloadFileService delegateDownloadFileService,
-            IDelegateUploadFileService delegateUploadFileService
+            IDelegateUploadFileService delegateUploadFileService,
+            IClockUtility clockUtility
         )
         {
             this.delegateDownloadFileService = delegateDownloadFileService;
             this.delegateUploadFileService = delegateUploadFileService;
+            this.clockUtility = clockUtility;
         }
 
         public IActionResult Index()
@@ -39,8 +43,11 @@
         [Route("DownloadDelegates")]
         public IActionResult DownloadDelegates()
         {
-            var content = delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(User.GetCentreIdKnownNotNull());
-            var fileName = $"DLS Delegates for Bulk Update {DateTime.Today:yyyy-MM-dd}.xlsx";
+            var content =
+                delegateDownloadFileService.GetDelegatesAndJobGroupDownloadFileForCentre(
+                    User.GetCentreIdKnownNotNull()
+                );
+            var fileName = $"DLS Delegates for Bulk Update {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),
@@ -65,8 +72,6 @@
             {
                 return View("StartUpload", model);
             }
-
-            model.ClearDateIfNotSendEmail();
 
             try
             {

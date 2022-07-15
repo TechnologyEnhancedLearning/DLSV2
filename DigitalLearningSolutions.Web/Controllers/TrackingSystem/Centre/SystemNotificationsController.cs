@@ -4,10 +4,11 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.SystemNotifications;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -20,18 +21,18 @@
     [Route("/TrackingSystem/Centre/SystemNotifications")]
     public class SystemNotificationsController : Controller
     {
-        private readonly IClockService clockService;
+        private readonly IClockUtility clockUtility;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly ISystemNotificationsDataService systemNotificationsDataService;
 
         public SystemNotificationsController(
             ISystemNotificationsDataService systemNotificationsDataService,
-            IClockService clockService,
+            IClockUtility clockUtility,
             ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.systemNotificationsDataService = systemNotificationsDataService;
-            this.clockService = clockService;
+            this.clockUtility = clockUtility;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
@@ -45,7 +46,7 @@
 
             if (unacknowledgedNotifications.Count > 0)
             {
-                Response.Cookies.SetSkipSystemNotificationCookie(adminId, clockService.UtcNow);
+                Response.Cookies.SetSkipSystemNotificationCookie(adminId, clockUtility.UtcNow);
             }
             else if (Request.Cookies.HasSkippedNotificationsCookie(adminId))
             {

@@ -7,11 +7,12 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -133,6 +134,13 @@
                 (() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(2)).Returns(
                 PromptsTestHelper.GetDefaultCentreRegistrationPrompts(customPromptLists, 2)
             );
+            var testUserEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new AdminAccount[] { },
+                new[] { UserTestHelper.GetDefaultDelegateAccount() }
+            );
+            A.CallTo
+                (() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
             var formData = new MyAccountEditDetailsFormData();
             var expectedPrompt = new EditDelegateRegistrationPromptViewModel(
                 1,
@@ -163,7 +171,7 @@
         }
 
         [Test]
-        public void EditDetailsPostSave_for_admin_user_with_missing_delegate_answers_doesnt_fail_validation()
+        public void EditDetailsPostSave_for_admin_only_user_with_missing_delegate_answers_doesnt_fail_validation_or_update_delegate()
         {
             // Given
             var myAccountController = new MyAccountController(
@@ -188,6 +196,13 @@
                     )
                 )
                 .DoesNothing();
+            var testUserEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new[] { UserTestHelper.GetDefaultAdminAccount() },
+                new DelegateAccount[] {  }
+            );
+            A.CallTo
+                (() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
             const string centreSpecificEmail = "centre@email.com";
             var model = new MyAccountEditDetailsFormData
             {
@@ -217,7 +232,7 @@
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
-                        A<DelegateDetailsData>._,
+                        null,
                         A<string?>._,
                         A<int>._,
                         true

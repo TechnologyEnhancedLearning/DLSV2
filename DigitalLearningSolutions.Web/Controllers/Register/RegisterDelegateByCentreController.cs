@@ -2,19 +2,18 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
@@ -169,8 +168,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            model.ClearDateIfNotSendEmail();
-
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -238,7 +235,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
                 TempData.Clear();
                 TempData.Add("delegateNumber", candidateNumber);
-                TempData.Add("emailSent", data.ShouldSendEmail);
                 TempData.Add("passwordSet", data.IsPasswordSet);
                 return RedirectToAction("Confirmation");
             }
@@ -264,8 +260,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public IActionResult Confirmation()
         {
             var delegateNumber = (string?)TempData.Peek("delegateNumber");
-            var emailSent = (bool)TempData.Peek("emailSent");
-            var passwordSet = (bool)TempData.Peek("passwordSet");
             TempData.Clear();
 
             if (delegateNumber == null)
@@ -273,7 +267,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return RedirectToAction("Index");
             }
 
-            var viewModel = new ConfirmationViewModel(delegateNumber, emailSent, passwordSet);
+            var viewModel = new ConfirmationViewModel(delegateNumber);
             return View(viewModel);
         }
 
