@@ -33,7 +33,7 @@
             var (userId, centreId, centreName) =
                 userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(email, code);
 
-            if (userId == null || centreName == null)
+            if (userId == null)
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
@@ -51,7 +51,7 @@
                 CentreName = centreName,
                 CentreSpecificEmail = email,
                 RegistrationConfirmationHash = code,
-                DelegateId = delegateAccount!.CandidateNumber,
+                CandidateNumber = delegateAccount!.CandidateNumber,
                 SupportEmail = supportEmail,
                 UserExists = existingUserAccount != null,
                 UserActive = existingUserAccount?.Active ?? false,
@@ -64,7 +64,7 @@
         }
 
         [HttpPost]
-        public IActionResult Index()
+        public IActionResult CompleteRegistration()
         {
             var model = TempData.Peek<ClaimAccountViewModel>()!;
 
