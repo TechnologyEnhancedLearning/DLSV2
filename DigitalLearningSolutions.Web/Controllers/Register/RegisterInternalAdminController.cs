@@ -105,7 +105,7 @@
                 registrationService.CreateDelegateAccountForExistingUser(
                     new InternalDelegateRegistrationModel(
                         model.Centre!.Value,
-                        null,
+                        model.CentreSpecificEmail,
                         null,
                         null,
                         null,
