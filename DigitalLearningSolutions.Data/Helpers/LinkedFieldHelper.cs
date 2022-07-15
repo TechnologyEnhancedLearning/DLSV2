@@ -51,7 +51,7 @@
                 null,
                 null
             );
-            AddCustomPromptLinkedFields(linkedFieldsWithAnswers, newAnswers, blankAnswers, centreRegistrationPromptsService);
+            AddCustomPromptLinkedFields(linkedFieldsWithAnswers, blankAnswers, newAnswers, centreRegistrationPromptsService);
 
             return linkedFieldsWithAnswers;
         }

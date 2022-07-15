@@ -662,6 +662,75 @@
             }
         }
 
+        [Test]
+        public void AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses_adds_delegate_to_groups()
+        {
+            // given
+            var now = DateTime.Now;
+            A.CallTo(() => clockService.UtcNow).Returns(now);
+            A.CallTo(() => userDataService.GetDelegateById(reusableDelegateDetails.Id))
+                .Returns(
+                    UserTestHelper.GetDefaultDelegateEntity(
+                        reusableDelegateDetails.Id,
+                        centreId: reusableDelegateDetails.CentreId
+                    )
+                );
+
+            A.CallTo(
+                () => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
+                    reusableDelegateDetails.CentreId,
+                    1
+                )
+            ).Returns("clique");
+            A.CallTo(
+                () => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
+                    reusableDelegateDetails.CentreId,
+                    2
+                )
+            ).Returns("astronomy");
+            A.CallTo(
+                () => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
+                    reusableDelegateDetails.CentreId,
+                    3
+                )
+            ).Returns("mathematics");
+
+            var group_to_join_1 = GroupTestHelper.GetDefaultGroup(48, "cool kids", linkedToField: 1);
+            var group_to_join_2 = GroupTestHelper.GetDefaultGroup(49, "astronomy - local group", linkedToField: 2);
+            var group_to_not_join = GroupTestHelper.GetDefaultGroup(49, "set with binary operation", linkedToField: 3);
+            var ineligibile_group = GroupTestHelper.GetDefaultGroup(50, "Bad - Apple", shouldAddNewRegistrantsToGroup: false);
+            var groups = new List<Group>{ group_to_join_1, group_to_join_2, group_to_not_join, ineligibile_group };
+
+            var registrationFieldAnswers = new RegistrationFieldAnswers(
+                reusableDelegateDetails.CentreId,
+                reusableDelegateDetails.JobGroupId,
+                "cool kids",
+                "local group",
+                "noise",
+                null,
+                null,
+                null
+            );
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(reusableDelegateDetails.CentreId)).Returns(groups);
+
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(reusableDelegateDetails.JobGroupId))
+                .Returns("job group name");
+
+            // when
+            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(reusableDelegateDetails.Id, registrationFieldAnswers);
+
+            // then
+            A.CallTo(
+                () => groupsDataService.AddDelegateToGroup(reusableDelegateDetails.Id, group_to_join_1.GroupId, now, 1)
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => groupsDataService.AddDelegateToGroup(reusableDelegateDetails.Id, group_to_join_2.GroupId, now, 1)
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._)
+            ).MustHaveHappenedTwiceExactly();
+        }
+
         private void GivenCurrentTimeIs(DateTime validationTime)
         {
             A.CallTo(() => clockService.UtcNow).Returns(validationTime);
