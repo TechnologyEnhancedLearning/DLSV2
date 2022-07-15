@@ -689,8 +689,9 @@
                             answers.Answer6 == row.Answer6 &&
                             answers.JobGroupId.ToString() == row.JobGroupID &&
                             answers.CentreId == CentreId
-                        ))
-                ).MustHaveHappenedOnceExactly();
+                    )
+                )
+            ).MustHaveHappenedOnceExactly();
 
             result.ProcessedCount.Should().Be(1);
             result.RegisteredCount.Should().Be(1);

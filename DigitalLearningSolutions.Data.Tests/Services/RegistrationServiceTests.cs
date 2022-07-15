@@ -1167,7 +1167,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         [Test]
         public void CreateDelegateAccountForExistingUser_adds_new_delegate_to_groups()
         {
-
             // Given
             const int userId = 2;
             const int delegateId = 2;
@@ -1203,16 +1202,20 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                     () =>
-                        groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(delegateId, A<RegistrationFieldAnswers>.That.Matches(answers =>
-                            answers.Answer1 == expectedAnswers.Answer1 &&
-                            answers.Answer2 == expectedAnswers.Answer2 &&
-                            answers.Answer3 == expectedAnswers.Answer3 &&
-                            answers.Answer4 == expectedAnswers.Answer4 &&
-                            answers.Answer5 == expectedAnswers.Answer5 &&
-                            answers.Answer6 == expectedAnswers.Answer6 &&
-                            answers.JobGroupId == delegateEntity.UserAccount.JobGroupId &&
-                            answers.CentreId == delegateEntity.DelegateAccount.CentreId
-                        ))
+                        groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                            delegateId,
+                            A<RegistrationFieldAnswers>.That.Matches(
+                                answers =>
+                                    answers.Answer1 == expectedAnswers.Answer1 &&
+                                    answers.Answer2 == expectedAnswers.Answer2 &&
+                                    answers.Answer3 == expectedAnswers.Answer3 &&
+                                    answers.Answer4 == expectedAnswers.Answer4 &&
+                                    answers.Answer5 == expectedAnswers.Answer5 &&
+                                    answers.Answer6 == expectedAnswers.Answer6 &&
+                                    answers.JobGroupId == delegateEntity.UserAccount.JobGroupId &&
+                                    answers.CentreId == delegateEntity.DelegateAccount.CentreId
+                            )
+                        )
                 )
                 .MustHaveHappened();
         }

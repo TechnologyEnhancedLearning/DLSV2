@@ -456,7 +456,8 @@
             groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(groupId, delegateId, addedByAdminId);
 
             // Then
-            A.CallTo(() => groupsDataService.AddDelegateToGroup(delegateId, groupId, dateTime, 0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.AddDelegateToGroup(delegateId, groupId, dateTime, 0))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(CentreId)).MustHaveHappenedOnceExactly();
         }
 
@@ -698,8 +699,12 @@
             var group_to_join_1 = GroupTestHelper.GetDefaultGroup(48, "cool kids", linkedToField: 1);
             var group_to_join_2 = GroupTestHelper.GetDefaultGroup(49, "astronomy - local group", linkedToField: 2);
             var group_to_not_join = GroupTestHelper.GetDefaultGroup(49, "set with binary operation", linkedToField: 3);
-            var ineligibile_group = GroupTestHelper.GetDefaultGroup(50, "Bad - Apple", shouldAddNewRegistrantsToGroup: false);
-            var groups = new List<Group>{ group_to_join_1, group_to_join_2, group_to_not_join, ineligibile_group };
+            var ineligibile_group = GroupTestHelper.GetDefaultGroup(
+                50,
+                "Bad - Apple",
+                shouldAddNewRegistrantsToGroup: false
+            );
+            var groups = new List<Group> { group_to_join_1, group_to_join_2, group_to_not_join, ineligibile_group };
 
             var registrationFieldAnswers = new RegistrationFieldAnswers(
                 reusableDelegateDetails.CentreId,
@@ -717,7 +722,10 @@
                 .Returns("job group name");
 
             // when
-            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(reusableDelegateDetails.Id, registrationFieldAnswers);
+            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                reusableDelegateDetails.Id,
+                registrationFieldAnswers
+            );
 
             // then
             A.CallTo(
