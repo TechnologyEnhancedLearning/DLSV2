@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
+    using DigitalLearningSolutions.Data.Models.Notifications;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Models.User;
@@ -188,11 +189,11 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             // Then
             A.CallTo(
                 () =>
-                notificationDataService.GetAdminRecipientsForCentreNotification(
-                    model.Centre,
-                    4
+                    notificationDataService.GetAdminRecipientsForCentreNotification(
+                        model.Centre,
+                        4
                     )
-                ).MustHaveHappened();
+            ).MustHaveHappened();
         }
 
         [Test]
@@ -212,11 +213,11 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             // Then
             A.CallTo(
                 () =>
-                notificationDataService.GetAdminRecipientsForCentreNotification(
-                    model.Centre,
-                    4
+                    notificationDataService.GetAdminRecipientsForCentreNotification(
+                        model.Centre,
+                        4
                     )
-                ).MustHaveHappened();
+            ).MustHaveHappened();
         }
 
         [Test]
@@ -349,9 +350,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         )
         {
             // Given
-            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            GivenPendingSupervisorDelegateIdsForEmailAre(new List<int> { 1, 2, 3, 4, 5 });
+            GivenAdminsToNotifyHaveEmails(new[] { ApproverEmail });
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
 
             // When
             registrationService.CreateDelegateAccountForNewUser(
@@ -1381,6 +1382,16 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                     }
                 )
             );
+        }
+
+        private void GivenAdminsToNotifyHaveEmails(IEnumerable<string> adminEmails)
+        {
+            A.CallTo(() => notificationDataService.GetAdminRecipientsForCentreNotification(A<int>._, A<int>._))
+                .Returns(
+                    adminEmails.Select(
+                        email => Builder<NotificationRecipient>.CreateNew().With(r => r.Email = email).Build()
+                    )
+                );
         }
     }
 }

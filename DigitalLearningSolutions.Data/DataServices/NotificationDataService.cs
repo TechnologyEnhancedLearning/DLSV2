@@ -81,6 +81,7 @@
                 new { progressId, candidateId, customisationId }
             );
         }
+
         public IEnumerable<NotificationRecipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId)
         {
             var recipients = connection.Query<NotificationRecipient>(
