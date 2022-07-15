@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.MyAccount
 {
+    using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Data;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -8,7 +10,6 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -424,6 +425,182 @@
 
             // Then
             result.Should().BeStatusCodeResult().WithStatusCode(500);
+        }
+
+        [Test]
+        public void EditDetailsPost_with_no_centreId_updates_user_details_and_all_centre_specific_emails()
+        {
+            // Given
+            const int userId = 2;
+            var myAccountController = new MyAccountController(
+                centreRegistrationPromptsService,
+                userService,
+                userDataService,
+                imageResizeService,
+                jobGroupsDataService,
+                promptsService,
+                logger,
+                config
+            ).WithDefaultContext().WithMockUser(true, null, null, null, userId);
+
+            var centreSpecificEmailsByCentreId = new Dictionary<int, string?>
+            {
+                { 1, "email@centre1.com" },
+                { 2, "email@centre2.com" },
+                { 3, null },
+            };
+
+            var formData = new MyAccountEditDetailsFormData
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Email = Email,
+                JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
+                AllCentreSpecificEmailsDictionary = centreSpecificEmailsByCentreId.ToDictionary(
+                    row => row.Key.ToString(),
+                    row => row.Value
+                ),
+            };
+
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(Email, A<IDbTransaction?>._)).Returns(false);
+
+            A.CallTo(
+                    () => userService.UpdateUserDetailsAndCentreSpecificDetails(
+                        A<EditAccountDetailsData>._,
+                        A<DelegateDetailsData>._,
+                        A<string?>._,
+                        A<int>._,
+                        A<bool>._
+                    )
+                )
+                .DoesNothing();
+
+            // When
+            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+
+            // Then
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                        A<string>._,
+                        A<int>._,
+                        A<IDbTransaction?>._
+                    )
+                )
+                .MustNotHaveHappened();
+
+            A.CallTo(
+                    () => userService.UpdateUserDetailsAndCentreSpecificDetails(
+                        A<EditAccountDetailsData>._,
+                        A<DelegateDetailsData?>._,
+                        A<string>._,
+                        A<int>._,
+                        A<bool>._
+                    )
+                )
+                .MustNotHaveHappened();
+
+            A.CallTo(
+                () => userService.UpdateUserDetails(
+                    A<EditAccountDetailsData>.That.Matches(
+                        e =>
+                            e.FirstName == formData.FirstName &&
+                            e.Surname == formData.LastName &&
+                            e.Email == formData.Email &&
+                            e.UserId == userId &&
+                            e.JobGroupId == formData.JobGroupId &&
+                            e.ProfessionalRegistrationNumber == formData.ProfessionalRegistrationNumber &&
+                            e.ProfileImage == formData.ProfileImage
+                    ),
+                    true,
+                    null
+                )
+            ).MustHaveHappened();
+
+            A.CallTo(
+                () => userService.SetCentreEmails(
+                    userId,
+                    A<Dictionary<int, string?>>.That.IsSameSequenceAs(centreSpecificEmailsByCentreId)
+                )
+            ).MustHaveHappened();
+
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void EditDetailsPost_with_no_centreId_and_bad_centre_specific_emails_fails_validation()
+        {
+            // Given
+            const int userId = 2;
+            var myAccountController = new MyAccountController(
+                centreRegistrationPromptsService,
+                userService,
+                userDataService,
+                imageResizeService,
+                jobGroupsDataService,
+                promptsService,
+                logger,
+                config
+            ).WithDefaultContext().WithMockUser(true, null, null, null, userId);
+
+            myAccountController.ModelState.AddModelError(nameof(MyAccountEditDetailsFormData.Email), "Required");
+
+            var centreSpecificEmailsByCentreId = new Dictionary<int, string?>
+            {
+                { 1, "email @centre1.com" },
+                { 2, "email2" },
+            };
+
+            var formData = new MyAccountEditDetailsFormData
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Email = Email,
+                JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
+                AllCentreSpecificEmailsDictionary = centreSpecificEmailsByCentreId.ToDictionary(
+                    row => row.Key.ToString(),
+                    row => row.Value
+                ),
+            };
+
+            var expectedModel = new MyAccountEditDetailsViewModel(
+                formData,
+                new List<(int id, string name)>(),
+                new List<EditDelegateRegistrationPromptViewModel>(),
+                new List<(int, string, string?)>(),
+                DlsSubApplication.Default
+            );
+
+            // When
+            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+
+            // Then
+            result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
+
+            myAccountController
+                .ModelState[$"{nameof(MyAccountEditDetailsFormData.AllCentreSpecificEmailsDictionary)}_1"]
+                .ValidationState
+                .Should().Be
+                    (ModelValidationState.Invalid);
+
+            myAccountController
+                .ModelState[$"{nameof(MyAccountEditDetailsFormData.AllCentreSpecificEmailsDictionary)}_2"]
+                .ValidationState
+                .Should().Be
+                    (ModelValidationState.Invalid);
+
+            A.CallTo(
+                () => userService.UpdateUserDetails(
+                    A<EditAccountDetailsData>._,
+                    A<bool>._,
+                    A<DateTime?>._
+                )
+            ).MustNotHaveHappened();
+
+            A.CallTo(
+                () => userService.SetCentreEmails(A<int>._, A<Dictionary<int, string?>>._)
+            ).MustNotHaveHappened();
         }
     }
 }
