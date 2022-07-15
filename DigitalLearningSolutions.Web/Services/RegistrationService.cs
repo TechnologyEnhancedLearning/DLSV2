@@ -441,7 +441,11 @@ namespace DigitalLearningSolutions.Web.Services
         {
             if (delegateRegistrationModel.CentreSpecificEmail != null)
             {
-                ValidateCentreEmail(delegateRegistrationModel.CentreSpecificEmail, delegateRegistrationModel.Centre);
+                ValidateCentreEmail(
+                    delegateRegistrationModel.CentreSpecificEmail,
+                    delegateRegistrationModel.Centre,
+                    null
+                );
             }
 
             var currentTime = clockUtility.UtcNow;
@@ -476,14 +480,14 @@ namespace DigitalLearningSolutions.Web.Services
             );
         }
 
-        private void ValidateCentreEmail(string centreEmail, int centreId, int? userId = null)
+        private void ValidateCentreEmail(string centreEmail, int centreId, int? idOfRegistrantIfAlreadyExisting)
         {
-            var centreEmailIsInUse = userId == null
+            var centreEmailIsInUse = idOfRegistrantIfAlreadyExisting == null
                 ? userDataService.CentreSpecificEmailIsInUseAtCentre(centreEmail, centreId)
                 : userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     centreEmail,
                     centreId,
-                    userId.Value
+                    idOfRegistrantIfAlreadyExisting.Value
                 );
 
             if (centreEmailIsInUse)

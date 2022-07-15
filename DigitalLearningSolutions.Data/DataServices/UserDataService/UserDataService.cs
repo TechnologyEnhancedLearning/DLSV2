@@ -119,17 +119,16 @@
             bool hasBeenPromptedForPrn
         );
 
-        bool PrimaryEmailIsInUse(string email, IDbTransaction? transaction = null);
+        bool PrimaryEmailIsInUse(string email);
 
-        bool PrimaryEmailIsInUseByOtherUser(string email, int userId, IDbTransaction? transaction = null);
+        bool PrimaryEmailIsInUseByOtherUser(string email, int userId);
 
-        bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId, IDbTransaction? transaction = null);
+        bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId);
 
         bool CentreSpecificEmailIsInUseAtCentreByOtherUser(
             string email,
             int centreId,
-            int userId,
-            IDbTransaction? transaction = null
+            int userId
         );
 
         void DeleteAdminAccount(int adminId);
@@ -266,25 +265,24 @@
             );
         }
 
-        public bool PrimaryEmailIsInUse(string email, IDbTransaction? transaction = null)
+        public bool PrimaryEmailIsInUse(string email)
         {
-            return PrimaryEmailIsInUseQuery(email, null, transaction);
+            return PrimaryEmailIsInUseQuery(email, null);
         }
 
-        public bool PrimaryEmailIsInUseByOtherUser(string email, int userId, IDbTransaction? transaction = null)
+        public bool PrimaryEmailIsInUseByOtherUser(string email, int userId)
         {
-            return PrimaryEmailIsInUseQuery(email, userId, transaction);
+            return PrimaryEmailIsInUseQuery(email, userId);
         }
 
-        private bool PrimaryEmailIsInUseQuery(string email, int? userId, IDbTransaction? transaction = null)
+        private bool PrimaryEmailIsInUseQuery(string email, int? userId)
         {
             return connection.QueryFirst<int>(
                 @$"SELECT COUNT(*)
                     FROM Users
                     WHERE PrimaryEmail = @email
                     {(userId == null ? "" : "AND Id <> @userId")}",
-                new { email, userId },
-                transaction
+                new { email, userId }
             ) > 0;
         }
     }

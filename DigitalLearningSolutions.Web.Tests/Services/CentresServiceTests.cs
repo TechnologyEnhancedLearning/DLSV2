@@ -127,7 +127,7 @@
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((true, primaryEmail));
 
             // When
-            var result = centresService.DoEmailsMatchCentre(primaryEmail, null, centreId);
+            var result = centresService.IsAnEmailValidForCentreManager(primaryEmail, null, centreId);
 
             // Then
             result.Should().BeTrue();
@@ -145,7 +145,7 @@
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((true, centreEmail));
 
             // When
-            var result = centresService.DoEmailsMatchCentre("primary@email", centreEmail, centreId);
+            var result = centresService.IsAnEmailValidForCentreManager("primary@email", centreEmail, centreId);
 
             // Then
             result.Should().BeTrue();
@@ -159,7 +159,7 @@
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((true, "different@email"));
 
             // When
-            var result = centresService.DoEmailsMatchCentre("primary@email", "centre@email", centreId);
+            var result = centresService.IsAnEmailValidForCentreManager("primary@email", "centre@email", centreId);
 
             // Then
             result.Should().BeFalse();

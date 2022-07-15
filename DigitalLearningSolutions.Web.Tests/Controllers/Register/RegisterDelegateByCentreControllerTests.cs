@@ -71,8 +71,7 @@
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentre(
                         model.CentreSpecificEmail!,
-                        model.Centre.Value,
-                        null
+                        model.Centre.Value
                     )
                 )
                 .Returns(true);
@@ -84,8 +83,7 @@
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentre(
                         model.CentreSpecificEmail!,
-                        model.Centre.Value,
-                        null
+                        model.Centre.Value
                     )
                 )
                 .MustHaveHappened();
@@ -108,8 +106,7 @@
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentre(
                         model.CentreSpecificEmail!,
-                        model.Centre.Value,
-                        null
+                        model.Centre.Value
                     )
                 )
                 .Returns(false);
@@ -121,8 +118,7 @@
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentre(
                         model.CentreSpecificEmail!,
-                        model.Centre.Value,
-                        null
+                        model.Centre.Value
                     )
                 )
                 .MustHaveHappened();
@@ -148,8 +144,7 @@
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentre(
                         model.CentreSpecificEmail!,
-                        model.Centre.Value,
-                        null
+                        model.Centre.Value
                     )
                 )
                 .Returns(false);

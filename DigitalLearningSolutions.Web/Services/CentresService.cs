@@ -20,7 +20,7 @@
 
         IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
 
-        bool DoEmailsMatchCentre(string primaryEmail, string? centreSpecificEmail, int centreId);
+        bool IsAnEmailValidForCentreManager(string primaryEmail, string? centreSpecificEmail, int centreId);
     }
 
     public class CentresService : ICentresService
@@ -66,13 +66,17 @@
             return centresDataService.GetAllCentreSummariesForMap();
         }
 
-        public bool DoEmailsMatchCentre(string primaryEmail, string? centreSpecificEmail, int centreId)
+        public bool IsAnEmailValidForCentreManager(string primaryEmail, string? centreSpecificEmail, int centreId)
         {
             var autoRegisterManagerEmail =
                 centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
 
-            return new List<string?> { primaryEmail, centreSpecificEmail }.Where(email => email != null).Any(
-                email => string.Equals(email, autoRegisterManagerEmail, StringComparison.CurrentCultureIgnoreCase)
+            return new List<string?> { primaryEmail, centreSpecificEmail }.Any(
+                email => email != null && string.Equals(
+                    email,
+                    autoRegisterManagerEmail,
+                    StringComparison.CurrentCultureIgnoreCase
+                )
             );
         }
     }

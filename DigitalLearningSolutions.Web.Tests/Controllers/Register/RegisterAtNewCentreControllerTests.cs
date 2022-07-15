@@ -136,8 +136,7 @@
                     () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
                         centreId,
-                        userAccount.Id,
-                        A<IDbTransaction?>._
+                        userAccount.Id
                     )
                 )
                 .Returns(true);
@@ -153,8 +152,7 @@
                     () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
                         centreId,
-                        userAccount.Id,
-                        A<IDbTransaction?>._
+                        userAccount.Id
                     )
                 )
                 .MustHaveHappened();
@@ -185,8 +183,7 @@
                 () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     A<string>._,
                     A<int>._,
-                    A<int>._,
-                    A<IDbTransaction?>._
+                    A<int>._
                 )
             ).MustNotHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
@@ -206,8 +203,7 @@
                     () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
                         model.Centre!.Value,
-                        UserId,
-                        A<IDbTransaction?>._
+                        UserId
                     )
                 )
                 .Returns(false);
@@ -220,8 +216,7 @@
                     () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
                         model.Centre!.Value,
-                        UserId,
-                        A<IDbTransaction?>._
+                        UserId
                     )
                 )
                 .MustHaveHappened();

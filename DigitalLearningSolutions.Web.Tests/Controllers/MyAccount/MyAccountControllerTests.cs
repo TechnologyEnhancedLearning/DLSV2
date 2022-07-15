@@ -105,14 +105,13 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(A<string>._, A<int>._, A<IDbTransaction?>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(A<string>._, A<int>._))
                 .MustNotHaveHappened();
             A.CallTo(
                 () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     A<string>._,
                     A<int>._,
-                    A<int>._,
-                    A<IDbTransaction?>._
+                    A<int>._
                 )
             ).MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
@@ -164,14 +163,13 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(A<string>._, A<int>._, A<IDbTransaction?>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(A<string>._, A<int>._))
                 .MustNotHaveHappened();
             A.CallTo(
                 () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     A<string>._,
                     A<int>._,
-                    A<int>._,
-                    A<IDbTransaction?>._
+                    A<int>._
                 )
             ).MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
@@ -180,22 +178,23 @@
         }
 
         [Test]
-        [TestCase("primary@email.com", null, true)]
-        [TestCase("primary@email.com", null, false)]
-        [TestCase("primary@email.com", "centre@email.com", true, false)]
-        [TestCase("primary@email.com", "centre@email.com", false, true)]
-        [TestCase("primary@email.com", "centre@email.com", true, true)]
-        [TestCase("primary@email.com", "centre@email.com", false, false)]
+        [TestCase(true, true)]
+        [TestCase(true, false)]
+        [TestCase(false, true, false)]
+        [TestCase(false, false, true)]
+        [TestCase(false, true, true)]
+        [TestCase(false, false, false)]
         public void EditDetailsPostSave_with_duplicate_email_fails_validation(
-            string primaryEmail,
-            string? centreSpecificEmail,
+            bool centreSpecificEmailIsNull,
             bool primaryEmailIsDuplicate,
             bool centreEmailIsDuplicate = false
         )
         {
             // Given
+            const string primaryEmail = "primary@email.com";
             const int userId = 2;
             const int centreId = 2;
+            var centreSpecificEmail = centreSpecificEmailIsNull ? null : "centre@email.com";
             var myAccountController = new MyAccountController(
                     centreRegistrationPromptsService,
                     userService,
@@ -207,10 +206,8 @@
                     config
                 ).WithDefaultContext()
                 .WithMockUser(true, centreId, userId: userId, delegateId: null);
-            var parameterName = typeof(MyAccountController).GetMethod("Index")?.GetParameters()
-                .SingleOrDefault(p => p.ParameterType == typeof(DlsSubApplication))?.Name;
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(primaryEmail, userId, A<IDbTransaction?>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(primaryEmail, userId))
                 .Returns(primaryEmailIsDuplicate);
 
             if (centreSpecificEmail != null)
@@ -219,8 +216,7 @@
                         () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                             centreSpecificEmail,
                             centreId,
-                            userId,
-                            A<IDbTransaction?>._
+                            userId
                         )
                     )
                     .Returns(centreEmailIsDuplicate);
@@ -247,44 +243,17 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(
-                () => userDataService.PrimaryEmailIsInUseByOtherUser(primaryEmail, userId, A<IDbTransaction?>._)
-            ).MustHaveHappened();
-
-            if (centreSpecificEmail == null)
-            {
-                A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
-                        A<string>._,
-                        A<int>._,
-                        A<int>._,
-                        A<IDbTransaction?>._
-                    )
-                ).MustNotHaveHappened();
-            }
-            else
-            {
-                A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
-                        centreSpecificEmail,
-                        centreId,
-                        userId,
-                        A<IDbTransaction?>._
-                    )
-                ).MustHaveHappened();
-            }
-
             if (primaryEmailIsDuplicate)
             {
                 myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Email)].ValidationState.Should().Be
                     (ModelValidationState.Invalid);
+            }
 
-                if (centreEmailIsDuplicate)
-                {
-                    myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.CentreSpecificEmail)]
-                        .ValidationState.Should().Be
-                            (ModelValidationState.Invalid);
-                }
+            if (centreEmailIsDuplicate)
+            {
+                myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.CentreSpecificEmail)]
+                    .ValidationState.Should().Be
+                        (ModelValidationState.Invalid);
             }
 
             if (primaryEmailIsDuplicate || centreEmailIsDuplicate)
@@ -294,10 +263,7 @@
             }
             else
             {
-                result.Should().BeRedirectToActionResult().WithActionName("Index").WithRouteValue(
-                    parameterName,
-                    DlsSubApplication.Default.UrlSegment
-                );
+                result.Should().BeRedirectToActionResult().WithActionName("Index");
             }
         }
 
@@ -318,16 +284,10 @@
                 logger,
                 config
             ).WithDefaultContext().WithMockUser(true, userId: userId, centreId: centreId, delegateId: null);
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId, null)).Returns(false);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId)).Returns(false);
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
-                        Email,
-                        centreId,
-                        userId,
-                        null
-                    )
-                )
-                .Returns(false);
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(Email, centreId, userId)
+            ).Returns(false);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
@@ -362,14 +322,13 @@
             var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId, A<IDbTransaction>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
                 .MustHaveHappened();
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         centreSpecificEmail,
                         centreId,
-                        userId,
-                        A<IDbTransaction>._
+                        userId
                     )
                 )
                 .MustHaveHappened();
@@ -409,14 +368,13 @@
                 ).WithDefaultContext()
                 .WithMockUser(true, centreId, userId: userId, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId, A<IDbTransaction?>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
                 .Returns(false);
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         Email,
                         centreId,
-                        userId,
-                        A<IDbTransaction?>._
+                        userId
                     )
                 )
                 .Returns(false);
@@ -466,14 +424,13 @@
                 ).WithDefaultContext()
                 .WithMockUser(true, centreId, userId: userId, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
-            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId, A<IDbTransaction?>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
                 .Returns(false);
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         Email,
                         centreId,
-                        userId,
-                        A<IDbTransaction?>._
+                        userId
                     )
                 )
                 .Returns(false);
@@ -555,8 +512,7 @@
             A.CallTo(
                     () => userDataService.PrimaryEmailIsInUseByOtherUser(
                         A<string>._,
-                        A<int>._,
-                        A<IDbTransaction?>._
+                        A<int>._
                     )
                 )
                 .MustNotHaveHappened();
@@ -564,8 +520,7 @@
                 () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     A<string>._,
                     A<int>._,
-                    A<int>._,
-                    A<IDbTransaction?>._
+                    A<int>._
                 )
             ).MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should()

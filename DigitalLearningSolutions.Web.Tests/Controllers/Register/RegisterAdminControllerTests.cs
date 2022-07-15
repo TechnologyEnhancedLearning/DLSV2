@@ -212,7 +212,13 @@
                 A.CallTo(() => userDataService.GetAdminUserByEmailAddress(centreSpecificEmail)).Returns(null);
             }
 
-            A.CallTo(() => centresService.DoEmailsMatchCentre(primaryEmail, centreSpecificEmail, DefaultCentreId))
+            A.CallTo(
+                    () => centresService.IsAnEmailValidForCentreManager(
+                        primaryEmail,
+                        centreSpecificEmail,
+                        DefaultCentreId
+                    )
+                )
                 .Returns(true);
             A.CallTo(
                     () => registrationService.RegisterCentreManager(

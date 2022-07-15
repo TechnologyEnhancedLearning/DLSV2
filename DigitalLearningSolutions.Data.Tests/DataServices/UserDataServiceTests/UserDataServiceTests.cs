@@ -96,7 +96,7 @@
 
         [Test]
         [TestCase("test@gmail.com", -1, true)]
-        [TestCase("test@gmail.com", 2, false)] // user id matches email
+        [TestCase("test@gmail.com", 2, false, TestName = "User id matches email")]
         [TestCase("not_an_email_in_the_database", 2, false)]
         public void PrimaryEmailIsInUseByOtherUser_returns_expected_value(string email, int userId, bool expectedResult)
         {

@@ -82,26 +82,24 @@
             }
         }
 
-        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId, IDbTransaction? transaction = null)
+        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId)
         {
-            return CentreSpecificEmailIsInUseAtCentreQuery(email, centreId, null, transaction);
+            return CentreSpecificEmailIsInUseAtCentreQuery(email, centreId, null);
         }
 
         public bool CentreSpecificEmailIsInUseAtCentreByOtherUser(
             string email,
             int centreId,
-            int userId,
-            IDbTransaction? transaction = null
+            int userId
         )
         {
-            return CentreSpecificEmailIsInUseAtCentreQuery(email, centreId, userId, transaction);
+            return CentreSpecificEmailIsInUseAtCentreQuery(email, centreId, userId);
         }
 
         private bool CentreSpecificEmailIsInUseAtCentreQuery(
             string email,
             int centreId,
-            int? userId,
-            IDbTransaction? transaction = null
+            int? userId
         )
         {
             return connection.QueryFirst<int>(
@@ -109,8 +107,7 @@
                     FROM UserCentreDetails
                     WHERE CentreId = @centreId AND Email = @email
                     {(userId == null ? "" : "AND UserId <> @userId")}",
-                new { email, centreId, userId },
-                transaction
+                new { email, centreId, userId }
             ) > 0;
         }
 

@@ -64,7 +64,7 @@
                 }
             }
 
-            if (!centresService.DoEmailsMatchCentre(
+            if (!centresService.IsAnEmailValidForCentreManager(
                 model.PrimaryEmail,
                 model.CentreSpecificEmail,
                 model.Centre!.Value
