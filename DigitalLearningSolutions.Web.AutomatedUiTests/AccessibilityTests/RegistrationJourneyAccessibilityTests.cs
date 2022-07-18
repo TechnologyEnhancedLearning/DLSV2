@@ -19,7 +19,11 @@
 
             // when
             Driver.Navigate().GoToUrl(BaseUrl + registerUrl);
+
             var registerResult = new AxeBuilder(Driver).Analyze();
+            Driver.ClickLinkContainingText("Create a new login");
+
+            var startResult = new AxeBuilder(Driver).Analyze();
             Driver.SelectDropdownItemValue("Centre", "101");
             Driver.FillTextInput("FirstName", "Test");
             Driver.FillTextInput("LastName", "User");
@@ -42,6 +46,7 @@
 
             // then
             registerResult.Violations.Should().BeEmpty();
+            startResult.Violations.Should().BeEmpty();
             learnerInformationResult.Violations.Should().BeEmpty();
             passwordResult.Violations.Should().BeEmpty();
             summaryResult.Violations.Should().BeEmpty();
