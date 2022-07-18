@@ -33,6 +33,7 @@
     {
         private const string IpAddress = "1.1.1.1";
         private const int SupervisorDelegateId = 1;
+        private const int UserId = 2;
         private ICentresDataService centresDataService = null!;
         private RegisterAtNewCentreController controller = null!;
         private IFeatureManager featureManager = null!;
@@ -69,7 +70,7 @@
                 .WithMockRequestContext(request)
                 .WithMockServices()
                 .WithMockTempData()
-                .WithMockUser(true);
+                .WithMockUser(true, userId: UserId);
         }
 
         [Test]
@@ -132,10 +133,10 @@
                 CentreSpecificEmail = "centre email",
             };
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
-                        ControllerContextHelper.CentreId,
-                        A<IDbTransaction?>._
+                        centreId,
+                        userAccount.Id
                     )
                 )
                 .Returns(true);
@@ -148,10 +149,10 @@
 
             // Then
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
-                        ControllerContextHelper.CentreId,
-                        A<IDbTransaction?>._
+                        centreId,
+                        userAccount.Id
                     )
                 )
                 .MustHaveHappened();
@@ -179,7 +180,11 @@
 
             // Then
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction?>._)
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
             ).MustNotHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
@@ -195,10 +200,10 @@
                 CentreSpecificEmail = "centre email",
             };
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
-                        ControllerContextHelper.CentreId,
-                        A<IDbTransaction?>._
+                        model.Centre!.Value,
+                        UserId
                     )
                 )
                 .Returns(false);
@@ -208,10 +213,10 @@
 
             // Then
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         model.CentreSpecificEmail!,
-                        ControllerContextHelper.CentreId,
-                        A<IDbTransaction?>._
+                        model.Centre!.Value,
+                        UserId
                     )
                 )
                 .MustHaveHappened();

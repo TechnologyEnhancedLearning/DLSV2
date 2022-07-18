@@ -9,7 +9,6 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -156,19 +155,19 @@
             if (centreSpecificEmail != null)
             {
                 A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
-                        centreSpecificEmail,
-                        DefaultCentreId,
-                        A<IDbTransaction?>._
-                    )
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(centreSpecificEmail, DefaultCentreId)
                 ).Returns(false);
                 A.CallTo(() => userDataService.GetCentreEmail(DefaultUserId, DefaultCentreId)).Returns(null);
-                A.CallTo(() => centresService.DoesEmailMatchCentre(centreSpecificEmail, DefaultCentreId)).Returns(true);
             }
-            else
-            {
-                A.CallTo(() => centresService.DoesEmailMatchCentre(primaryEmail, DefaultCentreId)).Returns(true);
-            }
+
+            A.CallTo(
+                    () => centresService.IsAnEmailValidForCentreManager(
+                        primaryEmail,
+                        centreSpecificEmail,
+                        DefaultCentreId
+                    )
+                )
+                .Returns(true);
 
             A.CallTo(
                 () => registrationService.CreateCentreManagerForExistingUser(
@@ -249,18 +248,6 @@
                 {
                     A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._))
                         .MustHaveHappenedOnceExactly();
-                }
-
-                if (centreSpecificEmail != null)
-                {
-                    A.CallTo(
-                        () => userDataService.SetCentreEmail(
-                            DefaultUserId,
-                            DefaultCentreId,
-                            centreSpecificEmail,
-                            A<IDbTransaction?>._
-                        )
-                    ).MustHaveHappenedOnceExactly();
                 }
             }
             else

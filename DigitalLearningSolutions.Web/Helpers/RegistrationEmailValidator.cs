@@ -44,28 +44,36 @@
             ICentresService centresService
         )
         {
-            if (model.CentreSpecificEmail == null || !modelState.HasError(model.CentreSpecificEmail))
+            if (model.CentreSpecificEmail != null)
             {
-                if (model.CentreSpecificEmail != null &&
-                    userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail, model.Centre!.Value) &&
-                    model.CentreSpecificEmail != userDataService.GetCentreEmail(userId, model.Centre.Value))
+                if (modelState.HasError(nameof(InternalAdminInformationViewModel.CentreSpecificEmail)))
+                {
+                    return;
+                }
+
+                if (userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    model.CentreSpecificEmail,
+                    model.Centre!.Value,
+                    userId
+                ))
                 {
                     modelState.AddModelError(
-                        nameof(PersonalInformationViewModel.CentreSpecificEmail),
+                        nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
                         DuplicateEmailErrorMessage
                     );
                 }
+            }
 
-                if (!centresService.DoesEmailMatchCentre(model.PrimaryEmail!, model.Centre!.Value) &&
-                    (model.CentreSpecificEmail == null ||
-                     !centresService.DoesEmailMatchCentre(model.CentreSpecificEmail, model.Centre.Value)
-                    ))
-                {
-                    modelState.AddModelError(
-                        nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                        WrongEmailForCentreErrorMessage
-                    );
-                }
+            if (!centresService.IsAnEmailValidForCentreManager(
+                model.PrimaryEmail,
+                model.CentreSpecificEmail,
+                model.Centre!.Value
+            ))
+            {
+                modelState.AddModelError(
+                    nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
+                    WrongEmailForCentreErrorMessage
+                );
             }
         }
 
@@ -80,13 +88,13 @@
             var primaryEmailIsValidAndNotNull =
                 !modelState.HasError(nameof(PersonalInformationViewModel.PrimaryEmail)) &&
                 model.PrimaryEmail != null;
+
             var centreSpecificEmailIsValidAndNotNull =
                 !modelState.HasError(nameof(PersonalInformationViewModel.CentreSpecificEmail)) &&
                 model.CentreSpecificEmail != null;
 
             var autoRegisterManagerEmail = isRegisterAdminJourney
-                ? centresDataService!.GetCentreAutoRegisterValues(model.Centre!.Value)
-                    .autoRegisterManagerEmail
+                ? centresDataService!.GetCentreAutoRegisterValues(model.Centre!.Value).autoRegisterManagerEmail
                 : null;
 
             if (primaryEmailIsValidAndNotNull)

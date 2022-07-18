@@ -8,7 +8,6 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -106,10 +105,14 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(A<string>._, A<IDbTransaction?>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(A<string>._, A<int>._))
                 .MustNotHaveHappened();
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction?>._)
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
             ).MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
         }
@@ -160,10 +163,14 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(A<string>._, A<IDbTransaction?>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(A<string>._, A<int>._))
                 .MustNotHaveHappened();
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction?>._)
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
             ).MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
             myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Answer1)].ValidationState.Should().Be
@@ -171,9 +178,102 @@
         }
 
         [Test]
-        public void EditDetailsPostSave_for_admin_only_user_with_missing_delegate_answers_doesnt_fail_validation_or_update_delegate()
+        [TestCase(true, true)]
+        [TestCase(true, false)]
+        [TestCase(false, true, false)]
+        [TestCase(false, false, true)]
+        [TestCase(false, true, true)]
+        [TestCase(false, false, false)]
+        public void EditDetailsPostSave_with_duplicate_email_fails_validation(
+            bool centreSpecificEmailIsNull,
+            bool primaryEmailIsDuplicate,
+            bool centreEmailIsDuplicate = false
+        )
         {
             // Given
+            const string primaryEmail = "primary@email.com";
+            const int userId = 2;
+            const int centreId = 2;
+            var centreSpecificEmail = centreSpecificEmailIsNull ? null : "centre@email.com";
+            var myAccountController = new MyAccountController(
+                    centreRegistrationPromptsService,
+                    userService,
+                    userDataService,
+                    imageResizeService,
+                    jobGroupsDataService,
+                    promptsService,
+                    logger,
+                    config
+                ).WithDefaultContext()
+                .WithMockUser(true, centreId, userId: userId, delegateId: null);
+
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(primaryEmail, userId))
+                .Returns(primaryEmailIsDuplicate);
+
+            if (centreSpecificEmail != null)
+            {
+                A.CallTo(
+                        () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                            centreSpecificEmail,
+                            centreId,
+                            userId
+                        )
+                    )
+                    .Returns(centreEmailIsDuplicate);
+            }
+
+            var formData = new MyAccountEditDetailsFormData
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Email = primaryEmail,
+                CentreSpecificEmail = centreSpecificEmail,
+                JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
+            };
+
+            var expectedModel = new MyAccountEditDetailsViewModel(
+                formData,
+                new List<(int id, string name)>(),
+                new List<EditDelegateRegistrationPromptViewModel>(),
+                DlsSubApplication.Default
+            );
+
+            // When
+            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+
+            // Then
+            if (primaryEmailIsDuplicate)
+            {
+                myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Email)].ValidationState.Should().Be
+                    (ModelValidationState.Invalid);
+            }
+
+            if (centreEmailIsDuplicate)
+            {
+                myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.CentreSpecificEmail)]
+                    .ValidationState.Should().Be
+                        (ModelValidationState.Invalid);
+            }
+
+            if (primaryEmailIsDuplicate || centreEmailIsDuplicate)
+            {
+                result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should()
+                    .BeEquivalentTo(expectedModel);
+            }
+            else
+            {
+                result.Should().BeRedirectToActionResult().WithActionName("Index");
+            }
+        }
+
+        [Test]
+        public void
+            EditDetailsPostSave_for_admin_only_user_with_missing_delegate_answers_doesnt_fail_validation_or_update_delegate()
+        {
+            // Given
+            const int userId = 2;
+            const int centreId = 2;
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
@@ -183,9 +283,11 @@
                 promptsService,
                 logger,
                 config
-            ).WithDefaultContext().WithMockUser(true, delegateId: null);
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(Email, null)).Returns(false);
-            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(Email, 2, null)).Returns(false);
+            ).WithDefaultContext().WithMockUser(true, userId: userId, centreId: centreId, delegateId: null);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId)).Returns(false);
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(Email, centreId, userId)
+            ).Returns(false);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
@@ -199,7 +301,7 @@
             var testUserEntity = new UserEntity(
                 UserTestHelper.GetDefaultUserAccount(),
                 new[] { UserTestHelper.GetDefaultAdminAccount() },
-                new DelegateAccount[] {  }
+                new DelegateAccount[] { }
             );
             A.CallTo
                 (() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
@@ -220,12 +322,13 @@
             var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(Email, A<IDbTransaction>._)).MustHaveHappened();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
+                .MustHaveHappened();
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         centreSpecificEmail,
-                        2,
-                        A<IDbTransaction>._
+                        centreId,
+                        userId
                     )
                 )
                 .MustHaveHappened();
@@ -250,6 +353,8 @@
         public void EditDetailsPostSave_with_valid_info_and_valid_return_url_redirects_to_return_url()
         {
             // Given
+            const int userId = 2;
+            const int centreId = 2;
             const string returnUrl = "/TrackingSystem/Centre/Dashboard";
             var myAccountController = new MyAccountController(
                     centreRegistrationPromptsService,
@@ -261,10 +366,17 @@
                     logger,
                     config
                 ).WithDefaultContext()
-                .WithMockUser(true, delegateId: null)
+                .WithMockUser(true, centreId, userId: userId, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(Email, A<IDbTransaction?>._)).Returns(false);
-            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(Email, 2, A<IDbTransaction?>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
+                .Returns(false);
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        Email,
+                        centreId,
+                        userId
+                    )
+                )
                 .Returns(false);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -298,6 +410,8 @@
         public void EditDetailsPostSave_with_valid_info_and_invalid_return_url_redirects_to_index()
         {
             // Given
+            const int userId = 2;
+            const int centreId = 2;
             var myAccountController = new MyAccountController(
                     centreRegistrationPromptsService,
                     userService,
@@ -308,10 +422,17 @@
                     logger,
                     config
                 ).WithDefaultContext()
-                .WithMockUser(true, delegateId: null)
+                .WithMockUser(true, centreId, userId: userId, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(Email, A<IDbTransaction?>._)).Returns(false);
-            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(Email, 2, A<IDbTransaction?>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
+                .Returns(false);
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        Email,
+                        centreId,
+                        userId
+                    )
+                )
                 .Returns(false);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -388,12 +509,22 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(A<string>._, A<IDbTransaction?>._))
+            A.CallTo(
+                    () => userDataService.PrimaryEmailIsInUseByOtherUser(
+                        A<string>._,
+                        A<int>._
+                    )
+                )
                 .MustNotHaveHappened();
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction?>._)
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
             ).MustNotHaveHappened();
-            result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
+            result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should()
+                .BeEquivalentTo(expectedModel);
             myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.ProfileImageFile)].ValidationState
                 .Should().Be(ModelValidationState.Invalid);
         }
