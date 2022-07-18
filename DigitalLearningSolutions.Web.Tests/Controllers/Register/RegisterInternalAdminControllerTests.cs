@@ -9,7 +9,6 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -249,18 +248,6 @@
                 {
                     A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._))
                         .MustHaveHappenedOnceExactly();
-                }
-
-                if (centreSpecificEmail != null)
-                {
-                    A.CallTo(
-                        () => userDataService.SetCentreEmail(
-                            DefaultUserId,
-                            DefaultCentreId,
-                            centreSpecificEmail,
-                            A<IDbTransaction?>._
-                        )
-                    ).MustHaveHappenedOnceExactly();
                 }
             }
             else
