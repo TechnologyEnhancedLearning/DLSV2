@@ -18,7 +18,7 @@
         <h1 class="nhsuk-heading-xl">Register</h1>
 
         <p class="nhsuk-body-l">
-          Please enter your centre email to register as an admin at <b>@Model.CentreName</b>.
+          You have chosen to register as an admin at <b>@Model.CentreName</b>. You may set a centre email for this account.
         </p>
         <input type="hidden" asp-for="Centre" />
         <input type="hidden" asp-for="PrimaryEmail" />
@@ -31,7 +31,7 @@
         <div class="nhsuk-hint">
           This will be used for logging into the system. All communications will be sent to this email by default. You can change your primary email on the My Account page.
         </div>
-        <p class="nhsuk-body-m nhsuk-u-margin-top-4 nhsuk-u-margin-left-1">@Model.PrimaryEmail</p>
+        <p class="nhsuk-body-m nhsuk-u-margin-top-2">@Model.PrimaryEmail</p>
       </div>
 
       <vc:text-input asp-for="CentreSpecificEmail"

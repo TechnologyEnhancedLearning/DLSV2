@@ -82,14 +82,32 @@
             }
         }
 
-        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId, IDbTransaction? transaction = null)
+        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId)
+        {
+            return CentreSpecificEmailIsInUseAtCentreQuery(email, centreId, null);
+        }
+
+        public bool CentreSpecificEmailIsInUseAtCentreByOtherUser(
+            string email,
+            int centreId,
+            int userId
+        )
+        {
+            return CentreSpecificEmailIsInUseAtCentreQuery(email, centreId, userId);
+        }
+
+        private bool CentreSpecificEmailIsInUseAtCentreQuery(
+            string email,
+            int centreId,
+            int? userId
+        )
         {
             return connection.QueryFirst<int>(
-                @"SELECT COUNT(*)
+                @$"SELECT COUNT(*)
                     FROM UserCentreDetails
-                    WHERE CentreId = @centreId AND Email = @email",
-                new { email, centreId },
-                transaction
+                    WHERE CentreId = @centreId AND Email = @email
+                    {(userId == null ? "" : "AND UserId <> @userId")}",
+                new { email, centreId, userId }
             ) > 0;
         }
 

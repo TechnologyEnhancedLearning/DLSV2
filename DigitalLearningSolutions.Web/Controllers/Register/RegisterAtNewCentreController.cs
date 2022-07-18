@@ -100,12 +100,13 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult PersonalInformation(InternalPersonalInformationViewModel model)
         {
-            ValidateEmailAddress(model);
-
             if (model.Centre != null)
             {
+                ValidateEmailAddress(model);
+
                 var delegateAccount = userService.GetUserById(User.GetUserIdKnownNotNull())!
                     .GetCentreAccountSet(model.Centre.Value)?.DelegateAccount;
+
                 if (delegateAccount?.Active == true)
                 {
                     ModelState.AddModelError(
@@ -294,16 +295,21 @@
 
         private bool CheckCentreIdValid(int? centreId)
         {
-            return centreId == null
-                   || centresDataService.GetCentreName(centreId.Value) != null;
+            return centreId == null || centresDataService.GetCentreName(centreId.Value) != null;
         }
 
         private void ValidateEmailAddress(InternalPersonalInformationViewModel model)
         {
-            if (model.CentreSpecificEmail != null && userDataService.CentreSpecificEmailIsInUseAtCentre(
-                model.CentreSpecificEmail,
-                User.GetCentreIdKnownNotNull()
-            ))
+            var userId = User.GetUserIdKnownNotNull();
+
+            if (
+                model.Centre != null && model.CentreSpecificEmail != null &&
+                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    model.CentreSpecificEmail,
+                    model.Centre.Value,
+                    userId
+                )
+            )
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.CentreSpecificEmail),
