@@ -232,6 +232,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IBrandsService, BrandsService>();
+            services.AddScoped<IClaimAccountService, ClaimAccountService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)

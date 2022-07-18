@@ -9,8 +9,8 @@
         public string RegistrationConfirmationHash { get; set; } = null!;
         public string CandidateNumber { get; set; } = null!;
         public string? SupportEmail { get; set; }
-        public bool UserExists { get; set; }
-        public bool UserActive { get; set; }
+        public bool EmailIsTaken { get; set; }
+        public bool EmailIsTakenByActiveUser { get; set; }
         public bool PasswordSet { get; set; }
     }
 }

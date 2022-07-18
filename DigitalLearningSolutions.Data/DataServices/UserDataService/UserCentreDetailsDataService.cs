@@ -149,10 +149,9 @@
             var matchingUserAndCentreIds = connection.Query<(int, int, string)>(
                 @"SELECT ucd.UserID, c.CentreID, c.CentreName
                     FROM UserCentreDetails AS ucd
-                    INNER JOIN DelegateAccounts AS da ON da.UserID = ucd.UserID
+                    INNER JOIN DelegateAccounts AS da ON da.UserID = ucd.UserID AND da.CentreID = ucd.CentreID
                     INNER JOIN Centres AS c ON c.CentreID = ucd.CentreID
                     WHERE ucd.Email = @centreSpecificEmail
-                        AND ucd.CentreID = da.CentreID
                         AND da.RegistrationConfirmationHash = @registrationConfirmationHash",
                 new { centreSpecificEmail, registrationConfirmationHash }
             ).ToList();

@@ -504,18 +504,20 @@
         {
             using var transaction = new TransactionScope();
 
-            // When
+            // Given
             const int userId = 1;
             const int centreId = 101;
+
+            // When
             userDataService.SetRegistrationConfirmationHash(userId, centreId, hash);
+
+            // Then
             var result = connection.Query<string>(
                 @"SELECT RegistrationConfirmationHash
                     FROM DelegateAccounts
                     WHERE UserID = @userId AND CentreID = @centreId",
                 new { userId, centreId }
             ).SingleOrDefault();
-
-            // Then
             result.Should().Be(hash);
         }
     }

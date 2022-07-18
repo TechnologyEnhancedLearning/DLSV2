@@ -196,11 +196,24 @@
         }
 
         [Test]
-        [TestCase(null)]
-        [TestCase(1)]
-        public void GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair_returns_user_id_if_it_exists(
-            int? userId
-        )
+        public void
+            GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair_returns_null_if_user_does_not_exist()
+        {
+            using var transaction = new TransactionScope();
+
+            // When
+            var result =
+                userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                    "centre@email.com",
+                    "hash"
+                );
+
+            // Then
+            result.Should().Be((null, null, null));
+        }
+
+        [Test]
+        public void GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair_returns_user_id_if_it_exists()
         {
             using var transaction = new TransactionScope();
 
@@ -208,27 +221,13 @@
             const string email = "centre@email.com";
             const string confirmationHash = "hash";
             const int centreId = 3;
-            var centreName = userId == null
-                ? null
-                : connection.Query<string>(
-                    @"SELECT CentreName FROM Centres WHERE CentreID = @centreId",
-                    new { centreId }
-                ).SingleOrDefault();
+            const int userId = 1;
+            var centreName = connection.Query<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @centreId",
+                new { centreId }
+            ).SingleOrDefault();
 
-            if (userId != null)
-            {
-                connection.Execute(
-                    @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES (@userId, @centreId, @email)",
-                    new { userId, centreId, email }
-                );
-
-                connection.Execute(
-                    @"INSERT INTO DelegateAccounts
-                            (UserID, CentreID, RegistrationConfirmationHash, DateRegistered, CandidateNumber)
-                        VALUES (@userId, @centreId, @confirmationHash, GETDATE(), 'CN1001')",
-                    new { userId, centreId, confirmationHash }
-                );
-            }
+            GivenUnclaimedUserExists(userId, centreId, email, confirmationHash);
 
             // When
             var result =
@@ -238,7 +237,22 @@
                 );
 
             // Then
-            result.Should().Be((userId, userId == null ? (int?)null : centreId, centreName));
+            result.Should().Be((userId, centreId, centreName));
+        }
+
+        private void GivenUnclaimedUserExists(int userId, int centreId, string email, string hash)
+        {
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES (@userId, @centreId, @email)",
+                new { userId, centreId, email }
+            );
+
+            connection.Execute(
+                @"INSERT INTO DelegateAccounts
+                            (UserID, CentreID, RegistrationConfirmationHash, DateRegistered, CandidateNumber)
+                        VALUES (@userId, @centreId, @hash, GETDATE(), 'CN1001')",
+                new { userId, centreId, hash }
+            );
         }
     }
 }

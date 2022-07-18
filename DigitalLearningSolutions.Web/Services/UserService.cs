@@ -255,7 +255,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         public UserAccount? GetUserByEmailAddress(string emailAddress)
         {
-            return userDataService.GetUserAccountByEmailAddress(emailAddress);
+            return userDataService.GetUserAccountByPrimaryEmail(emailAddress);
         }
 
         public DelegateEntity? GetDelegateById(int id)

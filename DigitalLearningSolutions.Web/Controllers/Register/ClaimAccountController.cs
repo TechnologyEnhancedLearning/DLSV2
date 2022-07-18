@@ -1,11 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
-    using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Mvc;
 
@@ -13,17 +12,20 @@
     public class ClaimAccountController : Controller
     {
         private readonly IUserDataService userDataService;
-        private readonly IConfigDataService configDataService;
+        private readonly IClaimAccountService claimAccountService;
 
-        public ClaimAccountController(IUserDataService userDataService, IConfigDataService configDataService)
+        public ClaimAccountController(
+            IUserDataService userDataService,
+            IClaimAccountService claimAccountService
+        )
         {
             this.userDataService = userDataService;
-            this.configDataService = configDataService;
+            this.claimAccountService = claimAccountService;
         }
 
         [HttpGet]
         [Route("/ClaimAccount/CompleteRegistration")]
-        public IActionResult CompleteRegistration(string? email = null, string? code = null)
+        public IActionResult CompleteRegistration(string email, string code)
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(code))
             {
@@ -38,26 +40,14 @@
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
-            var existingUserAccount = userDataService.GetUserAccountByEmailAddress(email);
-            var userClaimingAccount = userDataService.GetUserAccountById(userId.Value);
-            var delegateAccount = userDataService.GetDelegateAccountsByUserId(userId.Value)
-                .SingleOrDefault(da => da.CentreId == centreId);
-            var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+            var model = claimAccountService.CreateModelForCompleteRegistration(
+                userId.Value,
+                centreId.Value,
+                centreName,
+                email
+            );
 
-            var model = new ClaimAccountViewModel
-            {
-                UserId = userId.Value,
-                CentreId = centreId.Value,
-                CentreName = centreName,
-                CentreSpecificEmail = email,
-                RegistrationConfirmationHash = code,
-                CandidateNumber = delegateAccount!.CandidateNumber,
-                SupportEmail = supportEmail,
-                UserExists = existingUserAccount != null,
-                UserActive = existingUserAccount?.Active ?? false,
-                PasswordSet = !string.IsNullOrWhiteSpace(userClaimingAccount?.PasswordHash),
-            };
-
+            model.RegistrationConfirmationHash = code;
             TempData.Set(model);
 
             return View(model);
@@ -79,17 +69,14 @@
                 return NotFound();
             }
 
-            userDataService.SetPrimaryEmailAndActivate(model.UserId, model.CentreSpecificEmail);
-            userDataService.SetCentreEmail(model.UserId, model.CentreId, null);
-            userDataService.SetRegistrationConfirmationHash(model.UserId, model.CentreId, null);
-            return RedirectToAction("Confirmation");
-        }
+            claimAccountService.ConvertTemporaryUserToConfirmedUser(
+                model.UserId,
+                model.CentreId,
+                model.CentreSpecificEmail
+            );
 
-        [HttpGet]
-        public IActionResult Confirmation()
-        {
-            var model = TempData.Peek<ClaimAccountViewModel>()!;
-            return View(model);
+            TempData.Clear();
+            return View("Confirmation", model);
         }
     }
 }

@@ -1,13 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
-    using System.Collections.Generic;
     using System.Data;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using FakeItEasy;
@@ -23,19 +20,17 @@
         private const int DefaultUserId = 2;
         private const int DefaultCentreId = 7;
         private const string DefaultCentreName = "Centre";
-        private const string DefaultPasswordHash = "hash";
         private const string DefaultCandidateNumber = "CN777";
-        private const string DefaultSupportEmail = "support@email.com";
         private IUserDataService userDataService = null!;
-        private IConfigDataService configDataService = null!;
+        private IClaimAccountService claimAccountService = null!;
         private ClaimAccountController controller = null!;
 
         [SetUp]
         public void Setup()
         {
             userDataService = A.Fake<IUserDataService>();
-            configDataService = A.Fake<IConfigDataService>();
-            controller = new ClaimAccountController(userDataService, configDataService)
+            claimAccountService = A.Fake<IClaimAccountService>();
+            controller = new ClaimAccountController(userDataService, claimAccountService)
                 .WithDefaultContext()
                 .WithMockTempData();
         }
@@ -49,9 +44,9 @@
         [TestCase("   ", DefaultCode)]
         [TestCase(DefaultEmail, null)]
         [TestCase(DefaultEmail, "   ")]
-        public void CompleteRegistrationGet_with_no_invalid_email_or_code_redirects_to_AccessDenied(
-            string? email,
-            string? code
+        public void CompleteRegistrationGet_with_invalid_email_or_code_redirects_to_AccessDenied(
+            string email,
+            string code
         )
         {
             // When
@@ -88,44 +83,26 @@
         }
 
         [Test]
-        [TestCase(false, false, "")]
-        [TestCase(false, false, DefaultPasswordHash)]
-        [TestCase(true, false, "")]
-        [TestCase(true, false, DefaultPasswordHash)]
-        [TestCase(true, true, "")]
-        [TestCase(true, true, DefaultPasswordHash)]
-        public void CompleteRegistrationGet_with_existing_user_returns_view_model(
-            bool userExists,
-            bool active,
-            string hash
-        )
+        public void CompleteRegistrationGet_with_existing_user_returns_view_model()
         {
             // Given
-            var existingUserAccount = userExists ? UserTestHelper.GetDefaultUserAccount(active: active) : null;
-            var userClaimingAccount = UserTestHelper.GetDefaultUserAccount(passwordHash: hash);
-            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount(
-                candidateNumber: DefaultCandidateNumber,
-                centreId: DefaultCentreId
-            );
-            var expectedModel = GetViewModel(
-                userExists: userExists,
-                userActive: active,
-                supportEmail: DefaultSupportEmail,
-                passwordSet: !string.IsNullOrWhiteSpace(hash)
-            );
-
             A.CallTo(
                 () => userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
                     DefaultEmail,
                     DefaultCode
                 )
             ).Returns((DefaultUserId, DefaultCentreId, DefaultCentreName));
-            A.CallTo(() => userDataService.GetUserAccountByEmailAddress(DefaultEmail)).Returns(existingUserAccount);
-            A.CallTo(() => userDataService.GetUserAccountById(DefaultUserId)).Returns(userClaimingAccount);
-            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId))
-                .Returns(new List<DelegateAccount> { delegateAccount });
-            A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.SupportEmail))
-                .Returns(DefaultSupportEmail);
+
+            var expectedModel = GetViewModel();
+
+            A.CallTo(
+                () => claimAccountService.CreateModelForCompleteRegistration(
+                    DefaultUserId,
+                    DefaultCentreId,
+                    DefaultCentreName,
+                    DefaultEmail
+                )
+            ).Returns(expectedModel);
 
             // When
             var result = controller.CompleteRegistration(DefaultEmail, DefaultCode);
@@ -152,24 +129,6 @@
             result.Should().BeNotFoundResult();
         }
 
-        // TODO HEEDLS-975 Test that this redirect to SetPassword
-        [Test]
-        public void CompleteRegistrationPost_with_password_not_set_returns_NotFound()
-        {
-            // Given
-            var model = GetViewModel();
-            controller.TempData.Set(model);
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail, A<IDbTransaction?>._)).Returns(false);
-
-            // When
-            var result = controller.CompleteRegistration();
-
-            // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail, A<IDbTransaction?>._))
-                .MustHaveHappenedOnceExactly();
-            result.Should().BeNotFoundResult();
-        }
-
         [Test]
         public void
             CompleteRegistrationPost_with_primary_email_not_in_use_and_password_set_sets_expected_data_and_redirects_to_Confirmation()
@@ -178,11 +137,13 @@
             var model = GetViewModel(passwordSet: true);
             controller.TempData.Set(model);
             A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail, A<IDbTransaction?>._)).Returns(false);
-            A.CallTo(() => userDataService.SetPrimaryEmailAndActivate(DefaultUserId, DefaultEmail)).DoesNothing();
-            A.CallTo(() => userDataService.SetCentreEmail(DefaultUserId, DefaultCentreId, null, A<IDbTransaction?>._))
-                .DoesNothing();
-            A.CallTo(() => userDataService.SetRegistrationConfirmationHash(DefaultUserId, DefaultCentreId, null))
-                .DoesNothing();
+            A.CallTo(
+                () => claimAccountService.ConvertTemporaryUserToConfirmedUser(
+                    DefaultUserId,
+                    DefaultCentreId,
+                    DefaultEmail
+                )
+            ).DoesNothing();
 
             // When
             var result = controller.CompleteRegistration();
@@ -190,13 +151,16 @@
             // Then
             A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail, A<IDbTransaction?>._))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => userDataService.SetPrimaryEmailAndActivate(DefaultUserId, DefaultEmail))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => userDataService.SetCentreEmail(DefaultUserId, DefaultCentreId, null, A<IDbTransaction?>._))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => userDataService.SetRegistrationConfirmationHash(DefaultUserId, DefaultCentreId, null))
-                .MustHaveHappenedOnceExactly();
-            result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
+            A.CallTo(
+                () => claimAccountService.ConvertTemporaryUserToConfirmedUser(
+                    DefaultUserId,
+                    DefaultCentreId,
+                    DefaultEmail
+                )
+            ).MustHaveHappenedOnceExactly();
+            result.Should().BeViewResult().ModelAs<ClaimAccountViewModel>();
+            ((ViewResult)result).ViewData.Model.Should().BeEquivalentTo(model);
+            ((ViewResult)result).ViewName.Should().Be("Confirmation");
         }
 
         private static ClaimAccountViewModel GetViewModel(
@@ -207,8 +171,8 @@
             string registrationConfirmationHash = DefaultCode,
             string candidateNumber = DefaultCandidateNumber,
             string? supportEmail = null,
-            bool userExists = false,
-            bool userActive = false,
+            bool emailIsTaken = false,
+            bool emailIsTakenByActiveUser = false,
             bool passwordSet = false
         )
         {
@@ -221,8 +185,8 @@
                 RegistrationConfirmationHash = registrationConfirmationHash,
                 CandidateNumber = candidateNumber,
                 SupportEmail = supportEmail,
-                UserExists = userExists,
-                UserActive = userActive,
+                EmailIsTaken = emailIsTaken,
+                EmailIsTakenByActiveUser = emailIsTakenByActiveUser,
                 PasswordSet = passwordSet,
             };
         }

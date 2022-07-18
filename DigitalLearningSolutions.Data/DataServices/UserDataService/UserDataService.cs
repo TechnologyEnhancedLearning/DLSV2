@@ -131,7 +131,7 @@
 
         UserAccount? GetUserAccountById(int userId);
 
-        UserAccount? GetUserAccountByEmailAddress(string emailAddress);
+        UserAccount? GetUserAccountByPrimaryEmail(string emailAddress);
 
         int? GetUserIdByAdminId(int adminId);
 
@@ -240,7 +240,7 @@
             ).SingleOrDefault();
         }
 
-        public UserAccount? GetUserAccountByEmailAddress(string emailAddress)
+        public UserAccount? GetUserAccountByPrimaryEmail(string emailAddress)
         {
             return connection.Query<UserAccount>(
                 @$"{BaseSelectUserQuery} WHERE u.PrimaryEmail = @emailAddress",

@@ -63,10 +63,10 @@
         }
 
         [Test]
-        public void GetUserAccountByEmailAddress_returns_expected_user_account()
+        public void GetUserAccountByPrimaryEmail_returns_expected_user_account()
         {
             // When
-            var result = userDataService.GetUserAccountByEmailAddress("test@gmail.com");
+            var result = userDataService.GetUserAccountByPrimaryEmail("test@gmail.com");
 
             // Then
             result.Should().BeEquivalentTo(
@@ -101,14 +101,16 @@
         {
             using var transaction = new TransactionScope();
 
-            // When
+            // Given
             const int userId = 2;
             const string primaryEmail = "primary@email.com";
+
+            // When
             connection.Execute(@"UPDATE Users SET Active = 0 WHERE ID = @userId", new { userId });
             userDataService.SetPrimaryEmailAndActivate(userId, primaryEmail);
-            var result = userDataService.GetUserAccountById(userId);
 
             // Then
+            var result = userDataService.GetUserAccountById(userId);
             result!.PrimaryEmail.Should().Be(primaryEmail);
             result.Active.Should().BeTrue();
         }

@@ -31,8 +31,8 @@
       </div>
     </dl>
 
-    @if (Model.UserExists) {
-      if (Model.UserActive) {
+    @if (Model.EmailIsTaken) {
+      if (Model.EmailIsTakenByActiveUser) {
         <p class="nhsuk-body-m">
           A DLS user account is already registered with this email address. If that account belongs to you, you can link this delegate record to your login.
         </p>
