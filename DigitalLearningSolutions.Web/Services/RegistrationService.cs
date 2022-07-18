@@ -67,6 +67,7 @@ namespace DigitalLearningSolutions.Web.Services
         private readonly IRegistrationDataService registrationDataService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
+        private readonly INotificationDataService notificationDataService;
         private readonly IUserService userService;
 
         public RegistrationService(
@@ -78,6 +79,7 @@ namespace DigitalLearningSolutions.Web.Services
             IConfiguration config,
             ISupervisorDelegateService supervisorDelegateService,
             IUserDataService userDataService,
+            INotificationDataService notificationDataService,
             ILogger<RegistrationService> logger,
             IUserService userService,
             IClockUtility clockUtility
@@ -92,6 +94,7 @@ namespace DigitalLearningSolutions.Web.Services
             this.config = config;
             this.supervisorDelegateService = supervisorDelegateService;
             this.userDataService = userDataService;
+            this.notificationDataService = notificationDataService;
             this.logger = logger;
             this.userService = userService;
             this.clockUtility = clockUtility;
@@ -139,7 +142,25 @@ namespace DigitalLearningSolutions.Web.Services
                 );
             }
 
-            SendDelegateNeedsApprovalEmailIfNecessary(delegateRegistrationModel, refactoredTrackingSystemEnabled);
+            if (!delegateRegistrationModel.Approved)
+            {
+                var recipients = notificationDataService.GetAdminRecipientsForCentreNotification(delegateRegistrationModel.Centre, 4);
+
+                foreach (var recipient in recipients)
+                {
+                    if (recipient.Email != null && recipient.FirstName != null)
+                    {
+                        var approvalEmail = GenerateApprovalEmail(
+                        recipient.Email,
+                        recipient.FirstName,
+                        delegateRegistrationModel.FirstName,
+                        delegateRegistrationModel.LastName,
+                        refactoredTrackingSystemEnabled
+                    );
+                        emailService.SendEmail(approvalEmail);
+                    }
+                }
+            }
 
             return (candidateNumber, delegateRegistrationModel.Approved);
         }

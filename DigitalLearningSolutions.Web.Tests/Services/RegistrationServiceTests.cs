@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
+    using DigitalLearningSolutions.Data.Models.Notifications;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Models.User;
@@ -18,6 +19,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
@@ -44,6 +46,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private INotificationDataService notificationDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -56,6 +59,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             config = A.Fake<IConfiguration>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
             userService = A.Fake<IUserService>();
+            notificationDataService = A.Fake<INotificationDataService>();
             userDataService = A.Fake<IUserDataService>();
             clockUtility = A.Fake<IClockUtility>();
 
@@ -84,6 +88,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 config,
                 supervisorDelegateService,
                 userDataService,
+                notificationDataService,
                 new NullLogger<RegistrationService>(),
                 userService,
                 clockUtility
@@ -184,15 +189,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             // Then
             A.CallTo(
                 () =>
-                    emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval" &&
-                                e.Body.TextBody.Contains(OldSystemBaseUrl + "/tracking/approvedelegates")
-                        )
+                    notificationDataService.GetAdminRecipientsForCentreNotification(
+                        model.Centre,
+                        4
                     )
             ).MustHaveHappened();
         }
@@ -214,15 +213,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             // Then
             A.CallTo(
                 () =>
-                    emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval" &&
-                                e.Body.TextBody.Contains(RefactoredSystemBaseUrl + "/TrackingSystem/Delegates/Approve")
-                        )
+                    notificationDataService.GetAdminRecipientsForCentreNotification(
+                        model.Centre,
+                        4
                     )
             ).MustHaveHappened();
         }
@@ -357,9 +350,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         )
         {
             // Given
-            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            GivenPendingSupervisorDelegateIdsForEmailAre(new List<int> { 1, 2, 3, 4, 5 });
+            GivenAdminsToNotifyHaveEmails(new[] { ApproverEmail });
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
 
             // When
             registrationService.CreateDelegateAccountForNewUser(
@@ -1423,6 +1416,16 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                     }
                 )
             );
+        }
+
+        private void GivenAdminsToNotifyHaveEmails(IEnumerable<string> adminEmails)
+        {
+            A.CallTo(() => notificationDataService.GetAdminRecipientsForCentreNotification(A<int>._, A<int>._))
+                .Returns(
+                    adminEmails.Select(
+                        email => Builder<NotificationRecipient>.CreateNew().With(r => r.Email = email).Build()
+                    )
+                );
         }
     }
 }

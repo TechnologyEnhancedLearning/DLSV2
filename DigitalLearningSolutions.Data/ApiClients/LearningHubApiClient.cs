@@ -16,6 +16,7 @@
     {
         Task<ResourceSearchResult> SearchResource(
             string text,
+            int? catalogueId,
             int? offset = null,
             int? limit = null,
             IEnumerable<string>? resourceTypes = null
@@ -26,6 +27,8 @@
         Task<BulkResourceReferences> GetBulkResourcesByReferenceIds(
             IEnumerable<int> resourceReferenceIds
         );
+
+        Task<CataloguesResult> GetCatalogues();
     }
 
     public class LearningHubApiClient : ILearningHubApiClient
@@ -48,12 +51,13 @@
 
         public async Task<ResourceSearchResult> SearchResource(
             string text,
+            int? catalogueId = null,
             int? offset = null,
             int? limit = null,
             IEnumerable<string>? resourceTypes = null
         )
         {
-            var queryString = GetSearchQueryString(text, offset, limit, resourceTypes);
+            var queryString = GetSearchQueryString(text, catalogueId, offset, limit, resourceTypes);
 
             var response = await GetStringAsync($"/Resource/Search?{queryString}");
             var result = JsonConvert.DeserializeObject<ResourceSearchResult>(response);
@@ -80,22 +84,32 @@
             return result;
         }
 
+        public async Task<CataloguesResult> GetCatalogues()
+        {
+            var response = await GetStringAsync($"/Catalogues");
+            var result = JsonConvert.DeserializeObject<CataloguesResult>(response);
+            return result;
+        }
+
         private static string GetSearchQueryString(
             string text,
+            int? catalogueId = null,
             int? offset = null,
             int? limit = null,
             IEnumerable<string>? resourceTypes = null
         )
         {
             var textQueryString = GetQueryString("text", text);
-            var offSetQueryString = GetQueryString("offset", offset.ToString());
-            var limitQueryString = GetQueryString("limit", limit.ToString());
+            var catalogueIdString = GetQueryString("catalogueId", catalogueId?.ToString());
+            var offSetQueryString = GetQueryString("offset", offset?.ToString());
+            var limitQueryString = GetQueryString("limit", limit?.ToString());
 
-            var queryStrings = new List<string> { textQueryString, offSetQueryString, limitQueryString };
+            var queryStrings = new List<string> { textQueryString, catalogueIdString, offSetQueryString, limitQueryString };
 
             if (resourceTypes != null)
             {
-                var resourceTypesQueryStrings = resourceTypes.Where(x => !string.IsNullOrEmpty(x))
+                var resourceTypesQueryStrings = resourceTypes
+                    .Where(x => !string.IsNullOrEmpty(x))
                     .Select(r => GetQueryString("resourceTypes", r.ToString()));
                 queryStrings.AddRange(resourceTypesQueryStrings);
             }
