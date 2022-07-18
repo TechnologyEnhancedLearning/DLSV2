@@ -48,7 +48,6 @@
 
             controller = new RegisterDelegateByCentreController(
                     jobGroupsDataService,
-                    userService,
                     promptsService,
                     cryptoService,
                     userDataService,
