@@ -11,11 +11,16 @@
     public interface ICentresService
     {
         IEnumerable<CentreRanking> GetCentresForCentreRankingPage(int centreId, int numberOfDays, int? regionId);
+
         int? GetCentreRankForCentre(int centreId);
+
         IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
+
         IEnumerable<CentreSummaryForFindYourCentre> GetAllCentreSummariesForFindCentre();
+
         IEnumerable<CentreSummaryForMap> GetAllCentreSummariesForMap();
-        bool DoesEmailMatchCentre(string email, int centreId);
+
+        bool IsAnEmailValidForCentreManager(string primaryEmail, string? centreSpecificEmail, int centreId);
     }
 
     public class CentresService : ICentresService
@@ -61,11 +66,18 @@
             return centresDataService.GetAllCentreSummariesForMap();
         }
 
-        public bool DoesEmailMatchCentre(string email, int centreId)
+        public bool IsAnEmailValidForCentreManager(string primaryEmail, string? centreSpecificEmail, int centreId)
         {
             var autoRegisterManagerEmail =
                 centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
-            return string.Equals(email, autoRegisterManagerEmail, StringComparison.CurrentCultureIgnoreCase);
+
+            return new List<string?> { primaryEmail, centreSpecificEmail }.Any(
+                email => email != null && string.Equals(
+                    email,
+                    autoRegisterManagerEmail,
+                    StringComparison.CurrentCultureIgnoreCase
+                )
+            );
         }
     }
 }

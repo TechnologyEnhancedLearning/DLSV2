@@ -442,7 +442,11 @@ namespace DigitalLearningSolutions.Web.Services
         {
             if (delegateRegistrationModel.CentreSpecificEmail != null)
             {
-                ValidateCentreEmail(delegateRegistrationModel.CentreSpecificEmail, delegateRegistrationModel.Centre);
+                ValidateCentreEmail(
+                    delegateRegistrationModel.CentreSpecificEmail,
+                    delegateRegistrationModel.Centre,
+                    null
+                );
             }
 
             var currentTime = clockUtility.UtcNow;
@@ -461,7 +465,11 @@ namespace DigitalLearningSolutions.Web.Services
         {
             if (delegateRegistrationModel.CentreSpecificEmail != null)
             {
-                ValidateCentreEmail(delegateRegistrationModel.CentreSpecificEmail, delegateRegistrationModel.Centre);
+                ValidateCentreEmail(
+                    delegateRegistrationModel.CentreSpecificEmail,
+                    delegateRegistrationModel.Centre,
+                    userId
+                );
             }
 
             var currentTime = clockUtility.UtcNow;
@@ -473,9 +481,17 @@ namespace DigitalLearningSolutions.Web.Services
             );
         }
 
-        private void ValidateCentreEmail(string centreEmail, int centreId)
+        private void ValidateCentreEmail(string centreEmail, int centreId, int? idOfRegistrantIfAlreadyExisting)
         {
-            if (userDataService.CentreSpecificEmailIsInUseAtCentre(centreEmail, centreId))
+            var centreEmailIsInUse = idOfRegistrantIfAlreadyExisting == null
+                ? userDataService.CentreSpecificEmailIsInUseAtCentre(centreEmail, centreId)
+                : userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    centreEmail,
+                    centreId,
+                    idOfRegistrantIfAlreadyExisting.Value
+                );
+
+            if (centreEmailIsInUse)
             {
                 var error = DelegateCreationError.EmailAlreadyInUse;
                 logger.LogError(

@@ -116,9 +116,27 @@
         }
 
         [Test]
+        [TestCase("primary@email")]
+        [TestCase("PRIMARY@EMAIL")]
+        public void DoEmailsMatchCentre_calls_dataService_and_returns_true_if_primary_email_matches_case_insensitively(
+            string primaryEmail
+        )
+        {
+            // Given
+            const int centreId = 1;
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((true, primaryEmail));
+
+            // When
+            var result = centresService.IsAnEmailValidForCentreManager(primaryEmail, null, centreId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
         [TestCase("centre@email")]
         [TestCase("CENTRE@EMAIL")]
-        public void DoesEmailMatchCentre_calls_dataService_and_returns_true_if_email_matches_case_insensitively(
+        public void DoEmailsMatchCentre_calls_dataService_and_returns_true_if_centre_email_matches_case_insensitively(
             string centreEmail
         )
         {
@@ -127,21 +145,21 @@
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((true, centreEmail));
 
             // When
-            var result = centresService.DoesEmailMatchCentre(centreEmail, centreId);
+            var result = centresService.IsAnEmailValidForCentreManager("primary@email", centreEmail, centreId);
 
             // Then
             result.Should().BeTrue();
         }
 
         [Test]
-        public void DoesEmailMatchCentre_calls_dataService_and_returns_false_if_email_does_not_match()
+        public void DoEmailsMatchCentre_calls_dataService_and_returns_false_if_email_does_not_match()
         {
             // Given
             const int centreId = 1;
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((true, "different@email"));
 
             // When
-            var result = centresService.DoesEmailMatchCentre("centre@email", centreId);
+            var result = centresService.IsAnEmailValidForCentreManager("primary@email", "centre@email", centreId);
 
             // Then
             result.Should().BeFalse();

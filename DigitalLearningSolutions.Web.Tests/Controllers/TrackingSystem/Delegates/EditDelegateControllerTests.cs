@@ -121,10 +121,10 @@
 
             A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     email,
                     delegateEntity.DelegateAccount.CentreId,
-                    A<IDbTransaction>._
+                    delegateEntity.UserAccount.Id
                 )
             ).Returns(true);
 
@@ -134,6 +134,14 @@
             // Then
             using (new AssertionScope())
             {
+                A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        email,
+                        delegateEntity.DelegateAccount.CentreId,
+                        delegateEntity.UserAccount.Id
+                    )
+                ).MustHaveHappenedOnceExactly();
+
                 result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
                 AssertModelStateErrorIsExpected(
                     result,
@@ -153,15 +161,21 @@
                 ProfessionalRegistrationNumber = "!&^£%&*^!%£",
             };
 
-            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, 2, A<IDbTransaction>._))
-                .Returns(false);
-
             // When
             var result = controller.Index(formData, DelegateId);
 
             // Then
             using (new AssertionScope())
             {
+                A.CallTo(
+                        () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                            A<string>._,
+                            A<int>._,
+                            A<int>._
+                        )
+                    )
+                    .MustNotHaveHappened();
+
                 result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
                 AssertModelStateErrorIsExpected(
                     result,
@@ -190,10 +204,10 @@
 
             A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     centreSpecificEmail,
                     delegateEntity.DelegateAccount.CentreId,
-                    A<IDbTransaction>._
+                    delegateEntity.UserAccount.Id
                 )
             ).Returns(false);
 
@@ -205,10 +219,10 @@
             {
                 A.CallTo(() => userService.GetDelegateById(DelegateId)).MustHaveHappenedOnceExactly();
                 A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                         centreSpecificEmail,
                         delegateEntity.DelegateAccount.CentreId,
-                        A<IDbTransaction>._
+                        delegateEntity.UserAccount.Id
                     )
                 ).MustHaveHappenedOnceExactly();
                 A.CallTo(
@@ -251,7 +265,11 @@
             {
                 A.CallTo(() => userService.GetDelegateById(DelegateId)).MustHaveHappenedOnceExactly();
                 A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction>._)
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        A<string>._,
+                        A<int>._,
+                        A<int>._
+                    )
                 ).MustNotHaveHappened();
                 A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -285,9 +303,6 @@
                 HasProfessionalRegistrationNumber = false,
                 CentreSpecificEmail = primaryEmail,
             };
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction>._)
-            ).Returns(false);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -295,6 +310,14 @@
             // Then
             using (new AssertionScope())
             {
+                A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        A<string>._,
+                        A<int>._,
+                        A<int>._
+                    )
+                ).MustNotHaveHappened();
+
                 A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
@@ -328,9 +351,6 @@
                 HasProfessionalRegistrationNumber = false,
                 CentreSpecificEmail = primaryEmail,
             };
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction>._)
-            ).Returns(false);
 
             // When
             var result = controller.Index(formData, DelegateId);
@@ -338,6 +358,14 @@
             // Then
             using (new AssertionScope())
             {
+                A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        A<string>._,
+                        A<int>._,
+                        A<int>._
+                    )
+                ).MustNotHaveHappened();
+
                 A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
@@ -353,26 +381,32 @@
 
         [Test]
         public void
-            Index_post_saves_centre_specific_email_as_given_value_if_same_as_primary_email_and_user_has_centre_details()
+            Index_post_saves_centre_specific_email_as_given_value_if_it_is_the_same_as_primary_email_and_centre_specific_email_already_exists()
         {
             // Given
-            const string primaryEmail = "primary@email";
+            const string newCentreSpecificEmail = "primary@email";
             var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
                 DelegateId,
-                primaryEmail: primaryEmail,
+                primaryEmail: newCentreSpecificEmail,
                 userCentreDetailsId: 1,
-                centreSpecificEmail: primaryEmail
+                centreSpecificEmail: "old@centre.com"
             );
-            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
 
             var formData = new EditDelegateFormData
             {
                 JobGroupId = 1,
                 HasProfessionalRegistrationNumber = false,
-                CentreSpecificEmail = primaryEmail,
+                CentreSpecificEmail = newCentreSpecificEmail,
             };
+
+            A.CallTo(() => userService.GetDelegateById(DelegateId)).Returns(delegateEntity);
+
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._, A<IDbTransaction>._)
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    newCentreSpecificEmail,
+                    delegateEntity.DelegateAccount.CentreId,
+                    delegateEntity.UserAccount.Id
+                )
             ).Returns(false);
 
             // When
@@ -385,7 +419,7 @@
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
                         A<DelegateDetailsData>._,
-                        primaryEmail,
+                        newCentreSpecificEmail,
                         delegateEntity.DelegateAccount.CentreId,
                         false
                     )
