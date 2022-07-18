@@ -38,11 +38,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
-        private readonly IUserService userService;
 
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
-            IUserService userService,
             PromptsService promptsService,
             ICryptoService cryptoService,
             IUserDataService userDataService,
@@ -51,7 +49,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         )
         {
             this.jobGroupsDataService = jobGroupsDataService;
-            this.userService = userService;
             this.promptsService = promptsService;
             this.userDataService = userDataService;
             this.registrationService = registrationService;

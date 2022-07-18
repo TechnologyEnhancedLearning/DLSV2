@@ -260,7 +260,8 @@ namespace DigitalLearningSolutions.Web.Services
                     delegateRegistrationModel.PasswordHash
                 );
             }
-            else if (delegateRegistrationModel.NotifyDate.HasValue)
+
+            if (delegateRegistrationModel.NotifyDate.HasValue)
             {
                 passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                     delegateId,

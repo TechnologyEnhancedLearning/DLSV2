@@ -261,14 +261,14 @@
         )
         {
             var emailAddress = delegateEntity.EmailForCentreNotifications;
-            var setPasswordUrl = new UriBuilder(baseUrl);
-            if (!setPasswordUrl.Path.EndsWith('/'))
+            var completeRegistrationUrl = new UriBuilder(baseUrl);
+            if (!completeRegistrationUrl.Path.EndsWith('/'))
             {
-                setPasswordUrl.Path += '/';
+                completeRegistrationUrl.Path += '/';
             }
 
-            setPasswordUrl.Path += "CompleteRegistration"; // TODO: HEEDLS-974 Create controller for this link
-            setPasswordUrl.Query = $"code={registrationConfirmationHash}&email={emailAddress}";
+            completeRegistrationUrl.Path += "CompleteRegistration"; // TODO: HEEDLS-974 Create controller for this link
+            completeRegistrationUrl.Query = $"code={registrationConfirmationHash}&email={emailAddress}";
 
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";
 
@@ -277,14 +277,14 @@
                 TextBody = $@"Dear {delegateEntity.UserAccount.FullName},
                             An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateEntity.DelegateAccount.CentreName}.
                             You have been assigned the unique DLS delegate number {delegateEntity.DelegateAccount.CandidateNumber}.
-                            To complete your registration and access your Digital Learning Solutions content, please click: {setPasswordUrl.Uri}
+                            To complete your registration and access your Digital Learning Solutions content, please click: {completeRegistrationUrl.Uri}
                             Note that this link can only be used once and it will expire in three days.
                             Please don't reply to this email as it has been automatically generated.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {delegateEntity.UserAccount.FullName},</p>
                                 <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateEntity.DelegateAccount.CentreName}.</p>
                                 <p>You have been assigned the unique DLS delegate number {delegateEntity.DelegateAccount.CandidateNumber}.</p>
-                                <p><a href=""{setPasswordUrl.Uri}"">Click here to complete your registration and access your Digital Learning Solutions content</a></p>
+                                <p><a href=""{completeRegistrationUrl.Uri}"">Click here to complete your registration and access your Digital Learning Solutions content</a></p>
                                 <p>Note that this link can only be used once and it will expire in three days.</p>
                                 <p>Please don't reply to this email as it has been automatically generated.</p>
                             </body>",
