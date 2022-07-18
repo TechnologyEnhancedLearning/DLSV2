@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
-    using System.Data;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
@@ -118,13 +117,13 @@
             // Given
             var model = GetViewModel();
             controller.TempData.Set(model);
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail, A<IDbTransaction?>._)).Returns(true);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail)).Returns(true);
 
             // When
             var result = controller.CompleteRegistration();
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail, A<IDbTransaction?>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeNotFoundResult();
         }
@@ -136,7 +135,7 @@
             // Given
             var model = GetViewModel(passwordSet: true);
             controller.TempData.Set(model);
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail, A<IDbTransaction?>._)).Returns(false);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail)).Returns(false);
             A.CallTo(
                 () => claimAccountService.ConvertTemporaryUserToConfirmedUser(
                     DefaultUserId,
@@ -149,7 +148,7 @@
             var result = controller.CompleteRegistration();
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail, A<IDbTransaction?>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => claimAccountService.ConvertTemporaryUserToConfirmedUser(
