@@ -388,7 +388,7 @@
         }
 
         [Test]
-        public void SetCentreEmails_calls_UserDataService_does_not_call_data_service_if_given_an_empty_dictionary()
+        public void SetCentreEmails_does_not_call_data_service_if_given_an_empty_dictionary()
         {
             // Given
             var centreEmailsByCentreId = new Dictionary<int, string?>();
