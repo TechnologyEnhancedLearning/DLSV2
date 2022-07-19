@@ -322,7 +322,7 @@
         }
 
         [Test]
-        public void UpdateUserDetails_uses_sets_detailsLastChecked_to_ClockUtility_UtcNow_if_argument_provided()
+        public void UpdateUserDetails_sets_detailsLastChecked_to_ClockUtility_UtcNow_if_no_argument_provided()
         {
             // Given
             const bool changesMadeBySameUser = true;
@@ -388,7 +388,7 @@
         }
 
         [Test]
-        public void SetCentreEmails_calls_UserDataService_does_nothing_if_given_an_empty_dictionary()
+        public void SetCentreEmails_calls_UserDataService_does_not_call_data_service_if_given_an_empty_dictionary()
         {
             // Given
             var centreEmailsByCentreId = new Dictionary<int, string?>();
