@@ -281,7 +281,8 @@
                                rfa.Answer5 == answer5 &&
                                rfa.Answer6 == answer6
                     ),
-                    null
+                    null,
+                    delegateAccountWithOldDetails.GetRegistrationFieldAnswers()
                 )
             ).MustHaveHappened();
         }

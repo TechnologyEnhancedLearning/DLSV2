@@ -31,7 +31,8 @@
                 delegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                null
+                null,
+                delegateAccountWithOldDetails.GetRegistrationFieldAnswers()
             );
 
             // Then
@@ -65,7 +66,8 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                null
+                null,
+                delegateAccountWithOldDetails.GetRegistrationFieldAnswers()
             );
 
             // Then
@@ -100,7 +102,8 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                null
+                null,
+                delegateAccountWithOldDetails.GetRegistrationFieldAnswers()
             );
 
             // Then
@@ -135,7 +138,8 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                null
+                null,
+                delegateAccountWithOldDetails.GetRegistrationFieldAnswers()
             );
 
             // Then
@@ -170,7 +174,8 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                null
+                null,
+                delegateAccountWithOldDetails.GetRegistrationFieldAnswers()
             );
 
             // Then
@@ -211,7 +216,8 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                null
+                null,
+                delegateAccountWithOldDetails.GetRegistrationFieldAnswers()
             );
 
             // Then
@@ -241,7 +247,8 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                null
+                null,
+                delegateAccountWithOldDetails.GetRegistrationFieldAnswers()
             );
 
             // Then
@@ -277,7 +284,8 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                null
+                null,
+                delegateAccountWithOldDetails.GetRegistrationFieldAnswers()
             );
 
             // Then
@@ -318,7 +326,8 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                null
+                null,
+                delegateAccountWithOldDetails.GetRegistrationFieldAnswers()
             );
 
             // Then
@@ -360,7 +369,8 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                null
+                null,
+                delegateAccountWithOldDetails.GetRegistrationFieldAnswers()
             );
 
             // Then

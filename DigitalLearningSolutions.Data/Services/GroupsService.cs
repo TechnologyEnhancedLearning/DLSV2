@@ -41,7 +41,8 @@
             int delegateId,
             AccountDetailsData accountDetailsData,
             RegistrationFieldAnswers newDelegateDetails,
-            string? centreEmail
+            string? centreEmail,
+            RegistrationFieldAnswers oldRegistrationFieldAnswers
         );
 
         void AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
@@ -174,20 +175,20 @@
             int delegateId,
             AccountDetailsData accountDetailsData,
             RegistrationFieldAnswers registrationFieldAnswers,
-            string? centreEmail
+            string? centreEmail,
+            RegistrationFieldAnswers
+                oldRegistrationFieldAnswers // Pass in empty one to get post registration group update
         )
         {
-            var delegateAccountWithOldDetails = userDataService.GetDelegateUserById(delegateId)!;
-
             var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldChanges(
-                delegateAccountWithOldDetails.GetRegistrationFieldAnswers(),
+                oldRegistrationFieldAnswers,
                 registrationFieldAnswers,
                 jobGroupsDataService,
                 centreRegistrationPromptsService
             );
 
             var allSynchronisedGroupsAtCentre =
-                GetSynchronisedGroupsForCentre(delegateAccountWithOldDetails.CentreId).ToList();
+                GetSynchronisedGroupsForCentre(registrationFieldAnswers.CentreId).ToList();
 
             foreach (var changedAnswer in changedLinkedFields)
             {
@@ -204,20 +205,21 @@
                 using var transaction = new TransactionScope();
                 foreach (var groupToRemoveDelegateFrom in groupsToRemoveDelegateFrom)
                 {
-                    RemoveDelegateFromGroup(delegateAccountWithOldDetails.Id, groupToRemoveDelegateFrom.GroupId);
+                    RemoveDelegateFromGroup(delegateId, groupToRemoveDelegateFrom.GroupId);
                 }
 
                 foreach (var groupToAddDelegateTo in groupsToAddDelegateTo)
                 {
                     groupsDataService.AddDelegateToGroup(
-                        delegateAccountWithOldDetails.Id,
+                        delegateId,
                         groupToAddDelegateTo.GroupId,
                         clockService.UtcNow,
                         1
                     );
 
                     EnrolDelegateOnGroupCourses(
-                        delegateAccountWithOldDetails,
+                        registrationFieldAnswers.CentreId,
+                        delegateId,
                         accountDetailsData,
                         centreEmail,
                         groupToAddDelegateTo.GroupId
@@ -228,7 +230,7 @@
             }
         }
 
-        public void AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+        public void AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses( // Think this can be replaced with a specific call to SynchroniseUserChangesWithGroups()
             int delegateId,
             RegistrationFieldAnswers registrationFieldAnswers
         )
@@ -273,20 +275,21 @@
         }
 
         public void EnrolDelegateOnGroupCourses(
-            DelegateUser delegateAccountWithOldDetails,
+            int centreId,
+            int delegateId,
             AccountDetailsData newDetails,
             string? centreEmail,
             int groupId,
             int? addedByAdminId = null
         )
         {
-            var groupCourses = GetUsableGroupCoursesForCentre(groupId, delegateAccountWithOldDetails.CentreId);
+            var groupCourses = GetUsableGroupCoursesForCentre(groupId, centreId);
             var fullName = newDetails.FirstName + " " + newDetails.Surname;
 
             foreach (var groupCourse in groupCourses)
             {
                 EnrolDelegateOnGroupCourse(
-                    delegateAccountWithOldDetails.Id,
+                    delegateId,
                     centreEmail ?? newDetails.Email,
                     fullName,
                     addedByAdminId,
@@ -337,7 +340,8 @@
             );
 
             EnrolDelegateOnGroupCourses(
-                delegateUser,
+                delegateUser.CentreId,
+                delegateUser.Id,
                 accountDetailsData,
                 delegateEntity.EmailForCentreNotifications,
                 groupId,
