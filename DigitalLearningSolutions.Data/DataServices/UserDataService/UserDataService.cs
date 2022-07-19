@@ -12,6 +12,8 @@
     {
         AdminEntity? GetAdminById(int id);
 
+        IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId);
+
         AdminUser? GetAdminUserById(int id);
 
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
@@ -41,8 +43,6 @@
         IEnumerable<DelegateEntity> GetUnapprovedDelegatesByCentreId(int centreId);
 
         DelegateUser? GetDelegateUserById(int id);
-
-        List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
 
         List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
 
@@ -75,8 +75,6 @@
         void RemoveDelegateAccount(int delegateId);
 
         int GetNumberOfApprovedDelegatesAtCentre(int centreId);
-
-        DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId);
 
         void DeactivateDelegateUser(int delegateId);
 
@@ -121,9 +119,17 @@
             bool hasBeenPromptedForPrn
         );
 
-        bool AnyEmailsInSetAreAlreadyInUse(IEnumerable<string?> emails, IDbTransaction? transaction = null);
+        bool PrimaryEmailIsInUse(string email);
 
-        bool EmailIsInUseByOtherUser(int userId, string email, IDbTransaction? transaction = null);
+        bool PrimaryEmailIsInUseByOtherUser(string email, int userId);
+
+        bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId);
+
+        bool CentreSpecificEmailIsInUseAtCentreByOtherUser(
+            string email,
+            int centreId,
+            int userId
+        );
 
         void DeleteAdminAccount(int adminId);
 
@@ -151,6 +157,8 @@
         );
 
         string? GetCentreEmail(int userId, int centreId);
+
+        IEnumerable<(string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(int userId);
 
         IEnumerable<(int centreId, string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(int userId);
     }
@@ -255,6 +263,27 @@
                         WHERE ID = @userId",
                 new { userId, updatedCount }
             );
+        }
+
+        public bool PrimaryEmailIsInUse(string email)
+        {
+            return PrimaryEmailIsInUseQuery(email, null);
+        }
+
+        public bool PrimaryEmailIsInUseByOtherUser(string email, int userId)
+        {
+            return PrimaryEmailIsInUseQuery(email, userId);
+        }
+
+        private bool PrimaryEmailIsInUseQuery(string email, int? userId)
+        {
+            return connection.QueryFirst<int>(
+                @$"SELECT COUNT(*)
+                    FROM Users
+                    WHERE PrimaryEmail = @email
+                    {(userId == null ? "" : "AND Id <> @userId")}",
+                new { email, userId }
+            ) > 0;
         }
     }
 }

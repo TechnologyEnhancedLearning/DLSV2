@@ -36,7 +36,12 @@
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.LearnCandidateId);
         }
 
-        public static int GetCentreId(this ClaimsPrincipal user)
+        public static int? GetCentreId(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
+        }
+
+        public static int GetCentreIdKnownNotNull(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserCentreId);
         }
@@ -55,6 +60,11 @@
         public static string? GetUserPrimaryEmail(this ClaimsPrincipal user)
         {
             return user.FindFirst(ClaimTypes.Email).Value;
+        }
+
+        public static string GetUserPrimaryEmailKnownNotNull(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsRequiredString(ClaimTypes.Email);
         }
 
         public static int? GetCustomClaimAsInt(this ClaimsPrincipal user, string customClaimType)
@@ -100,6 +110,12 @@
             return int.Parse(customClaimString);
         }
 
+        // Should only be used for claims we know not be null from the authorization policy
+        public static string GetCustomClaimAsRequiredString(this ClaimsPrincipal user, string customClaimType)
+        {
+            return user.GetCustomClaim(customClaimType)!;
+        }
+
         public static bool IsDelegateOnlyAccount(this ClaimsPrincipal user)
         {
             return user.GetAdminId() == null
@@ -138,7 +154,8 @@
 
         public static bool HasSupervisorAdminPermissions(this ClaimsPrincipal user)
         {
-            return user.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true;
+            return user.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true ||
+                   user.GetCustomClaimAsBool(CustomClaimTypes.IsNominatedSupervisor) == true;
         }
 
         public static string GetCandidateNumberKnownNotNull(this ClaimsPrincipal user)

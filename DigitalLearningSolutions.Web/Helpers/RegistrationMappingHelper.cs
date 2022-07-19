@@ -51,6 +51,7 @@
                 data.Answer6,
                 true,
                 true,
+                true,
                 data.ProfessionalRegistrationNumber,
                 notifyDate: DateTime.Now
             );
@@ -80,7 +81,7 @@
             return new DelegateRegistrationModel(
                 data.FirstName!,
                 data.LastName!,
-                data.PrimaryEmail!,
+                Guid.NewGuid().ToString(),
                 data.CentreSpecificEmail,
                 data.Centre!.Value,
                 data.JobGroup!.Value,
@@ -93,6 +94,7 @@
                 data.Answer6,
                 false,
                 true,
+                false,
                 data.ProfessionalRegistrationNumber,
                 true,
                 data.WelcomeEmailDate

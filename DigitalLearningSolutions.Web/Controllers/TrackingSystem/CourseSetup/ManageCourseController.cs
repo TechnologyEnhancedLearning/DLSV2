@@ -4,13 +4,13 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -36,7 +36,7 @@
         public IActionResult Index(int customisationId)
         {
             TempData.Clear();
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
 
             var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
@@ -61,7 +61,7 @@
         [Route("LearningPathwayDefaults")]
         public IActionResult EditLearningPathwayDefaults(int customisationId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
 
             var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
@@ -120,7 +120,7 @@
         [Route("AutoRefreshOptions")]
         public IActionResult EditAutoRefreshOptions(int customisationId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
 
             var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
@@ -180,7 +180,7 @@
         [Route("CourseDetails")]
         public IActionResult EditCourseDetails(int customisationId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId()!;
 
             var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
@@ -201,7 +201,7 @@
             EditCourseDetailsFormData formData
         )
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             CourseDetailsValidator.ValidateCustomisationName(
                 formData,
@@ -242,7 +242,7 @@
         [Route("EditCourseOptions")]
         public IActionResult EditCourseOptions(int customisationId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
 
             var courseOptions = courseService.GetCourseOptionsFilteredByCategory(
@@ -282,7 +282,7 @@
 
         private IEnumerable<SelectListItem> GetCourseOptionsSelectList(int customisationId, int? selectedId = null)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId()!;
 
             var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryId)

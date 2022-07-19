@@ -130,16 +130,16 @@ namespace DigitalLearningSolutions.Data.DataServices
         private const string DelegateAllAttemptsQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
                 FROM dbo.AssessAttempts AS aa
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
+                INNER JOIN dbo.DelegateAccounts AS dacc ON dacc.ID = aa.CandidateID
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL
-                AND can.CandidateId = ca.CandidateId) AS AllAttempts";
+                AND dacc.ID = da.ID) AS AllAttempts";
 
         private const string DelegateAttemptsPassedQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
                 FROM dbo.AssessAttempts AS aa
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
+                INNER JOIN dbo.DelegateAccounts AS dacc ON dacc.ID = aa.CandidateID
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
-                AND can.CandidateId = ca.CandidateId) AS AttemptsPassed";
+                AND dacc.ID = da.ID) AS AttemptsPassed";
 
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
@@ -171,28 +171,32 @@ namespace DigitalLearningSolutions.Data.DataServices
                 {DelegateAttemptsPassedQuery},
                 pr.FirstSubmittedTime AS Enrolled,
                 pr.EnrollmentMethodID AS EnrolmentMethodId,
-                auEnrolledBy.Forename AS EnrolledByForename,
-                auEnrolledBy.Surname AS EnrolledBySurname,
-                auEnrolledBy.Active AS EnrolledByAdminActive,
-                auSupervisor.AdminID AS SupervisorAdminId,
-                auSupervisor.Forename AS SupervisorForename,
-                auSupervisor.Surname AS SupervisorSurname,
-                auSupervisor.Active AS SupervisorAdminActive,
-                ca.CandidateID AS DelegateId,
-                ca.CandidateNumber,
-                ca.FirstName AS DelegateFirstName,
-                ca.LastName AS DelegateLastName,
-                ca.EmailAddress AS DelegateEmail,
-                ca.Active AS IsDelegateActive,
-                ca.HasBeenPromptedForPrn,
-                ca.ProfessionalRegistrationNumber,
-                ca.CentreID AS DelegateCentreId
+                uEnrolledBy.FirstName AS EnrolledByForename,
+                uEnrolledBy.LastName AS EnrolledBySurname,
+                aaEnrolledBy.Active AS EnrolledByAdminActive,
+                aaSupervisor.ID AS SupervisorAdminId,
+                uSupervisor.FirstName AS SupervisorForename,
+                uSupervisor.LastName AS SupervisorSurname,
+                aaSupervisor.Active AS SupervisorAdminActive,
+                da.ID AS DelegateId,
+                da.CandidateNumber,
+                u.FirstName AS DelegateFirstName,
+                u.LastName AS DelegateLastName,
+                COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
+                da.Active AS IsDelegateActive,
+                u.HasBeenPromptedForPrn,
+                u.ProfessionalRegistrationNumber,
+                da.CentreID AS DelegateCentreId
             FROM Customisations cu
-            INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
-            INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
-            LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = pr.SupervisorAdminId
-            LEFT OUTER JOIN AdminUsers auEnrolledBy ON auEnrolledBy.AdminID = pr.EnrolledByAdminID
-            INNER JOIN Candidates AS ca ON ca.CandidateID = pr.CandidateID";
+            INNER JOIN Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+            INNER JOIN Progress AS pr ON pr.CustomisationID = cu.CustomisationID
+            LEFT OUTER JOIN AdminAccounts AS aaSupervisor ON aaSupervisor.ID = pr.SupervisorAdminId
+            LEFT OUTER JOIN Users AS uSupervisor ON uSupervisor.ID = aaSupervisor.UserID
+            LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy ON aaEnrolledBy.ID = pr.EnrolledByAdminID
+            LEFT OUTER JOIN Users AS uEnrolledBy ON uEnrolledBy.ID = aaEnrolledBy.UserID
+            INNER JOIN DelegateAccounts AS da ON da.ID = pr.CandidateID
+            INNER JOIN Users AS u ON u.ID = da.UserID
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID";
 
         public CourseDataService(IDbConnection connection, ILogger<CourseDataService> logger)
         {
@@ -369,7 +373,8 @@ namespace DigitalLearningSolutions.Data.DataServices
             return connection.QuerySingleOrDefault<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.ProgressID = @progressId
-                        AND ap.ArchivedDate IS NULL",
+                        AND ap.ArchivedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4",
                 new { progressId }
             );
         }
@@ -385,8 +390,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                                         WHERE cap.ApplicationID = cu.ApplicationID AND
                                             cap.CentreID = @centreID AND
                                             cap.Active = 1)))
-                        AND ca.CentreID = @centreId
-                        AND pr.CustomisationID = @customisationId",
+                        AND da.CentreID = @centreId
+                        AND pr.CustomisationID = @customisationId
+                        AND ap.DefaultContentTypeID <> 4",
                 new { customisationId, centreId }
             );
         }
@@ -446,7 +452,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 @"SELECT cu.CustomisationName, ap.ApplicationName
                         FROM Customisations cu
                         JOIN Applications ap ON cu.ApplicationId = ap.ApplicationId
-                        WHERE cu.CustomisationId = @customisationId",
+                        WHERE cu.CustomisationId = @customisationId
+                            AND ap.DefaultContentTypeID <> 4",
                 new { customisationId }
             );
             if (names == null)
@@ -473,7 +480,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
                 INNER JOIN Customisations AS c ON c.CustomisationID = ct.CustomisationID
                 INNER JOIN Applications AS a ON a.ApplicationID = c.ApplicationID
-                WHERE ct.DiagStatus = 1 AND a.DiagAssess = 1 AND ct.CustomisationID = c.CustomisationID";
+                WHERE ct.DiagStatus = 1 AND a.DiagAssess = 1 AND ct.CustomisationID = c.CustomisationID
+                    AND a.ArchivedDate IS NULL AND a.DefaultContentTypeID <> 4";
 
             return connection.Query<CourseAssessmentDetails>(
                 $@"SELECT
@@ -516,6 +524,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
                     INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
                     WHERE ap.ArchivedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4
                         AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND EXISTS (SELECT CentreApplicationID FROM CentreApplications
                                     WHERE (CentreID = @centreID AND ApplicationID = ap.ApplicationID))",
@@ -540,7 +549,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
                     WHERE ap.ArchivedDate IS NULL
                         AND ap.Debug = 0
-                        AND ap.BrandID = @brandId",
+                        AND ap.BrandID = @brandId
+                        AND ap.DefaultContentTypeID <> 4",
                 new { brandId }
             );
         }
@@ -560,9 +570,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN Customisations AS c ON c.CustomisationID = p.CustomisationId
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     WHERE cn.CentreID = @centreID
-                    AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    AND ap.ArchivedDate IS NULL
-                    AND ap.DefaultContentTypeID <> 4",
+                        AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                        AND ap.ArchivedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4",
                 new { centreId, categoryId }
             );
         }
@@ -576,12 +586,14 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             return connection.ExecuteScalar<bool>(
                 @"SELECT CASE WHEN EXISTS (
-                        SELECT CustomisationID
-                        FROM dbo.Customisations
-                        WHERE [ApplicationID] = @applicationID
-                        AND [CentreID] = @centreID
-                        AND [CustomisationName] = @customisationName
-                        AND [CustomisationID] != @customisationId)
+                        SELECT c.CustomisationID
+                        FROM dbo.Customisations AS c
+                        INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                        WHERE c.[ApplicationID] = @applicationID
+                            AND c.[CentreID] = @centreID
+                            AND c.[CustomisationName] = @customisationName
+                            AND c.[CustomisationID] != @customisationId
+                            AND ap.DefaultContentTypeID <> 4)
                     THEN CAST(1 AS BIT)
                     ELSE CAST(0 AS BIT) END",
                 new { customisationName, centreId, applicationId, customisationId }
@@ -709,15 +721,16 @@ namespace DigitalLearningSolutions.Data.DataServices
                         Applications.ApplicationID,
                         COUNT(Progress.ProgressID) AS NumRecentProgressRecords
                     FROM Applications
-                        INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
-                        INNER JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID
+                    INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
+                    INNER JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID
                     WHERE Applications.BrandID = @brandId
-                      AND Applications.Debug = 0
-                      AND Applications.ArchivedDate IS NULL
-                      AND Progress.SubmittedTime > @threeMonthsAgo
+                        AND Applications.Debug = 0
+                        AND Applications.ArchivedDate IS NULL
+                        AND Progress.SubmittedTime > @threeMonthsAgo
+                        AND Applications.DefaultContentTypeID <> 4
                     GROUP BY Applications.ApplicationID",
                 new
-                    { brandId, threeMonthsAgo }
+                { brandId, threeMonthsAgo }
             );
             return query.ToDictionary<dynamic?, int, int>(
                 entry => entry.ApplicationID,
@@ -803,22 +816,24 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             return connection.Query<CourseDelegateForExport>(
                 $@"SELECT
-                        ca.CandidateID AS DelegateId,
-                        ca.CandidateNumber,
-                        ca.FirstName AS DelegateFirstName,
-                        ca.LastName AS DelegateLastName,
-                        ca.EmailAddress AS DelegateEmail,
-                        ca.Active AS IsDelegateActive,
-                        ca.Answer1 AS RegistrationAnswer1,
-                        ca.Answer2 AS RegistrationAnswer1,
-                        ca.Answer3 AS RegistrationAnswer1,
-                        ca.Answer4 AS RegistrationAnswer1,
-                        ca.Answer5 AS RegistrationAnswer1,
-                        ca.Answer6 AS RegistrationAnswer1,
+                        ap.ApplicationName,
+                        cu.CustomisationName,
+                        da.ID AS DelegateId,
+                        da.CandidateNumber,
+                        u.FirstName AS DelegateFirstName,
+                        u.LastName AS DelegateLastName,
+                        COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
+                        da.Active AS IsDelegateActive,
+                        da.Answer1 AS RegistrationAnswer1,
+                        da.Answer2 AS RegistrationAnswer2,
+                        da.Answer3 AS RegistrationAnswer3,
+                        da.Answer4 AS RegistrationAnswer4,
+                        da.Answer5 AS RegistrationAnswer5,
+                        da.Answer6 AS RegistrationAnswer6,
                         p.ProgressID,
                         p.PLLocked AS IsProgressLocked,
                         p.SubmittedTime AS LastUpdated,
-                        ca.DateRegistered AS Enrolled,
+                        da.DateRegistered AS Enrolled,
                         p.CompleteByDate AS CompleteBy,
                         p.RemovedDate,
                         p.Completed,
@@ -831,11 +846,15 @@ namespace DigitalLearningSolutions.Data.DataServices
                         p.Answer3,
                         {DelegateAllAttemptsQuery},
                         {DelegateAllAttemptsQuery}
-                    FROM Candidates AS ca
-                    INNER JOIN Progress AS p ON p.CandidateID = ca.CandidateID
-                    INNER JOIN Customisations cu ON cu.CustomisationID = p.CustomisationID
-                    WHERE ca.CentreID = @centreId
-                        AND p.CustomisationID = @customisationId",
+                    FROM DelegateAccounts AS da
+                    INNER JOIN Users AS u on u.ID = da.UserID
+                    INNER JOIN Progress AS p ON p.CandidateID = da.ID
+                    LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.centreID = da.centreID
+                    INNER JOIN Customisations AS cu ON cu.CustomisationID = p.CustomisationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+                    WHERE da.CentreID = @centreId
+                        AND p.CustomisationID = @customisationId
+                        AND ap.DefaultContentTypeID <> 4",
                 new { customisationId, centreId }
             );
         }

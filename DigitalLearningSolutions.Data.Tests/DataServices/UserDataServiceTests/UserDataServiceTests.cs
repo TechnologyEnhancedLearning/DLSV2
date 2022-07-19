@@ -81,5 +81,30 @@
             // Then
             result.Should().Be(2);
         }
+
+        [Test]
+        [TestCase("test@gmail.com", true)]
+        [TestCase("not_an_email_in_the_database", false)]
+        public void PrimaryEmailIsInUse_returns_expected_value(string email, bool expectedResult)
+        {
+            // When
+            var result = userDataService.PrimaryEmailIsInUse(email);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        [TestCase("test@gmail.com", -1, true)]
+        [TestCase("test@gmail.com", 2, false, TestName = "User id matches email")]
+        [TestCase("not_an_email_in_the_database", 2, false)]
+        public void PrimaryEmailIsInUseByOtherUser_returns_expected_value(string email, int userId, bool expectedResult)
+        {
+            // When
+            var result = userDataService.PrimaryEmailIsInUseByOtherUser(email, userId);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
     }
 }

@@ -20,7 +20,7 @@
       @if (Model.CentreUserDetails.Any(centreRow =>
         centreRow.Status.Equals(ChooseACentreStatus.DelegateUnapproved)
         || centreRow.Status.Equals(ChooseACentreStatus.Unapproved))) {
-        <vc:inset-text css-class="" text="You have an unapproved delegate account. You will be notified via your primary email when your registration has been approved." />
+        <vc:inset-text css-class="" text="You have an unapproved delegate account. You will be notified via email when your registration has been approved." />
       }
 
       <table role="table" class="nhsuk-table-responsive">

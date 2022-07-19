@@ -50,6 +50,18 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             var model = new TermsViewModel(termsText);
             return View(model);
         }
+        public IActionResult Contact()
+        {
+            var contactText = configDataService.GetConfigValue(ConfigDataService.ContactText);
+            if (contactText == null)
+            {
+                logger.LogError("Contact text from Config table is null");
+                return StatusCode(500);
+            }
+
+            var model = new ContactViewModel(contactText);
+            return View(model);
+        }
 
         public IActionResult Error()
         {
@@ -100,7 +112,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         private string? GetBannerText()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var bannerText = centresDataService.GetBannerText(centreId);
             return bannerText;
         }

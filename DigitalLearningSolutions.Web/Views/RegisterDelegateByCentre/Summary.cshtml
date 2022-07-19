@@ -47,7 +47,7 @@
           Email
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.PrimaryEmail
+          @Model.CentreSpecificEmail
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="PersonalInformation">
@@ -96,10 +96,10 @@
       }
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          @(Model.ShouldSendEmail ? "Welcome email date" : "Send welcome email")
+          Welcome email date
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @(Model.ShouldSendEmail ? Model.WelcomeEmailDate : "No")
+          @Model.WelcomeEmailDate
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="WelcomeEmail">
@@ -107,21 +107,19 @@
           </a>
         </dd>
       </div>
-      @if (!Model.ShouldSendEmail) {
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Password set
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @(Model.IsPasswordSet ? "Yes" : "No")
-          </dd>
-          <dd class="nhsuk-summary-list__actions">
-            <a asp-action="Password">
-              Change<span class="nhsuk-u-visually-hidden"> password settings</span>
-            </a>
-          </dd>
-        </div>
-      }
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Password set
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @(Model.IsPasswordSet ? "Yes" : "No")
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="Password">
+            Change<span class="nhsuk-u-visually-hidden"> password settings</span>
+          </a>
+        </dd>
+      </div>
     </dl>
 
     <form method="post" asp-action="Summary">

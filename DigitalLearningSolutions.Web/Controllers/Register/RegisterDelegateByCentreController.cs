@@ -2,19 +2,18 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
@@ -39,11 +38,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
-        private readonly IUserService userService;
 
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
-            IUserService userService,
             PromptsService promptsService,
             ICryptoService cryptoService,
             IUserDataService userDataService,
@@ -52,7 +49,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         )
         {
             this.jobGroupsDataService = jobGroupsDataService;
-            this.userService = userService;
             this.promptsService = promptsService;
             this.userDataService = userDataService;
             this.registrationService = registrationService;
@@ -63,7 +59,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [Route("/TrackingSystem/Delegates/Register")]
         public IActionResult Index()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             SetCentreDelegateRegistrationData(centreId);
 
@@ -76,7 +72,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            var model = new PersonalInformationViewModel(data);
+            var model = new RegisterDelegatePersonalInformationViewModel(data);
 
             ValidatePersonalInformation(model);
 
@@ -85,7 +81,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpPost]
-        public IActionResult PersonalInformation(PersonalInformationViewModel model)
+        public IActionResult PersonalInformation(RegisterDelegatePersonalInformationViewModel model)
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
@@ -169,8 +165,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            model.ClearDateIfNotSendEmail();
-
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -238,7 +232,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
                 TempData.Clear();
                 TempData.Add("delegateNumber", candidateNumber);
-                TempData.Add("emailSent", data.ShouldSendEmail);
                 TempData.Add("passwordSet", data.IsPasswordSet);
                 return RedirectToAction("Confirmation");
             }
@@ -264,8 +257,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public IActionResult Confirmation()
         {
             var delegateNumber = (string?)TempData.Peek("delegateNumber");
-            var emailSent = (bool)TempData.Peek("emailSent");
-            var passwordSet = (bool)TempData.Peek("passwordSet");
             TempData.Clear();
 
             if (delegateNumber == null)
@@ -273,7 +264,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return RedirectToAction("Index");
             }
 
-            var viewModel = new ConfirmationViewModel(delegateNumber, emailSent, passwordSet);
+            var viewModel = new ConfirmationViewModel(delegateNumber);
             return View(viewModel);
         }
 
@@ -283,17 +274,17 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             TempData.Set(centreDelegateRegistrationData);
         }
 
-        private void ValidatePersonalInformation(PersonalInformationViewModel model)
+        private void ValidatePersonalInformation(RegisterDelegatePersonalInformationViewModel model)
         {
-            if (model.PrimaryEmail == null)
+            if (model.CentreSpecificEmail == null)
             {
                 return;
             }
 
-            if (!userService.IsDelegateEmailValidForCentre(model.PrimaryEmail, model.Centre!.Value))
+            if (userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail, model.Centre!.Value))
             {
                 ModelState.AddModelError(
-                    nameof(PersonalInformationViewModel.PrimaryEmail),
+                    nameof(RegisterDelegatePersonalInformationViewModel.CentreSpecificEmail),
                     "A user with this email is already registered at this centre"
                 );
             }

@@ -4,11 +4,11 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -59,7 +59,7 @@
                 CourseStatusFilterOptions.IsActive.FilterValue
             );
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
 
             var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId);
@@ -96,7 +96,7 @@
         [Route("AllCourseStatistics")]
         public IActionResult AllCourseStatistics()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
             var details = courseService.GetCentreCourseDetailsWithAllCentreCourses(centreId, categoryId);
 
@@ -113,7 +113,7 @@
             string? existingFilterString = null
         )
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryId = User.GetAdminCategoryId();
             var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFile(
                 centreId,

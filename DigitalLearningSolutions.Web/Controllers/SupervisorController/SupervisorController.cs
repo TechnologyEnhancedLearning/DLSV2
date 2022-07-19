@@ -1,18 +1,19 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.SupervisorController
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     [Authorize(Policy = CustomPolicies.UserSupervisor)]
     public partial class SupervisorController : Controller
     {
-        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly ISelfAssessmentService selfAssessmentService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly ISupervisorService supervisorService;
         private readonly IUserDataService userDataService;
 

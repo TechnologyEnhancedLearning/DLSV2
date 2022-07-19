@@ -15,13 +15,16 @@
         public PromoteToAdminViewModel() { }
 
         public PromoteToAdminViewModel(
-            DelegateUser user,
+            string firstName,
+            string lastName,
+            int delegateId,
+            int userId,
             int centreId,
             IEnumerable<Category> categories,
             CentreContractAdminUsage numberOfAdmins
-        ) : base(user, centreId)
+        ) : base(firstName, lastName, centreId, userId)
         {
-            DelegateId = user.Id;
+            DelegateId = delegateId;
 
             IsCentreAdmin = false;
             IsSupervisor = false;

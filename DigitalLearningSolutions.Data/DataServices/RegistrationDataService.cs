@@ -6,15 +6,17 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Logging;
 
     public interface IRegistrationDataService
     {
-        string RegisterNewUserAndDelegateAccount(
+        (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions
         );
+
+        int RegisterAdmin(AdminAccountRegistrationModel registrationModel);
 
         (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(
             DelegateRegistrationModel delegateRegistrationModel,
@@ -29,13 +31,11 @@
             int delegateId,
             DateTime currentTime
         );
-
-        int RegisterAdmin(AdminRegistrationModel registrationModel, int userId);
     }
 
     public class RegistrationDataService : IRegistrationDataService
     {
-        private readonly IClockService clockService;
+        private readonly IClockUtility clockUtility;
         private readonly IDbConnection connection;
         private readonly ILogger<IRegistrationDataService> logger;
         private readonly IUserDataService userDataService;
@@ -43,17 +43,17 @@
         public RegistrationDataService(
             IDbConnection connection,
             IUserDataService userDataService,
-            IClockService clockService,
+            IClockUtility clockUtility,
             ILogger<IRegistrationDataService> logger
         )
         {
             this.connection = connection;
             this.userDataService = userDataService;
-            this.clockService = clockService;
+            this.clockUtility = clockUtility;
             this.logger = logger;
         }
 
-        public string RegisterNewUserAndDelegateAccount(
+        public (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions
         )
@@ -61,7 +61,7 @@
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
 
-            var currentTime = clockService.UtcNow;
+            var currentTime = clockUtility.UtcNow;
 
             var userIdToLinkDelegateAccountTo = RegisterUserAccount(
                 delegateRegistrationModel,
@@ -70,7 +70,7 @@
                 transaction
             );
 
-            var (_, candidateNumber) = RegisterDelegateAccountAndCentreDetailForExistingUser(
+            var (delegateId, candidateNumber) = RegisterDelegateAccountAndCentreDetailForExistingUser(
                 delegateRegistrationModel,
                 userIdToLinkDelegateAccountTo,
                 currentTime,
@@ -79,7 +79,7 @@
 
             transaction.Commit();
 
-            return candidateNumber;
+            return (delegateId, candidateNumber);
         }
 
         public (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(
@@ -150,22 +150,22 @@
             transaction.Commit();
         }
 
-        public int RegisterAdmin(AdminRegistrationModel registrationModel, int userId)
+        public int RegisterAdmin(AdminAccountRegistrationModel registrationModel)
         {
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
 
             RegisterCentreDetailForExistingUser(
-                registrationModel.Centre,
+                registrationModel.CentreId,
                 registrationModel.CentreSpecificEmail,
-                userId,
+                registrationModel.UserId,
                 transaction
             );
 
             var adminValues = new
             {
-                userId,
-                centreID = registrationModel.Centre,
+                registrationModel.UserId,
+                centreID = registrationModel.CentreId,
                 categoryID = registrationModel.CategoryId,
                 isCentreAdmin = registrationModel.IsCentreAdmin,
                 isCentreManager = registrationModel.IsCentreManager,
@@ -220,7 +220,8 @@
                 FROM Notifications N INNER JOIN NotificationRoles NR
                 ON N.NotificationID = NR.NotificationID
                 WHERE RoleID IN @roles AND AutoOptIn = 1",
-                new { adminUserId, roles = registrationModel.GetNotificationRoles() }
+                new { adminUserId, roles = registrationModel.GetNotificationRoles() },
+                transaction
             );
 
             transaction.Commit();
@@ -241,9 +242,9 @@
                 delegateRegistrationModel.LastName,
                 delegateRegistrationModel.PrimaryEmail,
                 delegateRegistrationModel.JobGroup,
-                delegateRegistrationModel.Active,
-                PasswordHash = "temp",
-                ProfessionalRegistrationNumber = (string?)null,
+                delegateRegistrationModel.UserIsActive,
+                delegateRegistrationModel.ProfessionalRegistrationNumber,
+                PasswordHash = string.Empty,
                 TermsAgreed = registerJourneyContainsTermsAndConditions ? currentTime : (DateTime?)null,
                 DetailsLastChecked = currentTime,
             };
@@ -270,7 +271,7 @@
                         @lastName,
                         @jobGroup,
                         @professionalRegistrationNumber,
-                        @active,
+                        @userIsActive,
                         @termsAgreed,
                         @detailsLastChecked
                     )",
@@ -336,7 +337,7 @@
                 delegateRegistrationModel.Answer5,
                 delegateRegistrationModel.Answer6,
                 delegateRegistrationModel.Approved,
-                delegateRegistrationModel.Active,
+                delegateRegistrationModel.CentreAccountIsActive,
                 delegateRegistrationModel.IsExternalRegistered,
                 delegateRegistrationModel.IsSelfRegistered,
                 CentreSpecificDetailsLastChecked = currentTime,
@@ -378,7 +379,7 @@
                         @answer5,
                         @answer6,
                         @approved,
-                        @active,
+                        @centreAccountIsActive,
                         @isExternalRegistered,
                         @isSelfRegistered,
                         @centreSpecificDetailsLastChecked
@@ -414,7 +415,7 @@
                 delegateRegistrationModel.Answer5,
                 delegateRegistrationModel.Answer6,
                 delegateRegistrationModel.Approved,
-                delegateRegistrationModel.Active,
+                delegateRegistrationModel.CentreAccountIsActive,
                 CentreSpecificDetailsLastChecked = currentTime,
             };
 
@@ -427,7 +428,7 @@
                             Answer5 = @answer5,
                             Answer6 = @answer6,
                             Approved = @approved,
-                            Active = @active,
+                            Active = @centreAccountIsActive,
                             CentreSpecificDetailsLastChecked = @centreSpecificDetailsLastChecked
                         WHERE ID = @delegateId",
                 newDelegateValues,

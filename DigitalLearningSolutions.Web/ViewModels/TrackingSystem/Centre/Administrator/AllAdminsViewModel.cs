@@ -13,14 +13,14 @@
         public readonly IEnumerable<SearchableAdminViewModel> Admins;
 
         public AllAdminsViewModel(
-            IEnumerable<AdminUser> adminUsers,
+            IEnumerable<AdminEntity> admins,
             IEnumerable<Category> categories,
-            AdminUser loggedInAdminUser
+            AdminAccount loggedInAdminAccount
         )
 
         {
-            Admins = adminUsers.Select(au => new SearchableAdminViewModel(au, loggedInAdminUser,
-                new ReturnPageQuery(1, $"{au.Id}-card")));
+            Admins = admins.Select(admin => new SearchableAdminViewModel(admin, loggedInAdminAccount,
+                new ReturnPageQuery(1, $"{admin.AdminAccount.Id}-card")));
 
             Filters = AdministratorsViewModelFilterOptions.GetAllAdministratorsFilterModels(categories)
                 .SelectAppliedFilterViewModels();

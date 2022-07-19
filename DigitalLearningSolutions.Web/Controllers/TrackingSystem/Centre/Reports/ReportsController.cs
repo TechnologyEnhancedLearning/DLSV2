@@ -5,10 +5,10 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -35,7 +35,7 @@
 
         public IActionResult Index()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId();
 
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
@@ -72,7 +72,7 @@
         [Route("Data")]
         public IEnumerable<ActivityDataRowModel> GetGraphData()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId();
 
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
@@ -87,7 +87,7 @@
         [Route("EditFilters")]
         public IActionResult EditFilters()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var categoryIdFilter = User.GetAdminCategoryId();
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
@@ -111,7 +111,7 @@
             var categoryIdFilter = User.GetAdminCategoryId();
             if (!ModelState.IsValid)
             {
-                var centreId = User.GetCentreId();
+                var centreId = User.GetCentreIdKnownNotNull();
                 var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
                 model.SetUpDropdowns(filterOptions, categoryIdFilter);
                 model.DataStart = activityService.GetActivityStartDateForCentre(centreId);
@@ -144,7 +144,7 @@
             ReportInterval reportInterval
         )
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var adminCategoryIdFilter = User.GetAdminCategoryId();
 
             var dateRange =
@@ -186,7 +186,7 @@
             ReportInterval reportInterval
         )
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var adminCategoryIdFilter = User.GetAdminCategoryId();
 
             var dateRange =

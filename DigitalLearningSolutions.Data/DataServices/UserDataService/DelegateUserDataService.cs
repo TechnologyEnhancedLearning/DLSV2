@@ -60,7 +60,9 @@
                 da.SelfReg,
                 da.OldPassword,
                 da.UserID,
-                da.CentreSpecificDetailsLastChecked
+                da.CentreSpecificDetailsLastChecked,
+                da.RegistrationConfirmationHash,
+                da.RegistrationConfirmationHashCreationDateTime
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreId";
 
@@ -107,7 +109,13 @@
                 ucd.UserID,
                 ucd.CentreID,
                 ucd.Email,
-                ucd.EmailVerified
+                ucd.EmailVerified,
+                (SELECT ID
+                    FROM AdminAccounts aa
+                        WHERE aa.UserID = da.UserID
+                            AND aa.CentreID = da.CentreID
+                            AND aa.Active = 1
+                ) AS AdminID
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS ce ON ce.CentreId = da.CentreID
             INNER JOIN Users AS u ON u.ID = da.UserID
@@ -119,15 +127,16 @@
         {
             var sql = $@"{BaseDelegateEntitySelectQuery} WHERE da.ID = @id";
 
-            return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, DelegateEntity>(
+            return connection.Query<DelegateAccount, UserAccount, UserCentreDetails, int?, DelegateEntity>(
                 sql,
-                (delegateAccount, userAccount, userCentreDetails) => new DelegateEntity(
+                (delegateAccount, userAccount, userCentreDetails, adminId) => new DelegateEntity(
                     delegateAccount,
                     userAccount,
-                    userCentreDetails
+                    userCentreDetails,
+                    adminId
                 ),
                 new { id },
-                splitOn: "ID,ID"
+                splitOn: "ID,ID,AdminID"
             ).SingleOrDefault();
         }
 
@@ -174,17 +183,6 @@
             ).SingleOrDefault();
 
             return user;
-        }
-
-        public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
-        {
-            var users = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateUserQuery}
-                    WHERE cd.EmailAddress = @emailAddress",
-                new { emailAddress }
-            ).ToList();
-
-            return users;
         }
 
         [Obsolete("New code should use GetUnapprovedDelegatesByCentreId instead")]
@@ -290,18 +288,6 @@
                 @"SELECT COUNT(*) FROM Candidates WHERE Active = 1 AND Approved = 1 AND CentreID = @centreId",
                 new { centreId }
             );
-        }
-
-        [Obsolete("New code should use GetDelegateByCandidateNumber instead")]
-        public DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId)
-        {
-            var user = connection.Query<DelegateUser>(
-                @$"{BaseSelectDelegateUserQuery}
-                    WHERE cd.CandidateNumber = @candidateNumber AND cd.CentreId = @centreId",
-                new { candidateNumber, centreId }
-            ).SingleOrDefault();
-
-            return user;
         }
 
         public void UpdateDelegateAccount(

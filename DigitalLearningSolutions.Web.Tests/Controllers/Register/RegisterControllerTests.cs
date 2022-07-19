@@ -3,20 +3,22 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Primitives;
     using Microsoft.FeatureManagement;
@@ -36,7 +38,7 @@
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
-        private IUserService userService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -45,7 +47,7 @@
             cryptoService = A.Fake<ICryptoService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
-            userService = A.Fake<IUserService>();
+            userDataService = A.Fake<IUserDataService>();
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
@@ -56,7 +58,7 @@
                     jobGroupsDataService,
                     registrationService,
                     cryptoService,
-                    userService,
+                    userDataService,
                     promptsService,
                     featureManager,
                     supervisorDelegateService
@@ -91,6 +93,43 @@
         }
 
         [Test]
+        public void IndexGet_with_no_centreId_shows_index_page()
+        {
+            // When
+            var result = controller.Index();
+
+            // Then
+            A.CallTo(() => centresDataService.GetCentreName(A<int>._)).MustNotHaveHappened();
+
+            using (new AssertionScope())
+            {
+                result.Should().BeViewResult().ModelAs<RegisterViewModel>().CentreId.Should().BeNull();
+                result.Should().BeViewResult().ModelAs<RegisterViewModel>().CentreName.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void IndexGet_with_centreId_shows_index_page()
+        {
+            // Given
+            const int centreId = 1;
+            const string centreName = "centre";
+            const string inviteId = "invite";
+            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(centreName);
+
+            // When
+            var result = controller.Index(centreId, inviteId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeViewResult().ModelAs<RegisterViewModel>().CentreId.Should().Be(centreId);
+                result.Should().BeViewResult().ModelAs<RegisterViewModel>().CentreName.Should().Be(centreName);
+                result.Should().BeViewResult().ModelAs<RegisterViewModel>().InviteId.Should().Be(inviteId);
+            }
+        }
+
+        [Test]
         public void IndexGet_with_invalid_centreId_param_shows_error()
         {
             // Given
@@ -106,14 +145,54 @@
         }
 
         [Test]
-        public void IndexGet_with_valid_centreId_param_sets_data_correctly()
+        public void IndexGet_while_logged_in_redirects_to_register_at_new_centre_journey()
+        {
+            // Given
+            const int centreId = 1;
+            const string inviteId = "invite";
+            var authenticatedController = new RegisterController(
+                centresDataService,
+                jobGroupsDataService,
+                registrationService,
+                cryptoService,
+                userDataService,
+                promptsService,
+                featureManager,
+                supervisorDelegateService
+            ).WithDefaultContext().WithMockUser(true);
+
+            // When
+            var result = authenticatedController.Index(centreId, inviteId);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("RegisterAtNewCentre")
+                .WithActionName("Index").WithRouteValue("centreId", centreId).WithRouteValue("inviteId", inviteId);
+        }
+
+        [Test]
+        public void Start_with_invalid_centreId_param_shows_error()
+        {
+            // Given
+            const int centreId = 7;
+            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(null);
+
+            // When
+            var result = controller.Start(centreId);
+
+            // Then
+            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void Start_with_valid_centreId_param_sets_data_correctly()
         {
             // Given
             const int centreId = 7;
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
 
             // When
-            var result = controller.Index(centreId);
+            var result = controller.Start(centreId);
 
             // Then
             A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
@@ -124,10 +203,10 @@
         }
 
         [Test]
-        public void IndexGet_with_no_centreId_param_allows_normal_registration()
+        public void Start_with_no_centreId_param_allows_normal_registration()
         {
             // When
-            var result = controller.Index();
+            var result = controller.Start();
 
             // Then
             A.CallTo(() => centresDataService.GetCentreName(A<int>._)).MustNotHaveHappened();
@@ -138,26 +217,31 @@
         }
 
         [Test]
-        public void IndexGet_while_logged_in_redirects_to_register_at_new_centre_journey()
+        public void Start_while_logged_in_redirects_to_register_at_new_centre_journey()
         {
             // Given
+            const int centreId = 1;
+            const string centreName = "centre";
+            const string inviteId = "invite";
             var authenticatedController = new RegisterController(
                 centresDataService,
                 jobGroupsDataService,
                 registrationService,
                 cryptoService,
-                userService,
+                userDataService,
                 promptsService,
                 featureManager,
                 supervisorDelegateService
             ).WithDefaultContext().WithMockUser(true);
 
+            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(centreName);
+
             // When
-            var result = authenticatedController.Index();
+            var result = authenticatedController.Start(centreId, inviteId);
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("RegisterAtNewCentre")
-                .WithActionName("Index");
+                .WithActionName("Index").WithRouteValue("centreId", centreId).WithRouteValue("inviteId", inviteId);
         }
 
         [Test]
@@ -205,7 +289,7 @@
                                     d.Answer4 == data.Answer4 &&
                                     d.Answer5 == data.Answer5 &&
                                     d.Answer6 == data.Answer6 &&
-                                    d.Active &&
+                                    d.CentreAccountIsActive &&
                                     d.IsSelfRegistered &&
                                     d.NotifyDate != null
                             ),

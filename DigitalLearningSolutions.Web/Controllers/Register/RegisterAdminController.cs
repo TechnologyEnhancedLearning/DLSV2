@@ -1,17 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Mvc;
@@ -25,7 +24,7 @@
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
-        private readonly IUserService userService;
+        private readonly IRegisterAdminService registerAdminService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
@@ -34,7 +33,7 @@
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
             IUserDataService userDataService,
-            IUserService userService
+            IRegisterAdminService registerAdminService
         )
         {
             this.centresDataService = centresDataService;
@@ -43,7 +42,7 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.userDataService = userDataService;
-            this.userService = userService;
+            this.registerAdminService = registerAdminService;
         }
 
         public IActionResult Index(int? centreId = null)
@@ -58,7 +57,7 @@
                 return NotFound();
             }
 
-            if (!IsRegisterAdminAllowed(centreId.Value))
+            if (!registerAdminService.IsRegisterAdminAllowed(centreId.Value))
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
@@ -80,7 +79,7 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 ModelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 
@@ -96,7 +95,7 @@
             RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
                 model,
                 ModelState,
-                userService,
+                userDataService,
                 centresDataService
             );
 
@@ -234,14 +233,6 @@
             return View();
         }
 
-        private bool IsRegisterAdminAllowed(int centreId)
-        {
-            var adminUsers = userDataService.GetAdminUsersByCentreId(centreId);
-            var hasCentreManagerAdmin = adminUsers.Any(user => user.IsCentreManager);
-            var (autoRegistered, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
-            return !hasCentreManagerAdmin && !autoRegistered && !string.IsNullOrWhiteSpace(autoRegisterManagerEmail);
-        }
-
         private void SetAdminRegistrationData(int centreId)
         {
             var adminRegistrationData = new RegistrationData(centreId);
@@ -249,20 +240,20 @@
             TempData.Set(adminRegistrationData);
         }
 
-        private bool IsEmailUnique(string email)
-        {
-            var adminUser = userDataService.GetAdminUserByEmailAddress(email);
-            return adminUser == null;
-        }
-
         private bool CanProceedWithRegistration(RegistrationData data)
         {
-            return data.Centre.HasValue && data.PrimaryEmail != null && IsRegisterAdminAllowed(data.Centre.Value) &&
-                   (data.CentreSpecificEmail != null &&
-                    centresService.DoesEmailMatchCentre(data.CentreSpecificEmail, data.Centre.Value) ||
-                    centresService.DoesEmailMatchCentre(data.PrimaryEmail, data.Centre.Value)) &&
-                   IsEmailUnique(data.PrimaryEmail) &&
-                   (data.CentreSpecificEmail == null || IsEmailUnique(data.CentreSpecificEmail));
+            return data.Centre.HasValue && data.PrimaryEmail != null &&
+                   registerAdminService.IsRegisterAdminAllowed(data.Centre.Value) &&
+                   centresService.IsAnEmailValidForCentreManager(
+                       data.PrimaryEmail,
+                       data.CentreSpecificEmail,
+                       data.Centre.Value
+                   ) &&
+                   !userDataService.PrimaryEmailIsInUse(data.PrimaryEmail) &&
+                   (data.CentreSpecificEmail == null || !userDataService.CentreSpecificEmailIsInUseAtCentre(
+                       data.CentreSpecificEmail,
+                       data.Centre.Value
+                   ));
         }
 
         private void SetCentreName(PersonalInformationViewModel model)

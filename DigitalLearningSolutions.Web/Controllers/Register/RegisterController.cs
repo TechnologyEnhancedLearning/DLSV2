@@ -4,15 +4,16 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Mvc;
@@ -29,14 +30,14 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
-        private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
 
         public RegisterController(
             ICentresDataService centresDataService,
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
             ICryptoService cryptoService,
-            IUserService userService,
+            IUserDataService userDataService,
             PromptsService promptsService,
             IFeatureManager featureManager,
             ISupervisorDelegateService supervisorDelegateService
@@ -46,7 +47,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
-            this.userService = userService;
+            this.userDataService = userDataService;
             this.promptsService = promptsService;
             this.featureManager = featureManager;
             this.supervisorDelegateService = supervisorDelegateService;
@@ -59,7 +60,29 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return RedirectToAction("Index", "RegisterAtNewCentre", new { centreId, inviteId });
             }
 
-            if (!CheckCentreIdValid(centreId))
+            var centreName = GetCentreName(centreId);
+
+            if (centreId != null && centreName == null)
+            {
+                return NotFound();
+            }
+
+            var model = new RegisterViewModel(centreId, centreName, inviteId);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Start(int? centreId = null, string? inviteId = null)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "RegisterAtNewCentre", new { centreId, inviteId });
+            }
+
+            var centreName = GetCentreName(centreId);
+
+            if (centreId != null && centreName == null)
             {
                 return NotFound();
             }
@@ -74,11 +97,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 supervisorDelegateRecord = null;
             }
 
-            SetDelegateRegistrationData(
+            var delegateRegistrationData = new DelegateRegistrationData(
                 centreId,
                 supervisorDelegateRecord?.ID,
                 supervisorDelegateRecord?.DelegateEmail
             );
+
+            TempData.Set(delegateRegistrationData);
 
             return RedirectToAction("PersonalInformation");
         }
@@ -94,7 +119,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             // Check this email and centre combination doesn't already exist in case we were redirected
             // back here by the user trying to submit the final page of the form
-            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, ModelState, userService);
+            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(
+                model,
+                ModelState,
+                userDataService
+            );
 
             return View(model);
         }
@@ -103,7 +132,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
-            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(model, ModelState, userService);
+            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(
+                model,
+                ModelState,
+                userDataService
+            );
 
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
@@ -298,16 +331,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(viewModel);
         }
 
-        private void SetDelegateRegistrationData(int? centreId, int? supervisorDelegateId, string? email)
+        private string? GetCentreName(int? centreId)
         {
-            var delegateRegistrationData = new DelegateRegistrationData(centreId, supervisorDelegateId, email);
-            TempData.Set(delegateRegistrationData);
-        }
-
-        private bool CheckCentreIdValid(int? centreId)
-        {
-            return centreId == null
-                   || centresDataService.GetCentreName(centreId.Value) != null;
+            return centreId == null ? null : centresDataService.GetCentreName(centreId.Value);
         }
 
         private IEnumerable<EditDelegateRegistrationPromptViewModel>

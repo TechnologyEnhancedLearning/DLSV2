@@ -13,5 +13,6 @@
         public int? CandidateId { get; set; }
         public int? Version { get; set; }
         public int? TutorialId { get; set; }
+        public int? Score { get; set; }
     }
 }

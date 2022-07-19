@@ -1,12 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
@@ -79,6 +81,7 @@
             var controller = new MyAccountController(
                 A.Fake<ICentreRegistrationPromptsService>(),
                 A.Fake<IUserService>(),
+                A.Fake<IUserDataService>(),
                 A.Fake<IImageResizeService>(),
                 A.Fake<IJobGroupsDataService>(),
                 A.Fake<PromptsService>(),
@@ -140,6 +143,7 @@
             var controller = new MyAccountController(
                 A.Fake<ICentreRegistrationPromptsService>(),
                 A.Fake<IUserService>(),
+                A.Fake<IUserDataService>(),
                 A.Fake<IImageResizeService>(),
                 A.Fake<IJobGroupsDataService>(),
                 A.Fake<PromptsService>(),

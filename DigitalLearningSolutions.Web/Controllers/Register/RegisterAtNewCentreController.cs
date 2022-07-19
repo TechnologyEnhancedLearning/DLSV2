@@ -4,15 +4,16 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,7 @@
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
 
         public RegisterAtNewCentreController(
             ICentresDataService centresDataService,
@@ -36,7 +38,8 @@
             PromptsService promptsService,
             IRegistrationService registrationService,
             ISupervisorDelegateService supervisorDelegateService,
-            IUserService userService
+            IUserService userService,
+            IUserDataService userDataService
         )
         {
             this.centresDataService = centresDataService;
@@ -45,6 +48,7 @@
             this.registrationService = registrationService;
             this.supervisorDelegateService = supervisorDelegateService;
             this.userService = userService;
+            this.userDataService = userDataService;
         }
 
         public IActionResult Index(int? centreId = null, string? inviteId = null)
@@ -95,12 +99,13 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult PersonalInformation(InternalPersonalInformationViewModel model)
         {
-            ValidateEmailAddress(model);
-
             if (model.Centre != null)
             {
+                ValidateEmailAddress(model);
+
                 var delegateAccount = userService.GetUserById(User.GetUserIdKnownNotNull())!
                     .GetCentreAccountSet(model.Centre.Value)?.DelegateAccount;
+
                 if (delegateAccount?.Active == true)
                 {
                     ModelState.AddModelError(
@@ -289,16 +294,21 @@
 
         private bool CheckCentreIdValid(int? centreId)
         {
-            return centreId == null
-                   || centresDataService.GetCentreName(centreId.Value) != null;
+            return centreId == null || centresDataService.GetCentreName(centreId.Value) != null;
         }
 
         private void ValidateEmailAddress(InternalPersonalInformationViewModel model)
         {
-            if (model.CentreSpecificEmail != null && !userService.NewEmailAddressIsValid(
-                model.CentreSpecificEmail,
-                User.GetUserIdKnownNotNull()
-            ))
+            var userId = User.GetUserIdKnownNotNull();
+
+            if (
+                model.Centre != null && model.CentreSpecificEmail != null &&
+                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    model.CentreSpecificEmail,
+                    model.Centre.Value,
+                    userId
+                )
+            )
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.CentreSpecificEmail),

@@ -1,19 +1,21 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -31,6 +33,7 @@
     {
         private const string IpAddress = "1.1.1.1";
         private const int SupervisorDelegateId = 1;
+        private const int UserId = 2;
         private ICentresDataService centresDataService = null!;
         private RegisterAtNewCentreController controller = null!;
         private IFeatureManager featureManager = null!;
@@ -40,6 +43,7 @@
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserService userService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -47,6 +51,7 @@
             centresDataService = A.Fake<ICentresDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userService = A.Fake<IUserService>();
+            userDataService = A.Fake<IUserDataService>();
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
@@ -58,13 +63,14 @@
                     promptsService,
                     registrationService,
                     supervisorDelegateService,
-                    userService
+                    userService,
+                    userDataService
                 )
                 .WithDefaultContext()
                 .WithMockRequestContext(request)
                 .WithMockServices()
                 .WithMockTempData()
-                .WithMockUser(true);
+                .WithMockUser(true, userId: UserId);
         }
 
         [Test]
@@ -127,9 +133,13 @@
                 CentreSpecificEmail = "centre email",
             };
             A.CallTo(
-                    () => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId)
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        model.CentreSpecificEmail!,
+                        centreId,
+                        userAccount.Id
+                    )
                 )
-                .Returns(false);
+                .Returns(true);
             A.CallTo(() => userService.GetUserById(userAccount.Id)).Returns(
                 new UserEntity(userAccount, new List<AdminAccount>(), new[] { new DelegateAccount() })
             );
@@ -139,7 +149,11 @@
 
             // Then
             A.CallTo(
-                    () => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId)
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        model.CentreSpecificEmail!,
+                        centreId,
+                        userAccount.Id
+                    )
                 )
                 .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
@@ -165,7 +179,13 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._)).MustNotHaveHappened();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
 
@@ -180,16 +200,24 @@
                 CentreSpecificEmail = "centre email",
             };
             A.CallTo(
-                    () => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId)
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        model.CentreSpecificEmail!,
+                        model.Centre!.Value,
+                        UserId
+                    )
                 )
-                .Returns(true);
+                .Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
             A.CallTo(
-                    () => userService.NewEmailAddressIsValid(model.CentreSpecificEmail!, ControllerContextHelper.UserId)
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        model.CentreSpecificEmail!,
+                        model.Centre!.Value,
+                        UserId
+                    )
                 )
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");

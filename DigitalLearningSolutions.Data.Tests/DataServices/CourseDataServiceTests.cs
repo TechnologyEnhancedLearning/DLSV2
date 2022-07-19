@@ -535,7 +535,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Then
             using (new AssertionScope())
             {
-                result.Should().HaveCount(65);
+                result.Should().HaveCount(61);
                 result.First().Should().BeEquivalentTo(expectedFirstApplication);
             }
         }
@@ -1007,6 +1007,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Given
             var expectedFirstRecord = new CourseDelegateForExport
             {
+                CustomisationName = "Standard",
+                ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
                 IsDelegateActive = true,
                 CandidateNumber = "PC97",
                 CompleteBy = null,

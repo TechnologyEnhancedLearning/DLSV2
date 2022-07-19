@@ -8,18 +8,51 @@
         public const int Centre = 2;
         public const string PasswordHash = "hash";
 
+        public static AdminAccountRegistrationModel GetDefaultCentreManagerAccountRegistrationModel(
+            int userId = 4046,
+            string centreSpecificEmail = "centre@email.com",
+            int centre = Centre,
+            bool active = true,
+            int? categoryId = null,
+            bool isCentreAdmin = true,
+            bool isCentreManager = true,
+            bool isContentCreator = false,
+            bool isContentManager = false,
+            bool isTrainer = false,
+            bool importOnly = false,
+            bool isSupervisor = false,
+            bool isNominatedSupervisor = false
+        )
+        {
+            return new AdminAccountRegistrationModel(
+                userId,
+                centreSpecificEmail,
+                centre,
+                categoryId,
+                isCentreAdmin,
+                isCentreManager,
+                isContentManager,
+                isContentCreator,
+                isTrainer,
+                importOnly,
+                isSupervisor,
+                isNominatedSupervisor,
+                active
+            );
+        }
+
         public static AdminRegistrationModel GetDefaultCentreManagerRegistrationModel(
             string firstName = "Test",
             string lastName = "User",
-            string primaryEmail = "testuser@email.com",
-            string centreSpecificEmail = "centre@email.com",
+            string email = "testuser@email.com",
             int centre = Centre,
+            string? centreSpecificEmail = null,
             string? passwordHash = PasswordHash,
             bool active = true,
             bool approved = true,
             string? professionalRegistrationNumber = "PRN1234",
-            int jobGroupId = 1,
-            int? categoryId = null,
+            int jobGroupId = 0,
+            int categoryId = 0,
             bool isCentreAdmin = true,
             bool isCentreManager = true,
             bool isSupervisor = false,
@@ -33,7 +66,7 @@
             return new AdminRegistrationModel(
                 firstName,
                 lastName,
-                primaryEmail,
+                email,
                 centreSpecificEmail,
                 centre,
                 passwordHash,
@@ -56,15 +89,15 @@
         public static AdminRegistrationModel GetDefaultAdminRegistrationModel(
             string firstName = "Test",
             string lastName = "User",
-            string primaryEmail = "testuser@email.com",
-            string centreSpecificEmail = "centre@email.com",
+            string email = "testuser@email.com",
             int centre = Centre,
+            string? centreSpecificEmail = null,
             string? passwordHash = PasswordHash,
             bool active = true,
             bool approved = true,
             string? professionalRegistrationNumber = "PRN1234",
-            int jobGroupId = 1,
-            int? categoryId = null,
+            int jobGroupId = 0,
+            int categoryId = 0,
             bool isCentreAdmin = true,
             bool isCentreManager = true,
             bool isSupervisor = true,
@@ -78,7 +111,7 @@
             return new AdminRegistrationModel(
                 firstName,
                 lastName,
-                primaryEmail,
+                email,
                 centreSpecificEmail,
                 centre,
                 passwordHash,
@@ -114,6 +147,7 @@
             bool isSelfRegistered = true,
             DateTime? notifyDate = null,
             bool active = true,
+            bool activeUser = true,
             bool approved = false,
             string? professionalRegistrationNumber = "PRN1234",
             string? centreSpecificEmail = "testuser@weekends.com"
@@ -135,6 +169,7 @@
                 answer6,
                 isSelfRegistered,
                 active,
+                activeUser,
                 professionalRegistrationNumber,
                 approved,
                 notifyDate

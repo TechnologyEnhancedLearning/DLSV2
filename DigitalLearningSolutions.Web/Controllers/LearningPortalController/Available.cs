@@ -20,7 +20,7 @@
 
             var availableCourses = courseDataService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),
-                User.GetCentreId()
+                User.GetCentreIdKnownNotNull()
             );
             var bannerText = GetBannerText();
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
@@ -46,7 +46,7 @@
         {
             var availableCourses = courseDataService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),
-                User.GetCentreId()
+                User.GetCentreIdKnownNotNull()
             );
             var model = new AllAvailableItemsPageViewModel(availableCourses);
             return View("Available/AllAvailableItems", model);

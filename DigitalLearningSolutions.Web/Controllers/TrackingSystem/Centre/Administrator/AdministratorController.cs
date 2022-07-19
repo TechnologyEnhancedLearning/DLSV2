@@ -8,11 +8,11 @@
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
@@ -66,11 +66,10 @@
                 AdminFilterCookieName
             );
 
-            var centreId = User.GetCentreId();
-            var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
+            var centreId = User.GetCentreIdKnownNotNull();
+            var adminsAtCentre = userDataService.GetAdminsByCentreId(centreId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
-            var loggedInUserId = User.GetAdminId();
-            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+            var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
 
             var availableFilters =
                 AdministratorsViewModelFilterOptions.GetAllAdministratorsFilterModels(categories);
@@ -83,7 +82,7 @@
             );
 
             var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
-                adminUsersAtCentre,
+                adminsAtCentre,
                 searchSortPaginationOptions
             );
 
@@ -91,7 +90,7 @@
                 centreId,
                 result,
                 availableFilters,
-                loggedInAdminUser!
+                loggedInAdmin!.AdminAccount
             );
 
             Response.UpdateFilterCookie(AdminFilterCookieName, result.FilterString);
@@ -102,16 +101,15 @@
         [Route("AllAdmins")]
         public IActionResult AllAdmins()
         {
-            var centreId = User.GetCentreId();
-            var loggedInUserId = User.GetAdminId();
-            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+            var centreId = User.GetCentreIdKnownNotNull();
+            var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
 
-            var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
+            var adminsAtCentre = userDataService.GetAdminsByCentreId(centreId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var model = new AllAdminsViewModel(
-                adminUsersAtCentre,
+                adminsAtCentre,
                 categories,
-                loggedInAdminUser!
+                loggedInAdmin!.AdminAccount
             );
             return View("AllAdmins", model);
         }
@@ -121,7 +119,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult EditAdminRoles(int adminId, ReturnPageQuery returnPageQuery)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var adminUser = userDataService.GetAdminUserById(adminId);
 
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
@@ -166,14 +164,14 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult DeactivateOrDeleteAdmin(int adminId, ReturnPageQuery returnPageQuery)
         {
-            var adminUser = userDataService.GetAdminUserById(adminId);
+            var admin = userDataService.GetAdminById(adminId);
 
-            if (!CurrentUserCanDeactivateAdmin(adminUser!))
+            if (!CurrentUserCanDeactivateAdmin(admin!.AdminAccount))
             {
                 return NotFound();
             }
 
-            var model = new DeactivateAdminViewModel(adminUser!, returnPageQuery);
+            var model = new DeactivateAdminViewModel(admin, returnPageQuery);
             return View(model);
         }
 
@@ -182,9 +180,9 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult DeactivateOrDeleteAdmin(int adminId, DeactivateAdminViewModel model)
         {
-            var adminUser = userDataService.GetAdminUserById(adminId);
+            var admin = userDataService.GetAdminById(adminId);
 
-            if (!CurrentUserCanDeactivateAdmin(adminUser!))
+            if (!CurrentUserCanDeactivateAdmin(admin!.AdminAccount))
             {
                 return NotFound();
             }
@@ -199,12 +197,12 @@
             return View("DeactivateOrDeleteAdminConfirmation");
         }
 
-        private bool CurrentUserCanDeactivateAdmin(AdminUser adminToDeactivate)
+        private bool CurrentUserCanDeactivateAdmin(AdminAccount adminToDeactivate)
         {
-            var loggedInUserId = User.GetAdminId();
-            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+            var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.GetValueOrDefault());
 
-            return UserPermissionsHelper.LoggedInAdminCanDeactivateUser(adminToDeactivate!, loggedInAdminUser!);
+            return UserPermissionsHelper.LoggedInAdminCanDeactivateUser(adminToDeactivate, loggedInAdmin!.AdminAccount);
         }
+
     }
 }

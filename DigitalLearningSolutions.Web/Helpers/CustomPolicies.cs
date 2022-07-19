@@ -5,6 +5,7 @@
     public class CustomPolicies
     {
         public const string BasicUser = "BasicUser";
+        public const string CentreUser = "CentreUser";
         public const string UserDelegateOnly = "UserDelegateOnly";
         public const string UserCentreAdmin = "UserCentreAdmin";
         public const string UserFrameworksAdminOnly = "UserFrameworksAdminOnly";
@@ -16,6 +17,13 @@
         public static AuthorizationPolicyBuilder ConfigurePolicyBasicUser(AuthorizationPolicyBuilder policy)
         {
             return policy.RequireAssertion(context => context.User.GetUserId() != null);
+        }
+
+        public static AuthorizationPolicyBuilder ConfigurePolicyCentreUser(AuthorizationPolicyBuilder policy)
+        {
+            return policy.RequireAssertion(
+                context => context.User.GetUserId() != null && context.User.GetCentreId() != null
+            );
         }
 
         public static AuthorizationPolicyBuilder ConfigurePolicyUserDelegateOnly(AuthorizationPolicyBuilder policy)
@@ -76,7 +84,8 @@
             return policy.RequireAssertion(
                 context => context.User.GetUserId() != null &&
                            context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null &&
-                           context.User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true
+                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true ||
+                            context.User.GetCustomClaimAsBool(CustomClaimTypes.IsNominatedSupervisor) == true)
             );
         }
 

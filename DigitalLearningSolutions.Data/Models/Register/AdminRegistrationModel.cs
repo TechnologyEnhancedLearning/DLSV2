@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Register
 {
-    using System.Collections.Generic;
-
     public class AdminRegistrationModel : RegistrationModel
     {
         public AdminRegistrationModel(
@@ -11,7 +9,7 @@
             string? centreSpecificEmail,
             int centre,
             string? passwordHash,
-            bool active,
+            bool centreAccountIsActive,
             bool approved,
             string? professionalRegistrationNumber,
             int jobGroupId,
@@ -32,7 +30,7 @@
             centreSpecificEmail,
             centre,
             passwordHash,
-            active,
+            centreAccountIsActive,
             approved,
             professionalRegistrationNumber,
             jobGroupId
@@ -81,47 +79,5 @@
         public int? CategoryId { get; set; }
 
         public byte[]? ProfileImage { get; set; }
-
-        public IEnumerable<int> GetNotificationRoles()
-        {
-            var roles = new List<int>();
-
-            if (IsCentreAdmin)
-            {
-                roles.Add(1);
-            }
-
-            if (IsCentreManager)
-            {
-                roles.Add(2);
-            }
-
-            if (IsContentManager)
-            {
-                roles.Add(3);
-            }
-
-            if (IsContentCreator)
-            {
-                roles.Add(4);
-            }
-
-            if (IsSupervisor)
-            {
-                roles.Add(6);
-            }
-
-            if (IsTrainer)
-            {
-                roles.Add(7);
-            }
-
-            if (IsNominatedSupervisor)
-            {
-                roles.Add(8);
-            }
-
-            return roles;
-        }
     }
 }

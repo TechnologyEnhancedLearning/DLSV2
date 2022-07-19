@@ -2,12 +2,12 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -44,7 +44,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
 
         public IActionResult Index()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
 
@@ -57,7 +57,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
         [Route("EditCentreManagerDetails")]
         public IActionResult EditCentreManagerDetails()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
 
@@ -75,7 +75,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
                 return View(model);
             }
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             centresDataService
                 .UpdateCentreManagerDetails(centreId, model.FirstName!, model.LastName!, model.Email!, model.Telephone);
@@ -87,7 +87,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
         [Route("EditCentreWebsiteDetails")]
         public IActionResult EditCentreWebsiteDetails()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
 
@@ -127,7 +127,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
             var latitude = double.Parse(mapsResponse.Results[0].Geometry.Location.Latitude);
             var longitude = double.Parse(mapsResponse.Results[0].Geometry.Location.Longitude);
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             centresDataService.UpdateCentreWebsiteDetails(
                 centreId,
@@ -150,7 +150,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
         [Route("EditCentreDetails")]
         public IActionResult EditCentreDetails()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
 
@@ -177,7 +177,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
         [HttpGet("Certificate")]
         public IActionResult PreviewCertificate()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var certificateInfo = certificateService.GetPreviewCertificateForCentre(centreId);
             if (certificateInfo == null)
             {
@@ -207,7 +207,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
                 return View(model);
             }
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             centresDataService.UpdateCentreDetails(
                 centreId,

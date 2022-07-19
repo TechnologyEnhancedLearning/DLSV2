@@ -9,6 +9,7 @@
         (
             int centreId = 2,
             string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
+            bool active = true,
             int regionId = 5,
             string regionName = "North West",
             string? notifyEmail = "notify@test.com",
@@ -45,6 +46,7 @@
             {
                 CentreId = centreId,
                 CentreName = centreName,
+                Active = active,
                 RegionId = regionId,
                 RegionName = regionName,
                 NotifyEmail = notifyEmail,

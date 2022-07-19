@@ -1,15 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.MyAccount
 {
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -34,6 +36,7 @@
         private PromptsService promptsService = null!;
         private IUrlHelper urlHelper = null!;
         private IUserService userService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -41,6 +44,7 @@
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             config = A.Fake<IConfiguration>();
             userService = A.Fake<IUserService>();
+            userDataService = A.Fake<IUserDataService>();
             imageResizeService = A.Fake<ImageResizeService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             promptsService = new PromptsService(centreRegistrationPromptsService);
@@ -57,6 +61,7 @@
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
+                userDataService,
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
@@ -80,6 +85,7 @@
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
+                userDataService,
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
@@ -99,8 +105,15 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(A<string>._, A<int>._))
                 .MustNotHaveHappened();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
         }
 
@@ -111,6 +124,7 @@
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
+                userDataService,
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
@@ -123,6 +137,13 @@
                 (() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(2)).Returns(
                 PromptsTestHelper.GetDefaultCentreRegistrationPrompts(customPromptLists, 2)
             );
+            var testUserEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new AdminAccount[] { },
+                new[] { UserTestHelper.GetDefaultDelegateAccount() }
+            );
+            A.CallTo
+                (() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
             var formData = new MyAccountEditDetailsFormData();
             var expectedPrompt = new EditDelegateRegistrationPromptViewModel(
                 1,
@@ -142,27 +163,131 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._))
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(A<string>._, A<int>._))
                 .MustNotHaveHappened();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
             myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Answer1)].ValidationState.Should().Be
                 (ModelValidationState.Invalid);
         }
 
         [Test]
-        public void EditDetailsPostSave_for_admin_user_with_missing_delegate_answers_doesnt_fail_validation()
+        [TestCase(true, true)]
+        [TestCase(true, false)]
+        [TestCase(false, true, false)]
+        [TestCase(false, false, true)]
+        [TestCase(false, true, true)]
+        [TestCase(false, false, false)]
+        public void EditDetailsPostSave_with_duplicate_email_fails_validation(
+            bool centreSpecificEmailIsNull,
+            bool primaryEmailIsDuplicate,
+            bool centreEmailIsDuplicate = false
+        )
         {
             // Given
+            const string primaryEmail = "primary@email.com";
+            const int userId = 2;
+            const int centreId = 2;
+            var centreSpecificEmail = centreSpecificEmailIsNull ? null : "centre@email.com";
+            var myAccountController = new MyAccountController(
+                    centreRegistrationPromptsService,
+                    userService,
+                    userDataService,
+                    imageResizeService,
+                    jobGroupsDataService,
+                    promptsService,
+                    logger,
+                    config
+                ).WithDefaultContext()
+                .WithMockUser(true, centreId, userId: userId, delegateId: null);
+
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(primaryEmail, userId))
+                .Returns(primaryEmailIsDuplicate);
+
+            if (centreSpecificEmail != null)
+            {
+                A.CallTo(
+                        () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                            centreSpecificEmail,
+                            centreId,
+                            userId
+                        )
+                    )
+                    .Returns(centreEmailIsDuplicate);
+            }
+
+            var formData = new MyAccountEditDetailsFormData
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Email = primaryEmail,
+                CentreSpecificEmail = centreSpecificEmail,
+                JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
+            };
+
+            var expectedModel = new MyAccountEditDetailsViewModel(
+                formData,
+                new List<(int id, string name)>(),
+                new List<EditDelegateRegistrationPromptViewModel>(),
+                DlsSubApplication.Default
+            );
+
+            // When
+            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+
+            // Then
+            if (primaryEmailIsDuplicate)
+            {
+                myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Email)].ValidationState.Should().Be
+                    (ModelValidationState.Invalid);
+            }
+
+            if (centreEmailIsDuplicate)
+            {
+                myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.CentreSpecificEmail)]
+                    .ValidationState.Should().Be
+                        (ModelValidationState.Invalid);
+            }
+
+            if (primaryEmailIsDuplicate || centreEmailIsDuplicate)
+            {
+                result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should()
+                    .BeEquivalentTo(expectedModel);
+            }
+            else
+            {
+                result.Should().BeRedirectToActionResult().WithActionName("Index");
+            }
+        }
+
+        [Test]
+        public void
+            EditDetailsPostSave_for_admin_only_user_with_missing_delegate_answers_doesnt_fail_validation_or_update_delegate()
+        {
+            // Given
+            const int userId = 2;
+            const int centreId = 2;
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
+                userDataService,
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
                 logger,
                 config
-            ).WithDefaultContext().WithMockUser(true, delegateId: null);
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
+            ).WithDefaultContext().WithMockUser(true, userId: userId, centreId: centreId, delegateId: null);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId)).Returns(false);
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(Email, centreId, userId)
+            ).Returns(false);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
@@ -173,11 +298,20 @@
                     )
                 )
                 .DoesNothing();
+            var testUserEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new[] { UserTestHelper.GetDefaultAdminAccount() },
+                new DelegateAccount[] { }
+            );
+            A.CallTo
+                (() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
+            const string centreSpecificEmail = "centre@email.com";
             var model = new MyAccountEditDetailsFormData
             {
                 FirstName = "Test",
                 LastName = "User",
                 Email = Email,
+                CentreSpecificEmail = centreSpecificEmail,
                 JobGroupId = 1,
                 HasProfessionalRegistrationNumber = false,
             };
@@ -188,11 +322,20 @@
             var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).MustHaveHappened();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
+                .MustHaveHappened();
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        centreSpecificEmail,
+                        centreId,
+                        userId
+                    )
+                )
+                .MustHaveHappened();
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
-                        A<DelegateDetailsData>._,
+                        null,
                         A<string?>._,
                         A<int>._,
                         true
@@ -210,19 +353,31 @@
         public void EditDetailsPostSave_with_valid_info_and_valid_return_url_redirects_to_return_url()
         {
             // Given
+            const int userId = 2;
+            const int centreId = 2;
             const string returnUrl = "/TrackingSystem/Centre/Dashboard";
             var myAccountController = new MyAccountController(
                     centreRegistrationPromptsService,
                     userService,
+                    userDataService,
                     imageResizeService,
                     jobGroupsDataService,
                     promptsService,
                     logger,
                     config
                 ).WithDefaultContext()
-                .WithMockUser(true, delegateId: null)
+                .WithMockUser(true, centreId, userId: userId, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
+                .Returns(false);
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        Email,
+                        centreId,
+                        userId
+                    )
+                )
+                .Returns(false);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
@@ -255,18 +410,30 @@
         public void EditDetailsPostSave_with_valid_info_and_invalid_return_url_redirects_to_index()
         {
             // Given
+            const int userId = 2;
+            const int centreId = 2;
             var myAccountController = new MyAccountController(
                     centreRegistrationPromptsService,
                     userService,
+                    userDataService,
                     imageResizeService,
                     jobGroupsDataService,
                     promptsService,
                     logger,
                     config
                 ).WithDefaultContext()
-                .WithMockUser(true, delegateId: null)
+                .WithMockUser(true, centreId, userId: userId, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
-            A.CallTo(() => userService.NewEmailAddressIsValid(Email, 2)).Returns(true);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
+                .Returns(false);
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        Email,
+                        centreId,
+                        userId
+                    )
+                )
+                .Returns(false);
             A.CallTo(
                     () => userService.UpdateUserDetailsAndCentreSpecificDetails(
                         A<EditAccountDetailsData>._,
@@ -307,6 +474,7 @@
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
+                userDataService,
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,
@@ -341,9 +509,22 @@
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int>._))
+            A.CallTo(
+                    () => userDataService.PrimaryEmailIsInUseByOtherUser(
+                        A<string>._,
+                        A<int>._
+                    )
+                )
                 .MustNotHaveHappened();
-            result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should()
+                .BeEquivalentTo(expectedModel);
             myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.ProfileImageFile)].ValidationState
                 .Should().Be(ModelValidationState.Invalid);
         }
@@ -355,6 +536,7 @@
             var myAccountController = new MyAccountController(
                 centreRegistrationPromptsService,
                 userService,
+                userDataService,
                 imageResizeService,
                 jobGroupsDataService,
                 promptsService,

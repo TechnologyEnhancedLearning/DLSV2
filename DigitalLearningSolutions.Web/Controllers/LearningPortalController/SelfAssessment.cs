@@ -102,7 +102,7 @@
             }
 
             selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
-
+            competency.CompetencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyId(competency.Id);
             var model = new SelfAssessmentCompetencyViewModel(
                 assessment,
                 competency,
@@ -227,8 +227,6 @@
             var model = new SupervisorCommentsViewModel
             {
                 SupervisorComment = supervisorComment,
-                SelfAssessmentSupervisor =
-                    selfAssessmentService.GetSupervisorForSelfAssessmentId(selfAssessmentId, candidateId),
                 AssessmentQuestion = new AssessmentQuestion
                 {
                     Verified = supervisorComment.Verified,
@@ -245,29 +243,35 @@
         {
             TempData.Clear();
             TempData.Set<List<AppliedFilterViewModel>>(model.AppliedFilters);
-            return RedirectToAction("FilteredSelfAssessmentGroups", new { model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model.SearchText });
+            return RedirectToAction("FilteredSelfAssessmentGroups", model);
         }
 
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/{competencyGroupId}/Filtered")]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/Filtered")]
-        public IActionResult FilteredSelfAssessmentGroups(int selfAssessmentId, string vocabulary, int? competencyGroupId = null, string filterBy = "", string searchText = null)
+        public IActionResult FilteredSelfAssessmentGroups(SearchSelfAssessmentOvervieviewViewModel model)
         {
-            var appliedFilters = TempData.Get<List<AppliedFilterViewModel>>();
-            var model = new SearchSelfAssessmentOvervieviewViewModel(searchText, selfAssessmentId, vocabulary, appliedFilters);
-            if (filterBy == "CLEAR")
-            {
-                model.AppliedFilters.Clear();
-            }
-
-            return SelfAssessmentOverview(selfAssessmentId, vocabulary, competencyGroupId, model);
+            model.AppliedFilters = TempData.Get<List<AppliedFilterViewModel>>();
+            return SelfAssessmentOverview(model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model);
         }
 
         public IActionResult AddSelfAssessmentOverviewFilter(SearchSelfAssessmentOvervieviewViewModel model)
         {
-            string filterName = Enum.GetName(model.ResponseStatus.GetType(), model.ResponseStatus);
-            if (!model.AppliedFilters.Any(f => f.FilterValue == model.ResponseStatus.ToString()))
+            if (!model.AppliedFilters.Any(f => f.FilterValue == model.SelectedFilter.ToString()))
             {
-                model.AppliedFilters.Add(new AppliedFilterViewModel(model.ResponseStatus?.GetDescription(), null, model.ResponseStatus.ToString()));
+
+                string description;
+                string tagClass = string.Empty;
+                if (model.SelectedFilter < 0)
+                {
+                    description = ((SelfAssessmentCompetencyFilter)model.SelectedFilter).GetDescription(model.IsSupervisorResultsReviewed);
+                }
+                else
+                {
+                    var flag = frameworkService.GetCustomFlagsByFrameworkId(null, model.SelectedFilter).First();
+                    description = $"{flag.FlagGroup}: {flag.FlagName}";
+                    tagClass = flag.FlagTagClass;
+                }
+                model.AppliedFilters.Add(new AppliedFilterViewModel(description, null, model.SelectedFilter.ToString(), tagClass));
             }
             TempData.Clear();
             TempData.Set<List<AppliedFilterViewModel>>(model.AppliedFilters);
@@ -294,7 +298,11 @@
             var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
             selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, candidateId);
-            var competencies = FilterCompetencies(selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList(), searchModel);
+
+            var recentResults = selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList();
+            var competencyIds = recentResults.Select(c => c.Id).ToArray();
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+            var competencies = CompetencyFilterHelper.FilterCompetencies(recentResults, competencyFlags, searchModel);
 
             foreach (var competency in competencies)
             {
@@ -314,6 +322,9 @@
                 }
             }
 
+            var searchViewModel = searchModel == null ?
+                new SearchSelfAssessmentOvervieviewViewModel(searchModel?.SearchText, assessment.Id, vocabulary, assessment.IsSupervisorResultsReviewed, assessment.IncludeRequirementsFilters, null, null)
+                : searchModel.Initialise(searchModel.AppliedFilters, competencyFlags.ToList(), assessment.IsSupervisorResultsReviewed, assessment.IncludeRequirementsFilters);
             var model = new SelfAssessmentOverviewViewModel
             {
                 SelfAssessment = assessment,
@@ -321,42 +332,15 @@
                 PreviousCompetencyNumber = Math.Max(competencies.Count(), 1),
                 NumberOfOptionalCompetencies = optionalCompetencies.Count(),
                 SupervisorSignOffs = supervisorSignOffs,
-                SearchViewModel = new SearchSelfAssessmentOvervieviewViewModel(searchModel?.SearchText, assessment.Id, vocabulary, searchModel?.AppliedFilters)
+                SearchViewModel = searchViewModel
             };
+            if (searchModel != null)
+            {
+                searchModel.IsSupervisorResultsReviewed = assessment.IsSupervisorResultsReviewed;
+            }
             ViewBag.SupervisorSelfAssessmentReview = assessment.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/SelfAssessmentOverview", model);
         }
-
-        private List<Competency> FilterCompetencies(List<Competency> competencies, SearchSelfAssessmentOvervieviewViewModel search)
-        {
-            var searchText = search?.SearchText?.Trim() ?? string.Empty;
-            List<Competency> filteredCompetencies = null;
-            if (searchText.Length > 0 || search?.AppliedFilters.Count() > 0)
-            {
-                var wordsInSearchText = searchText.Split().Where(w => w != string.Empty);
-                var filters = search.AppliedFilters.Select(f => Enum.Parse<SelfAssessmentCompetencyFilter>(f.FilterValue));
-                var noResponseStatusFilterApplied = !filters.Any(f => f.IsResponseStatusFilter());
-                var noRequirementsFilterApplied = !filters.Any(f => f.IsRequirementsFilter());
-                filteredCompetencies = (from c in competencies
-                                        let searchTextMatchesGroup = wordsInSearchText.Any(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                        let searchTextMatchesCompetencyDescription = wordsInSearchText.Any(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                        let searchTextMatchesCompetencyName = wordsInSearchText.Any(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                        let responseStatusFilterMatchesAnyQuestion =
-                                               (filters.Contains(SelfAssessmentCompetencyFilter.NotYetResponded) && c.AssessmentQuestions.Any(q => q.ResultId == null))
-                                            || (filters.Contains(SelfAssessmentCompetencyFilter.SelfAssessed) && c.AssessmentQuestions.Any(q => q.Verified == null && q.ResultId != null))
-                                            || (filters.Contains(SelfAssessmentCompetencyFilter.Verified) && c.AssessmentQuestions.Any(q => q.Verified.HasValue))
-                                        let requirementsFilterMatchesAnyQuestion =
-                                               (filters.Contains(SelfAssessmentCompetencyFilter.MeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 3))
-                                            || (filters.Contains(SelfAssessmentCompetencyFilter.PartiallyMeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 2))
-                                            || (filters.Contains(SelfAssessmentCompetencyFilter.NotMeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 1))
-                                        where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
-                                           && (noResponseStatusFilterApplied || responseStatusFilterMatchesAnyQuestion)
-                                           && (noRequirementsFilterApplied || requirementsFilterMatchesAnyQuestion)
-                                        select c).ToList();
-            }
-            return (filteredCompetencies ?? competencies);
-        }
-
         [HttpPost]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
@@ -542,7 +526,7 @@
 
             TempData.Set(sessionAddSupervisor);
             var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
-                User.GetCentreId(),
+                User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
                 User.GetCandidateIdKnownNotNull()
             );
@@ -560,18 +544,22 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add")]
         public IActionResult SetSupervisorName(AddSupervisorViewModel model)
         {
+            var sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             if (!ModelState.IsValid)
             {
+                var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
+               User.GetCentreIdKnownNotNull(),
+               sessionAddSupervisor.SelfAssessmentID,
+               User.GetCandidateIdKnownNotNull()
+           );
+                model.Supervisors = supervisors;
                 return View("SelfAssessments/AddSupervisor", model);
             }
-
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(model.SupervisorAdminID);
-            var sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             if (sessionAddSupervisor == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-
             sessionAddSupervisor.SupervisorAdminId = model.SupervisorAdminID;
             sessionAddSupervisor.SupervisorEmail = supervisor.Email;
             var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(model.SelfAssessmentID)
@@ -731,7 +719,7 @@
                 candidateId,
                 delegateEntity!.EmailForCentreNotifications,
                 sessionAddSupervisor.SupervisorEmail ?? throw new InvalidOperationException(),
-                User.GetCentreId()
+                User.GetCentreIdKnownNotNull()
             );
             supervisorService.InsertCandidateAssessmentSupervisor(
                 candidateId,

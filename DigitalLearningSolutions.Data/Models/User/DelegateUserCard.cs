@@ -34,12 +34,13 @@
             HasDismissedLhLoginWarning = delegateEntity.UserAccount.HasDismissedLhLoginWarning;
             SelfReg = delegateEntity.DelegateAccount.SelfReg;
             ExternalReg = delegateEntity.DelegateAccount.ExternalReg;
+            AdminId = delegateEntity.AdminId;
         }
 
         public bool SelfReg { get; set; }
         public bool ExternalReg { get; set; }
         public int? AdminId { get; set; }
-        public bool IsPasswordSet => Password != null;
+        public bool IsPasswordSet => !string.IsNullOrEmpty(Password);
         public bool IsAdmin => AdminId.HasValue;
 
         public RegistrationType RegistrationType => (SelfReg, ExternalReg) switch

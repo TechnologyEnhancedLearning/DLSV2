@@ -4,12 +4,12 @@
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -63,7 +63,7 @@
                 CourseDelegateAccountStatusFilterOptions.Active.FilterValue
             );
 
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var adminCategoryId = User.GetAdminCategoryId();
 
             try
@@ -114,7 +114,7 @@
         [Route("AllCourseDelegates/{customisationId:int}")]
         public IActionResult AllCourseDelegates(int customisationId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var courseDelegates = courseDelegatesService.GetCourseDelegatesForCentre(customisationId, centreId);
             var adminFields = courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId);
             var model = new AllCourseDelegatesViewModel(courseDelegates, adminFields.AdminFields);
@@ -131,7 +131,7 @@
             string? existingFilterString = null
         )
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(
                 customisationId,
                 centreId,

@@ -4,6 +4,7 @@
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
 
     public class SetCourseContentViewModel
     {
@@ -14,6 +15,13 @@
             AvailableSections = availableSections;
             IncludeAllSections = true;
             SelectedSectionIds = null;
+        }
+
+        public SetCourseContentViewModel(CourseContentTempData tempData)
+        {
+            IncludeAllSections = tempData.IncludeAllSections;
+            AvailableSections = tempData.AvailableSections;
+            SelectedSectionIds = tempData.SelectedSectionIds;
         }
 
         public SetCourseContentViewModel(

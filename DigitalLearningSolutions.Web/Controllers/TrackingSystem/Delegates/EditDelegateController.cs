@@ -2,12 +2,13 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EditDelegate;
     using Microsoft.AspNetCore.Authorization;
@@ -25,14 +26,17 @@
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly PromptsService promptsService;
         private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
 
         public EditDelegateController(
             IUserService userService,
+            IUserDataService userDataService,
             IJobGroupsDataService jobGroupsDataService,
             PromptsService registrationPromptsService
         )
         {
             this.userService = userService;
+            this.userDataService = userDataService;
             this.jobGroupsDataService = jobGroupsDataService;
             promptsService = registrationPromptsService;
         }
@@ -40,7 +44,7 @@
         [HttpGet]
         public IActionResult Index(int delegateId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var delegateEntity = userService.GetDelegateById(delegateId);
 
             if (delegateEntity == null || delegateEntity.DelegateAccount.CentreId != centreId)
@@ -60,7 +64,7 @@
         [HttpPost]
         public IActionResult Index(EditDelegateFormData formData, int delegateId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             promptsService.ValidateCentreRegistrationPrompts(formData, centreId, ModelState);
 
@@ -86,15 +90,21 @@
                 formData.CentreSpecificEmail = null;
             }
 
-            if (formData.CentreSpecificEmail != null && !userService.NewEmailAddressIsValid(
-                formData.CentreSpecificEmail,
-                delegateEntity!.UserAccount.Id
-            ))
+            if (
+                formData.CentreSpecificEmail != null &&
+                formData.CentreSpecificEmail != delegateEntity.UserCentreDetails?.Email &&
+                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    formData.CentreSpecificEmail,
+                    delegateEntity.DelegateAccount.CentreId,
+                    delegateEntity.UserAccount.Id
+                )
+            )
             {
                 ModelState.AddModelError(
                     nameof(EditDetailsFormData.CentreSpecificEmail),
                     CommonValidationErrorMessages.EmailAlreadyInUse
                 );
+
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
@@ -103,6 +113,7 @@
                 delegateEntity.UserAccount.Id,
                 delegateId
             );
+
             userService.UpdateUserDetailsAndCentreSpecificDetails(
                 editDelegateDetailsData,
                 delegateDetailsData,

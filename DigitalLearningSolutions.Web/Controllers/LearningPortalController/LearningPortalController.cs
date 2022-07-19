@@ -2,10 +2,10 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -25,6 +25,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly INotificationService notificationService;
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly ISupervisorService supervisorService;
+        private readonly IFrameworkService frameworkService;
         private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
@@ -34,6 +35,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             IUserDataService userDataService,
             ISelfAssessmentService selfAssessmentService,
             ISupervisorService supervisorService,
+            IFrameworkService frameworkService,
             INotificationService notificationService,
             IFrameworkNotificationService frameworkNotificationService,
             ILogger<LearningPortalController> logger,
@@ -48,6 +50,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.userDataService = userDataService;
             this.selfAssessmentService = selfAssessmentService;
             this.supervisorService = supervisorService;
+            this.frameworkService = frameworkService;
             this.notificationService = notificationService;
             this.frameworkNotificationService = frameworkNotificationService;
             this.logger = logger;
@@ -70,7 +73,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 
         private string? GetBannerText()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var bannerText = centresDataService.GetBannerText(centreId);
             return bannerText;
         }
