@@ -466,7 +466,7 @@ namespace DigitalLearningSolutions.Web.Services
                 ValidateCentreEmail(
                     delegateRegistrationModel.CentreSpecificEmail,
                     delegateRegistrationModel.Centre,
-                    null
+                    userId
                 );
             }
 

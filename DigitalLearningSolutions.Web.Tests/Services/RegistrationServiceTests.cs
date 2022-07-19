@@ -1018,12 +1018,15 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
             // Then
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail!, model.Centre)
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    model.CentreSpecificEmail!,
+                    model.Centre,
+                    userId
+                )
             ).MustHaveHappenedOnceExactly();
 
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(A<string>._, A<int>._, A<int>._)
-            ).MustNotHaveHappened();
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._))
+                .MustNotHaveHappened();
 
             A.CallTo(
                     () =>
@@ -1066,12 +1069,15 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
             // Then
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail!, model.Centre)
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    model.CentreSpecificEmail!,
+                    model.Centre,
+                    userId
+                )
             ).MustHaveHappenedOnceExactly();
 
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(A<string>._, A<int>._, A<int>._)
-            ).MustNotHaveHappened();
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._))
+                .MustNotHaveHappened();
 
             A.CallTo(
                     () =>
@@ -1113,12 +1119,15 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
             // Then
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail!, model.Centre)
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    model.CentreSpecificEmail!,
+                    model.Centre,
+                    userId
+                )
             ).MustHaveHappenedOnceExactly();
 
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(A<string>._, A<int>._, A<int>._)
-            ).MustNotHaveHappened();
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._))
+                .MustNotHaveHappened();
 
             A.CallTo(
                     () =>
