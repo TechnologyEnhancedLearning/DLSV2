@@ -28,7 +28,7 @@
 
         public static void ClickLinkContainingText(this IWebDriver driver, string text)
         {
-            var foundLink = driver.FindElement(By.XPath($"//a[contains(text(), '{text}')]"));
+            var foundLink = driver.FindElement(By.XPath($"//a[contains(., '{text}')]"));
             foundLink.Click();
         }
 
