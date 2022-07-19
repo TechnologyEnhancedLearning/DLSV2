@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -76,7 +77,7 @@
 
             var allCentreSpecificEmails = centreId == null
                 ? userService.GetAllCentreEmailsForUser(userId).ToList()
-                : new List<(string centreName, string? centreSpecificEmail)>();
+                : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
             var switchCentreReturnUrl = StringHelper.GetLocalRedirectUrl(config, SwitchCentreReturnUrl);
 
@@ -95,7 +96,6 @@
             return View(model);
         }
 
-        // TODO HEEDLS-965 Sort out edit details for centreless user, only the minimum has been done to allow it to load
         [NoCaching]
         [HttpGet("EditDetails")]
         public IActionResult EditDetails(
@@ -119,12 +119,17 @@
                     )
                     : new List<EditDelegateRegistrationPromptViewModel>();
 
+            var allCentreSpecificEmails = centreId == null
+                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
+
             var model = new MyAccountEditDetailsViewModel(
-                userEntity.UserAccount,
+                userEntity!.UserAccount,
                 delegateAccount,
                 jobGroups,
                 centreId != null ? userService.GetCentreEmail(userId, centreId.Value) : null,
                 customPrompts,
+                allCentreSpecificEmails,
                 dlsSubApplication,
                 returnUrl,
                 isCheckDetailsRedirect
@@ -133,7 +138,6 @@
             return View(model);
         }
 
-        // TODO HEEDLS-965 Edit details post fails for centreless user, contains call to User.GetCentreIdKnownNotNull()
         [NoCaching]
         [HttpPost("EditDetails")]
         public IActionResult EditDetails(
@@ -156,7 +160,24 @@
             DlsSubApplication dlsSubApplication
         )
         {
-            var centreId = User.GetCentreIdKnownNotNull();
+            // Custom Validate functions are not called if the ModelState is invalid due to attribute validation.
+            // This form potentially (if the user is not logged in to a centre) contains the ability to edit all the user's centre-specific emails,
+            // which are validated by a Validate function, so in order to display error messages for them if some other field is ALSO invalid,
+            // we must manually call formData.Validate() here.
+            if (!ModelState.IsValid)
+            {
+                var validationResults = formData.Validate(new ValidationContext(formData));
+
+                foreach (var error in validationResults)
+                {
+                    foreach (var memberName in error.MemberNames)
+                    {
+                        ModelState.AddModelError(memberName, error.ErrorMessage);
+                    }
+                }
+            }
+
+            var centreId = User.GetCentreId();
             var userId = User.GetUserIdKnownNotNull();
             var userEntity = userService.GetUserById(userId);
 
@@ -164,7 +185,7 @@
 
             if (delegateAccount != null)
             {
-                promptsService.ValidateCentreRegistrationPrompts(formData, centreId, ModelState);
+                promptsService.ValidateCentreRegistrationPrompts(formData, centreId!.Value, ModelState);
             }
 
             if (formData.ProfileImageFile != null)
@@ -183,7 +204,7 @@
 
             if (!ModelState.IsValid)
             {
-                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
+                return ReturnToEditDetailsViewWithErrors(formData, userId, centreId, dlsSubApplication);
             }
 
             var emailsValid = true;
@@ -198,10 +219,10 @@
             }
 
             if (
-                !string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) &&
+                centreId.HasValue && !string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) &&
                 userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     formData.CentreSpecificEmail,
-                    centreId,
+                    centreId.Value,
                     userId
                 )
             )
@@ -215,7 +236,7 @@
 
             if (!emailsValid)
             {
-                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication);
+                return ReturnToEditDetailsViewWithErrors(formData, userId, centreId, dlsSubApplication);
             }
 
             var (accountDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToEditAccountDetailsData(
@@ -223,13 +244,22 @@
                 userId,
                 delegateAccount?.Id
             );
-            userService.UpdateUserDetailsAndCentreSpecificDetails(
-                accountDetailsData,
-                delegateDetailsData,
-                formData.CentreSpecificEmail,
-                centreId,
-                true
-            );
+
+            if (centreId.HasValue)
+            {
+                userService.UpdateUserDetailsAndCentreSpecificDetails(
+                    accountDetailsData,
+                    delegateDetailsData,
+                    formData.CentreSpecificEmail,
+                    centreId.Value,
+                    true
+                );
+            }
+            else
+            {
+                userService.UpdateUserDetails(accountDetailsData, true);
+                userService.SetCentreEmails(userId, formData.CentreSpecificEmailsByCentreId);
+            }
 
             return this.RedirectToReturnUrl(formData.ReturnUrl, logger) ?? RedirectToAction(
                 "Index",
@@ -239,16 +269,40 @@
 
         private IActionResult ReturnToEditDetailsViewWithErrors(
             MyAccountEditDetailsFormData formData,
+            int userId,
+            int? centreId,
             DlsSubApplication dlsSubApplication
         )
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-            var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
-                    formData,
-                    User.GetCentreIdKnownNotNull()
-                );
-            var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
+            var customPrompts = centreId != null
+                ? promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(formData, centreId.Value)
+                : new List<EditDelegateRegistrationPromptViewModel>();
+
+            var allCentreSpecificEmails = centreId == null
+                ? userService.GetAllCentreEmailsForUser(userId).Select(
+                    row =>
+                    {
+                        string? email = null;
+
+                        formData.AllCentreSpecificEmailsDictionary?.TryGetValue(
+                            row.centreId.ToString(),
+                            out email
+                        );
+
+                        return (row.centreId, row.centreName, email);
+                    }
+                ).ToList()
+                : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
+
+            var model = new MyAccountEditDetailsViewModel(
+                formData,
+                jobGroups,
+                customPrompts,
+                allCentreSpecificEmails,
+                dlsSubApplication
+            );
+
             return View(model);
         }
 
@@ -260,27 +314,34 @@
             // We don't want to display validation errors on other fields in this case
             ModelState.ClearErrorsForAllFieldsExcept(nameof(MyAccountEditDetailsViewModel.ProfileImageFile));
 
-            var userDelegateId = User.GetCandidateId();
-            var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
+            var userId = User.GetUserIdKnownNotNull();
+            var centreId = User.GetCentreId();
+            var userEntity = userService.GetUserById(userId);
+            var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
+
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-            var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
-                    delegateUser,
-                    User.GetCentreIdKnownNotNull()
-                );
 
-            if (!ModelState.IsValid)
-            {
-                return View(new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication));
-            }
+            var customPrompts = centreId != null
+                ? promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateAccount, centreId.Value)
+                : new List<EditDelegateRegistrationPromptViewModel>();
 
-            if (formData.ProfileImageFile != null)
+            var allCentreSpecificEmails = centreId == null
+                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
+
+            if (ModelState.IsValid && formData.ProfileImageFile != null)
             {
                 ModelState.Remove(nameof(MyAccountEditDetailsFormData.ProfileImage));
                 formData.ProfileImage = imageResizeService.ResizeProfilePicture(formData.ProfileImageFile);
             }
 
-            var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
+            var model = new MyAccountEditDetailsViewModel(
+                formData,
+                jobGroups,
+                customPrompts,
+                allCentreSpecificEmails,
+                dlsSubApplication
+            );
             return View(model);
         }
 
@@ -295,16 +356,28 @@
             ModelState.Remove(nameof(MyAccountEditDetailsFormData.ProfileImage));
             formData.ProfileImage = null;
 
-            var userDelegateId = User.GetCandidateId();
-            var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-            var customPrompts =
-                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
-                    delegateUser,
-                    User.GetCentreIdKnownNotNull()
-                );
+            var userId = User.GetUserIdKnownNotNull();
+            var centreId = User.GetCentreId();
+            var userEntity = userService.GetUserById(userId);
+            var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
 
-            var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+
+            var customPrompts = centreId != null
+                ? promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateAccount, centreId.Value)
+                : new List<EditDelegateRegistrationPromptViewModel>();
+
+            var allCentreSpecificEmails = centreId == null
+                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
+
+            var model = new MyAccountEditDetailsViewModel(
+                formData,
+                jobGroups,
+                customPrompts,
+                allCentreSpecificEmails,
+                dlsSubApplication
+            );
             return View(model);
         }
 

@@ -9,7 +9,7 @@
 
     public class InternalPersonalInformationViewModel
     {
-        public InternalPersonalInformationViewModel(){}
+        public InternalPersonalInformationViewModel() { }
 
         public InternalPersonalInformationViewModel(InternalDelegateRegistrationData data)
         {
@@ -20,7 +20,7 @@
 
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
-        [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
+        [NoWhitespace(ErrorMessage = CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? CentreSpecificEmail { get; set; }
 
         [Required(ErrorMessage = "Select a centre")]

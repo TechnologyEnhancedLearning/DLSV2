@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
-@model NumericInputViewModel
+@model TextInputViewModel
 
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
   <label class="nhsuk-label" for="@Model.Id">
@@ -24,7 +24,7 @@
          name="@Model.Name"
          value="@Model.Value"
          type="@Model.Type"
-         pattern="[0-9]*"
-         inputmode="numeric"
+         spellcheck="@Model.SpellCheck"
+         autocomplete="@Model.Autocomplete"
          aria-describedby="@Model.Name-error @Model.Name-hint" />
 </div>
