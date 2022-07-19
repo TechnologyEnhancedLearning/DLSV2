@@ -10,16 +10,18 @@
     [Authorize(Policy = CustomPolicies.UserSupervisor)]
     public partial class SupervisorController : Controller
     {
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
+        private readonly IFrameworkService frameworkService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly ISelfAssessmentService selfAssessmentService;
-        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly ISupervisorService supervisorService;
         private readonly IUserDataService userDataService;
 
         public SupervisorController(
             ISupervisorService supervisorService,
             IFrameworkNotificationService frameworkNotificationService,
+            IFrameworkService frameworkService,
             ISelfAssessmentService selfAssessmentService,
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IUserDataService userDataService,
@@ -28,6 +30,7 @@
         {
             this.supervisorService = supervisorService;
             this.frameworkNotificationService = frameworkNotificationService;
+            this.frameworkService = frameworkService;
             this.selfAssessmentService = selfAssessmentService;
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.userDataService = userDataService;

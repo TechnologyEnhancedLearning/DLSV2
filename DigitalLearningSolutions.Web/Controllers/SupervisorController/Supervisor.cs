@@ -662,7 +662,7 @@
             {
                 ModelState.ClearErrorsForAllFieldsExcept("SelfAssessmentSupervisorRoleId");
                 var supervisorDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var roleProfile = supervisorService.GetRoleProfileById((int)sessionEnrolOnRoleProfile.SelfAssessmentID);
                 var supervisorRoles =
                     supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value);
