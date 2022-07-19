@@ -628,7 +628,7 @@
                     user.JobGroupId,
                 }
             );
-            // TODO: UAR-889 - Remove LastName_deprecated from this query once the not-null constraint is lifted
+            // TODO: HEEDLS-1014 - Remove LastName_deprecated from this query since the not-null constraint was lifted in 932
             sqlConnection.Execute(
                 @"INSERT INTO DelegateAccounts (
                         CentreID,

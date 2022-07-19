@@ -31,7 +31,6 @@
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
 
-        // TODO HEEDLS-899 Sort out supervisor delegate stuff
         public string? Email { get; set; }
 
         public virtual void SetPersonalInformation(InternalPersonalInformationViewModel model)

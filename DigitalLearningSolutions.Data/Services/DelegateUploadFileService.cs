@@ -268,7 +268,7 @@ namespace DigitalLearningSolutions.Data.Services
                 return;
             }
 
-            // TODO: HEEDLS-899 - Change to User ID once HEEDLS-932 is merged
+            // TODO: HEEDLS-1014 - Change Delegate ID to User ID
             supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                 pendingSupervisorDelegateIds,
                 delegateId

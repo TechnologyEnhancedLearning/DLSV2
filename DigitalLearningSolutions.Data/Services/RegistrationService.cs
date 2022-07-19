@@ -137,7 +137,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (supervisorDelegateRecordIdsMatchingDelegate.Any())
             {
-                // TODO: HEEDLS-899 - Change to User ID once HEEDLS-932 is merged
+                // TODO: HEEDLS-1014 - Change Delegate ID to User ID
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     supervisorDelegateRecordIdsMatchingDelegate,
                     delegateUser.Id
@@ -229,7 +229,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (supervisorDelegateRecordIdsMatchingDelegate.Any())
             {
-                // TODO: HEEDLS-899 - Change to User ID once HEEDLS-932 is merged
+                // TODO: HEEDLS-1014 - Change Delegate ID to User ID
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     supervisorDelegateRecordIdsMatchingDelegate,
                     delegateId
@@ -289,7 +289,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (supervisorDelegateRecordIdsMatchingDelegate.Any())
             {
-                // TODO: HEEDLS-899 - Change to User ID once HEEDLS-932 is merged
+                // TODO: HEEDLS-1014 - Change Delegate ID to User ID
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     supervisorDelegateRecordIdsMatchingDelegate,
                     delegateUser.Id

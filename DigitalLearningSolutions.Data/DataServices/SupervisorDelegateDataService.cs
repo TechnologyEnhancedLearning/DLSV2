@@ -86,7 +86,7 @@
             );
         }
 
-        // TODO: HEEDLS-899 - Change CandidateID to User ID once HEEDLS-932 is merged
+        // TODO: HEEDLS-1014 - Change CandidateID to UserID
         public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int candidateId)
         {
             connection.Execute(

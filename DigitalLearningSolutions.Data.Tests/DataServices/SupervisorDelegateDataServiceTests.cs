@@ -126,7 +126,7 @@
             }
         }
 
-        // TODO: HEEDLS-899 - Change CandidateID to User ID once HEEDLS-932 is merged
+        // TODO: HEEDLS-1014 - Change CandidateID to UserID
         [Test]
         public void UpdateSupervisorDelegateRecordsCandidateId_updates_record_correctly()
         {

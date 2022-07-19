@@ -64,7 +64,7 @@
             }
         }
 
-        // TODO: HEEDLS-899 - Change name of method to AddUserIdToSupervisorDelegateRecords and candidateId to userId once HEEDLS-932 is merged
+        // TODO: HEEDLS-1014 - Change CandidateID to UserID
         [Test]
         public void AddDelegateIdToSupervisorDelegateRecords_calls_data_service_with_correct_values()
         {
