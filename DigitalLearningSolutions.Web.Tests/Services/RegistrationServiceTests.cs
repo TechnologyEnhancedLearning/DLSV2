@@ -1365,9 +1365,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         private void GivenNoPendingSupervisorDelegateRecordsForEmail()
         {
             A.CallTo(
-                    () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                    () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
                         A<int>._,
-                        A<string>._
+                        A<List<string?>>._
                     )
                 )
                 .Returns(new List<SupervisorDelegate>());
@@ -1377,9 +1377,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         {
             var supervisorDelegates = supervisorDelegateIds.Select(id => new SupervisorDelegate { ID = id });
             A.CallTo(
-                    () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                    () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
                         A<int>._,
-                        A<string>._
+                        A<List<string>>._
                     )
                 )
                 .Returns(supervisorDelegates);

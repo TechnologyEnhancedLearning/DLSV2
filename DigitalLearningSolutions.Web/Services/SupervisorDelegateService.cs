@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Supervisor;
 
@@ -9,7 +10,10 @@
     {
         SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(Guid inviteHash);
 
-        IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email);
+        IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
+            int centreId,
+            IEnumerable<string?> emails
+        );
 
         void AddDelegateIdToSupervisorDelegateRecords(IEnumerable<int> supervisorDelegateIds, int delegateId);
     }
@@ -30,17 +34,28 @@
             return supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash);
         }
 
-        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(
-            int centreId,
-            string email
-        )
-        {
-            return supervisorDelegateDataService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(centreId, email);
-        }
-
+        // TODO: HEEDLS-1014 - Change name of method to AddUserIdToSupervisorDelegateRecords
         public void AddDelegateIdToSupervisorDelegateRecords(IEnumerable<int> supervisorDelegateIds, int delegateId)
         {
             supervisorDelegateDataService.UpdateSupervisorDelegateRecordsCandidateId(supervisorDelegateIds, delegateId);
+        }
+
+        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
+            int centreId,
+            IEnumerable<string?> emails
+        )
+        {
+            var nonNullEmails = emails.Where(e => !string.IsNullOrWhiteSpace(e)).ToList();
+
+            if (!nonNullEmails.Any())
+            {
+                return new List<SupervisorDelegate>();
+            }
+
+            return supervisorDelegateDataService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
+                centreId,
+                nonNullEmails!
+            );
         }
     }
 }
