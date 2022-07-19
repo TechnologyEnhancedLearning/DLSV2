@@ -67,6 +67,7 @@ namespace DigitalLearningSolutions.Web.Services
         private readonly IRegistrationDataService registrationDataService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
+        private readonly INotificationDataService notificationDataService;
         private readonly IUserService userService;
 
         public RegistrationService(
@@ -78,6 +79,7 @@ namespace DigitalLearningSolutions.Web.Services
             IConfiguration config,
             ISupervisorDelegateService supervisorDelegateService,
             IUserDataService userDataService,
+            INotificationDataService notificationDataService,
             ILogger<RegistrationService> logger,
             IUserService userService,
             IClockUtility clockUtility
@@ -92,6 +94,7 @@ namespace DigitalLearningSolutions.Web.Services
             this.config = config;
             this.supervisorDelegateService = supervisorDelegateService;
             this.userDataService = userDataService;
+            this.notificationDataService = notificationDataService;
             this.logger = logger;
             this.userService = userService;
             this.clockUtility = clockUtility;
@@ -105,7 +108,6 @@ namespace DigitalLearningSolutions.Web.Services
             int? supervisorDelegateId = null
         )
         {
-            // TODO HEEDLS-899 sort out supervisor delegate stuff
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
@@ -133,13 +135,32 @@ namespace DigitalLearningSolutions.Web.Services
 
             if (supervisorDelegateRecordIdsMatchingDelegate.Any())
             {
+                // TODO: HEEDLS-1014 - Change Delegate ID to User ID
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     supervisorDelegateRecordIdsMatchingDelegate,
                     delegateId
                 );
             }
 
-            SendDelegateNeedsApprovalEmailIfNecessary(delegateRegistrationModel, refactoredTrackingSystemEnabled);
+            if (!delegateRegistrationModel.Approved)
+            {
+                var recipients = notificationDataService.GetAdminRecipientsForCentreNotification(delegateRegistrationModel.Centre, 4);
+
+                foreach (var recipient in recipients)
+                {
+                    if (recipient.Email != null && recipient.FirstName != null)
+                    {
+                        var approvalEmail = GenerateApprovalEmail(
+                        recipient.Email,
+                        recipient.FirstName,
+                        delegateRegistrationModel.FirstName,
+                        delegateRegistrationModel.LastName,
+                        refactoredTrackingSystemEnabled
+                    );
+                        emailService.SendEmail(approvalEmail);
+                    }
+                }
+            }
 
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
@@ -161,7 +182,6 @@ namespace DigitalLearningSolutions.Web.Services
             var userAccountsAtCentre = userEntity.GetCentreAccountSet(internalDelegateRegistrationModel.Centre);
             var userHasAdminAccountAtCentre = userAccountsAtCentre?.CanLogIntoAdminAccount == true;
 
-            // TODO HEEDLS-899 sort out supervisor delegate stuff, this is just copied from the external registration
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
@@ -225,6 +245,7 @@ namespace DigitalLearningSolutions.Web.Services
 
             if (supervisorDelegateRecordIdsMatchingDelegate.Any())
             {
+                // TODO: HEEDLS-1014 - Change Delegate ID to User ID
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     supervisorDelegateRecordIdsMatchingDelegate,
                     delegateId
@@ -249,7 +270,6 @@ namespace DigitalLearningSolutions.Web.Services
                 registerJourneyContainsTermsAndConditions
             );
 
-            // TODO HEEDLS-899 sort out supervisor delegate stuff
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
@@ -279,6 +299,7 @@ namespace DigitalLearningSolutions.Web.Services
 
             if (supervisorDelegateRecordIdsMatchingDelegate.Any())
             {
+                // TODO: HEEDLS-1014 - Change Delegate ID to User ID
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     supervisorDelegateRecordIdsMatchingDelegate,
                     delegateId
@@ -445,7 +466,7 @@ namespace DigitalLearningSolutions.Web.Services
                 ValidateCentreEmail(
                     delegateRegistrationModel.CentreSpecificEmail,
                     delegateRegistrationModel.Centre,
-                    null
+                    userId
                 );
             }
 
@@ -524,11 +545,13 @@ namespace DigitalLearningSolutions.Web.Services
             DelegateRegistrationModel delegateRegistrationModel
         )
         {
+            var delegateEmails = new List<string?>
+                { delegateRegistrationModel.PrimaryEmail, delegateRegistrationModel.CentreSpecificEmail };
+
             return supervisorDelegateService
-                .GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                .GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
                     delegateRegistrationModel.Centre,
-                    // TODO HEEDLS-899 it's undecided at time of comment whether this should be matched on centre email or primary email
-                    delegateRegistrationModel.PrimaryEmail
+                    delegateEmails
                 ).Select(record => record.ID);
         }
 

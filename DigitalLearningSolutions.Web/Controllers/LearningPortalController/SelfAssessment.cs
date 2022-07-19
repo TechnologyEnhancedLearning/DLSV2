@@ -227,8 +227,6 @@
             var model = new SupervisorCommentsViewModel
             {
                 SupervisorComment = supervisorComment,
-                SelfAssessmentSupervisor =
-                    selfAssessmentService.GetSupervisorForSelfAssessmentId(selfAssessmentId, candidateId),
                 AssessmentQuestion = new AssessmentQuestion
                 {
                     Verified = supervisorComment.Verified,
@@ -336,7 +334,7 @@
                 SupervisorSignOffs = supervisorSignOffs,
                 SearchViewModel = searchViewModel
             };
-            if(searchModel != null)
+            if (searchModel != null)
             {
                 searchModel.IsSupervisorResultsReviewed = assessment.IsSupervisorResultsReviewed;
             }
@@ -715,11 +713,11 @@
 
             TempData.Set(sessionAddSupervisor);
             var candidateId = User.GetCandidateIdKnownNotNull();
+            var delegateEntity = userDataService.GetDelegateById(candidateId);
             var supervisorDelegateId = supervisorService.AddSuperviseDelegate(
                 sessionAddSupervisor.SupervisorAdminId,
                 candidateId,
-                // TODO HEEDLS-899 This will have been broken by changes to the claims since it will be expecting centre specific emails
-                User.GetUserPrimaryEmail() ?? throw new InvalidOperationException(),
+                delegateEntity!.EmailForCentreNotifications,
                 sessionAddSupervisor.SupervisorEmail ?? throw new InvalidOperationException(),
                 User.GetCentreIdKnownNotNull()
             );

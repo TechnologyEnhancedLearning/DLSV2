@@ -24,6 +24,12 @@ namespace DigitalLearningSolutions.Web.Services
 
         List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
 
+        void UpdateUserDetails(
+            EditAccountDetailsData editAccountDetailsData,
+            bool changeMadeBySameUser,
+            DateTime? detailsLastChecked = null
+        );
+
         void UpdateUserDetailsAndCentreSpecificDetails(
             EditAccountDetailsData editAccountDetailsData,
             DelegateDetailsData? delegateDetailsData,
@@ -31,6 +37,8 @@ namespace DigitalLearningSolutions.Web.Services
             int centreId,
             bool changeMadeBySameUser
         );
+
+        void SetCentreEmails(int userId, Dictionary<int, string?> centreEmailsByCentreId);
 
         void ResetFailedLoginCount(UserAccount userAccount);
 
@@ -66,7 +74,9 @@ namespace DigitalLearningSolutions.Web.Services
 
         string? GetCentreEmail(int userId, int centreId);
 
-        IEnumerable<(string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(int userId);
+        IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(
+            int userId
+        );
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
 
@@ -295,7 +305,9 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetCentreEmail(userId, centreId);
         }
 
-        public IEnumerable<(string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(int userId)
+        public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(
+            int userId
+        )
         {
             return userDataService.GetAllCentreEmailsForUser(userId);
         }
@@ -326,6 +338,26 @@ namespace DigitalLearningSolutions.Web.Services
         public AdminEntity? GetAdminById(int adminId)
         {
             return userDataService.GetAdminById(adminId);
+        }
+
+        public void UpdateUserDetails(
+            EditAccountDetailsData editAccountDetailsData,
+            bool changeMadeBySameUser,
+            DateTime? detailsLastChecked = null
+        )
+        {
+            userDataService.UpdateUser(
+                editAccountDetailsData.FirstName,
+                editAccountDetailsData.Surname,
+                editAccountDetailsData.Email,
+                editAccountDetailsData.ProfileImage,
+                editAccountDetailsData.ProfessionalRegistrationNumber,
+                editAccountDetailsData.HasBeenPromptedForPrn,
+                editAccountDetailsData.JobGroupId,
+                detailsLastChecked ?? clockUtility.UtcNow,
+                editAccountDetailsData.UserId,
+                changeMadeBySameUser
+            );
         }
 
         public void UpdateUserDetailsAndCentreSpecificDetails(
@@ -359,24 +391,21 @@ namespace DigitalLearningSolutions.Web.Services
                 );
             }
 
-            userDataService.UpdateUser(
-                editAccountDetailsData.FirstName,
-                editAccountDetailsData.Surname,
-                editAccountDetailsData.Email,
-                editAccountDetailsData.ProfileImage,
-                editAccountDetailsData.ProfessionalRegistrationNumber,
-                editAccountDetailsData.HasBeenPromptedForPrn,
-                editAccountDetailsData.JobGroupId,
-                detailsLastChecked,
-                editAccountDetailsData.UserId,
-                changeMadeBySameUser
-            );
+            UpdateUserDetails(editAccountDetailsData, changeMadeBySameUser, detailsLastChecked);
 
             userDataService.SetCentreEmail(
                 editAccountDetailsData.UserId,
                 centreId,
                 centreEmail
             );
+        }
+
+        public void SetCentreEmails(int userId, Dictionary<int, string?> centreEmailsByCentreId)
+        {
+            foreach (var (centreId, email) in centreEmailsByCentreId)
+            {
+                userDataService.SetCentreEmail(userId, centreId, email);
+            }
         }
 
         private bool NewUserRolesExceedAvailableSpots(

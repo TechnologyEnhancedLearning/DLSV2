@@ -160,7 +160,9 @@
 
         string? GetCentreEmail(int userId, int centreId);
 
-        IEnumerable<(string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(int userId);
+        IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(
+            int userId
+        );
 
         IEnumerable<(int centreId, string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(int userId);
 

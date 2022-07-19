@@ -774,14 +774,17 @@
         {
             // Given
             const string candidateNumber = "DELEGATE";
+            const string delegateEmail = "email@test.com";
             const int newDelegateRecordId = 5;
+
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
             var supervisorDelegates = new List<SupervisorDelegate>
                 { new SupervisorDelegate { ID = 1 }, new SupervisorDelegate { ID = 2 } };
             var supervisorDelegateIds = new List<int> { 1, 2 };
+            var delegateEmailList = new List<string?> { delegateEmail };
 
-            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId))
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(delegateEmail, CentreId))
                 .Returns(false);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
@@ -797,7 +800,10 @@
                 .Returns(UserTestHelper.GetDefaultDelegateEntity(newDelegateRecordId));
             A.CallTo(
                 () =>
-                    supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(A<int>._, A<string>._)
+                    supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
+                        CentreId,
+                        A<List<string?>>.That.IsSameSequenceAs(delegateEmailList)
+                    )
             ).Returns(supervisorDelegates);
             A.CallTo(
                 () =>
@@ -816,14 +822,14 @@
                 )
                 .MustHaveHappened();
             A.CallTo(
-                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailsAndCentre(
                     CentreId,
-                    "email@test.com"
+                    A<IEnumerable<string?>>.That.IsSameSequenceAs(delegateEmailList)
                 )
             ).MustHaveHappened();
             A.CallTo(
                 () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
-                    A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
+                    A<List<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
                     newDelegateRecordId
                 )
             ).MustHaveHappened();

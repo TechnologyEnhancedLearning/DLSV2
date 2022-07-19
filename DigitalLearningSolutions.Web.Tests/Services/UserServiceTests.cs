@@ -164,8 +164,8 @@
             const string centreEmail = "test@email.com";
             const bool shouldUpdateProfileImage = true;
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
-            var now = DateTime.Now;
-            A.CallTo(() => clockUtility.UtcNow).Returns(now);
+            var detailsLastChecked = new DateTime(2022, 1, 1);
+            A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -186,7 +186,7 @@
                         accountDetailsData.ProfessionalRegistrationNumber,
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
-                        now,
+                        detailsLastChecked,
                         accountDetailsData.UserId,
                         shouldUpdateProfileImage
                     )
@@ -227,8 +227,8 @@
                 answer6
             );
 
-            var now = DateTime.Now;
-            A.CallTo(() => clockUtility.UtcNow).Returns(now);
+            var detailsLastChecked = new DateTime(2022, 1, 1);
+            A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -249,7 +249,7 @@
                         accountDetailsData.ProfessionalRegistrationNumber,
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
-                        now,
+                        detailsLastChecked,
                         accountDetailsData.UserId,
                         shouldUpdateProfileImage
                     )
@@ -264,7 +264,7 @@
                         answer4,
                         answer5,
                         answer6,
-                        now
+                        detailsLastChecked
                     )
                 )
                 .MustHaveHappened();
@@ -284,6 +284,122 @@
                     null
                 )
             ).MustHaveHappened();
+        }
+
+        [Test]
+        public void UpdateUserDetails_updates_user()
+        {
+            // Given
+            const bool changesMadeBySameUser = true;
+            var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
+            var detailsLastChecked = new DateTime(2022, 1, 1);
+
+            // When
+            userService.UpdateUserDetails(
+                accountDetailsData,
+                changesMadeBySameUser,
+                detailsLastChecked
+            );
+
+            // Then
+            A.CallTo(
+                    () => userDataService.UpdateUser(
+                        accountDetailsData.FirstName,
+                        accountDetailsData.Surname,
+                        accountDetailsData.Email,
+                        accountDetailsData.ProfileImage,
+                        accountDetailsData.ProfessionalRegistrationNumber,
+                        accountDetailsData.HasBeenPromptedForPrn,
+                        accountDetailsData.JobGroupId,
+                        detailsLastChecked,
+                        accountDetailsData.UserId,
+                        changesMadeBySameUser
+                    )
+                )
+                .MustHaveHappened();
+
+            A.CallTo(() => clockUtility.UtcNow).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void UpdateUserDetails_sets_detailsLastChecked_to_ClockUtility_UtcNow_if_no_argument_provided()
+        {
+            // Given
+            const bool changesMadeBySameUser = true;
+            var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
+            var detailsLastChecked = new DateTime(2022, 1, 1);
+            A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+
+            // When
+            userService.UpdateUserDetails(
+                accountDetailsData,
+                changesMadeBySameUser
+            );
+
+            // Then
+            A.CallTo(
+                    () => userDataService.UpdateUser(
+                        accountDetailsData.FirstName,
+                        accountDetailsData.Surname,
+                        accountDetailsData.Email,
+                        accountDetailsData.ProfileImage,
+                        accountDetailsData.ProfessionalRegistrationNumber,
+                        accountDetailsData.HasBeenPromptedForPrn,
+                        accountDetailsData.JobGroupId,
+                        detailsLastChecked,
+                        accountDetailsData.UserId,
+                        changesMadeBySameUser
+                    )
+                )
+                .MustHaveHappened();
+
+            A.CallTo(() => clockUtility.UtcNow).MustHaveHappened();
+        }
+
+        [Test]
+        public void SetCentreEmails_calls_UserDataService_SetCentreEmail_for_each_item_in_given_dictionary()
+        {
+            // Given
+            const int userId = 2;
+            var centreEmailsByCentreId = new Dictionary<int, string?>
+            {
+                { 1, "email@centre1.com" },
+                { 2, "email@centre2.com" },
+                { 3, null },
+            };
+
+            A.CallTo(
+                () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._)
+            ).DoesNothing();
+
+            // When
+            userService.SetCentreEmails(userId, centreEmailsByCentreId);
+
+            // Then
+            A.CallTo(
+                () => userDataService.SetCentreEmail(userId, 1, "email@centre1.com", A<IDbTransaction?>._)
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => userDataService.SetCentreEmail(userId, 2, "email@centre2.com", A<IDbTransaction?>._)
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => userDataService.SetCentreEmail(userId, 3, null, A<IDbTransaction?>._)
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void SetCentreEmails_does_not_call_data_service_if_given_an_empty_dictionary()
+        {
+            // Given
+            var centreEmailsByCentreId = new Dictionary<int, string?>();
+
+            // When
+            userService.SetCentreEmails(2, centreEmailsByCentreId);
+
+            // Then
+            A.CallTo(
+                () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._)
+            ).MustNotHaveHappened();
         }
 
         [Test]
@@ -746,7 +862,12 @@
                 UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday),
                 new List<AdminAccount>(),
                 new List<DelegateAccount>
-                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: sevenMonthsAgo, active: false) }
+                {
+                    UserTestHelper.GetDefaultDelegateAccount(
+                        centreSpecificDetailsLastChecked: sevenMonthsAgo,
+                        active: false
+                    )
+                }
             );
 
             // When
@@ -763,12 +884,14 @@
         {
             // Given
             const int userId = 1;
+            const int centreId = 1;
             const string centreName = "centre name";
             const string centreEmail = "centre@email.com";
 
-            var centreEmailList = new List<(string centreName, string? centreEmail)> { (centreName, centreEmail) };
+            var centreEmailList = new List<(int centreId, string centreName, string? centreEmail)>
+                { (centreId, centreName, centreEmail) };
             A.CallTo(() => userDataService.GetAllCentreEmailsForUser(userId)).Returns(
-                isEmpty ? new List<(string centreName, string? centreSpecificEmail)>() : centreEmailList
+                isEmpty ? new List<(int centreId, string centreName, string? centreSpecificEmail)>() : centreEmailList
             );
 
             // When
@@ -776,7 +899,7 @@
 
             // Then
             result.Should().BeEquivalentTo(
-                isEmpty ? new List<(string centreName, string? centreEmail)>() : centreEmailList
+                isEmpty ? new List<(int centreId, string centreName, string? centreEmail)>() : centreEmailList
             );
         }
 

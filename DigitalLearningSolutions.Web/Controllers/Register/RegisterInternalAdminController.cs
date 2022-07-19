@@ -101,7 +101,6 @@
 
             if (delegateAccount == null)
             {
-                // We can have the centreSpecificEmail = null here because we already set it for the admin account
                 registrationService.CreateDelegateAccountForExistingUser(
                     new InternalDelegateRegistrationModel(
                         model.Centre!.Value,

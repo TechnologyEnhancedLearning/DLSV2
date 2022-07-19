@@ -17,7 +17,7 @@
             string? centreName,
             string? centreSpecificEmail,
             CentreRegistrationPromptsWithAnswers? customPrompts,
-            List<(string centreName, string? centreSpecificEmail)> allCentreSpecificEmails,
+            List<(int centreId, string centreName, string? centreSpecificEmail)> allCentreSpecificEmails,
             DlsSubApplication dlsSubApplication,
             string switchCentreReturnUrl
         )
@@ -80,7 +80,11 @@
 
         public List<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
 
-        public List<(string centreName, string? centreSpecificEmail)> AllCentreSpecificEmails { get; set; }
+        public List<(int centreId, string centreName, string? centreSpecificEmail)> AllCentreSpecificEmails
+        {
+            get;
+            set;
+        }
 
         public DlsSubApplication DlsSubApplication { get; set; }
 
