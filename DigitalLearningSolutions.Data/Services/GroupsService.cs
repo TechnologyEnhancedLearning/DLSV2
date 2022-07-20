@@ -41,16 +41,13 @@
             int delegateId,
             AccountDetailsData accountDetailsData,
             RegistrationFieldAnswers newDelegateDetails,
+            RegistrationFieldAnswers oldRegistrationFieldAnswers,
             string? centreEmail
         );
 
-        void AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
-            int delegateId,
-            RegistrationFieldAnswers registrationFieldAnswers
-        );
-
         void EnrolDelegateOnGroupCourses(
-            DelegateUser delegateAccountWithOldDetails,
+            int delegateId,
+            int centreId,
             AccountDetailsData newDetails,
             string? centreEmail,
             int groupId,
@@ -174,20 +171,19 @@
             int delegateId,
             AccountDetailsData accountDetailsData,
             RegistrationFieldAnswers registrationFieldAnswers,
+            RegistrationFieldAnswers oldRegistrationFieldAnswers,
             string? centreEmail
         )
         {
-            var delegateAccountWithOldDetails = userDataService.GetDelegateUserById(delegateId)!;
-
             var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldChanges(
-                delegateAccountWithOldDetails.GetRegistrationFieldAnswers(),
+                oldRegistrationFieldAnswers,
                 registrationFieldAnswers,
                 jobGroupsDataService,
                 centreRegistrationPromptsService
             );
 
             var allSynchronisedGroupsAtCentre =
-                GetSynchronisedGroupsForCentre(delegateAccountWithOldDetails.CentreId).ToList();
+                GetSynchronisedGroupsForCentre(registrationFieldAnswers.CentreId).ToList();
 
             foreach (var changedAnswer in changedLinkedFields)
             {
@@ -204,20 +200,21 @@
                 using var transaction = new TransactionScope();
                 foreach (var groupToRemoveDelegateFrom in groupsToRemoveDelegateFrom)
                 {
-                    RemoveDelegateFromGroup(delegateAccountWithOldDetails.Id, groupToRemoveDelegateFrom.GroupId);
+                    RemoveDelegateFromGroup(delegateId, groupToRemoveDelegateFrom.GroupId);
                 }
 
                 foreach (var groupToAddDelegateTo in groupsToAddDelegateTo)
                 {
                     groupsDataService.AddDelegateToGroup(
-                        delegateAccountWithOldDetails.Id,
+                        delegateId,
                         groupToAddDelegateTo.GroupId,
                         clockService.UtcNow,
                         1
                     );
 
                     EnrolDelegateOnGroupCourses(
-                        delegateAccountWithOldDetails,
+                        delegateId,
+                        registrationFieldAnswers.CentreId,
                         accountDetailsData,
                         centreEmail,
                         groupToAddDelegateTo.GroupId
@@ -228,61 +225,22 @@
             }
         }
 
-        public void AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
-            int delegateId,
-            RegistrationFieldAnswers registrationFieldAnswers
-        )
-        {
-            var newDelegateAccount = userDataService.GetDelegateById(delegateId)!;
-
-            var newLinkedFields = LinkedFieldHelper.GetNewLinkedFields(
-                registrationFieldAnswers,
-                jobGroupsDataService,
-                centreRegistrationPromptsService
-            );
-
-            var allSynchronisedGroupsAtCentre =
-                GetAddNewRegistrantsGroupsForCentre(newDelegateAccount.DelegateAccount.CentreId).ToList();
-
-            foreach (var linkedField in newLinkedFields)
-            {
-                var groupsToAddDelegateTo = allSynchronisedGroupsAtCentre.Where(
-                    g => g.LinkedToField == linkedField.LinkedFieldNumber &&
-                         GroupLabelMatchesAnswer(g.GroupLabel, linkedField.NewValue!, linkedField.LinkedFieldName)
-                );
-
-                foreach (var groupToAddDelegateTo in groupsToAddDelegateTo)
-                {
-                    groupsDataService.AddDelegateToGroup(
-                        newDelegateAccount.DelegateAccount.Id,
-                        groupToAddDelegateTo.GroupId,
-                        clockService.UtcNow,
-                        1
-                    );
-
-                    EnrolNewDelegateOnGroupCourse(
-                        newDelegateAccount,
-                        groupToAddDelegateTo.GroupId
-                    );
-                }
-            }
-        }
-
         public void EnrolDelegateOnGroupCourses(
-            DelegateUser delegateAccountWithOldDetails,
+            int delegateId,
+            int centreId,
             AccountDetailsData newDetails,
             string? centreEmail,
             int groupId,
             int? addedByAdminId = null
         )
         {
-            var groupCourses = GetUsableGroupCoursesForCentre(groupId, delegateAccountWithOldDetails.CentreId);
+            var groupCourses = GetUsableGroupCoursesForCentre(groupId, centreId);
             var fullName = newDetails.FirstName + " " + newDetails.Surname;
 
             foreach (var groupCourse in groupCourses)
             {
                 EnrolDelegateOnGroupCourse(
-                    delegateAccountWithOldDetails.Id,
+                    delegateId,
                     centreEmail ?? newDetails.Email,
                     fullName,
                     addedByAdminId,
@@ -333,7 +291,8 @@
             );
 
             EnrolDelegateOnGroupCourses(
-                delegateUser,
+                delegateUser.Id,
+                delegateUser.CentreId,
                 accountDetailsData,
                 delegateEntity.EmailForCentreNotifications,
                 groupId,
