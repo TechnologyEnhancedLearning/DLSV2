@@ -8,13 +8,16 @@
     public interface IClaimAccountService
     {
         ClaimAccountViewModel GetAccountDetailsForCompletingRegistration(
-            int userId,
+            int userIdForRegistration,
             int centreId,
             string centreName,
-            string email
+            string email,
+            int? loggedInUserId = null
         );
 
         void ConvertTemporaryUserToConfirmedUser(int userId, int centreId, string primaryEmail);
+
+        void LinkAccount(int oldUserId, int newUserId, int centreId);
     }
 
     public class ClaimAccountService : IClaimAccountService
@@ -29,28 +32,31 @@
         }
 
         public ClaimAccountViewModel GetAccountDetailsForCompletingRegistration(
-            int userId,
+            int userIdForRegistration,
             int centreId,
             string centreName,
-            string email
+            string email,
+            int? loggedInUserId = null
         )
         {
-            var existingUserOwningEmailIfAny = userDataService.GetUserAccountByPrimaryEmail(email);
-            var userAccountToBeClaimed = userDataService.GetUserAccountById(userId);
-            var delegateAccountToBeClaimed = userDataService.GetDelegateAccountsByUserId(userId)
+            var userMatchingEmail = userDataService.GetUserAccountByPrimaryEmail(email);
+            var emailIsTaken = userMatchingEmail != null &&
+                               (loggedInUserId == null || loggedInUserId != userMatchingEmail.Id);
+            var userAccountToBeClaimed = userDataService.GetUserAccountById(userIdForRegistration);
+            var delegateAccountToBeClaimed = userDataService.GetDelegateAccountsByUserId(userIdForRegistration)
                 .SingleOrDefault(da => da.CentreId == centreId);
             var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
 
             return new ClaimAccountViewModel
             {
-                UserId = userId,
+                UserId = userIdForRegistration,
                 CentreId = centreId,
                 CentreName = centreName,
-                CentreSpecificEmail = email,
+                Email = email,
                 CandidateNumber = delegateAccountToBeClaimed!.CandidateNumber,
                 SupportEmail = supportEmail,
-                EmailIsTaken = existingUserOwningEmailIfAny != null,
-                EmailIsTakenByActiveUser = existingUserOwningEmailIfAny?.Active ?? false,
+                EmailIsTaken = emailIsTaken,
+                EmailIsTakenByActiveUser = emailIsTaken && userMatchingEmail.Active,
                 PasswordSet = !string.IsNullOrWhiteSpace(userAccountToBeClaimed?.PasswordHash),
             };
         }
@@ -60,6 +66,13 @@
             userDataService.SetPrimaryEmailAndActivate(userId, primaryEmail);
             userDataService.SetCentreEmail(userId, centreId, null);
             userDataService.SetRegistrationConfirmationHash(userId, centreId, null);
+        }
+
+        public void LinkAccount(int oldUserId, int newUserId, int centreId)
+        {
+            userDataService.LinkDelegateAccountToNewUser(oldUserId, newUserId, centreId);
+            userDataService.LinkUserCentreDetailsToNewUser(oldUserId, newUserId, centreId);
+            userDataService.DeleteUser(oldUserId);
         }
     }
 }

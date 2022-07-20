@@ -35,8 +35,7 @@
           A DLS user account is already registered with this email address. If that account belongs to you, you can link this delegate record to your login.
         </p>
 
-        <!-- TODO HEEDLS-976 Change the asp-action to LinkDlsAccount -->
-        <vc:action-link asp-controller="ClaimAccount" asp-action="CompleteRegistration" link-text="Link this record" />
+        <vc:action-link asp-controller="ClaimAccount" asp-action="LinkDlsAccount" link-text="Link this record" />
       } else {
         <p class="nhsuk-body-m">
           The DLS user account associated with this email address is inactive. To request reactivation of the account, please contact <a href="mailto:@Model.SupportEmail">@Model.SupportEmail</a>.
@@ -47,15 +46,14 @@
         If you already have an account on DLS, we recommend that you link your new account to your existing login.
       </p>
 
-      <!-- TODO HEEDLS-976 Change the asp-action to LinkDlsAccount -->
-      <vc:action-link asp-controller="ClaimAccount" asp-action="CompleteRegistration" link-text="Use existing login" />
+      <vc:action-link asp-controller="ClaimAccount" asp-action="LinkDlsAccount" link-text="Use existing login" />
 
       <p class="nhsuk-body-m">
         Otherwise, you can create a new login.
       </p>
 
       var routeData = new Dictionary<string, string> {
-        { "email", Model.CentreSpecificEmail },
+        { "email", Model.Email },
         { "code", Model.RegistrationConfirmationHash },
       };
 

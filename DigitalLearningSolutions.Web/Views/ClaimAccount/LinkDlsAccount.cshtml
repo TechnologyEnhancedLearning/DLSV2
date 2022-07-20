@@ -1,0 +1,24 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model ClaimAccountViewModel
+
+@{
+  ViewData["Title"] = "Claim account";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Link new account</h1>
+
+    <partial name="_CentreSummary" model="@Model" />
+
+    <p class="nhsuk-body-m">
+      Are you sure you would like to link this account to your login?
+    </p>
+
+    <form method="post" asp-action="LinkDlsAccount">
+      <button class="nhsuk-button" type="submit">Link account</button>
+    </form>
+
+    <vc:cancel-link asp-controller="Home" asp-action="Index" />
+  </div>
+</div>

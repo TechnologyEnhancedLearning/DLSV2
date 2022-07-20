@@ -131,6 +131,8 @@
             int userId
         );
 
+        void DeleteUser(int userId);
+
         void DeleteAdminAccount(int adminId);
 
         int? GetUserIdFromUsername(string username);
@@ -173,6 +175,10 @@
             );
 
         void SetRegistrationConfirmationHash(int userId, int centreId, string? hash);
+
+        void LinkDelegateAccountToNewUser(int oldUserId, int newUserId, int centreId);
+
+        void LinkUserCentreDetailsToNewUser(int oldUserId, int newUserId, int centreId);
     }
 
     public partial class UserDataService : IUserDataService
@@ -303,6 +309,14 @@
             connection.Execute(
                 @"UPDATE Users SET PrimaryEmail = @email, Active = 1 WHERE ID = @userId",
                 new { email, userId }
+            );
+        }
+
+        public void DeleteUser(int userId)
+        {
+            connection.Execute(
+                @"DELETE FROM Users WHERE ID = @userId",
+                new { userId }
             );
         }
     }

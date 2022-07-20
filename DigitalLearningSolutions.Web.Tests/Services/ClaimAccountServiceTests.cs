@@ -76,7 +76,7 @@
                     UserId = DefaultUserId,
                     CentreId = DefaultCentreId,
                     CentreName = DefaultCentreName,
-                    CentreSpecificEmail = DefaultEmail,
+                    Email = DefaultEmail,
                     CandidateNumber = DefaultCandidateNumber,
                     SupportEmail = DefaultSupportEmail,
                     EmailIsTaken = emailIsTaken,

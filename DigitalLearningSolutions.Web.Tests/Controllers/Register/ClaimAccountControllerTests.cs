@@ -20,6 +20,7 @@
         private const int DefaultCentreId = 7;
         private const string DefaultCentreName = "Centre";
         private const string DefaultCandidateNumber = "CN777";
+        private IUserService userService = null!;
         private IUserDataService userDataService = null!;
         private IClaimAccountService claimAccountService = null!;
         private ClaimAccountController controller = null!;
@@ -27,9 +28,10 @@
         [SetUp]
         public void Setup()
         {
+            userService = A.Fake<IUserService>();
             userDataService = A.Fake<IUserDataService>();
             claimAccountService = A.Fake<IClaimAccountService>();
-            controller = new ClaimAccountController(userDataService, claimAccountService)
+            controller = new ClaimAccountController(userService, userDataService, claimAccountService)
                 .WithDefaultContext()
                 .WithMockTempData();
         }
@@ -99,7 +101,8 @@
                     DefaultUserId,
                     DefaultCentreId,
                     DefaultCentreName,
-                    DefaultEmail
+                    DefaultEmail,
+                    null
                 )
             ).Returns(expectedModel);
 
@@ -176,7 +179,8 @@
                     DefaultUserId,
                     DefaultCentreId,
                     DefaultCentreName,
-                    DefaultEmail
+                    DefaultEmail,
+                    null
                 )
             ).Returns(expectedModel);
 
@@ -249,7 +253,7 @@
                 UserId = userId,
                 CentreId = centreId,
                 CentreName = centreName,
-                CentreSpecificEmail = centreSpecificEmail,
+                Email = centreSpecificEmail,
                 RegistrationConfirmationHash = registrationConfirmationHash,
                 CandidateNumber = candidateNumber,
                 SupportEmail = supportEmail,

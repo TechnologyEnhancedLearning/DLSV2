@@ -417,5 +417,15 @@
                 new { hash, userId, centreId }
             );
         }
+
+        public void LinkDelegateAccountToNewUser(int oldUserId, int newUserId, int centreId)
+        {
+            connection.Execute(
+                @"UPDATE DelegateAccounts
+                    SET UserID = @newUserId, RegistrationConfirmationHash = NULL
+                    WHERE UserID = @oldUserId AND CentreID = @centreId",
+                new { oldUserId, newUserId, centreId }
+            );
+        }
     }
 }
