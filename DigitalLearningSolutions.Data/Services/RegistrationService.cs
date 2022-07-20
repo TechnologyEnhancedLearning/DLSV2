@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using MimeKit;
@@ -135,11 +136,6 @@ namespace DigitalLearningSolutions.Data.Services
                 true
             );
 
-            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
-                delegateId,
-                delegateRegistrationModel.GetRegistrationFieldAnswers()
-            );
-
             if (supervisorDelegateRecordIdsMatchingDelegate.Any())
             {
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
@@ -216,9 +212,12 @@ namespace DigitalLearningSolutions.Data.Services
                     ReregisterDelegateAccountForExistingUser(userId, delegateId, delegateRegistrationModel);
                 }
 
-                groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                groupsService.SynchroniseUserChangesWithGroups(
                     delegateId,
-                    delegateRegistrationModel.GetRegistrationFieldAnswers()
+                    new AccountDetailsData(delegateRegistrationModel.FirstName, delegateRegistrationModel.LastName, delegateRegistrationModel.PrimaryEmail),
+                    delegateRegistrationModel.GetRegistrationFieldAnswers(),
+                    new RegistrationFieldAnswers(delegateRegistrationModel.Centre, 0, null, null, null, null, null, null),
+                    delegateRegistrationModel.CentreSpecificEmail
                 );
 
                 transaction.Complete();
@@ -266,11 +265,6 @@ namespace DigitalLearningSolutions.Data.Services
             var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
                 registerJourneyContainsTermsAndConditions
-            );
-
-            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
-                delegateId,
-                delegateRegistrationModel.GetRegistrationFieldAnswers()
             );
 
             // TODO HEEDLS-899 sort out supervisor delegate stuff
@@ -434,6 +428,14 @@ namespace DigitalLearningSolutions.Data.Services
                 var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
                     registerJourneyContainsTermsAndConditions
+                );
+
+                groupsService.SynchroniseUserChangesWithGroups(
+                    delegateId,
+                    new AccountDetailsData(delegateRegistrationModel.FirstName, delegateRegistrationModel.LastName, delegateRegistrationModel.PrimaryEmail),
+                    delegateRegistrationModel.GetRegistrationFieldAnswers(),
+                    new RegistrationFieldAnswers(delegateRegistrationModel.Centre, 0, null, null, null, null, null, null),
+                    delegateRegistrationModel.CentreSpecificEmail
                 );
 
                 return (delegateId, candidateNumber);
