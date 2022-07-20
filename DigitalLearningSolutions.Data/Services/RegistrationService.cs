@@ -216,13 +216,9 @@ namespace DigitalLearningSolutions.Data.Services
                     ReregisterDelegateAccountForExistingUser(userId, delegateId, delegateRegistrationModel);
                 }
 
-                var delegateEntity = userDataService.GetDelegateById(
-                    delegateId
-                )!;
-
                 groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
                     delegateId,
-                    delegateEntity.GetRegistrationFieldAnswers()
+                    delegateRegistrationModel.GetRegistrationFieldAnswers()
                 );
 
                 transaction.Complete();

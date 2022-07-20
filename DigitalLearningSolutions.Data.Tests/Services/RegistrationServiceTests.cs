@@ -1170,21 +1170,33 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             const int userId = 2;
             const int delegateId = 2;
-            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
+            var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel(answer6: null);
             var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
-                7,
-                answer1: "a",
-                answer2: "b",
-                answer3: "c",
-                answer4: "d",
-                answer5: "e",
-                answer6: null
+                delegateId,
+                answer1: "answer1",
+                answer2: "answer2",
+                answer3: "answer3",
+                answer4: "answer4",
+                answer5: "answer5",
+                answer6: null,
+                jobGroupId: 0
             );
             var expectedAnswers = delegateEntity.GetRegistrationFieldAnswers();
+
             A.CallTo(
                 () => registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
-                    A<DelegateRegistrationModel>._,
-                    A<int>._,
+                    A<DelegateRegistrationModel>.That.Matches(
+                        m =>
+                            m.Centre == model.Centre &&
+                            m.CentreSpecificEmail == model.CentreSpecificEmail &&
+                            m.Answer1 == model.Answer1 &&
+                            m.Answer2 == model.Answer2 &&
+                            m.Answer3 == model.Answer3 &&
+                            m.Answer4 == model.Answer4 &&
+                            m.Answer5 == model.Answer5 &&
+                            m.Answer6 == model.Answer6
+                        ),
+                    userId,
                     A<DateTime>._,
                     A<IDbTransaction?>._
                 )
@@ -1192,7 +1204,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => userDataService.GetDelegateById(delegateId)).Returns(delegateEntity);
 
             // When
-            var (_, approved, _) = registrationService.CreateDelegateAccountForExistingUser(
+            registrationService.CreateDelegateAccountForExistingUser(
                 model,
                 userId,
                 "987.654.321.100",

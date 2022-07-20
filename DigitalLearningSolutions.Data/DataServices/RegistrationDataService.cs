@@ -114,15 +114,6 @@
                 transaction
             );
 
-            var delegateEntity = userDataService.GetDelegateById(
-                delegateId
-            )!;
-
-            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
-                delegateId,
-                delegateEntity.GetRegistrationFieldAnswers()
-            );
-
             if (transactionShouldBeClosed)
             {
                 transaction.Commit();
@@ -153,15 +144,6 @@
                 delegateId,
                 currentTime,
                 transaction
-            );
-
-            var delegateEntity = userDataService.GetDelegateById(
-                delegateId
-            )!;
-
-            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
-                delegateId,
-                delegateEntity.GetRegistrationFieldAnswers()
             );
 
             transaction.Commit();

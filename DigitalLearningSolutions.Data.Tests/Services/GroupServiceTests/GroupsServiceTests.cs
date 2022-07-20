@@ -667,8 +667,8 @@
         public void AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses_adds_delegate_to_groups()
         {
             // given
-            var now = DateTime.Now;
-            A.CallTo(() => clockService.UtcNow).Returns(now);
+            var fixedDate = new DateTime(2100, 1, 1);
+            A.CallTo(() => clockService.UtcNow).Returns(fixedDate);
             A.CallTo(() => userDataService.GetDelegateById(reusableDelegateDetails.Id))
                 .Returns(
                     UserTestHelper.GetDefaultDelegateEntity(
@@ -696,15 +696,15 @@
                 )
             ).Returns("mathematics");
 
-            var group_to_join_1 = GroupTestHelper.GetDefaultGroup(48, "cool kids", linkedToField: 1);
-            var group_to_join_2 = GroupTestHelper.GetDefaultGroup(49, "astronomy - local group", linkedToField: 2);
-            var group_to_not_join = GroupTestHelper.GetDefaultGroup(49, "set with binary operation", linkedToField: 3);
-            var ineligibile_group = GroupTestHelper.GetDefaultGroup(
+            var groupToJoin1 = GroupTestHelper.GetDefaultGroup(48, "cool kids", linkedToField: 1);
+            var groupToJoin2 = GroupTestHelper.GetDefaultGroup(49, "astronomy - local group", linkedToField: 2);
+            var groupToNotJoin = GroupTestHelper.GetDefaultGroup(49, "set with binary operation", linkedToField: 3);
+            var ineligibleGroup = GroupTestHelper.GetDefaultGroup(
                 50,
                 "Bad - Apple",
                 shouldAddNewRegistrantsToGroup: false
             );
-            var groups = new List<Group> { group_to_join_1, group_to_join_2, group_to_not_join, ineligibile_group };
+            var groups = new List<Group> { groupToJoin1, groupToJoin2, groupToNotJoin, ineligibleGroup };
 
             var registrationFieldAnswers = new RegistrationFieldAnswers(
                 reusableDelegateDetails.CentreId,
@@ -729,10 +729,10 @@
 
             // then
             A.CallTo(
-                () => groupsDataService.AddDelegateToGroup(reusableDelegateDetails.Id, group_to_join_1.GroupId, now, 1)
+                () => groupsDataService.AddDelegateToGroup(reusableDelegateDetails.Id, groupToJoin1.GroupId, fixedDate, 1)
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
-                () => groupsDataService.AddDelegateToGroup(reusableDelegateDetails.Id, group_to_join_2.GroupId, now, 1)
+                () => groupsDataService.AddDelegateToGroup(reusableDelegateDetails.Id, groupToJoin2.GroupId, fixedDate, 1)
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._)

@@ -251,8 +251,6 @@
                          GroupLabelMatchesAnswer(g.GroupLabel, linkedField.NewValue!, linkedField.LinkedFieldName)
                 );
 
-                using var transaction = new TransactionScope();
-
                 foreach (var groupToAddDelegateTo in groupsToAddDelegateTo)
                 {
                     groupsDataService.AddDelegateToGroup(
@@ -267,8 +265,6 @@
                         groupToAddDelegateTo.GroupId
                     );
                 }
-
-                transaction.Complete();
             }
         }
 
@@ -555,14 +551,13 @@
         )
         {
             var groupCourses = GetUsableGroupCoursesForCentre(groupId, newDelegateEntity.DelegateAccount.CentreId);
-            var fullName = newDelegateEntity.UserAccount.FirstName + " " + newDelegateEntity.UserAccount.LastName;
 
             foreach (var groupCourse in groupCourses)
             {
                 EnrolDelegateOnGroupCourse(
                     newDelegateEntity.DelegateAccount.Id,
                     newDelegateEntity.EmailForCentreNotifications,
-                    fullName,
+                    newDelegateEntity.UserAccount.FullName,
                     addedByAdminId,
                     groupCourse,
                     false
