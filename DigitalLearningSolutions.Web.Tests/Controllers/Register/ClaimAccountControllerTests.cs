@@ -95,7 +95,7 @@
             var expectedModel = GetViewModel();
 
             A.CallTo(
-                () => claimAccountService.GetViewModelForClaimAccountJourney(
+                () => claimAccountService.GetAccountDetailsForCompletingRegistration(
                     DefaultUserId,
                     DefaultCentreId,
                     DefaultCentreName,
@@ -172,7 +172,7 @@
             var expectedModel = GetViewModel();
 
             A.CallTo(
-                () => claimAccountService.GetViewModelForClaimAccountJourney(
+                () => claimAccountService.GetAccountDetailsForCompletingRegistration(
                     DefaultUserId,
                     DefaultCentreId,
                     DefaultCentreName,

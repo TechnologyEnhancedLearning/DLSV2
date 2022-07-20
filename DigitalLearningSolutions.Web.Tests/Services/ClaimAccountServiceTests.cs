@@ -40,7 +40,7 @@
         [TestCase(true, false, DefaultPasswordHash)]
         [TestCase(true, true, "")]
         [TestCase(true, true, DefaultPasswordHash)]
-        public void GetViewModelForClaimAccountJourney_returns_expected_model(
+        public void GetAccountDetailsForCompletingRegistration_returns_expected_model(
             bool emailIsTaken,
             bool emailIsTakenByActiveUser,
             string passwordHash
@@ -62,7 +62,7 @@
                 .Returns(DefaultSupportEmail);
 
             // When
-            var result = claimAccountService.GetViewModelForClaimAccountJourney(
+            var result = claimAccountService.GetAccountDetailsForCompletingRegistration(
                 DefaultUserId,
                 DefaultCentreId,
                 DefaultCentreName,

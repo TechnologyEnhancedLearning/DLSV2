@@ -92,7 +92,7 @@
                 return null;
             }
 
-            var model = claimAccountService.GetViewModelForClaimAccountJourney(
+            var model = claimAccountService.GetAccountDetailsForCompletingRegistration(
                 userId.Value,
                 centreId.Value,
                 centreName,

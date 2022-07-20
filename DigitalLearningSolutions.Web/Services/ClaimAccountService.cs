@@ -7,7 +7,7 @@
 
     public interface IClaimAccountService
     {
-        ClaimAccountViewModel GetViewModelForClaimAccountJourney(
+        ClaimAccountViewModel GetAccountDetailsForCompletingRegistration(
             int userId,
             int centreId,
             string centreName,
@@ -28,7 +28,7 @@
             this.configDataService = configDataService;
         }
 
-        public ClaimAccountViewModel GetViewModelForClaimAccountJourney(
+        public ClaimAccountViewModel GetAccountDetailsForCompletingRegistration(
             int userId,
             int centreId,
             string centreName,
