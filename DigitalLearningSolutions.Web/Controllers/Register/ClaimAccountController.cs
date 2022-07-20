@@ -24,30 +24,28 @@
         }
 
         [HttpGet]
-        [Route("/ClaimAccount/CompleteRegistration")]
+        public IActionResult Index(string email, string code)
+        {
+            var model = GetViewModelIfValidParameters(email, code);
+
+            if (model == null)
+            {
+                return RedirectToAction("AccessDenied", "LearningSolutions");
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
         public IActionResult CompleteRegistration(string email, string code)
         {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(code))
+            var model = GetViewModelIfValidParameters(email, code);
+
+            if (model == null)
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
-            var (userId, centreId, centreName) =
-                userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(email, code);
-
-            if (userId == null)
-            {
-                return RedirectToAction("AccessDenied", "LearningSolutions");
-            }
-
-            var model = claimAccountService.CreateModelForCompleteRegistration(
-                userId.Value,
-                centreId.Value,
-                centreName,
-                email
-            );
-
-            model.RegistrationConfirmationHash = code;
             TempData.Set(model);
 
             return View(model);
@@ -77,6 +75,32 @@
 
             TempData.Clear();
             return View("Confirmation", model);
+        }
+
+        private ClaimAccountViewModel? GetViewModelIfValidParameters(string email, string code)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(code))
+            {
+                return null;
+            }
+
+            var (userId, centreId, centreName) =
+                userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(email, code);
+
+            if (userId == null)
+            {
+                return null;
+            }
+
+            var model = claimAccountService.GetViewModelForClaimAccountJourney(
+                userId.Value,
+                centreId.Value,
+                centreName,
+                email
+            );
+
+            model.RegistrationConfirmationHash = code;
+            return model;
         }
     }
 }

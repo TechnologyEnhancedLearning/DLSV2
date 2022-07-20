@@ -43,13 +43,90 @@
         [TestCase("   ", DefaultCode)]
         [TestCase(DefaultEmail, null)]
         [TestCase(DefaultEmail, "   ")]
+        public void IndexGet_with_invalid_email_or_code_redirects_to_AccessDenied(
+            string email,
+            string code
+        )
+        {
+            // When
+            var result = controller.Index(email, code);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
+                .WithActionName("AccessDenied");
+        }
+
+        [Test]
+        public void IndexGet_with_no_existing_user_redirects_to_AccessDenied()
+        {
+            // Given
+            A.CallTo(
+                () => userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                    DefaultEmail,
+                    DefaultCode
+                )
+            ).Returns((null, null, null));
+
+            // When
+            var result = controller.Index(DefaultEmail, DefaultCode);
+
+            // Then
+            A.CallTo(
+                () => userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                    DefaultEmail,
+                    DefaultCode
+                )
+            ).MustHaveHappenedOnceExactly();
+            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
+                .WithActionName("AccessDenied");
+        }
+
+        [Test]
+        public void IndexGet_with_existing_user_returns_view_model()
+        {
+            // Given
+            A.CallTo(
+                () => userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                    DefaultEmail,
+                    DefaultCode
+                )
+            ).Returns((DefaultUserId, DefaultCentreId, DefaultCentreName));
+
+            var expectedModel = GetViewModel();
+
+            A.CallTo(
+                () => claimAccountService.GetViewModelForClaimAccountJourney(
+                    DefaultUserId,
+                    DefaultCentreId,
+                    DefaultCentreName,
+                    DefaultEmail
+                )
+            ).Returns(expectedModel);
+
+            // When
+            var result = controller.Index(DefaultEmail, DefaultCode);
+
+            // Then
+            result.Should().BeViewResult().ModelAs<ClaimAccountViewModel>();
+            ((ViewResult)result).ViewData.Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        [TestCase(null, null)]
+        [TestCase("   ", null)]
+        [TestCase(null, "   ")]
+        [TestCase("   ", "   ")]
+        [TestCase(null, DefaultCode)]
+        [TestCase("   ", DefaultCode)]
+        [TestCase(DefaultEmail, null)]
+        [TestCase(DefaultEmail, "   ")]
         public void CompleteRegistrationGet_with_invalid_email_or_code_redirects_to_AccessDenied(
             string email,
             string code
         )
         {
             // When
-            var result = controller.CompleteRegistration(email, code);
+            var result = controller.Index(email, code);
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
@@ -68,7 +145,7 @@
             ).Returns((null, null, null));
 
             // When
-            var result = controller.CompleteRegistration(DefaultEmail, DefaultCode);
+            var result = controller.Index(DefaultEmail, DefaultCode);
 
             // Then
             A.CallTo(
@@ -95,7 +172,7 @@
             var expectedModel = GetViewModel();
 
             A.CallTo(
-                () => claimAccountService.CreateModelForCompleteRegistration(
+                () => claimAccountService.GetViewModelForClaimAccountJourney(
                     DefaultUserId,
                     DefaultCentreId,
                     DefaultCentreName,
@@ -104,7 +181,7 @@
             ).Returns(expectedModel);
 
             // When
-            var result = controller.CompleteRegistration(DefaultEmail, DefaultCode);
+            var result = controller.Index(DefaultEmail, DefaultCode);
 
             // Then
             result.Should().BeViewResult().ModelAs<ClaimAccountViewModel>();
@@ -115,8 +192,7 @@
         public void CompleteRegistrationPost_with_email_in_use_returns_NotFound()
         {
             // Given
-            var model = GetViewModel();
-            controller.TempData.Set(model);
+            controller.TempData.Set(GetViewModel());
             A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail)).Returns(true);
 
             // When
@@ -136,13 +212,6 @@
             var model = GetViewModel(passwordSet: true);
             controller.TempData.Set(model);
             A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail)).Returns(false);
-            A.CallTo(
-                () => claimAccountService.ConvertTemporaryUserToConfirmedUser(
-                    DefaultUserId,
-                    DefaultCentreId,
-                    DefaultEmail
-                )
-            ).DoesNothing();
 
             // When
             var result = controller.CompleteRegistration();

@@ -1,67 +1,36 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Register
 @model ClaimAccountViewModel
 
-<link rel="stylesheet" href="@Url.Content("~/css/claimAccount/completeRegistration.css")" asp-append-version="true">
-
 @{
-  ViewData["Title"] = "Complete delegate registration";
+  ViewData["Title"] = "Complete registration";
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
 
     <h1 class="nhsuk-heading-l" id="app-page-heading">
-      Complete delegate registration
+      Complete registration
     </h1>
 
-    <p class="nhsuk-body-m">You have been registered for a new account.</p>
+    <form method="post" asp-action="CompleteRegistration">
+      <dl class="nhsuk-summary-list--no-border nhsuk-body-m">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Centre:
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.CentreName" />
+        </div>
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Email:
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.CentreSpecificEmail" />
+        </div>
+      </dl>
 
-    <dl class="nhsuk-summary-list--no-border nhsuk-body-m">
-      <div class="nhsuk-summary-list__row basic-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Centre:
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.CentreName" />
-      </div>
-      <div class="nhsuk-summary-list__row basic-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Account email:
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.CentreSpecificEmail" />
-      </div>
-    </dl>
+      <p class="nhsuk-body-m">Are you sure you would like to create a new login for this account?</p>
 
-    @if (Model.EmailIsTaken) {
-      if (Model.EmailIsTakenByActiveUser) {
-        <p class="nhsuk-body-m">
-          A DLS user account is already registered with this email address. If that account belongs to you, you can link this delegate record to your login.
-        </p>
-
-        <!-- TODO HEEDLS-976 Change the asp-action to LinkDlsAccount -->
-        <vc:action-link asp-controller="ClaimAccount" asp-action="CompleteRegistration" link-text="Link this record" />
-      } else {
-        <p class="nhsuk-body-m">
-          The DLS user account associated with this email address is inactive. To request reactivation of the account, please contact <a href="mailto:@Model.SupportEmail">@Model.SupportEmail</a>.
-        </p>
-      }
-    } else {
-      <p class="nhsuk-body-m">
-        If you already have an account on DLS, we recommend that you link your new account to your existing login.
-      </p>
-
-      <!-- TODO HEEDLS-976 Change the asp-action to LinkDlsAccount -->
-      <vc:action-link asp-controller="ClaimAccount" asp-action="CompleteRegistration" link-text="Use existing login" />
-
-      <p class="nhsuk-body-m">
-        Otherwise, you can create a new login.
-      </p>
-
-      <form asp-controller="ClaimAccount" asp-action="CompleteRegistration" method="post">
-        <button type="submit" role="link" class="create-new-login__button">
-          <vc:action-link asp-controller="ClaimAccount" asp-action="Index" link-text="Create a new login" />
-        </button>
-      </form>
-    }
-
+      <button class="nhsuk-button" type="submit">Create login</button>
+    </form>
   </div>
 </div>

@@ -40,7 +40,7 @@
         [TestCase(true, false, DefaultPasswordHash)]
         [TestCase(true, true, "")]
         [TestCase(true, true, DefaultPasswordHash)]
-        public void CreateModelForCompleteRegistration_returns_expected_model(
+        public void GetViewModelForClaimAccountJourney_returns_expected_model(
             bool emailIsTaken,
             bool emailIsTakenByActiveUser,
             string passwordHash
@@ -62,7 +62,7 @@
                 .Returns(DefaultSupportEmail);
 
             // When
-            var result = claimAccountService.CreateModelForCompleteRegistration(
+            var result = claimAccountService.GetViewModelForClaimAccountJourney(
                 DefaultUserId,
                 DefaultCentreId,
                 DefaultCentreName,
@@ -70,31 +70,25 @@
             );
 
             // Then
-            var expectedModel = new ClaimAccountViewModel
-            {
-                UserId = DefaultUserId,
-                CentreId = DefaultCentreId,
-                CentreName = DefaultCentreName,
-                CentreSpecificEmail = DefaultEmail,
-                CandidateNumber = DefaultCandidateNumber,
-                SupportEmail = DefaultSupportEmail,
-                EmailIsTaken = emailIsTaken,
-                EmailIsTakenByActiveUser = emailIsTakenByActiveUser,
-                PasswordSet = !string.IsNullOrWhiteSpace(passwordHash),
-            };
-            result.Should().BeEquivalentTo(expectedModel);
+            result.Should().BeEquivalentTo(
+                new ClaimAccountViewModel
+                {
+                    UserId = DefaultUserId,
+                    CentreId = DefaultCentreId,
+                    CentreName = DefaultCentreName,
+                    CentreSpecificEmail = DefaultEmail,
+                    CandidateNumber = DefaultCandidateNumber,
+                    SupportEmail = DefaultSupportEmail,
+                    EmailIsTaken = emailIsTaken,
+                    EmailIsTakenByActiveUser = emailIsTakenByActiveUser,
+                    PasswordSet = !string.IsNullOrWhiteSpace(passwordHash),
+                }
+            );
         }
 
         [Test]
         public void ConvertTemporaryUserToConfirmedUser_sets_expected_data()
         {
-            // Given
-            A.CallTo(() => userDataService.SetPrimaryEmailAndActivate(DefaultUserId, DefaultEmail)).DoesNothing();
-            A.CallTo(() => userDataService.SetCentreEmail(DefaultUserId, DefaultCentreId, null, A<IDbTransaction?>._))
-                .DoesNothing();
-            A.CallTo(() => userDataService.SetRegistrationConfirmationHash(DefaultUserId, DefaultCentreId, null))
-                .DoesNothing();
-
             // When
             claimAccountService.ConvertTemporaryUserToConfirmedUser(DefaultUserId, DefaultCentreId, DefaultEmail);
 

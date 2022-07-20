@@ -104,9 +104,9 @@
             // Given
             const int userId = 2;
             const string primaryEmail = "primary@email.com";
+            connection.Execute(@"UPDATE Users SET Active = 0 WHERE ID = @userId", new { userId });
 
             // When
-            connection.Execute(@"UPDATE Users SET Active = 0 WHERE ID = @userId", new { userId });
             userDataService.SetPrimaryEmailAndActivate(userId, primaryEmail);
 
             // Then
