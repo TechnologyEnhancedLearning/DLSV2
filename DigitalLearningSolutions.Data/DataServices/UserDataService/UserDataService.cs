@@ -139,7 +139,7 @@
 
         UserAccount? GetUserAccountById(int userId);
 
-        UserAccount? GetUserAccountByEmailAddress(string emailAddress);
+        UserAccount? GetUserAccountByPrimaryEmail(string emailAddress);
 
         int? GetUserIdByAdminId(int adminId);
 
@@ -148,6 +148,8 @@
         IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId);
 
         DelegateAccount? GetDelegateAccountById(int id);
+
+        void SetPrimaryEmailAndActivate(int userId, string email);
 
         void SetCentreEmail(
             int userId,
@@ -163,6 +165,14 @@
         );
 
         IEnumerable<(int centreId, string centreName, string centreEmail)> GetUnverifiedCentreEmailsForUser(int userId);
+
+        (int? userId, int? centreId, string? centreName)
+            GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                string centreSpecificEmail,
+                string registrationConfirmationHash
+            );
+
+        void SetRegistrationConfirmationHash(int userId, int centreId, string? hash);
     }
 
     public partial class UserDataService : IUserDataService
@@ -240,7 +250,7 @@
             ).SingleOrDefault();
         }
 
-        public UserAccount? GetUserAccountByEmailAddress(string emailAddress)
+        public UserAccount? GetUserAccountByPrimaryEmail(string emailAddress)
         {
             return connection.Query<UserAccount>(
                 @$"{BaseSelectUserQuery} WHERE u.PrimaryEmail = @emailAddress",
@@ -286,6 +296,14 @@
                     {(userId == null ? "" : "AND Id <> @userId")}",
                 new { email, userId }
             ) > 0;
+        }
+
+        public void SetPrimaryEmailAndActivate(int userId, string email)
+        {
+            connection.Execute(
+                @"UPDATE Users SET PrimaryEmail = @email, Active = 1 WHERE ID = @userId",
+                new { email, userId }
+            );
         }
     }
 }

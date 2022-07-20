@@ -267,7 +267,7 @@
                 completeRegistrationUrl.Path += '/';
             }
 
-            completeRegistrationUrl.Path += "CompleteRegistration"; // TODO: HEEDLS-974 Create controller for this link
+            completeRegistrationUrl.Path += "ClaimAccount/CompleteRegistration";
             completeRegistrationUrl.Query = $"code={registrationConfirmationHash}&email={emailAddress}";
 
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";

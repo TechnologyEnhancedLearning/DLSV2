@@ -24,6 +24,7 @@
         public const string TermsText = "TermsAndConditions";
         public const string ContactText = "ContactUsHtml";
         public const string AppBaseUrl = "V2AppBaseUrl";
+        public const string SupportEmail = "SupportEmail";
 
         private readonly IDbConnection connection;
 
