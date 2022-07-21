@@ -464,7 +464,7 @@
             {
                 new DelegateUserCard
                 {
-                    FirstName = "include", Approved = true, SelfReg = false, Password = null, EmailAddress = "email"
+                    FirstName = "include", Approved = true, SelfReg = false, Password = null, EmailAddress = "email",
                 },
                 new DelegateUserCard
                     { FirstName = "include", Approved = true, SelfReg = false, Password = "", EmailAddress = "email" },
@@ -866,7 +866,7 @@
                     UserTestHelper.GetDefaultDelegateAccount(
                         centreSpecificDetailsLastChecked: sevenMonthsAgo,
                         active: false
-                    )
+                    ),
                 }
             );
 
@@ -969,7 +969,7 @@
                     new List<(int, string, string)>
                     {
                         (1, "centre1", "centre@1.email"), (2, "centre2", "centre@2.email"),
-                        (3, "centre3", "centre@3.email"), (4, "centre4", "centre@4.email")
+                        (3, "centre3", "centre@3.email"), (4, "centre4", "centre@4.email"),
                     }
                 );
 
@@ -978,8 +978,8 @@
 
             // Then
             result.centreEmails.Count().Should().Be(2);
-            result.centreEmails.Should().Contain(("centre1", "centre@1.email"));
-            result.centreEmails.Should().Contain(("centre3", "centre@3.email"));
+            result.centreEmails.Should().Contain((1, "centre1", "centre@1.email"));
+            result.centreEmails.Should().Contain((3, "centre3", "centre@3.email"));
         }
 
         private void AssertAdminPermissionsCalledCorrectly(

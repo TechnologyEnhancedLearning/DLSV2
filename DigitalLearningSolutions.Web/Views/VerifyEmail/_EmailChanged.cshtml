@@ -12,7 +12,7 @@
 
   <p class="nhsuk-body-m">@primaryEmailChangedText</p>
 } else {
-  var (firstCentreName, firstCentreEmail) = Model.CentreSpecificEmails.First();
+  var (_, firstCentreName, firstCentreEmail) = Model.CentreSpecificEmails.First();
   @if (Model.SingleUnverifiedEmail) {
     var emailChangedText = $"You've updated your email address for your account at {firstCentreName}." +
                            $" An email with a verification link has been sent to {firstCentreEmail}." +
@@ -27,7 +27,7 @@
   }
 }
 
-@foreach (var (centreName, centreEmail) in Model.CentreEmailsExcludingFirstParagraph) {
+@foreach (var (_, centreName, centreEmail) in Model.CentreEmailsExcludingFirstParagraph) {
   var centreEmailChangedText = $"You've also updated your email address for your account at {centreName}: {centreEmail}." +
                                " You will not be able to access that account until you verify the address.";
 

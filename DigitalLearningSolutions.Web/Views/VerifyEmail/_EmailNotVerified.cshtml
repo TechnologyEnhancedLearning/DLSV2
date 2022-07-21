@@ -7,13 +7,13 @@
 
   <p class="nhsuk-body-m">@primaryEmailText</p>
 } else {
-  var (firstCentreName, firstCentreEmail) = Model.CentreSpecificEmails.First();
+  var (_, firstCentreName, firstCentreEmail) = Model.CentreSpecificEmails.First();
   var centreEmailFirstParagraphText = $"Your email address {firstCentreEmail} for your account at" +
                                       $" {firstCentreName} has not been verified yet. {VerifyEmailViewModel.CentreEmailExplanation}";
   <p class="nhsuk-body-m">@centreEmailFirstParagraphText</p>
 }
 
-@foreach (var (centreName, centreEmail) in Model.CentreEmailsExcludingFirstParagraph) {
+@foreach (var (_, centreName, centreEmail) in Model.CentreEmailsExcludingFirstParagraph) {
   var centreEmailText = $"Your email address {centreEmail} for your account at {centreName} has also not been" +
                         $" verified yet. {VerifyEmailViewModel.CentreEmailExplanation}";
   <p class="nhsuk-body-m">@centreEmailText</p>

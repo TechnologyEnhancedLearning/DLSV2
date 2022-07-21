@@ -108,6 +108,7 @@
 
         [HttpPost]
         [Authorize(Policy = CustomPolicies.BasicUser)]
+        [ServiceFilter(typeof(VerifyUserHasVerifiedNecessaryEmails))]
         public async Task<IActionResult> ChooseCentre(int centreId, string? returnUrl)
         {
             var userEntity = userService.GetUserById(User.GetUserIdKnownNotNull());

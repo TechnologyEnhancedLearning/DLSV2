@@ -3,7 +3,8 @@
 @model VerifyEmailViewModel
 
 @{
-  ViewData["Title"] = "Verify your email address";
+  var title = Model.SingleUnverifiedEmail ? "Verify your email address" : "Verify your email addresses";
+  ViewData["Title"] = title;
 }
 
 @section NavMenuItems {
@@ -12,7 +13,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Verify your email address</h1>
+    <h1 class="nhsuk-heading-xl">@title</h1>
 
     @if (Model.UnverifiedEmailsCount == 0) {
       <p class="nhsuk-body-m"> All your email addresses are verified.</p>
@@ -22,10 +23,12 @@
       }
 
       @if (Model.EmailVerificationReason.Equals(EmailVerificationReason.EmailChanged)) {
-        <partial name="_EmailChanged"/>
+        <partial name="_EmailChanged" />
       }
     }
 
-    <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="View My account" />
+    <div class="nhsuk-u-margin-top-5">
+      <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="View My account" />
+    </div>
   </div>
 </div>
