@@ -14,20 +14,7 @@
 
     <p class="nhsuk-body-m">You have been registered for a new account.</p>
 
-    <dl class="nhsuk-summary-list--no-border nhsuk-body-m">
-      <div class="nhsuk-summary-list__row basic-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Centre:
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.CentreName" />
-      </div>
-      <div class="nhsuk-summary-list__row basic-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Account email:
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.CentreSpecificEmail" />
-      </div>
-    </dl>
+    <partial name="_CentreSummary" model="@Model" />
 
     @if (Model.EmailIsTaken) {
       if (Model.EmailIsTakenByActiveUser) {
