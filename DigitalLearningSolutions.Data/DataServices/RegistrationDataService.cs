@@ -44,15 +44,13 @@
             IDbConnection connection,
             IUserDataService userDataService,
             IClockUtility clockUtility,
-            ILogger<IRegistrationDataService> logger,
-            IGroupsService groupsService
+            ILogger<IRegistrationDataService> logger
         )
         {
             this.connection = connection;
             this.userDataService = userDataService;
             this.clockUtility = clockUtility;
             this.logger = logger;
-            this.groupsService = groupsService;
         }
 
         public (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(

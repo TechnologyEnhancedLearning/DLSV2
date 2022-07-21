@@ -9,7 +9,6 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
-    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -33,8 +32,7 @@
             userDataService = new UserDataService(connection);
             clockUtility = A.Fake<IClockUtility>();
             logger = A.Fake<ILogger<IRegistrationDataService>>();
-            groupsService = A.Fake<IGroupsService>();
-            service = new RegistrationDataService(connection, userDataService, clockUtility, logger, groupsService);
+            service = new RegistrationDataService(connection, userDataService, clockUtility, logger);
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }
 

@@ -93,12 +93,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 notificationDataService,
                 new NullLogger<RegistrationService>(),
                 userService,
-<<<<<<< HEAD:DigitalLearningSolutions.Data.Tests/Services/RegistrationServiceTests.cs
-                clockService,
+                clockUtility,
                 groupsService
-=======
-                clockUtility
->>>>>>> uar-test:DigitalLearningSolutions.Web.Tests/Services/RegistrationServiceTests.cs
             );
         }
 
