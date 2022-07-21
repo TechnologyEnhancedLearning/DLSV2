@@ -21,7 +21,6 @@
                 linkedToField: 1,
                 changesToRegistrationDetailsShouldChangeGroupMembership: false
             );
-            A.CallTo(() => userDataService.GetDelegateUserById(delegateDetails.Id)).Returns(delegateDetails);
             A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
                 new List<Group> { nonSynchronisedGroup }
             );
@@ -31,6 +30,7 @@
                 delegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
+                delegateDetails.GetRegistrationFieldAnswers(),
                 null
             );
 
@@ -65,6 +65,7 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
                 null
             );
 
@@ -100,6 +101,7 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
                 null
             );
 
@@ -135,6 +137,7 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId, answer1: "old answer"),
                 null
             );
 
@@ -170,6 +173,7 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId, answer1: "old answer"),
                 null
             );
 
@@ -211,6 +215,7 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId, answer1: "old answer"),
                 null
             );
 
@@ -241,6 +246,7 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
                 null
             );
 
@@ -277,6 +283,7 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
                 null
             );
 
@@ -318,6 +325,7 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
                 null
             );
 
@@ -360,6 +368,7 @@
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
                 null
             );
 

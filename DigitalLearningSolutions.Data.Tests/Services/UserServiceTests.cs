@@ -216,6 +216,7 @@
             const string answer6 = "answer6";
             const bool shouldUpdateProfileImage = true;
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(delegateAccount.Id);
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var delegateDetailsData = new DelegateDetailsData(
                 delegateAccount.Id,
@@ -229,6 +230,7 @@
 
             var now = DateTime.Now;
             A.CallTo(() => clockService.UtcNow).Returns(now);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateAccount.Id)).Returns(delegateUser);
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -281,6 +283,7 @@
                                rfa.Answer5 == answer5 &&
                                rfa.Answer6 == answer6
                     ),
+                    delegateUser.GetRegistrationFieldAnswers(),
                     null
                 )
             ).MustHaveHappened();

@@ -677,8 +677,11 @@
             ).MustHaveHappenedOnceExactly();
 
             A.CallTo(
-                () => groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                () => groupsService.SynchroniseUserChangesWithGroups(
                     NewDelegateIdAndCandidateNumber.Item1,
+                    A<AccountDetailsData>.That.Matches(add =>
+                        add.FirstName == row.FirstName &&
+                        add.Surname == row.LastName),
                     A<RegistrationFieldAnswers>.That.Matches(
                         answers =>
                             answers.Answer1 == row.Answer1 &&
@@ -689,7 +692,19 @@
                             answers.Answer6 == row.Answer6 &&
                             answers.JobGroupId.ToString() == row.JobGroupID &&
                             answers.CentreId == CentreId
-                    )
+                            ),
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        answers =>
+                            answers.Answer1 == null &&
+                            answers.Answer2 == null &&
+                            answers.Answer3 == null &&
+                            answers.Answer4 == null &&
+                            answers.Answer5 == null &&
+                            answers.Answer6 == null &&
+                            answers.JobGroupId == 0 &&
+                            answers.CentreId == CentreId
+                    ),
+                    row.EmailAddress
                 )
             ).MustHaveHappenedOnceExactly();
 

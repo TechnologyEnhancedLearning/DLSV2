@@ -199,9 +199,12 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateId
             );
 
-            groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+            groupsService.SynchroniseUserChangesWithGroups(
                 delegateId,
-                model.GetRegistrationFieldAnswers()
+                new AccountDetailsData(model.FirstName, model.LastName, model.PrimaryEmail),
+                model.GetRegistrationFieldAnswers(),
+                new RegistrationFieldAnswers(model.Centre, 0, null, null, null, null, null, null),
+                model.CentreSpecificEmail
             );
 
             SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, delegateId);

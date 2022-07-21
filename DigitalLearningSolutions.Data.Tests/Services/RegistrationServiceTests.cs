@@ -4,7 +4,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
-    using System.Transactions;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -405,19 +404,35 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // Then
             A.CallTo(
-                () => groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
+                () => groupsService.SynchroniseUserChangesWithGroups(
                     NewDelegateIdAndCandidateNumber.Item1,
+                    A<AccountDetailsData>.That.Matches(add =>
+                        add.FirstName == model.FirstName &&
+                        add.Surname == model.LastName &&
+                        add.Email == model.PrimaryEmail),
                     A<RegistrationFieldAnswers>.That.Matches(
                         answers =>
-                            answers.Answer1 == expectedAnswers.Answer1 &&
-                            answers.Answer2 == expectedAnswers.Answer2 &&
-                            answers.Answer3 == expectedAnswers.Answer3 &&
-                            answers.Answer4 == expectedAnswers.Answer4 &&
-                            answers.Answer5 == expectedAnswers.Answer5 &&
-                            answers.Answer6 == expectedAnswers.Answer6 &&
+                            answers.Answer1 == model.Answer1 &&
+                            answers.Answer2 == model.Answer2 &&
+                            answers.Answer3 == model.Answer3 &&
+                            answers.Answer4 == model.Answer4 &&
+                            answers.Answer5 == model.Answer5 &&
+                            answers.Answer6 == model.Answer6 &&
                             answers.JobGroupId == model.JobGroup &&
                             answers.CentreId == model.Centre
-                    )
+                    ),
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        answers =>
+                            answers.Answer1 == null &&
+                            answers.Answer2 == null &&
+                            answers.Answer3 == null &&
+                            answers.Answer4 == null &&
+                            answers.Answer5 == null &&
+                            answers.Answer6 == null &&
+                            answers.JobGroupId == 0 &&
+                            answers.CentreId == model.Centre
+                    ),
+                    model.CentreSpecificEmail
                 )
             ).MustHaveHappenedOnceExactly();
         }
@@ -1171,17 +1186,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             const int userId = 2;
             const int delegateId = 2;
             var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel(answer6: null);
-            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
-                delegateId,
-                answer1: "answer1",
-                answer2: "answer2",
-                answer3: "answer3",
-                answer4: "answer4",
-                answer5: "answer5",
-                answer6: null,
-                jobGroupId: 0
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new AdminAccount[] { },
+                new DelegateAccount[] { }
             );
-            var expectedAnswers = delegateEntity.GetRegistrationFieldAnswers();
 
             A.CallTo(
                 () => registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
@@ -1201,7 +1210,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     A<IDbTransaction?>._
                 )
             ).Returns((delegateId, "fake"));
-            A.CallTo(() => userDataService.GetDelegateById(delegateId)).Returns(delegateEntity);
+            A.CallTo(() => userService.GetUserById(userEntity.UserAccount.Id)).Returns(userEntity);
 
             // When
             registrationService.CreateDelegateAccountForExistingUser(
@@ -1213,23 +1222,37 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // Then
             A.CallTo(
-                    () =>
-                        groupsService.AddNewDelegateToRegistrationFieldGroupsAndEnrolOnCourses(
-                            delegateId,
-                            A<RegistrationFieldAnswers>.That.Matches(
-                                answers =>
-                                    answers.Answer1 == expectedAnswers.Answer1 &&
-                                    answers.Answer2 == expectedAnswers.Answer2 &&
-                                    answers.Answer3 == expectedAnswers.Answer3 &&
-                                    answers.Answer4 == expectedAnswers.Answer4 &&
-                                    answers.Answer5 == expectedAnswers.Answer5 &&
-                                    answers.Answer6 == expectedAnswers.Answer6 &&
-                                    answers.JobGroupId == delegateEntity.UserAccount.JobGroupId &&
-                                    answers.CentreId == delegateEntity.DelegateAccount.CentreId
-                            )
-                        )
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    NewDelegateIdAndCandidateNumber.Item1,
+                    A<AccountDetailsData>.That.Matches(add =>
+                        add.FirstName == userEntity.UserAccount.FirstName &&
+                        add.Surname == userEntity.UserAccount.LastName &&
+                        add.Email == userEntity.UserAccount.PrimaryEmail),
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        answers =>
+                            answers.Answer1 == model.Answer1 &&
+                            answers.Answer2 == model.Answer2 &&
+                            answers.Answer3 == model.Answer3 &&
+                            answers.Answer4 == model.Answer4 &&
+                            answers.Answer5 == model.Answer5 &&
+                            answers.Answer6 == model.Answer6 &&
+                            answers.JobGroupId == userEntity.UserAccount.JobGroupId &&
+                            answers.CentreId == model.Centre
+                    ),
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        answers =>
+                            answers.Answer1 == null &&
+                            answers.Answer2 == null &&
+                            answers.Answer3 == null &&
+                            answers.Answer4 == null &&
+                            answers.Answer5 == null &&
+                            answers.Answer6 == null &&
+                            answers.JobGroupId == 0 &&
+                            answers.CentreId == model.Centre
+                    ),
+                    model.CentreSpecificEmail
                 )
-                .MustHaveHappened();
+            ).MustHaveHappenedOnceExactly();
         }
 
         [Test]
