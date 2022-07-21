@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.UserDataServiceTests
 {
     using System;
+    using System.Transactions;
+    using Dapper;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -61,10 +63,10 @@
         }
 
         [Test]
-        public void GetUserAccountByEmailAddress_returns_expected_user_account()
+        public void GetUserAccountByPrimaryEmail_returns_expected_user_account()
         {
             // When
-            var result = userDataService.GetUserAccountByEmailAddress("test@gmail.com");
+            var result = userDataService.GetUserAccountByPrimaryEmail("test@gmail.com");
 
             // Then
             result.Should().BeEquivalentTo(
@@ -89,6 +91,37 @@
         {
             // When
             var result = userDataService.PrimaryEmailIsInUse(email);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        public void SetPrimaryEmailAndActivate_sets_primary_email_and_activates_user()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 2;
+            const string primaryEmail = "primary@email.com";
+            connection.Execute(@"UPDATE Users SET Active = 0 WHERE ID = @userId", new { userId });
+
+            // When
+            userDataService.SetPrimaryEmailAndActivate(userId, primaryEmail);
+
+            // Then
+            var result = userDataService.GetUserAccountById(userId);
+            result!.PrimaryEmail.Should().Be(primaryEmail);
+            result.Active.Should().BeTrue();
+        }
+
+        [TestCase("test@gmail.com", -1, true)]
+        [TestCase("test@gmail.com", 2, false, TestName = "User id matches email")]
+        [TestCase("not_an_email_in_the_database", 2, false)]
+        public void PrimaryEmailIsInUseByOtherUser_returns_expected_value(string email, int userId, bool expectedResult)
+        {
+            // When
+            var result = userDataService.PrimaryEmailIsInUseByOtherUser(email, userId);
 
             // Then
             result.Should().Be(expectedResult);

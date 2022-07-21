@@ -6,7 +6,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Logging;
 
     public interface IRegistrationDataService
@@ -35,23 +35,22 @@
 
     public class RegistrationDataService : IRegistrationDataService
     {
-        private readonly IClockService clockService;
+        private readonly IClockUtility clockUtility;
         private readonly IDbConnection connection;
         private readonly ILogger<IRegistrationDataService> logger;
         private readonly IUserDataService userDataService;
-        private readonly IGroupsService groupsService;
 
         public RegistrationDataService(
             IDbConnection connection,
             IUserDataService userDataService,
-            IClockService clockService,
+            IClockUtility clockUtility,
             ILogger<IRegistrationDataService> logger,
             IGroupsService groupsService
         )
         {
             this.connection = connection;
             this.userDataService = userDataService;
-            this.clockService = clockService;
+            this.clockUtility = clockUtility;
             this.logger = logger;
             this.groupsService = groupsService;
         }
@@ -64,7 +63,7 @@
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
 
-            var currentTime = clockService.UtcNow;
+            var currentTime = clockUtility.UtcNow;
 
             var userIdToLinkDelegateAccountTo = RegisterUserAccount(
                 delegateRegistrationModel,

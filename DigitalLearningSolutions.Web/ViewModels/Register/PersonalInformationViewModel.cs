@@ -37,7 +37,7 @@
         [Required(ErrorMessage = "Enter a primary email")]
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
-        [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
+        [NoWhitespace(ErrorMessage = CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? PrimaryEmail { get; set; }
     }
 }

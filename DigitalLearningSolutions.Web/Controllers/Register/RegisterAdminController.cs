@@ -4,13 +4,13 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Mvc;
@@ -244,9 +244,11 @@
         {
             return data.Centre.HasValue && data.PrimaryEmail != null &&
                    registerAdminService.IsRegisterAdminAllowed(data.Centre.Value) &&
-                   (data.CentreSpecificEmail != null &&
-                    centresService.DoesEmailMatchCentre(data.CentreSpecificEmail, data.Centre.Value) ||
-                    centresService.DoesEmailMatchCentre(data.PrimaryEmail, data.Centre.Value)) &&
+                   centresService.IsAnEmailValidForCentreManager(
+                       data.PrimaryEmail,
+                       data.CentreSpecificEmail,
+                       data.Centre.Value
+                   ) &&
                    !userDataService.PrimaryEmailIsInUse(data.PrimaryEmail) &&
                    (data.CentreSpecificEmail == null || !userDataService.CentreSpecificEmailIsInUseAtCentre(
                        data.CentreSpecificEmail,

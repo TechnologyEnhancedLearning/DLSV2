@@ -82,14 +82,32 @@
             }
         }
 
-        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId, IDbTransaction? transaction = null)
+        public bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId)
+        {
+            return CentreSpecificEmailIsInUseAtCentreQuery(email, centreId, null);
+        }
+
+        public bool CentreSpecificEmailIsInUseAtCentreByOtherUser(
+            string email,
+            int centreId,
+            int userId
+        )
+        {
+            return CentreSpecificEmailIsInUseAtCentreQuery(email, centreId, userId);
+        }
+
+        private bool CentreSpecificEmailIsInUseAtCentreQuery(
+            string email,
+            int centreId,
+            int? userId
+        )
         {
             return connection.QueryFirst<int>(
-                @"SELECT COUNT(*)
+                @$"SELECT COUNT(*)
                     FROM UserCentreDetails
-                    WHERE CentreId = @centreId AND Email = @email",
-                new { email, centreId },
-                transaction
+                    WHERE CentreId = @centreId AND Email = @email
+                    {(userId == null ? "" : "AND UserId <> @userId")}",
+                new { email, centreId, userId }
             ) > 0;
         }
 
@@ -103,16 +121,20 @@
             ).SingleOrDefault();
         }
 
-        public IEnumerable<(string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(int userId)
+        public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(
+            int userId
+        )
         {
-            return connection.Query<(string, string?)>(
-                @"SELECT c.CentreName, ucd.Email
+            return connection.Query<(int, string, string?)>(
+                @"SELECT c.CentreId, c.CentreName, ucd.Email
                     FROM DelegateAccounts AS da
                     INNER JOIN Centres AS c ON c.CentreID = da.CentreID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.CentreID = c.CentreID
                     WHERE da.UserID = @userId
+
                     UNION
-                    SELECT c.CentreName, ucd.Email
+
+                    SELECT c.CentreId, c.CentreName, ucd.Email
                     FROM AdminAccounts AS aa
                     INNER JOIN Centres AS c ON c.centreID = aa.CentreID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = aa.UserID AND ucd.CentreID = c.CentreID
@@ -138,6 +160,27 @@
                         AND c.Active = 1",
                 new { userId }
             );
+        }
+
+        public (int? userId, int? centreId, string? centreName)
+            GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                string centreSpecificEmail,
+                string registrationConfirmationHash
+            )
+        {
+            var matchingUserAndCentreIds = connection.Query<(int, int, string)>(
+                @"SELECT ucd.UserID, c.CentreID, c.CentreName
+                    FROM UserCentreDetails AS ucd
+                    INNER JOIN DelegateAccounts AS da ON da.UserID = ucd.UserID AND da.CentreID = ucd.CentreID
+                    INNER JOIN Centres AS c ON c.CentreID = ucd.CentreID
+                    WHERE ucd.Email = @centreSpecificEmail
+                        AND da.RegistrationConfirmationHash = @registrationConfirmationHash",
+                new { centreSpecificEmail, registrationConfirmationHash }
+            ).ToList();
+
+            return matchingUserAndCentreIds.Any()
+                ? matchingUserAndCentreIds.Single()
+                : ((int?)null, (int?)null, (string?)null);
         }
     }
 }

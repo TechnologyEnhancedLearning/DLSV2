@@ -7,11 +7,12 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

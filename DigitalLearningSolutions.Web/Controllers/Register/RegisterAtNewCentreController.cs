@@ -7,13 +7,13 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -58,7 +58,6 @@
                 return NotFound();
             }
 
-            // TODO HEEDLS-899 sort out supervisor delegate stuff, this is just copied from the external registration
             var supervisorDelegateRecord = centreId.HasValue && !string.IsNullOrEmpty(inviteId) &&
                                            Guid.TryParse(inviteId, out var inviteHash)
                 ? supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(inviteHash)
@@ -100,12 +99,13 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<InternalDelegateRegistrationData>))]
         public IActionResult PersonalInformation(InternalPersonalInformationViewModel model)
         {
-            ValidateEmailAddress(model);
-
             if (model.Centre != null)
             {
+                ValidateEmailAddress(model);
+
                 var delegateAccount = userService.GetUserById(User.GetUserIdKnownNotNull())!
                     .GetCentreAccountSet(model.Centre.Value)?.DelegateAccount;
+
                 if (delegateAccount?.Active == true)
                 {
                     ModelState.AddModelError(
@@ -294,16 +294,21 @@
 
         private bool CheckCentreIdValid(int? centreId)
         {
-            return centreId == null
-                   || centresDataService.GetCentreName(centreId.Value) != null;
+            return centreId == null || centresDataService.GetCentreName(centreId.Value) != null;
         }
 
         private void ValidateEmailAddress(InternalPersonalInformationViewModel model)
         {
-            if (model.CentreSpecificEmail != null && userDataService.CentreSpecificEmailIsInUseAtCentre(
-                model.CentreSpecificEmail,
-                User.GetCentreIdKnownNotNull()
-            ))
+            var userId = User.GetUserIdKnownNotNull();
+
+            if (
+                model.Centre != null && model.CentreSpecificEmail != null &&
+                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    model.CentreSpecificEmail,
+                    model.Centre.Value,
+                    userId
+                )
+            )
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.CentreSpecificEmail),

@@ -1,10 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Signposting
 {
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

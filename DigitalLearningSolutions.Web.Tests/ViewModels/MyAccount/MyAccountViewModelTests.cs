@@ -28,7 +28,7 @@
                 }
             );
             var centreEmail = "centre@gmail.com";
-            var allCentreSpecificEmails = new List<(string centreName, string? centreSpecificEmail)>();
+            var allCentreSpecificEmails = new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
             // When
             var returnedModel = new MyAccountViewModel(
@@ -72,8 +72,8 @@
             var centreName = UserTestHelper.GetDefaultAdminUser().CentreName;
             var centreEmail = "centre@gmail.com";
             int? centreId = null;
-            var allCentreSpecificEmails = new List<(string centreName, string? centreSpecificEmail)>
-                { ("centre", "email") };
+            var allCentreSpecificEmails = new List<(int centreId, string centreName, string? centreSpecificEmail)>
+                { (1, "centre", "email") };
 
             // When
             var returnedModel = new MyAccountViewModel(
@@ -129,7 +129,7 @@
                 delegateAccount.CentreName,
                 null,
                 customPrompts,
-                new List<(string centreName, string? centreSpecificEmail)>(),
+                new List<(int centreId, string centreName, string? centreSpecificEmail)>(),
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -172,7 +172,7 @@
                 UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
-                new List<(string centreName, string? centreSpecificEmail)>(),
+                new List<(int centreId, string centreName, string? centreSpecificEmail)>(),
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -208,7 +208,7 @@
                 UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
-                new List<(string centreName, string? centreSpecificEmail)>(),
+                new List<(int centreId, string centreName, string? centreSpecificEmail)>(),
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -244,7 +244,7 @@
                 UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
-                new List<(string centreName, string? centreSpecificEmail)>(),
+                new List<(int centreId, string centreName, string? centreSpecificEmail)>(),
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );

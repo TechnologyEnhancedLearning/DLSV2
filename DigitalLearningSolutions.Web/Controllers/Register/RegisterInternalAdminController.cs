@@ -5,10 +5,10 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -119,11 +119,6 @@
             }
             else
             {
-                if (model.CentreSpecificEmail != null)
-                {
-                    userDataService.SetCentreEmail(userId, model.Centre.Value, model.CentreSpecificEmail);
-                }
-
                 if (!delegateAccount.Approved)
                 {
                     delegateApprovalsService.ApproveDelegate(delegateAccount.Id, delegateAccount.CentreId);

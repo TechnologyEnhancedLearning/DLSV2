@@ -9,7 +9,7 @@
         [Required(ErrorMessage = "Enter your email")]
         [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
-        [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
+        [NoWhitespace(ErrorMessage = CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? Email { get; set; }
     }
 }

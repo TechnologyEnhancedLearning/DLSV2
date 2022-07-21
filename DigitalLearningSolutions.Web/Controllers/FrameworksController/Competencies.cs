@@ -1,4 +1,5 @@
 ﻿using DigitalLearningSolutions.Data.Models.Frameworks;
+using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 using DigitalLearningSolutions.Data.Models.SelfAssessments;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
@@ -35,13 +36,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             if (!ModelState.IsValid)
             {
-                if(ModelState["Name"].ValidationState == ModelValidationState.Invalid)
+                if (ModelState["Name"].ValidationState == ModelValidationState.Invalid)
                 {
                     ModelState.Remove(nameof(CompetencyGroupBase.Name));
                     ModelState.AddModelError(nameof(CompetencyGroupBase.Name), "Please enter a valid competency group name (between 3 and 255 characters)");
                 }
 
-                if(ModelState["Description"].ValidationState == ModelValidationState.Invalid)
+                if (ModelState["Description"].ValidationState == ModelValidationState.Invalid)
                 {
                     ModelState.Remove(nameof(CompetencyGroupBase.Description));
                     ModelState.AddModelError(nameof(CompetencyGroupBase.Description), "Please enter a valid competency group description (between 0 and 1000 characters)");
@@ -81,13 +82,24 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             frameworkService.MoveFrameworkCompetencyGroup(frameworkCompetencyGroupId, step, direction);
             return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
         }
+        [Route("/Frameworks/{frameworkId}/CompetencyGroup/{frameworkCompetencyGroupId}/{competencyGroupId}/Remove/{competencyCount}/Confirm")]
+        public IActionResult CompetencyGroupRemoveConfirm(int frameworkId, int frameworkCompetencyGroupId, int competencyGroupId, int competencyCount)
+        {
+            var model = new CompetencyGroupRemoveConfirmViewModel(frameworkId, frameworkCompetencyGroupId, competencyGroupId, competencyCount);
 
-        public IActionResult DeleteFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId, int competencyGroupId)
+            return View("Developer/CompetencyGroupRemoveConfirm", model);
+        }
+
+        public IActionResult DeleteFrameworkCompetencyGroup(int frameworkId, int competencyGroupId, int frameworkCompetencyGroupId)
         {
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
             if (userRole < 2) return StatusCode(403);
-            frameworkService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, GetAdminId());
-            return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
+
+            var adminId = GetAdminId();
+
+            frameworkService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, adminId);
+
+            return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId }));
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}/{frameworkCompetencyId}")]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}")]
@@ -166,7 +178,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
             if (userRole < 2) return StatusCode(403);
             frameworkService.DeleteFrameworkCompetency(frameworkCompetencyId, GetAdminId());
-            return frameworkCompetencyGroupId != null ? new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId , frameworkCompetencyGroupId}) + "#fcgroup-" + frameworkCompetencyGroupId.ToString()) : new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-ungrouped");
+            return frameworkCompetencyGroupId != null ? new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString()) : new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-ungrouped");
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}/{frameworkCompetencyId}/Preview/")]
         public IActionResult PreviewCompetency(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId)

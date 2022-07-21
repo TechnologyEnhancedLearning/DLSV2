@@ -407,5 +407,15 @@
                 new { id }
             );
         }
+
+        public void SetRegistrationConfirmationHash(int userId, int centreId, string? hash)
+        {
+            connection.Execute(
+                @"UPDATE DelegateAccounts
+                    SET RegistrationConfirmationHash = @hash
+                    WHERE UserID = @userId AND CentreID = @centreId",
+                new { hash, userId, centreId }
+            );
+        }
     }
 }

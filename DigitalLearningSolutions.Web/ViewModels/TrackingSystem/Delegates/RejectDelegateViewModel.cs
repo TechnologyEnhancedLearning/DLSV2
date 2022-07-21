@@ -12,7 +12,7 @@
             FullName = delegateEntity.UserAccount.FirstName + " " + delegateEntity.UserAccount.LastName;
             Email = delegateEntity.EmailForCentreNotifications;
             DateRegistered = delegateEntity.DelegateAccount.DateRegistered;
-            ProfessionalRegistrationNumber = PrnStringHelper.GetPrnDisplayString(
+            ProfessionalRegistrationNumber = PrnHelper.GetPrnDisplayString(
                 delegateEntity.UserAccount.HasBeenPromptedForPrn,
                 delegateEntity.UserAccount.ProfessionalRegistrationNumber
             );

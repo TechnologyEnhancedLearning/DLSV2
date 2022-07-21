@@ -112,6 +112,81 @@
         }
 
         [Test]
+        [TestCase("centre@email.com", true)]
+        [TestCase("not_an_email_in_the_database", false)]
+        public void CentreSpecificEmailIsInUseAtCentreByOtherUser_returns_expected_value(
+            string email,
+            bool expectedResult
+        )
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const int centreId = 2;
+
+            if (expectedResult)
+            {
+                connection.Execute(
+                    @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                    VALUES (@userId, @centreId, @email)",
+                    new { userId, centreId, email }
+                );
+            }
+
+            // When
+            var result = userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(email, centreId, 2);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        public void
+            CentreSpecificEmailIsInUseAtCentreByOtherUser_returns_false_when_email_is_in_use_at_different_centre()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const string email = "centre@email.com";
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                VALUES (1, 2, @email)",
+                new { email }
+            );
+
+            // When
+            var result = userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(email, 3, 2);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void CentreSpecificEmailIsInUseAtCentreByOtherUser_returns_false_when_email_is_in_use_by_same_user()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const string email = "centre@email.com";
+            const int userId = 1;
+            const int centreId = 2;
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                VALUES (@userId, @centreId, @email)",
+                new { userId, centreId, email }
+            );
+
+            // When
+            var result = userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(email, centreId, userId);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
         public void GetAllCentreEmailsForUser_returns_centre_email_list()
         {
             using var transaction = new TransactionScope();
@@ -172,10 +247,13 @@
 
             // Then
             result.Count.Should().Be(4);
-            result.Should().ContainEquivalentOf((delegateOnlyCentreName, delegateOnlyCentreEmail));
-            result.Should().ContainEquivalentOf((adminOnlyCentreName, adminOnlyCentreEmail));
-            result.Should().ContainEquivalentOf((adminAndDelegateCentreName, adminAndDelegateCentreEmail));
-            result.Should().ContainEquivalentOf((nullCentreEmailCentreName, (string?)null));
+            result.Should()
+                .ContainEquivalentOf((delegateOnlyCentreId, delegateOnlyCentreName, delegateOnlyCentreEmail));
+            result.Should().ContainEquivalentOf((adminOnlyCentreId, adminOnlyCentreName, adminOnlyCentreEmail));
+            result.Should().ContainEquivalentOf(
+                (adminAndDelegateCentreId, adminAndDelegateCentreName, adminAndDelegateCentreEmail)
+            );
+            result.Should().ContainEquivalentOf((nullCentreEmailCentreId, nullCentreEmailCentreName, (string?)null));
         }
 
         [Test]
@@ -193,6 +271,66 @@
 
             // Then
             result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void
+            GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair_returns_null_if_user_does_not_exist()
+        {
+            using var transaction = new TransactionScope();
+
+            // When
+            var result =
+                userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                    "centre@email.com",
+                    "hash"
+                );
+
+            // Then
+            result.Should().Be((null, null, null));
+        }
+
+        [Test]
+        public void GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair_returns_user_id_if_it_exists()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const string email = "centre@email.com";
+            const string confirmationHash = "hash";
+            const int centreId = 3;
+            const int userId = 1;
+            var centreName = connection.Query<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @centreId",
+                new { centreId }
+            ).SingleOrDefault();
+
+            GivenUnclaimedUserExists(userId, centreId, email, confirmationHash);
+
+            // When
+            var result =
+                userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
+                    email,
+                    confirmationHash
+                );
+
+            // Then
+            result.Should().Be((userId, centreId, centreName));
+        }
+
+        private void GivenUnclaimedUserExists(int userId, int centreId, string email, string hash)
+        {
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES (@userId, @centreId, @email)",
+                new { userId, centreId, email }
+            );
+
+            connection.Execute(
+                @"INSERT INTO DelegateAccounts
+                            (UserID, CentreID, RegistrationConfirmationHash, DateRegistered, CandidateNumber)
+                        VALUES (@userId, @centreId, @hash, GETDATE(), 'CN1001')",
+                new { userId, centreId, hash }
+            );
         }
     }
 }

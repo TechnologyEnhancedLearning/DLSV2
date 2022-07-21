@@ -4,11 +4,11 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using FakeItEasy;
@@ -212,7 +212,13 @@
                 A.CallTo(() => userDataService.GetAdminUserByEmailAddress(centreSpecificEmail)).Returns(null);
             }
 
-            A.CallTo(() => centresService.DoesEmailMatchCentre(centreEmailOrPrimaryIfNull, DefaultCentreId))
+            A.CallTo(
+                    () => centresService.IsAnEmailValidForCentreManager(
+                        primaryEmail,
+                        centreSpecificEmail,
+                        DefaultCentreId
+                    )
+                )
                 .Returns(true);
             A.CallTo(
                     () => registrationService.RegisterCentreManager(

@@ -19,7 +19,7 @@
 
         [MaxLength(250, ErrorMessage = "Email must be 250 characters or fewer")]
         [EmailAddress(ErrorMessage = "Enter an email in the correct format, like name@example.com")]
-        [NoWhitespace("Email must not contain any whitespace characters")]
+        [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? NotifyEmail { get; set; }
 
         [Required(ErrorMessage = "Enter the centre support details")]

@@ -6,13 +6,16 @@
 
     public class FilterableApplicationSelectListItemViewModel : SelectListItem
     {
-        public FilterableApplicationSelectListItemViewModel(ApplicationDetails details)
+        public FilterableApplicationSelectListItemViewModel(ApplicationDetails details, int? selectedApplicationId = null)
         {
             ApplicationId = details.ApplicationId;
             ApplicationName = details.ApplicationName;
             Category = details.CategoryName;
             Topic = details.CourseTopic;
+            Selected = details.ApplicationId == selectedApplicationId;
         }
+
+        public bool Selected { get; set; }
 
         public int ApplicationId { get; set; }
 

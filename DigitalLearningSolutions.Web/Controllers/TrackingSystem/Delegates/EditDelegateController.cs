@@ -4,11 +4,11 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EditDelegate;
     using Microsoft.AspNetCore.Authorization;
@@ -90,13 +90,13 @@
                 formData.CentreSpecificEmail = null;
             }
 
-            // TODO HEEDLS-1002: Check that the CentreSpecificEmail is in use BY ANOTHER USER
             if (
                 formData.CentreSpecificEmail != null &&
                 formData.CentreSpecificEmail != delegateEntity.UserCentreDetails?.Email &&
-                userDataService.CentreSpecificEmailIsInUseAtCentre(
+                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
                     formData.CentreSpecificEmail,
-                    delegateEntity.DelegateAccount.CentreId
+                    delegateEntity.DelegateAccount.CentreId,
+                    delegateEntity.UserAccount.Id
                 )
             )
             {
@@ -104,6 +104,7 @@
                     nameof(EditDetailsFormData.CentreSpecificEmail),
                     CommonValidationErrorMessages.EmailAlreadyInUse
                 );
+
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
@@ -112,6 +113,7 @@
                 delegateEntity.UserAccount.Id,
                 delegateId
             );
+
             userService.UpdateUserDetailsAndCentreSpecificDetails(
                 editDelegateDetailsData,
                 delegateDetailsData,

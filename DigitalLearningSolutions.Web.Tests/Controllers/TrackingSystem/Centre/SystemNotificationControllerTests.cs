@@ -4,10 +4,11 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
@@ -17,7 +18,7 @@
 
     public class SystemNotificationControllerTests
     {
-        private readonly IClockService clockService = A.Fake<IClockService>();
+        private readonly IClockUtility clockUtility = A.Fake<IClockUtility>();
         private SystemNotificationsController controller = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -34,7 +35,7 @@
             controller =
                 new SystemNotificationsController(
                         systemNotificationsDataService,
-                        clockService,
+                        clockUtility,
                         searchSortFilterPaginateService
                     )
                     .WithMockHttpContext(httpRequest, response: httpResponse)
@@ -48,7 +49,7 @@
         {
             // Given
             var testDate = new DateTime(2021, 8, 23);
-            A.CallTo(() => clockService.UtcNow).Returns(testDate);
+            A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
             var expectedExpiry = testDate.AddHours(24);
             A.CallTo(() => systemNotificationsDataService.GetUnacknowledgedSystemNotifications(A<int>._))
                 .Returns(new List<SystemNotification> { SystemNotificationTestHelper.GetDefaultSystemNotification() });

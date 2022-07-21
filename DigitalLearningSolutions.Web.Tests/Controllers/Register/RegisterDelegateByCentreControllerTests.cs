@@ -6,12 +6,12 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -33,13 +33,11 @@
         private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
-        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
-            userService = A.Fake<IUserService>();
             userDataService = A.Fake<IUserDataService>();
             promptsService = A.Fake<PromptsService>();
             cryptoService = A.Fake<ICryptoService>();
@@ -48,7 +46,6 @@
 
             controller = new RegisterDelegateByCentreController(
                     jobGroupsDataService,
-                    userService,
                     promptsService,
                     cryptoService,
                     userDataService,
@@ -74,8 +71,7 @@
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentre(
                         model.CentreSpecificEmail!,
-                        model.Centre.Value,
-                        null
+                        model.Centre.Value
                     )
                 )
                 .Returns(true);
@@ -87,8 +83,7 @@
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentre(
                         model.CentreSpecificEmail!,
-                        model.Centre.Value,
-                        null
+                        model.Centre.Value
                     )
                 )
                 .MustHaveHappened();
@@ -111,8 +106,7 @@
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentre(
                         model.CentreSpecificEmail!,
-                        model.Centre.Value,
-                        null
+                        model.Centre.Value
                     )
                 )
                 .Returns(false);
@@ -124,8 +118,7 @@
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentre(
                         model.CentreSpecificEmail!,
-                        model.Centre.Value,
-                        null
+                        model.Centre.Value
                     )
                 )
                 .MustHaveHappened();
@@ -151,8 +144,7 @@
             A.CallTo(
                     () => userDataService.CentreSpecificEmailIsInUseAtCentre(
                         model.CentreSpecificEmail!,
-                        model.Centre.Value,
-                        null
+                        model.Centre.Value
                     )
                 )
                 .Returns(false);
