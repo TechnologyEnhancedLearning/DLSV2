@@ -121,6 +121,16 @@
         }
 
         [Test]
+        public void IndexGet_with_logged_in_user_redirects_to_LinkDlsAccount()
+        {
+            // When
+            var result = controllerWithLoggedInUser.Index("email", "code");
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("LinkDlsAccount");
+        }
+
+        [Test]
         [TestCase(null, null)]
         [TestCase("   ", null)]
         [TestCase(null, "   ")]
@@ -198,6 +208,16 @@
         }
 
         [Test]
+        public void CompleteRegistrationGet_with_logged_in_user_redirects_to_LinkDlsAccount()
+        {
+            // When
+            var result = controllerWithLoggedInUser.CompleteRegistration("email", "code");
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("LinkDlsAccount");
+        }
+
+        [Test]
         public void CompleteRegistrationPost_with_email_in_use_returns_NotFound()
         {
             // Given
@@ -238,6 +258,19 @@
             result.Should().BeViewResult()
                 .WithViewName("Confirmation")
                 .ModelAs<ClaimAccountViewModel>().Should().BeEquivalentTo(model);
+        }
+
+        [Test]
+        public void CompleteRegistrationPost_with_logged_in_user_redirects_to_LinkDlsAccount()
+        {
+            // Given
+            controllerWithLoggedInUser.TempData.Set(GetViewModel());
+
+            // When
+            var result = controllerWithLoggedInUser.CompleteRegistration();
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("LinkDlsAccount");
         }
 
         [Test]

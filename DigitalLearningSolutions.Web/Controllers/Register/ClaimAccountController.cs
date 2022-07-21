@@ -32,6 +32,11 @@
         [HttpGet]
         public IActionResult Index(string email, string code)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("LinkDlsAccount", new { email, code });
+            }
+
             var model = GetViewModelIfValidParameters(email, code);
 
             if (model == null)
@@ -45,6 +50,11 @@
         [HttpGet]
         public IActionResult CompleteRegistration(string email, string code)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("LinkDlsAccount", new { email, code });
+            }
+
             var model = GetViewModelIfValidParameters(email, code);
 
             if (model == null)
@@ -61,6 +71,14 @@
         public IActionResult CompleteRegistration()
         {
             var model = TempData.Peek<ClaimAccountViewModel>()!;
+
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction(
+                    "LinkDlsAccount",
+                    new { email = model.Email, code = model.RegistrationConfirmationHash }
+                );
+            }
 
             if (userDataService.PrimaryEmailIsInUse(model.Email))
             {
