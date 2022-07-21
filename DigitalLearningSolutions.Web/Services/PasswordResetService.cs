@@ -267,7 +267,7 @@
                 completeRegistrationUrl.Path += '/';
             }
 
-            completeRegistrationUrl.Path += "ClaimAccount/CompleteRegistration";
+            completeRegistrationUrl.Path += "ClaimAccount";
             completeRegistrationUrl.Query = $"code={registrationConfirmationHash}&email={emailAddress}";
 
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";
