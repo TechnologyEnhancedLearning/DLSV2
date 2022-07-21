@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
@@ -12,6 +13,7 @@
             int userId,
             int centreId,
             string? email,
+            DateTime? emailVerified,
             IDbTransaction? transaction = null
         )
         {
@@ -28,6 +30,7 @@
                 userId,
                 centreId,
                 email,
+                emailVerified,
             };
 
             var detailsAlreadyExist = connection.QuerySingle<bool>(
@@ -50,7 +53,7 @@
                             EmailVerified = NULL
                         WHERE userID = @userId AND centreID = @centreId"
                         : @"UPDATE UserCentreDetails
-                        SET Email = @email
+                        SET Email = @email, EmailVerified = @emailVerified
                         WHERE userID = @userId AND centreID = @centreId",
                     userCentreDetailsValues,
                     transaction
@@ -63,13 +66,15 @@
                     (
                         UserId,
                         CentreId,
-                        Email
+                        Email,
+                        EmailVerified
                     )
                     VALUES
                     (
                         @userId,
                         @centreId,
-                        @email
+                        @email,
+                        @emailVerified
                     )",
                     userCentreDetailsValues,
                     transaction

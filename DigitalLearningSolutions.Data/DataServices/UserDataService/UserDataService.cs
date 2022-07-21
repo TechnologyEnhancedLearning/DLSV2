@@ -155,6 +155,7 @@
             int userId,
             int centreId,
             string? email,
+            DateTime? emailVerified = null,
             IDbTransaction? transaction = null
         );
 

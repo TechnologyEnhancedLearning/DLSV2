@@ -95,7 +95,15 @@
             // Then
             A.CallTo(() => userDataService.SetPrimaryEmailAndActivate(DefaultUserId, DefaultEmail))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => userDataService.SetCentreEmail(DefaultUserId, DefaultCentreId, null, A<IDbTransaction?>._))
+            A.CallTo(
+                    () => userDataService.SetCentreEmail(
+                        DefaultUserId,
+                        DefaultCentreId,
+                        null,
+                        null,
+                        A<IDbTransaction?>._
+                    )
+                )
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => userDataService.SetRegistrationConfirmationHash(DefaultUserId, DefaultCentreId, null))
                 .MustHaveHappenedOnceExactly();

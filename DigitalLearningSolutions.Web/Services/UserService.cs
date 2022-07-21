@@ -396,7 +396,8 @@ namespace DigitalLearningSolutions.Web.Services
             userDataService.SetCentreEmail(
                 editAccountDetailsData.UserId,
                 centreId,
-                centreEmail
+                centreEmail,
+                changeMadeBySameUser ? (DateTime?)null : clockUtility.UtcNow
             );
         }
 
