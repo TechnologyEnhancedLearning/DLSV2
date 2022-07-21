@@ -275,15 +275,26 @@
                     delegateDetailsData.DelegateId,
                     accountDetailsData,
                     A<RegistrationFieldAnswers>.That.Matches(
-                        rfa => rfa.JobGroupId == accountDetailsData.JobGroupId &&
-                               rfa.Answer1 == answer1 &&
-                               rfa.Answer2 == answer2 &&
-                               rfa.Answer3 == answer3 &&
-                               rfa.Answer4 == answer4 &&
-                               rfa.Answer5 == answer5 &&
-                               rfa.Answer6 == answer6
+                        rfa =>
+                            rfa.JobGroupId == accountDetailsData.JobGroupId &&
+                            rfa.Answer1 == answer1 &&
+                            rfa.Answer2 == answer2 &&
+                            rfa.Answer3 == answer3 &&
+                            rfa.Answer4 == answer4 &&
+                            rfa.Answer5 == answer5 &&
+                            rfa.Answer6 == answer6
                     ),
-                    delegateUser.GetRegistrationFieldAnswers(),
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        rfa =>
+                            rfa.JobGroupId == delegateUser.JobGroupId &&
+                            rfa.CentreId == delegateUser.CentreId &&
+                            rfa.Answer1 == delegateUser.Answer1 &&
+                            rfa.Answer2 == delegateUser.Answer2 &&
+                            rfa.Answer3 == delegateUser.Answer3 &&
+                            rfa.Answer4 == delegateUser.Answer4 &&
+                            rfa.Answer5 == delegateUser.Answer5 &&
+                            rfa.Answer6 == delegateUser.Answer6
+                    ),
                     null
                 )
             ).MustHaveHappened();
@@ -749,7 +760,12 @@
                 UserTestHelper.GetDefaultUserAccount(detailsLastChecked: yesterday),
                 new List<AdminAccount>(),
                 new List<DelegateAccount>
-                    { UserTestHelper.GetDefaultDelegateAccount(centreSpecificDetailsLastChecked: sevenMonthsAgo, active: false) }
+                {
+                    UserTestHelper.GetDefaultDelegateAccount(
+                        centreSpecificDetailsLastChecked: sevenMonthsAgo,
+                        active: false
+                    )
+                }
             );
 
             // When
