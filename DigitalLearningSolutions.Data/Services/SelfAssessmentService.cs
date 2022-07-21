@@ -32,11 +32,11 @@
         bool CanDelegateAccessSelfAssessment(int delegateId, int selfAssessmentId);
 
         // Competencies
-        IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId);
+        IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId, int? selfAssessmentResultId = null);
 
         IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId);
 
-        IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId);
+        IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId, bool? emailSent = null);
 
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(
             int assessmentQuestionId,
@@ -172,9 +172,9 @@
             selfAssessmentDataService.SetCompleteByDate(selfAssessmentId, candidateId, completeByDate);
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId)
+        public IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId, int? selfAssessmentResultId = null)
         {
-            return selfAssessmentDataService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId);
+            return selfAssessmentDataService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId, selfAssessmentResultId);
         }
 
         public IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(
@@ -185,9 +185,9 @@
             return selfAssessmentDataService.GetCandidateAssessmentResultsForReviewById(candidateAssessmentId, adminId);
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId)
+        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId, bool? emailSent = null)
         {
-            return selfAssessmentDataService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, candidateId);
+            return selfAssessmentDataService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, candidateId, emailSent);
         }
 
         public IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(

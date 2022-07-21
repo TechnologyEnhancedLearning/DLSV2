@@ -25,6 +25,8 @@
                     sv.Verified,
                     sv.Comments,
                     sv.SignedOff,
+                    sv.CandidateAssessmentSupervisorID,
+                    sv.EmailSent,
                     0 AS UserIsVerifier,
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM SelfAssessmentResults s
@@ -229,13 +231,14 @@
             return GroupCompetencyAssessmentQuestions(result);
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId)
+        public IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId, int? selfAssessmentResultId = null)
         {
+            var resultIdFilter = selfAssessmentResultId.HasValue ? $"ResultID = {selfAssessmentResultId.Value}" : "1=1";
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {SpecificAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {SpecificCompetencyTables}
-                    WHERE (CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0)
+                    WHERE (CAOC.IncludedInSelfAssessment = 1 OR SAS.Optional = 0) AND {resultIdFilter}
                     ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
@@ -269,13 +272,25 @@
             return GroupCompetencyAssessmentQuestions(result);
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId)
+        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId, bool? emailSent = null)
         {
+            const string supervisorFields = @"
+                EmailSent AS SupervisorEmailSent,
+                COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS SupervisorName,
+                SelfAssessmentResultSupervisorVerificationId AS SupervisorVerificationId,
+                CandidateAssessmentSupervisorID";
+            const string supervisorTables = @"
+                LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = CandidateAssessmentSupervisorID
+                LEFT OUTER JOIN SupervisorDelegates AS sd ON sd.ID = cas.SupervisorDelegateId
+                LEFT OUTER JOIN AdminUsers AS au ON au.AdminID = sd.SupervisorAdminID";
+            var emailSentFilter = emailSent == true ? "EmailSent IS NOT NULL" : "1=1";
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
-                    SELECT {CompetencyFields}
-                    FROM {CompetencyTables} INNER JOIN SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID
-                    WHERE ((LAR.Requested IS NULL) OR (LAR.Requested < DATEADD(week, -1, getUTCDate()))) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL)
+                    SELECT {supervisorFields}, {CompetencyFields}
+                    FROM {CompetencyTables}
+                        INNER JOIN SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID
+                        {supervisorTables}
+                    WHERE {emailSentFilter} AND ((LAR.Requested IS NULL) OR (LAR.Requested < DATEADD(week, -1, getUTCDate()))) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL)
                         OR (LAR.SupportingComments IS NOT NULL)) AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0)) AND ((SA.EnforceRoleRequirementsForSignOff = 0) OR (CAQ.Required = 0))
 						OR ((LAR.Requested IS NULL) OR (LAR.Requested < DATEADD(week, -1, getUTCDate()))) AND (LAR.Verified IS NULL) AND (LAR.ResultRAG = 3) AND ((CAOC.IncludedInSelfAssessment = 1) 
 						OR (SAS.Optional = 0)) AND (SA.EnforceRoleRequirementsForSignOff = 1)

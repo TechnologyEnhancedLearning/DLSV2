@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
@@ -808,7 +809,34 @@
             sessionRequestVerification.SelfAssessmentName = selfAssessment.Name;
             sessionRequestVerification.SupervisorSelfAssessmentReview = selfAssessment.SupervisorSelfAssessmentReview;
             TempData.Set(sessionRequestVerification);
-            return RedirectToAction("VerificationPickSupervisor", new { selfAssessmentId });
+            return RedirectToAction("ReviewConfirmationRequests", new { selfAssessmentId });
+        }
+
+
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Confirmation")]
+        public IActionResult ReviewConfirmationRequests(int selfAssessmentId)
+        {
+            var candidateId = User.GetCandidateIdKnownNotNull();
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+            if (selfAssessment == null)
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)(HttpStatusCode.NotFound) });
+            }
+
+            var competencies = PopulateCompetencyLevelDescriptors(
+                selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(
+                    selfAssessmentId,
+                    User.GetCandidateIdKnownNotNull(),
+                    true
+                ).ToList()
+            );
+            var model = new ReviewConfirmationRequestsViewModel
+            {
+                SelfAssessment = selfAssessment,
+                Competencies = competencies
+            };
+            TempData.Keep();
+            return View("SelfAssessments/ReviewConfirmationRequests", model);
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Supervisor")]
@@ -960,6 +988,27 @@
                 ResultCount = sessionRequestVerification.ResultIds.Count(),
             };
             return View("SelfAssessments/VerificationSummary", model);
+        }
+
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Verification/{candidateAssessmentSupervisorId}/{selfAssessmentResultId}/Resend")]
+        public IActionResult ResendSupervisorVerificationRequest(int selfAssessmentId, string vocabulary, int candidateAssessmentSupervisorId, int selfAssessmentResultId)
+        {
+
+            frameworkNotificationService.SendResultVerificationRequest(
+                candidateAssessmentSupervisorId,
+                selfAssessmentId,
+                1,
+                User.GetCandidateIdKnownNotNull(),
+                selfAssessmentResultId
+            );
+            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId, vocabulary });
+        }
+
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Verification/{selfAssessmentResultId}/Withdraw")]
+        public IActionResult WithdrawSupervisorVerificationRequest(int selfAssessmentId, string vocabulary, int supervisorVerificationId)
+        {
+            supervisorService.RemoveSelfAssessmentResultSupervisorVerificationById(supervisorVerificationId);
+            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId, vocabulary });
         }
 
         [HttpPost]

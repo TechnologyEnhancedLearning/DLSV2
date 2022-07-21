@@ -21,6 +21,10 @@
         public DateTime? Verified { get; set; }
         public DateTime? Requested { get; set; }
         public bool? SignedOff { get; set; }
+        public DateTime? SupervisorEmailSent { get; set; }
+        public int? SupervisorVerificationId { get; set; }
+        public int? CandidateAssessmentSupervisorId { get; set; }
+        public string? SupervisorName { get; set; }
         public List<AssessmentQuestion> AssessmentQuestions { get; set; } = new List<AssessmentQuestion>();
         public IEnumerable<CompetencyFlag> CompetencyFlags { get; set; } = new List<CompetencyFlag>();
     }

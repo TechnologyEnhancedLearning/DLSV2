@@ -36,5 +36,9 @@ namespace DigitalLearningSolutions.Web.Helpers
                 }
             }
         }
+        public static string FirstLetterToUpper(string? text)
+        {
+            return text?.Length > 1 ? char.ToUpper(text[0]) + text.Substring(1).ToLower() : string.Empty;
+        }
     }
 }

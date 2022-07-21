@@ -1,0 +1,128 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@using DigitalLearningSolutions.Web.Helpers
+@model ReviewConfirmationRequestsViewModel
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  Layout = "SelfAssessments/_Layout";
+  ViewData["Title"] = "Self Assessment";
+  ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
+}
+
+@section breadcrumbs {
+  <li class="nhsuk-breadcrumb__item">
+    <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.SelfAssessment.Name) introduction</a>
+  </li>
+  <li class="nhsuk-breadcrumb__item">
+    <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.VocabPlural()) home</a>
+  </li>
+  <li class="nhsuk-breadcrumb__item">Request confirmation</li>
+}
+
+@section mobilebacklink
+{
+  <p class="nhsuk-breadcrumb__back">
+    <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
+       asp-route-vocabulary="@Model.VocabPlural()"
+       asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+      Back to @Model.VocabPlural()
+    </a>
+  </p>
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+<h1>Competency confirmation requests</h1>
+@if (Model.Competencies.Any())
+{
+  <h2>Outstanding requests</h2>
+    @if(Model.Competencies.Any())
+    {
+      <table role="table" class="nhsuk-table-responsive">
+        <thead role="rowgroup" class="nhsuk-table__head">
+          <tr role="row">
+            <th role="columnheader" class="nhsuk-u-width-one-half" scope="col">
+              Competency
+            </th>
+            <th role="columnheader" scope="col">
+              Question
+            </th>
+            <th role="columnheader" scope="col">
+              Response
+            </th>
+            <th role="columnheader" scope="col">
+              Request
+            </th>
+          </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+        @foreach (var competency in Model.Competencies)
+        {
+          foreach(var question in competency.AssessmentQuestions)
+          {
+          <tr role="row" class="nhsuk-table__row">
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+              <span class="nhsuk-table-responsive__heading">Comptenecy </span>
+              @DisplayStringHelper.RemoveMarkup(competency.Description)
+            </td>
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+              <span class="nhsuk-table-responsive__heading">Question </span>
+              @DisplayStringHelper.RemoveMarkup(question.Question)
+            </td>
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+              <span class="nhsuk-table-responsive__heading">Response </span>
+              <partial name="../../Supervisor/Shared/_AssessmentQuestionResponse" model="question" />
+            </td>
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+              <span class="nhsuk-table-responsive__heading">Request </span>
+              @competency.SupervisorName<br />
+              @competency.SupervisorEmailSent?.ToString("dd/MM/yyyy")<br />
+              <span style="white-space: nowrap;">
+                <a asp-action="ResendSupervisorVerificationRequest"
+                   asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+                   asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
+                   asp-route-candidateAssessmentSupervisorId="@competency.CandidateAssessmentSupervisorId"
+                   asp-route-selfAssessmentResultId="@question.ResultId">
+                  Resend
+                </a>
+                <a asp-action="WithdrawSupervisorVerificationRequest" class="nhsuk-u-margin-left-1"
+                   asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+                   asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
+                   asp-route-selfAssessmentResultId="@competency.SupervisorVerificationId">
+                  Withdraw
+                </a>
+              </span>
+            </td>
+          </tr>
+          }
+        }
+        </tbody>
+      </table>
+    }
+    <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
+      <div class="nhsuk-grid-column-full">
+        <a class="nhsuk-button"
+           asp-action="VerificationPickSupervisor"
+           asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+          New confirmation request
+        </a>
+      </div>
+    </div>
+    <div class="nhsuk-back-link">
+      <a class="nhsuk-back-link__link"
+         asp-action="SelfAssessmentOverview"
+         asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+      </a>
+    </div>
+}
+else
+{
+  <p>
+    There are no self assessment results ready for confirmation.
+  </p>
+  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+    Cancel
+  </a>
+}
