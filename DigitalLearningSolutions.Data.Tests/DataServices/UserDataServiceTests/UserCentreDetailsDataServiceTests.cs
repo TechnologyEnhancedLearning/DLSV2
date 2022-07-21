@@ -318,6 +318,71 @@
             result.Should().Be((userId, centreId, centreName));
         }
 
+        [Test]
+        public void LinkUserCentreDetailsToNewUser_updates_UserId()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int centreId = 7;
+            const int newUserId = 2;
+            const string email = "email_to_be_linked@centre.com";
+
+            var userId = connection.QuerySingle<int>(
+                @"INSERT INTO Users
+                (
+                    PrimaryEmail,
+                    PasswordHash,
+                    FirstName,
+                    LastName,
+                    JobGroupID,
+                    Active,
+                    FailedLoginCount,
+                    HasBeenPromptedForPrn,
+                    HasDismissedLhLoginWarning
+                )
+                OUTPUT Inserted.ID
+                VALUES
+                ('LinkUserCentreDetailsToNewUser_updates_UserId@email.com', 'password', 'test', 'user', 1, 1, 0, 1, 1)"
+            );
+
+            var userCentreDetailsId = connection.QuerySingle<int>(
+                @"INSERT INTO UserCentreDetails
+                (UserID, CentreID, Email)
+                OUTPUT Inserted.ID
+                VALUES (@userId, @centreId, @email)",
+                new { userId, centreId, email }
+            );
+
+            var oldUser = userDataService.GetUserAccountById(userId);
+            var newUser = userDataService.GetUserAccountById(newUserId);
+
+            var newUserCentreDetails = connection.Query<(int, string)>(
+                @"SELECT CentreID, Email FROM UserCentreDetails
+                    WHERE UserID = @newUserId",
+                new { newUserId }
+            );
+
+            // When
+            userDataService.LinkUserCentreDetailsToNewUser(userId, newUserId, centreId);
+
+            // Then
+            oldUser.Should().NotBeNull();
+            newUser.Should().NotBeNull();
+
+            newUserCentreDetails.Should().NotContain(row => row.Item1 == centreId && row.Item2 == email);
+
+            var updatedUserCentreDetails = connection.QuerySingle<(int, int, string)>(
+                @"SELECT UserID, CentreID, Email FROM UserCentreDetails
+                    WHERE ID = @userCentreDetailsId",
+                new { userCentreDetailsId }
+            );
+
+            updatedUserCentreDetails.Item1.Should().Be(newUserId);
+            updatedUserCentreDetails.Item2.Should().Be(centreId);
+            updatedUserCentreDetails.Item3.Should().Be(email);
+        }
+
         private void GivenUnclaimedUserExists(int userId, int centreId, string email, string hash)
         {
             connection.Execute(
