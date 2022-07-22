@@ -176,9 +176,17 @@
 
         void SetRegistrationConfirmationHash(int userId, int centreId, string? hash);
 
-        void LinkDelegateAccountToNewUser(int oldUserId, int newUserId, int centreId);
+        void LinkDelegateAccountToNewUser(
+            int currentUserIdForDelegateAccount,
+            int newUserIdForDelegateAccount,
+            int centreId
+        );
 
-        void LinkUserCentreDetailsToNewUser(int oldUserId, int newUserId, int centreId);
+        void LinkUserCentreDetailsToNewUser(
+            int currentUserIdForUserCentreDetails,
+            int newUserIdForUserCentreDetails,
+            int centreId
+        );
     }
 
     public partial class UserDataService : IUserDataService

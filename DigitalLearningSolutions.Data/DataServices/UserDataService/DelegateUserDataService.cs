@@ -418,13 +418,17 @@
             );
         }
 
-        public void LinkDelegateAccountToNewUser(int oldUserId, int newUserId, int centreId)
+        public void LinkDelegateAccountToNewUser(
+            int currentUserIdForDelegateAccount,
+            int newUserIdForDelegateAccount,
+            int centreId
+        )
         {
             connection.Execute(
                 @"UPDATE DelegateAccounts
-                    SET UserID = @newUserId, RegistrationConfirmationHash = NULL
-                    WHERE UserID = @oldUserId AND CentreID = @centreId",
-                new { oldUserId, newUserId, centreId }
+                    SET UserID = @newUserIdForDelegateAccount, RegistrationConfirmationHash = NULL
+                    WHERE UserID = @currentUserIdForDelegateAccount AND CentreID = @centreId",
+                new { currentUserIdForDelegateAccount, newUserIdForDelegateAccount, centreId }
             );
         }
     }

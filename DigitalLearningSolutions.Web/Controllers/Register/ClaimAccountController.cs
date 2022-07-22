@@ -197,7 +197,7 @@
                 return null;
             }
 
-            var model = claimAccountService.GetAccountDetailsForCompletingRegistration(
+            var model = claimAccountService.GetAccountDetailsForClaimAccount(
                 userId.Value,
                 centreId.Value,
                 centreName,
@@ -230,7 +230,7 @@
                 );
             }
 
-            if (model.EmailIsTaken)
+            if (model.IdOfUserMatchingEmailIfAny != null && model.IdOfUserMatchingEmailIfAny != loggedInUserId)
             {
                 return RedirectToAction("WrongUser", new { email = model.Email, centreName = model.CentreName });
             }

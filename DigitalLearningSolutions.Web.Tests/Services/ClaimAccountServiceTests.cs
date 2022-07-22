@@ -49,7 +49,7 @@
                 .Returns(DefaultSupportEmail);
 
             // When
-            var result = claimAccountService.GetAccountDetailsForCompletingRegistration(
+            var result = claimAccountService.GetAccountDetailsForClaimAccount(
                 DefaultUserId,
                 DefaultCentreId,
                 DefaultCentreName,
@@ -66,25 +66,24 @@
                     Email = DefaultEmail,
                     CandidateNumber = DefaultCandidateNumber,
                     SupportEmail = DefaultSupportEmail,
-                    EmailIsTaken = false,
-                    EmailIsTakenByActiveUser = false,
+                    IdOfUserMatchingEmailIfAny = null,
+                    UserMatchingEmailIsActive = false,
                     PasswordSet = false,
                 }
             );
         }
 
         [Test]
-        [TestCase(null, true, true)]
-        [TestCase(null, false, false)]
-        [TestCase(DefaultUserId, true, false)]
-        [TestCase(DefaultUserId, false, false)]
-        [TestCase(DefaultUserId + 1, true, true)]
-        [TestCase(DefaultUserId + 1, false, false)]
+        [TestCase(null, true)]
+        [TestCase(null, false)]
+        [TestCase(DefaultUserId, true)]
+        [TestCase(DefaultUserId, false)]
+        [TestCase(DefaultUserId + 1, true)]
+        [TestCase(DefaultUserId + 1, false)]
         public void
             GetAccountDetailsForCompletingRegistration_returns_model_with_correct_EmailIsTaken(
                 int? loggedInUserId,
-                bool otherUserWithEmailExists,
-                bool expectedEmailIsTaken
+                bool otherUserWithEmailExists
             )
         {
             // Given
@@ -100,7 +99,7 @@
                 .Returns(new List<DelegateAccount> { delegateAccountToBeClaimed });
 
             // When
-            var result = claimAccountService.GetAccountDetailsForCompletingRegistration(
+            var result = claimAccountService.GetAccountDetailsForClaimAccount(
                 DefaultUserId,
                 DefaultCentreId,
                 DefaultCentreName,
@@ -109,7 +108,7 @@
             );
 
             // Then
-            result.EmailIsTaken.Should().Be(expectedEmailIsTaken);
+            result.IdOfUserMatchingEmailIfAny.Should().Be(userAccountMatchingEmail?.Id);
         }
 
         [Test]
@@ -118,7 +117,7 @@
         public void
             GetAccountDetailsForCompletingRegistration_returns_model_with_correct_EmailIsTakenByActiveUser(
                 bool otherUserWithEmailIsActive,
-                bool expectedEmailIsTakenByActiveUser
+                bool expectedUserMatchingEmailIsActive
             )
         {
             // Given
@@ -134,7 +133,7 @@
                 .Returns(new List<DelegateAccount> { delegateAccountToBeClaimed });
 
             // When
-            var result = claimAccountService.GetAccountDetailsForCompletingRegistration(
+            var result = claimAccountService.GetAccountDetailsForClaimAccount(
                 DefaultUserId,
                 DefaultCentreId,
                 DefaultCentreName,
@@ -142,7 +141,7 @@
             );
 
             // Then
-            result.EmailIsTakenByActiveUser.Should().Be(expectedEmailIsTakenByActiveUser);
+            result.UserMatchingEmailIsActive.Should().Be(expectedUserMatchingEmailIsActive);
         }
 
         [Test]
@@ -165,7 +164,7 @@
                 .Returns(new List<DelegateAccount> { delegateAccountToBeClaimed });
 
             // When
-            var result = claimAccountService.GetAccountDetailsForCompletingRegistration(
+            var result = claimAccountService.GetAccountDetailsForClaimAccount(
                 DefaultUserId,
                 DefaultCentreId,
                 DefaultCentreName,

@@ -319,7 +319,7 @@
         }
 
         [Test]
-        public void LinkUserCentreDetailsToNewUser_updates_UserId()
+        public void LinkUserCentreDetailsToNewUser_updates_UserId_in_claimed_UserCentreDetails()
         {
             using var transaction = new TransactionScope();
 

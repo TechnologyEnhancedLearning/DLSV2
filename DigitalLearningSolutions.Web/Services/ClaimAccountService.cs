@@ -7,7 +7,7 @@
 
     public interface IClaimAccountService
     {
-        ClaimAccountViewModel GetAccountDetailsForCompletingRegistration(
+        ClaimAccountViewModel GetAccountDetailsForClaimAccount(
             int userIdForRegistration,
             int centreId,
             string centreName,
@@ -31,7 +31,7 @@
             this.configDataService = configDataService;
         }
 
-        public ClaimAccountViewModel GetAccountDetailsForCompletingRegistration(
+        public ClaimAccountViewModel GetAccountDetailsForClaimAccount(
             int userIdForRegistration,
             int centreId,
             string centreName,
@@ -40,8 +40,6 @@
         )
         {
             var userMatchingEmail = userDataService.GetUserAccountByPrimaryEmail(email);
-            var emailIsTaken = userMatchingEmail != null &&
-                               (loggedInUserId == null || loggedInUserId != userMatchingEmail.Id);
             var userAccountToBeClaimed = userDataService.GetUserAccountById(userIdForRegistration);
             var delegateAccountToBeClaimed = userDataService.GetDelegateAccountsByUserId(userIdForRegistration)
                 .SingleOrDefault(da => da.CentreId == centreId);
@@ -55,8 +53,8 @@
                 Email = email,
                 CandidateNumber = delegateAccountToBeClaimed!.CandidateNumber,
                 SupportEmail = supportEmail,
-                EmailIsTaken = emailIsTaken,
-                EmailIsTakenByActiveUser = emailIsTaken && userMatchingEmail.Active,
+                IdOfUserMatchingEmailIfAny = userMatchingEmail?.Id,
+                UserMatchingEmailIsActive = userMatchingEmail?.Active == true,
                 PasswordSet = !string.IsNullOrWhiteSpace(userAccountToBeClaimed?.PasswordHash),
             };
         }
@@ -68,11 +66,11 @@
             userDataService.SetRegistrationConfirmationHash(userId, centreId, null);
         }
 
-        public void LinkAccount(int oldUserId, int newUserId, int centreId)
+        public void LinkAccount(int currentUserIdForAccount, int newUserIdForAccount, int centreId)
         {
-            userDataService.LinkDelegateAccountToNewUser(oldUserId, newUserId, centreId);
-            userDataService.LinkUserCentreDetailsToNewUser(oldUserId, newUserId, centreId);
-            userDataService.DeleteUser(oldUserId);
+            userDataService.LinkDelegateAccountToNewUser(currentUserIdForAccount, newUserIdForAccount, centreId);
+            userDataService.LinkUserCentreDetailsToNewUser(currentUserIdForAccount, newUserIdForAccount, centreId);
+            userDataService.DeleteUser(currentUserIdForAccount);
         }
     }
 }

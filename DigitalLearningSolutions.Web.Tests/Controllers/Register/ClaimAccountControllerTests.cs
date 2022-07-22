@@ -408,8 +408,7 @@
             LinkDlsAccountGet_when_the_claim_email_address_matches_the_primary_email_of_another_user_redirects_to_WrongUser()
         {
             // Given
-            var model = GivenValidViewModel(loggedInUserId: DefaultLoggedInUserId);
-            model.EmailIsTaken = true;
+            GivenValidViewModel(loggedInUserId: DefaultLoggedInUserId, idOfUserMatchingEmailIfAny: DefaultUserId);
 
             // When
             var result = controllerWithLoggedInUser.LinkDlsAccount(DefaultEmail, DefaultCode);
@@ -508,7 +507,7 @@
             LinkDlsAccountPost_when_the_claim_email_address_matches_the_primary_email_of_another_user_redirects_to_WrongUser()
         {
             // Given
-            GivenValidViewModel(loggedInUserId: DefaultLoggedInUserId, emailIsTaken: true);
+            GivenValidViewModel(loggedInUserId: DefaultLoggedInUserId, idOfUserMatchingEmailIfAny: DefaultUserId);
 
             // When
             var result = controllerWithLoggedInUser.LinkDlsAccountPost(DefaultEmail, DefaultCode);
@@ -570,8 +569,8 @@
             string registrationConfirmationHash = DefaultCode,
             string candidateNumber = DefaultCandidateNumber,
             string? supportEmail = null,
-            bool emailIsTaken = false,
-            bool emailIsTakenByActiveUser = false,
+            int? idOfUserMatchingEmailIfAny = null,
+            bool userMatchingEmailIsActive = false,
             bool passwordSet = false,
             int? loggedInUserId = null
         )
@@ -585,8 +584,8 @@
                 RegistrationConfirmationHash = registrationConfirmationHash,
                 CandidateNumber = candidateNumber,
                 SupportEmail = supportEmail,
-                EmailIsTaken = emailIsTaken,
-                EmailIsTakenByActiveUser = emailIsTakenByActiveUser,
+                IdOfUserMatchingEmailIfAny = idOfUserMatchingEmailIfAny,
+                UserMatchingEmailIsActive = userMatchingEmailIsActive,
                 PasswordSet = passwordSet,
             };
 
@@ -598,7 +597,7 @@
             ).Returns((DefaultUserId, DefaultCentreId, DefaultCentreName));
 
             A.CallTo(
-                () => claimAccountService.GetAccountDetailsForCompletingRegistration(
+                () => claimAccountService.GetAccountDetailsForClaimAccount(
                     DefaultUserId,
                     DefaultCentreId,
                     DefaultCentreName,
