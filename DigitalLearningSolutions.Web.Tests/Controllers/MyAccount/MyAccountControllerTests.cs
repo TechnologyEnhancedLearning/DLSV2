@@ -73,9 +73,9 @@
         public void EditDetailsPostSave_with_invalid_model_doesnt_call_services()
         {
             // Given
-            var myAccountController = GetMyAccountController().WithMockUser(true);
+            var myAccountController = GetMyAccountController().WithMockUser(true, null);
             var formData = new MyAccountEditDetailsFormData();
-            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData);
+            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, null);
 
             myAccountController.ModelState.AddModelError(nameof(MyAccountEditDetailsFormData.Email), "Required");
 
@@ -112,7 +112,8 @@
         public void EditDetailsPostSave_with_missing_delegate_answers_fails_validation()
         {
             // Given
-            var myAccountController = GetMyAccountController().WithMockUser(true, adminId: null);
+            const int centreId = 2;
+            var myAccountController = GetMyAccountController().WithMockUser(true, centreId, adminId: null);
 
             var customPromptLists = new List<CentreRegistrationPrompt>
             {
@@ -134,7 +135,7 @@
                 null
             );
 
-            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData);
+            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, centreId);
             expectedModel.DelegateRegistrationPrompts.Add(expectedPrompt);
 
             A.CallTo(() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
@@ -218,7 +219,7 @@
                 HasProfessionalRegistrationNumber = false,
             };
 
-            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData);
+            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, centreId);
 
             // When
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
@@ -393,7 +394,8 @@
         public void EditDetailsPostSave_without_previewing_profile_image_fails_validation()
         {
             // Given
-            var myAccountController = GetMyAccountController().WithMockUser(true, adminId: null);
+            const int centreId = 2;
+            var myAccountController = GetMyAccountController().WithMockUser(true, centreId, adminId: null);
 
             var customPromptLists = new List<CentreRegistrationPrompt>
             {
@@ -413,11 +415,11 @@
                 null
             );
 
-            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData);
+            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, centreId);
             expectedModel.DelegateRegistrationPrompts.Add(expectedPrompt);
 
             A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(2)).Returns(
-                PromptsTestHelper.GetDefaultCentreRegistrationPrompts(customPromptLists, 2)
+                PromptsTestHelper.GetDefaultCentreRegistrationPrompts(customPromptLists, centreId)
             );
 
             // When
@@ -528,7 +530,7 @@
 
             var (myAccountController, formData) =
                 GetCentrelessControllerAndFormData(userId, centreSpecificEmailsByCentreId);
-            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData);
+            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, null);
 
             myAccountController.ModelState.AddModelError(nameof(MyAccountEditDetailsFormData.Email), "Required");
 
@@ -606,11 +608,13 @@
         }
 
         private static MyAccountEditDetailsViewModel GetBasicMyAccountEditDetailsViewModel(
-            MyAccountEditDetailsFormData formData
+            MyAccountEditDetailsFormData formData,
+            int? centreId
         )
         {
             return new MyAccountEditDetailsViewModel(
                 formData,
+                centreId,
                 new List<(int id, string name)>(),
                 new List<EditDelegateRegistrationPromptViewModel>(),
                 new List<(int, string, string?)>(),

@@ -130,7 +130,7 @@
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-full">
 
-      @if (Model.IsDelegateUser) {
+      @if (Model.IsLoggedInToCentre) {
         const string centreEmailHintText = @"If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address.
                                               Your primary email address will still be used for logging in and notifications for managing your account.";
 
@@ -143,7 +143,22 @@
           autocomplete="email"
           hint-text="@centreEmailHintText"
           css-class="nhsuk-u-width-one-half" />
+      } else {
+        const string centreEmailHintText = @"If you supply a centre email for an account, all notifications relating to your activity at that centre will be sent to this email address.
+                                              Your primary email address will still be used for logging in and notifications for managing your account.";
 
+        <h2>Centre emails</h2>
+
+        <vc:dictionary-text-input
+          asp-for="AllCentreSpecificEmailsDictionary"
+          spell-check="false"
+          autocomplete="email"
+          hint-text="@centreEmailHintText"
+          css-class="nhsuk-u-width-one-half" />
+      }
+
+
+      @if (Model.IsDelegateUser) {
         @foreach (var customField in Model.DelegateRegistrationPrompts) {
           @if (customField.Options.Any()) {
             <vc:select-list asp-for="@("Answer" + customField.PromptNumber)"
@@ -165,18 +180,6 @@
                            css-class="nhsuk-u-width-one-half" />
           }
         }
-      } else {
-        const string centreEmailHintText = @"If you supply a centre email for an account, all notifications relating to your activity at that centre will be sent to this email address.
-                                              Your primary email address will still be used for logging in and notifications for managing your account.";
-
-        <h2>Centre emails</h2>
-
-        <vc:dictionary-text-input
-          asp-for="AllCentreSpecificEmailsDictionary"
-          spell-check="false"
-          autocomplete="email"
-          hint-text="@centreEmailHintText"
-          css-class="nhsuk-u-width-one-half" />
       }
     </div>
   </div>
