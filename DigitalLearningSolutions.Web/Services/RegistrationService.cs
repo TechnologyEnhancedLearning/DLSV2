@@ -148,19 +148,23 @@ namespace DigitalLearningSolutions.Web.Services
 
             if (!delegateRegistrationModel.Approved)
             {
-                var recipients = notificationDataService.GetAdminRecipientsForCentreNotification(delegateRegistrationModel.Centre, 4);
+                var recipients =
+                    notificationDataService.GetAdminRecipientsForCentreNotification(
+                        delegateRegistrationModel.Centre,
+                        4
+                    );
 
                 foreach (var recipient in recipients)
                 {
                     if (recipient.Email != null && recipient.FirstName != null)
                     {
                         var approvalEmail = GenerateApprovalEmail(
-                        recipient.Email,
-                        recipient.FirstName,
-                        delegateRegistrationModel.FirstName,
-                        delegateRegistrationModel.LastName,
-                        refactoredTrackingSystemEnabled
-                    );
+                            recipient.Email,
+                            recipient.FirstName,
+                            delegateRegistrationModel.FirstName,
+                            delegateRegistrationModel.LastName,
+                            refactoredTrackingSystemEnabled
+                        );
                         emailService.SendEmail(approvalEmail);
                     }
                 }
@@ -178,7 +182,6 @@ namespace DigitalLearningSolutions.Web.Services
                 int? supervisorDelegateId = null
             )
         {
-            using var transaction = new TransactionScope();
             var userEntity = userService.GetUserById(userId)!;
 
             var delegateRegistrationModel =
@@ -231,13 +234,24 @@ namespace DigitalLearningSolutions.Web.Services
 
                 groupsService.SynchroniseUserChangesWithGroups(
                     delegateId,
-                    new AccountDetailsData(delegateRegistrationModel.FirstName, delegateRegistrationModel.LastName, delegateRegistrationModel.PrimaryEmail),
+                    new AccountDetailsData(
+                        delegateRegistrationModel.FirstName,
+                        delegateRegistrationModel.LastName,
+                        delegateRegistrationModel.PrimaryEmail
+                    ),
                     delegateRegistrationModel.GetRegistrationFieldAnswers(),
-                    new RegistrationFieldAnswers(delegateRegistrationModel.Centre, 0, null, null, null, null, null, null),
+                    new RegistrationFieldAnswers(
+                        delegateRegistrationModel.Centre,
+                        0,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    ),
                     delegateRegistrationModel.CentreSpecificEmail
                 );
-
-                transaction.Complete();
             }
             catch (DelegateCreationFailedException exception)
             {
@@ -278,8 +292,6 @@ namespace DigitalLearningSolutions.Web.Services
             bool registerJourneyContainsTermsAndConditions
         )
         {
-            using var transaction = new TransactionScope();
-
             var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
                 registerJourneyContainsTermsAndConditions
@@ -320,8 +332,6 @@ namespace DigitalLearningSolutions.Web.Services
                     delegateId
                 );
             }
-
-            transaction.Complete();
 
             return candidateNumber;
         }
@@ -451,9 +461,22 @@ namespace DigitalLearningSolutions.Web.Services
 
                 groupsService.SynchroniseUserChangesWithGroups(
                     delegateId,
-                    new AccountDetailsData(delegateRegistrationModel.FirstName, delegateRegistrationModel.LastName, delegateRegistrationModel.PrimaryEmail),
+                    new AccountDetailsData(
+                        delegateRegistrationModel.FirstName,
+                        delegateRegistrationModel.LastName,
+                        delegateRegistrationModel.PrimaryEmail
+                    ),
                     delegateRegistrationModel.GetRegistrationFieldAnswers(),
-                    new RegistrationFieldAnswers(delegateRegistrationModel.Centre, 0, null, null, null, null, null, null),
+                    new RegistrationFieldAnswers(
+                        delegateRegistrationModel.Centre,
+                        0,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    ),
                     delegateRegistrationModel.CentreSpecificEmail
                 );
 

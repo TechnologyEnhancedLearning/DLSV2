@@ -7,7 +7,6 @@ namespace DigitalLearningSolutions.Web.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Transactions;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -75,8 +74,6 @@ namespace DigitalLearningSolutions.Web.Services
 
         internal BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime welcomeEmailDate)
         {
-            using var transaction = new TransactionScope();
-
             var jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical().Select(item => item.id).ToList();
             var delegateRows = table.Rows().Skip(1).Select(row => new DelegateTableRow(table, row)).ToList();
 
@@ -84,8 +81,6 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 ProcessDelegateRow(centreId, welcomeEmailDate, delegateRow, jobGroupIds);
             }
-
-            transaction.Complete();
 
             return new BulkUploadResult(delegateRows);
         }
