@@ -199,14 +199,6 @@ namespace DigitalLearningSolutions.Web.Services
                 delegateId
             );
 
-            groupsService.SynchroniseUserChangesWithGroups(
-                delegateId,
-                new AccountDetailsData(model.FirstName, model.LastName, model.PrimaryEmail),
-                model.GetRegistrationFieldAnswers(),
-                new RegistrationFieldAnswers(model.Centre, 0, null, null, null, null, null, null),
-                model.CentreSpecificEmail
-            );
-
             SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, delegateId);
 
             passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
