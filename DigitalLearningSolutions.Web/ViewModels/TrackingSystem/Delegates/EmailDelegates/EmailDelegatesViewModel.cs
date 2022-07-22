@@ -1,10 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class EmailDelegatesViewModel : BaseSearchablePageViewModel<DelegateUserCard>
@@ -15,9 +15,9 @@
             bool selectAll = false
         ) : base(result, true, availableFilters)
         {
-            Day = DateTime.Today.Day;
-            Month = DateTime.Today.Month;
-            Year = DateTime.Today.Year;
+            Day = clockUtility.UtcToday.Day;
+            Month = clockUtility.UtcToday.Month;
+            Year = clockUtility.UtcToday.Year;
             Delegates = result.ItemsToDisplay.Select(
                 delegateUser =>
                 {
@@ -46,6 +46,7 @@
         public int? Day { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }
+        private readonly IClockUtility clockUtility = new ClockUtility();
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new List<(string, string)>();
 

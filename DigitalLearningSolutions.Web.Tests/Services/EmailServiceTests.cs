@@ -6,6 +6,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using MailKit.Net.Smtp;
@@ -20,6 +21,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         private IEmailDataService emailDataService = null!;
         private EmailService emailService = null!;
         private ISmtpClient smtpClient = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void Setup()
@@ -28,6 +30,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             configDataService = A.Fake<IConfigDataService>();
             var smtpClientFactory = A.Fake<ISmtpClientFactory>();
             smtpClient = A.Fake<ISmtpClient>();
+            clockUtility = A.Fake<IClockUtility>();
             A.CallTo(() => smtpClientFactory.GetSmtpClient()).Returns(smtpClient);
 
             A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.MailPort)).Returns("25");
@@ -38,7 +41,13 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 .Returns("test@example.com");
 
             var logger = A.Fake<ILogger<EmailService>>();
-            emailService = new EmailService(emailDataService, configDataService, smtpClientFactory, logger);
+            emailService = new EmailService(
+                emailDataService,
+                configDataService,
+                smtpClientFactory,
+                logger,
+                clockUtility
+            );
         }
 
         [TestCase(ConfigDataService.MailPort)]
@@ -341,6 +350,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             var emails = new List<Email> { EmailTestHelper.GetDefaultEmailToSingleRecipient("to@example.com") };
             var deliveryDate = DateTime.Today;
             const string addedByProcess = "some process";
+            A.CallTo(() => clockUtility.UtcToday).Returns(deliveryDate);
 
             // When
             emailService.ScheduleEmails(emails, addedByProcess, deliveryDate);

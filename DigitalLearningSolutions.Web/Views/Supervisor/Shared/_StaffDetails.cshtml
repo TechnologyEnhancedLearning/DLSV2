@@ -1,8 +1,10 @@
 ﻿@using DigitalLearningSolutions.Data.Models.Supervisor
+@using DigitalLearningSolutions.Data.Utilities
 @using DigitalLearningSolutions.Web.Extensions
 @model SupervisorDelegateDetail
 @{
-    bool IsSupervisor = (bool)(ViewData["isSupervisor"] ?? false);   
+  bool IsSupervisor = (bool)(ViewData["isSupervisor"] ?? false);
+  var clockUtility = new ClockUtility();
 }
 
 <dl class="nhsuk-summary-list">
@@ -11,7 +13,7 @@
     Added
   </dt>
   <dd class="nhsuk-summary-list__value">
-    @(Model.Added.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? Model.Added.ToShortDateString() : "Today")
+    @(Model.Added.ToShortDateString() != clockUtility.UtcNow.ToShortDateString() ? Model.Added.ToShortDateString() : "Today")
   </dd>
   <dd class="nhsuk-summary-list__actions">
   </dd>

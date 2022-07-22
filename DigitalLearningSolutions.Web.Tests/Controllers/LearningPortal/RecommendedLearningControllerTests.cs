@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.Services;
@@ -26,6 +27,7 @@
         private IRecommendedLearningService recommendedLearningService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void Setup()
@@ -36,6 +38,7 @@
             recommendedLearningService = A.Fake<IRecommendedLearningService>();
             actionPlanService = A.Fake<IActionPlanService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
+            clockUtility = A.Fake<IClockUtility>();
 
             controller = new RecommendedLearningController(
                     filteredApiHelperService,
@@ -43,7 +46,8 @@
                     configuration,
                     recommendedLearningService,
                     actionPlanService,
-                    searchSortFilterPaginateService
+                    searchSortFilterPaginateService,
+                    clockUtility
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, delegateId: DelegateId);

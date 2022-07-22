@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Builder;
@@ -13,6 +14,8 @@
 
     public class TestUserAppStartupFilter : IStartupFilter
     {
+        private readonly IClockUtility clockUtility = new ClockUtility();
+
         public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
         {
             return builder =>
@@ -40,7 +43,7 @@
                                 {
                                     AllowRefresh = true,
                                     IsPersistent = false,
-                                    IssuedUtc = DateTime.UtcNow,
+                                    IssuedUtc = clockUtility.UtcNow,
                                 };
 
                                 await context.SignInAsync(

@@ -5,10 +5,13 @@ using System;
 
 namespace DigitalLearningSolutions.Web.Helpers
 {
+    using DigitalLearningSolutions.Data.Utilities;
+
     public static class SignpostingCookieHelper
     {
         public static readonly string CookieName = "SignpostingCookie";
         public static readonly int CookieExpiryDays = 30;
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
 
         public static void SetSignpostingCookie(
             this IResponseCookies cookies,
@@ -16,7 +19,7 @@ namespace DigitalLearningSolutions.Web.Helpers
             DateTime? currentDateTime = null
         )
         {
-            var expiry = (currentDateTime ?? DateTime.UtcNow).AddDays(CookieExpiryDays);
+            var expiry = (currentDateTime ?? ClockUtility.UtcNow).AddDays(CookieExpiryDays);
             var settings = new JsonSerializerSettings
             {
                 DefaultValueHandling = DefaultValueHandling.Ignore,

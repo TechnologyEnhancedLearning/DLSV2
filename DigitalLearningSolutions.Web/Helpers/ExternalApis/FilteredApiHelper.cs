@@ -14,6 +14,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public interface IFilteredApiHelperService
     {
@@ -28,6 +29,7 @@
     public class FilteredApiHelper : IFilteredApiHelperService
     {
         private static readonly HttpClient client = new HttpClient();
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
         public async Task<AccessToken> GetUserAccessToken<T>(string candidateNumber)
         {
             string token = GenerateUserJwt(candidateNumber);
@@ -102,7 +104,7 @@
             new Claim("userID", "DLS-" + candidateNumber),
                 }),
                 //Issuer = myIssuer,
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = ClockUtility.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(mySecurityKey, SecurityAlgorithms.HmacSha256)
             };
 

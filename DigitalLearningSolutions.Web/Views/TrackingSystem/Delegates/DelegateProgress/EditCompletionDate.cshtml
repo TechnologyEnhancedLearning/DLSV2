@@ -1,3 +1,4 @@
+@using DigitalLearningSolutions.Data.Utilities
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @model EditCompletionDateViewModel
@@ -14,7 +15,8 @@
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
   }
 
-  var exampleDate = DateTime.Today;
+  var clockUtility = new ClockUtility();
+  var exampleDate = clockUtility.UtcToday;
   var hintTextLines = new List<string> {
     $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the completed date",
   };

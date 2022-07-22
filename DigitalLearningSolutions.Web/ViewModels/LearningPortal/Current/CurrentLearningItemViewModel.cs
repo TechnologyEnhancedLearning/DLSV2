@@ -3,6 +3,7 @@
     using System;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class CurrentLearningItemViewModel : StartedLearningItemViewModel
@@ -19,15 +20,16 @@
         public DateTime? CompleteByDate { get; }
         public OldDateValidator.ValidationResult? CompleteByValidationResult { get; set; }
         public ReturnPageQuery ReturnPageQuery { get; }
+        private readonly IClockUtility clockUtility = new ClockUtility();
 
         public string DateStyle()
         {
-            if (CompleteByDate < DateTime.Today)
+            if (CompleteByDate < clockUtility.UtcToday)
             {
                 return "overdue";
             }
 
-            if (CompleteByDate < DateTime.Today + TimeSpan.FromDays(30))
+            if (CompleteByDate < clockUtility.UtcToday + TimeSpan.FromDays(30))
             {
                 return "due-soon";
             }

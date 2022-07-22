@@ -3,12 +3,15 @@
     using System;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using Microsoft.AspNetCore.Mvc;
 
     public static class CompletedCourseHelper
     {
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
+
         public static CompletedCourse CreateDefaultCompletedCourse(
             int customisationId = 1,
             string courseName = "Course 1",
@@ -38,9 +41,9 @@
                 Sections = sections,
                 ProgressID = progressId,
                 Evaluated = evaluated,
-                StartedDate = startedDate ?? DateTime.UtcNow,
-                LastAccessed = lastAccessed ?? DateTime.UtcNow,
-                Completed = completed ?? DateTime.UtcNow,
+                StartedDate = startedDate ?? ClockUtility.UtcNow,
+                LastAccessed = lastAccessed ?? ClockUtility.UtcNow,
+                Completed = completed ?? ClockUtility.UtcNow,
                 ArchivedDate = archivedDate
             };
         }

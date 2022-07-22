@@ -1,11 +1,13 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Data.Utilities
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @model MarkActionPlanResourceAsCompleteViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? $"Error: Mark {Model.ResourceName} as complete" : $"Mark {Model.ResourceName} as complete";
-  var exampleDate = DateTime.Today;
+  var clockUtility = new ClockUtility();
+  var exampleDate = clockUtility.UtcToday;
   var hintTextLines = new List<string> {
     $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}",
   };

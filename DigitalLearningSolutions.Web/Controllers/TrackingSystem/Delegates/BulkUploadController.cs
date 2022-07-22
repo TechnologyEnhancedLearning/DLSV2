@@ -60,7 +60,7 @@
         public IActionResult StartUpload()
         {
             TempData.Clear();
-            var model = new UploadDelegatesViewModel(DateTime.Today);
+            var model = new UploadDelegatesViewModel(clockUtility.UtcToday);
             return View("StartUpload", model);
         }
 

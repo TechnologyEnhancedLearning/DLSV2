@@ -4,9 +4,12 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public static class SelfAssessmentHelper
     {
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
+
         public static CurrentSelfAssessment CreateDefaultSelfAssessment(
             int id = 1,
             string name = "name",
@@ -31,7 +34,7 @@
                 Description = description,
                 Name = name,
                 NumberOfCompetencies = numberOfCompetencies,
-                StartedDate = startedDate ?? DateTime.UtcNow,
+                StartedDate = startedDate ?? ClockUtility.UtcNow,
                 LastAccessed = lastAccessed,
                 CompleteByDate = completeByDate,
                 IncludesSignposting = includesSignposting,

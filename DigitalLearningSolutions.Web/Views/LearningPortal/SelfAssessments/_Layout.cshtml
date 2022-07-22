@@ -1,4 +1,9 @@
-﻿@using Microsoft.AspNetCore.Http.Extensions
+﻿@using DigitalLearningSolutions.Data.Utilities
+@using Microsoft.AspNetCore.Http.Extensions
+
+@{
+  var clockUtility = new ClockUtility();
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -91,7 +96,7 @@
                             <a class="nhsuk-footer__list-item-link" href="https://www.hee.nhs.uk/about/privacy-notice">Privacy <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
                         </li>
                     </ul>
-                    <p class="nhsuk-footer__copyright">&copy; Digital Learning Solutions, Health Education England @DateTime.Now.Year</p>
+                    <p class="nhsuk-footer__copyright">&copy; Digital Learning Solutions, Health Education England @clockUtility.UtcNow.Year</p>
                 </div>
             </div>
         </footer>

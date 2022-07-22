@@ -1,5 +1,10 @@
 ﻿@using DigitalLearningSolutions.Data.Models.Supervisor;
+@using DigitalLearningSolutions.Data.Utilities
 @model IEnumerable<DelegateSelfAssessment>;
+
+@{
+  var clockUtility = new ClockUtility();
+}
 
 <table role="table" class="nhsuk-table-responsive">
   <caption class="nhsuk-table__caption"><h2>Self assessments</h2></caption>
@@ -42,14 +47,14 @@
       </td>
       <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
         <span class="nhsuk-table-responsive__heading">Actions </span>
-        @if (delegateSelfAssessment.SignOffRequested == 0 && delegateSelfAssessment.LastAccessed < DateTime.Now.AddDays(-7))
+        @if (delegateSelfAssessment.SignOffRequested == 0 && delegateSelfAssessment.LastAccessed < clockUtility.UtcNow.AddDays(-7))
         {
           <a class="status-tag" asp-action="SendReminderDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Send reminder</a>
-        } 
+        }
         @if (delegateSelfAssessment.LaunchCount > 0)
         {
           <a asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">@(delegateSelfAssessment.SignOffRequested > 0 | delegateSelfAssessment.ResultsVerificationRequests > 0 ? "Review" : "View")</a>
-        } 
+        }
         @if (delegateSelfAssessment.CompletedDate != null | delegateSelfAssessment.LaunchCount == 0)
         {
           <a asp-action="RemoveDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Remove</a>

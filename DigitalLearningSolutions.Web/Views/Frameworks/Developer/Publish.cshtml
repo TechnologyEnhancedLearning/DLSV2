@@ -1,8 +1,10 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+﻿@using DigitalLearningSolutions.Data.Utilities
+@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model PublishViewModel;
 @{
   ViewData["Title"] = Model.DetailFramework.FrameworkName;
   ViewData["Application"] = "Framework Service";
+  var clockUtility = new ClockUtility();
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -50,7 +52,7 @@
             <span class="nhsuk-table-responsive__heading">Reviewer </span>@review.UserEmail
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-            <span class="nhsuk-table-responsive__heading">Requested </span>@(review.ReviewRequested.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? review.ReviewRequested.ToShortDateString() : "Today")
+            <span class="nhsuk-table-responsive__heading">Requested </span>@(review.ReviewRequested.ToShortDateString() != clockUtility.UtcNow.ToShortDateString() ? review.ReviewRequested.ToShortDateString() : "Today")
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
             <span class="nhsuk-table-responsive__heading">Status </span>
@@ -72,7 +74,7 @@
             }
             @if (review.ReviewComplete == null)
             {
-              @if (review.ReviewRequested.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
+              @if (review.ReviewRequested.ToShortDateString() != clockUtility.UtcNow.ToShortDateString())
               {
                 <a asp-action="ResendRequest" asp-route-reviewId="@review.ID" asp-route-frameworkId="@review.FrameworkID" asp-route-frameworkCollaboratorId="@review.FrameworkCollaboratorID">
                   Send reminder
