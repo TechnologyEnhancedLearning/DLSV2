@@ -26,10 +26,24 @@
       </div>
     </dl>
 
-    <p class="nhsuk-body-m">Are you sure you would like to create a new login for this account?</p>
+    <p class="nhsuk-body-m">Are you sure you would like to activate this delegate record?</p>
 
     <form method="post" asp-action="CompleteRegistration">
-      <button class="nhsuk-button" type="submit">Create login</button>
+      <button class="nhsuk-button" type="submit">Activate</button>
     </form>
+
+    @{
+      var routeData = new Dictionary<string, string> {
+         { "email", Model.CentreSpecificEmail },
+         { "code", Model.RegistrationConfirmationHash },
+       };
+    }
+
+    <vc:cancel-link
+      asp-controller="ClaimAccount"
+      asp-action="Index"
+      asp-all-route-data="@routeData"
+      link-text="Cancel" />
+
   </div>
 </div>

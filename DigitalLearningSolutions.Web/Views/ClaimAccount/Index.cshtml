@@ -12,7 +12,7 @@
       Complete delegate registration
     </h1>
 
-    <p class="nhsuk-body-m">You have been registered for a new account.</p>
+    <p class="nhsuk-body-m">A new delegate record has been created for you by an administrator.</p>
 
     <dl class="nhsuk-summary-list--no-border nhsuk-body-m">
       <div class="nhsuk-summary-list__row basic-summary-list__row">
@@ -39,19 +39,19 @@
         <vc:action-link asp-controller="ClaimAccount" asp-action="CompleteRegistration" link-text="Link this record" />
       } else {
         <p class="nhsuk-body-m">
-          The DLS user account associated with this email address is inactive. To request reactivation of the account, please contact <a href="mailto:@Model.SupportEmail">@Model.SupportEmail</a>.
+          There is already a DLS user account associated with this email address. To request reactivation of the user account and link this delegate record to the account, please contact <a href="mailto:@Model.SupportEmail">@Model.SupportEmail</a>.
         </p>
       }
     } else {
       <p class="nhsuk-body-m">
-        If you already have an account on DLS, we recommend that you link your new account to your existing login.
+        <b>Recommended:</b> If you have used DLS in the past (for example, at another NHS trust or university), we recommend that you link this record to your existing login.
       </p>
 
       <!-- TODO HEEDLS-976 Change the asp-action to LinkDlsAccount -->
       <vc:action-link asp-controller="ClaimAccount" asp-action="CompleteRegistration" link-text="Use existing login" />
 
       <p class="nhsuk-body-m">
-        Otherwise, you can create a new login.
+        <b>Alternative:</b> If you have never accessed DLS before, please activate this delegate record to log in. A new DLS user account will be created.
       </p>
 
       var routeData = new Dictionary<string, string> {
@@ -63,7 +63,7 @@
         asp-controller="ClaimAccount"
         asp-action="CompleteRegistration"
         asp-all-route-data="@routeData"
-        link-text="Create a new login" />
+        link-text="Activate delegate record" />
     }
 
   </div>
