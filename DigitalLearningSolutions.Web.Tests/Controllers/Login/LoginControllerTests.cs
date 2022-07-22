@@ -34,8 +34,8 @@
         private ILogger<LoginController> logger = null!;
         private ILoginService loginService = null!;
         private ISessionService sessionService = null!;
-        private IUserService userService = null!;
         private IUrlHelper urlHelper = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
@@ -229,6 +229,23 @@
             // Then
             result.Should().BeViewResult().WithViewName("Index").ModelAs<LoginViewModel>();
             Assert.IsFalse(controller.ModelState.IsValid);
+        }
+
+        [Test]
+        public async Task Unverified_email_should_redirect_to_Verify_Email_page()
+        {
+            // Given
+            var userEntity = GetUserEntity(true, true);
+
+            A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
+                new LoginResult(LoginAttemptResult.UnverifiedEmail, userEntity)
+            );
+
+            // When
+            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("VerifyEmail").WithActionName("Index");
         }
 
         [Test]
@@ -478,7 +495,7 @@
             var userEntity = GetUserEntity(
                 withAdminAccount,
                 withDelegateAccount,
-                isAdminAccountActive: isAdminAccountActive,
+                isAdminAccountActive,
                 centreId: centreId
             );
 

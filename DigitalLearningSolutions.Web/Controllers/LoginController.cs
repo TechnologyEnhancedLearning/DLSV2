@@ -71,6 +71,13 @@
                     return View("AccountLocked");
                 case LoginAttemptResult.InactiveAccount:
                     return View("AccountInactive");
+                case LoginAttemptResult.UnverifiedEmail:
+                    await CentrelessLogInAsync(loginResult.UserEntity!, model.RememberMe);
+                    return RedirectToAction(
+                        "Index",
+                        "VerifyEmail",
+                        new { emailVerificationReason = EmailVerificationReason.EmailNotVerified }
+                    );
                 case LoginAttemptResult.LogIntoSingleCentre:
                     return await LogIntoCentreAsync(
                         loginResult.UserEntity!,

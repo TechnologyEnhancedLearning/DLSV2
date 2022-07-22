@@ -57,9 +57,29 @@
                 return new LoginResult(LoginAttemptResult.AccountLocked);
             }
 
+            var (unverifiedPrimaryEmail, unverifiedCentreEmails) =
+                userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id);
+            var primaryEmailIsUnverified = unverifiedPrimaryEmail != null;
+
+            var centreIdIfLoggingIntoSingleCentre = primaryEmailIsUnverified
+                ? null
+                : GetCentreIdIfLoggingUserIntoSingleCentre(userEntity, username);
+            var userIsLoggingIntoSingleCentreAndCentreEmailIsUnverified =
+                centreIdIfLoggingIntoSingleCentre != null && unverifiedCentreEmails.Select(uce => uce.centreId).ToList()
+                    .Contains((int)centreIdIfLoggingIntoSingleCentre);
+
+            if (primaryEmailIsUnverified || userIsLoggingIntoSingleCentreAndCentreEmailIsUnverified)
+            {
+                return new LoginResult(
+                    LoginAttemptResult.UnverifiedEmail,
+                    userEntity,
+                    centreIdIfLoggingIntoSingleCentre
+                );
+            }
+
             return !userEntity.UserAccount.Active
                 ? new LoginResult(LoginAttemptResult.InactiveAccount)
-                : DetermineDestinationForSuccessfulLogin(userEntity, username);
+                : DetermineDestinationForSuccessfulLogin(userEntity, centreIdIfLoggingIntoSingleCentre);
         }
 
         public IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(UserEntity? userEntity)
@@ -80,11 +100,12 @@
             );
         }
 
-        private LoginResult DetermineDestinationForSuccessfulLogin(UserEntity userEntity, string username)
+        private LoginResult DetermineDestinationForSuccessfulLogin(
+            UserEntity userEntity,
+            int? singleCentreToLogUserInto
+        )
         {
             userService.ResetFailedLoginCount(userEntity.UserAccount);
-
-            var singleCentreToLogUserInto = GetCentreIdIfLoggingUserIntoSingleCentre(userEntity, username);
 
             return singleCentreToLogUserInto == null
                 ? new LoginResult(LoginAttemptResult.ChooseACentre, userEntity)
