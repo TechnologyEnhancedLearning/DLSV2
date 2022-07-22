@@ -292,6 +292,8 @@ namespace DigitalLearningSolutions.Web.Services
             bool registerJourneyContainsTermsAndConditions
         )
         {
+            using var transaction = new TransactionScope();
+
             var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
                 registerJourneyContainsTermsAndConditions
@@ -332,6 +334,8 @@ namespace DigitalLearningSolutions.Web.Services
                     delegateId
                 );
             }
+
+            transaction.Complete();
 
             return candidateNumber;
         }
