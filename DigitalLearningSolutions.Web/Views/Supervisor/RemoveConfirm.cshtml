@@ -46,6 +46,7 @@
       @Html.HiddenFor(m => m.LastName)
       @Html.HiddenFor(m => m.DelegateEmail)
       @Html.HiddenFor(m => m.CandidateAssessmentCount)
+      @Html.HiddenFor(m => m.ReturnPageQuery)
     </form>
 
     <vc:cancel-link-with-return-page-query asp-controller="Supervisor" asp-action="MyStaffList" return-page-query="@Model.ReturnPageQuery" />
