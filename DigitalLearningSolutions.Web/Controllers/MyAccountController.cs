@@ -126,6 +126,7 @@
             var model = new MyAccountEditDetailsViewModel(
                 userEntity!.UserAccount,
                 delegateAccount,
+                centreId,
                 jobGroups,
                 centreId != null ? userService.GetCentreEmail(userId, centreId.Value) : null,
                 customPrompts,
@@ -297,6 +298,7 @@
 
             var model = new MyAccountEditDetailsViewModel(
                 formData,
+                centreId,
                 jobGroups,
                 customPrompts,
                 allCentreSpecificEmails,
@@ -337,6 +339,7 @@
 
             var model = new MyAccountEditDetailsViewModel(
                 formData,
+                centreId,
                 jobGroups,
                 customPrompts,
                 allCentreSpecificEmails,
@@ -373,6 +376,7 @@
 
             var model = new MyAccountEditDetailsViewModel(
                 formData,
+                centreId,
                 jobGroups,
                 customPrompts,
                 allCentreSpecificEmails,
