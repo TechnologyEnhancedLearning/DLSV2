@@ -41,7 +41,6 @@
         private IRegistrationService registrationService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
-        private IGroupsService groupsService = null!;
 
         [SetUp]
         public void SetUp()
@@ -55,7 +54,6 @@
             registrationService = A.Fake<IRegistrationService>(x => x.Strict());
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
             passwordResetService = A.Fake<IPasswordResetService>();
-            groupsService = A.Fake<IGroupsService>();
             configuration = A.Fake<IConfiguration>();
 
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(A<string>._))
@@ -67,8 +65,7 @@
                 registrationService,
                 supervisorDelegateService,
                 passwordResetService,
-                configuration,
-                groupsService
+                configuration
             );
         }
 
