@@ -17,6 +17,8 @@
     <p class="nhsuk-body-m">Are you sure you would like to create a new login for this account?</p>
 
     <form method="post" asp-action="CompleteRegistration">
+      <input type="hidden" asp-for="Email" />
+      <input type="hidden" name="code" value="@Model.RegistrationConfirmationHash" />
       <button class="nhsuk-button" type="submit">Create login</button>
     </form>
 

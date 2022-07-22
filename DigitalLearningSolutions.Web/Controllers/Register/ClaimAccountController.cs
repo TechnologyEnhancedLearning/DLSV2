@@ -3,7 +3,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
@@ -62,22 +61,23 @@
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
-            TempData.Set(model);
-
             return View(model);
         }
 
+        [Route("/ClaimAccount/CompleteRegistration")]
         [HttpPost]
-        public IActionResult CompleteRegistration()
+        public IActionResult CompleteRegistrationPost(string email, string code)
         {
-            var model = TempData.Peek<ClaimAccountViewModel>()!;
-
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction(
-                    "LinkDlsAccount",
-                    new { email = model.Email, code = model.RegistrationConfirmationHash }
-                );
+                return RedirectToAction("LinkDlsAccount", new { email, code });
+            }
+
+            var model = GetViewModelIfValidParameters(email, code);
+
+            if (model == null)
+            {
+                return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
             if (userDataService.PrimaryEmailIsInUse(model.Email))
@@ -97,9 +97,28 @@
                 model.Email
             );
 
-            TempData.Clear();
+            return RedirectToAction(
+                "Confirmation",
+                new
+                {
+                    email = model.Email,
+                    centreName = model.CentreName,
+                    candidateNumber = model.CandidateNumber
+                }
+            );
+        }
 
-            return View("Confirmation", model);
+        [HttpGet]
+        public IActionResult Confirmation(string email, string centreName, string candidateNumber)
+        {
+            var model = new ClaimAccountViewModel
+            {
+                Email = email,
+                CentreName = centreName,
+                CandidateNumber = candidateNumber,
+            };
+
+            return View(model);
         }
 
         [Authorize(Policy = CustomPolicies.BasicUser)]
@@ -110,8 +129,6 @@
             var model = GetViewModelIfValidParameters(email, code, loggedInUserId);
             var actionResult = ValidateClaimAccountViewModelForLinkingAccounts(loggedInUserId, model);
 
-            TempData.Set(model);
-
             if (actionResult != null)
             {
                 return actionResult;
@@ -121,11 +138,12 @@
         }
 
         [Authorize(Policy = CustomPolicies.BasicUser)]
+        [Route("/ClaimAccount/LinkDlsAccount")]
         [HttpPost]
-        public IActionResult LinkDlsAccount()
+        public IActionResult LinkDlsAccountPost(string email, string code)
         {
-            var model = TempData.Peek<ClaimAccountViewModel>()!;
             var loggedInUserId = User.GetUserIdKnownNotNull();
+            var model = GetViewModelIfValidParameters(email, code, loggedInUserId);
             var actionResult = ValidateClaimAccountViewModelForLinkingAccounts(loggedInUserId, model);
 
             if (actionResult != null)
@@ -133,35 +151,31 @@
                 return actionResult;
             }
 
-            claimAccountService.LinkAccount(
-                model.UserId,
-                loggedInUserId,
-                model.CentreId
-            );
+            claimAccountService.LinkAccount(model!.UserId, loggedInUserId, model.CentreId);
 
-            TempData.Clear();
+            return RedirectToAction("AccountsLinked", new { centreName = model.CentreName });
+        }
 
-            return View("AccountsLinked", model);
+        [Authorize(Policy = CustomPolicies.BasicUser)]
+        [HttpGet]
+        public IActionResult AccountsLinked(string centreName)
+        {
+            var model = new ClaimAccountViewModel { CentreName = centreName };
+            return View(model);
         }
 
         [HttpGet]
-        public IActionResult WrongUser()
+        public IActionResult WrongUser(string email, string centreName)
         {
-            var model = TempData.Peek<ClaimAccountViewModel>();
-
-            TempData.Clear();
-
-            return model == null ? NotFound() as IActionResult : View(model);
+            var model = new ClaimAccountViewModel { Email = email, CentreName = centreName };
+            return View(model);
         }
 
         [HttpGet]
-        public IActionResult AccountAlreadyExists()
+        public IActionResult AccountAlreadyExists(string email, string centreName)
         {
-            var model = TempData.Peek<ClaimAccountViewModel>();
-
-            TempData.Clear();
-
-            return model == null ? NotFound() as IActionResult : View(model);
+            var model = new ClaimAccountViewModel { Email = email, CentreName = centreName };
+            return View(model);
         }
 
         private ClaimAccountViewModel? GetViewModelIfValidParameters(
@@ -203,7 +217,6 @@
         {
             if (model == null)
             {
-                TempData.Clear();
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
@@ -211,12 +224,15 @@
 
             if (delegateAccounts.Any(account => account.CentreId == model.CentreId))
             {
-                return RedirectToAction("AccountAlreadyExists");
+                return RedirectToAction(
+                    "AccountAlreadyExists",
+                    new { email = model.Email, centreName = model.CentreName }
+                );
             }
 
             if (model.EmailIsTaken)
             {
-                return RedirectToAction("WrongUser");
+                return RedirectToAction("WrongUser", new { email = model.Email, centreName = model.CentreName });
             }
 
             return null;
