@@ -26,10 +26,12 @@
       </div>
     </dl>
 
-    <p class="nhsuk-body-m">Are you sure you would like to create a new login for this account?</p>
+    <p class="nhsuk-body-m">Are you sure you would like to activate this delegate record?</p>
 
     <form method="post" asp-action="CompleteRegistration">
-      <button class="nhsuk-button" type="submit">Create login</button>
+      <button class="nhsuk-button" type="submit">Activate</button>
     </form>
+
+    <vc:cancel-link asp-controller="Home" asp-action="Index" />
   </div>
 </div>
