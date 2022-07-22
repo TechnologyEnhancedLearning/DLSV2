@@ -32,18 +32,6 @@
       <button class="nhsuk-button" type="submit">Activate</button>
     </form>
 
-    @{
-      var routeData = new Dictionary<string, string> {
-         { "email", Model.CentreSpecificEmail },
-         { "code", Model.RegistrationConfirmationHash },
-       };
-    }
-
-    <vc:cancel-link
-      asp-controller="ClaimAccount"
-      asp-action="Index"
-      asp-all-route-data="@routeData"
-      link-text="Cancel" />
-
+    <vc:cancel-link asp-controller="Home" asp-action="Index" />
   </div>
 </div>
