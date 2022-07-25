@@ -528,62 +528,30 @@
             using var transaction = new TransactionScope();
 
             // Given
-            const int centreId = 7;
-            const int newUserId = 2;
+            const int userIdForDelegateAccountAfterUpdate = 2;
 
-            var userId = connection.QuerySingle<int>(
-                @"INSERT INTO Users
-                (
-                    PrimaryEmail,
-                    PasswordHash,
-                    FirstName,
-                    LastName,
-                    JobGroupID,
-                    Active,
-                    FailedLoginCount,
-                    HasBeenPromptedForPrn,
-                    HasDismissedLhLoginWarning
-                )
-                OUTPUT Inserted.ID
-                VALUES
-                ('LinkDelegateAccountToNewUser_updates_UserId_and_sets_RegistrationConfirmationHash_to_null@email.com', 'password', 'test', 'user', 1, 1, 0, 1, 1)"
-            );
+            var delegateEntity = userDataService.GetDelegateByCandidateNumber("CLAIMABLEUSER1")!;
+            var currentUserIdForDelegateAccount = delegateEntity.UserAccount.Id;
+            var delegateId = delegateEntity.DelegateAccount.Id;
+            var centreId = delegateEntity.DelegateAccount.CentreId;
 
-            var delegateId = connection.QuerySingle<int>(
-                @"INSERT INTO DelegateAccounts
-                (
-                    UserID,
-                    CentreID,
-                    DateRegistered,
-                    CandidateNumber,
-                    Approved,
-                    Active,
-                    ExternalReg,
-                    SelfReg,
-                    RegistrationConfirmationHash
-                )
-                OUTPUT Inserted.ID
-                VALUES
-                (@userId, @centreId, CURRENT_TIMESTAMP, 'candidate_number', 1, 1, 0, 1, 'hash')",
-                new { userId, centreId }
-            );
-
-            var oldUser = userDataService.GetUserAccountById(userId);
-            var newUser = userDataService.GetUserAccountById(newUserId);
-            var newUserDelegateAccounts = userDataService.GetDelegateAccountsByUserId(newUserId);
+            var newUserDelegateAccountsBeforeUpdate =
+                userDataService.GetDelegateAccountsByUserId(userIdForDelegateAccountAfterUpdate);
 
             // When
-            userDataService.LinkDelegateAccountToNewUser(userId, newUserId, centreId);
+            userDataService.LinkDelegateAccountToNewUser(
+                currentUserIdForDelegateAccount,
+                userIdForDelegateAccountAfterUpdate,
+                centreId
+            );
 
             // Then
-            oldUser.Should().NotBeNull();
-            newUser.Should().NotBeNull();
-
-            newUserDelegateAccounts.Should().NotContain(delegateAccount => delegateAccount.CentreId == centreId);
+            newUserDelegateAccountsBeforeUpdate.Should()
+                .NotContain(delegateAccount => delegateAccount.CentreId == centreId);
 
             var updatedDelegateEntity = userDataService.GetDelegateById(delegateId)!;
 
-            updatedDelegateEntity.UserAccount.Id.Should().Be(newUserId);
+            updatedDelegateEntity.UserAccount.Id.Should().Be(userIdForDelegateAccountAfterUpdate);
             updatedDelegateEntity.DelegateAccount.RegistrationConfirmationHash.Should().Be(null);
         }
     }

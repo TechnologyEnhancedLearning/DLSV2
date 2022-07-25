@@ -324,61 +324,42 @@
             using var transaction = new TransactionScope();
 
             // Given
-            const int centreId = 7;
-            const int newUserId = 2;
-            const string email = "email_to_be_linked@centre.com";
+            const int userIdForUserCentreDetailsAfterUpdate = 2;
 
-            var userId = connection.QuerySingle<int>(
-                @"INSERT INTO Users
-                (
-                    PrimaryEmail,
-                    PasswordHash,
-                    FirstName,
-                    LastName,
-                    JobGroupID,
-                    Active,
-                    FailedLoginCount,
-                    HasBeenPromptedForPrn,
-                    HasDismissedLhLoginWarning
-                )
-                OUTPUT Inserted.ID
-                VALUES
-                ('LinkUserCentreDetailsToNewUser_updates_UserId@email.com', 'password', 'test', 'user', 1, 1, 0, 1, 1)"
-            );
+            var delegateEntity = userDataService.GetDelegateByCandidateNumber("CLAIMABLEUSER1")!;
+            var currentUserIdForUserCentreDetails = delegateEntity.UserAccount.Id;
+            var centreId = delegateEntity.DelegateAccount.CentreId;
+            var userCentreDetailsId = delegateEntity.UserCentreDetails!.Id;
+            var email = delegateEntity.UserCentreDetails.Email;
 
-            var userCentreDetailsId = connection.QuerySingle<int>(
-                @"INSERT INTO UserCentreDetails
-                (UserID, CentreID, Email)
-                OUTPUT Inserted.ID
-                VALUES (@userId, @centreId, @email)",
-                new { userId, centreId, email }
-            );
+            var newUser = userDataService.GetUserAccountById(userIdForUserCentreDetailsAfterUpdate);
 
-            var oldUser = userDataService.GetUserAccountById(userId);
-            var newUser = userDataService.GetUserAccountById(newUserId);
-
-            var newUserCentreDetails = connection.Query<(int, string)>(
+            var newUserUserCentreDetailsBeforeUpdate = connection.Query<(int, string)>(
                 @"SELECT CentreID, Email FROM UserCentreDetails
-                    WHERE UserID = @newUserId",
-                new { newUserId }
+                    WHERE UserID = @userIdForUserCentreDetailsAfterUpdate",
+                new { userIdForUserCentreDetailsAfterUpdate }
             );
 
             // When
-            userDataService.LinkUserCentreDetailsToNewUser(userId, newUserId, centreId);
+            userDataService.LinkUserCentreDetailsToNewUser(
+                currentUserIdForUserCentreDetails,
+                userIdForUserCentreDetailsAfterUpdate,
+                centreId
+            );
 
             // Then
-            oldUser.Should().NotBeNull();
             newUser.Should().NotBeNull();
 
-            newUserCentreDetails.Should().NotContain(row => row.Item1 == centreId && row.Item2 == email);
+            newUserUserCentreDetailsBeforeUpdate.Should()
+                .NotContain(row => row.Item1 == centreId && row.Item2 == email);
 
             var updatedUserCentreDetails = connection.QuerySingle<(int, int, string)>(
                 @"SELECT UserID, CentreID, Email FROM UserCentreDetails
-                    WHERE ID = @userCentreDetailsId",
+                        WHERE ID = @userCentreDetailsId",
                 new { userCentreDetailsId }
             );
 
-            updatedUserCentreDetails.Item1.Should().Be(newUserId);
+            updatedUserCentreDetails.Item1.Should().Be(userIdForUserCentreDetailsAfterUpdate);
             updatedUserCentreDetails.Item2.Should().Be(centreId);
             updatedUserCentreDetails.Item3.Should().Be(email);
         }
