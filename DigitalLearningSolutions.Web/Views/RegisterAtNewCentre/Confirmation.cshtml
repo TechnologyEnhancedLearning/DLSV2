@@ -26,9 +26,15 @@
       <partial name="_LogoutForm" />
     } else if (Model.Approved) {
       <p>
-        You will need to log out and in again before you can access your new account.
+        You can now log into your new account.
       </p>
-      <partial name="_LogoutForm" />
+      <a
+        class="nhsuk-button nhsuk-button--secondary"
+        asp-controller="Login"
+        asp-action="ChooseACentre"
+        role="button">
+        Switch centre
+      </a>
     }
 
     @if (!Model.Approved) {
