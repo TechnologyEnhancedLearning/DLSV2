@@ -46,7 +46,7 @@
         public void IndexGet_with_existing_user_returns_view_model()
         {
             // Given
-            var model = GivenValidViewModel();
+            var model = GivenClaimAccountViewModel();
 
             // When
             var result = controller.Index(DefaultEmail, DefaultCode);
@@ -92,13 +92,6 @@
             var result = controller.Index(DefaultEmail, DefaultCode);
 
             // Then
-            A.CallTo(
-                () => userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
-                    DefaultEmail,
-                    DefaultCode
-                )
-            ).MustHaveHappenedOnceExactly();
-
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -117,7 +110,7 @@
         public void CompleteRegistrationGet_with_existing_user_returns_view_model()
         {
             // Given
-            var model = GivenValidViewModel();
+            var model = GivenClaimAccountViewModel();
 
             // When
             var result = controller.CompleteRegistration(DefaultEmail, DefaultCode);
@@ -163,13 +156,6 @@
             var result = controller.CompleteRegistration(DefaultEmail, DefaultCode);
 
             // Then
-            A.CallTo(
-                () => userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
-                    DefaultEmail,
-                    DefaultCode
-                )
-            ).MustHaveHappenedOnceExactly();
-
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -189,7 +175,7 @@
             CompleteRegistrationPost_with_primary_email_not_in_use_and_password_set_sets_expected_data_and_redirects_to_Confirmation()
         {
             // Given
-            GivenValidViewModel(passwordSet: true);
+            GivenClaimAccountViewModel(passwordSet: true);
 
             A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail)).Returns(false);
 
@@ -216,7 +202,7 @@
         public void CompleteRegistrationPost_with_email_in_use_returns_NotFound()
         {
             // Given
-            GivenValidViewModel();
+            GivenClaimAccountViewModel();
 
             A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail)).Returns(true);
 
@@ -224,8 +210,9 @@
             var result = controller.CompleteRegistrationPost(DefaultEmail, DefaultCode);
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultEmail))
-                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => claimAccountService.ConvertTemporaryUserToConfirmedUser(A<int>._, A<int>._, A<string>._)
+            ).MustNotHaveHappened();
 
             result.Should().BeNotFoundResult();
         }
@@ -235,7 +222,7 @@
         public void CompleteRegistrationPost_with_password_not_set_returns_NotFound()
         {
             // Given
-            GivenValidViewModel(passwordSet: false);
+            GivenClaimAccountViewModel(passwordSet: false);
 
             // When
             var result = controller.CompleteRegistrationPost(DefaultEmail, DefaultCode);
@@ -281,13 +268,6 @@
             var result = controller.CompleteRegistrationPost(DefaultEmail, DefaultCode);
 
             // Then
-            A.CallTo(
-                () => userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
-                    DefaultEmail,
-                    DefaultCode
-                )
-            ).MustHaveHappenedOnceExactly();
-
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -326,7 +306,7 @@
         public void LinkDlsAccountGet_with_existing_account_to_be_claimed_returns_view_model()
         {
             // Given
-            var model = GivenValidViewModel(loggedInUserId: DefaultLoggedInUserId);
+            var model = GivenClaimAccountViewModel(loggedInUserId: DefaultLoggedInUserId);
 
             // When
             var result = controllerWithLoggedInUser.LinkDlsAccount(DefaultEmail, DefaultCode);
@@ -372,13 +352,6 @@
             var result = controllerWithLoggedInUser.LinkDlsAccount(DefaultEmail, DefaultCode);
 
             // Then
-            A.CallTo(
-                () => userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
-                    DefaultEmail,
-                    DefaultCode
-                )
-            ).MustHaveHappenedOnceExactly();
-
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -388,19 +361,14 @@
             LinkDlsAccountGet_when_the_logged_in_user_already_has_a_delegate_account_at_the_centre_redirects_to_AccountAlreadyExists()
         {
             // Given
-            GivenValidViewModel(loggedInUserId: DefaultLoggedInUserId);
-            GivenUserEntity();
+            GivenClaimAccountViewModel(loggedInUserId: DefaultLoggedInUserId, centreId: DefaultCentreId);
+            GivenLoggedInUserWithDelegateAccountAtCentre(DefaultLoggedInUserId, DefaultCentreId);
 
             // When
             var result = controllerWithLoggedInUser.LinkDlsAccount(DefaultEmail, DefaultCode);
 
             // Then
-            A.CallTo(
-                () => userService.GetUserById(DefaultLoggedInUserId)
-            ).MustHaveHappenedOnceExactly();
-
-            result.Should().BeRedirectToActionResult()
-                .WithActionName("AccountAlreadyExists");
+            result.Should().BeRedirectToActionResult().WithActionName("AccountAlreadyExists");
         }
 
         [Test]
@@ -408,21 +376,20 @@
             LinkDlsAccountGet_when_the_claim_email_address_matches_the_primary_email_of_another_user_redirects_to_WrongUser()
         {
             // Given
-            GivenValidViewModel(loggedInUserId: DefaultLoggedInUserId, idOfUserMatchingEmailIfAny: DefaultUserId);
+            GivenClaimAccountViewModel(loggedInUserId: 3, idOfUserMatchingEmailIfAny: 2);
 
             // When
             var result = controllerWithLoggedInUser.LinkDlsAccount(DefaultEmail, DefaultCode);
 
             // Then
-            result.Should().BeRedirectToActionResult()
-                .WithActionName("WrongUser");
+            result.Should().BeRedirectToActionResult().WithActionName("WrongUser");
         }
 
         [Test]
         public void LinkDlsAccountPost_with_valid_viewmodel_sets_expected_data_and_redirects_to_AccountsLinked()
         {
             // Given
-            GivenValidViewModel(loggedInUserId: DefaultLoggedInUserId);
+            GivenClaimAccountViewModel(loggedInUserId: DefaultLoggedInUserId);
 
             // When
             var result = controllerWithLoggedInUser.LinkDlsAccountPost(DefaultEmail, DefaultCode);
@@ -455,6 +422,10 @@
             var result = controllerWithLoggedInUser.LinkDlsAccountPost(email, code);
 
             // Then
+            A.CallTo(
+                () => claimAccountService.LinkAccount(A<int>._, A<int>._, A<int>._)
+            ).MustNotHaveHappened();
+
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -475,11 +446,8 @@
 
             // Then
             A.CallTo(
-                () => userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
-                    DefaultEmail,
-                    DefaultCode
-                )
-            ).MustHaveHappenedOnceExactly();
+                () => claimAccountService.LinkAccount(A<int>._, A<int>._, A<int>._)
+            ).MustNotHaveHappened();
 
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
@@ -490,14 +458,16 @@
             LinkDlsAccountPost_when_the_logged_in_user_already_has_a_delegate_account_at_the_centre_redirects_to_AccountAlreadyExists()
         {
             // Given
-            GivenValidViewModel(loggedInUserId: DefaultLoggedInUserId);
-            GivenUserEntity();
+            GivenClaimAccountViewModel(loggedInUserId: DefaultLoggedInUserId, centreId: DefaultCentreId);
+            GivenLoggedInUserWithDelegateAccountAtCentre(DefaultLoggedInUserId, DefaultCentreId);
 
             // When
             var result = controllerWithLoggedInUser.LinkDlsAccountPost(DefaultEmail, DefaultCode);
 
             // Then
-            A.CallTo(() => userService.GetUserById(DefaultLoggedInUserId)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => claimAccountService.LinkAccount(A<int>._, A<int>._, A<int>._)
+            ).MustNotHaveHappened();
 
             result.Should().BeRedirectToActionResult().WithActionName("AccountAlreadyExists");
         }
@@ -507,12 +477,16 @@
             LinkDlsAccountPost_when_the_claim_email_address_matches_the_primary_email_of_another_user_redirects_to_WrongUser()
         {
             // Given
-            GivenValidViewModel(loggedInUserId: DefaultLoggedInUserId, idOfUserMatchingEmailIfAny: DefaultUserId);
+            GivenClaimAccountViewModel(loggedInUserId: 3, idOfUserMatchingEmailIfAny: 2);
 
             // When
             var result = controllerWithLoggedInUser.LinkDlsAccountPost(DefaultEmail, DefaultCode);
 
             // Then
+            A.CallTo(
+                () => claimAccountService.LinkAccount(A<int>._, A<int>._, A<int>._)
+            ).MustNotHaveHappened();
+
             result.Should().BeRedirectToActionResult().WithActionName("WrongUser");
         }
 
@@ -561,7 +535,7 @@
                 .ModelAs<ClaimAccountViewModel>().Should().BeEquivalentTo(model);
         }
 
-        private ClaimAccountViewModel GivenValidViewModel(
+        private ClaimAccountViewModel GivenClaimAccountViewModel(
             int userId = DefaultUserId,
             int centreId = DefaultCentreId,
             string centreName = DefaultCentreName,
@@ -591,17 +565,17 @@
 
             A.CallTo(
                 () => userDataService.GetUserIdAndCentreForCentreEmailRegistrationConfirmationHashPair(
-                    DefaultEmail,
-                    DefaultCode
+                    centreSpecificEmail,
+                    registrationConfirmationHash
                 )
-            ).Returns((DefaultUserId, DefaultCentreId, DefaultCentreName));
+            ).Returns((userId, centreId, centreName));
 
             A.CallTo(
                 () => claimAccountService.GetAccountDetailsForClaimAccount(
-                    DefaultUserId,
-                    DefaultCentreId,
-                    DefaultCentreName,
-                    DefaultEmail,
+                    userId,
+                    centreId,
+                    centreName,
+                    centreSpecificEmail,
                     loggedInUserId
                 )
             ).Returns(model);
@@ -609,16 +583,17 @@
             return model;
         }
 
-        private void GivenUserEntity()
+        private void GivenLoggedInUserWithDelegateAccountAtCentre(int userId, int centreIdForDelegateAccount)
         {
             var userEntity = new UserEntity(
                 UserTestHelper.GetDefaultUserAccount(),
                 new List<AdminAccount>(),
-                new List<DelegateAccount> { UserTestHelper.GetDefaultDelegateAccount(centreId: DefaultCentreId) }
+                new List<DelegateAccount>
+                    { UserTestHelper.GetDefaultDelegateAccount(centreId: centreIdForDelegateAccount) }
             );
 
             A.CallTo(
-                () => userService.GetUserById(DefaultLoggedInUserId)
+                () => userService.GetUserById(userId)
             ).Returns(userEntity);
         }
 
