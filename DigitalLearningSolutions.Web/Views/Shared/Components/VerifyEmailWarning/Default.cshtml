@@ -2,8 +2,8 @@
 @model VerifyEmailWarningViewModel
 
 @{
-  var multipleEmailsAreUnverified = Model.UnverifiedCentreEmails?.Count + (Model.PrimaryEmailIsUnverified ? 1 : 0) > 1;
-  var atLeastOneCentreEmailIsUnverified = Model.UnverifiedCentreEmails != null && Model.UnverifiedCentreEmails.Any();
+  var multipleEmailsAreUnverified = Model.UnverifiedCentreEmails.Count + (Model.PrimaryEmailIsUnverified ? 1 : 0) > 1;
+  var atLeastOneCentreEmailIsUnverified = Model.UnverifiedCentreEmails.Any();
 
   var thisAddress = multipleEmailsAreUnverified ? "each of the addresses above" : "this address";
   var link = multipleEmailsAreUnverified ? "links" : "link";

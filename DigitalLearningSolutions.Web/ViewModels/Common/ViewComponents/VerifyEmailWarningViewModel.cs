@@ -7,28 +7,17 @@
     {
         public readonly bool IsOnMyAccountPage;
         public readonly bool PrimaryEmailIsUnverified;
-        public readonly List<string>? UnverifiedCentreEmails;
+        public readonly List<string> UnverifiedCentreEmails;
 
         public VerifyEmailWarningViewModel(
             bool isOnMyAccountPage,
             bool primaryEmailIsUnverified,
-            IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)>? unverifiedCentreEmails
+            IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> unverifiedCentreEmails
         )
         {
             IsOnMyAccountPage = isOnMyAccountPage;
             PrimaryEmailIsUnverified = primaryEmailIsUnverified;
-            UnverifiedCentreEmails = unverifiedCentreEmails?.Select(uce => uce.centreSpecificEmail).ToList();
-        }
-
-        public VerifyEmailWarningViewModel(
-            bool isOnMyAccountPage,
-            bool primaryEmailIsUnverified,
-            List<string>? unverifiedCentreEmails
-        )
-        {
-            IsOnMyAccountPage = isOnMyAccountPage;
-            PrimaryEmailIsUnverified = primaryEmailIsUnverified;
-            UnverifiedCentreEmails = unverifiedCentreEmails;
+            UnverifiedCentreEmails = unverifiedCentreEmails.Select(uce => uce.centreSpecificEmail).ToList();
         }
     }
 }

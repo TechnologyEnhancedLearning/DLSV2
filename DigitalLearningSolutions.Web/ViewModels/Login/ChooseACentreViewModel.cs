@@ -8,19 +8,19 @@
         public ChooseACentreViewModel(
             List<ChooseACentreAccountViewModel> centreUserDetails,
             string? returnUrl,
-            bool primaryEmailIsUnverified,
-            List<string> unverifiedCentreEmails
+            bool primaryEmailIsVerified,
+            List<(int centreId, string centreName, string? centreSpecificEmail)> unverifiedCentreEmails
         )
         {
             CentreUserDetails = centreUserDetails;
             ReturnUrl = returnUrl;
-            PrimaryEmailIsUnverified = primaryEmailIsUnverified;
+            PrimaryEmailIsVerified = primaryEmailIsVerified;
             UnverifiedCentreEmails = unverifiedCentreEmails;
         }
 
         public List<ChooseACentreAccountViewModel> CentreUserDetails { get; set; }
         public string? ReturnUrl { get; set; }
-        public bool PrimaryEmailIsUnverified { get; set; }
-        public List<string> UnverifiedCentreEmails { get; set; }
+        public bool PrimaryEmailIsVerified { get; set; }
+        public List<(int centreId, string centreName, string? centreSpecificEmail)> UnverifiedCentreEmails { get; set; }
     }
 }

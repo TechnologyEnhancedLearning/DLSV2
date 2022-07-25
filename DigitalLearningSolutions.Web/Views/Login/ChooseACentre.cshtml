@@ -4,6 +4,7 @@
 @model ChooseACentreViewModel
 @{
   ViewData["Title"] = "Choose A Centre";
+  var centreIdsWithUnverifiedEmails = Model.UnverifiedCentreEmails.Select(uce => uce.centreId).ToList();
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/login/chooseACentre.css")" asp-append-version="true">
@@ -13,7 +14,7 @@
 
     <vc:verify-email-warning
       is-my-account-page="false"
-      primary-email-is-unverified="@Model.PrimaryEmailIsUnverified"
+      primary-email-is-unverified="@(!Model.PrimaryEmailIsVerified)"
       unverified-centre-emails="@Model.UnverifiedCentreEmails" />
 
     <h1 id="page-heading" class="nhsuk-heading-xl">Choose a centre</h1>
@@ -46,6 +47,7 @@
           </th>
         </tr>
         </thead>
+
         <tbody class="nhsuk-table__body">
         @foreach (var centreRow in Model.CentreUserDetails) {
           <tr role="row" class="nhsuk-table__row">
@@ -69,18 +71,26 @@
               </div>
             </td>
             <td role="cell" class="nhsuk-table__cell choose-centre-td">
-              @if (centreRow.Status.ActionButton == ChooseACentreButton.Choose) {
-                <form method="POST" asp-action="ChooseCentre">
-                  <input type="hidden" name="centreId" value="@centreRow.CentreId" />
-                  <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
-                  <button type="submit" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0">
-                    Choose <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
-                  </button>
-                </form>
-              } else if (centreRow.Status.ActionButton == ChooseACentreButton.Reactivate) {
-                <a asp-controller="RegisterAtNewCentre" asp-action="Index" asp-route-centreId="@centreRow.CentreId" role="button" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0">
-                  Reregister <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
-                </a>
+              @if (Model.PrimaryEmailIsVerified && !centreIdsWithUnverifiedEmails.Contains(centreRow.CentreId)) {
+                @if (centreRow.Status.ActionButton == ChooseACentreButton.Choose) {
+                  <form method="POST" asp-action="ChooseCentre">
+                    <input type="hidden" name="centreId" value="@centreRow.CentreId" />
+                    <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+                    <button
+                      type="submit"
+                      class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0">
+                      Choose <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
+                    </button>
+                  </form>
+                } else if (centreRow.Status.ActionButton == ChooseACentreButton.Reactivate) {
+                  <a asp-controller="RegisterAtNewCentre"
+                     asp-action="Index"
+                     asp-route-centreId="@centreRow.CentreId"
+                     role="button"
+                     class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0">
+                    Reregister <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
+                  </a>
+                }
               } else {
                 <span class="nhsuk-u-visually-hidden">You cannot log in to this centre.</span>
               }
@@ -93,8 +103,10 @@
       <p>You have no centre accounts.</p>
     }
 
-    <a role="button" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4 nhsuk-u-margin-top-0" asp-controller="RegisterAtNewCentre" asp-action="Index">
-      Register at a new centre
-    </a>
+    @if (!Model.PrimaryEmailIsVerified) {
+      <a role="button" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4 nhsuk-u-margin-top-0" asp-controller="RegisterAtNewCentre" asp-action="Index">
+        Register at a new centre
+      </a>
+    }
   </div>
 </div>

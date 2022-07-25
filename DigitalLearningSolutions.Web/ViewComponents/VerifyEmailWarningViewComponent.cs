@@ -9,7 +9,7 @@
         public IViewComponentResult Invoke(
             bool isMyAccountPage,
             bool primaryEmailIsUnverified,
-            List<string>? unverifiedCentreEmails
+            List<(int centreId, string centreName, string? centreSpecificEmail)> unverifiedCentreEmails
         )
         {
             var model = new VerifyEmailWarningViewModel(
