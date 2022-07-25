@@ -4,15 +4,16 @@
 @{
   var multipleEmailsAreUnverified = Model.UnverifiedCentreEmails.Count + (Model.PrimaryEmailIsUnverified ? 1 : 0) > 1;
   var atLeastOneCentreEmailIsUnverified = Model.UnverifiedCentreEmails.Any();
+  var multipleCentreEmailsAreUnverified = Model.UnverifiedCentreEmails.Count > 1;
 
   var thisAddress = multipleEmailsAreUnverified ? "each of the addresses above" : "this address";
   var link = multipleEmailsAreUnverified ? "links" : "link";
   var address = multipleEmailsAreUnverified ? "addresses" : "address";
   var folder = multipleEmailsAreUnverified ? "folders" : "folder";
-  var pronoun = multipleEmailsAreUnverified ? "them" : "it";
-  var anUnverifiedCentreEmailAddress = multipleEmailsAreUnverified ?
+  var it = multipleEmailsAreUnverified ? "them" : "it";
+  var anUnverifiedCentreEmailAddress = multipleCentreEmailsAreUnverified ?
     "multiple unverified centre email addresses" : "an unverified centre email address";
-  var accountThatUsesIt = multipleEmailsAreUnverified ? "accounts that use them" : "account that uses it";
+  var accountThatUsesIt = multipleCentreEmailsAreUnverified ? "accounts that use them" : "account that uses it";
 }
 
 @if (Model.PrimaryEmailIsUnverified || atLeastOneCentreEmailIsUnverified) {
@@ -20,9 +21,10 @@
     <h2 class="nhsuk-warning-callout__label">
       <span role="text">
         <span class="nhsuk-u-visually-hidden">Important: </span>
-        @(multipleEmailsAreUnverified ? "Please verify your email address" : "Please verify your email addresses")
+        Please verify your email @address
       </span>
     </h2>
+
     @if (Model.PrimaryEmailIsUnverified) {
       <p>
         Your primary email address has not been verified yet. You will not be able to
@@ -30,6 +32,7 @@
           "choose a centre, reactivate an account, or register at a new centre until it you verify the address.")
       </p>
     }
+
     @if (Model.IsOnMyAccountPage) {
       if (atLeastOneCentreEmailIsUnverified) {
         foreach (var (email, index) in Model.UnverifiedCentreEmails.Select((email, index) => (email, index))) {
@@ -45,14 +48,14 @@
       <p>
         An email with a verification link should have been sent to @thisAddress.
         Please click the @link to verify your email @address.
-        Check your Junk @folder if you can’t find @pronoun, or you can resend @pronoun by clicking the button below.
+        Check your Junk @folder if you can’t find @it, or you can resend @it by clicking the button below.
       </p>
 
       <a class="nhsuk-button nhsuk-button--secondary"
          role="button">
         Resend verification @(multipleEmailsAreUnverified ? "links" : "link")
       </a>
-    } else {
+    } else if (atLeastOneCentreEmailIsUnverified) {
       <p>
         You @(Model.PrimaryEmailIsUnverified ? "also" : null) have @anUnverifiedCentreEmailAddress.
         You will not be able to access the centre @accountThatUsesIt until you have verified the @address.

@@ -22,6 +22,7 @@
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.Register))]
     [Authorize(Policy = CustomPolicies.BasicUser)]
+    [ServiceFilter(typeof(VerifyUserHasVerifiedNecessaryEmails))]
     public class RegisterAtNewCentreController : Controller
     {
         private readonly ICentresDataService centresDataService;
@@ -51,7 +52,6 @@
             this.userDataService = userDataService;
         }
 
-        [ServiceFilter(typeof(VerifyUserHasVerifiedNecessaryEmails))]
         public IActionResult Index(int? centreId = null, string? inviteId = null)
         {
             if (!CheckCentreIdValid(centreId))

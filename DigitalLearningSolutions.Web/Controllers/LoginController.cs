@@ -112,7 +112,7 @@
                 chooseACentreAccountViewModels.OrderByDescending(account => account.IsActiveAdmin)
                     .ThenBy(account => account.CentreName).ToList(),
                 returnUrl,
-                userEntity.UserAccount.EmailVerified == null,
+                userEntity.UserAccount.EmailVerified.HasValue,
                 unverifiedCentreEmails
             );
 

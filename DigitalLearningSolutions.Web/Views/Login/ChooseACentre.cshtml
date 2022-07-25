@@ -5,6 +5,7 @@
 @{
   ViewData["Title"] = "Choose A Centre";
   var centreIdsWithUnverifiedEmails = Model.UnverifiedCentreEmails.Select(uce => uce.centreId).ToList();
+  var primaryEmailIsUnverified = Model.PrimaryEmailIsVerified == false;
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/login/chooseACentre.css")" asp-append-version="true">
@@ -14,7 +15,7 @@
 
     <vc:verify-email-warning
       is-my-account-page="false"
-      primary-email-is-unverified="@(!Model.PrimaryEmailIsVerified)"
+      primary-email-is-unverified="@primaryEmailIsUnverified"
       unverified-centre-emails="@Model.UnverifiedCentreEmails" />
 
     <h1 id="page-heading" class="nhsuk-heading-xl">Choose a centre</h1>
@@ -103,7 +104,7 @@
       <p>You have no centre accounts.</p>
     }
 
-    @if (!Model.PrimaryEmailIsVerified) {
+    @if (Model.PrimaryEmailIsVerified) {
       <a role="button" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4 nhsuk-u-margin-top-0" asp-controller="RegisterAtNewCentre" asp-action="Index">
         Register at a new centre
       </a>

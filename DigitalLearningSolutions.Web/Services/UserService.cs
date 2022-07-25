@@ -46,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         void UpdateFailedLoginCount(UserAccount userAccount);
 
-        public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId);
+        IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId);
 
         void UpdateAdminUserPermissions(
             int adminId,
@@ -80,7 +80,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
 
-        public (string? primaryEmail, IEnumerable<(int centreId, string centreName, string centreEmail)> centreEmails)
+        (string? primaryEmail, List<(int centreId, string centreName, string centreEmail)> centreEmails)
             GetUnverifiedEmailsForUser(int userId);
 
         AdminEntity? GetAdminById(int adminId);
@@ -312,7 +312,7 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetAllCentreEmailsForUser(userId);
         }
 
-        public (string? primaryEmail, IEnumerable<(int centreId, string centreName, string centreEmail)> centreEmails)
+        public (string? primaryEmail, List<(int centreId, string centreName, string centreEmail)> centreEmails)
             GetUnverifiedEmailsForUser(int userId)
         {
             var userEntity = GetUserById(userId);
@@ -332,7 +332,7 @@ namespace DigitalLearningSolutions.Web.Services
                     userEntity.DelegateAccounts.Any(account => account.CentreId == tuple.centreId && account.Active)
             );
 
-            return (unverifiedPrimaryEmail, unverifiedCentreEmails);
+            return (unverifiedPrimaryEmail, unverifiedCentreEmails.ToList());
         }
 
         public AdminEntity? GetAdminById(int adminId)

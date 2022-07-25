@@ -91,7 +91,7 @@
                 centreId != null ? userService.GetCentreEmail(userId, centreId.Value) : null,
                 customPrompts,
                 allCentreSpecificEmails,
-                unverifiedCentreEmails.ToList(),
+                unverifiedCentreEmails,
                 dlsSubApplication,
                 switchCentreReturnUrl
             );

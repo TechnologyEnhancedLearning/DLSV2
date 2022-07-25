@@ -19,7 +19,7 @@
     public class VerifyUserHasVerifiedNecessaryEmailsTests
     {
         private const int UserId = 2;
-        private const int CentreId = 2;
+        private const int CentreId = 101;
         private readonly IUserService userService = A.Fake<IUserService>();
         private ActionExecutingContext context = null!;
 
@@ -28,7 +28,7 @@
         {
             var homeController = new HomeController(A.Fake<IConfiguration>(), A.Fake<IBrandsService>())
                 .WithDefaultContext().WithMockTempData()
-                .WithMockUser(true, 101);
+                .WithMockUser(true, CentreId);
             context = new ActionExecutingContext(
                 new ActionContext(
                     new DefaultHttpContext(),
@@ -59,7 +59,7 @@
         }
 
         [Test]
-        public void Does_not_redirect_if_primary_email_is_verified_and_user_is_not_choosing_a_centre()
+        public void Does_not_redirect_if_no_emails_are_unverified()
         {
             // Given
             var resultListingNoEmailsAsUnverified = ((string?)null,
@@ -76,10 +76,30 @@
         }
 
         [Test]
-        public void Redirects_to_verify_email_page_if_centre_email_at_centre_user_has_chosen_is_unverified()
+        public void
+            Does_not_redirect_if_primary_email_is_verified_and_user_has_unverified_centre_email_but_is_not_logging_into_a_centre_directly()
         {
             // Given
-            SetUpContextForChoosingACentre();
+            var resultListingCentreEmailAsUnverified = ((string?)null,
+                new List<(int centreId, string centreName, string centreEmail)>
+                    { (CentreId, "Test Centre", "centre@email.com") });
+
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(UserId))
+                .Returns(resultListingCentreEmailAsUnverified);
+
+            // When
+            new VerifyUserHasVerifiedNecessaryEmails(userService).OnActionExecuting(context);
+
+            // Then
+            context.Result.Should().BeNull();
+        }
+
+        [Test]
+        public void
+            Redirects_to_verify_email_page_if_centre_email_is_unverified_at_centre_user_has_logged_into_directly()
+        {
+            // Given
+            SetUpContextForLoggingIntoSingleCentre();
 
             var resultListingCentreEmailAsUnverified = ((string?)null,
                 new List<(int centreId, string centreName, string centreEmail)>
@@ -96,10 +116,11 @@
         }
 
         [Test]
-        public void Does_not_redirect_because_centre_email_at_centre_other_than_the_one_user_has_chosen_is_unverified()
+        public void
+            Does_not_redirect_because_centre_email_is_unverified_at_centre_other_than_the_one_user_has_logged_into_directly()
         {
             // Given
-            SetUpContextForChoosingACentre();
+            SetUpContextForLoggingIntoSingleCentre();
 
             var resultListingCentreEmailAsUnverifiedAtDifferentCentre = ((string?)null,
                 new List<(int centreId, string centreName, string centreEmail)>
@@ -121,7 +142,7 @@
                 .WithRouteValue("emailVerificationReason", EmailVerificationReason.EmailNotVerified);
         }
 
-        private void SetUpContextForChoosingACentre()
+        private void SetUpContextForLoggingIntoSingleCentre()
         {
             context.RouteData.Values["action"] = "ChooseCentre";
             context.ActionArguments["centreId"] = CentreId;
