@@ -104,10 +104,16 @@
         {
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
             var chooseACentreAccountViewModels = loginService.GetChooseACentreAccountViewModels(userEntity);
+
+            var unverifiedCentreEmails = userService.GetUnverifiedEmailsForUser(userEntity!.UserAccount.Id).centreEmails
+                .Select(uce => uce.centreEmail).ToList();
+
             var model = new ChooseACentreViewModel(
                 chooseACentreAccountViewModels.OrderByDescending(account => account.IsActiveAdmin)
                     .ThenBy(account => account.CentreName).ToList(),
-                returnUrl
+                returnUrl,
+                userEntity.UserAccount.EmailVerified == null,
+                unverifiedCentreEmails
             );
 
             return View("ChooseACentre", model);

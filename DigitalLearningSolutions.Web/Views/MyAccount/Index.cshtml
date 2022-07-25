@@ -14,6 +14,11 @@
   <partial name="_AutoNavMenuItems" model="Model.DlsSubApplication" />
 }
 
+<vc:verify-email-warning
+  is-my-account-page="true"
+  primary-email-is-unverified="@Model.PrimaryEmailIsUnverified"
+  unverified-centre-emails="@Model.UnverifiedCentreEmails?.Select(uce => uce.centreSpecificEmail).ToList()" />
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <div class="nhsuk-grid-row">

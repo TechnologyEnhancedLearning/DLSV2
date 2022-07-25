@@ -14,6 +14,9 @@
     {
         private const string SwitchCentreReturnUrl = "/MyAccount";
 
+        private readonly List<(int centreId, string centreName, string? centreSpecificEmail)> emptyCentreEmailsList =
+            new List<(int centreId, string centreName, string? centreSpecificEmail)>();
+
         [Test]
         public void MyAccountViewModel_AdminUser_and_DelegateUser_populates_expected_values()
         {
@@ -28,7 +31,6 @@
                 }
             );
             var centreEmail = "centre@gmail.com";
-            var allCentreSpecificEmails = new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
             // When
             var returnedModel = new MyAccountViewModel(
@@ -38,7 +40,8 @@
                 delegateAccount.CentreName,
                 centreEmail,
                 customPrompts,
-                allCentreSpecificEmails,
+                emptyCentreEmailsList,
+                emptyCentreEmailsList,
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -59,7 +62,7 @@
                 returnedModel.DateRegistered.Should().BeEquivalentTo(
                     delegateAccount.DateRegistered.ToString(DateHelper.StandardDateFormat)
                 );
-                returnedModel.AllCentreSpecificEmails.Should().BeEquivalentTo(allCentreSpecificEmails);
+                returnedModel.AllCentreSpecificEmails.Should().BeEquivalentTo(emptyCentreEmailsList);
                 returnedModel.SwitchCentreReturnUrl.Should().Be(SwitchCentreReturnUrl);
             }
         }
@@ -84,6 +87,7 @@
                 centreEmail,
                 null,
                 allCentreSpecificEmails,
+                emptyCentreEmailsList,
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -129,7 +133,8 @@
                 delegateAccount.CentreName,
                 null,
                 customPrompts,
-                new List<(int centreId, string centreName, string? centreSpecificEmail)>(),
+                emptyCentreEmailsList,
+                emptyCentreEmailsList,
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -172,7 +177,8 @@
                 UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
-                new List<(int centreId, string centreName, string? centreSpecificEmail)>(),
+                emptyCentreEmailsList,
+                emptyCentreEmailsList,
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -208,7 +214,8 @@
                 UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
-                new List<(int centreId, string centreName, string? centreSpecificEmail)>(),
+                emptyCentreEmailsList,
+                emptyCentreEmailsList,
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );
@@ -244,7 +251,8 @@
                 UserTestHelper.GetDefaultAdminAccount().CentreName,
                 null,
                 customPrompts,
-                new List<(int centreId, string centreName, string? centreSpecificEmail)>(),
+                emptyCentreEmailsList,
+                emptyCentreEmailsList,
                 DlsSubApplication.Default,
                 SwitchCentreReturnUrl
             );

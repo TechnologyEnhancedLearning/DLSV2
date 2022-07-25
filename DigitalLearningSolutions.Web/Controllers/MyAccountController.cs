@@ -35,8 +35,8 @@
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly ILogger<MyAccountController> logger;
         private readonly PromptsService promptsService;
-        private readonly IUserService userService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public MyAccountController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
@@ -79,6 +79,8 @@
                 ? userService.GetAllCentreEmailsForUser(userId).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
+            var (_, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id);
+
             var switchCentreReturnUrl = StringHelper.GetLocalRedirectUrl(config, SwitchCentreReturnUrl);
 
             var model = new MyAccountViewModel(
@@ -89,6 +91,7 @@
                 centreId != null ? userService.GetCentreEmail(userId, centreId.Value) : null,
                 customPrompts,
                 allCentreSpecificEmails,
+                unverifiedCentreEmails.ToList(),
                 dlsSubApplication,
                 switchCentreReturnUrl
             );
