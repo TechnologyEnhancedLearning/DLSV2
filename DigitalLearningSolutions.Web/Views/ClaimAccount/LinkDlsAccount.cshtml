@@ -20,7 +20,7 @@
       Would you like to link this delegate record to your existing login?
     </p>
 
-    <form method="post" asp-action="LinkDlsAccountPost">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="LinkDlsAccountPost">
       <input type="hidden" asp-for="Email" />
       <input type="hidden" name="code" value="@Model.RegistrationConfirmationHash" />
       <button class="nhsuk-button" type="submit">Link delegate record</button>
