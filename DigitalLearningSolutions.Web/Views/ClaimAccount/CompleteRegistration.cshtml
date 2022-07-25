@@ -14,12 +14,12 @@
 
     <partial name="_DelegateRecordSummary" model="@Model" />
 
-    <p class="nhsuk-body-m">Are you sure you would like to create a new login for this account?</p>
+    <p class="nhsuk-body-m">Are you sure you would like to activate this delegate record?</p>
 
-    <form method="post" asp-action="CompleteRegistration">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="CompleteRegistration">
       <input type="hidden" asp-for="Email" />
       <input type="hidden" name="code" value="@Model.RegistrationConfirmationHash" />
-      <button class="nhsuk-button" type="submit">Create login</button>
+      <button class="nhsuk-button" type="submit">Activate</button>
     </form>
 
     <vc:cancel-link asp-controller="Home" asp-action="Index" />
