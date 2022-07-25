@@ -1,4 +1,7 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+﻿@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ChangePasswordViewModel
 
 @{
@@ -31,26 +34,7 @@
         autocomplete="current-password"
         css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input
-        asp-for="@nameof(Model.Password)"
-        label="New password"
-        populate-with-current-value="false"
-        type="password"
-        spell-check="false"
-        hint-text="Your new password should have a minimum of 8 characters with at least 1 letter, 1 number and 1 symbol."
-        autocomplete="new-password"
-        css-class="nhsuk-u-width-one-half" />
-
-      <vc:text-input
-        asp-for="@nameof(Model.ConfirmPassword)"
-        label="Re-type new password"
-        populate-with-current-value="false"
-        type="password"
-        spell-check="false"
-        hint-text=""
-        autocomplete="new-password"
-        css-class="nhsuk-u-width-one-half" />
-
+      <partial name="_SetPasswordFields" model="@(new SetPasswordViewModel("New password"))" />
       <button class="nhsuk-button" type="submit">Change password</button>
     </form>
 
