@@ -15,6 +15,12 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/Login", "Log in")]
         [InlineData("/ForgotPassword", "Reset your password")]
         [InlineData("/ResetPassword/Error", "Something went wrong...")]
+        [InlineData("/ClaimAccount?email=claimable_user@email.com&code=code", "Complete registration")]
+        [InlineData(
+            "/ClaimAccount/CompleteRegistration?email=claimable_user@email.com&code=code",
+            "Complete registration"
+        )]
+        [InlineData("/ClaimAccount/Confirmation", "Delegate registration complete")]
         public void Page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when
