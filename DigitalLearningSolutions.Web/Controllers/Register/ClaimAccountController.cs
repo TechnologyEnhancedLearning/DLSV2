@@ -164,6 +164,7 @@
             return View(model);
         }
 
+        [Authorize(Policy = CustomPolicies.BasicUser)]
         [HttpGet]
         public IActionResult WrongUser(string email, string centreName)
         {
@@ -171,6 +172,7 @@
             return View(model);
         }
 
+        [Authorize(Policy = CustomPolicies.BasicUser)]
         [HttpGet]
         public IActionResult AccountAlreadyExists(string email, string centreName)
         {
