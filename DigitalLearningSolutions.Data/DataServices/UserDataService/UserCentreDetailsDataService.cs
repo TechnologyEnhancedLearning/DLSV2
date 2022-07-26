@@ -187,5 +187,19 @@
                 ? matchingUserAndCentreIds.Single()
                 : ((int?)null, (int?)null, (string?)null);
         }
+
+        public void LinkUserCentreDetailsToNewUser(
+            int currentUserIdForUserCentreDetails,
+            int newUserIdForUserCentreDetails,
+            int centreId
+        )
+        {
+            connection.Execute(
+                @"UPDATE UserCentreDetails
+                    SET UserID = @newUserIdForUserCentreDetails
+                    WHERE UserID = @currentUserIdForUserCentreDetails AND CentreID = @centreId",
+                new { currentUserIdForUserCentreDetails, newUserIdForUserCentreDetails, centreId }
+            );
+        }
     }
 }

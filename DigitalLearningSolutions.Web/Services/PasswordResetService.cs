@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Web;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
@@ -231,7 +232,7 @@
             }
 
             resetPasswordUrl.Path += "ResetPassword";
-            resetPasswordUrl.Query = $"code={resetHash}&email={emailAddress}";
+            resetPasswordUrl.Query = $"code={resetHash}&email={HttpUtility.UrlEncode(emailAddress)}";
 
             var emailSubject = "Digital Learning Solutions Tracking System Password Reset";
 
@@ -268,7 +269,8 @@
             }
 
             completeRegistrationUrl.Path += "ClaimAccount";
-            completeRegistrationUrl.Query = $"code={registrationConfirmationHash}&email={emailAddress}";
+            completeRegistrationUrl.Query =
+                $"code={registrationConfirmationHash}&email={HttpUtility.UrlEncode(emailAddress)}";
 
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";
 

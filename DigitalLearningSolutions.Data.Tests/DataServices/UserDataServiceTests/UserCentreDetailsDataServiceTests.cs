@@ -353,6 +353,52 @@
             result.Should().Be((userId, centreId, centreName));
         }
 
+        [Test]
+        public void LinkUserCentreDetailsToNewUser_updates_UserId_in_claimed_UserCentreDetails()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userIdForUserCentreDetailsAfterUpdate = 2;
+
+            var delegateEntity = userDataService.GetDelegateByCandidateNumber("CLAIMABLEUSER1")!;
+            var currentUserIdForUserCentreDetails = delegateEntity.UserAccount.Id;
+            var centreId = delegateEntity.DelegateAccount.CentreId;
+            var userCentreDetailsId = delegateEntity.UserCentreDetails!.Id;
+            var email = delegateEntity.UserCentreDetails.Email;
+
+            var newUser = userDataService.GetUserAccountById(userIdForUserCentreDetailsAfterUpdate);
+
+            var newUserUserCentreDetailsBeforeUpdate = connection.Query<(int, string)>(
+                @"SELECT CentreID, Email FROM UserCentreDetails
+                    WHERE UserID = @userIdForUserCentreDetailsAfterUpdate",
+                new { userIdForUserCentreDetailsAfterUpdate }
+            );
+
+            // When
+            userDataService.LinkUserCentreDetailsToNewUser(
+                currentUserIdForUserCentreDetails,
+                userIdForUserCentreDetailsAfterUpdate,
+                centreId
+            );
+
+            // Then
+            newUser.Should().NotBeNull();
+
+            newUserUserCentreDetailsBeforeUpdate.Should()
+                .NotContain(row => row.Item1 == centreId && row.Item2 == email);
+
+            var updatedUserCentreDetails = connection.QuerySingle<(int, int, string)>(
+                @"SELECT UserID, CentreID, Email FROM UserCentreDetails
+                        WHERE ID = @userCentreDetailsId",
+                new { userCentreDetailsId }
+            );
+
+            updatedUserCentreDetails.Item1.Should().Be(userIdForUserCentreDetailsAfterUpdate);
+            updatedUserCentreDetails.Item2.Should().Be(centreId);
+            updatedUserCentreDetails.Item3.Should().Be(email);
+        }
+
         private void GivenUnclaimedUserExists(int userId, int centreId, string email, string hash)
         {
             connection.Execute(
