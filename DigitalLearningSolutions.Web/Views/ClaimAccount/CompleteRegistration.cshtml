@@ -1,25 +1,36 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Register
-@model ClaimAccountViewModel
+﻿@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ClaimAccountCompleteRegistrationViewModel
 
 @{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var routeData = new Dictionary<string, string> {
+    { "email", Model.Email },
+    { "code", Model.Code },
+  };
+
   ViewData["Title"] = "Complete registration";
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Password), nameof(Model.ConfirmPassword) })" />
+    }
 
-    <h1 class="nhsuk-heading-l" id="app-page-heading">
+    <h1 class="nhsuk-heading-x1" id="app-page-heading">
       Complete registration
     </h1>
 
     <partial name="_DelegateRecordSummary" model="@Model" />
 
-    <p class="nhsuk-body-m">Are you sure you would like to activate this delegate record?</p>
+    <h4>Please set a password for this account</h4>
 
-    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="CompleteRegistration">
-      <input type="hidden" asp-for="Email" />
-      <input type="hidden" name="code" value="@Model.RegistrationConfirmationHash" />
-      <button class="nhsuk-button" type="submit">Activate</button>
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="CompleteRegistration" asp-all-route-data="routeData">
+      <partial name="_SetPasswordFields" model="@(new SetPasswordViewModel())" />
+      <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
     <vc:cancel-link asp-controller="Home" asp-action="Index" />

@@ -1,6 +1,6 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Register
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount
 {
-    public class ClaimAccountViewModel
+    public class ClaimAccountViewModel : IHasDataForDelegateRecordSummary
     {
         public int UserId { get; set; }
         public int CentreId { get; set; }
@@ -11,6 +11,6 @@
         public string? SupportEmail { get; set; }
         public int? IdOfUserMatchingEmailIfAny { get; set; }
         public bool UserMatchingEmailIsActive { get; set; }
-        public bool PasswordSet { get; set; }
+        public bool WasPasswordSetByAdmin { get; set; }
     }
 }

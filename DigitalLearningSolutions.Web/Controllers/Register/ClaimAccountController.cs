@@ -1,12 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.ViewModels.Register;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
@@ -61,12 +63,34 @@
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
-            return View(model);
+            return View(
+                model.WasPasswordSetByAdmin ? "CompleteRegistrationWithoutPassword" : "CompleteRegistration",
+                GetClaimAccountCompleteRegistrationViewModel(model)
+            );
         }
 
-        [Route("/ClaimAccount/CompleteRegistration")]
         [HttpPost]
-        public IActionResult CompleteRegistrationPost(string email, string code)
+        public async Task<IActionResult> CompleteRegistration(
+            ConfirmPasswordViewModel formData,
+            [FromQuery] string email,
+            [FromQuery] string code
+        )
+        {
+            return await CompleteRegistrationPost(email, code, false, formData);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompleteRegistrationWithoutPassword(string email, string code)
+        {
+            return await CompleteRegistrationPost(email, code, true);
+        }
+
+        private async Task<IActionResult> CompleteRegistrationPost(
+            string email,
+            string code,
+            bool passwordMustAlreadyBeSet,
+            ConfirmPasswordViewModel? formData = null
+        )
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -85,16 +109,21 @@
                 return NotFound();
             }
 
-            if (!model.PasswordSet)
+            if (model.WasPasswordSetByAdmin != passwordMustAlreadyBeSet)
             {
-                // TODO HEEDLS-975 Redirect to SetPassword
                 return NotFound();
             }
 
-            claimAccountService.ConvertTemporaryUserToConfirmedUser(
+            if (!ModelState.IsValid)
+            {
+                return View(GetClaimAccountCompleteRegistrationViewModel(model, formData));
+            }
+
+            await claimAccountService.ConvertTemporaryUserToConfirmedUser(
                 model.UserId,
                 model.CentreId,
-                model.Email
+                model.Email,
+                passwordMustAlreadyBeSet ? null : formData?.Password
             );
 
             return RedirectToAction(
@@ -103,7 +132,7 @@
                 {
                     email = model.Email,
                     centreName = model.CentreName,
-                    candidateNumber = model.CandidateNumber
+                    candidateNumber = model.CandidateNumber,
                 }
             );
         }
@@ -181,8 +210,8 @@
         }
 
         private ClaimAccountViewModel? GetViewModelIfValidParameters(
-            string email,
-            string code,
+            string? email,
+            string? code,
             int? loggedInUserId = null
         )
         {
@@ -238,6 +267,22 @@
             }
 
             return null;
+        }
+
+        private static ClaimAccountCompleteRegistrationViewModel GetClaimAccountCompleteRegistrationViewModel(
+            ClaimAccountViewModel model,
+            ConfirmPasswordViewModel? formData = null
+        )
+        {
+            return new ClaimAccountCompleteRegistrationViewModel
+            {
+                Email = model.Email,
+                Code = model.RegistrationConfirmationHash,
+                CentreName = model.CentreName,
+                WasPasswordSetByAdmin = model.WasPasswordSetByAdmin,
+                Password = formData?.Password,
+                ConfirmPassword = formData?.ConfirmPassword,
+            };
         }
     }
 }

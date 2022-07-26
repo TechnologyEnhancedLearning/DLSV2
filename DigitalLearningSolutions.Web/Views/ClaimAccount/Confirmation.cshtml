@@ -1,4 +1,6 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+﻿@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ClaimAccountViewModel
 
 @{
@@ -36,9 +38,11 @@
       </div>
     </dl>
 
-    <p class="nhsuk-body-m">
-      You can now log in using your primary email or delegate ID and the password your admin has set for you.
-    </p>
+    @if (Model.WasPasswordSetByAdmin) {
+      <p class="nhsuk-body-m">You can now log in using your primary email or delegate ID and the password your admin has set for you.</p>
+    } else {
+      <p class="nhsuk-body-m">You can now log in using your primary email or delegate ID and the password you set.</p>
+    }
 
     <vc:action-link asp-controller="Login" asp-action="Index" link-text="Log in" />
   </div>
