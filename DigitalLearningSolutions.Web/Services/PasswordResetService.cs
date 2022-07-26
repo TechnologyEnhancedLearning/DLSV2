@@ -268,7 +268,7 @@
                 completeRegistrationUrl.Path += '/';
             }
 
-            completeRegistrationUrl.Path += "ClaimAccount/CompleteRegistration";
+            completeRegistrationUrl.Path += "ClaimAccount";
             completeRegistrationUrl.Query =
                 $"code={registrationConfirmationHash}&email={HttpUtility.UrlEncode(emailAddress)}";
 
