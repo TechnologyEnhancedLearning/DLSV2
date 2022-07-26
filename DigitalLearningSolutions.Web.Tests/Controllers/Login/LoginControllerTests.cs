@@ -352,7 +352,12 @@
 
                 result.As<ViewResult>().Model.As<ChooseACentreViewModel>().ReturnUrl.Should().Be(returnUrl);
 
-                A.CallTo(() => loginService.GetChooseACentreAccountViewModels(userEntity))
+                A.CallTo(
+                        () => loginService.GetChooseACentreAccountViewModels(
+                            userEntity,
+                            A<List<(int centreId, string centreName, string centreEmail)>>._
+                        )
+                    )
                     .MustHaveHappened();
             }
         }

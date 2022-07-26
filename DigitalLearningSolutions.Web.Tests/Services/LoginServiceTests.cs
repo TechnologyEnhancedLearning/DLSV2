@@ -20,6 +20,9 @@
             ResultListingNoEmailsAsUnverified =
                 (null, new List<(int centreId, string centreName, string centreEmail)>());
 
+        private static readonly List<(int centreId, string centreName, string centreEmail)>
+            EmptyListOfUnverifiedEmails = new List<(int centreId, string centreName, string centreEmail)>();
+
         private LoginService loginService = null!;
         private IUserService userService = null!;
         private IUserVerificationService userVerificationService = null!;
@@ -623,17 +626,62 @@
             );
 
             // When
-            var result = loginService.GetChooseACentreAccountViewModels(userEntity);
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity, EmptyListOfUnverifiedEmails);
 
             // Then
             result.Should().BeEquivalentTo(
                 new List<ChooseACentreAccountViewModel>
                 {
-                    new ChooseACentreAccountViewModel(1, "admin+delegate", true, true, true, true, true),
-                    new ChooseACentreAccountViewModel(2, "admin inactive centre", false, true, false, false, false),
-                    new ChooseACentreAccountViewModel(3, "inactive delegate", true, false, true, true, false),
-                    new ChooseACentreAccountViewModel(4, "unapproved delegate", true, false, true, false, true),
-                    new ChooseACentreAccountViewModel(5, "admin+unapproved delegate", true, true, true, false, true),
+                    new ChooseACentreAccountViewModel(
+                        1,
+                        "admin+delegate",
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        new List<int>()
+                    ),
+                    new ChooseACentreAccountViewModel(
+                        2,
+                        "admin inactive centre",
+                        false,
+                        true,
+                        false,
+                        false,
+                        false,
+                        new List<int>()
+                    ),
+                    new ChooseACentreAccountViewModel(
+                        3,
+                        "inactive delegate",
+                        true,
+                        false,
+                        true,
+                        true,
+                        false,
+                        new List<int>()
+                    ),
+                    new ChooseACentreAccountViewModel(
+                        4,
+                        "unapproved delegate",
+                        true,
+                        false,
+                        true,
+                        false,
+                        true,
+                        new List<int>()
+                    ),
+                    new ChooseACentreAccountViewModel(
+                        5,
+                        "admin+unapproved delegate",
+                        true,
+                        true,
+                        true,
+                        false,
+                        true,
+                        new List<int>()
+                    ),
                 }
             );
         }
@@ -655,13 +703,13 @@
             );
 
             // When
-            var result = loginService.GetChooseACentreAccountViewModels(userEntity);
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity, EmptyListOfUnverifiedEmails);
 
             // Then
             result.Should().BeEquivalentTo(
                 new List<ChooseACentreAccountViewModel>
                 {
-                    new ChooseACentreAccountViewModel(2, "delegate", true, false, true, true, true),
+                    new ChooseACentreAccountViewModel(2, "delegate", true, false, true, true, true, new List<int>()),
                 }
             );
         }
@@ -677,7 +725,7 @@
             );
 
             // When
-            var result = loginService.GetChooseACentreAccountViewModels(userEntity);
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity, EmptyListOfUnverifiedEmails);
 
             // Then
             result.Should().HaveCount(0);
@@ -694,7 +742,7 @@
             );
 
             // When
-            var result = loginService.GetChooseACentreAccountViewModels(userEntity);
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity, EmptyListOfUnverifiedEmails);
 
             // Then
             result.Should().HaveCount(0);

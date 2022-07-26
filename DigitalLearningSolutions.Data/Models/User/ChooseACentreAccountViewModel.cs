@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
 
     public class ChooseACentreAccountViewModel
@@ -7,10 +8,11 @@
         public readonly int CentreId;
         public readonly string CentreName;
         public readonly bool IsActiveAdmin;
-        public readonly bool IsDelegate;
-        private readonly bool isCentreInactive;
         private readonly bool isApprovedDelegate;
+        private readonly bool isCentreInactive;
+        public readonly bool IsDelegate;
         private readonly bool isInactiveDelegate;
+        private readonly bool isUnverifiedEmail;
 
         public ChooseACentreAccountViewModel(
             int centreId,
@@ -19,7 +21,8 @@
             bool isActiveAdmin,
             bool isDelegate,
             bool isDelegateApproved,
-            bool isDelegateActive
+            bool isDelegateActive,
+            ICollection<int> idsOfCentresWithUnverifiedEmails
         )
         {
             CentreId = centreId;
@@ -29,6 +32,7 @@
             IsDelegate = isDelegate;
             isApprovedDelegate = IsDelegate && isDelegateApproved;
             isInactiveDelegate = IsDelegate && !isDelegateActive;
+            isUnverifiedEmail = idsOfCentresWithUnverifiedEmails.Contains(CentreId);
         }
 
         public bool IsUnapprovedDelegate => IsDelegate && !isApprovedDelegate;
@@ -40,6 +44,11 @@
                 if (isCentreInactive)
                 {
                     return ChooseACentreStatus.CentreInactive;
+                }
+
+                if (isUnverifiedEmail)
+                {
+                    return ChooseACentreStatus.EmailUnverified;
                 }
 
                 if (isInactiveDelegate)

@@ -103,10 +103,12 @@
         public IActionResult ChooseACentre(DlsSubApplication dlsSubApplication, string? returnUrl)
         {
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
-            var chooseACentreAccountViewModels = loginService.GetChooseACentreAccountViewModels(userEntity);
 
             var unverifiedCentreEmails =
                 userService.GetUnverifiedEmailsForUser(userEntity!.UserAccount.Id).centreEmails.ToList();
+
+            var chooseACentreAccountViewModels =
+                loginService.GetChooseACentreAccountViewModels(userEntity, unverifiedCentreEmails);
 
             var model = new ChooseACentreViewModel(
                 chooseACentreAccountViewModels.OrderByDescending(account => account.IsActiveAdmin)

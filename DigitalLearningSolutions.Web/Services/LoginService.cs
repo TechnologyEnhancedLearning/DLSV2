@@ -11,7 +11,10 @@
     {
         LoginResult AttemptLogin(string username, string password);
 
-        IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(UserEntity? userEntity);
+        IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(
+            UserEntity? userEntity,
+            List<(int centreId, string centreName, string centreEmail)> unverifiedCentreEmails
+        );
     }
 
     public class LoginService : ILoginService
@@ -82,8 +85,13 @@
                 : DetermineDestinationForSuccessfulLogin(userEntity, centreIdIfLoggingIntoSingleCentre);
         }
 
-        public IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(UserEntity? userEntity)
+        public IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(
+            UserEntity? userEntity,
+            List<(int centreId, string centreName, string centreEmail)> unverifiedCentreEmails
+        )
         {
+            var idsOfCentresWithUnverifiedEmails = unverifiedCentreEmails.Select(uce => uce.centreId).ToList();
+
             return userEntity!.CentreAccountSetsByCentreId.Values.Where(
                 centreAccountSet => centreAccountSet.AdminAccount?.Active == true ||
                                     centreAccountSet.DelegateAccount != null
@@ -95,7 +103,8 @@
                     centreAccountSet.AdminAccount?.Active == true,
                     centreAccountSet.DelegateAccount != null,
                     centreAccountSet.DelegateAccount?.Approved ?? false,
-                    centreAccountSet.DelegateAccount?.Active ?? false
+                    centreAccountSet.DelegateAccount?.Active ?? false,
+                    idsOfCentresWithUnverifiedEmails
                 )
             );
         }

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Models.User
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.User;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -83,7 +84,8 @@
                 isAdmin,
                 isDelegate,
                 isDelegateApproved,
-                isDelegateActive
+                isDelegateActive,
+                new List<int>()
             );
 
             // Then
