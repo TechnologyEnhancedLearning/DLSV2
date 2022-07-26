@@ -355,7 +355,7 @@
                 A.CallTo(
                         () => loginService.GetChooseACentreAccountViewModels(
                             userEntity,
-                            A<List<(int centreId, string centreName, string centreEmail)>>._
+                            A<List<int>>._
                         )
                     )
                     .MustHaveHappened();

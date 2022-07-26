@@ -13,7 +13,7 @@
 
         IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(
             UserEntity? userEntity,
-            List<(int centreId, string centreName, string centreEmail)> unverifiedCentreEmails
+            List<int> idsOfCentresWithUnverifiedEmails
         );
     }
 
@@ -87,11 +87,9 @@
 
         public IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(
             UserEntity? userEntity,
-            List<(int centreId, string centreName, string centreEmail)> unverifiedCentreEmails
+            List<int> idsOfCentresWithUnverifiedEmails
         )
         {
-            var idsOfCentresWithUnverifiedEmails = unverifiedCentreEmails.Select(uce => uce.centreId).ToList();
-
             return userEntity!.CentreAccountSetsByCentreId.Values.Where(
                 centreAccountSet => centreAccountSet.AdminAccount?.Active == true ||
                                     centreAccountSet.DelegateAccount != null
@@ -104,7 +102,7 @@
                     centreAccountSet.DelegateAccount != null,
                     centreAccountSet.DelegateAccount?.Approved ?? false,
                     centreAccountSet.DelegateAccount?.Active ?? false,
-                    idsOfCentresWithUnverifiedEmails
+                    idsOfCentresWithUnverifiedEmails.Contains(centreAccountSet.CentreId)
                 )
             );
         }
