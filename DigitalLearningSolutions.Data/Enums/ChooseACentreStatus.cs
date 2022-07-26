@@ -65,7 +65,6 @@
 
         public readonly ChooseACentreButton? ActionButton;
         public readonly string TagColour;
-
         public readonly string TagLabel;
 
         private ChooseACentreStatus(
