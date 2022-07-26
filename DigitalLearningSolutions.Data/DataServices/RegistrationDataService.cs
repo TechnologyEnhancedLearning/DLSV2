@@ -111,8 +111,6 @@
                 transaction
             );
 
-            // TODO HEEDLS-874 deal with group assignment
-
             if (transactionShouldBeClosed)
             {
                 transaction.Commit();
@@ -145,8 +143,6 @@
                 currentTime,
                 transaction
             );
-
-            // TODO HEEDLS-874 deal with group assignment
 
             transaction.Commit();
         }

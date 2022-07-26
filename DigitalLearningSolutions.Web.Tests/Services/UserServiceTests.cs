@@ -217,6 +217,7 @@
             const string answer6 = "answer6";
             const bool shouldUpdateProfileImage = true;
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(delegateAccount.Id);
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var delegateDetailsData = new DelegateDetailsData(
                 delegateAccount.Id,
@@ -230,6 +231,7 @@
 
             var detailsLastChecked = new DateTime(2022, 1, 1);
             A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateAccount.Id)).Returns(delegateUser);
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -274,13 +276,25 @@
                     delegateDetailsData.DelegateId,
                     accountDetailsData,
                     A<RegistrationFieldAnswers>.That.Matches(
-                        rfa => rfa.JobGroupId == accountDetailsData.JobGroupId &&
-                               rfa.Answer1 == answer1 &&
-                               rfa.Answer2 == answer2 &&
-                               rfa.Answer3 == answer3 &&
-                               rfa.Answer4 == answer4 &&
-                               rfa.Answer5 == answer5 &&
-                               rfa.Answer6 == answer6
+                        rfa =>
+                            rfa.JobGroupId == accountDetailsData.JobGroupId &&
+                            rfa.Answer1 == answer1 &&
+                            rfa.Answer2 == answer2 &&
+                            rfa.Answer3 == answer3 &&
+                            rfa.Answer4 == answer4 &&
+                            rfa.Answer5 == answer5 &&
+                            rfa.Answer6 == answer6
+                    ),
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        rfa =>
+                            rfa.JobGroupId == delegateUser.JobGroupId &&
+                            rfa.CentreId == delegateUser.CentreId &&
+                            rfa.Answer1 == delegateUser.Answer1 &&
+                            rfa.Answer2 == delegateUser.Answer2 &&
+                            rfa.Answer3 == delegateUser.Answer3 &&
+                            rfa.Answer4 == delegateUser.Answer4 &&
+                            rfa.Answer5 == delegateUser.Answer5 &&
+                            rfa.Answer6 == delegateUser.Answer6
                     ),
                     null
                 )

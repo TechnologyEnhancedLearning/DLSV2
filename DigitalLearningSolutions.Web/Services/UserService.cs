@@ -372,10 +372,12 @@ namespace DigitalLearningSolutions.Web.Services
 
             if (delegateDetailsData != null)
             {
+                var delegateAccountWithDetails = userDataService.GetDelegateUserById(delegateDetailsData.DelegateId)!;
                 groupsService.SynchroniseUserChangesWithGroups(
                     delegateDetailsData.DelegateId,
                     editAccountDetailsData,
                     new RegistrationFieldAnswers(delegateDetailsData, editAccountDetailsData.JobGroupId),
+                    delegateAccountWithDetails.GetRegistrationFieldAnswers(),
                     centreEmail
                 );
 

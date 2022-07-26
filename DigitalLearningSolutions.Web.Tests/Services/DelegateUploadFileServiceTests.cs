@@ -13,6 +13,7 @@
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
@@ -657,7 +658,7 @@
                     ),
                     false
                 )
-            ).MustHaveHappened();
+            ).MustHaveHappenedOnceExactly();
 
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
@@ -667,7 +668,6 @@
                     "DelegateBulkUpload_Refactor"
                 )
             ).MustHaveHappenedOnceExactly();
-
             result.ProcessedCount.Should().Be(1);
             result.RegisteredCount.Should().Be(1);
         }
