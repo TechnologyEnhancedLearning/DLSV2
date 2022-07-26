@@ -386,13 +386,60 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            var expectedAnswers = model.GetRegistrationFieldAnswers();
 
             // When
             registrationService.CreateDelegateAccountForNewUser(
                 model,
                 string.Empty,
                 false,
+                false
+            );
+
+            // Then
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    NewDelegateIdAndCandidateNumber.Item1,
+                    A<AccountDetailsData>.That.Matches(add =>
+                        add.FirstName == model.FirstName &&
+                        add.Surname == model.LastName &&
+                        add.Email == model.PrimaryEmail),
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        answers =>
+                            answers.Answer1 == model.Answer1 &&
+                            answers.Answer2 == model.Answer2 &&
+                            answers.Answer3 == model.Answer3 &&
+                            answers.Answer4 == model.Answer4 &&
+                            answers.Answer5 == model.Answer5 &&
+                            answers.Answer6 == model.Answer6 &&
+                            answers.JobGroupId == model.JobGroup &&
+                            answers.CentreId == model.Centre
+                    ),
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        answers =>
+                            answers.Answer1 == null &&
+                            answers.Answer2 == null &&
+                            answers.Answer3 == null &&
+                            answers.Answer4 == null &&
+                            answers.Answer5 == null &&
+                            answers.Answer6 == null &&
+                            answers.JobGroupId == 0 &&
+                            answers.CentreId == model.Centre
+                    ),
+                    model.CentreSpecificEmail
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void RegisterDelegateByCentre_adds_new_delegate_to_groups()
+        {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+
+            // When
+            registrationService.RegisterDelegateByCentre(
+                model,
+                string.Empty,
                 false
             );
 

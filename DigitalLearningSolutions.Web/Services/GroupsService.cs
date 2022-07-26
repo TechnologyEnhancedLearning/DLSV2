@@ -176,6 +176,7 @@
             string? centreEmail
         )
         {
+            using var transaction = new TransactionScope();
             var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldChanges(
                 oldRegistrationFieldAnswers,
                 registrationFieldAnswers,
@@ -198,7 +199,6 @@
                          GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.NewValue, changedAnswer.LinkedFieldName)
                 );
 
-                using var transaction = new TransactionScope();
                 foreach (var groupToRemoveDelegateFrom in groupsToRemoveDelegateFrom)
                 {
                     RemoveDelegateFromGroup(delegateId, groupToRemoveDelegateFrom.GroupId);
@@ -221,9 +221,9 @@
                         groupToAddDelegateTo.GroupId
                     );
                 }
-
-                transaction.Complete();
             }
+
+            transaction.Complete();
         }
 
         public void EnrolDelegateOnGroupCourses(
@@ -601,17 +601,11 @@
                 .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
         }
 
-        private IEnumerable<Group> GetAddNewRegistrantsGroupsForCentre(int centreId)
+        private static bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string linkedFieldName)
         {
-            return groupsDataService.GetGroupsForCentre(centreId)
-                .Where(g => g.ShouldAddNewRegistrantsToGroup);
-        }
-
-        private static bool GroupLabelMatchesAnswer(string groupLabel, string answer, string linkedFieldName)
-        {
-            return string.Equals(groupLabel, answer, StringComparison.CurrentCultureIgnoreCase) || string.Equals(
+            return !string.IsNullOrEmpty(answer) && string.Equals(groupLabel, answer, StringComparison.CurrentCultureIgnoreCase) || string.Equals(
                 groupLabel,
-                GetGroupNameWithPrefix(linkedFieldName, answer),
+                GetGroupNameWithPrefix(linkedFieldName, answer!),
                 StringComparison.CurrentCultureIgnoreCase
             );
         }

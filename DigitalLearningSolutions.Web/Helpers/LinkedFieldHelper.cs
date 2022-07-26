@@ -40,36 +40,6 @@
             return changedLinkedFieldsWithAnswers;
         }
 
-        public static List<LinkedFieldChange> GetNewLinkedFields(
-            RegistrationFieldAnswers newAnswers,
-            IJobGroupsDataService jobGroupsDataService,
-            ICentreRegistrationPromptsService centreRegistrationPromptsService
-        )
-        {
-            var linkedFieldsWithAnswers = new List<LinkedFieldChange>();
-
-            var newJobGroup = jobGroupsDataService.GetJobGroupName(newAnswers.JobGroupId);
-            linkedFieldsWithAnswers.Add(
-                new LinkedFieldChange(RegistrationField.JobGroup.LinkedToFieldId, "Job group", null, newJobGroup)
-            );
-
-            var blankAnswers = new RegistrationFieldAnswers(
-                newAnswers.CentreId,
-                0,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            );
-            linkedFieldsWithAnswers = linkedFieldsWithAnswers.Concat(
-                AddCustomPromptLinkedFields(blankAnswers, newAnswers, centreRegistrationPromptsService)
-            ).ToList();
-
-            return linkedFieldsWithAnswers;
-        }
-
         private static IEnumerable<LinkedFieldChange> AddCustomPromptLinkedFields(
             RegistrationFieldAnswers oldAnswers,
             RegistrationFieldAnswers newAnswers,
