@@ -208,34 +208,35 @@
                 return ReturnToEditDetailsViewWithErrors(formData, userId, centreId, dlsSubApplication);
             }
 
-            var emailsValid = true;
-
             if (userDataService.PrimaryEmailIsInUseByOtherUser(formData.Email!, userId))
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
                     CommonValidationErrorMessages.EmailAlreadyInUse
                 );
-                emailsValid = false;
             }
 
-            if (
-                centreId.HasValue && !string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) &&
-                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
-                    formData.CentreSpecificEmail,
-                    centreId.Value,
-                    userId
-                )
-            )
+            var centreSpecificEmails = centreId.HasValue
+                ? new Dictionary<int, string?> { { centreId.Value, formData.CentreSpecificEmail } }
+                : formData.CentreSpecificEmailsByCentreId;
+
+            foreach (var (id, centreEmail) in centreSpecificEmails)
             {
-                ModelState.AddModelError(
-                    nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),
-                    CommonValidationErrorMessages.EmailAlreadyInUse
-                );
-                emailsValid = false;
+                if (
+                    !string.IsNullOrWhiteSpace(centreEmail) &&
+                    userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(centreEmail, id, userId)
+                )
+                {
+                    ModelState.AddModelError(
+                        id == centreId
+                            ? nameof(MyAccountEditDetailsFormData.CentreSpecificEmail)
+                            : $"{nameof(formData.AllCentreSpecificEmailsDictionary)}_{id}",
+                        CommonValidationErrorMessages.EmailAlreadyInUse
+                    );
+                }
             }
 
-            if (!emailsValid)
+            if (!ModelState.IsValid)
             {
                 return ReturnToEditDetailsViewWithErrors(formData, userId, centreId, dlsSubApplication);
             }

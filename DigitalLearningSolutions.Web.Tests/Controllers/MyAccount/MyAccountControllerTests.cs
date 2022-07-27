@@ -250,6 +250,103 @@
         }
 
         [Test]
+        public void EditDetailsPostSave_validates_duplicate_centre_specific_emails()
+        {
+            // Given
+            const string primaryEmail = "primary@email.com";
+            const int userId = 2;
+            var myAccountController = new MyAccountController(
+                    centreRegistrationPromptsService,
+                    userService,
+                    userDataService,
+                    imageResizeService,
+                    jobGroupsDataService,
+                    promptsService,
+                    logger,
+                    config
+                ).WithDefaultContext()
+                .WithMockUser(true, null, userId: userId, delegateId: null);
+
+            var allCentreSpecificEmailsDictionary = new Dictionary<string, string?>
+            {
+                { "2", null },
+                { "3", "email@centre3.com" },
+                { "4", "reused_email@centre4.com" },
+            };
+
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(primaryEmail, userId)).Returns(false);
+
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        "email@centre3.com",
+                        3,
+                        userId
+                    )
+                )
+                .Returns(false);
+
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        "reused_email@centre4.com",
+                        4,
+                        userId
+                    )
+                )
+                .Returns(true);
+
+            var formData = new MyAccountEditDetailsFormData
+            {
+                FirstName = "Test",
+                LastName = "User",
+                AllCentreSpecificEmailsDictionary = allCentreSpecificEmailsDictionary,
+                JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
+            };
+
+            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, null);
+
+            // When
+            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+
+            // Then
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        A<string>._,
+                        2,
+                        A<int>._
+                    )
+                )
+                .MustNotHaveHappened();
+
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        "email@centre3.com",
+                        3,
+                        userId
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        "reused_email@centre4.com",
+                        4,
+                        userId
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+
+            myAccountController.ModelState[$"{nameof(formData.AllCentreSpecificEmailsDictionary)}_4"]
+                .ValidationState.Should().Be
+                    (ModelValidationState.Invalid);
+
+            myAccountController.ModelState.Count.Should().Be(1); // The values for centres 2 and 3 are not invalid
+
+            result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should()
+                .BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
         public void
             EditDetailsPostSave_for_admin_only_user_with_missing_delegate_answers_doesnt_fail_validation_or_update_delegate()
         {
