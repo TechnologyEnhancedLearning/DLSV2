@@ -232,26 +232,7 @@ namespace DigitalLearningSolutions.Web.Services
                     ReregisterDelegateAccountForExistingUser(userId, delegateId, delegateRegistrationModel);
                 }
 
-                groupsService.SynchroniseUserChangesWithGroups(
-                    delegateId,
-                    new AccountDetailsData(
-                        delegateRegistrationModel.FirstName,
-                        delegateRegistrationModel.LastName,
-                        delegateRegistrationModel.PrimaryEmail
-                    ),
-                    delegateRegistrationModel.GetRegistrationFieldAnswers(),
-                    new RegistrationFieldAnswers(
-                        delegateRegistrationModel.Centre,
-                        0,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                    ),
-                    delegateRegistrationModel.CentreSpecificEmail
-                );
+                groupsService.AddNewlyRegisteredUserToAddNewRegistrantGroups(delegateId, delegateRegistrationModel);
             }
             catch (DelegateCreationFailedException exception)
             {
@@ -462,27 +443,8 @@ namespace DigitalLearningSolutions.Web.Services
                     delegateRegistrationModel,
                     registerJourneyContainsTermsAndConditions
                 );
-
-                groupsService.SynchroniseUserChangesWithGroups(
-                    delegateId,
-                    new AccountDetailsData(
-                        delegateRegistrationModel.FirstName,
-                        delegateRegistrationModel.LastName,
-                        delegateRegistrationModel.PrimaryEmail
-                    ),
-                    delegateRegistrationModel.GetRegistrationFieldAnswers(),
-                    new RegistrationFieldAnswers(
-                        delegateRegistrationModel.Centre,
-                        0,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                    ),
-                    delegateRegistrationModel.CentreSpecificEmail
-                );
+                
+                groupsService.AddNewlyRegisteredUserToAddNewRegistrantGroups(delegateId, delegateRegistrationModel);
 
                 return (delegateId, candidateNumber);
             }

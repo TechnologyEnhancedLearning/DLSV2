@@ -11,6 +11,7 @@
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Progress;
+    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
@@ -38,12 +39,26 @@
             int? addedByAdminId = null
         );
 
+        void SynchroniseUserChangesWithSynchronisedGroups(
+            int delegateId,
+            AccountDetailsData accountDetailsData,
+            RegistrationFieldAnswers registrationFieldAnswers,
+            RegistrationFieldAnswers oldRegistrationFieldAnswers,
+            string? centreEmail
+        );
+
+        void AddNewlyRegisteredUserToAddNewRegistrantGroups(
+            int delegateId,
+            DelegateRegistrationModel delegateRegistrationModel
+        );
+
         void SynchroniseUserChangesWithGroups(
             int delegateId,
             AccountDetailsData accountDetailsData,
             RegistrationFieldAnswers newDelegateDetails,
             RegistrationFieldAnswers oldRegistrationFieldAnswers,
-            string? centreEmail
+            string? centreEmail,
+            List<Group> groupsToSynchronise
         );
 
         void EnrolDelegateOnGroupCourses(
@@ -168,12 +183,65 @@
             return groupsDataService.AddDelegateGroup(groupDetails);
         }
 
-        public void SynchroniseUserChangesWithGroups(
+        public void SynchroniseUserChangesWithSynchronisedGroups(
             int delegateId,
             AccountDetailsData accountDetailsData,
             RegistrationFieldAnswers registrationFieldAnswers,
             RegistrationFieldAnswers oldRegistrationFieldAnswers,
             string? centreEmail
+        )
+        {
+            var synchronisedGroupsForCentre =
+                GetSynchronisedGroupsForCentre(registrationFieldAnswers.CentreId).ToList();
+
+            SynchroniseUserChangesWithGroups(
+                delegateId,
+                accountDetailsData,
+                registrationFieldAnswers,
+                oldRegistrationFieldAnswers,
+                centreEmail,
+                synchronisedGroupsForCentre
+            );
+        }
+
+        public void AddNewlyRegisteredUserToAddNewRegistrantGroups(
+            int delegateId,
+            DelegateRegistrationModel delegateRegistrationModel
+        )
+        {
+            var addNewRegistrantGroups =
+                GetAddNewRegistrantGroupsForCentre(delegateRegistrationModel.Centre).ToList();
+
+            SynchroniseUserChangesWithGroups(
+                delegateId,
+                new AccountDetailsData(
+                    delegateRegistrationModel.FirstName,
+                    delegateRegistrationModel.LastName,
+                    delegateRegistrationModel.PrimaryEmail
+                ),
+                delegateRegistrationModel.GetRegistrationFieldAnswers(),
+                new RegistrationFieldAnswers(
+                    delegateRegistrationModel.Centre,
+                    0,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ),
+                delegateRegistrationModel.CentreSpecificEmail,
+                addNewRegistrantGroups
+            );
+        }
+
+        public void SynchroniseUserChangesWithGroups(
+            int delegateId,
+            AccountDetailsData accountDetailsData,
+            RegistrationFieldAnswers registrationFieldAnswers,
+            RegistrationFieldAnswers oldRegistrationFieldAnswers,
+            string? centreEmail,
+            List<Group> groupsToSynchronise
         )
         {
             using var transaction = new TransactionScope();
@@ -184,17 +252,14 @@
                 centreRegistrationPromptsService
             );
 
-            var allSynchronisedGroupsAtCentre =
-                GetSynchronisedGroupsForCentre(registrationFieldAnswers.CentreId).ToList();
-
             foreach (var changedAnswer in changedLinkedFields)
             {
-                var groupsToRemoveDelegateFrom = allSynchronisedGroupsAtCentre.Where(
+                var groupsToRemoveDelegateFrom = groupsToSynchronise.Where(
                     g => g.LinkedToField == changedAnswer.LinkedFieldNumber &&
                          GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.OldValue, changedAnswer.LinkedFieldName)
                 );
 
-                var groupsToAddDelegateTo = allSynchronisedGroupsAtCentre.Where(
+                var groupsToAddDelegateTo = groupsToSynchronise.Where(
                     g => g.LinkedToField == changedAnswer.LinkedFieldNumber &&
                          GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.NewValue, changedAnswer.LinkedFieldName)
                 );
@@ -504,27 +569,6 @@
             transaction.Complete();
         }
 
-        private void EnrolNewDelegateOnGroupCourse(
-            DelegateEntity newDelegateEntity,
-            int groupId,
-            int? addedByAdminId = null
-        )
-        {
-            var groupCourses = GetUsableGroupCoursesForCentre(groupId, newDelegateEntity.DelegateAccount.CentreId);
-
-            foreach (var groupCourse in groupCourses)
-            {
-                EnrolDelegateOnGroupCourse(
-                    newDelegateEntity.DelegateAccount.Id,
-                    newDelegateEntity.EmailForCentreNotifications,
-                    newDelegateEntity.UserAccount.FullName,
-                    addedByAdminId,
-                    groupCourse,
-                    false
-                );
-            }
-        }
-
         private void EnrolDelegateOnGroupCourse(
             int delegateUserId,
             string delegateUserEmailAddress,
@@ -601,9 +645,19 @@
                 .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
         }
 
+        private IEnumerable<Group> GetAddNewRegistrantGroupsForCentre(int centreId)
+        {
+            return groupsDataService.GetGroupsForCentre(centreId)
+                .Where(g => g.ShouldAddNewRegistrantsToGroup);
+        }
+
         private static bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string linkedFieldName)
         {
-            return !string.IsNullOrEmpty(answer) && string.Equals(groupLabel, answer, StringComparison.CurrentCultureIgnoreCase) || string.Equals(
+            return !string.IsNullOrEmpty(answer) && string.Equals(
+                groupLabel,
+                answer,
+                StringComparison.CurrentCultureIgnoreCase
+            ) || string.Equals(
                 groupLabel,
                 GetGroupNameWithPrefix(linkedFieldName, answer!),
                 StringComparison.CurrentCultureIgnoreCase

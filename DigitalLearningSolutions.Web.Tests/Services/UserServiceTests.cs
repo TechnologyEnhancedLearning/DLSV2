@@ -296,7 +296,8 @@
                             rfa.Answer5 == delegateUser.Answer5 &&
                             rfa.Answer6 == delegateUser.Answer6
                     ),
-                    null
+                    null,
+                    TODO
                 )
             ).MustHaveHappened();
         }
