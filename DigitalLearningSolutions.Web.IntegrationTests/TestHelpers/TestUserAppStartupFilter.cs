@@ -27,6 +27,7 @@
                             async context =>
                             {
                                 var delegateId = int.Parse(context.Request.Query["delegateId"]);
+                                var withoutUserIdClaim = context.Request.Query["withoutUserIdClaim"].Count > 0;
                                 var userAccount = TestUserDataService.GetUserAccount(delegateId);
                                 var delegateUser = TestUserDataService.GetDelegate(delegateId);
                                 var userEntity = new UserEntity(
@@ -34,8 +35,16 @@
                                     new List<AdminAccount>(),
                                     new List<DelegateAccount> { delegateUser }
                                 );
+
                                 var claims = LoginClaimsHelper.GetClaimsForSignIntoCentre(userEntity, 1);
+
+                                if (withoutUserIdClaim)
+                                {
+                                    claims = claims.Where(claim => claim.Type != CustomClaimTypes.UserId).ToList();
+                                }
+
                                 var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
+
                                 var authProperties = new AuthenticationProperties
                                 {
                                     AllowRefresh = true,
