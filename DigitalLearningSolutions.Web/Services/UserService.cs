@@ -376,7 +376,7 @@ namespace DigitalLearningSolutions.Web.Services
                 groupsService.SynchroniseUserChangesWithGroups(
                     delegateDetailsData.DelegateId,
                     editAccountDetailsData,
-                    new RegistrationFieldAnswers(delegateDetailsData, editAccountDetailsData.JobGroupId),
+                    new RegistrationFieldAnswers(delegateDetailsData, editAccountDetailsData.JobGroupId, centreId),
                     delegateAccountWithDetails.GetRegistrationFieldAnswers(),
                     centreEmail
                 );
