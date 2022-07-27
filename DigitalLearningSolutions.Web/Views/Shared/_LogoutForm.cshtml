@@ -1,5 +1,7 @@
-﻿<form asp-controller="Logout" asp-action="Index" method="post">
-  <button type="submit" class="nhsuk-button nhsuk-button--secondary">
+﻿@model string
+
+<form asp-controller="Logout" asp-action="Index" method="post">
+  <button type="submit" class="@($"nhsuk-button {Model}")">
     Log out
   </button>
 </form>

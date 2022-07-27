@@ -19,11 +19,12 @@
       <span class="nhsuk-u-visually-hidden">Information: </span>
       <p>Your delegate number is <span class="nhsuk-u-font-weight-bold">@Model.CandidateNumber</span></p>
     </div>
+
     @if (Model.HasAdminAccountAtCentre) {
       <p>
         You will need to log out and in again before you can access the Learning Portal.
       </p>
-      <partial name="_LogoutForm" />
+      <partial name="_LogoutForm" model="@("nhsuk-button--secondary")" />
     } else if (Model.Approved) {
       <p>
         You can now log into your new account.
@@ -35,9 +36,7 @@
         role="button">
         Switch centre
       </a>
-    }
-
-    @if (!Model.Approved) {
+    } else {
       <div class="nhsuk-warning-callout">
         <h2 class="nhsuk-warning-callout__label">
           <span role="text">
