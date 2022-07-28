@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.ViewModels.Register
 @model InternalConfirmationViewModel
 
 @{
@@ -24,13 +25,13 @@
       <p>
         You will need to log out and in again before you can access the Learning Portal.
       </p>
-      <partial name="_LogoutForm" model="@("nhsuk-button--secondary")" />
+      <partial name="_LogoutForm" model="@ButtonType.Secondary" />
     } else if (Model.Approved) {
       <p>
         You can now log into your new account.
       </p>
       <a
-        class="nhsuk-button nhsuk-button--secondary"
+        class="@ButtonType.Secondary.CssClass"
         asp-controller="Login"
         asp-action="ChooseACentre"
         role="button">

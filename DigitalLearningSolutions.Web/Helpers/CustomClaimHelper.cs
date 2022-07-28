@@ -17,7 +17,7 @@
 
         public static bool IsMissingUserId(this ClaimsPrincipal user)
         {
-            return user.GetUserPrimaryEmail() != null && user.GetUserId() == null;
+            return user.Identity.IsAuthenticated && user.GetUserId() == null;
         }
 
         public static int? GetAdminId(this ClaimsPrincipal user)

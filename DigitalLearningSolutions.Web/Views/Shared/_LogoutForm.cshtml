@@ -1,7 +1,8 @@
-﻿@model string
+﻿@using DigitalLearningSolutions.Data.Enums
+@model ButtonType
 
 <form asp-controller="Logout" asp-action="Index" method="post">
-  <button type="submit" class="@($"nhsuk-button {Model}")">
+  <button type="submit" class="@Model.CssClass">
     Log out
   </button>
 </form>

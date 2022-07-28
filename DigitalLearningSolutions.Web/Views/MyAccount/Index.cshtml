@@ -1,3 +1,4 @@
+@using DigitalLearningSolutions.Data.Enums
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @model MyAccountViewModel
 
@@ -25,7 +26,7 @@
       @{ var switchCentreButtonText = Model.CentreId == null ? "Choose centre" : "Switch centre"; }
       <div class="nhsuk-grid-column-one-half heading-button-group">
         <a
-          class="nhsuk-button nhsuk-button--secondary heading-button"
+          class="@($"{ButtonType.Secondary.CssClass} heading-button")"
           asp-controller="Login"
           asp-action="ChooseACentre"
           asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment"
@@ -51,14 +52,14 @@
 </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="MyAccount" asp-action="EditDetails" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
+    <a class="@($"{ButtonType.Primary.CssClass} left-button-mobile-margin-bottom nhsuk-u-margin-right-2")" asp-controller="MyAccount" asp-action="EditDetails" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
       Edit details
     </a>
-    <a class="nhsuk-button nhsuk-button--secondary left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="ChangePassword" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
+    <a class="@($"{ButtonType.Secondary.CssClass} left-button-mobile-margin-bottom nhsuk-u-margin-right-2")" asp-controller="ChangePassword" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
       Change password
     </a>
     @if (Model.CentreId != null) {
-      <a class="nhsuk-button nhsuk-button--secondary" asp-controller="NotificationPreferences" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
+      <a class="@ButtonType.Secondary.CssClass" asp-controller="NotificationPreferences" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
         View notification preferences
       </a>
     }
@@ -66,6 +67,6 @@
 </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <partial name="_LogoutForm" model="@("nhsuk-button--secondary")" />
+    <partial name="_LogoutForm" model="@ButtonType.Secondary" />
   </div>
 </div>
