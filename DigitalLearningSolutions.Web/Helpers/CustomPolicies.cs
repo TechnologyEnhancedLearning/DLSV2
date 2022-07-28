@@ -54,10 +54,10 @@
         {
             return policy.RequireAssertion(
                 context => context.User.IsAdminAccount() &&
-                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) == true) ||
-                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) == true) ||
-                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) == true) ||
-                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor) == true)
+                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) == true ||
+                           context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) == true ||
+                           context.User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) == true ||
+                           context.User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor) == true)
             );
         }
 
