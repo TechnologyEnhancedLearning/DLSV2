@@ -35,8 +35,8 @@
 
         public string CategoryName { get; set; }
 
-        public string CategoryFilter => nameof(AdminUser.CategoryName) + FilteringHelper.Separator +
-                                        nameof(AdminUser.CategoryName) +
+        public string CategoryFilter => nameof(AdminEntity.CategoryName) + FilteringHelper.Separator +
+                                        nameof(AdminEntity.CategoryName) +
                                         FilteringHelper.Separator + CategoryName;
 
         public string? EmailAddress { get; set; }

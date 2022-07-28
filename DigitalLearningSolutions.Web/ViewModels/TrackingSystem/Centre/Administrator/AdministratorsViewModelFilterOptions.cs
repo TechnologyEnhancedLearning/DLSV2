@@ -35,7 +35,7 @@
             return categories.Select(
                 c => new FilterOptionModel(
                     c,
-                    nameof(AdminUser.CategoryName) + FilteringHelper.Separator + nameof(AdminUser.CategoryName) +
+                    nameof(AdminEntity.CategoryName) + FilteringHelper.Separator + nameof(AdminEntity.CategoryName) +
                     FilteringHelper.Separator + c,
                     FilterStatus.Default
                 )
