@@ -1,10 +1,7 @@
 ﻿@using DigitalLearningSolutions.Data.Utilities
 @using DigitalLearningSolutions.Web.ViewModels.Supervisor
+@inject IClockUtility ClockUtility
 @model SupervisorDelegateDetailViewModel;
-
-@{
-  var clockUtility = new ClockUtility();
-}
 
 <div class="searchable-element nhsuk-panel" id="@Model.SupervisorDelegateDetail.ID-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
@@ -49,7 +46,7 @@
               Added
             </dt>
             <dd class="nhsuk-summary-list__value">
-              @(Model.SupervisorDelegateDetail.Added.ToShortDateString() != clockUtility.UtcNow.ToShortDateString() ? Model.SupervisorDelegateDetail.Added.ToShortDateString() : "Today")
+              @(Model.SupervisorDelegateDetail.Added.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString() ? Model.SupervisorDelegateDetail.Added.ToShortDateString() : "Today")
             </dd>
             <dd class="nhsuk-summary-list__actions">
             </dd>
@@ -59,10 +56,10 @@
             Notification Sent
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @(Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() != clockUtility.UtcNow.ToShortDateString() ? Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() : "Today")
+            @(Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString() ? Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() : "Today")
           </dd>
           <dd class="nhsuk-summary-list__actions">
-            @if (Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() != clockUtility.UtcNow.ToShortDateString())
+            @if (Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString())
             {
               <a asp-action="ResendInvite" asp-route-reviewId="@Model.SupervisorDelegateDetail.ID">
                 Send reminder

@@ -1,11 +1,7 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
 @using DigitalLearningSolutions.Data.Utilities
-
+@inject IClockUtility ClockUtility
 @model IEnumerable<SupervisorSignOff>
-
-@{
-  var clockUtility = new ClockUtility();
-}
 
 @if (Model.Any())
 {
@@ -46,7 +42,7 @@
     @if ((Model.Count() - 1) > 0)
     {
   <dd class="nhsuk-summary-list__actions">
-    @if ((Model.FirstOrDefault().EmailSent == null && Model.FirstOrDefault().Verified == null || (Model.FirstOrDefault().Verified == null) && Model.FirstOrDefault().EmailSent.Value.ToShortDateString() != clockUtility.UtcNow.ToShortDateString()))
+    @if ((Model.FirstOrDefault().EmailSent == null && Model.FirstOrDefault().Verified == null || (Model.FirstOrDefault().Verified == null) && Model.FirstOrDefault().EmailSent.Value.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString()))
     {
       if (ViewContext.RouteData.Values.ContainsKey("vocabulary"))
       {

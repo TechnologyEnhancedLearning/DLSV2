@@ -1,6 +1,8 @@
 ﻿@using DigitalLearningSolutions.Data.Utilities
 @using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+@inject IClockUtility ClockUtility
 @model EnrolDelegateSetCompletByDateViewModel;
+
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Enrol on Profile Assessment";
@@ -39,8 +41,7 @@
   </nav>
 }
 @{
-  var clockUtility = new ClockUtility();
-  var exampleDate = clockUtility.UtcToday + TimeSpan.FromDays(7);
+  var exampleDate = ClockUtility.UtcToday + TimeSpan.FromDays(7);
   string prefillDay;
   string prefillMonth;
   string prefillYear;

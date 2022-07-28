@@ -1,6 +1,7 @@
 ﻿@using DigitalLearningSolutions.Data.Utilities
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@inject IClockUtility ClockUtility
 @model EditCompleteByDateViewModel
 
 @{
@@ -14,8 +15,7 @@
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
   }
 
-  var clockUtility = new ClockUtility();
-  var exampleDate = clockUtility.UtcToday;
+  var exampleDate = ClockUtility.UtcToday;
   var hintTextLines = new List<string> {
     $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the complete by date.",
     "Activities with no complete by date will be removed after 6 months of inactivity.",

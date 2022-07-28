@@ -1,5 +1,6 @@
 @using DigitalLearningSolutions.Data.Utilities
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
+@inject IClockUtility ClockUtility
 @model EmailDelegatesViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/emailDelegates.css")" asp-append-version="true">
@@ -7,8 +8,7 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Send welcome messages" : "Send welcome messages";
-  var clockUtility = new ClockUtility();
-  var exampleDate = clockUtility.UtcToday;
+  var exampleDate = ClockUtility.UtcToday;
   var hintTextLines = new List<string> {
     $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}",
   };
