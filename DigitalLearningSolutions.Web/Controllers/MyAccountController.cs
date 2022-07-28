@@ -208,34 +208,24 @@
                 return ReturnToEditDetailsViewWithErrors(formData, userId, centreId, dlsSubApplication);
             }
 
-            var emailsValid = true;
-
             if (userDataService.PrimaryEmailIsInUseByOtherUser(formData.Email!, userId))
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
                     CommonValidationErrorMessages.EmailAlreadyInUse
                 );
-                emailsValid = false;
             }
 
-            if (
-                centreId.HasValue && !string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) &&
-                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
-                    formData.CentreSpecificEmail,
-                    centreId.Value,
-                    userId
-                )
-            )
+            if (centreId.HasValue)
             {
-                ModelState.AddModelError(
-                    nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),
-                    CommonValidationErrorMessages.EmailAlreadyInUse
-                );
-                emailsValid = false;
+                ValidateSingleCentreEmail(formData.CentreSpecificEmail, centreId.Value, userId);
+            }
+            else
+            {
+                ValidateCentreEmailsDictionary(formData.CentreSpecificEmailsByCentreId, userId);
             }
 
-            if (!emailsValid)
+            if (!ModelState.IsValid)
             {
                 return ReturnToEditDetailsViewWithErrors(formData, userId, centreId, dlsSubApplication);
             }
@@ -266,6 +256,37 @@
                 "Index",
                 new { dlsSubApplication = dlsSubApplication.UrlSegment }
             );
+        }
+
+        private void ValidateSingleCentreEmail(string? email, int centreId, int userId)
+        {
+            if (IsCentreSpecificEmailAlreadyInUse(email, centreId, userId))
+            {
+                ModelState.AddModelError(
+                    nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),
+                    CommonValidationErrorMessages.CentreEmailAlreadyInUse
+                );
+            }
+        }
+
+        private void ValidateCentreEmailsDictionary(Dictionary<int, string?> centreEmailsDictionary, int userId)
+        {
+            foreach (var (centreId, centreEmail) in centreEmailsDictionary)
+            {
+                if (IsCentreSpecificEmailAlreadyInUse(centreEmail, centreId, userId))
+                {
+                    ModelState.AddModelError(
+                        $"{nameof(MyAccountEditDetailsFormData.AllCentreSpecificEmailsDictionary)}_{centreId}",
+                        CommonValidationErrorMessages.CentreEmailAlreadyInUse
+                    );
+                }
+            }
+        }
+
+        private bool IsCentreSpecificEmailAlreadyInUse(string? email, int centreId, int userId)
+        {
+            return !string.IsNullOrWhiteSpace(email) &&
+                   userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(email, centreId, userId);
         }
 
         private IActionResult ReturnToEditDetailsViewWithErrors(
