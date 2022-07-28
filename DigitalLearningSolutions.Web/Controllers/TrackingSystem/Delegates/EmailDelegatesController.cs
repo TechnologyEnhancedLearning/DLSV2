@@ -9,6 +9,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -33,6 +34,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         private readonly IUserService userService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IConfiguration config;
+        private readonly IClockUtility clockUtility;
 
         public EmailDelegatesController(
             PromptsService promptsService,
@@ -40,7 +42,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             IPasswordResetService passwordResetService,
             IUserService userService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IConfiguration config
+            IConfiguration config,
+            IClockUtility clockUtility
         )
         {
             this.promptsService = promptsService;
@@ -49,6 +52,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             this.userService = userService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.config = config;
+            this.clockUtility = clockUtility;
         }
 
         [HttpGet]
@@ -91,6 +95,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var model = new EmailDelegatesViewModel(
                 result,
                 availableFilters,
+                clockUtility.UtcToday,
                 selectAll
             );
 

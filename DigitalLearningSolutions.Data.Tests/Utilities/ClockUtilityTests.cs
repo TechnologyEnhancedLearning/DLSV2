@@ -14,7 +14,9 @@
 
         private readonly string[] directoriesToTest =
         {
-            "DigitalLearningSolutions.Data", "DigitalLearningSolutions.Data.Migrations", "DigitalLearningSolutions.Web",
+            "DigitalLearningSolutions.Data",
+            "DigitalLearningSolutions.Data.Migrations",
+            "DigitalLearningSolutions.Web",
         };
 
         [Test]
@@ -24,7 +26,7 @@
         public void ClockUtility_should_be_used_instead_of_DateTime_functions(string disallowed, string useInstead)
         {
             var filenames = RunCommandAndReturnOutput(
-                $"/C git grep -l {disallowed} {string.Join("", directoriesToTest)}",
+                $"/C git grep -l {disallowed} {string.Join(" ", directoriesToTest)}",
                 repoRootDir
             ).Trim().Split("\n");
 

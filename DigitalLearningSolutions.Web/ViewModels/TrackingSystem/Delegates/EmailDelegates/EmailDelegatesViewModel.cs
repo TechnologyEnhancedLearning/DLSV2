@@ -1,23 +1,20 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class EmailDelegatesViewModel : BaseSearchablePageViewModel<DelegateUserCard>
     {
-        public EmailDelegatesViewModel(
+        private EmailDelegatesViewModel(
             SearchSortFilterPaginationResult<DelegateUserCard> result,
             IEnumerable<FilterModel> availableFilters,
-            bool selectAll = false
+            bool selectAll
         ) : base(result, true, availableFilters)
         {
-            Day = clockUtility.UtcToday.Day;
-            Month = clockUtility.UtcToday.Month;
-            Year = clockUtility.UtcToday.Year;
             Delegates = result.ItemsToDisplay.Select(
                 delegateUser =>
                 {
@@ -31,8 +28,20 @@
         public EmailDelegatesViewModel(
             SearchSortFilterPaginationResult<DelegateUserCard> result,
             IEnumerable<FilterModel> availableFilters,
+            DateTime emailDate,
+            bool selectAll = false
+        ) : this(result, availableFilters, selectAll)
+        {
+            Day = emailDate.Day;
+            Month = emailDate.Month;
+            Year = emailDate.Year;
+        }
+
+        public EmailDelegatesViewModel(
+            SearchSortFilterPaginationResult<DelegateUserCard> result,
+            IEnumerable<FilterModel> availableFilters,
             EmailDelegatesFormData formData
-        ) : this(result, availableFilters)
+        ) : this(result, availableFilters, false)
         {
             SelectedDelegateIds = formData.SelectedDelegateIds;
             Day = formData.Day;
@@ -46,7 +55,6 @@
         public int? Day { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }
-        private readonly IClockUtility clockUtility = new ClockUtility();
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new List<(string, string)>();
 

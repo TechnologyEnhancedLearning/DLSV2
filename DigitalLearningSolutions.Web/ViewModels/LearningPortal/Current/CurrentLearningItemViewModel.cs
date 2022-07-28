@@ -24,12 +24,14 @@
 
         public string DateStyle()
         {
-            if (CompleteByDate < clockUtility.UtcToday)
+            var utcToday = clockUtility.UtcToday;
+
+            if (CompleteByDate < utcToday)
             {
                 return "overdue";
             }
 
-            if (CompleteByDate < clockUtility.UtcToday + TimeSpan.FromDays(30))
+            if (CompleteByDate < utcToday + TimeSpan.FromDays(30))
             {
                 return "due-soon";
             }

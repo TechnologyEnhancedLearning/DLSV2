@@ -7,7 +7,7 @@
 
     public static class DateValidator
     {
-        private static ClockUtility clockUtility = new ClockUtility();
+        private static readonly ClockUtility ClockUtility = new ClockUtility();
 
         public static DateValidationResult ValidateDate(
             int? day,
@@ -63,12 +63,12 @@
             try
             {
                 var date = new DateTime(year, month, day);
-                if (dateMustNotBeInPast && date < clockUtility.UtcToday)
+                if (dateMustNotBeInPast && date < ClockUtility.UtcToday)
                 {
                     return new DateValidationResult("Enter " + NameWithIndefiniteArticle(name) + " not in the past");
                 }
 
-                if (dateMustNotBeInFuture && date > clockUtility.UtcToday)
+                if (dateMustNotBeInFuture && date > ClockUtility.UtcToday)
                 {
                     return new DateValidationResult("Enter " + NameWithIndefiniteArticle(name) + " not in the future");
                 }
