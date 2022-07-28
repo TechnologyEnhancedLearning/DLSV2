@@ -127,6 +127,11 @@
             return user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false;
         }
 
+        public static bool IsAdminAccount(this ClaimsPrincipal user)
+        {
+            return user.GetUserId() != null && user.GetAdminId() != null;
+        }
+
         public static bool HasCentreAdminPermissions(this ClaimsPrincipal user)
         {
             return (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreAdmin) ?? false) ||
