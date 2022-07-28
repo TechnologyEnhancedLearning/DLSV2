@@ -183,5 +183,15 @@
             result.Should().BeRedirectToActionResult().WithControllerName("LearningPortal")
                 .WithActionName("AccessDenied");
         }
+
+        [Test]
+        public void PleaseLogout_returns_default_view()
+        {
+            // When
+            var result = controller.PleaseLogout();
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
     }
 }

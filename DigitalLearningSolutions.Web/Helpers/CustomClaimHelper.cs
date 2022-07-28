@@ -15,6 +15,11 @@
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserId);
         }
 
+        public static bool IsMissingUserId(this ClaimsPrincipal user)
+        {
+            return user.Identity.IsAuthenticated && user.GetUserId() == null;
+        }
+
         public static int? GetAdminId(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
