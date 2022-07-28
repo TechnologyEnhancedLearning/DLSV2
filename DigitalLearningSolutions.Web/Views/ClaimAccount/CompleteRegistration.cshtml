@@ -1,7 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ClaimAccountCompleteRegistrationViewModel
 
 @{
@@ -29,7 +27,7 @@
     <h4>Please set a password for this account</h4>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="CompleteRegistration" asp-all-route-data="routeData">
-      <partial name="_SetPasswordFields" model="@(new SetPasswordViewModel())" />
+      <partial name="_SetPasswordFields" model="@(new SetPasswordViewModel(Model))" />
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 

@@ -1,7 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ChangePasswordViewModel
 
 @{
@@ -34,7 +32,7 @@
         autocomplete="current-password"
         css-class="nhsuk-u-width-one-half" />
 
-      <partial name="_SetPasswordFields" model="@(new SetPasswordViewModel("New password"))" />
+      <partial name="_SetPasswordFields" model="@(new SetPasswordViewModel(Model, "New password"))" />
       <button class="nhsuk-button" type="submit">Change password</button>
     </form>
 

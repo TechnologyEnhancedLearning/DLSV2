@@ -76,21 +76,28 @@
             [FromQuery] string code
         )
         {
-            return await CompleteRegistrationPost(email, code, false, formData);
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("LinkDlsAccount", new { email, code });
+            }
+
+            var model = GetViewModelIfValidParameters(email, code);
+
+            if (model == null)
+            {
+                return RedirectToAction("AccessDenied", "LearningSolutions");
+            }
+
+            if (model.WasPasswordSetByAdmin)
+            {
+                return NotFound();
+            }
+
+            return await CompleteRegistrationPost(model!, formData.Password);
         }
 
         [HttpPost]
         public async Task<IActionResult> CompleteRegistrationWithoutPassword(string email, string code)
-        {
-            return await CompleteRegistrationPost(email, code, true);
-        }
-
-        private async Task<IActionResult> CompleteRegistrationPost(
-            string email,
-            string code,
-            bool passwordMustAlreadyBeSet,
-            ConfirmPasswordViewModel? formData = null
-        )
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -104,26 +111,34 @@
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
-            if (userDataService.PrimaryEmailIsInUse(model.Email))
+            if (!model.WasPasswordSetByAdmin)
             {
                 return NotFound();
             }
 
-            if (model.WasPasswordSetByAdmin != passwordMustAlreadyBeSet)
+            return await CompleteRegistrationPost(model!);
+        }
+
+        private async Task<IActionResult> CompleteRegistrationPost(
+            ClaimAccountViewModel model,
+            string? password = null
+        )
+        {
+            if (userDataService.PrimaryEmailIsInUse(model.Email))
             {
                 return NotFound();
             }
 
             if (!ModelState.IsValid)
             {
-                return View(GetClaimAccountCompleteRegistrationViewModel(model, formData));
+                return View(GetClaimAccountCompleteRegistrationViewModel(model));
             }
 
             await claimAccountService.ConvertTemporaryUserToConfirmedUser(
                 model.UserId,
                 model.CentreId,
                 model.Email,
-                passwordMustAlreadyBeSet ? null : formData?.Password
+                password
             );
 
             return RedirectToAction(
@@ -270,8 +285,7 @@
         }
 
         private static ClaimAccountCompleteRegistrationViewModel GetClaimAccountCompleteRegistrationViewModel(
-            ClaimAccountViewModel model,
-            ConfirmPasswordViewModel? formData = null
+            ClaimAccountViewModel model
         )
         {
             return new ClaimAccountCompleteRegistrationViewModel
@@ -280,8 +294,6 @@
                 Code = model.RegistrationConfirmationHash,
                 CentreName = model.CentreName,
                 WasPasswordSetByAdmin = model.WasPasswordSetByAdmin,
-                Password = formData?.Password,
-                ConfirmPassword = formData?.ConfirmPassword,
             };
         }
     }

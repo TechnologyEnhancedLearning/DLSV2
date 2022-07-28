@@ -3,9 +3,12 @@
     public class SetPasswordViewModel : ConfirmPasswordViewModel
     {
         public SetPasswordViewModel(
+            ConfirmPasswordViewModel model,
             string label = "Password"
         )
         {
+            Password = model.Password;
+            ConfirmPassword = model.ConfirmPassword;
             Label = label;
         }
 

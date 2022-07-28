@@ -1,7 +1,5 @@
-@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.Common
 @using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ConfirmPasswordViewModel
 
 @{
@@ -28,7 +26,7 @@
         </p>
       </div>
 
-      <partial name="_SetPasswordFields" model="@(new SetPasswordViewModel())" />
+      <partial name="_SetPasswordFields" model="@(new SetPasswordViewModel(Model))" />
 
       <button class="nhsuk-button" type="submit">Set password</button>
     </form>
