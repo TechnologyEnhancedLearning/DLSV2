@@ -9,6 +9,7 @@
         public const string InvalidEmail = "Enter an email in the correct format, like name@example.com";
         public const string WhitespaceInEmail = "Email must not contain any whitespace characters";
         public const string EmailAlreadyInUse = "This email is already in use";
+        public const string CentreEmailAlreadyInUse = "This email is in already use by another user at the centre";
 
         public const string PasswordRegex = @"(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Za-z]).*";
         public const string PasswordInvalidCharacters = "Password must contain at least 1 letter, 1 number and 1 symbol";

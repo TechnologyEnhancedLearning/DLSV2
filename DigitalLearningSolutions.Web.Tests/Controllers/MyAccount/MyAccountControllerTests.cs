@@ -344,6 +344,10 @@
 
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should()
                 .BeEquivalentTo(expectedModel);
+
+            var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
+                .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
+            errorMessage.Should().BeEquivalentTo("This email is in already use by another user at the centre");
         }
 
         [Test]
