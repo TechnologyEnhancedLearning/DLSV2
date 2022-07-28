@@ -32,7 +32,7 @@
                 centreAnswersData,
                 delegateDetails.GetRegistrationFieldAnswers(),
                 null,
-                TODO
+                new List<Group>()
             );
 
             // Then
@@ -57,9 +57,6 @@
                 linkedToField: 2,
                 changesToRegistrationDetailsShouldChangeGroupMembership: true
             );
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
-                new List<Group> { synchronisedGroup }
-            );
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
@@ -68,7 +65,7 @@
                 centreAnswersData,
                 UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
                 null,
-                TODO
+                new List<Group> { synchronisedGroup }
             );
 
             // Then
@@ -94,9 +91,6 @@
                 linkedToField: 1,
                 changesToRegistrationDetailsShouldChangeGroupMembership: true
             );
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
-                new List<Group> { synchronisedGroup }
-            );
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
@@ -105,7 +99,7 @@
                 centreAnswersData,
                 UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
                 null,
-                TODO
+                new List<Group> { synchronisedGroup }
             );
 
             // Then
@@ -131,9 +125,6 @@
                 linkedToField: 1,
                 changesToRegistrationDetailsShouldChangeGroupMembership: true
             );
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
-                new List<Group> { synchronisedGroup }
-            );
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
@@ -142,7 +133,7 @@
                 centreAnswersData,
                 UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId, answer1: "old answer"),
                 null,
-                TODO
+                new List<Group> { synchronisedGroup }
             );
 
             // Then
@@ -168,9 +159,6 @@
                 linkedToField: 1,
                 changesToRegistrationDetailsShouldChangeGroupMembership: true
             );
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
-                new List<Group> { synchronisedGroup }
-            );
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
@@ -179,7 +167,7 @@
                 centreAnswersData,
                 UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId, answer1: "old answer"),
                 null,
-                TODO
+                new List<Group> { synchronisedGroup }
             );
 
             // Then
@@ -211,9 +199,6 @@
                 linkedToField: 1,
                 changesToRegistrationDetailsShouldChangeGroupMembership: true
             );
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
-                new List<Group> { synchronisedGroup1, synchronisedGroup2 }
-            );
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
@@ -222,7 +207,7 @@
                 centreAnswersData,
                 UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId, answer1: "old answer"),
                 null,
-                TODO
+                new List<Group> { synchronisedGroup1, synchronisedGroup2 }
             );
 
             // Then
@@ -243,9 +228,6 @@
                 linkedToField: 1,
                 changesToRegistrationDetailsShouldChangeGroupMembership: true
             );
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
-                new List<Group> { synchronisedGroup }
-            );
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
@@ -254,7 +236,7 @@
                 centreAnswersData,
                 UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
                 null,
-                TODO
+                new List<Group> { synchronisedGroup }
             );
 
             // Then
@@ -281,9 +263,6 @@
                 linkedToField: 1,
                 changesToRegistrationDetailsShouldChangeGroupMembership: true
             );
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
-                new List<Group> { synchronisedGroup }
-            );
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
@@ -292,7 +271,7 @@
                 centreAnswersData,
                 UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
                 null,
-                TODO
+                new List<Group> { synchronisedGroup }
             );
 
             // Then
@@ -324,9 +303,6 @@
                 linkedToField: 1,
                 changesToRegistrationDetailsShouldChangeGroupMembership: true
             );
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
-                new List<Group> { synchronisedGroup1, synchronisedGroup2 }
-            );
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
@@ -335,7 +311,7 @@
                 centreAnswersData,
                 UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
                 null,
-                TODO
+                new List<Group> { synchronisedGroup1, synchronisedGroup2 }
             );
 
             // Then
@@ -368,9 +344,6 @@
                 linkedToField: 1,
                 changesToRegistrationDetailsShouldChangeGroupMembership: true
             );
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
-                new List<Group> { synchronisedGroup1, synchronisedGroup2 }
-            );
 
             // When
             groupsService.SynchroniseUserChangesWithGroups(
@@ -379,7 +352,7 @@
                 centreAnswersData,
                 UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
                 null,
-                TODO
+                new List<Group> { synchronisedGroup1, synchronisedGroup2 }
             );
 
             // Then
