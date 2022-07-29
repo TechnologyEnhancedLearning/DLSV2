@@ -74,8 +74,8 @@
                 case LoginAttemptResult.UnverifiedEmail:
                     await CentrelessLogInAsync(loginResult.UserEntity!, model.RememberMe);
                     return RedirectToAction(
+                        "Index",
                         "VerifyYourEmail",
-                        "VerifyEmail",
                         new { emailVerificationReason = EmailVerificationReason.EmailNotVerified }
                     );
                 case LoginAttemptResult.LogIntoSingleCentre:
@@ -139,7 +139,7 @@
 
             if (centreEmailIsUnverified)
             {
-                return RedirectToAction("VerifyYourEmail", "VerifyEmail");
+                return RedirectToAction("Index", "VerifyYourEmail");
             }
 
             var rememberMe = (await HttpContext.AuthenticateAsync()).Properties.IsPersistent;

@@ -245,8 +245,8 @@
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("VerifyEmail")
-                .WithActionName("VerifyYourEmail");
+            result.Should().BeRedirectToActionResult().WithControllerName("VerifyYourEmail")
+                .WithActionName("Index");
         }
 
         [Test]

@@ -11,17 +11,17 @@
 
     [Authorize(Policy = CustomPolicies.BasicUser)]
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
-    public class VerifyEmailController : Controller
+    public class VerifyYourEmailController : Controller
     {
         private readonly IUserService userService;
 
-        public VerifyEmailController(IUserService userService)
+        public VerifyYourEmailController(IUserService userService)
         {
             this.userService = userService;
         }
 
         [Route("/VerifyEmail/{emailVerificationReason}")]
-        public IActionResult VerifyYourEmail(string? emailVerificationReason)
+        public IActionResult Index(string? emailVerificationReason)
         {
             if (emailVerificationReason == null)
             {
