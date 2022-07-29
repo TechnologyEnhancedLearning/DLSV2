@@ -26,7 +26,7 @@
             );
 
             // When
-            groupsService.SynchroniseUserChangesWithGroups(
+            groupsService.UpdateDelegateGroupsBasedOnUserChanges(
                 delegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
@@ -47,7 +47,8 @@
         }
 
         [Test]
-        public void SynchroniseUserChangesWithGroups_does_nothing_if_synchronised_groups_are_not_for_changed_fields()
+        public void
+            UpdateDelegateGroupsBasedOnUserChanges_does_nothing_if_synchronised_groups_are_not_for_changed_fields()
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
@@ -59,7 +60,7 @@
             );
 
             // When
-            groupsService.SynchroniseUserChangesWithGroups(
+            groupsService.UpdateDelegateGroupsBasedOnUserChanges(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
@@ -81,7 +82,7 @@
 
         [Test]
         public void
-            SynchroniseUserChangesWithGroups_does_nothing_if_synchronised_groups_for_changed_fields_have_different_values()
+            UpdateDelegateGroupsBasedOnUserChanges_does_nothing_if_synchronised_groups_for_changed_fields_have_different_values()
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
@@ -93,7 +94,7 @@
             );
 
             // When
-            groupsService.SynchroniseUserChangesWithGroups(
+            groupsService.UpdateDelegateGroupsBasedOnUserChanges(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
@@ -114,7 +115,7 @@
         }
 
         [Test]
-        public void SynchroniseUserChangesWithGroups_removes_delegate_from_synchronised_old_answer_group()
+        public void UpdateDelegateGroupsBasedOnUserChanges_removes_delegate_from_synchronised_old_answer_group()
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
@@ -127,11 +128,14 @@
             );
 
             // When
-            groupsService.SynchroniseUserChangesWithGroups(
+            groupsService.UpdateDelegateGroupsBasedOnUserChanges(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId, answer1: "old answer"),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(
+                    reusableDelegateDetails.CentreId,
+                    answer1: "old answer"
+                ),
                 null,
                 new List<Group> { synchronisedGroup }
             );
@@ -142,7 +146,7 @@
 
         [Test]
         public void
-            SynchroniseUserChangesWithGroups_removes_delegate_from_synchronised_old_answer_group_when_group_label_includes_prompt_name()
+            UpdateDelegateGroupsBasedOnUserChanges_removes_delegate_from_synchronised_old_answer_group_when_group_label_includes_prompt_name()
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
@@ -161,11 +165,14 @@
             );
 
             // When
-            groupsService.SynchroniseUserChangesWithGroups(
+            groupsService.UpdateDelegateGroupsBasedOnUserChanges(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId, answer1: "old answer"),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(
+                    reusableDelegateDetails.CentreId,
+                    answer1: "old answer"
+                ),
                 null,
                 new List<Group> { synchronisedGroup }
             );
@@ -176,7 +183,7 @@
 
         [Test]
         public void
-            SynchroniseUserChangesWithGroups_removes_delegate_from_all_synchronised_old_answer_groups_if_multiple_exist()
+            UpdateDelegateGroupsBasedOnUserChanges_removes_delegate_from_all_synchronised_old_answer_groups_if_multiple_exist()
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
@@ -201,11 +208,14 @@
             );
 
             // When
-            groupsService.SynchroniseUserChangesWithGroups(
+            groupsService.UpdateDelegateGroupsBasedOnUserChanges(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
-                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId, answer1: "old answer"),
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(
+                    reusableDelegateDetails.CentreId,
+                    answer1: "old answer"
+                ),
                 null,
                 new List<Group> { synchronisedGroup1, synchronisedGroup2 }
             );
@@ -217,7 +227,7 @@
         }
 
         [Test]
-        public void SynchroniseUserChangesWithGroups_adds_delegate_to_synchronised_new_answer_group()
+        public void UpdateDelegateGroupsBasedOnUserChanges_adds_delegate_to_synchronised_new_answer_group()
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
@@ -230,7 +240,7 @@
             );
 
             // When
-            groupsService.SynchroniseUserChangesWithGroups(
+            groupsService.UpdateDelegateGroupsBasedOnUserChanges(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
@@ -245,7 +255,7 @@
 
         [Test]
         public void
-            SynchroniseUserChangesWithGroups_adds_delegate_to_synchronised_new_answer_group_when_group_label_includes_prompt_name()
+            UpdateDelegateGroupsBasedOnUserChanges_adds_delegate_to_synchronised_new_answer_group_when_group_label_includes_prompt_name()
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
@@ -265,7 +275,7 @@
             );
 
             // When
-            groupsService.SynchroniseUserChangesWithGroups(
+            groupsService.UpdateDelegateGroupsBasedOnUserChanges(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
@@ -280,7 +290,7 @@
 
         [Test]
         public void
-            SynchroniseUserChangesWithGroups_adds_delegate_to_all_synchronised_new_answer_groups_if_multiple_exist()
+            UpdateDelegateGroupsBasedOnUserChanges_adds_delegate_to_all_synchronised_new_answer_groups_if_multiple_exist()
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
@@ -305,7 +315,7 @@
             );
 
             // When
-            groupsService.SynchroniseUserChangesWithGroups(
+            groupsService.UpdateDelegateGroupsBasedOnUserChanges(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,
@@ -320,7 +330,7 @@
 
         [Test]
         public void
-            SynchroniseUserChangesWithGroups_adds_delegate_to_synchronised_new_answer_groups_when_group_labels_differ_in_casing()
+            UpdateDelegateGroupsBasedOnUserChanges_adds_delegate_to_synchronised_new_answer_groups_when_group_labels_differ_in_casing()
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer");
@@ -346,7 +356,7 @@
             );
 
             // When
-            groupsService.SynchroniseUserChangesWithGroups(
+            groupsService.UpdateDelegateGroupsBasedOnUserChanges(
                 reusableDelegateDetails.Id,
                 reusableEditAccountDetailsData,
                 centreAnswersData,

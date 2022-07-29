@@ -398,7 +398,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
             // Then
             A.CallTo(
-                () => groupsService.AddNewlyRegisteredUserToAddNewRegistrantGroups(
+                () => groupsService.AddNewDelegateToAppropriateGroups(
                     NewDelegateIdAndCandidateNumber.Item1,
                     model)
             ).MustHaveHappenedOnceExactly();
@@ -419,7 +419,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
             // Then
             A.CallTo(
-                () => groupsService.AddNewlyRegisteredUserToAddNewRegistrantGroups(
+                () => groupsService.AddNewDelegateToAppropriateGroups(
                     NewDelegateIdAndCandidateNumber.Item1,
                     model)
             ).MustHaveHappenedOnceExactly();
@@ -1240,7 +1240,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
             // Then
             A.CallTo(
-                () => groupsService.AddNewlyRegisteredUserToAddNewRegistrantGroups(
+                () => groupsService.AddNewDelegateToAppropriateGroups(
                     NewDelegateIdAndCandidateNumber.Item1,
                     A<DelegateRegistrationModel>.That.Matches(
                         m =>

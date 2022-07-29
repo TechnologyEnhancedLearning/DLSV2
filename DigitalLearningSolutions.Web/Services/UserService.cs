@@ -373,7 +373,7 @@ namespace DigitalLearningSolutions.Web.Services
             if (delegateDetailsData != null)
             {
                 var delegateAccountWithDetails = userDataService.GetDelegateUserById(delegateDetailsData.DelegateId)!;
-                groupsService.SynchroniseUserChangesWithSynchronisedGroups(
+                groupsService.UpdateSynchronisedDelegateGroupsBasedOnUserChanges(
                     delegateDetailsData.DelegateId,
                     editAccountDetailsData,
                     new RegistrationFieldAnswers(delegateDetailsData, editAccountDetailsData.JobGroupId, centreId),

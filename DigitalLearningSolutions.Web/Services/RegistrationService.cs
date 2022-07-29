@@ -232,7 +232,7 @@ namespace DigitalLearningSolutions.Web.Services
                     ReregisterDelegateAccountForExistingUser(userId, delegateId, delegateRegistrationModel);
                 }
 
-                groupsService.AddNewlyRegisteredUserToAddNewRegistrantGroups(delegateId, delegateRegistrationModel);
+                groupsService.AddNewDelegateToAppropriateGroups(delegateId, delegateRegistrationModel);
             }
             catch (DelegateCreationFailedException exception)
             {
@@ -443,8 +443,8 @@ namespace DigitalLearningSolutions.Web.Services
                     delegateRegistrationModel,
                     registerJourneyContainsTermsAndConditions
                 );
-                
-                groupsService.AddNewlyRegisteredUserToAddNewRegistrantGroups(delegateId, delegateRegistrationModel);
+
+                groupsService.AddNewDelegateToAppropriateGroups(delegateId, delegateRegistrationModel);
 
                 return (delegateId, candidateNumber);
             }

@@ -273,7 +273,7 @@
                 )
                 .MustHaveHappened();
             A.CallTo(
-                () => groupsService.SynchroniseUserChangesWithSynchronisedGroups(
+                () => groupsService.UpdateSynchronisedDelegateGroupsBasedOnUserChanges(
                     delegateDetailsData.DelegateId,
                     accountDetailsData,
                     A<RegistrationFieldAnswers>.That.Matches(
