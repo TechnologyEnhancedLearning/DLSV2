@@ -192,7 +192,7 @@
         )
         {
             var groupsForSynchronisation =
-                GetSynchronisedGroupsForCentre(registrationFieldAnswers.CentreId).ToList();
+                GetGroupsWhichShouldUpdateWhenUserDetailsChangeForCentre(registrationFieldAnswers.CentreId).ToList();
 
             UpdateDelegateGroupsBasedOnUserChanges(
                 delegateId,
@@ -210,7 +210,7 @@
         )
         {
             var groupsForSynchronisation =
-                GetAddNewRegistrantGroupsForCentre(delegateRegistrationModel.Centre).ToList();
+                GetGroupsWhichShouldAddNewRegistrantsForCentre(delegateRegistrationModel.Centre).ToList();
 
             UpdateDelegateGroupsBasedOnUserChanges(
                 delegateId,
@@ -639,13 +639,13 @@
             emailService.ScheduleEmail(email, addedByProcess);
         }
 
-        private IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)
+        private IEnumerable<Group> GetGroupsWhichShouldUpdateWhenUserDetailsChangeForCentre(int centreId)
         {
             return groupsDataService.GetGroupsForCentre(centreId)
                 .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
         }
 
-        private IEnumerable<Group> GetAddNewRegistrantGroupsForCentre(int centreId)
+        private IEnumerable<Group> GetGroupsWhichShouldAddNewRegistrantsForCentre(int centreId)
         {
             return groupsDataService.GetGroupsForCentre(centreId)
                 .Where(g => g.ShouldAddNewRegistrantsToGroup);
