@@ -111,8 +111,6 @@
                 transaction
             );
 
-            // TODO HEEDLS-874 deal with group assignment
-
             if (transactionShouldBeClosed)
             {
                 transaction.Commit();
@@ -135,6 +133,7 @@
                 userId,
                 delegateRegistrationModel.Centre,
                 delegateRegistrationModel.CentreSpecificEmail,
+                null,
                 transaction
             );
 
@@ -144,8 +143,6 @@
                 currentTime,
                 transaction
             );
-
-            // TODO HEEDLS-874 deal with group assignment
 
             transaction.Commit();
         }
@@ -293,6 +290,7 @@
                     userId,
                     centreId,
                     centreSpecificEmail,
+                    null,
                     transaction
                 );
             }

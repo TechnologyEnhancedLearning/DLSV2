@@ -202,6 +202,7 @@
                         DefaultUserId,
                         DefaultCentreId,
                         centreSpecificEmail,
+                        null,
                         A<IDbTransaction?>._
                     )
                 )
@@ -262,7 +263,15 @@
                     )
                 ).MustHaveHappenedOnceExactly();
                 A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._)).MustNotHaveHappened();
-                A.CallTo(() => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._))
+                A.CallTo(
+                        () => userDataService.SetCentreEmail(
+                            A<int>._,
+                            A<int>._,
+                            A<string?>._,
+                            null,
+                            A<IDbTransaction?>._
+                        )
+                    )
                     .MustNotHaveHappened();
             }
 

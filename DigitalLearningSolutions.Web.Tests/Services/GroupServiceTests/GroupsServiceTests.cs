@@ -457,7 +457,8 @@
             groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(groupId, delegateId, addedByAdminId);
 
             // Then
-            A.CallTo(() => groupsDataService.AddDelegateToGroup(delegateId, groupId, dateTime, 0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.AddDelegateToGroup(delegateId, groupId, dateTime, 0))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(CentreId)).MustHaveHappenedOnceExactly();
         }
 

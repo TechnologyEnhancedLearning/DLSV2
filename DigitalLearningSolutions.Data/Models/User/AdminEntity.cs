@@ -38,5 +38,15 @@
             UserAccount.PrimaryEmail,
             UserCentreDetails?.Email
         );
+
+        public string? CategoryName => AdminAccount.CategoryName;
+        public bool IsLocked => UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold;
+        public bool IsCmsAdministrator => AdminAccount.IsCmsAdministrator;
+        public bool IsCmsManager => AdminAccount.IsCmsManager;
+        public bool IsCentreAdmin => AdminAccount.IsCentreAdmin;
+        public bool IsSupervisor => AdminAccount.IsSupervisor;
+        public bool IsNominatedSupervisor => AdminAccount.IsNominatedSupervisor;
+        public bool IsTrainer => AdminAccount.IsTrainer;
+        public bool IsContentCreator => AdminAccount.IsContentCreator;
     }
 }

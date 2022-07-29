@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
@@ -61,6 +62,7 @@ namespace DigitalLearningSolutions.Web.Services
         private readonly IClockUtility clockUtility;
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
+        private readonly IGroupsService groupsService;
         private readonly ILogger<RegistrationService> logger;
         private readonly IPasswordDataService passwordDataService;
         private readonly IPasswordResetService passwordResetService;
@@ -82,7 +84,8 @@ namespace DigitalLearningSolutions.Web.Services
             INotificationDataService notificationDataService,
             ILogger<RegistrationService> logger,
             IUserService userService,
-            IClockUtility clockUtility
+            IClockUtility clockUtility,
+            IGroupsService groupsService
         )
         {
             this.registrationDataService = registrationDataService;
@@ -98,6 +101,7 @@ namespace DigitalLearningSolutions.Web.Services
             this.logger = logger;
             this.userService = userService;
             this.clockUtility = clockUtility;
+            this.groupsService = groupsService;
         }
 
         public (string candidateNumber, bool approved) CreateDelegateAccountForNewUser(
@@ -144,19 +148,23 @@ namespace DigitalLearningSolutions.Web.Services
 
             if (!delegateRegistrationModel.Approved)
             {
-                var recipients = notificationDataService.GetAdminRecipientsForCentreNotification(delegateRegistrationModel.Centre, 4);
+                var recipients =
+                    notificationDataService.GetAdminRecipientsForCentreNotification(
+                        delegateRegistrationModel.Centre,
+                        4
+                    );
 
                 foreach (var recipient in recipients)
                 {
                     if (recipient.Email != null && recipient.FirstName != null)
                     {
                         var approvalEmail = GenerateApprovalEmail(
-                        recipient.Email,
-                        recipient.FirstName,
-                        delegateRegistrationModel.FirstName,
-                        delegateRegistrationModel.LastName,
-                        refactoredTrackingSystemEnabled
-                    );
+                            recipient.Email,
+                            recipient.FirstName,
+                            delegateRegistrationModel.FirstName,
+                            delegateRegistrationModel.LastName,
+                            refactoredTrackingSystemEnabled
+                        );
                         emailService.SendEmail(approvalEmail);
                     }
                 }
@@ -223,6 +231,27 @@ namespace DigitalLearningSolutions.Web.Services
                     candidateNumber = delegateAccountAtCentre.CandidateNumber;
                     ReregisterDelegateAccountForExistingUser(userId, delegateId, delegateRegistrationModel);
                 }
+
+                groupsService.SynchroniseUserChangesWithGroups(
+                    delegateId,
+                    new AccountDetailsData(
+                        delegateRegistrationModel.FirstName,
+                        delegateRegistrationModel.LastName,
+                        delegateRegistrationModel.PrimaryEmail
+                    ),
+                    delegateRegistrationModel.GetRegistrationFieldAnswers(),
+                    new RegistrationFieldAnswers(
+                        delegateRegistrationModel.Centre,
+                        0,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    ),
+                    delegateRegistrationModel.CentreSpecificEmail
+                );
             }
             catch (DelegateCreationFailedException exception)
             {
@@ -432,6 +461,27 @@ namespace DigitalLearningSolutions.Web.Services
                 var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
                     registerJourneyContainsTermsAndConditions
+                );
+
+                groupsService.SynchroniseUserChangesWithGroups(
+                    delegateId,
+                    new AccountDetailsData(
+                        delegateRegistrationModel.FirstName,
+                        delegateRegistrationModel.LastName,
+                        delegateRegistrationModel.PrimaryEmail
+                    ),
+                    delegateRegistrationModel.GetRegistrationFieldAnswers(),
+                    new RegistrationFieldAnswers(
+                        delegateRegistrationModel.Centre,
+                        0,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    ),
+                    delegateRegistrationModel.CentreSpecificEmail
                 );
 
                 return (delegateId, candidateNumber);

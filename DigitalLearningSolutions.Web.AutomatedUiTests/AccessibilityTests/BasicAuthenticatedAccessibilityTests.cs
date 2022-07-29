@@ -140,6 +140,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/SuperAdmin/System/Faqs", "FAQs")]
         [InlineData("/VerifyEmail/EmailChanged", "Verify your email addresses")]
         [InlineData("/VerifyEmail/EmailNotVerified", "Verify your email addresses")]
+        [InlineData("/ClaimAccount/LinkDlsAccount?email=claimable_user@email.com&code=code", "Link delegate record")]
+        [InlineData("/ClaimAccount/AccountsLinked", "Delegate record linked")]
+        [InlineData("/ClaimAccount/WrongUser", "Link delegate record")]
+        [InlineData("/ClaimAccount/AccountAlreadyExists", "Link delegate record")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when

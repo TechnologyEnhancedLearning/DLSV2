@@ -37,7 +37,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -78,7 +79,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -119,7 +121,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -160,7 +163,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -202,7 +206,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -243,7 +248,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -286,7 +292,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -326,7 +333,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -361,7 +369,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -396,7 +405,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -431,7 +441,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -468,7 +479,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -500,7 +512,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
+                reusableDelegateDetails.Id,
+                reusableDelegateDetails.CentreId,
                 reusableEditAccountDetailsData,
                 null,
                 8
@@ -544,7 +557,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                oldDelegateDetails,
+                oldDelegateDetails.Id,
+                oldDelegateDetails.CentreId,
                 newAccountDetails,
                 null,
                 8
@@ -600,7 +614,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                oldDelegateDetails,
+                oldDelegateDetails.Id,
+                oldDelegateDetails.CentreId,
                 newAccountDetails,
                 null,
                 8
@@ -653,7 +668,8 @@
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
-                oldDelegateDetails,
+                oldDelegateDetails.Id,
+                oldDelegateDetails.CentreId,
                 newAccountDetails,
                 centreEmail,
                 8

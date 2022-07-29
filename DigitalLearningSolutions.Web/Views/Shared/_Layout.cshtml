@@ -120,7 +120,7 @@
                 </a>
               </li>
             }
-            @if (User.Identity.IsAuthenticated && User.GetAdminId() != null) {
+            @if (User.IsAdminAccount()) {
               <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.SwitchApplication)">
                 <a class="nhsuk-header__navigation-link" asp-controller="ApplicationSelector" asp-action="Index">
                   Switch application

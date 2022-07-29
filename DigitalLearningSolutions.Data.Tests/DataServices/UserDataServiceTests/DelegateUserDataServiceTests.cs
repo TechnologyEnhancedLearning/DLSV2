@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Transactions;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -519,6 +520,39 @@
                 new { userId, centreId }
             ).SingleOrDefault();
             result.Should().Be(hash);
+        }
+
+        [Test]
+        public void LinkDelegateAccountToNewUser_updates_UserId_and_sets_RegistrationConfirmationHash_to_null()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userIdForDelegateAccountAfterUpdate = 2;
+
+            var delegateEntity = userDataService.GetDelegateByCandidateNumber("CLAIMABLEUSER1")!;
+            var currentUserIdForDelegateAccount = delegateEntity.UserAccount.Id;
+            var delegateId = delegateEntity.DelegateAccount.Id;
+            var centreId = delegateEntity.DelegateAccount.CentreId;
+
+            var newUserDelegateAccountsBeforeUpdate =
+                userDataService.GetDelegateAccountsByUserId(userIdForDelegateAccountAfterUpdate);
+
+            // When
+            userDataService.LinkDelegateAccountToNewUser(
+                currentUserIdForDelegateAccount,
+                userIdForDelegateAccountAfterUpdate,
+                centreId
+            );
+
+            // Then
+            newUserDelegateAccountsBeforeUpdate.Should()
+                .NotContain(delegateAccount => delegateAccount.CentreId == centreId);
+
+            var updatedDelegateEntity = userDataService.GetDelegateById(delegateId)!;
+
+            updatedDelegateEntity.UserAccount.Id.Should().Be(userIdForDelegateAccountAfterUpdate);
+            updatedDelegateEntity.DelegateAccount.RegistrationConfirmationHash.Should().Be(null);
         }
     }
 }

@@ -15,6 +15,11 @@
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserId);
         }
 
+        public static bool IsMissingUserId(this ClaimsPrincipal user)
+        {
+            return user.Identity.IsAuthenticated && user.GetUserId() == null;
+        }
+
         public static int? GetAdminId(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
@@ -125,6 +130,11 @@
         public static bool HasLearningPortalPermissions(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false;
+        }
+
+        public static bool IsAdminAccount(this ClaimsPrincipal user)
+        {
+            return user.GetUserId() != null && user.GetAdminId() != null;
         }
 
         public static bool HasCentreAdminPermissions(this ClaimsPrincipal user)

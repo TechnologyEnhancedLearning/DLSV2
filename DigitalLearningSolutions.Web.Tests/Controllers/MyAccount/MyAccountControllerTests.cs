@@ -73,9 +73,9 @@
         public void EditDetailsPostSave_with_invalid_model_doesnt_call_services()
         {
             // Given
-            var myAccountController = GetMyAccountController().WithMockUser(true);
+            var myAccountController = GetMyAccountController().WithMockUser(true, null);
             var formData = new MyAccountEditDetailsFormData();
-            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData);
+            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, null);
 
             myAccountController.ModelState.AddModelError(nameof(MyAccountEditDetailsFormData.Email), "Required");
 
@@ -112,7 +112,8 @@
         public void EditDetailsPostSave_with_missing_delegate_answers_fails_validation()
         {
             // Given
-            var myAccountController = GetMyAccountController().WithMockUser(true, adminId: null);
+            const int centreId = 2;
+            var myAccountController = GetMyAccountController().WithMockUser(true, centreId, adminId: null);
 
             var customPromptLists = new List<CentreRegistrationPrompt>
             {
@@ -134,7 +135,7 @@
                 null
             );
 
-            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData);
+            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, centreId);
             expectedModel.DelegateRegistrationPrompts.Add(expectedPrompt);
 
             A.CallTo(() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
@@ -218,7 +219,7 @@
                 HasProfessionalRegistrationNumber = false,
             };
 
-            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData);
+            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, centreId);
 
             // When
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
@@ -246,6 +247,107 @@
             {
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
             }
+        }
+
+        [Test]
+        public void EditDetailsPostSave_validates_duplicate_centre_specific_emails()
+        {
+            // Given
+            const string primaryEmail = "primary@email.com";
+            const int userId = 2;
+            var myAccountController = new MyAccountController(
+                    centreRegistrationPromptsService,
+                    userService,
+                    userDataService,
+                    imageResizeService,
+                    jobGroupsDataService,
+                    promptsService,
+                    logger,
+                    config
+                ).WithDefaultContext()
+                .WithMockUser(true, null, userId: userId, delegateId: null);
+
+            var allCentreSpecificEmailsDictionary = new Dictionary<string, string?>
+            {
+                { "2", null },
+                { "3", "email@centre3.com" },
+                { "4", "reused_email@centre4.com" },
+            };
+
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(primaryEmail, userId)).Returns(false);
+
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        "email@centre3.com",
+                        3,
+                        userId
+                    )
+                )
+                .Returns(false);
+
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        "reused_email@centre4.com",
+                        4,
+                        userId
+                    )
+                )
+                .Returns(true);
+
+            var formData = new MyAccountEditDetailsFormData
+            {
+                FirstName = "Test",
+                LastName = "User",
+                AllCentreSpecificEmailsDictionary = allCentreSpecificEmailsDictionary,
+                JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
+            };
+
+            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, null);
+
+            // When
+            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+
+            // Then
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        A<string>._,
+                        2,
+                        A<int>._
+                    )
+                )
+                .MustNotHaveHappened();
+
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        "email@centre3.com",
+                        3,
+                        userId
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+
+            A.CallTo(
+                    () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                        "reused_email@centre4.com",
+                        4,
+                        userId
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+
+            myAccountController.ModelState[$"{nameof(formData.AllCentreSpecificEmailsDictionary)}_4"]
+                .ValidationState.Should().Be
+                    (ModelValidationState.Invalid);
+
+            myAccountController.ModelState.Count.Should().Be(1); // The values for centres 2 and 3 are not invalid
+
+            result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should()
+                .BeEquivalentTo(expectedModel);
+
+            var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
+                .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
+            errorMessage.Should().BeEquivalentTo("This email is in already use by another user at the centre");
         }
 
         [Test]
@@ -393,7 +495,8 @@
         public void EditDetailsPostSave_without_previewing_profile_image_fails_validation()
         {
             // Given
-            var myAccountController = GetMyAccountController().WithMockUser(true, adminId: null);
+            const int centreId = 2;
+            var myAccountController = GetMyAccountController().WithMockUser(true, centreId, adminId: null);
 
             var customPromptLists = new List<CentreRegistrationPrompt>
             {
@@ -413,11 +516,11 @@
                 null
             );
 
-            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData);
+            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, centreId);
             expectedModel.DelegateRegistrationPrompts.Add(expectedPrompt);
 
             A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(2)).Returns(
-                PromptsTestHelper.GetDefaultCentreRegistrationPrompts(customPromptLists, 2)
+                PromptsTestHelper.GetDefaultCentreRegistrationPrompts(customPromptLists, centreId)
             );
 
             // When
@@ -528,7 +631,7 @@
 
             var (myAccountController, formData) =
                 GetCentrelessControllerAndFormData(userId, centreSpecificEmailsByCentreId);
-            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData);
+            var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, null);
 
             myAccountController.ModelState.AddModelError(nameof(MyAccountEditDetailsFormData.Email), "Required");
 
@@ -606,11 +709,13 @@
         }
 
         private static MyAccountEditDetailsViewModel GetBasicMyAccountEditDetailsViewModel(
-            MyAccountEditDetailsFormData formData
+            MyAccountEditDetailsFormData formData,
+            int? centreId
         )
         {
             return new MyAccountEditDetailsViewModel(
                 formData,
+                centreId,
                 new List<(int id, string name)>(),
                 new List<EditDelegateRegistrationPromptViewModel>(),
                 new List<(int, string, string?)>(),

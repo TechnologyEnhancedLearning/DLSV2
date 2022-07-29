@@ -42,11 +42,13 @@
             int delegateId,
             AccountDetailsData accountDetailsData,
             RegistrationFieldAnswers newDelegateDetails,
+            RegistrationFieldAnswers oldRegistrationFieldAnswers,
             string? centreEmail
         );
 
         void EnrolDelegateOnGroupCourses(
-            DelegateUser delegateAccountWithOldDetails,
+            int delegateId,
+            int centreId,
             AccountDetailsData newDetails,
             string? centreEmail,
             int groupId,
@@ -170,20 +172,20 @@
             int delegateId,
             AccountDetailsData accountDetailsData,
             RegistrationFieldAnswers registrationFieldAnswers,
+            RegistrationFieldAnswers oldRegistrationFieldAnswers,
             string? centreEmail
         )
         {
-            var delegateAccountWithOldDetails = userDataService.GetDelegateUserById(delegateId)!;
-
+            using var transaction = new TransactionScope();
             var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldChanges(
-                delegateAccountWithOldDetails.GetRegistrationFieldAnswers(),
+                oldRegistrationFieldAnswers,
                 registrationFieldAnswers,
                 jobGroupsDataService,
                 centreRegistrationPromptsService
             );
 
             var allSynchronisedGroupsAtCentre =
-                GetSynchronisedGroupsForCentre(delegateAccountWithOldDetails.CentreId).ToList();
+                GetSynchronisedGroupsForCentre(registrationFieldAnswers.CentreId).ToList();
 
             foreach (var changedAnswer in changedLinkedFields)
             {
@@ -197,48 +199,49 @@
                          GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.NewValue, changedAnswer.LinkedFieldName)
                 );
 
-                using var transaction = new TransactionScope();
                 foreach (var groupToRemoveDelegateFrom in groupsToRemoveDelegateFrom)
                 {
-                    RemoveDelegateFromGroup(delegateAccountWithOldDetails.Id, groupToRemoveDelegateFrom.GroupId);
+                    RemoveDelegateFromGroup(delegateId, groupToRemoveDelegateFrom.GroupId);
                 }
 
                 foreach (var groupToAddDelegateTo in groupsToAddDelegateTo)
                 {
                     groupsDataService.AddDelegateToGroup(
-                        delegateAccountWithOldDetails.Id,
+                        delegateId,
                         groupToAddDelegateTo.GroupId,
                         clockUtility.UtcNow,
                         1
                     );
 
                     EnrolDelegateOnGroupCourses(
-                        delegateAccountWithOldDetails,
+                        delegateId,
+                        registrationFieldAnswers.CentreId,
                         accountDetailsData,
                         centreEmail,
                         groupToAddDelegateTo.GroupId
                     );
                 }
-
-                transaction.Complete();
             }
+
+            transaction.Complete();
         }
 
         public void EnrolDelegateOnGroupCourses(
-            DelegateUser delegateAccountWithOldDetails,
+            int delegateId,
+            int centreId,
             AccountDetailsData newDetails,
             string? centreEmail,
             int groupId,
             int? addedByAdminId = null
         )
         {
-            var groupCourses = GetUsableGroupCoursesForCentre(groupId, delegateAccountWithOldDetails.CentreId);
+            var groupCourses = GetUsableGroupCoursesForCentre(groupId, centreId);
             var fullName = newDetails.FirstName + " " + newDetails.Surname;
 
             foreach (var groupCourse in groupCourses)
             {
                 EnrolDelegateOnGroupCourse(
-                    delegateAccountWithOldDetails.Id,
+                    delegateId,
                     centreEmail ?? newDetails.Email,
                     fullName,
                     addedByAdminId,
@@ -289,7 +292,8 @@
             );
 
             EnrolDelegateOnGroupCourses(
-                delegateUser,
+                delegateUser.Id,
+                delegateUser.CentreId,
                 accountDetailsData,
                 delegateEntity.EmailForCentreNotifications,
                 groupId,
@@ -500,6 +504,27 @@
             transaction.Complete();
         }
 
+        private void EnrolNewDelegateOnGroupCourse(
+            DelegateEntity newDelegateEntity,
+            int groupId,
+            int? addedByAdminId = null
+        )
+        {
+            var groupCourses = GetUsableGroupCoursesForCentre(groupId, newDelegateEntity.DelegateAccount.CentreId);
+
+            foreach (var groupCourse in groupCourses)
+            {
+                EnrolDelegateOnGroupCourse(
+                    newDelegateEntity.DelegateAccount.Id,
+                    newDelegateEntity.EmailForCentreNotifications,
+                    newDelegateEntity.UserAccount.FullName,
+                    addedByAdminId,
+                    groupCourse,
+                    false
+                );
+            }
+        }
+
         private void EnrolDelegateOnGroupCourse(
             int delegateUserId,
             string delegateUserEmailAddress,
@@ -576,11 +601,11 @@
                 .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
         }
 
-        private static bool GroupLabelMatchesAnswer(string groupLabel, string answer, string linkedFieldName)
+        private static bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string linkedFieldName)
         {
-            return string.Equals(groupLabel, answer, StringComparison.CurrentCultureIgnoreCase) || string.Equals(
+            return !string.IsNullOrEmpty(answer) && string.Equals(groupLabel, answer, StringComparison.CurrentCultureIgnoreCase) || string.Equals(
                 groupLabel,
-                GetGroupNameWithPrefix(linkedFieldName, answer),
+                GetGroupNameWithPrefix(linkedFieldName, answer!),
                 StringComparison.CurrentCultureIgnoreCase
             );
         }

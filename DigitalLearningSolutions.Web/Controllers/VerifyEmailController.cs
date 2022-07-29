@@ -7,7 +7,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [Authorize]
+    [Authorize(Policy = CustomPolicies.BasicUser)]
     public class VerifyEmailController : Controller
     {
         private readonly IUserService userService;

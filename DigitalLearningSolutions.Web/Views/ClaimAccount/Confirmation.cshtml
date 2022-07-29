@@ -7,15 +7,15 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-l" id="app-page-heading">
+    <h1 class="nhsuk-heading-x1" id="app-page-heading">
       Delegate registration complete
     </h1>
 
     <p class="nhsuk-body-m">
-      You should make a note of your delegate ID and keep it safe. You can use it to log in to the Learning Portal and any DigitalLearningSolution courses.
+      You should make a note of your delegate ID and keep it safe. You can use it to log in to the Learning Portal and any Digital Learning Solutions courses.
     </p>
 
-    <dl class="nhsuk-summary-list--no-border nhsuk-body-m">
+    <dl class="nhsuk-summary-list--no-border nhsuk-body-m word-break">
       <div class="nhsuk-summary-list__row basic-summary-list__row">
         <dt class="nhsuk-summary-list__key">
           Centre:
@@ -26,7 +26,7 @@
         <dt class="nhsuk-summary-list__key">
           Primary email:
         </dt>
-        <partial name="_SummaryFieldValue" model="@Model.CentreSpecificEmail" />
+        <partial name="_SummaryFieldValue" model="@Model.Email" />
       </div>
       <div class="nhsuk-summary-list__row basic-summary-list__row">
         <dt class="nhsuk-summary-list__key">
@@ -37,7 +37,7 @@
     </dl>
 
     <p class="nhsuk-body-m">
-      You can now login using the primary email or delegate ID and the password your admin has set for you.
+      You can now log in using your primary email or delegate ID and the password your admin has set for you.
     </p>
 
     <vc:action-link asp-controller="Login" asp-action="Index" link-text="Log in" />

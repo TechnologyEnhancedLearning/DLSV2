@@ -95,6 +95,18 @@
             result.Should().Be(expectedResult);
         }
 
+        [TestCase("test@gmail.com", -1, true)]
+        [TestCase("test@gmail.com", 2, false, TestName = "User id matches email")]
+        [TestCase("not_an_email_in_the_database", 2, false)]
+        public void PrimaryEmailIsInUseByOtherUser_returns_expected_value(string email, int userId, bool expectedResult)
+        {
+            // When
+            var result = userDataService.PrimaryEmailIsInUseByOtherUser(email, userId);
+
+            // Then
+            result.Should().Be(expectedResult);
+        }
+
         [Test]
         public void SetPrimaryEmailAndActivate_sets_primary_email_and_activates_user()
         {
@@ -114,16 +126,43 @@
             result.Active.Should().BeTrue();
         }
 
-        [TestCase("test@gmail.com", -1, true)]
-        [TestCase("test@gmail.com", 2, false, TestName = "User id matches email")]
-        [TestCase("not_an_email_in_the_database", 2, false)]
-        public void PrimaryEmailIsInUseByOtherUser_returns_expected_value(string email, int userId, bool expectedResult)
+        [Test]
+        public void DeleteUser_deletes_expected_user()
         {
+            using var transaction = new TransactionScope();
+
+            // Given
+
+            // Create a new user with no delegate or admin accounts so that it can be deleted without failing
+            // a referential integrity check in the database.
+            var userId = connection.QuerySingle<int>(
+                @"INSERT INTO Users
+                (
+                    PrimaryEmail,
+                    PasswordHash,
+                    FirstName,
+                    LastName,
+                    JobGroupID,
+                    Active,
+                    FailedLoginCount,
+                    HasBeenPromptedForPrn,
+                    HasDismissedLhLoginWarning
+                )
+                OUTPUT Inserted.ID
+                VALUES
+                ('DeleteUser_deletes_expected_user@email.com', 'password', 'test', 'user', 1, 1, 0, 1, 1)"
+            );
+
+            var user = userDataService.GetUserAccountById(userId);
+
             // When
-            var result = userDataService.PrimaryEmailIsInUseByOtherUser(email, userId);
+            userDataService.DeleteUser(userId);
 
             // Then
-            result.Should().Be(expectedResult);
+            var result = userDataService.GetUserAccountById(userId);
+
+            result.Should().BeNull();
+            user.Should().NotBeNull();
         }
     }
 }

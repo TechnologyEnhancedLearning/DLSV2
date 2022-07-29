@@ -62,7 +62,7 @@ namespace DigitalLearningSolutions.Web
                         options.Cookie.Name = ".AspNet.SharedCookie";
                         options.Cookie.Path = "/";
                         options.Events.OnRedirectToLogin = RedirectToLogin;
-                        options.Events.OnRedirectToAccessDenied = RedirectToAccessDenied;
+                        options.Events.OnRedirectToAccessDenied = RedirectToAccessDeniedOrLogout;
                     }
                 );
 
@@ -80,6 +80,10 @@ namespace DigitalLearningSolutions.Web
                     options.AddPolicy(
                         CustomPolicies.UserDelegateOnly,
                         policy => CustomPolicies.ConfigurePolicyUserDelegateOnly(policy)
+                    );
+                    options.AddPolicy(
+                        CustomPolicies.UserAdmin,
+                        policy => CustomPolicies.ConfigurePolicyUserAdmin(policy)
                     );
                     options.AddPolicy(
                         CustomPolicies.UserCentreAdmin,
@@ -356,9 +360,10 @@ namespace DigitalLearningSolutions.Web
             return Task.CompletedTask;
         }
 
-        private Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
+        private Task RedirectToAccessDeniedOrLogout(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect(config.GetAppRootPath() + "/AccessDenied");
+            var redirectTo = context.HttpContext.User.IsMissingUserId() ? "/PleaseLogout" : "/AccessDenied";
+            context.HttpContext.Response.Redirect(config.GetAppRootPath() + redirectTo);
             return Task.CompletedTask;
         }
     }

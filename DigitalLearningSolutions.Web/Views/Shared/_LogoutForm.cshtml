@@ -1,5 +1,8 @@
-﻿<form asp-controller="Logout" asp-action="Index" method="post">
-  <button type="submit" class="nhsuk-button nhsuk-button--secondary">
+﻿@using DigitalLearningSolutions.Data.Enums
+@model ButtonType
+
+<form asp-controller="Logout" asp-action="Index" method="post">
+  <button type="submit" class="@Model.CssClass">
     Log out
   </button>
 </form>

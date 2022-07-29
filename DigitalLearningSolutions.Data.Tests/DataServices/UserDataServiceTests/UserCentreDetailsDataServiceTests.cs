@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.UserDataServiceTests
 {
+    using System;
     using System.Linq;
     using System.Transactions;
     using Dapper;
@@ -34,6 +35,40 @@
 
             // Then
             result.Should().BeEquivalentTo(email);
+            count.Should().Equal(entriesCount);
+        }
+
+        [Test]
+        [TestCase(true, null, 1)]
+        [TestCase(true, "new@admin.email", 1)]
+        [TestCase(false, null, 0)]
+        [TestCase(false, "new@admin.email", 1)]
+        public void SetCentreEmail_sets_emailVerified_if_provided_and_email_not_empty(
+            bool detailsExist,
+            string? email,
+            int entriesCount
+        )
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            var emailVerified = new DateTime(2022, 2, 2);
+            if (detailsExist)
+            {
+                connection.Execute(
+                    @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                        VALUES (8, 374, 'sample@admin.email')"
+                );
+            }
+
+            // When
+            userDataService.SetCentreEmail(8, 374, email, emailVerified);
+            var result = connection.Query<DateTime?>(@"SELECT EmailVerified FROM UserCentreDetails WHERE UserID = 8")
+                .SingleOrDefault();
+            var count = connection.Query<int>(@"SELECT COUNT(*) FROM UserCentreDetails WHERE UserID = 8");
+
+            // Then
+            result.Should().Be(email == null ? (DateTime?)null : emailVerified);
             count.Should().Equal(entriesCount);
         }
 
@@ -316,6 +351,52 @@
 
             // Then
             result.Should().Be((userId, centreId, centreName));
+        }
+
+        [Test]
+        public void LinkUserCentreDetailsToNewUser_updates_UserId_in_claimed_UserCentreDetails()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userIdForUserCentreDetailsAfterUpdate = 2;
+
+            var delegateEntity = userDataService.GetDelegateByCandidateNumber("CLAIMABLEUSER1")!;
+            var currentUserIdForUserCentreDetails = delegateEntity.UserAccount.Id;
+            var centreId = delegateEntity.DelegateAccount.CentreId;
+            var userCentreDetailsId = delegateEntity.UserCentreDetails!.Id;
+            var email = delegateEntity.UserCentreDetails.Email;
+
+            var newUser = userDataService.GetUserAccountById(userIdForUserCentreDetailsAfterUpdate);
+
+            var newUserUserCentreDetailsBeforeUpdate = connection.Query<(int, string)>(
+                @"SELECT CentreID, Email FROM UserCentreDetails
+                    WHERE UserID = @userIdForUserCentreDetailsAfterUpdate",
+                new { userIdForUserCentreDetailsAfterUpdate }
+            );
+
+            // When
+            userDataService.LinkUserCentreDetailsToNewUser(
+                currentUserIdForUserCentreDetails,
+                userIdForUserCentreDetailsAfterUpdate,
+                centreId
+            );
+
+            // Then
+            newUser.Should().NotBeNull();
+
+            newUserUserCentreDetailsBeforeUpdate.Should()
+                .NotContain(row => row.Item1 == centreId && row.Item2 == email);
+
+            var updatedUserCentreDetails = connection.QuerySingle<(int, int, string)>(
+                @"SELECT UserID, CentreID, Email FROM UserCentreDetails
+                        WHERE ID = @userCentreDetailsId",
+                new { userCentreDetailsId }
+            );
+
+            updatedUserCentreDetails.Item1.Should().Be(userIdForUserCentreDetailsAfterUpdate);
+            updatedUserCentreDetails.Item2.Should().Be(centreId);
+            updatedUserCentreDetails.Item3.Should().Be(email);
         }
 
         private void GivenUnclaimedUserExists(int userId, int centreId, string email, string hash)

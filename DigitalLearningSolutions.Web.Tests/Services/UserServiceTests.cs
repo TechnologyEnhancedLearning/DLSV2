@@ -197,6 +197,7 @@
                         accountDetailsData.UserId,
                         centreId,
                         centreEmail,
+                        null,
                         A<IDbTransaction?>._
                     )
                 )
@@ -216,6 +217,7 @@
             const string answer6 = "answer6";
             const bool shouldUpdateProfileImage = true;
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(delegateAccount.Id);
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var delegateDetailsData = new DelegateDetailsData(
                 delegateAccount.Id,
@@ -229,6 +231,7 @@
 
             var detailsLastChecked = new DateTime(2022, 1, 1);
             A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateAccount.Id)).Returns(delegateUser);
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -273,17 +276,94 @@
                     delegateDetailsData.DelegateId,
                     accountDetailsData,
                     A<RegistrationFieldAnswers>.That.Matches(
-                        rfa => rfa.JobGroupId == accountDetailsData.JobGroupId &&
-                               rfa.Answer1 == answer1 &&
-                               rfa.Answer2 == answer2 &&
-                               rfa.Answer3 == answer3 &&
-                               rfa.Answer4 == answer4 &&
-                               rfa.Answer5 == answer5 &&
-                               rfa.Answer6 == answer6
+                        rfa =>
+                            rfa.JobGroupId == accountDetailsData.JobGroupId &&
+                            rfa.Answer1 == answer1 &&
+                            rfa.Answer2 == answer2 &&
+                            rfa.Answer3 == answer3 &&
+                            rfa.Answer4 == answer4 &&
+                            rfa.Answer5 == answer5 &&
+                            rfa.Answer6 == answer6
+                    ),
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        rfa =>
+                            rfa.JobGroupId == delegateUser.JobGroupId &&
+                            rfa.CentreId == delegateUser.CentreId &&
+                            rfa.Answer1 == delegateUser.Answer1 &&
+                            rfa.Answer2 == delegateUser.Answer2 &&
+                            rfa.Answer3 == delegateUser.Answer3 &&
+                            rfa.Answer4 == delegateUser.Answer4 &&
+                            rfa.Answer5 == delegateUser.Answer5 &&
+                            rfa.Answer6 == delegateUser.Answer6
                     ),
                     null
                 )
             ).MustHaveHappened();
+        }
+
+        [Test]
+        public void
+            UpdateUserDetailsAndCentreSpecificDetails_with_changeMadeBySameUser_true_does_not_set_emailVerified()
+        {
+            // Given
+            const int centreId = 1;
+            const string centreEmail = "test@email.com";
+            const bool changeMadeBySameUser = true;
+            var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
+            var detailsLastChecked = new DateTime(2022, 1, 1);
+            A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+
+            // When
+            userService.UpdateUserDetailsAndCentreSpecificDetails(
+                accountDetailsData,
+                null,
+                centreEmail,
+                centreId,
+                changeMadeBySameUser
+            );
+
+            // Then
+            A.CallTo(
+                () => userDataService.SetCentreEmail(
+                    accountDetailsData.UserId,
+                    centreId,
+                    centreEmail,
+                    null,
+                    A<IDbTransaction?>._
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void UpdateUserDetailsAndCentreSpecificDetails_with_changeMadeBySameUser_false_sets_emailVerified()
+        {
+            // Given
+            const int centreId = 1;
+            const string centreEmail = "test@email.com";
+            const bool changeMadeBySameUser = false;
+            var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
+            var detailsLastChecked = new DateTime(2022, 1, 1);
+            A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+
+            // When
+            userService.UpdateUserDetailsAndCentreSpecificDetails(
+                accountDetailsData,
+                null,
+                centreEmail,
+                centreId,
+                changeMadeBySameUser
+            );
+
+            // Then
+            A.CallTo(
+                () => userDataService.SetCentreEmail(
+                    accountDetailsData.UserId,
+                    centreId,
+                    centreEmail,
+                    detailsLastChecked,
+                    A<IDbTransaction?>._
+                )
+            ).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -369,7 +449,7 @@
             };
 
             A.CallTo(
-                () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, null, A<IDbTransaction?>._)
             ).DoesNothing();
 
             // When
@@ -377,13 +457,13 @@
 
             // Then
             A.CallTo(
-                () => userDataService.SetCentreEmail(userId, 1, "email@centre1.com", A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(userId, 1, "email@centre1.com", null, A<IDbTransaction?>._)
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
-                () => userDataService.SetCentreEmail(userId, 2, "email@centre2.com", A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(userId, 2, "email@centre2.com", null, A<IDbTransaction?>._)
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
-                () => userDataService.SetCentreEmail(userId, 3, null, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(userId, 3, null, null, A<IDbTransaction?>._)
             ).MustHaveHappenedOnceExactly();
         }
 
@@ -398,7 +478,7 @@
 
             // Then
             A.CallTo(
-                () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, null, A<IDbTransaction?>._)
             ).MustNotHaveHappened();
         }
 

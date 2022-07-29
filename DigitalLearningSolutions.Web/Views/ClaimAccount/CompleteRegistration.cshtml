@@ -8,28 +8,20 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
 
-    <h1 class="nhsuk-heading-l" id="app-page-heading">
+    <h1 class="nhsuk-heading-x1" id="app-page-heading">
       Complete registration
     </h1>
-    <dl class="nhsuk-summary-list--no-border nhsuk-body-m">
-      <div class="nhsuk-summary-list__row basic-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Centre:
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.CentreName" />
-      </div>
-      <div class="nhsuk-summary-list__row basic-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Email:
-        </dt>
-        <partial name="_SummaryFieldValue" model="@Model.CentreSpecificEmail" />
-      </div>
-    </dl>
 
-    <p class="nhsuk-body-m">Are you sure you would like to create a new login for this account?</p>
+    <partial name="_DelegateRecordSummary" model="@Model" />
 
-    <form method="post" asp-action="CompleteRegistration">
-      <button class="nhsuk-button" type="submit">Create login</button>
+    <p class="nhsuk-body-m">Are you sure you would like to activate this delegate record?</p>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="CompleteRegistration">
+      <input type="hidden" asp-for="Email" />
+      <input type="hidden" name="code" value="@Model.RegistrationConfirmationHash" />
+      <button class="nhsuk-button" type="submit">Activate</button>
     </form>
+
+    <vc:cancel-link asp-controller="Home" asp-action="Index" />
   </div>
 </div>
