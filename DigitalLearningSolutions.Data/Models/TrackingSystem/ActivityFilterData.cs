@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public class ActivityFilterData
     {
@@ -31,11 +32,12 @@
         public DateTime? EndDate { get; set; }
         public ReportInterval ReportInterval { get; set; }
         public CourseFilterType FilterType { get; set; }
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
 
         public static ActivityFilterData GetDefaultFilterData(int? categoryIdFilter)
         {
             return new ActivityFilterData(
-                DateTime.UtcNow.Date.AddYears(-1),
+                ClockUtility.UtcNow.Date.AddYears(-1),
                 null,
                 null,
                 categoryIdFilter,

@@ -4,12 +4,14 @@
     using System.Collections.Generic;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Utilities;
     using FluentAssertions;
     using Microsoft.Data.SqlClient;
 
     public class SessionTestHelper
     {
         private readonly SqlConnection connection;
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
 
         public SessionTestHelper(SqlConnection connection)
         {
@@ -58,7 +60,7 @@
             bool active = true
         )
         {
-            loginTime ??= DateTime.UtcNow;
+            loginTime ??= ClockUtility.UtcNow;
             return new Session(sessionId, candidateId, customisationId, loginTime.Value, duration, active);
         }
 

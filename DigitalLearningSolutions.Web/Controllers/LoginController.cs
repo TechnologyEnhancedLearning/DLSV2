@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -26,18 +27,21 @@
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
         private readonly IUserService userService;
+        private readonly IClockUtility clockUtility;
 
         public LoginController(
             ILoginService loginService,
             ISessionService sessionService,
             ILogger<LoginController> logger,
-            IUserService userService
+            IUserService userService,
+            IClockUtility clockUtility
         )
         {
             this.loginService = loginService;
             this.sessionService = sessionService;
             this.logger = logger;
             this.userService = userService;
+            this.clockUtility = clockUtility;
         }
 
         public IActionResult Index(string? returnUrl = null)
@@ -138,7 +142,7 @@
             {
                 AllowRefresh = true,
                 IsPersistent = rememberMe,
-                IssuedUtc = DateTime.UtcNow,
+                IssuedUtc = clockUtility.UtcNow,
             };
 
             var adminAccount = userEntity!.GetCentreAccountSet(centreIdToLogInto)?.AdminAccount;
@@ -178,7 +182,7 @@
             {
                 AllowRefresh = true,
                 IsPersistent = rememberMe,
-                IssuedUtc = DateTime.UtcNow,
+                IssuedUtc = clockUtility.UtcNow,
             };
 
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);

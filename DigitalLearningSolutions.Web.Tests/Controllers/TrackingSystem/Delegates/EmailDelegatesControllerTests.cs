@@ -30,6 +30,7 @@
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IUserService userService = null!;
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void Setup()
@@ -41,6 +42,7 @@
             passwordResetService = A.Fake<IPasswordResetService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             config = A.Fake<IConfiguration>();
+            clockUtility = A.Fake<IClockUtility>();
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
@@ -53,7 +55,8 @@
                     passwordResetService,
                     userService,
                     searchSortFilterPaginateService,
-                    config
+                    config,
+                    clockUtility
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)

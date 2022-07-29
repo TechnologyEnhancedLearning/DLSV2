@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public interface IActivityService
     {
@@ -42,18 +43,21 @@
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseDataService courseDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IClockUtility clockUtility;
 
         public ActivityService(
             IActivityDataService activityDataService,
             IJobGroupsDataService jobGroupsDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
-            ICourseDataService courseDataService
+            ICourseDataService courseDataService,
+            IClockUtility clockUtility
         )
         {
             this.activityDataService = activityDataService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.courseCategoriesDataService = courseCategoriesDataService;
             this.courseDataService = courseDataService;
+            this.clockUtility = clockUtility;
         }
 
         public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData)
@@ -73,7 +77,7 @@
 
             var dateSlots = DateHelper.GetPeriodsBetweenDates(
                 filterData.StartDate,
-                filterData.EndDate ?? DateTime.UtcNow,
+                filterData.EndDate ?? clockUtility.UtcNow,
                 filterData.ReportInterval
             );
 
@@ -139,7 +143,7 @@
                         DateInformation.GetDateRangeLabel(
                             DateHelper.StandardDateFormat,
                             filterData.StartDate,
-                            filterData.EndDate ?? DateTime.Now
+                            filterData.EndDate ?? clockUtility.UtcNow
                         ),
                         p.Registrations,
                         p.Completions,
@@ -161,7 +165,7 @@
                 var lastRow = new WorkbookRow(
                     last.DateInformation.GetDateRangeLabel(
                         DateHelper.StandardDateFormat,
-                        filterData.EndDate ?? DateTime.Now,
+                        filterData.EndDate ?? clockUtility.UtcNow,
                         true
                     ),
                     last.Registrations,
@@ -205,7 +209,7 @@
 
             var endDateIsSet = DateTime.TryParse(endDateString, out var endDate);
 
-            if (endDateIsSet && (endDate < startDate || endDate > DateTime.Now))
+            if (endDateIsSet && (endDate < startDate || endDate > clockUtility.UtcNow))
             {
                 return null;
             }

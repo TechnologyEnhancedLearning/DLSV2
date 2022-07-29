@@ -3,9 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public static class DateValidator
     {
+        private static readonly ClockUtility ClockUtility = new ClockUtility();
+
         public static DateValidationResult ValidateDate(
             int? day,
             int? month,
@@ -60,12 +63,12 @@
             try
             {
                 var date = new DateTime(year, month, day);
-                if (dateMustNotBeInPast && date < DateTime.Today)
+                if (dateMustNotBeInPast && date < ClockUtility.UtcToday)
                 {
                     return new DateValidationResult("Enter " + NameWithIndefiniteArticle(name) + " not in the past");
                 }
 
-                if (dateMustNotBeInFuture && date > DateTime.Today)
+                if (dateMustNotBeInFuture && date > ClockUtility.UtcToday)
                 {
                     return new DateValidationResult("Enter " + NameWithIndefiniteArticle(name) + " not in the future");
                 }

@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -38,6 +39,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
+        private readonly IClockUtility clockUtility;
 
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
@@ -45,7 +47,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             ICryptoService cryptoService,
             IUserDataService userDataService,
             IRegistrationService registrationService,
-            IConfiguration config
+            IConfiguration config,
+            IClockUtility clockUtility
         )
         {
             this.jobGroupsDataService = jobGroupsDataService;
@@ -54,6 +57,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
             this.config = config;
+            this.clockUtility = clockUtility;
         }
 
         [Route("/TrackingSystem/Delegates/Register")]
@@ -270,7 +274,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private void SetCentreDelegateRegistrationData(int centreId)
         {
-            var centreDelegateRegistrationData = new DelegateRegistrationByCentreData(centreId, DateTime.Today);
+            var centreDelegateRegistrationData = new DelegateRegistrationByCentreData(centreId, clockUtility.UtcToday);
             TempData.Set(centreDelegateRegistrationData);
         }
 
