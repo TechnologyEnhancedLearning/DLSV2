@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Services.GroupServiceTests
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -367,6 +368,97 @@
 
             // Then
             DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup1.GroupId, synchronisedGroup2.GroupId });
+        }
+
+        [Test]
+        public void UpdateSynchronisedDelegateGroupsBasedOnUserChanges_adds_delegate_to_appropriate_groups()
+        {
+            // Given
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer", answer2: "new answer2");
+            A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
+            var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                5,
+                "new answer",
+                linkedToField: 1,
+                changesToRegistrationDetailsShouldChangeGroupMembership: true,
+                shouldAddNewRegistrantsToGroup: false
+            );
+            var unsynchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                6,
+                "new answer2",
+                linkedToField: 2,
+                changesToRegistrationDetailsShouldChangeGroupMembership: false,
+                shouldAddNewRegistrantsToGroup: true
+            );
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(centreAnswersData.CentreId))
+                .Returns(new List<Group> { synchronisedGroup, unsynchronisedGroup });
+
+            // When
+            groupsService.UpdateSynchronisedDelegateGroupsBasedOnUserChanges(
+                reusableDelegateDetails.Id,
+                reusableEditAccountDetailsData,
+                centreAnswersData,
+                UserTestHelper.GetDefaultRegistrationFieldAnswers(reusableDelegateDetails.CentreId),
+                null
+            );
+
+            // Then
+            DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup.GroupId });
+            A.CallTo(
+                () => groupsDataService.AddDelegateToGroup(
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._,
+                    A<int>._
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void AddNewDelegateToAppropriateGroups_adds_delegate_to_appropriate_groups()
+        {
+            // Given
+            var registrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                answer1: "new answer",
+                answer2: "new answer2",
+                centre: 1
+            );
+            A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
+            var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                5,
+                "new answer",
+                linkedToField: 1,
+                changesToRegistrationDetailsShouldChangeGroupMembership: false,
+                shouldAddNewRegistrantsToGroup: true
+            );
+            var unsynchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                6,
+                "new answer2",
+                linkedToField: 2,
+                changesToRegistrationDetailsShouldChangeGroupMembership: true,
+                shouldAddNewRegistrantsToGroup: false
+            );
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(registrationModel.Centre))
+                .Returns(new List<Group> { synchronisedGroup, unsynchronisedGroup });
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(0)).Returns(null);
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(1)).Returns(null);
+
+            // When
+            groupsService.AddNewDelegateToAppropriateGroups(
+                reusableDelegateDetails.Id,
+                registrationModel
+            );
+
+            // Then
+            DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup.GroupId });
+            A.CallTo(
+                () => groupsDataService.AddDelegateToGroup(
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._,
+                    A<int>._
+                )
+            ).MustHaveHappenedOnceExactly();
         }
 
         private void DelegateMustHaveBeenRemovedFromGroups(IEnumerable<int> groupIds)
