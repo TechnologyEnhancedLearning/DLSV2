@@ -2,12 +2,14 @@
 {
     using System.Collections.Generic;
     using System.Data;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Register;
+    using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
     using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
@@ -23,6 +25,7 @@
         private const string DefaultSupportEmail = "support@email.com";
         private IUserDataService userDataService = null!;
         private IConfigDataService configDataService = null!;
+        private IPasswordService passwordService = null!;
         private ClaimAccountService claimAccountService = null!;
 
         [SetUp]
@@ -30,7 +33,8 @@
         {
             userDataService = A.Fake<IUserDataService>();
             configDataService = A.Fake<IConfigDataService>();
-            claimAccountService = new ClaimAccountService(userDataService, configDataService);
+            passwordService = A.Fake<IPasswordService>();
+            claimAccountService = new ClaimAccountService(userDataService, configDataService, passwordService);
         }
 
         [Test]
@@ -68,7 +72,7 @@
                     SupportEmail = DefaultSupportEmail,
                     IdOfUserMatchingEmailIfAny = null,
                     UserMatchingEmailIsActive = false,
-                    PasswordSet = false,
+                    WasPasswordSetByAdmin = false,
                 }
             );
         }
@@ -172,14 +176,19 @@
             );
 
             // Then
-            result.PasswordSet.Should().Be(expectedPasswordSet);
+            result.WasPasswordSetByAdmin.Should().Be(expectedPasswordSet);
         }
 
         [Test]
-        public void ConvertTemporaryUserToConfirmedUser_calls_data_services()
+        public async Task ConvertTemporaryUserToConfirmedUser_calls_expected_services_when_password_is_null()
         {
             // When
-            claimAccountService.ConvertTemporaryUserToConfirmedUser(DefaultUserId, DefaultCentreId, DefaultEmail);
+            await claimAccountService.ConvertTemporaryUserToConfirmedUser(
+                DefaultUserId,
+                DefaultCentreId,
+                DefaultEmail,
+                null
+            );
 
             // Then
             A.CallTo(() => userDataService.SetPrimaryEmailAndActivate(DefaultUserId, DefaultEmail))
@@ -196,6 +205,39 @@
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => userDataService.SetRegistrationConfirmationHash(DefaultUserId, DefaultCentreId, null))
                 .MustHaveHappenedOnceExactly();
+            A.CallTo(() => passwordService.ChangePasswordAsync(A<int>._, A<string>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task ConvertTemporaryUserToConfirmedUser_calls_expected_services_when_password_is_not_null()
+        {
+            // Given
+            const string password = "password";
+
+            // When
+            await claimAccountService.ConvertTemporaryUserToConfirmedUser(
+                DefaultUserId,
+                DefaultCentreId,
+                DefaultEmail,
+                password
+            );
+
+            // Then
+            A.CallTo(() => userDataService.SetPrimaryEmailAndActivate(DefaultUserId, DefaultEmail))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                    () => userDataService.SetCentreEmail(
+                        DefaultUserId,
+                        DefaultCentreId,
+                        null,
+                        null,
+                        A<IDbTransaction?>._
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.SetRegistrationConfirmationHash(DefaultUserId, DefaultCentreId, null))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => passwordService.ChangePasswordAsync(DefaultUserId, password)).MustHaveHappenedOnceExactly();
         }
 
         [Test]

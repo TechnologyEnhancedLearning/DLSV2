@@ -1,4 +1,5 @@
 @using DigitalLearningSolutions.Web.ViewModels.Common
+@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model ConfirmPasswordViewModel
 
 @{
@@ -14,8 +15,7 @@
   <div class="nhsuk-grid-column-full">
     <form method="post" asp-action="Index">
 
-      @if (errorHasOccurred)
-      {
+      @if (errorHasOccurred) {
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Password), nameof(Model.ConfirmPassword) })" />
       }
 
@@ -26,23 +26,7 @@
         </p>
       </div>
 
-      <vc:text-input asp-for="@nameof(Model.Password)"
-                     label="Password"
-                     populate-with-current-value="false"
-                     type="password"
-                     spell-check="false"
-                     hint-text="Your new password should have a minimum of 8 characters with at least 1 letter, 1 number and 1 symbol."
-                     autocomplete="new-password"
-                     css-class="nhsuk-u-width-one-half" />
-
-      <vc:text-input asp-for="@nameof(Model.ConfirmPassword)"
-                     label="Re-type password"
-                     populate-with-current-value="false"
-                     type="password"
-                     spell-check="false"
-                     hint-text=""
-                     autocomplete="new-password"
-                     css-class="nhsuk-u-width-one-half" />
+      <partial name="_SetPasswordFields" model="@(new SetPasswordViewModel(Model))" />
 
       <button class="nhsuk-button" type="submit">Set password</button>
     </form>

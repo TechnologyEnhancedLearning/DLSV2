@@ -1,12 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.ViewModels.Register;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
@@ -61,12 +63,18 @@
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
-            return View(model);
+            return View(
+                model.WasPasswordSetByAdmin ? "CompleteRegistrationWithoutPassword" : "CompleteRegistration",
+                GetClaimAccountCompleteRegistrationViewModel(model)
+            );
         }
 
-        [Route("/ClaimAccount/CompleteRegistration")]
         [HttpPost]
-        public IActionResult CompleteRegistrationPost(string email, string code)
+        public async Task<IActionResult> CompleteRegistration(
+            ConfirmPasswordViewModel formData,
+            [FromQuery] string email,
+            [FromQuery] string code
+        )
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -80,21 +88,57 @@
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
+            if (model.WasPasswordSetByAdmin)
+            {
+                return NotFound();
+            }
+
+            return await CompleteRegistrationPost(model!, formData.Password);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompleteRegistrationWithoutPassword(string email, string code)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("LinkDlsAccount", new { email, code });
+            }
+
+            var model = GetViewModelIfValidParameters(email, code);
+
+            if (model == null)
+            {
+                return RedirectToAction("AccessDenied", "LearningSolutions");
+            }
+
+            if (!model.WasPasswordSetByAdmin)
+            {
+                return NotFound();
+            }
+
+            return await CompleteRegistrationPost(model!);
+        }
+
+        private async Task<IActionResult> CompleteRegistrationPost(
+            ClaimAccountViewModel model,
+            string? password = null
+        )
+        {
             if (userDataService.PrimaryEmailIsInUse(model.Email))
             {
                 return NotFound();
             }
 
-            if (!model.PasswordSet)
+            if (!ModelState.IsValid)
             {
-                // TODO HEEDLS-975 Redirect to SetPassword
-                return NotFound();
+                return View(GetClaimAccountCompleteRegistrationViewModel(model));
             }
 
-            claimAccountService.ConvertTemporaryUserToConfirmedUser(
+            await claimAccountService.ConvertTemporaryUserToConfirmedUser(
                 model.UserId,
                 model.CentreId,
-                model.Email
+                model.Email,
+                password
             );
 
             return RedirectToAction(
@@ -103,7 +147,7 @@
                 {
                     email = model.Email,
                     centreName = model.CentreName,
-                    candidateNumber = model.CandidateNumber
+                    candidateNumber = model.CandidateNumber,
                 }
             );
         }
@@ -181,8 +225,8 @@
         }
 
         private ClaimAccountViewModel? GetViewModelIfValidParameters(
-            string email,
-            string code,
+            string? email,
+            string? code,
             int? loggedInUserId = null
         )
         {
@@ -238,6 +282,19 @@
             }
 
             return null;
+        }
+
+        private static ClaimAccountCompleteRegistrationViewModel GetClaimAccountCompleteRegistrationViewModel(
+            ClaimAccountViewModel model
+        )
+        {
+            return new ClaimAccountCompleteRegistrationViewModel
+            {
+                Email = model.Email,
+                Code = model.RegistrationConfirmationHash,
+                CentreName = model.CentreName,
+                WasPasswordSetByAdmin = model.WasPasswordSetByAdmin,
+            };
         }
     }
 }
