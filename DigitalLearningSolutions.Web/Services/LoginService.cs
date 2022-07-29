@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.ViewModels;
 
     public interface ILoginService
     {

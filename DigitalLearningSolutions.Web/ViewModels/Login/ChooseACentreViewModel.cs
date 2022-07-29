@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Login
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.ViewModels;
 
     public class ChooseACentreViewModel
     {

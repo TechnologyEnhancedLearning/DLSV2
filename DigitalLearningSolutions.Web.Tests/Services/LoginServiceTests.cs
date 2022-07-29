@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.ViewModels;
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FluentAssertions;

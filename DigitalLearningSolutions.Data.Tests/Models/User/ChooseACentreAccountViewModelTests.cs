@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Models.User
 {
-    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.ViewModels;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
@@ -104,20 +104,22 @@
             }
         }
 
-        [TestCase(true, true, true, true)]
-        [TestCase(true, true, false, true)]
-        [TestCase(true, false, true, true)]
-        [TestCase(false, true, true, true)]
+        [TestCase(true, true, true)]
+        [TestCase(true, true, false)]
+        [TestCase(true, false, true)]
+        [TestCase(false, true, true)]
         public void StatusTag_and_ActionButton_return_expected_values_when_email_is_unverified(
             bool isAdmin,
             bool isDelegate,
-            bool isDelegateApproved,
-            bool isEmailUnverified
+            bool isDelegateApproved
         )
         {
             // When
+            const bool isEmailUnverified = true;
+            const bool isDelegateActive = true;
             const string expectedTagLabel = "Email unverified";
             const string expectedTagColour = "red";
+
             var result = new ChooseACentreAccountViewModel(
                 1,
                 "",
@@ -125,7 +127,7 @@
                 isAdmin,
                 isDelegate,
                 isDelegateApproved,
-                true,
+                isDelegateActive,
                 isEmailUnverified
             );
 

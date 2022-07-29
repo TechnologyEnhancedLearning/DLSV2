@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Models.User
+﻿namespace DigitalLearningSolutions.Data.ViewModels
 {
     using DigitalLearningSolutions.Data.Enums;
 
