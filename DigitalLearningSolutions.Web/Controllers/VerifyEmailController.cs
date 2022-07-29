@@ -18,7 +18,7 @@
         }
 
         [Route("/VerifyEmail/{emailVerificationReason}")]
-        public IActionResult Index(string? emailVerificationReason)
+        public IActionResult VerifyYourEmail(string? emailVerificationReason)
         {
             if (emailVerificationReason == null)
             {

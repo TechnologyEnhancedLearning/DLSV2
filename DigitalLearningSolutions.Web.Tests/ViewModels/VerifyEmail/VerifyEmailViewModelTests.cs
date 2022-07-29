@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.ViewModels.VerifyEmail;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class VerifyEmailViewModelTests
@@ -63,12 +64,15 @@
             );
 
             // Then
-            model.EmailVerificationReason.Should().BeEquivalentTo(EmailVerificationReason.EmailNotVerified);
-            model.PrimaryEmail.Should().BeEquivalentTo(primaryEmail);
-            model.CentreSpecificEmails.Should().BeEquivalentTo(centreSpecificEmails);
-            model.UnverifiedEmailsCount.Should().Be(unverifiedEmailsCount);
-            model.SingleUnverifiedEmail.Should().Be(singleUnverifiedEmail);
-            model.CentreEmailsExcludingFirstParagraph.Should().BeEquivalentTo(centreEmailsExcludingFirstParagraph);
+            using (new AssertionScope())
+            {
+                model.EmailVerificationReason.Should().BeEquivalentTo(EmailVerificationReason.EmailNotVerified);
+                model.PrimaryEmail.Should().BeEquivalentTo(primaryEmail);
+                model.CentreSpecificEmails.Should().BeEquivalentTo(centreSpecificEmails);
+                model.UnverifiedEmailsCount.Should().Be(unverifiedEmailsCount);
+                model.SingleUnverifiedEmail.Should().Be(singleUnverifiedEmail);
+                model.CentreEmailsExcludingFirstParagraph.Should().BeEquivalentTo(centreEmailsExcludingFirstParagraph);
+            }
         }
     }
 }

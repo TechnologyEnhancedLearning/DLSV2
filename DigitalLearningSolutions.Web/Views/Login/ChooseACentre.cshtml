@@ -4,7 +4,6 @@
 @model ChooseACentreViewModel
 @{
   ViewData["Title"] = "Choose A Centre";
-  var centreIdsWithUnverifiedEmails = Model.UnverifiedCentreEmails.Select(uce => uce.centreId).ToList();
   var primaryEmailIsUnverified = Model.PrimaryEmailIsVerified == false;
 }
 
@@ -13,7 +12,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
 
-    <vc:verify-email-warning
+    <vc:verify-email-warning-if-appropriate
       is-my-account-page="false"
       primary-email-is-unverified="@primaryEmailIsUnverified"
       unverified-centre-emails="@Model.UnverifiedCentreEmails" />
@@ -72,7 +71,7 @@
               </div>
             </td>
             <td role="cell" class="nhsuk-table__cell choose-centre-td">
-              @if (Model.PrimaryEmailIsVerified && !centreIdsWithUnverifiedEmails.Contains(centreRow.CentreId)) {
+              @if (Model.PrimaryEmailIsVerified) {
                 @if (centreRow.Status.ActionButton == ChooseACentreButton.Choose) {
                   <form method="POST" asp-action="ChooseCentre">
                     <input type="hidden" name="centreId" value="@centreRow.CentreId" />

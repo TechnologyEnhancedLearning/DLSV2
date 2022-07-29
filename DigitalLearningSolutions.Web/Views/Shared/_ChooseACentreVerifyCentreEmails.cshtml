@@ -1,0 +1,18 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@model VerifyEmailWarningIfAppropriateViewModel
+
+@{
+  var numSpecificPhrases = new {
+    address = Model.MultipleCentreEmailsAreUnverified ? "addresses" : "address",
+    anUnverifiedCentreEmailAddress = Model.MultipleCentreEmailsAreUnverified ?
+      "multiple unverified centre email addresses" : "an unverified centre email address",
+    accountThatUsesIt = Model.MultipleCentreEmailsAreUnverified ? "accounts that use them" : "account that uses it",
+  };
+}
+
+@if (Model.AtLeastOneCentreEmailIsUnverified) {
+  <p>
+    You @(Model.PrimaryEmailIsUnverified ? "also" : null) have @numSpecificPhrases.anUnverifiedCentreEmailAddress.
+    You will not be able to access the centre @numSpecificPhrases.accountThatUsesIt until you have verified the @numSpecificPhrases.address.
+  </p>
+}

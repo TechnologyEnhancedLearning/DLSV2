@@ -22,7 +22,7 @@
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.Register))]
     [Authorize(Policy = CustomPolicies.BasicUser)]
-    [ServiceFilter(typeof(VerifyUserHasVerifiedNecessaryEmails))]
+    [ServiceFilter(typeof(VerifyUserHasVerifiedPrimaryEmail))]
     public class RegisterAtNewCentreController : Controller
     {
         private readonly ICentresDataService centresDataService;

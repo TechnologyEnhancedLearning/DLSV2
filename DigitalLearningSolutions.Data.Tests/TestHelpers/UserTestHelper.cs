@@ -27,10 +27,11 @@
             bool hasBeenPromptedForPrn = false,
             int? learningHubAuthId = null,
             bool hasDismissedLhLoginWarning = false,
-            DateTime? emailVerified = null,
+            bool emailVerified = true,
             DateTime? detailsLastChecked = null
         )
         {
+            var emailVerifiedDateTime = emailVerified ? DateTime.Parse("2022-04-27 16:28:55.247") : (DateTime?)null;
             detailsLastChecked ??= DateTime.Parse("2022-04-27 16:28:55.247");
             return new UserAccount
             {
@@ -50,7 +51,7 @@
                 HasBeenPromptedForPrn = hasBeenPromptedForPrn,
                 LearningHubAuthId = learningHubAuthId,
                 HasDismissedLhLoginWarning = hasDismissedLhLoginWarning,
-                EmailVerified = emailVerified,
+                EmailVerified = emailVerifiedDateTime,
                 DetailsLastChecked = detailsLastChecked,
             };
         }
@@ -723,7 +724,7 @@
         )
         {
             return connection.QuerySingle<(string? email, DateTime? emailVerified)>(
-                $"SELECT Email, EmailVerified FROM UserCentreDetails WHERE CentreID = @centreId AND UserID = @userId",
+                "SELECT Email, EmailVerified FROM UserCentreDetails WHERE CentreID = @centreId AND UserID = @userId",
                 new { centreId, userId }
             );
         }

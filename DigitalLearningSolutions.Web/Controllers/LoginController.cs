@@ -74,7 +74,7 @@
                 case LoginAttemptResult.UnverifiedEmail:
                     await CentrelessLogInAsync(loginResult.UserEntity!, model.RememberMe);
                     return RedirectToAction(
-                        "Index",
+                        "VerifyYourEmail",
                         "VerifyEmail",
                         new { emailVerificationReason = EmailVerificationReason.EmailNotVerified }
                     );
@@ -124,7 +124,7 @@
 
         [HttpPost]
         [Authorize(Policy = CustomPolicies.BasicUser)]
-        [ServiceFilter(typeof(VerifyUserHasVerifiedNecessaryEmails))]
+        [ServiceFilter(typeof(VerifyUserHasVerifiedPrimaryEmail))]
         public async Task<IActionResult> ChooseCentre(int centreId, string? returnUrl)
         {
             var userEntity = userService.GetUserById(User.GetUserIdKnownNotNull());
@@ -133,6 +133,13 @@
             if (centreAccountSet?.IsCentreActive != true)
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
+            }
+
+            var centreEmailIsUnverified = loginService.CentreEmailIsUnverified(userEntity.UserAccount.Id, centreId);
+
+            if (centreEmailIsUnverified)
+            {
+                return RedirectToAction("VerifyYourEmail", "VerifyEmail");
             }
 
             var rememberMe = (await HttpContext.AuthenticateAsync()).Properties.IsPersistent;

@@ -12,10 +12,9 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <form method="post" asp-action="Index">
+    <form method="post" asp-action="VerifyYourEmail">
 
-      @if (errorHasOccurred)
-      {
+      @if (errorHasOccurred) {
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Password), nameof(Model.ConfirmPassword) })" />
       }
 

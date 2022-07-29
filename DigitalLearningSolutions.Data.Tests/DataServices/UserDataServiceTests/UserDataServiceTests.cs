@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.UserDataServiceTests
 {
-    using System;
     using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -58,7 +57,7 @@
 
             // Then
             result.Should().BeEquivalentTo(
-                UserTestHelper.GetDefaultUserAccount(emailVerified: DateTime.Parse("2022-04-27 16:28:55.247"))
+                UserTestHelper.GetDefaultUserAccount()
             );
         }
 
@@ -70,7 +69,7 @@
 
             // Then
             result.Should().BeEquivalentTo(
-                UserTestHelper.GetDefaultUserAccount(emailVerified: DateTime.Parse("2022-04-27 16:28:55.247"))
+                UserTestHelper.GetDefaultUserAccount()
             );
         }
 

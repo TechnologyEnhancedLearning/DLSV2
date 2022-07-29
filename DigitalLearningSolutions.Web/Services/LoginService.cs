@@ -15,6 +15,8 @@
             UserEntity? userEntity,
             List<int> idsOfCentresWithUnverifiedEmails
         );
+
+        bool CentreEmailIsUnverified(int userId, int centreIdIfLoggingIntoSingleCentre);
     }
 
     public class LoginService : ILoginService
@@ -60,18 +62,27 @@
                 return new LoginResult(LoginAttemptResult.AccountLocked);
             }
 
-            var (unverifiedPrimaryEmail, unverifiedCentreEmails) =
-                userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id);
-            var primaryEmailIsUnverified = unverifiedPrimaryEmail != null;
+            if (!userEntity.UserAccount.Active)
+            {
+                return new LoginResult(LoginAttemptResult.InactiveAccount);
+            }
 
-            var centreIdIfLoggingIntoSingleCentre = primaryEmailIsUnverified
-                ? null
-                : GetCentreIdIfLoggingUserIntoSingleCentre(userEntity, username);
-            var userIsLoggingIntoSingleCentreAndCentreEmailIsUnverified =
-                centreIdIfLoggingIntoSingleCentre != null && unverifiedCentreEmails.Select(uce => uce.centreId).ToList()
-                    .Contains((int)centreIdIfLoggingIntoSingleCentre);
+            userService.ResetFailedLoginCount(userEntity.UserAccount);
 
-            if (primaryEmailIsUnverified || userIsLoggingIntoSingleCentreAndCentreEmailIsUnverified)
+            if (userEntity.UserAccount.EmailVerified == null)
+            {
+                return new LoginResult(
+                    LoginAttemptResult.UnverifiedEmail,
+                    userEntity
+                );
+            }
+
+            var centreIdIfLoggingIntoSingleCentre = GetCentreIdIfLoggingUserIntoSingleCentre(userEntity, username);
+
+            if (centreIdIfLoggingIntoSingleCentre != null && CentreEmailIsUnverified(
+                userEntity.UserAccount.Id,
+                (int)centreIdIfLoggingIntoSingleCentre
+            ))
             {
                 return new LoginResult(
                     LoginAttemptResult.UnverifiedEmail,
@@ -80,9 +91,13 @@
                 );
             }
 
-            return !userEntity.UserAccount.Active
-                ? new LoginResult(LoginAttemptResult.InactiveAccount)
-                : DetermineDestinationForSuccessfulLogin(userEntity, centreIdIfLoggingIntoSingleCentre);
+            return centreIdIfLoggingIntoSingleCentre == null
+                ? new LoginResult(LoginAttemptResult.ChooseACentre, userEntity)
+                : new LoginResult(
+                    LoginAttemptResult.LogIntoSingleCentre,
+                    userEntity,
+                    centreIdIfLoggingIntoSingleCentre
+                );
         }
 
         public IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(
@@ -107,16 +122,11 @@
             );
         }
 
-        private LoginResult DetermineDestinationForSuccessfulLogin(
-            UserEntity userEntity,
-            int? singleCentreToLogUserInto
-        )
+        public bool CentreEmailIsUnverified(int userId, int centreIdIfLoggingIntoSingleCentre)
         {
-            userService.ResetFailedLoginCount(userEntity.UserAccount);
-
-            return singleCentreToLogUserInto == null
-                ? new LoginResult(LoginAttemptResult.ChooseACentre, userEntity)
-                : new LoginResult(LoginAttemptResult.LogIntoSingleCentre, userEntity, singleCentreToLogUserInto);
+            var (_, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
+            return unverifiedCentreEmails.Select(uce => uce.centreId)
+                .Contains(centreIdIfLoggingIntoSingleCentre);
         }
 
         // If there are no accounts this will also return null, as there is no single centre to log into

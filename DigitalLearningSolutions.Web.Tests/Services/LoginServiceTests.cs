@@ -483,8 +483,6 @@
             A.CallTo(() => userService.GetUserByUsername(candidateNumberForLogin)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
                 .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 1, 2 }, new List<int>()));
-            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
-                .Returns(ResultListingNoEmailsAsUnverified);
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -505,7 +503,7 @@
         {
             // Given
             var userEntity = new UserEntity(
-                UserTestHelper.GetDefaultUserAccount(),
+                UserTestHelper.GetDefaultUserAccount(emailVerified: false),
                 new List<AdminAccount>(),
                 new List<DelegateAccount>
                 {
@@ -686,7 +684,7 @@
         }
 
         [Test]
-        public void GetChooseACentreAccountViewModels_identifies_accounts_with_inactive_emails_correctly()
+        public void GetChooseACentreAccountViewModels_identifies_accounts_with_unverified_emails_correctly()
         {
             // Given
             var idsOfCentresWithUnverifiedEmails = new List<int> { 1, 2, 3 };
@@ -814,6 +812,42 @@
 
             // Then
             result.Should().HaveCount(0);
+        }
+
+        [Test]
+        public void CentreEmailIsUnverified_returns_true_when_centre_email_is_unverified()
+        {
+            // Given
+            const int userId = 1;
+            const int centreId = 2;
+            var unverifiedCentreEmails = new List<(int centreId, string centreName, string centreEmail)>
+                { (centreId, "Test centre", "centre@email.com") };
+
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userId)).Returns((null, unverifiedCentreEmails));
+
+            // When
+            var result = loginService.CentreEmailIsUnverified(userId, centreId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void CentreEmailIsUnverified_returns_false_when_centre_email_is_verified()
+        {
+            // Given
+            const int userId = 1;
+            const int centreId = 2;
+            var unverifiedCentreEmails = new List<(int centreId, string centreName, string centreEmail)>
+                { (centreId + 1, "Test centre", "centre@email.com") };
+
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userId)).Returns((null, unverifiedCentreEmails));
+
+            // When
+            var result = loginService.CentreEmailIsUnverified(userId, centreId);
+
+            // Then
+            result.Should().BeFalse();
         }
     }
 }

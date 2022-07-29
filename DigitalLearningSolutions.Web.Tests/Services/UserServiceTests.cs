@@ -932,7 +932,7 @@
         {
             // Given
             var userAccount = UserTestHelper.GetDefaultUserAccount(
-                emailVerified: primaryEmail == null ? DateTime.Now : (DateTime?)null,
+                emailVerified: primaryEmail == null,
                 primaryEmail: "unverified@primary.email"
             );
             A.CallTo(() => userDataService.GetUserAccountById(userAccount.Id)).Returns(userAccount);

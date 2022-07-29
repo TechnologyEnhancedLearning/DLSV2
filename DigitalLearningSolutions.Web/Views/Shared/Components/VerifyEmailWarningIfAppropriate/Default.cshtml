@@ -1,0 +1,34 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@model VerifyEmailWarningIfAppropriateViewModel
+
+@{
+  var numSpecificPhrases = new {
+    address = Model.MultipleEmailsAreUnverified ? "addresses" : "address",
+  };
+}
+
+@if (Model.PrimaryEmailIsUnverified || Model.AtLeastOneCentreEmailIsUnverified) {
+  <div class="nhsuk-warning-callout">
+    <h2 class="nhsuk-warning-callout__label">
+      <span role="text">
+        <span class="nhsuk-u-visually-hidden">Important: </span>
+        Please verify your email @numSpecificPhrases.address
+      </span>
+    </h2>
+
+    @if (Model.PrimaryEmailIsUnverified) {
+      <p>
+        Your primary email address has not been verified yet. You will not be able to
+        @(Model.IsOnMyAccountPage ? "access any centre accounts until you verify the address." :
+          "choose a centre, reactivate an account, or register at a new centre until it you verify the address.")
+      </p>
+    }
+
+    @if (Model.IsOnMyAccountPage) {
+      <partial name="_MyAccountVerifyCentreEmails" model="@Model" />
+    } else {
+      <partial name="_ChooseACentreVerifyCentreEmails" model="@Model" />
+    }
+
+  </div>
+}
