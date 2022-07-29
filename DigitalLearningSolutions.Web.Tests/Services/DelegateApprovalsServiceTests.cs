@@ -25,6 +25,7 @@
         private IEmailService emailService = null!;
         private ILogger<DelegateApprovalsService> logger = null!;
         private IUserDataService userDataService = null!;
+        private ISessionDataService sessionDataService = null!;
 
         [SetUp]
         public void SetUp()
@@ -33,6 +34,7 @@
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
+            sessionDataService = A.Fake<ISessionDataService>();
             logger = A.Fake<ILogger<DelegateApprovalsService>>();
             config = A.Fake<IConfiguration>();
             delegateApprovalsService = new DelegateApprovalsService(
@@ -40,6 +42,7 @@
                 centreRegistrationPromptsService,
                 emailService,
                 centresDataService,
+                sessionDataService,
                 logger,
                 config
             );
@@ -182,7 +185,7 @@
         }
 
         [Test]
-        public void RejectDelegate_deletes_delegate_and_sends_email()
+        public void RejectDelegate_with_delegate_without_sessions_deletes_delegate_and_sends_email()
         {
             // Given
             const int delegateId = 1;
@@ -194,7 +197,9 @@
             );
 
             A.CallTo(() => userDataService.GetDelegateById(delegateId)).Returns(delegateEntity);
+            A.CallTo(() => sessionDataService.HasDelegateGotSessions(delegateId)).Returns(false);
             A.CallTo(() => userDataService.RemoveDelegateAccount(delegateId)).DoesNothing();
+            A.CallTo(() => userDataService.DeactivateDelegateUser(delegateId)).DoesNothing();
             A.CallTo(() => emailService.SendEmail(A<Email>._)).DoesNothing();
 
             // When
@@ -202,6 +207,34 @@
 
             // Then
             A.CallTo(() => userDataService.RemoveDelegateAccount(delegateId)).MustHaveHappened();
+            A.CallTo(() => userDataService.DeactivateDelegateUser(delegateId)).MustNotHaveHappened();
+            A.CallTo(() => emailService.SendEmail(A<Email>._)).MustHaveHappened();
+        }
+
+        [Test]
+        public void RejectDelegate_with_delegate_with_sessions_deactivates_delegate_and_sends_email()
+        {
+            // Given
+            const int delegateId = 1;
+            const int centreId = 2;
+            var delegateEntity = UserTestHelper.GetDefaultDelegateEntity(
+                delegateId,
+                centreId: centreId,
+                approved: false
+            );
+
+            A.CallTo(() => userDataService.GetDelegateById(delegateId)).Returns(delegateEntity);
+            A.CallTo(() => sessionDataService.HasDelegateGotSessions(delegateId)).Returns(true);
+            A.CallTo(() => userDataService.RemoveDelegateAccount(delegateId)).DoesNothing();
+            A.CallTo(() => userDataService.DeactivateDelegateUser(delegateId)).DoesNothing();
+            A.CallTo(() => emailService.SendEmail(A<Email>._)).DoesNothing();
+
+            // When
+            delegateApprovalsService.RejectDelegate(delegateId, centreId);
+
+            // Then
+            A.CallTo(() => userDataService.RemoveDelegateAccount(delegateId)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.DeactivateDelegateUser(delegateId)).MustHaveHappened();
             A.CallTo(() => emailService.SendEmail(A<Email>._)).MustHaveHappened();
         }
 
@@ -215,6 +248,7 @@
 
             A.CallTo(() => userDataService.GetDelegateById(delegateId)).Returns(delegateEntity);
             A.CallTo(() => userDataService.RemoveDelegateAccount(delegateId)).DoesNothing();
+            A.CallTo(() => userDataService.DeactivateDelegateUser(delegateId)).DoesNothing();
             A.CallTo(() => emailService.SendEmail(A<Email>._)).DoesNothing();
 
             // When
@@ -223,6 +257,7 @@
             // Then
             action.Should().Throw<UserAccountInvalidStateException>();
             A.CallTo(() => userDataService.RemoveDelegateAccount(delegateId)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.DeactivateDelegateUser(delegateId)).MustNotHaveHappened();
             A.CallTo(() => emailService.SendEmail(A<Email>._)).MustNotHaveHappened();
         }
     }
