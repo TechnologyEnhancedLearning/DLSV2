@@ -653,15 +653,17 @@
 
         private static bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string linkedFieldName)
         {
-            return !string.IsNullOrEmpty(answer) && string.Equals(
-                groupLabel,
-                answer,
-                StringComparison.CurrentCultureIgnoreCase
-            ) || string.Equals(
-                groupLabel,
-                GetGroupNameWithPrefix(linkedFieldName, answer!),
-                StringComparison.CurrentCultureIgnoreCase
-            );
+            return !string.IsNullOrEmpty(answer) &&
+                   (string.Equals(
+                           groupLabel,
+                           answer,
+                           StringComparison.CurrentCultureIgnoreCase
+                       ) || string.Equals(
+                           groupLabel,
+                           GetGroupNameWithPrefix(linkedFieldName, answer!),
+                           StringComparison.CurrentCultureIgnoreCase
+                       )
+                   );
         }
 
         private static bool ProgressShouldBeUpdatedOnEnrolment(

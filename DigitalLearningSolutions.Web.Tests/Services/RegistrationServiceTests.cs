@@ -1254,40 +1254,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                             m.Centre == model.Centre
                             ))
             ).MustHaveHappenedOnceExactly();
-            /*
-            A.CallTo(
-                () => groupsService.SynchroniseUserChangesWithGroups(
-                    NewDelegateIdAndCandidateNumber.Item1,
-                    A<AccountDetailsData>.That.Matches(add =>
-                        add.FirstName == userEntity.UserAccount.FirstName &&
-                        add.Surname == userEntity.UserAccount.LastName &&
-                        add.Email == userEntity.UserAccount.PrimaryEmail),
-                    A<RegistrationFieldAnswers>.That.Matches(
-                        answers =>
-                            answers.Answer1 == model.Answer1 &&
-                            answers.Answer2 == model.Answer2 &&
-                            answers.Answer3 == model.Answer3 &&
-                            answers.Answer4 == model.Answer4 &&
-                            answers.Answer5 == model.Answer5 &&
-                            answers.Answer6 == model.Answer6 &&
-                            answers.JobGroupId == userEntity.UserAccount.JobGroupId &&
-                            answers.CentreId == model.Centre
-                    ),
-                    A<RegistrationFieldAnswers>.That.Matches(
-                        answers =>
-                            answers.Answer1 == null &&
-                            answers.Answer2 == null &&
-                            answers.Answer3 == null &&
-                            answers.Answer4 == null &&
-                            answers.Answer5 == null &&
-                            answers.Answer6 == null &&
-                            answers.JobGroupId == 0 &&
-                            answers.CentreId == model.Centre
-                    ),
-                    model.CentreSpecificEmail,
-                    A<List<Group>>._
-                )
-            ).MustHaveHappenedOnceExactly();*/
         }
 
         [Test]
