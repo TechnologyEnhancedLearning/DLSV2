@@ -1006,15 +1006,15 @@
         }
 
         [Test]
-        [TestCase(null)]
-        [TestCase("unverified@primary.email")]
-        public void GetUnverifiedEmailsForUser_returns_unverified_primary_email(string? primaryEmail)
+        public void GetUnverifiedEmailsForUser_returns_unverified_primary_email()
         {
             // Given
+            const string unverifiedPrimaryEmail = "unverified@primary.email";
             var userAccount = UserTestHelper.GetDefaultUserAccount(
-                emailVerified: primaryEmail == null,
-                primaryEmail: "unverified@primary.email"
+                emailVerified: false,
+                primaryEmail: unverifiedPrimaryEmail
             );
+
             A.CallTo(() => userDataService.GetUserAccountById(userAccount.Id)).Returns(userAccount);
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(userAccount.Id)).Returns(new List<AdminAccount>());
             A.CallTo(() => userDataService.GetDelegateAccountsByUserId(userAccount.Id))
@@ -1026,7 +1026,7 @@
             var result = userService.GetUnverifiedEmailsForUser(userAccount.Id);
 
             // Then
-            result.primaryEmail.Should().BeEquivalentTo(primaryEmail);
+            result.primaryEmail.Should().BeEquivalentTo(unverifiedPrimaryEmail);
         }
 
         [Test]

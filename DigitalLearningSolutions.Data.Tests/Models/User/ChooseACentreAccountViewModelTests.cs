@@ -108,18 +108,17 @@
         [TestCase(true, true, false)]
         [TestCase(true, false, true)]
         [TestCase(false, true, true)]
-        public void StatusTag_and_ActionButton_return_expected_values_when_email_is_unverified(
+        public void StatusTag_and_ActionButton_show_email_unverified_when_email_is_unverified(
             bool isAdmin,
             bool isDelegate,
             bool isDelegateApproved
         )
         {
-            // When
-            const bool isEmailUnverified = true;
-            const bool isDelegateActive = true;
+            // Given
             const string expectedTagLabel = "Email unverified";
             const string expectedTagColour = "red";
 
+            // When
             var result = new ChooseACentreAccountViewModel(
                 1,
                 "",
@@ -127,8 +126,8 @@
                 isAdmin,
                 isDelegate,
                 isDelegateApproved,
-                isDelegateActive,
-                isEmailUnverified
+                true,
+                true
             );
 
             // Then

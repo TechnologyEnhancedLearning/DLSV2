@@ -521,7 +521,6 @@
                 .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
             A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
                 .Returns(resultListingPrimaryEmailAsUnverified);
-            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -559,7 +558,6 @@
                 .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
             A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
                 .Returns(resultListingCentreEmailAsUnverified);
-            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
