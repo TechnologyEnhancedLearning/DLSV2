@@ -19,15 +19,16 @@
     @if (Model.PrimaryEmailIsUnverified) {
       <p>
         Your primary email address has not been verified yet. You will not be able to
-        @(Model.IsOnMyAccountPage ? "access any centre accounts until you verify the address." :
-          "choose a centre, reactivate an account, or register at a new centre until it you verify the address.")
+        @(Model.MentionBlockedActionsOnChooseACentrePage ?
+          "choose a centre, reactivate an account, or register at a new centre until it you verify the address." :
+          "access any centre accounts until you verify the address.")
       </p>
     }
 
-    @if (Model.IsOnMyAccountPage) {
-      <partial name="_MyAccountVerifyCentreEmails" model="@Model" />
+    @if (Model.ShowCentreEmailsAndResendButton) {
+      <partial name="_CentreEmailsDetailedListWithResendButton" model="@Model" />
     } else {
-      <partial name="_ChooseACentreVerifyCentreEmails" model="@Model" />
+      <partial name="_CentreEmailsShortSummary" model="@Model" />
     }
 
   </div>

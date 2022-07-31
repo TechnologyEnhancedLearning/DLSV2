@@ -6,19 +6,22 @@
     public class VerifyEmailWarningIfAppropriateViewModel
     {
         public readonly bool AtLeastOneCentreEmailIsUnverified;
-        public readonly bool IsOnMyAccountPage;
+        public readonly bool MentionBlockedActionsOnChooseACentrePage;
         public readonly bool MultipleCentreEmailsAreUnverified;
         public readonly bool MultipleEmailsAreUnverified;
         public readonly bool PrimaryEmailIsUnverified;
+        public readonly bool ShowCentreEmailsAndResendButton;
         public readonly List<(string centreName, string unverifiedEmail)> UnverifiedCentreEmails;
 
         public VerifyEmailWarningIfAppropriateViewModel(
-            bool isOnMyAccountPage,
+            bool showCentreEmailsAndResendButton,
+            bool mentionBlockedActionsOnChooseACentrePage,
             bool primaryEmailIsUnverified,
             List<(string centreName, string unverifiedEmail)> unverifiedCentreEmails
         )
         {
-            IsOnMyAccountPage = isOnMyAccountPage;
+            ShowCentreEmailsAndResendButton = showCentreEmailsAndResendButton;
+            MentionBlockedActionsOnChooseACentrePage = mentionBlockedActionsOnChooseACentrePage;
             PrimaryEmailIsUnverified = primaryEmailIsUnverified;
             UnverifiedCentreEmails = unverifiedCentreEmails;
             AtLeastOneCentreEmailIsUnverified = UnverifiedCentreEmails.Any();
