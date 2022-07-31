@@ -74,21 +74,16 @@
             <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
               <span class="nhsuk-table-responsive__heading">Request </span>
               @competency.SupervisorName<br />
-              @competency.SupervisorEmailSent?.ToString("dd/MM/yyyy")<br />
+              @competency.SupervisorVerificationRequested?.ToString("dd/MM/yyyy")<br />
               <span style="white-space: nowrap;">
                 <a asp-action="ResendSupervisorVerificationRequest"
                    asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
                    asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
                    asp-route-candidateAssessmentSupervisorId="@competency.CandidateAssessmentSupervisorId"
-                   asp-route-selfAssessmentResultId="@question.ResultId">
-                  Resend
-                </a>
+                   asp-route-selfAssessmentResultId="@question.ResultId">Resend</a>
                 <a asp-action="WithdrawSupervisorVerificationRequest" class="nhsuk-u-margin-left-1"
                    asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
-                   asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
-                   asp-route-selfAssessmentResultId="@competency.SupervisorVerificationId">
-                  Withdraw
-                </a>
+                   asp-route-supervisorVerificationId="@competency.SupervisorVerificationId">Withdraw</a>
               </span>
             </td>
           </tr>

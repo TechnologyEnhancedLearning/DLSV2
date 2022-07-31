@@ -272,10 +272,10 @@
             return GroupCompetencyAssessmentQuestions(result);
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId, bool? emailSent = null)
+        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId)
         {
             const string supervisorFields = @"
-                EmailSent AS SupervisorEmailSent,
+                LAR.Requested AS SupervisorVerificationRequested,
                 COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS SupervisorName,
                 SelfAssessmentResultSupervisorVerificationId AS SupervisorVerificationId,
                 CandidateAssessmentSupervisorID";
@@ -283,14 +283,14 @@
                 LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = CandidateAssessmentSupervisorID
                 LEFT OUTER JOIN SupervisorDelegates AS sd ON sd.ID = cas.SupervisorDelegateId
                 LEFT OUTER JOIN AdminUsers AS au ON au.AdminID = sd.SupervisorAdminID";
-            var emailSentFilter = emailSent == true ? "EmailSent IS NOT NULL" : "1=1";
+
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
                     SELECT {supervisorFields}, {CompetencyFields}
                     FROM {CompetencyTables}
                         INNER JOIN SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID
                         {supervisorTables}
-                    WHERE {emailSentFilter} AND ((LAR.Requested IS NULL) OR (LAR.Requested < DATEADD(week, -1, getUTCDate()))) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL)
+                    WHERE ((LAR.Requested IS NULL) OR (LAR.Requested < DATEADD(week, -1, getUTCDate()))) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL)
                         OR (LAR.SupportingComments IS NOT NULL)) AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0)) AND ((SA.EnforceRoleRequirementsForSignOff = 0) OR (CAQ.Required = 0))
 						OR ((LAR.Requested IS NULL) OR (LAR.Requested < DATEADD(week, -1, getUTCDate()))) AND (LAR.Verified IS NULL) AND (LAR.ResultRAG = 3) AND ((CAOC.IncludedInSelfAssessment = 1) 
 						OR (SAS.Optional = 0)) AND (SA.EnforceRoleRequirementsForSignOff = 1)

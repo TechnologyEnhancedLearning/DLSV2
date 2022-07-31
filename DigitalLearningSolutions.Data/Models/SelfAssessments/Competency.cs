@@ -21,7 +21,7 @@
         public DateTime? Verified { get; set; }
         public DateTime? Requested { get; set; }
         public bool? SignedOff { get; set; }
-        public DateTime? SupervisorEmailSent { get; set; }
+        public DateTime? SupervisorVerificationRequested { get; set; }
         public int? SupervisorVerificationId { get; set; }
         public int? CandidateAssessmentSupervisorId { get; set; }
         public string? SupervisorName { get; set; }
