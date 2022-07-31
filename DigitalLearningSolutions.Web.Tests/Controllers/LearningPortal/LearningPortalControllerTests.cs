@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -33,6 +34,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IUserDataService userDataService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void SetUp()
@@ -50,6 +52,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
+            clockUtility = A.Fake<IClockUtility>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
@@ -76,7 +79,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 config,
                 actionPlanService,
                 candidateAssessmentDownloadFileService,
-                searchSortFilterPaginateService
+                searchSortFilterPaginateService,
+                clockUtility
             );
             controller.ControllerContext = new ControllerContext
                 { HttpContext = new DefaultHttpContext { User = user } };

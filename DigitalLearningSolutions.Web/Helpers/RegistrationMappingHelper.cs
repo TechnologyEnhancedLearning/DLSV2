@@ -2,10 +2,13 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Models;
 
     public static class RegistrationMappingHelper
     {
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
+
         public static AdminRegistrationModel MapToCentreManagerAdminRegistrationModel(RegistrationData data)
         {
             return new AdminRegistrationModel(
@@ -53,7 +56,7 @@
                 true,
                 true,
                 data.ProfessionalRegistrationNumber,
-                notifyDate: DateTime.Now
+                notifyDate: ClockUtility.UtcNow
             );
         }
 

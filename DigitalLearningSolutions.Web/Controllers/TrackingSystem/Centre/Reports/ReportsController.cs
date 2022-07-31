@@ -5,6 +5,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -23,14 +24,17 @@
     {
         private readonly IActivityService activityService;
         private readonly IEvaluationSummaryService evaluationSummaryService;
+        private readonly IClockUtility clockUtility;
 
         public ReportsController(
             IActivityService activityService,
-            IEvaluationSummaryService evaluationSummaryService
+            IEvaluationSummaryService evaluationSummaryService,
+            IClockUtility clockUtility
         )
         {
             this.activityService = activityService;
             this.evaluationSummaryService = evaluationSummaryService;
+            this.clockUtility = clockUtility;
         }
 
         public IActionResult Index()
@@ -40,7 +44,7 @@
 
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
-            Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
+            Response.Cookies.SetReportsFilterCookie(filterData, clockUtility.UtcNow);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
 
@@ -61,7 +65,7 @@
                 filterModel,
                 evaluationResponseBreakdowns,
                 filterData.StartDate,
-                filterData.EndDate ?? DateTime.Today,
+                filterData.EndDate ?? clockUtility.UtcToday,
                 activityService.GetActivityStartDateForCentre(centreId, categoryIdFilter) != null,
                 activityService.GetCourseCategoryNameForActivityFilter(categoryIdFilter)
             );
@@ -128,7 +132,7 @@
                 model.ReportInterval
             );
 
-            Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
+            Response.Cookies.SetReportsFilterCookie(filterData, clockUtility.UtcNow);
 
             return RedirectToAction("Index");
         }
@@ -167,7 +171,7 @@
 
             var dataFile = activityService.GetActivityDataFileForCentre(centreId, filterData);
 
-            var fileName = $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx";
+            var fileName = $"Activity data for centre {centreId} downloaded {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
             return File(
                 dataFile,
                 FileHelper.GetContentTypeFromFileName(fileName),
@@ -208,7 +212,7 @@
             );
 
             var content = evaluationSummaryService.GetEvaluationSummaryFileForCentre(centreId, filterData);
-            var fileName = $"DLS Evaluation Stats {DateTime.Today:yyyy-MM-dd}.xlsx";
+            var fileName = $"DLS Evaluation Stats {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),

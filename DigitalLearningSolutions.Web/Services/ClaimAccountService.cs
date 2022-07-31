@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Services
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.ViewModels.Register;
+    using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
 
     public interface IClaimAccountService
     {
@@ -15,7 +17,7 @@
             int? loggedInUserId = null
         );
 
-        void ConvertTemporaryUserToConfirmedUser(int userId, int centreId, string primaryEmail);
+        Task ConvertTemporaryUserToConfirmedUser(int userId, int centreId, string primaryEmail, string? password);
 
         void LinkAccount(int oldUserId, int newUserId, int centreId);
     }
@@ -24,11 +26,17 @@
     {
         private readonly IUserDataService userDataService;
         private readonly IConfigDataService configDataService;
+        private readonly IPasswordService passwordService;
 
-        public ClaimAccountService(IUserDataService userDataService, IConfigDataService configDataService)
+        public ClaimAccountService(
+            IUserDataService userDataService,
+            IConfigDataService configDataService,
+            IPasswordService passwordService
+        )
         {
             this.userDataService = userDataService;
             this.configDataService = configDataService;
+            this.passwordService = passwordService;
         }
 
         public ClaimAccountViewModel GetAccountDetailsForClaimAccount(
@@ -55,15 +63,25 @@
                 SupportEmail = supportEmail,
                 IdOfUserMatchingEmailIfAny = userMatchingEmail?.Id,
                 UserMatchingEmailIsActive = userMatchingEmail?.Active == true,
-                PasswordSet = !string.IsNullOrWhiteSpace(userAccountToBeClaimed?.PasswordHash),
+                WasPasswordSetByAdmin = !string.IsNullOrWhiteSpace(userAccountToBeClaimed?.PasswordHash),
             };
         }
 
-        public void ConvertTemporaryUserToConfirmedUser(int userId, int centreId, string primaryEmail)
+        public async Task ConvertTemporaryUserToConfirmedUser(
+            int userId,
+            int centreId,
+            string primaryEmail,
+            string? password
+        )
         {
             userDataService.SetPrimaryEmailAndActivate(userId, primaryEmail);
             userDataService.SetCentreEmail(userId, centreId, null);
             userDataService.SetRegistrationConfirmationHash(userId, centreId, null);
+
+            if (password != null)
+            {
+                await passwordService.ChangePasswordAsync(userId, password);
+            }
         }
 
         public void LinkAccount(int currentUserIdForAccount, int newUserIdForAccount, int centreId)

@@ -2,9 +2,12 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Utilities;
 
     public static class CompletedCourseHelper
     {
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
+
         public static CompletedCourse CreateDefaultCompletedCourse(
             int customisationId = 1,
             string courseName = "Course 1",
@@ -34,9 +37,9 @@
                 Sections = sections,
                 ProgressID = progressId,
                 Evaluated = evaluated,
-                StartedDate = startedDate ?? DateTime.UtcNow,
-                LastAccessed = lastAccessed ?? DateTime.UtcNow,
-                Completed = completed ?? DateTime.UtcNow,
+                StartedDate = startedDate ?? ClockUtility.UtcNow,
+                LastAccessed = lastAccessed ?? ClockUtility.UtcNow,
+                Completed = completed ?? ClockUtility.UtcNow,
                 ArchivedDate = archivedDate,
             };
         }

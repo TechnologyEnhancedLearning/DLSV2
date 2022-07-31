@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
@@ -36,6 +37,7 @@
         private ISessionService sessionService = null!;
         private IUrlHelper urlHelper = null!;
         private IUserService userService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void SetUp()
@@ -45,8 +47,11 @@
             logger = A.Fake<ILogger<LoginController>>();
             userService = A.Fake<IUserService>();
             urlHelper = A.Fake<IUrlHelper>();
+            clockUtility = A.Fake<IClockUtility>();
 
-            controller = new LoginController(loginService, sessionService, logger, userService)
+            A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
+
+            controller = new LoginController(loginService, sessionService, logger, userService, clockUtility)
                 .WithDefaultContext()
                 .WithMockUser(false)
                 .WithMockTempData()
@@ -58,7 +63,13 @@
                     typeof(IAuthenticationService)
                 );
 
-            controllerWithAuthenticatedUser = new LoginController(loginService, sessionService, logger, userService)
+            controllerWithAuthenticatedUser = new LoginController(
+                    loginService,
+                    sessionService,
+                    logger,
+                    userService,
+                    clockUtility
+                )
                 .WithDefaultContext()
                 .WithMockUser(true)
                 .WithMockTempData()

@@ -1,13 +1,15 @@
 ﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Data.Utilities
 @using DigitalLearningSolutions.Web.Controllers.LearningPortalController
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+@inject IClockUtility ClockUtility
 @model EditCompleteByDateViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? $"Error: Learning Portal - {Model.Name} - Set complete by date" : $"Learning Portal - {Model.Name} - Set complete by date";
-  var exampleDate = DateTime.Today + TimeSpan.FromDays(7);
+  var exampleDate = ClockUtility.UtcToday + TimeSpan.FromDays(7);
   var standardHintText = $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the complete by date.";
   var courseHintText = Model.Type.Equals(LearningItemType.Course) ? "Activities with a complete by date will remain on your 'Current courses' list until completed. Activities with no complete by date will be removed after 6 months of inactivity." : "";
   var hintTextLines = new List<string> { standardHintText, courseHintText };

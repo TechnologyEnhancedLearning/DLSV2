@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -33,6 +34,7 @@
         private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void Setup()
@@ -43,6 +45,7 @@
             cryptoService = A.Fake<ICryptoService>();
             registrationService = A.Fake<IRegistrationService>();
             config = A.Fake<IConfiguration>();
+            clockUtility = A.Fake<IClockUtility>();
 
             controller = new RegisterDelegateByCentreController(
                     jobGroupsDataService,
@@ -50,7 +53,8 @@
                     cryptoService,
                     userDataService,
                     registrationService,
-                    config
+                    config,
+                    clockUtility
                 )
                 .WithDefaultContext()
                 .WithMockTempData();

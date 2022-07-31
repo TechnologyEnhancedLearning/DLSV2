@@ -2,6 +2,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -28,6 +29,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly IFrameworkService frameworkService;
         private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly IClockUtility clockUtility;
 
         public LearningPortalController(
             ICentresDataService centresDataService,
@@ -42,7 +44,8 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             IConfiguration config,
             IActionPlanService actionPlanService,
             ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
-            ISearchSortFilterPaginateService searchSortFilterPaginateService
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
+            IClockUtility clockUtility
         )
         {
             this.centresDataService = centresDataService;
@@ -58,6 +61,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.actionPlanService = actionPlanService;
             this.candidateAssessmentDownloadFileService = candidateAssessmentDownloadFileService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
+            this.clockUtility = clockUtility;
         }
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]

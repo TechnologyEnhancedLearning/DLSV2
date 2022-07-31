@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models.Email;
+    using DigitalLearningSolutions.Data.Utilities;
     using MailKit.Net.Smtp;
     using Microsoft.Extensions.Logging;
     using MimeKit;
@@ -25,18 +26,21 @@
         private readonly IEmailDataService emailDataService;
         private readonly ILogger<EmailService> logger;
         private readonly ISmtpClientFactory smtpClientFactory;
+        private readonly IClockUtility clockUtility;
 
         public EmailService(
             IEmailDataService emailDataService,
             IConfigDataService configDataService,
             ISmtpClientFactory smtpClientFactory,
-            ILogger<EmailService> logger
+            ILogger<EmailService> logger,
+            IClockUtility clockUtility
         )
         {
             this.emailDataService = emailDataService;
             this.configDataService = configDataService;
             this.smtpClientFactory = smtpClientFactory;
             this.logger = logger;
+            this.clockUtility = clockUtility;
         }
 
         public void SendEmail(Email email)
@@ -76,7 +80,7 @@
         public void ScheduleEmails(IEnumerable<Email> emails, string addedByProcess, DateTime? deliveryDate = null)
         {
             var senderAddress = GetMailConfig().MailSenderAddress;
-            var urgent = deliveryDate?.Date.Equals(DateTime.Today) ?? false;
+            var urgent = deliveryDate?.Date.Equals(clockUtility.UtcToday) ?? false;
             emailDataService.ScheduleEmails(emails, senderAddress, addedByProcess, urgent, deliveryDate);
         }
 

@@ -9,15 +9,12 @@
 
     public class EmailDelegatesViewModel : BaseSearchablePageViewModel<DelegateUserCard>
     {
-        public EmailDelegatesViewModel(
+        private EmailDelegatesViewModel(
             SearchSortFilterPaginationResult<DelegateUserCard> result,
             IEnumerable<FilterModel> availableFilters,
-            bool selectAll = false
+            bool selectAll
         ) : base(result, true, availableFilters)
         {
-            Day = DateTime.Today.Day;
-            Month = DateTime.Today.Month;
-            Year = DateTime.Today.Year;
             Delegates = result.ItemsToDisplay.Select(
                 delegateUser =>
                 {
@@ -31,8 +28,20 @@
         public EmailDelegatesViewModel(
             SearchSortFilterPaginationResult<DelegateUserCard> result,
             IEnumerable<FilterModel> availableFilters,
+            DateTime emailDate,
+            bool selectAll = false
+        ) : this(result, availableFilters, selectAll)
+        {
+            Day = emailDate.Day;
+            Month = emailDate.Month;
+            Year = emailDate.Year;
+        }
+
+        public EmailDelegatesViewModel(
+            SearchSortFilterPaginationResult<DelegateUserCard> result,
+            IEnumerable<FilterModel> availableFilters,
             EmailDelegatesFormData formData
-        ) : this(result, availableFilters)
+        ) : this(result, availableFilters, false)
         {
             SelectedDelegateIds = formData.SelectedDelegateIds;
             Day = formData.Day;

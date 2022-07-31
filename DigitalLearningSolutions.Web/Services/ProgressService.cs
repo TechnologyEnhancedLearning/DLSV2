@@ -205,7 +205,7 @@
             var completionStatus = progressDataService.GetCompletionStatusForProgress(progress.ProgressId);
             if (completionStatus > 0)
             {
-                progressDataService.SetCompletionDate(progress.ProgressId, DateTime.UtcNow);
+                progressDataService.SetCompletionDate(progress.ProgressId, clockUtility.UtcNow);
                 var numLearningLogItemsAffected =
                     learningLogItemsDataService.MarkLearningLogItemsCompleteByProgressId(progress.ProgressId);
                 notificationService.SendProgressCompletionNotificationEmail(

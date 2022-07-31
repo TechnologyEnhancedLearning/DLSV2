@@ -11,6 +11,7 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FluentAssertions;
@@ -25,6 +26,7 @@
         private ICourseCategoriesDataService courseCategoriesDataService = null!;
         private ICourseDataService courseDataService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void SetUp()
@@ -33,11 +35,13 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             courseDataService = A.Fake<ICourseDataService>();
+            clockUtility = A.Fake<IClockUtility>();
             activityService = new ActivityService(
                 activityDataService,
                 jobGroupsDataService,
                 courseCategoriesDataService,
-                courseDataService
+                courseDataService,
+                clockUtility
             );
         }
 
@@ -465,6 +469,7 @@
             var endDateString = "2021-06-06";
             A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101, A<int?>._))
                 .Returns(DateTime.Parse("2000-06-07"));
+            A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
             // when
             var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
