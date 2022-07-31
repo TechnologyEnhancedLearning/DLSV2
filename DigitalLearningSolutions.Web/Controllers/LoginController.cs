@@ -135,7 +135,7 @@
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
-            var centreEmailIsUnverified = loginService.CentreEmailIsUnverified(userEntity.UserAccount.Id, centreId);
+            var centreEmailIsUnverified = !loginService.CentreEmailIsVerified(userEntity.UserAccount.Id, centreId);
 
             if (centreEmailIsUnverified)
             {

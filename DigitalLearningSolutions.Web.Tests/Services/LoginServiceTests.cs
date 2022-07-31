@@ -814,7 +814,7 @@
         }
 
         [Test]
-        public void CentreEmailIsUnverified_returns_true_when_centre_email_is_unverified()
+        public void CentreEmailIsVerified_returns_true_when_centre_email_is_verified()
         {
             // Given
             const int userId = 1;
@@ -825,14 +825,14 @@
             A.CallTo(() => userService.GetUnverifiedEmailsForUser(userId)).Returns((null, unverifiedCentreEmails));
 
             // When
-            var result = loginService.CentreEmailIsUnverified(userId, centreId);
+            var result = loginService.CentreEmailIsVerified(userId, centreId);
 
             // Then
             result.Should().BeTrue();
         }
 
         [Test]
-        public void CentreEmailIsUnverified_returns_false_when_centre_email_is_verified()
+        public void CentreEmailIsVerified_returns_false_when_centre_email_is_unverified()
         {
             // Given
             const int userId = 1;
@@ -843,7 +843,7 @@
             A.CallTo(() => userService.GetUnverifiedEmailsForUser(userId)).Returns((null, unverifiedCentreEmails));
 
             // When
-            var result = loginService.CentreEmailIsUnverified(userId, centreId);
+            var result = loginService.CentreEmailIsVerified(userId, centreId);
 
             // Then
             result.Should().BeFalse();

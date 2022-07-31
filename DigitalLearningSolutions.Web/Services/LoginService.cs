@@ -17,7 +17,7 @@
             List<int> idsOfCentresWithUnverifiedEmails
         );
 
-        bool CentreEmailIsUnverified(int userId, int centreIdIfLoggingIntoSingleCentre);
+        bool CentreEmailIsVerified(int userId, int centreIdIfLoggingIntoSingleCentre);
     }
 
     public class LoginService : ILoginService
@@ -80,7 +80,12 @@
 
             var centreIdIfLoggingIntoSingleCentre = GetCentreIdIfLoggingUserIntoSingleCentre(userEntity, username);
 
-            if (centreIdIfLoggingIntoSingleCentre != null && CentreEmailIsUnverified(
+            if (centreIdIfLoggingIntoSingleCentre == null)
+            {
+                return new LoginResult(LoginAttemptResult.ChooseACentre, userEntity);
+            }
+
+            if (!CentreEmailIsVerified(
                 userEntity.UserAccount.Id,
                 (int)centreIdIfLoggingIntoSingleCentre
             ))
@@ -92,13 +97,12 @@
                 );
             }
 
-            return centreIdIfLoggingIntoSingleCentre == null
-                ? new LoginResult(LoginAttemptResult.ChooseACentre, userEntity)
-                : new LoginResult(
-                    LoginAttemptResult.LogIntoSingleCentre,
-                    userEntity,
-                    centreIdIfLoggingIntoSingleCentre
-                );
+            return new LoginResult(
+                LoginAttemptResult.LogIntoSingleCentre,
+                userEntity,
+                centreIdIfLoggingIntoSingleCentre
+            );
+
         }
 
         public IEnumerable<ChooseACentreAccountViewModel> GetChooseACentreAccountViewModels(
@@ -123,11 +127,11 @@
             );
         }
 
-        public bool CentreEmailIsUnverified(int userId, int centreIdIfLoggingIntoSingleCentre)
+        public bool CentreEmailIsVerified(int userId, int centreIdIfLoggingIntoSingleCentre)
         {
             var (_, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
             return unverifiedCentreEmails.Select(uce => uce.centreId)
-                .Contains(centreIdIfLoggingIntoSingleCentre);
+                .Contains(centreIdIfLoggingIntoSingleCentre) == false;
         }
 
         // If there are no accounts this will also return null, as there is no single centre to log into
