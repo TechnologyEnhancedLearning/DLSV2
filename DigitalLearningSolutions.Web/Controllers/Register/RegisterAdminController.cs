@@ -49,7 +49,7 @@
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "RegisterInternalAdmin", new { centreId });
             }
 
             if (!centreId.HasValue || centresDataService.GetCentreName(centreId.Value) == null)

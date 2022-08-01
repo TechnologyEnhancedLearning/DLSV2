@@ -113,6 +113,32 @@
         }
 
         [Test]
+        public void IndexGet_with_logged_in_user_redirects_to_RegisterInternalAdmin()
+        {
+            // Given
+            var controllerWithLoggedInUser = new RegisterAdminController(
+                    centresDataService,
+                    centresService,
+                    cryptoService,
+                    jobGroupsDataService,
+                    registrationService,
+                    userDataService,
+                    registerAdminService
+                )
+                .WithDefaultContext()
+                .WithMockUser(true);
+
+            // When
+            var result = controllerWithLoggedInUser.Index(DefaultCentreId);
+
+            // Then
+            result.Should().BeRedirectToActionResult()
+                .WithControllerName("RegisterInternalAdmin")
+                .WithActionName("Index")
+                .WithRouteValue("centreId", DefaultCentreId);
+        }
+
+        [Test]
         public void PersonalInformationPost_does_not_continue_to_next_page_with_invalid_model()
         {
             // Given
