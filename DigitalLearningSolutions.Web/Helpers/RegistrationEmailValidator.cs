@@ -59,7 +59,7 @@
                 {
                     modelState.AddModelError(
                         nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
-                        DuplicateEmailErrorMessage
+                        CommonValidationErrorMessages.CentreEmailAlreadyInUse
                     );
                 }
             }

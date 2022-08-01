@@ -483,7 +483,7 @@
 
             AssertModelStateErrorIsExpected(
                 nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                DuplicateEmailErrorMessage
+                CommonValidationErrorMessages.CentreEmailAlreadyInUse
             );
         }
 
