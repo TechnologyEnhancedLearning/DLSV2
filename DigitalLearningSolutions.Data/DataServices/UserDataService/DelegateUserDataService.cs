@@ -207,6 +207,7 @@
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
             int jobGroupId,
+            DateTime? emailVerified,
             DateTime detailsLastChecked,
             int userId,
             bool changeMadeBySameUser = false
@@ -222,6 +223,7 @@
                             ProfessionalRegistrationNumber = @professionalRegNumber,
                             HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
                             JobGroupId = @jobGroupId,
+                            EmailVerified = @emailVerified,
                             DetailsLastChecked = (CASE WHEN @changeMadeBySameUser = 1 THEN @detailsLastChecked ELSE DetailsLastChecked END)
                         WHERE ID = @userId",
                 new
@@ -234,6 +236,7 @@
                     professionalRegNumber,
                     hasBeenPromptedForPrn,
                     jobGroupId,
+                    emailVerified,
                     detailsLastChecked,
                     changeMadeBySameUser,
                 }

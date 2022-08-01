@@ -346,6 +346,10 @@ namespace DigitalLearningSolutions.Web.Services
             DateTime? detailsLastChecked = null
         )
         {
+            // TODO: HEEDLS-915 Set EmailVerified to null if primary email was changed
+            // In 916 I set this to true temporarily for ease of adjusting the tests
+            const bool primaryEmailWasChanged = true;
+
             userDataService.UpdateUser(
                 editAccountDetailsData.FirstName,
                 editAccountDetailsData.Surname,
@@ -354,6 +358,7 @@ namespace DigitalLearningSolutions.Web.Services
                 editAccountDetailsData.ProfessionalRegistrationNumber,
                 editAccountDetailsData.HasBeenPromptedForPrn,
                 editAccountDetailsData.JobGroupId,
+                primaryEmailWasChanged ? (DateTime?)null : clockUtility.UtcNow,
                 detailsLastChecked ?? clockUtility.UtcNow,
                 editAccountDetailsData.UserId,
                 changeMadeBySameUser

@@ -54,6 +54,7 @@
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
             int jobGroupId,
+            DateTime? emailVerified,
             DateTime detailsLastChecked,
             int userId,
             bool changeMadeBySameUser = false
@@ -302,17 +303,6 @@
             return PrimaryEmailIsInUseQuery(email, userId);
         }
 
-        private bool PrimaryEmailIsInUseQuery(string email, int? userId)
-        {
-            return connection.QueryFirst<int>(
-                @$"SELECT COUNT(*)
-                    FROM Users
-                    WHERE PrimaryEmail = @email
-                    {(userId == null ? "" : "AND Id <> @userId")}",
-                new { email, userId }
-            ) > 0;
-        }
-
         public void SetPrimaryEmailAndActivate(int userId, string email)
         {
             connection.Execute(
@@ -327,6 +317,17 @@
                 @"DELETE FROM Users WHERE ID = @userId",
                 new { userId }
             );
+        }
+
+        private bool PrimaryEmailIsInUseQuery(string email, int? userId)
+        {
+            return connection.QueryFirst<int>(
+                @$"SELECT COUNT(*)
+                    FROM Users
+                    WHERE PrimaryEmail = @email
+                    {(userId == null ? "" : "AND Id <> @userId")}",
+                new { email, userId }
+            ) > 0;
         }
     }
 }

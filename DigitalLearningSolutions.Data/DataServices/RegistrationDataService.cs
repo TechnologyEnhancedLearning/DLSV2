@@ -101,6 +101,7 @@
                 delegateRegistrationModel.Centre,
                 delegateRegistrationModel.CentreSpecificEmail,
                 userId,
+                delegateRegistrationModel.IsSelfRegistered,
                 transaction
             );
 
@@ -156,6 +157,7 @@
                 registrationModel.CentreId,
                 registrationModel.CentreSpecificEmail,
                 registrationModel.UserId,
+                true,
                 transaction
             );
 
@@ -243,6 +245,7 @@
                 delegateRegistrationModel.ProfessionalRegistrationNumber,
                 PasswordHash = string.Empty,
                 TermsAgreed = registerJourneyContainsTermsAndConditions ? currentTime : (DateTime?)null,
+                EmailVerified = (DateTime?)null,
                 DetailsLastChecked = currentTime,
             };
 
@@ -257,6 +260,7 @@
                         ProfessionalRegistrationNumber,
                         Active,
                         TermsAgreed,
+                        EmailVerified,
                         DetailsLastChecked
                     )
                     OUTPUT Inserted.ID
@@ -270,6 +274,7 @@
                         @professionalRegistrationNumber,
                         @userIsActive,
                         @termsAgreed,
+                        @emailVerified,
                         @detailsLastChecked
                     )",
                 userValues,
@@ -281,6 +286,7 @@
             int centreId,
             string? centreSpecificEmail,
             int userId,
+            bool selfRegistered,
             IDbTransaction transaction
         )
         {
@@ -290,7 +296,7 @@
                     userId,
                     centreId,
                     centreSpecificEmail,
-                    null,
+                    selfRegistered ? (DateTime?)null : clockUtility.UtcNow,
                     transaction
                 );
             }
