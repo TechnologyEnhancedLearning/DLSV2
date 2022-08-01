@@ -191,6 +191,29 @@
         }
 
         [Test]
+        public void HasDelegateGotSessions_returns_true_when_delegate_has_sessions()
+        {
+            // When
+            var result = sessionDataService.HasDelegateGotSessions(1);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void HasDelegateGotSessions_returns_false_when_delegate_does_not_have_sessions()
+        {
+            // Given
+            const int fakeVeryLargeDelegateId = 123123123;
+
+            // When
+            var result = sessionDataService.HasDelegateGotSessions(fakeVeryLargeDelegateId);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
         public void GetSessionBySessionId_gets_session_correctly()
         {
             // Given
