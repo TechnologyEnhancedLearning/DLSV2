@@ -544,7 +544,7 @@
             {
                 new DelegateUserCard
                 {
-                    FirstName = "include", Approved = true, SelfReg = false, Password = null, EmailAddress = "email"
+                    FirstName = "include", Approved = true, SelfReg = false, Password = null, EmailAddress = "email",
                 },
                 new DelegateUserCard
                     { FirstName = "include", Approved = true, SelfReg = false, Password = "", EmailAddress = "email" },
@@ -946,7 +946,7 @@
                     UserTestHelper.GetDefaultDelegateAccount(
                         centreSpecificDetailsLastChecked: sevenMonthsAgo,
                         active: false
-                    )
+                    ),
                 }
             );
 
@@ -1006,15 +1006,15 @@
         }
 
         [Test]
-        [TestCase(null)]
-        [TestCase("unverified@primary.email")]
-        public void GetUnverifiedEmailsForUser_returns_unverified_primary_email(string? primaryEmail)
+        public void GetUnverifiedEmailsForUser_returns_unverified_primary_email()
         {
             // Given
+            const string unverifiedPrimaryEmail = "unverified@primary.email";
             var userAccount = UserTestHelper.GetDefaultUserAccount(
-                emailVerified: primaryEmail == null ? DateTime.Now : (DateTime?)null,
-                primaryEmail: "unverified@primary.email"
+                emailVerified: false,
+                primaryEmail: unverifiedPrimaryEmail
             );
+
             A.CallTo(() => userDataService.GetUserAccountById(userAccount.Id)).Returns(userAccount);
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(userAccount.Id)).Returns(new List<AdminAccount>());
             A.CallTo(() => userDataService.GetDelegateAccountsByUserId(userAccount.Id))
@@ -1026,7 +1026,7 @@
             var result = userService.GetUnverifiedEmailsForUser(userAccount.Id);
 
             // Then
-            result.primaryEmail.Should().BeEquivalentTo(primaryEmail);
+            result.primaryEmail.Should().BeEquivalentTo(unverifiedPrimaryEmail);
         }
 
         [Test]
@@ -1049,7 +1049,7 @@
                     new List<(int, string, string)>
                     {
                         (1, "centre1", "centre@1.email"), (2, "centre2", "centre@2.email"),
-                        (3, "centre3", "centre@3.email"), (4, "centre4", "centre@4.email")
+                        (3, "centre3", "centre@3.email"), (4, "centre4", "centre@4.email"),
                     }
                 );
 
@@ -1058,8 +1058,8 @@
 
             // Then
             result.centreEmails.Count().Should().Be(2);
-            result.centreEmails.Should().Contain(("centre1", "centre@1.email"));
-            result.centreEmails.Should().Contain(("centre3", "centre@3.email"));
+            result.centreEmails.Should().Contain((1, "centre1", "centre@1.email"));
+            result.centreEmails.Should().Contain((3, "centre3", "centre@3.email"));
         }
 
         private void AssertAdminPermissionsCalledCorrectly(

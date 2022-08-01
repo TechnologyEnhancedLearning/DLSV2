@@ -55,9 +55,17 @@
             null
         );
 
-        public readonly string TagLabel;
-        public readonly string TagColour;
+        public static readonly ChooseACentreStatus EmailUnverified = new ChooseACentreStatus(
+            5,
+            nameof(EmailUnverified),
+            "Email unverified",
+            RedCssClassName,
+            null
+        );
+
         public readonly ChooseACentreButton? ActionButton;
+        public readonly string TagColour;
+        public readonly string TagLabel;
 
         private ChooseACentreStatus(
             int id,

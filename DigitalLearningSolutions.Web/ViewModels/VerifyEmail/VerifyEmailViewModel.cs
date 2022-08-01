@@ -6,10 +6,13 @@
 
     public class VerifyEmailViewModel
     {
+        public const string CentreEmailExplanation =
+            "You will not be able to access that account until you verify the address.";
+
         public VerifyEmailViewModel(
             EmailVerificationReason emailVerificationReason,
             string? primaryEmail,
-            List<(string centreName, string centreEmail)> centreSpecificEmails
+            IReadOnlyCollection<(int centreId, string centreName, string centreEmail)> centreSpecificEmails
         )
         {
             EmailVerificationReason = emailVerificationReason;
@@ -23,12 +26,14 @@
 
         public EmailVerificationReason EmailVerificationReason { get; set; }
         public string? PrimaryEmail { get; set; }
-        public IEnumerable<(string centreName, string centreEmail)> CentreSpecificEmails { get; set; }
+        public IEnumerable<(int centreId, string centreName, string centreEmail)> CentreSpecificEmails { get; set; }
         public int UnverifiedEmailsCount { get; set; }
         public bool SingleUnverifiedEmail { get; set; }
-        public IEnumerable<(string centreName, string centreEmail)> CentreEmailsExcludingFirstParagraph { get; set; }
 
-        public const string CentreEmailExplanation =
-            "You will not be able to access that account until you verify the address.";
+        public IEnumerable<(int centreId, string centreName, string centreEmail)> CentreEmailsExcludingFirstParagraph
+        {
+            get;
+            set;
+        }
     }
 }

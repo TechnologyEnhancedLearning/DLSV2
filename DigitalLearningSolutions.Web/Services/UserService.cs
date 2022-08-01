@@ -46,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         void UpdateFailedLoginCount(UserAccount userAccount);
 
-        public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId);
+        IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId);
 
         void UpdateAdminUserPermissions(
             int adminId,
@@ -80,7 +80,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
 
-        (string? primaryEmail, IEnumerable<(string centreName, string centreEmail)> centreEmails)
+        (string? primaryEmail, List<(int centreId, string centreName, string centreEmail)> centreEmails)
             GetUnverifiedEmailsForUser(int userId);
 
         AdminEntity? GetAdminById(int adminId);
@@ -312,14 +312,14 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetAllCentreEmailsForUser(userId);
         }
 
-        public (string? primaryEmail, IEnumerable<(string centreName, string centreEmail)> centreEmails)
+        public (string? primaryEmail, List<(int centreId, string centreName, string centreEmail)> centreEmails)
             GetUnverifiedEmailsForUser(int userId)
         {
             var userEntity = GetUserById(userId);
 
             if (userEntity == null)
             {
-                return (null, new List<(string centreName, string centreEmail)>());
+                return (null, new List<(int centreId, string centreName, string centreEmail)>());
             }
 
             var unverifiedPrimaryEmail = userEntity.UserAccount.EmailVerified == null
@@ -330,9 +330,9 @@ namespace DigitalLearningSolutions.Web.Services
                 tuple =>
                     userEntity.AdminAccounts.Any(account => account.CentreId == tuple.centreId && account.Active) ||
                     userEntity.DelegateAccounts.Any(account => account.CentreId == tuple.centreId && account.Active)
-            ).Select(tuple => (tuple.centreName, tuple.centreEmail));
+            );
 
-            return (unverifiedPrimaryEmail, unverifiedCentreEmails);
+            return (unverifiedPrimaryEmail, unverifiedCentreEmails.ToList());
         }
 
         public AdminEntity? GetAdminById(int adminId)

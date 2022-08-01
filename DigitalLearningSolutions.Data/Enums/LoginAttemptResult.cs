@@ -8,5 +8,6 @@
         InactiveAccount,
         AccountsHaveMismatchedPasswords,
         AccountLocked,
+        UnverifiedEmail,
     }
 }

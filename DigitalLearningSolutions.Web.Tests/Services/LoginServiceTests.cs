@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.ViewModels;
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FluentAssertions;
@@ -15,6 +16,13 @@
     {
         private const string Username = "Username";
         private const string Password = "Password";
+
+        private static readonly (string?, List<(int centreId, string centreName, string centreEmail)>)
+            ResultListingNoEmailsAsUnverified =
+                (null, new List<(int centreId, string centreName, string centreEmail)>());
+
+        private static readonly List<int> EmptyListOfCentreIds = new List<int>();
+
         private LoginService loginService = null!;
         private IUserService userService = null!;
         private IUserVerificationService userVerificationService = null!;
@@ -58,6 +66,8 @@
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
                 .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
+                .Returns(ResultListingNoEmailsAsUnverified);
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -189,6 +199,8 @@
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
                 .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
+                .Returns(ResultListingNoEmailsAsUnverified);
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -297,6 +309,8 @@
                         new List<int>()
                     )
                 );
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
+                .Returns(ResultListingNoEmailsAsUnverified);
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -336,6 +350,8 @@
             A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
                 .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 1, 2 }, new List<int>()));
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
+                .Returns(ResultListingNoEmailsAsUnverified);
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -371,6 +387,8 @@
             A.CallTo(() => userService.GetUserByUsername(candidateNumberForLogin)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
                 .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 1, 2 }, new List<int>()));
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
+                .Returns(ResultListingNoEmailsAsUnverified);
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -411,6 +429,8 @@
             A.CallTo(() => userService.GetUserByUsername(candidateNumberForLogin)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
                 .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 1, 2 }, new List<int>()));
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
+                .Returns(ResultListingNoEmailsAsUnverified);
             A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
@@ -460,6 +480,7 @@
                     UserTestHelper.GetDefaultDelegateAccount(2, centreId: 2, candidateNumber: "AB2"),
                 }
             );
+
             A.CallTo(() => userService.GetUserByUsername(candidateNumberForLogin)).Returns(userEntity);
             A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
                 .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 1, 2 }, new List<int>()));
@@ -474,6 +495,83 @@
                 result.UserEntity.Should().Be(userEntity);
                 result.LoginAttemptResult.Should().Be(LoginAttemptResult.ChooseACentre);
                 result.CentreToLogInto.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void
+            AttemptLogin_returns_unverified_email_if_primary_email_is_unverified()
+        {
+            // Given
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(emailVerified: false),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                {
+                    UserTestHelper.GetDefaultDelegateAccount(),
+                    UserTestHelper.GetDefaultDelegateAccount(3, centreId: 2, candidateNumber: "AB2"),
+                }
+            );
+
+            var resultListingPrimaryEmailAsUnverified = ("primary@email.com",
+                new List<(int centreId, string centreName, string centreEmail)>());
+
+            A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
+                .Returns(resultListingPrimaryEmailAsUnverified);
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.UserEntity.Should().Be(userEntity);
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.UnverifiedEmail);
+                result.CentreToLogInto.Should().BeNull();
+                A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void
+            AttemptLogin_returns_unverified_email_if_user_is_logging_into_single_centre_and_centre_email_is_unverified()
+        {
+            // Given
+            const int centreId = 1;
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>(),
+                new List<DelegateAccount>
+                {
+                    UserTestHelper.GetDefaultDelegateAccount(centreId: 1),
+                }
+            );
+
+            var resultListingCentreEmailAsUnverified = ((string?)null,
+                new List<(int centreId, string centreName, string centreEmail)>
+                    { (centreId, "Test Centre", "centre@email.com") });
+
+            A.CallTo(() => userService.GetUserByUsername(Username)).Returns(userEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(Password, userEntity))
+                .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
+                .Returns(resultListingCentreEmailAsUnverified);
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.UserEntity.Should().Be(userEntity);
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.UnverifiedEmail);
+                result.CentreToLogInto.Should().Be(1);
+                A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).MustHaveHappenedOnceExactly();
             }
         }
 
@@ -528,17 +626,131 @@
             );
 
             // When
-            var result = loginService.GetChooseACentreAccountViewModels(userEntity);
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity, EmptyListOfCentreIds);
 
             // Then
             result.Should().BeEquivalentTo(
                 new List<ChooseACentreAccountViewModel>
                 {
-                    new ChooseACentreAccountViewModel(1, "admin+delegate", true, true, true, true, true),
-                    new ChooseACentreAccountViewModel(2, "admin inactive centre", false, true, false, false, false),
-                    new ChooseACentreAccountViewModel(3, "inactive delegate", true, false, true, true, false),
-                    new ChooseACentreAccountViewModel(4, "unapproved delegate", true, false, true, false, true),
-                    new ChooseACentreAccountViewModel(5, "admin+unapproved delegate", true, true, true, false, true),
+                    new ChooseACentreAccountViewModel(
+                        1,
+                        "admin+delegate",
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false
+                    ),
+                    new ChooseACentreAccountViewModel(
+                        2,
+                        "admin inactive centre",
+                        false,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false
+                    ),
+                    new ChooseACentreAccountViewModel(
+                        3,
+                        "inactive delegate",
+                        true,
+                        false,
+                        true,
+                        true,
+                        false,
+                        false
+                    ),
+                    new ChooseACentreAccountViewModel(
+                        4,
+                        "unapproved delegate",
+                        true,
+                        false,
+                        true,
+                        false,
+                        true,
+                        false
+                    ),
+                    new ChooseACentreAccountViewModel(
+                        5,
+                        "admin+unapproved delegate",
+                        true,
+                        true,
+                        true,
+                        false,
+                        true,
+                        false
+                    ),
+                }
+            );
+        }
+
+        [Test]
+        public void GetChooseACentreAccountViewModels_identifies_accounts_with_unverified_emails_correctly()
+        {
+            // Given
+            var idsOfCentresWithUnverifiedEmails = new List<int> { 1, 2, 3 };
+            var unverifiedEmailAdminAccountWithDelegateAccount =
+                UserTestHelper.GetDefaultAdminAccount(centreId: 1, centreName: "admin+delegate");
+            var unverifiedEmailDelegateAccountWithAdminAccount =
+                UserTestHelper.GetDefaultDelegateAccount(centreId: 1, centreName: "admin+delegate");
+            var unverifiedEmailAdminAccountOnly =
+                UserTestHelper.GetDefaultAdminAccount(centreId: 2, centreName: "admin only");
+            var unverifiedEmailDelegateAccountOnly =
+                UserTestHelper.GetDefaultDelegateAccount(centreId: 3, centreName: "delegate only");
+
+            var userEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new List<AdminAccount>
+                {
+                    unverifiedEmailAdminAccountWithDelegateAccount,
+                    unverifiedEmailAdminAccountOnly,
+                },
+                new List<DelegateAccount>
+                {
+                    unverifiedEmailDelegateAccountWithAdminAccount,
+                    unverifiedEmailDelegateAccountOnly,
+                }
+            );
+
+            // When
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity, idsOfCentresWithUnverifiedEmails);
+
+            // Then
+            result.Should().BeEquivalentTo(
+                new List<ChooseACentreAccountViewModel>
+                {
+                    new ChooseACentreAccountViewModel(
+                        1,
+                        "admin+delegate",
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true
+                    ),
+                    new ChooseACentreAccountViewModel(
+                        2,
+                        "admin only",
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        true
+                    ),
+                    new ChooseACentreAccountViewModel(
+                        3,
+                        "delegate only",
+                        true,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true
+                    ),
                 }
             );
         }
@@ -560,13 +772,13 @@
             );
 
             // When
-            var result = loginService.GetChooseACentreAccountViewModels(userEntity);
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity, EmptyListOfCentreIds);
 
             // Then
             result.Should().BeEquivalentTo(
                 new List<ChooseACentreAccountViewModel>
                 {
-                    new ChooseACentreAccountViewModel(2, "delegate", true, false, true, true, true),
+                    new ChooseACentreAccountViewModel(2, "delegate", true, false, true, true, true, false),
                 }
             );
         }
@@ -582,7 +794,7 @@
             );
 
             // When
-            var result = loginService.GetChooseACentreAccountViewModels(userEntity);
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity, EmptyListOfCentreIds);
 
             // Then
             result.Should().HaveCount(0);
@@ -599,10 +811,46 @@
             );
 
             // When
-            var result = loginService.GetChooseACentreAccountViewModels(userEntity);
+            var result = loginService.GetChooseACentreAccountViewModels(userEntity, EmptyListOfCentreIds);
 
             // Then
             result.Should().HaveCount(0);
+        }
+
+        [Test]
+        public void CentreEmailIsVerified_returns_true_when_centre_email_is_verified()
+        {
+            // Given
+            const int userId = 1;
+            const int centreId = 2;
+            var unverifiedCentreEmails = new List<(int centreId, string centreName, string centreEmail)>
+                { (centreId + 1, "Test centre", "centre@email.com") };
+
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userId)).Returns((null, unverifiedCentreEmails));
+
+            // When
+            var result = loginService.CentreEmailIsVerified(userId, centreId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void CentreEmailIsVerified_returns_false_when_centre_email_is_unverified()
+        {
+            // Given
+            const int userId = 1;
+            const int centreId = 2;
+            var unverifiedCentreEmails = new List<(int centreId, string centreName, string centreEmail)>
+                { (centreId, "Test centre", "centre@email.com") };
+
+            A.CallTo(() => userService.GetUnverifiedEmailsForUser(userId)).Returns((null, unverifiedCentreEmails));
+
+            // When
+            var result = loginService.CentreEmailIsVerified(userId, centreId);
+
+            // Then
+            result.Should().BeFalse();
         }
     }
 }

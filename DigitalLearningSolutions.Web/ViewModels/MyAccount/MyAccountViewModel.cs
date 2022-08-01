@@ -18,6 +18,7 @@
             string? centreSpecificEmail,
             CentreRegistrationPromptsWithAnswers? customPrompts,
             List<(int centreId, string centreName, string? centreSpecificEmail)> allCentreSpecificEmails,
+            List<(int centreId, string centreName, string? centreSpecificEmail)> unverifiedCentreEmails,
             DlsSubApplication dlsSubApplication,
             string switchCentreReturnUrl
         )
@@ -55,12 +56,16 @@
             AllCentreSpecificEmails = allCentreSpecificEmails;
             DlsSubApplication = dlsSubApplication;
             SwitchCentreReturnUrl = switchCentreReturnUrl;
+            PrimaryEmailIsUnverified = userAccount.EmailVerified == null;
+            UnverifiedCentreEmails = unverifiedCentreEmails;
         }
 
         public int? CentreId { get; set; }
         public string? CentreName { get; set; }
 
         public string PrimaryEmail { get; set; }
+
+        public bool PrimaryEmailIsUnverified { get; }
 
         public string? DelegateNumber { get; set; }
 
@@ -81,6 +86,12 @@
         public List<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
 
         public List<(int centreId, string centreName, string? centreSpecificEmail)> AllCentreSpecificEmails
+        {
+            get;
+            set;
+        }
+
+        public List<(int centreId, string centreName, string? centreSpecificEmail)>? UnverifiedCentreEmails
         {
             get;
             set;

@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Models.User
 {
-    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.ViewModels;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
@@ -64,7 +64,7 @@
         [TestCase(false, false, false, true, false, "Centre inactive", "grey")]
         // [TestCase(false, false, false, false, true)] - !isAdmin && !isDelegate && isDelegateActive
         // [TestCase(false, false, false, false, false)] - !isAdmin && !isDelegate
-        public void StatusTag_and_ActionButton_return_expected_values(
+        public void StatusTag_and_ActionButton_return_expected_values_when_email_is_verified(
             bool isCentreActive,
             bool isAdmin,
             bool isDelegate,
@@ -83,7 +83,8 @@
                 isAdmin,
                 isDelegate,
                 isDelegateApproved,
-                isDelegateActive
+                isDelegateActive,
+                false
             );
 
             // Then
@@ -100,6 +101,40 @@
                 {
                     result.Status.ActionButton.ToString().Should().Be(expectedActionButton);
                 }
+            }
+        }
+
+        [TestCase(true, true, true)]
+        [TestCase(true, true, false)]
+        [TestCase(true, false, true)]
+        [TestCase(false, true, true)]
+        public void StatusTag_and_ActionButton_show_email_unverified_when_email_is_unverified(
+            bool isAdmin,
+            bool isDelegate,
+            bool isDelegateApproved
+        )
+        {
+            // Given
+            const bool isEmailUnverified = true;
+
+            // When
+            var result = new ChooseACentreAccountViewModel(
+                1,
+                "",
+                true,
+                isAdmin,
+                isDelegate,
+                isDelegateApproved,
+                true,
+                isEmailUnverified
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Status.TagLabel.Should().Be("Email unverified");
+                result.Status.TagColour.Should().Be("red");
+                result.Status.ActionButton.Should().BeNull();
             }
         }
     }
