@@ -115,8 +115,7 @@
         )
         {
             // Given
-            const string expectedTagLabel = "Email unverified";
-            const string expectedTagColour = "red";
+            const bool isEmailUnverified = true;
 
             // When
             var result = new ChooseACentreAccountViewModel(
@@ -127,14 +126,14 @@
                 isDelegate,
                 isDelegateApproved,
                 true,
-                true
+                isEmailUnverified
             );
 
             // Then
             using (new AssertionScope())
             {
-                result.Status.TagLabel.Should().Be(expectedTagLabel);
-                result.Status.TagColour.Should().Be(expectedTagColour);
+                result.Status.TagLabel.Should().Be("Email unverified");
+                result.Status.TagColour.Should().Be("red");
                 result.Status.ActionButton.Should().BeNull();
             }
         }
