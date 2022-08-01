@@ -1,143 +1,94 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     public static class RegistrationEmailValidator
     {
-        private const string WrongEmailForCentreErrorMessage =
-            "This email address does not match the one held by the centre; " +
-            "either your primary email or centre email must match the one held by the centre";
+        public static void ValidatePrimaryEmailIfNecessary(
+            string? primaryEmail,
+            string nameOfFieldToValidate,
+            ModelStateDictionary modelState,
+            IUserDataService userDataService,
+            string errorMessage
+        )
+        {
+            if (
+                IsValidationNecessary(primaryEmail, nameOfFieldToValidate, modelState) &&
+                userDataService.PrimaryEmailIsInUse(primaryEmail!)
+            )
+            {
+                modelState.AddModelError(nameOfFieldToValidate, errorMessage);
+            }
+        }
 
-        private const string DuplicateEmailErrorMessage =
-            "A user with this email address is already registered; if this is you, " +
-            "please log in and register at this centre via the My Account page";
-
-        public static void ValidateEmailAddressesForDelegateRegistration(
-            PersonalInformationViewModel model,
+        public static void ValidateCentreEmailIfNecessary(
+            string? centreEmail,
+            int? centreId,
+            string nameOfFieldToValidate,
             ModelStateDictionary modelState,
             IUserDataService userDataService
         )
         {
-            ValidateEmailAddresses(false, model, modelState, userDataService);
+            if (
+                centreId.HasValue &&
+                IsValidationNecessary(centreEmail, nameOfFieldToValidate, modelState) &&
+                userDataService.CentreSpecificEmailIsInUseAtCentre(centreEmail!, centreId.Value)
+            )
+            {
+                modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.EmailInUseAtCentre);
+            }
         }
 
-        public static void ValidateEmailAddressesForAdminRegistration(
-            PersonalInformationViewModel model,
+        public static void ValidateCentreEmailWithUserIdIfNecessary(
+            string? centreEmail,
+            int? centreId,
+            int userId,
+            string nameOfFieldToValidate,
             ModelStateDictionary modelState,
-            IUserDataService userDataService,
-            ICentresDataService centresDataService
+            IUserDataService userDataService
         )
         {
-            ValidateEmailAddresses(true, model, modelState, userDataService, centresDataService);
+            if (
+                centreId.HasValue &&
+                IsValidationNecessary(centreEmail, nameOfFieldToValidate, modelState) &&
+                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(centreEmail!, centreId.Value, userId)
+            )
+            {
+                modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.EmailInUseAtCentre);
+            }
         }
 
-        public static void ValidateEmailsForInternalAdminRegistration(
-            int userId,
-            InternalAdminInformationViewModel model,
+        public static void ValidateEmailForCentreManagerIfNecessary(
+            string? primaryEmail,
+            string? centreEmail,
+            int? centreId,
+            string nameOfFieldToValidate,
             ModelStateDictionary modelState,
-            IUserDataService userDataService,
             ICentresService centresService
         )
         {
-            if (model.CentreSpecificEmail != null)
-            {
-                if (modelState.HasError(nameof(InternalAdminInformationViewModel.CentreSpecificEmail)))
-                {
-                    return;
-                }
-
-                if (userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
-                    model.CentreSpecificEmail,
-                    model.Centre!.Value,
-                    userId
-                ))
-                {
-                    modelState.AddModelError(
-                        nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
-                        CommonValidationErrorMessages.CentreEmailAlreadyInUse
-                    );
-                }
-            }
-
-            if (!centresService.IsAnEmailValidForCentreManager(
-                model.PrimaryEmail,
-                model.CentreSpecificEmail,
-                model.Centre!.Value
-            ))
+            if (
+                modelState.IsValid && centreId.HasValue && (primaryEmail != null || centreEmail != null) &&
+                !centresService.IsAnEmailValidForCentreManager(primaryEmail, centreEmail, centreId.Value)
+            )
             {
                 modelState.AddModelError(
-                    nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
-                    WrongEmailForCentreErrorMessage
+                    nameOfFieldToValidate,
+                    CommonValidationErrorMessages.WrongEmailForCentreDuringAdminRegistration
                 );
             }
         }
 
-        private static void ValidateEmailAddresses(
-            bool isRegisterAdminJourney,
-            PersonalInformationViewModel model,
-            ModelStateDictionary modelState,
-            IUserDataService userDataService,
-            ICentresDataService? centresDataService = null
+        private static bool IsValidationNecessary(
+            string? email,
+            string nameOfFieldToValidate,
+            ModelStateDictionary modelState
         )
         {
-            var primaryEmailIsValidAndNotNull =
-                !modelState.HasError(nameof(PersonalInformationViewModel.PrimaryEmail)) &&
-                model.PrimaryEmail != null;
-
-            var centreSpecificEmailIsValidAndNotNull =
-                !modelState.HasError(nameof(PersonalInformationViewModel.CentreSpecificEmail)) &&
-                model.CentreSpecificEmail != null;
-
-            var autoRegisterManagerEmail = isRegisterAdminJourney
-                ? centresDataService!.GetCentreAutoRegisterValues(model.Centre!.Value).autoRegisterManagerEmail
-                : null;
-
-            if (primaryEmailIsValidAndNotNull)
-            {
-                if (userDataService.PrimaryEmailIsInUse(model.PrimaryEmail))
-                {
-                    modelState.AddModelError(
-                        nameof(PersonalInformationViewModel.PrimaryEmail),
-                        DuplicateEmailErrorMessage
-                    );
-                }
-                else if (isRegisterAdminJourney)
-                {
-                    if (!StringHelper.StringsMatchCaseInsensitive(model.PrimaryEmail, autoRegisterManagerEmail!) &&
-                        model.CentreSpecificEmail == null)
-                    {
-                        modelState.AddModelError(
-                            nameof(PersonalInformationViewModel.PrimaryEmail),
-                            WrongEmailForCentreErrorMessage
-                        );
-                    }
-                }
-            }
-
-            if (centreSpecificEmailIsValidAndNotNull)
-            {
-                if (userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail, model.Centre!.Value))
-                {
-                    modelState.AddModelError(
-                        nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                        DuplicateEmailErrorMessage
-                    );
-                }
-                else if (isRegisterAdminJourney &&
-                         !StringHelper.StringsMatchCaseInsensitive(model.PrimaryEmail!, autoRegisterManagerEmail!) &&
-                         !StringHelper.StringsMatchCaseInsensitive(model.CentreSpecificEmail, autoRegisterManagerEmail))
-                {
-                    modelState.AddModelError(
-                        nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                        WrongEmailForCentreErrorMessage
-                    );
-                }
-            }
+            return email != null && !modelState.HasError(nameOfFieldToValidate);
         }
     }
 }

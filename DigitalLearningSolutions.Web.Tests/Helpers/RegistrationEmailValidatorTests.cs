@@ -1,12 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
-    using System.Data;
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.ViewModels.Register;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -17,440 +16,283 @@
         private const int DefaultUserId = 1;
         private const int DefaultCentreId = 7;
         private const string DefaultPrimaryEmail = "primary@email.com";
-        private const string DefaultPrimaryEmailAllCaps = "PRIMARY@EMAIL.COM";
         private const string DefaultCentreSpecificEmail = "centre@email.com";
-        private const string DefaultCentreSpecificEmailAllCaps = "CENTRE@EMAIL.COM";
-        private const string DifferentCentreEmail = "different@email.com";
         private const string DefaultErrorMessage = "error message";
-
-        private const string WrongEmailForCentreErrorMessage =
-            "This email address does not match the one held by the centre; " +
-            "either your primary email or centre email must match the one held by the centre";
-
-        private const string DuplicateEmailErrorMessage =
-            "A user with this email address is already registered; if this is you, " +
-            "please log in and register at this centre via the My Account page";
+        private const string DefaultFieldName = "FieldName";
 
         private static ModelStateDictionary modelState = null!;
-        private ICentresDataService centresDataService = null!;
-        private IUserService userService = null!;
         private IUserDataService userDataService = null!;
         private ICentresService centresService = null!;
 
         [SetUp]
         public void Setup()
         {
-            userService = A.Fake<IUserService>();
             userDataService = A.Fake<IUserDataService>();
             centresService = A.Fake<ICentresService>();
-            centresDataService = A.Fake<ICentresDataService>();
             modelState = new ModelStateDictionary();
         }
 
         [Test]
-        public void
-            ValidateEmailAddressesForDelegateRegistration_adds_no_new_error_messages_when_emails_are_already_invalid()
+        public void ValidatePrimaryEmailIfNecessary_adds_error_message_when_primary_email_is_in_use()
         {
             // Given
-            var model = GetDefaultPersonalInformationViewModel(centreSpecificEmail: null);
-
-            modelState.AddModelError(nameof(PersonalInformationViewModel.PrimaryEmail), DefaultErrorMessage);
-            modelState.AddModelError(nameof(PersonalInformationViewModel.CentreSpecificEmail), DefaultErrorMessage);
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail)).Returns(true);
 
             // When
-            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(
-                model,
+            RegistrationEmailValidator.ValidatePrimaryEmailIfNecessary(
+                DefaultPrimaryEmail,
+                DefaultFieldName,
                 modelState,
-                userDataService
+                userDataService,
+                DefaultErrorMessage
             );
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(A<string>._)).MustNotHaveHappened();
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._)
-            ).MustNotHaveHappened();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(A<int>._)).MustNotHaveHappened();
-            modelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
-                .Be(ModelValidationState.Invalid);
-            modelState[nameof(PersonalInformationViewModel.CentreSpecificEmail)].ValidationState.Should()
-                .Be(ModelValidationState.Invalid);
-            AssertModelStateErrorIsExpected(nameof(PersonalInformationViewModel.PrimaryEmail), DefaultErrorMessage);
-            AssertModelStateErrorIsExpected(
-                nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                DefaultErrorMessage
-            );
+            AssertModelStateErrorIsExpected(DefaultFieldName, DefaultErrorMessage);
         }
 
         [Test]
-        public void ValidateEmailAddressesForDelegateRegistration_adds_errors_on_emails_if_already_in_use()
+        public void ValidatePrimaryEmailIfNecessary_does_not_add_error_message_when_primary_email_is_not_in_use()
         {
             // Given
-            var model = GetDefaultPersonalInformationViewModel();
+            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail)).Returns(false);
+
+            // When
+            RegistrationEmailValidator.ValidatePrimaryEmailIfNecessary(
+                DefaultPrimaryEmail,
+                DefaultFieldName,
+                modelState,
+                userDataService,
+                DefaultErrorMessage
+            );
+
+            // Then
+            modelState.IsValid.Should().BeTrue();
+        }
+
+        [Test]
+        public void ValidatePrimaryEmailIfNecessary_does_not_add_error_message_when_email_is_null()
+        {
+            // When
+            RegistrationEmailValidator.ValidatePrimaryEmailIfNecessary(
+                null,
+                DefaultFieldName,
+                modelState,
+                userDataService,
+                DefaultErrorMessage
+            );
+
+            // Then
+            modelState.IsValid.Should().BeTrue();
+        }
+
+        [Test]
+        public void ValidatePrimaryEmailIfNecessary_does_not_add_another_error_message_when_field_already_has_error()
+        {
+            // Given
+            modelState.AddModelError(DefaultFieldName, DefaultErrorMessage);
 
             A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail)).Returns(true);
+
+            // When
+            RegistrationEmailValidator.ValidatePrimaryEmailIfNecessary(
+                DefaultPrimaryEmail,
+                DefaultFieldName,
+                modelState,
+                userDataService,
+                "different error"
+            );
+
+            // Then
+            modelState[DefaultFieldName].Errors.Count.Should().Be(1);
+            AssertModelStateErrorIsExpected(DefaultFieldName, DefaultErrorMessage);
+        }
+
+        [Test]
+        public void ValidateCentreEmailIfNecessary_adds_error_message_when_centre_email_is_in_use_at_centre()
+        {
+            // Given
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, A<int>._)
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, DefaultCentreId)
             ).Returns(true);
 
             // When
-            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(
-                model,
+            RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
+                DefaultCentreSpecificEmail,
+                DefaultCentreId,
+                DefaultFieldName,
                 modelState,
                 userDataService
             );
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, A<int>._)
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(A<int>._)).MustNotHaveHappened();
-            modelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
-                .Be(ModelValidationState.Invalid);
-            modelState[nameof(PersonalInformationViewModel.CentreSpecificEmail)].ValidationState.Should()
-                .Be(ModelValidationState.Invalid);
-            AssertModelStateErrorIsExpected(
-                nameof(PersonalInformationViewModel.PrimaryEmail),
-                DuplicateEmailErrorMessage
-            );
-            AssertModelStateErrorIsExpected(
-                nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                DuplicateEmailErrorMessage
-            );
+            AssertModelStateErrorIsExpected(DefaultFieldName, CommonValidationErrorMessages.EmailInUseAtCentre);
         }
 
         [Test]
-        public void ValidateEmailAddressesForDelegateRegistration_adds_no_errors_on_emails_if_valid_and_unique()
+        public void
+            ValidateCentreEmailIfNecessary_does_not_add_error_message_when_centre_email_is_not_in_use_at_centre()
         {
             // Given
-            var model = GetDefaultPersonalInformationViewModel();
-
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail))
-                .Returns(false);
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, A<int>._)
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, DefaultCentreId)
             ).Returns(false);
 
             // When
-            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(
-                model,
+            RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
+                DefaultCentreSpecificEmail,
+                DefaultCentreId,
+                DefaultFieldName,
                 modelState,
                 userDataService
             );
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, A<int>._)
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(A<int>._)).MustNotHaveHappened();
-            modelState.ValidationState.Should().Be(ModelValidationState.Valid);
+            modelState.IsValid.Should().BeTrue();
         }
 
         [Test]
-        public void
-            ValidateEmailAddressesForAdminRegistration_adds_no_new_error_messages_when_emails_are_already_invalid()
+        public void ValidateCentreEmailIfNecessary_does_not_add_error_message_when_email_is_null()
         {
-            // Given
-            var model = GetDefaultPersonalInformationViewModel(centreSpecificEmail: null);
-
-            modelState.AddModelError(nameof(PersonalInformationViewModel.PrimaryEmail), DefaultErrorMessage);
-            modelState.AddModelError(nameof(PersonalInformationViewModel.CentreSpecificEmail), DefaultErrorMessage);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .Returns((false, DifferentCentreEmail));
-
             // When
-            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
-                model,
+            RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
+                null,
+                DefaultCentreId,
+                DefaultFieldName,
                 modelState,
-                userDataService,
-                centresDataService
+                userDataService
             );
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(A<string>._)).MustNotHaveHappened();
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._)
-            ).MustNotHaveHappened();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            modelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
-                .Be(ModelValidationState.Invalid);
-            modelState[nameof(PersonalInformationViewModel.CentreSpecificEmail)].ValidationState.Should()
-                .Be(ModelValidationState.Invalid);
-            AssertModelStateErrorIsExpected(nameof(PersonalInformationViewModel.PrimaryEmail), DefaultErrorMessage);
-            AssertModelStateErrorIsExpected(
-                nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                DefaultErrorMessage
-            );
+            modelState.IsValid.Should().BeTrue();
         }
 
         [Test]
-        public void ValidateEmailAddressesForAdminRegistration_adds_errors_on_emails_if_already_in_use()
+        public void ValidateCentreEmailIfNecessary_does_not_add_another_error_message_when_field_already_has_error()
         {
             // Given
-            var model = GetDefaultPersonalInformationViewModel();
+            modelState.AddModelError(DefaultFieldName, DefaultErrorMessage);
 
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail)).Returns(true);
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, A<int>._)
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, DefaultCentreId)
             ).Returns(true);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .Returns((false, DifferentCentreEmail));
 
             // When
-            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
-                model,
+            RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
+                DefaultCentreSpecificEmail,
+                DefaultCentreId,
+                DefaultFieldName,
                 modelState,
-                userDataService,
-                centresDataService
+                userDataService
             );
 
             // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, A<int>._)
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            modelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
-                .Be(ModelValidationState.Invalid);
-            modelState[nameof(PersonalInformationViewModel.CentreSpecificEmail)].ValidationState.Should()
-                .Be(ModelValidationState.Invalid);
-            AssertModelStateErrorIsExpected(
-                nameof(PersonalInformationViewModel.PrimaryEmail),
-                DuplicateEmailErrorMessage
-            );
-            AssertModelStateErrorIsExpected(
-                nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                DuplicateEmailErrorMessage
-            );
+            modelState[DefaultFieldName].Errors.Count.Should().Be(1);
+
+            // note: error message is not CommonValidationErrorMessages.EmailInUseAtCentre
+            AssertModelStateErrorIsExpected(DefaultFieldName, DefaultErrorMessage);
         }
 
         [Test]
         public void
-            ValidateEmailAddressesForAdminRegistration_adds_wrong_email_error_on_primary_if_primary_does_not_match_centre_and_centre_email_is_null()
+            ValidateCentreEmailIfNecessary_does_nothing_if_centreId_is_null()
         {
-            // Given
-            var model = GetDefaultPersonalInformationViewModel(centreSpecificEmail: null);
-
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail))
-                .Returns(false);
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .Returns((false, DifferentCentreEmail));
-
             // When
-            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
-                model,
+            RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
+                DefaultCentreSpecificEmail,
+                null,
+                DefaultFieldName,
                 modelState,
-                userDataService,
-                centresDataService
-            );
-
-            // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            modelState[nameof(PersonalInformationViewModel.PrimaryEmail)].ValidationState.Should()
-                .Be(ModelValidationState.Invalid);
-            AssertModelStateErrorIsExpected(
-                nameof(PersonalInformationViewModel.PrimaryEmail),
-                WrongEmailForCentreErrorMessage
-            );
-        }
-
-        [Test]
-        public void
-            ValidateEmailAddressesForAdminRegistration_adds_wrong_email_error_on_centre_email_if_both_are_provided_and_neither_email_matches_centre()
-        {
-            // Given
-            var model = GetDefaultPersonalInformationViewModel();
-
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail))
-                .Returns(false);
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, A<int>._)
-            ).Returns(false);
-            A.CallTo(
-                () => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)
-            ).Returns((false, DifferentCentreEmail));
-
-            // When
-            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
-                model,
-                modelState,
-                userDataService,
-                centresDataService
-            );
-
-            // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, A<int>._)
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            modelState[nameof(PersonalInformationViewModel.CentreSpecificEmail)].ValidationState.Should()
-                .Be(ModelValidationState.Invalid);
-            AssertModelStateErrorIsExpected(
-                nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                WrongEmailForCentreErrorMessage
-            );
-        }
-
-        [Test]
-        [TestCase(DefaultPrimaryEmail)]
-        [TestCase(DefaultPrimaryEmailAllCaps)]
-        public void
-            ValidateEmailAddressesForAdminRegistration_does_not_add_wrong_email_error_if_primary_matches_centre_and_centre_email_is_null(
-                string primaryEmail
-            )
-        {
-            // Given
-            var model = GetDefaultPersonalInformationViewModel(primaryEmail, null);
-
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(primaryEmail))
-                .Returns(false);
-            A.CallTo(
-                () => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)
-            ).Returns((false, DefaultPrimaryEmail));
-
-            // When
-            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
-                model,
-                modelState,
-                userDataService,
-                centresDataService
-            );
-
-            // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(primaryEmail))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            modelState.ValidationState.Should().Be(ModelValidationState.Valid);
-        }
-
-        [Test]
-        [TestCase(DefaultPrimaryEmail)]
-        [TestCase(DefaultPrimaryEmailAllCaps)]
-        public void
-            ValidateEmailAddressesForAdminRegistration_does_not_add_wrong_email_error_if_primary_matches_centre_and_centre_email_is_not_null(
-                string primaryEmail
-            )
-        {
-            // Given
-            var model = GetDefaultPersonalInformationViewModel(primaryEmail);
-
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(primaryEmail)).Returns(false);
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, A<int>._)
-            ).Returns(false);
-            A.CallTo(
-                () => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)
-            ).Returns((false, DefaultPrimaryEmail));
-
-            // When
-            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
-                model,
-                modelState,
-                userDataService,
-                centresDataService
-            );
-
-            // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(primaryEmail))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(DefaultCentreSpecificEmail, A<int>._)
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            modelState.ValidationState.Should().Be(ModelValidationState.Valid);
-        }
-
-        [Test]
-        [TestCase(DefaultCentreSpecificEmail)]
-        [TestCase(DefaultCentreSpecificEmailAllCaps)]
-        public void
-            ValidateEmailAddressesForAdminRegistration_does_not_add_wrong_email_error_if_centre_email_matches_centre(
-                string centreSpecificEmail
-            )
-        {
-            // Given
-            var model = GetDefaultPersonalInformationViewModel(centreSpecificEmail: centreSpecificEmail);
-
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail))
-                .Returns(false);
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(centreSpecificEmail, A<int>._)
-            ).Returns(false);
-            A.CallTo(
-                () => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId)
-            ).Returns((false, DefaultCentreSpecificEmail));
-
-            // When
-            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
-                model,
-                modelState,
-                userDataService,
-                centresDataService
-            );
-
-            // Then
-            A.CallTo(() => userDataService.PrimaryEmailIsInUse(DefaultPrimaryEmail))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(centreSpecificEmail, A<int>._)
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            modelState.ValidationState.Should().Be(ModelValidationState.Valid);
-        }
-
-        [Test]
-        public void
-            ValidateEmailsForInternalAdminRegistration_adds_no_new_error_messages_when_centre_email_is_already_invalid()
-        {
-            // Given
-            var model = GetDefaultAdminInformationViewModel(centreSpecificEmail: null);
-
-            modelState.AddModelError(
-                nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
-                DefaultErrorMessage
-            );
-
-            // When
-            RegistrationEmailValidator.ValidateEmailsForInternalAdminRegistration(
-                DefaultUserId,
-                model,
-                modelState,
-                userDataService,
-                centresService
+                userDataService
             );
 
             // Then
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentre(A<string>._, A<int>._)
+                () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    A<string>._,
+                    A<int>._
+                )
             ).MustNotHaveHappened();
-            modelState[nameof(PersonalInformationViewModel.CentreSpecificEmail)].ValidationState.Should()
-                .Be(ModelValidationState.Invalid);
-            AssertModelStateErrorIsExpected(
-                nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                DefaultErrorMessage
-            );
+
+            modelState.IsValid.Should().BeTrue();
         }
 
         [Test]
-        public void ValidateEmailsForInternalAdminRegistration_adds_error_on_centre_email_if_already_in_use()
+        public void ValidateCentreEmailWithUserIdIfNecessary_adds_error_message_when_centre_email_is_in_use_at_centre()
         {
             // Given
-            var model = GetDefaultAdminInformationViewModel();
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    DefaultCentreSpecificEmail,
+                    DefaultCentreId,
+                    DefaultUserId
+                )
+            ).Returns(true);
+
+            // When
+            RegistrationEmailValidator.ValidateCentreEmailWithUserIdIfNecessary(
+                DefaultCentreSpecificEmail,
+                DefaultCentreId,
+                DefaultUserId,
+                DefaultFieldName,
+                modelState,
+                userDataService
+            );
+
+            // Then
+            AssertModelStateErrorIsExpected(DefaultFieldName, CommonValidationErrorMessages.EmailInUseAtCentre);
+        }
+
+        [Test]
+        public void
+            ValidateCentreEmailWithUserIdIfNecessary_does_not_add_error_message_when_centre_email_is_not_in_use_at_centre()
+        {
+            // Given
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    DefaultCentreSpecificEmail,
+                    DefaultCentreId,
+                    DefaultUserId
+                )
+            ).Returns(false);
+
+            // When
+            RegistrationEmailValidator.ValidateCentreEmailWithUserIdIfNecessary(
+                DefaultCentreSpecificEmail,
+                DefaultCentreId,
+                DefaultUserId,
+                DefaultFieldName,
+                modelState,
+                userDataService
+            );
+
+            // Then
+            modelState.IsValid.Should().BeTrue();
+        }
+
+        [Test]
+        public void ValidateCentreEmailWithUserIdIfNecessary_does_not_add_error_message_when_email_is_null()
+        {
+            // When
+            RegistrationEmailValidator.ValidateCentreEmailWithUserIdIfNecessary(
+                null,
+                DefaultCentreId,
+                DefaultUserId,
+                DefaultFieldName,
+                modelState,
+                userDataService
+            );
+
+            // Then
+            modelState.IsValid.Should().BeTrue();
+        }
+
+        [Test]
+        public void
+            ValidateCentreEmailWithUserIdIfNecessary_does_not_add_another_error_message_when_field_already_has_error()
+        {
+            // Given
+            modelState.AddModelError(DefaultFieldName, DefaultErrorMessage);
 
             A.CallTo(
                 () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
@@ -461,98 +303,161 @@
             ).Returns(true);
 
             // When
-            RegistrationEmailValidator.ValidateEmailsForInternalAdminRegistration(
+            RegistrationEmailValidator.ValidateCentreEmailWithUserIdIfNecessary(
+                DefaultCentreSpecificEmail,
+                DefaultCentreId,
                 DefaultUserId,
-                model,
+                DefaultFieldName,
                 modelState,
-                userDataService,
-                centresService
+                userDataService
+            );
+
+            // Then
+            modelState[DefaultFieldName].Errors.Count.Should().Be(1);
+
+            // note: error message is not CommonValidationErrorMessages.EmailInUseAtCentre
+            AssertModelStateErrorIsExpected(DefaultFieldName, DefaultErrorMessage);
+        }
+
+        [Test]
+        public void
+            ValidateCentreEmailWithUserIdIfNecessary_does_nothing_if_centreId_is_null()
+        {
+            // When
+            RegistrationEmailValidator.ValidateCentreEmailWithUserIdIfNecessary(
+                DefaultCentreSpecificEmail,
+                null,
+                DefaultUserId,
+                DefaultFieldName,
+                modelState,
+                userDataService
             );
 
             // Then
             A.CallTo(
                 () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
-                    DefaultCentreSpecificEmail,
-                    DefaultCentreId,
-                    DefaultUserId
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
                 )
-            ).MustHaveHappenedOnceExactly();
+            ).MustNotHaveHappened();
 
-            modelState[nameof(PersonalInformationViewModel.CentreSpecificEmail)].ValidationState.Should()
-                .Be(ModelValidationState.Invalid);
+            modelState.IsValid.Should().BeTrue();
+        }
 
+        [Test]
+        public void
+            ValidateEmailForCentreManagerIfNecessary_adds_error_message_when_neither_primary_nor_centre_email_is_valid_for_centre_manager()
+        {
+            // Given
+            A.CallTo(
+                () => centresService.IsAnEmailValidForCentreManager(
+                    DefaultPrimaryEmail,
+                    DefaultCentreSpecificEmail,
+                    DefaultCentreId
+                )
+            ).Returns(false);
+
+            // When
+            RegistrationEmailValidator.ValidateEmailForCentreManagerIfNecessary(
+                DefaultPrimaryEmail,
+                DefaultCentreSpecificEmail,
+                DefaultCentreId,
+                DefaultFieldName,
+                modelState,
+                centresService
+            );
+
+            // Then
             AssertModelStateErrorIsExpected(
-                nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                CommonValidationErrorMessages.CentreEmailAlreadyInUse
+                DefaultFieldName,
+                CommonValidationErrorMessages.WrongEmailForCentreDuringAdminRegistration
             );
         }
 
         [Test]
         public void
-            ValidateEmailsForInternalAdminRegistration_adds_wrong_email_error_on_centre_email_if_neither_email_matches_centre()
+            ValidateEmailForCentreManagerIfNecessary_does_not_add_error_message_when_either_primary_or_centre_email_is_valid_for_centre_manager()
         {
             // Given
-            var model = GetDefaultAdminInformationViewModel();
-
             A.CallTo(
-                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                () => centresService.IsAnEmailValidForCentreManager(
+                    DefaultPrimaryEmail,
                     DefaultCentreSpecificEmail,
-                    DefaultCentreId,
-                    DefaultUserId
+                    DefaultCentreId
                 )
-            ).Returns(false);
-
-            A.CallTo(
-                    () => centresService.IsAnEmailValidForCentreManager(
-                        DefaultPrimaryEmail,
-                        DefaultCentreSpecificEmail,
-                        DefaultCentreId
-                    )
-                )
-                .Returns(false);
+            ).Returns(true);
 
             // When
-            RegistrationEmailValidator.ValidateEmailsForInternalAdminRegistration(
-                DefaultUserId,
-                model,
+            RegistrationEmailValidator.ValidateEmailForCentreManagerIfNecessary(
+                DefaultPrimaryEmail,
+                DefaultCentreSpecificEmail,
+                DefaultCentreId,
+                DefaultFieldName,
                 modelState,
-                userDataService,
                 centresService
             );
 
             // Then
-            AssertModelStateErrorIsExpected(
-                nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                WrongEmailForCentreErrorMessage
+            modelState.IsValid.Should().BeTrue();
+        }
+
+        [Test]
+        public void
+            ValidateEmailForCentreManagerIfNecessary_does_not_add_another_error_message_when_the_model_is_already_invalid()
+        {
+            // Given
+            modelState.AddModelError(DefaultFieldName, DefaultErrorMessage);
+
+            A.CallTo(
+                () => centresService.IsAnEmailValidForCentreManager(
+                    DefaultPrimaryEmail,
+                    DefaultCentreSpecificEmail,
+                    DefaultCentreId
+                )
+            ).Returns(false);
+
+            // When
+            RegistrationEmailValidator.ValidateEmailForCentreManagerIfNecessary(
+                DefaultPrimaryEmail,
+                DefaultCentreSpecificEmail,
+                DefaultCentreId,
+                DefaultFieldName,
+                modelState,
+                centresService
             );
+
+            // Then
+            modelState[DefaultFieldName].Errors.Count.Should().Be(1);
+
+            // note: error message is not CommonValidationErrorMessages.WrongEmailForCentreDuringAdminRegistration
+            AssertModelStateErrorIsExpected(DefaultFieldName, DefaultErrorMessage);
         }
 
-        private PersonalInformationViewModel GetDefaultPersonalInformationViewModel(
-            string primaryEmail = DefaultPrimaryEmail,
-            string? centreSpecificEmail = DefaultCentreSpecificEmail
-        )
+        [Test]
+        public void
+            ValidateEmailForCentreManagerIfNecessary_does_nothing_if_centreId_is_null()
         {
-            return new PersonalInformationViewModel
-            {
-                FirstName = "Test",
-                LastName = "User",
-                Centre = DefaultCentreId,
-                PrimaryEmail = primaryEmail,
-                CentreSpecificEmail = centreSpecificEmail,
-            };
-        }
+            // When
+            RegistrationEmailValidator.ValidateEmailForCentreManagerIfNecessary(
+                DefaultPrimaryEmail,
+                DefaultCentreSpecificEmail,
+                null,
+                DefaultFieldName,
+                modelState,
+                centresService
+            );
 
-        private InternalAdminInformationViewModel GetDefaultAdminInformationViewModel(
-            string primaryEmail = DefaultPrimaryEmail,
-            string? centreSpecificEmail = DefaultCentreSpecificEmail
-        )
-        {
-            return new InternalAdminInformationViewModel
-            {
-                Centre = DefaultCentreId,
-                PrimaryEmail = primaryEmail,
-                CentreSpecificEmail = centreSpecificEmail,
-            };
+            // Then
+            A.CallTo(
+                () => centresService.IsAnEmailValidForCentreManager(
+                    A<string>._,
+                    A<string>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+
+            modelState.IsValid.Should().BeTrue();
         }
 
         private static void AssertModelStateErrorIsExpected(string modelProperty, string expectedErrorMessage)

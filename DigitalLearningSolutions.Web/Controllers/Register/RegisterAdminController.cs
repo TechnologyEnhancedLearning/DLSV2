@@ -76,12 +76,7 @@
             var model = new PersonalInformationViewModel(data);
             SetCentreName(model);
 
-            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
-                model,
-                ModelState,
-                userDataService,
-                centresDataService
-            );
+            ValidateEmailAddresses(model);
 
             return View(model);
         }
@@ -92,12 +87,7 @@
         {
             var data = TempData.Peek<RegistrationData>()!;
 
-            RegistrationEmailValidator.ValidateEmailAddressesForAdminRegistration(
-                model,
-                ModelState,
-                userDataService,
-                centresDataService
-            );
+            ValidateEmailAddresses(model);
 
             if (!ModelState.IsValid)
             {
@@ -273,6 +263,36 @@
         {
             model.Centre = centresDataService.GetCentreName((int)data.Centre!);
             model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
+        }
+
+        private void ValidateEmailAddresses(PersonalInformationViewModel model)
+        {
+            RegistrationEmailValidator.ValidatePrimaryEmailIfNecessary(
+                model.PrimaryEmail,
+                nameof(RegistrationData.PrimaryEmail),
+                ModelState,
+                userDataService,
+                CommonValidationErrorMessages.EmailInUseDuringAdminRegistration
+            );
+
+            RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
+                model.CentreSpecificEmail,
+                model.Centre,
+                nameof(RegistrationData.CentreSpecificEmail),
+                ModelState,
+                userDataService
+            );
+
+            RegistrationEmailValidator.ValidateEmailForCentreManagerIfNecessary(
+                model.PrimaryEmail,
+                model.CentreSpecificEmail,
+                model.Centre,
+                model.CentreSpecificEmail == null
+                    ? nameof(PersonalInformationViewModel.PrimaryEmail)
+                    : nameof(PersonalInformationViewModel.CentreSpecificEmail),
+                ModelState,
+                centresService
+            );
         }
     }
 }

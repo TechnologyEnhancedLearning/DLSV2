@@ -75,11 +75,21 @@
         {
             var userId = User.GetUserIdKnownNotNull();
 
-            RegistrationEmailValidator.ValidateEmailsForInternalAdminRegistration(
+            RegistrationEmailValidator.ValidateCentreEmailWithUserIdIfNecessary(
+                model.CentreSpecificEmail,
+                model.Centre,
                 userId,
-                model,
+                nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
                 ModelState,
-                userDataService,
+                userDataService
+            );
+
+            RegistrationEmailValidator.ValidateEmailForCentreManagerIfNecessary(
+                model.PrimaryEmail,
+                model.CentreSpecificEmail,
+                model.Centre,
+                nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
+                ModelState,
                 centresService
             );
 

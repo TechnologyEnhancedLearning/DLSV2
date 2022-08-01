@@ -1,6 +1,5 @@
 namespace DigitalLearningSolutions.Web.Controllers.Register
 {
-    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -78,7 +77,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             var model = new RegisterDelegatePersonalInformationViewModel(data);
 
-            ValidatePersonalInformation(model);
+            ValidateEmailAddress(model);
 
             return View(model);
         }
@@ -89,7 +88,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            ValidatePersonalInformation(model);
+            ValidateEmailAddress(model);
 
             if (!ModelState.IsValid)
             {
@@ -278,20 +277,15 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             TempData.Set(centreDelegateRegistrationData);
         }
 
-        private void ValidatePersonalInformation(RegisterDelegatePersonalInformationViewModel model)
+        private void ValidateEmailAddress(RegisterDelegatePersonalInformationViewModel model)
         {
-            if (model.CentreSpecificEmail == null)
-            {
-                return;
-            }
-
-            if (userDataService.CentreSpecificEmailIsInUseAtCentre(model.CentreSpecificEmail, model.Centre!.Value))
-            {
-                ModelState.AddModelError(
-                    nameof(RegisterDelegatePersonalInformationViewModel.CentreSpecificEmail),
-                    "A user with this email is already registered at this centre"
-                );
-            }
+            RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
+                model.CentreSpecificEmail,
+                model.Centre,
+                nameof(RegisterDelegatePersonalInformationViewModel.CentreSpecificEmail),
+                ModelState,
+                userDataService
+            );
         }
 
         private IEnumerable<EditDelegateRegistrationPromptViewModel> GetEditCustomFieldsFromModel(
