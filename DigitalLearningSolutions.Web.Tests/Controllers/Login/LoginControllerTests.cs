@@ -30,6 +30,7 @@
     {
         private IAuthenticationService authenticationService = null!;
         private IAuthenticationService authenticationServiceWithAuthenticatedUser = null!;
+        private IClockUtility clockUtility = null!;
         private LoginController controller = null!;
         private LoginController controllerWithAuthenticatedUser = null!;
         private ILogger<LoginController> logger = null!;
@@ -37,7 +38,6 @@
         private ISessionService sessionService = null!;
         private IUrlHelper urlHelper = null!;
         private IUserService userService = null!;
-        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void SetUp()
@@ -352,7 +352,7 @@
             const string returnUrl = "/some/other/page";
             var userEntity = GetUserEntity(true, true);
 
-            GivenAUserEntityWithAdminAndDelegateAccounts(userEntity);
+            GivenAUserEntityWithAdminAndDelegateAccountsAndVerifiedEmail(userEntity);
 
             // When
             var result = controllerWithAuthenticatedUser.ChooseACentre(DlsSubApplication.Default, returnUrl);
@@ -392,7 +392,7 @@
                 isCentreActive: false
             );
 
-            GivenAUserEntityWithAdminAndDelegateAccounts(userEntity);
+            GivenAUserEntityWithAdminAndDelegateAccountsAndVerifiedEmail(userEntity);
 
             // When
             var result = await controllerWithAuthenticatedUser.ChooseCentre(centreId, null);
@@ -434,7 +434,7 @@
                     : new List<DelegateAccount>()
             );
 
-            GivenAUserEntityWithAdminAndDelegateAccounts(userEntity);
+            GivenAUserEntityWithAdminAndDelegateAccountsAndVerifiedEmail(userEntity);
 
             // When
             var result = await controllerWithAuthenticatedUser.ChooseCentre(centreId, null);
@@ -453,6 +453,27 @@
         }
 
         [Test]
+        public async Task ChooseCentre_should_redirect_to_verify_email_page_if_centre_email_is_unverified()
+        {
+            // Given
+            const int centreId = 2;
+            var userEntity = GetUserEntity(true, true, centreId: centreId);
+
+            A.CallTo(() => authenticationServiceWithAuthenticatedUser.AuthenticateAsync(A<HttpContext>._, A<string>._))
+                .Returns(GetAuthenticateResult());
+
+            A.CallTo(() => userService.GetUserById(A<int>._)).Returns(userEntity ?? GetUserEntity(true, true));
+
+            A.CallTo(() => loginService.CentreEmailIsVerified(userEntity!.UserAccount.Id, centreId)).Returns(false);
+
+            // When
+            var result = await controllerWithAuthenticatedUser.ChooseCentre(centreId, null);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("VerifyYourEmail").WithActionName("Index");
+        }
+
+        [Test]
         [TestCase(true, false)]
         [TestCase(false, true)]
         [TestCase(true, true)]
@@ -465,7 +486,7 @@
             const int centreId = 2;
             var userEntity = GetUserEntity(withAdminAccount, withDelegateAccount, centreId: centreId);
 
-            GivenAUserEntityWithAdminAndDelegateAccounts(userEntity);
+            GivenAUserEntityWithAdminAndDelegateAccountsAndVerifiedEmail(userEntity);
 
             // When
             await controllerWithAuthenticatedUser.ChooseCentre(centreId, null);
@@ -516,7 +537,7 @@
                 centreId: centreId
             );
 
-            GivenAUserEntityWithAdminAndDelegateAccounts(userEntity);
+            GivenAUserEntityWithAdminAndDelegateAccountsAndVerifiedEmail(userEntity);
 
             // When
             try
@@ -560,7 +581,7 @@
         )
         {
             // Given
-            GivenAUserEntityWithAdminAndDelegateAccounts();
+            GivenAUserEntityWithAdminAndDelegateAccountsAndVerifiedEmail();
 
             A.CallTo(() => urlHelper.IsLocalUrl(A<string>._)).Returns(isReturnUrlValid ?? false);
 
@@ -587,7 +608,7 @@
         )
         {
             // Given
-            GivenAUserEntityWithAdminAndDelegateAccounts();
+            GivenAUserEntityWithAdminAndDelegateAccountsAndVerifiedEmail();
 
             A.CallTo(() => userService.ShouldForceDetailsCheck(A<UserEntity>._, A<int>._)).Returns(true);
 
@@ -625,7 +646,7 @@
             // Given
             var authenticateResult = GetAuthenticateResult(rememberMe);
 
-            GivenAUserEntityWithAdminAndDelegateAccounts(authenticateResult: authenticateResult);
+            GivenAUserEntityWithAdminAndDelegateAccountsAndVerifiedEmail(authenticateResult: authenticateResult);
 
             // When
             await controllerWithAuthenticatedUser.ChooseCentre(2, null);
@@ -698,7 +719,7 @@
             );
         }
 
-        private void GivenAUserEntityWithAdminAndDelegateAccounts(
+        private void GivenAUserEntityWithAdminAndDelegateAccountsAndVerifiedEmail(
             UserEntity? userEntity = null,
             AuthenticateResult? authenticateResult = null
         )
@@ -707,6 +728,8 @@
                 .Returns(authenticateResult ?? GetAuthenticateResult());
 
             A.CallTo(() => userService.GetUserById(A<int>._)).Returns(userEntity ?? GetUserEntity(true, true));
+
+            A.CallTo(() => loginService.CentreEmailIsVerified(A<int>._, A<int>._)).Returns(true);
         }
     }
 }

@@ -521,6 +521,7 @@
                 .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
             A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
                 .Returns(resultListingPrimaryEmailAsUnverified);
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -531,6 +532,7 @@
                 result.UserEntity.Should().Be(userEntity);
                 result.LoginAttemptResult.Should().Be(LoginAttemptResult.UnverifiedEmail);
                 result.CentreToLogInto.Should().BeNull();
+                A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).MustHaveHappenedOnceExactly();
             }
         }
 
@@ -558,6 +560,7 @@
                 .Returns(new UserEntityVerificationResult(true, new List<int>(), new[] { 2 }, new List<int>()));
             A.CallTo(() => userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id))
                 .Returns(resultListingCentreEmailAsUnverified);
+            A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).DoesNothing();
 
             // When
             var result = loginService.AttemptLogin(Username, Password);
@@ -568,6 +571,7 @@
                 result.UserEntity.Should().Be(userEntity);
                 result.LoginAttemptResult.Should().Be(LoginAttemptResult.UnverifiedEmail);
                 result.CentreToLogInto.Should().Be(1);
+                A.CallTo(() => userService.ResetFailedLoginCount(userEntity.UserAccount)).MustHaveHappenedOnceExactly();
             }
         }
 
@@ -820,7 +824,7 @@
             const int userId = 1;
             const int centreId = 2;
             var unverifiedCentreEmails = new List<(int centreId, string centreName, string centreEmail)>
-                { (centreId, "Test centre", "centre@email.com") };
+                { (centreId + 1, "Test centre", "centre@email.com") };
 
             A.CallTo(() => userService.GetUnverifiedEmailsForUser(userId)).Returns((null, unverifiedCentreEmails));
 
@@ -838,7 +842,7 @@
             const int userId = 1;
             const int centreId = 2;
             var unverifiedCentreEmails = new List<(int centreId, string centreName, string centreEmail)>
-                { (centreId + 1, "Test centre", "centre@email.com") };
+                { (centreId, "Test centre", "centre@email.com") };
 
             A.CallTo(() => userService.GetUnverifiedEmailsForUser(userId)).Returns((null, unverifiedCentreEmails));
 
