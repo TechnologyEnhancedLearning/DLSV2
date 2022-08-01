@@ -65,7 +65,7 @@
 
         public string PrimaryEmail { get; set; }
 
-        public bool PrimaryEmailIsUnverified { get; set; }
+        public bool PrimaryEmailIsUnverified { get; }
 
         public string? DelegateNumber { get; set; }
 
