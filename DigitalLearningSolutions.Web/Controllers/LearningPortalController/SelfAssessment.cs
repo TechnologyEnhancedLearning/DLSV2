@@ -827,7 +827,7 @@
                 selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(
                     selfAssessmentId,
                     User.GetCandidateIdKnownNotNull())
-                .Where(c => c.SupervisorVerificationRequested.HasValue)
+                .Where(c => c.SupervisorVerificationRequested.HasValue && !String.IsNullOrEmpty(c.SupervisorName))
                 .OrderBy(c => c.SupervisorVerificationRequested).ToList()
             );
             var model = new ReviewConfirmationRequestsViewModel

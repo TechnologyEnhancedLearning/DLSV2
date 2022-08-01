@@ -281,7 +281,7 @@
                 CandidateAssessmentSupervisorID";
             const string supervisorTables = @"
                 LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = CandidateAssessmentSupervisorID
-                LEFT OUTER JOIN SupervisorDelegates AS sd ON sd.ID = cas.SupervisorDelegateId
+                LEFT OUTER JOIN SupervisorDelegates AS sd ON sd.ID = cas.SupervisorDelegateId AND sd.Removed IS NULL
                 LEFT OUTER JOIN AdminUsers AS au ON au.AdminID = sd.SupervisorAdminID";
 
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
