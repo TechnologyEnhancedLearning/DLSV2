@@ -210,6 +210,8 @@
                 var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
                 registrationService.RegisterCentreManager(registrationModel, true);
 
+                // TODO: 915 - Send verification links to primary and centre emails
+
                 return RedirectToAction(
                     "Confirmation",
                     new

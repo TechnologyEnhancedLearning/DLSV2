@@ -130,6 +130,11 @@
                 }
             }
 
+            if (model.CentreSpecificEmail != null)
+            {
+                // TODO: 915 - Send verification link to centre email
+            }
+
             return RedirectToAction("Confirmation", new { centreId = model.Centre });
         }
 

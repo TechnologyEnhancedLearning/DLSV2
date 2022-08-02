@@ -289,6 +289,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                         data.SupervisorDelegateId
                     );
 
+                // TODO: 915 - Send verification links to primary and centre emails
+
                 TempData.Clear();
 
                 return RedirectToAction(

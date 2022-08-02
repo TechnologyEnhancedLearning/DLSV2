@@ -245,6 +245,11 @@
                         refactoredTrackingSystemEnabled
                     );
 
+                if (data.CentreSpecificEmail != null)
+                {
+                    // TODO: 915 - Send verification link to centre email
+                }
+
                 TempData.Clear();
 
                 return RedirectToAction(

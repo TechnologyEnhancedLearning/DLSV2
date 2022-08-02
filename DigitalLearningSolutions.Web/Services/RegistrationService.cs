@@ -19,7 +19,6 @@ namespace DigitalLearningSolutions.Web.Services
 
     public interface IRegistrationService
     {
-        // used in: register external delegate
         (string candidateNumber, bool approved) CreateDelegateAccountForNewUser(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
@@ -28,7 +27,6 @@ namespace DigitalLearningSolutions.Web.Services
             int? inviteId = null
         );
 
-        // used in: register internal admin, register internal delegate
         (string candidateNumber, bool approved, bool userHasAdminAccountAtCentre) CreateDelegateAccountForExistingUser(
             InternalDelegateRegistrationModel internalDelegateRegistrationModel,
             int userId,
@@ -52,7 +50,6 @@ namespace DigitalLearningSolutions.Web.Services
 
         void PromoteDelegateToAdmin(AdminRoles adminRoles, int? categoryId, int userId, int centreId);
 
-        // used in: register external admin, register delegate by centre, bulk upload registration
         (int delegateId, string candidateNumber) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions
