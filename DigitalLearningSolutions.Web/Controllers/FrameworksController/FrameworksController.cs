@@ -24,6 +24,7 @@
         private readonly ICompetencyLearningResourcesDataService competencyLearningResourcesDataService;
         private readonly ILearningHubApiClient learningHubApiClient;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly IMultiPageFormService multiPageFormService;
 
         public FrameworksController(
             IFrameworkService frameworkService,
@@ -33,7 +34,8 @@
             IImportCompetenciesFromFileService importCompetenciesFromFileService,
             ICompetencyLearningResourcesDataService competencyLearningResourcesDataService,
             ILearningHubApiClient learningHubApiClient,
-            ISearchSortFilterPaginateService searchSortFilterPaginateService
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
+            IMultiPageFormService multiPageFormService
         )
         {
             this.frameworkService = frameworkService;
@@ -44,6 +46,7 @@
             this.competencyLearningResourcesDataService = competencyLearningResourcesDataService;
             this.learningHubApiClient = learningHubApiClient;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
+            this.multiPageFormService = multiPageFormService;
         }
 
         private int? GetCentreId()

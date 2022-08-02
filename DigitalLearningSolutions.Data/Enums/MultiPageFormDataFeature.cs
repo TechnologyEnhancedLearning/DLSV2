@@ -35,6 +35,12 @@
             "EditAdminFieldDataGuid"
         );
 
+        public static readonly MultiPageFormDataFeature AddNewFramework = new MultiPageFormDataFeature(
+            5,
+            nameof(AddNewFramework),
+            "AddNewFrameworkDataGuid"
+        );
+
         public readonly string TempDataKey;
 
         private MultiPageFormDataFeature(int id, string name, string tempDataKey) : base(id, name)
