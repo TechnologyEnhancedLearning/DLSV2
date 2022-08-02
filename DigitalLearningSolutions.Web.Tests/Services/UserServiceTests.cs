@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
@@ -272,7 +273,7 @@
                 )
                 .MustHaveHappened();
             A.CallTo(
-                () => groupsService.SynchroniseUserChangesWithGroups(
+                () => groupsService.UpdateSynchronisedDelegateGroupsBasedOnUserChanges(
                     delegateDetailsData.DelegateId,
                     accountDetailsData,
                     A<RegistrationFieldAnswers>.That.Matches(
