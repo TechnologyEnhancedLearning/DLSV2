@@ -49,12 +49,15 @@
         public IActionResult Index(int? centreId = null)
         {
             var centreName = centreId == null ? null : centresDataService.GetCentreName(centreId.Value);
+
             if (centreName == null)
             {
                 return NotFound();
             }
 
-            if (!registerAdminService.IsRegisterAdminAllowed(centreId.Value))
+            var userId = User.GetUserIdKnownNotNull();
+
+            if (!registerAdminService.IsRegisterAdminAllowed(centreId.Value, userId))
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
@@ -74,6 +77,11 @@
         public async Task<IActionResult> Index(InternalAdminInformationViewModel model)
         {
             var userId = User.GetUserIdKnownNotNull();
+
+            if (!registerAdminService.IsRegisterAdminAllowed(model.Centre!.Value, userId))
+            {
+                return RedirectToAction("AccessDenied", "LearningSolutions");
+            }
 
             RegistrationEmailValidator.ValidateCentreEmailWithUserIdIfNecessary(
                 model.CentreSpecificEmail,

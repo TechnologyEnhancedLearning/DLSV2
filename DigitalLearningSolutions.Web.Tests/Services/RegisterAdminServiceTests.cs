@@ -38,9 +38,6 @@
             var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId);
 
             // Then
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
         }
 
@@ -56,9 +53,6 @@
             var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId);
 
             // Then
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
         }
 
@@ -74,9 +68,6 @@
             var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId);
 
             // Then
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
         }
 
@@ -98,9 +89,6 @@
             var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId);
 
             // Then
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
         }
 
@@ -119,10 +107,32 @@
             var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId);
 
             // Then
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void IsRegisterAdminAllowed_with_logged_in_user_already_an_admin_of_the_centre_returns_false()
+        {
+            // Given
+            const int loggedInUserId = 2;
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount(
+                userId: loggedInUserId,
+                centreId: DefaultCentreId
+            );
+
+            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId))
+                .Returns(new List<AdminEntity>());
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreDetailsById(DefaultCentreId)).MustHaveHappenedOnceExactly();
+                .Returns((false, DefaultCentreEmail));
+            A.CallTo(() => centresDataService.GetCentreDetailsById(DefaultCentreId))
+                .Returns(CentreTestHelper.GetDefaultCentre(active: true));
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(loggedInUserId))
+                .Returns(new List<AdminAccount> { adminAccount });
+
+            // When
+            var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, loggedInUserId);
+
+            // Then
             result.Should().BeFalse();
         }
 
@@ -141,10 +151,6 @@
             var result = registerAdminService.IsRegisterAdminAllowed(DefaultCentreId);
 
             // Then
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => centresDataService.GetCentreDetailsById(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeTrue();
         }
     }

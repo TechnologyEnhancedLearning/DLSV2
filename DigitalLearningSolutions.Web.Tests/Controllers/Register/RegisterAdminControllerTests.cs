@@ -6,7 +6,6 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -82,14 +81,15 @@
         {
             // Given
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
-            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).Returns(false);
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, null)).Returns(false);
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, null))
+                .MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -99,14 +99,15 @@
         {
             // Given
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
-            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).Returns(true);
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, null)).Returns(true);
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, null))
+                .MustHaveHappenedOnceExactly();
             var data = controller.TempData.Peek<RegistrationData>()!;
             data.Centre.Should().Be(DefaultCentreId);
             result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
@@ -213,7 +214,6 @@
         {
             // Given
             const int jobGroupId = 1;
-            var centreEmailOrPrimaryIfNull = centreSpecificEmail ?? primaryEmail;
             const string professionalRegistrationNumber = "PRN1234";
             var model = new SummaryViewModel
             {
@@ -232,7 +232,7 @@
                 HasProfessionalRegistrationNumber = true,
             };
             controller.TempData.Set(data);
-            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).Returns(true);
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, null)).Returns(true);
             if (centreSpecificEmail != null)
             {
                 A.CallTo(() => userDataService.GetAdminUserByEmailAddress(centreSpecificEmail)).Returns(null);
