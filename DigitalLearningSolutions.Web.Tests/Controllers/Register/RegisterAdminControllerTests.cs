@@ -6,7 +6,6 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -26,9 +25,10 @@
         private RegisterAdminController controller = null!;
         private ICryptoService cryptoService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private IRegisterAdminService registerAdminService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
-        private IRegisterAdminService registerAdminService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -39,6 +39,7 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             registerAdminService = A.Fake<IRegisterAdminService>();
             controller = new RegisterAdminController(
                     centresDataService,
@@ -47,6 +48,7 @@
                     jobGroupsDataService,
                     registrationService,
                     userDataService,
+                    userService,
                     registerAdminService
                 )
                 .WithDefaultContext()

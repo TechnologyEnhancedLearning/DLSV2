@@ -246,11 +246,11 @@
                     );
 
                 TempData.Clear();
-                TempData.Add("candidateNumber", candidateNumber);
-                TempData.Add("approved", approved);
-                TempData.Add("userHasAdminAccountAtCentre", userHasAdminAccountAtCentre);
-                TempData.Add("centreId", data.Centre);
-                return RedirectToAction("Confirmation");
+
+                return RedirectToAction(
+                    "Confirmation",
+                    new { candidateNumber, approved, userHasAdminAccountAtCentre, centreId = data.Centre }
+                );
             }
             catch (DelegateCreationFailedException e)
             {
@@ -266,31 +266,33 @@
         }
 
         [HttpGet]
-        public IActionResult Confirmation()
+        public IActionResult Confirmation(
+            string candidateNumber,
+            bool approved,
+            bool userHasAdminAccountAtCentre,
+            int? centreId
+        )
         {
-            var candidateNumber = (string?)TempData.Peek("candidateNumber");
-            var approvedNullable = (bool?)TempData.Peek("approved");
-            var centreIdNullable = (int?)TempData.Peek("centreId");
-            var hasAdminAccountNullable = (bool?)TempData.Peek("userHasAdminAccountAtCentre");
-            TempData.Clear();
-
-            if (candidateNumber == null || approvedNullable == null || centreIdNullable == null ||
-                hasAdminAccountNullable == null)
+            if (centreId == null)
             {
                 return RedirectToAction("Index");
             }
 
-            var hasAdminAccount = (bool)hasAdminAccountNullable;
-            var approved = (bool)approvedNullable;
-            var centreId = (int)centreIdNullable;
+            var userId = User.GetUserIdKnownNotNull();
 
-            var viewModel = new InternalConfirmationViewModel(
+            var (unverifiedPrimaryEmail, unverifiedCentreEmails) =
+                userService.GetUnverifiedEmailsForUser(userId);
+
+            var model = new InternalConfirmationViewModel(
                 candidateNumber,
                 approved,
-                hasAdminAccount,
-                centreId
+                userHasAdminAccountAtCentre,
+                centreId,
+                unverifiedPrimaryEmail != null,
+                unverifiedCentreEmails.Where(uce => uce.centreId == centreId).ToList()
             );
-            return View(viewModel);
+
+            return View(model);
         }
 
         private bool CheckCentreIdValid(int? centreId)

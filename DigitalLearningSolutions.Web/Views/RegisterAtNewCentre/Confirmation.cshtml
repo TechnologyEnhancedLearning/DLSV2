@@ -21,6 +21,12 @@
       <p>Your delegate number is <span class="nhsuk-u-font-weight-bold">@Model.CandidateNumber</span></p>
     </div>
 
+    <vc:verify-email-warning-if-appropriate
+      show-centre-emails-and-resend-button="true"
+      mention-blocked-actions-on-choose-a-centre-page="false"
+      primary-email-is-unverified="@Model.PrimaryEmailIsUnverified"
+      unverified-centre-emails="@Model.UnverifiedCentreEmails" />
+
     @if (Model.HasAdminAccountAtCentre) {
       <p>
         You will need to log out and in again before you can access the Learning Portal.

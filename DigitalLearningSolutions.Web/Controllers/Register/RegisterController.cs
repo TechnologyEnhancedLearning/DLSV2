@@ -31,6 +31,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public RegisterController(
             ICentresDataService centresDataService,
@@ -38,6 +39,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IRegistrationService registrationService,
             ICryptoService cryptoService,
             IUserDataService userDataService,
+            IUserService userService,
             PromptsService promptsService,
             IFeatureManager featureManager,
             ISupervisorDelegateService supervisorDelegateService
@@ -48,6 +50,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
             this.userDataService = userDataService;
+            this.userService = userService;
             this.promptsService = promptsService;
             this.featureManager = featureManager;
             this.supervisorDelegateService = supervisorDelegateService;
@@ -287,10 +290,15 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                     );
 
                 TempData.Clear();
-                TempData.Add("candidateNumber", candidateNumber);
-                TempData.Add("approved", approved);
-                TempData.Add("centreId", centreId);
-                return RedirectToAction("Confirmation");
+
+                return RedirectToAction(
+                    "Confirmation",
+                    new
+                    {
+                        centreId, candidateNumber, approved, data.PrimaryEmailVerified,
+                        model.Centre, model.CentreSpecificEmail,
+                    }
+                );
             }
             catch (DelegateCreationFailedException e)
             {
@@ -311,24 +319,31 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         }
 
         [HttpGet]
-        public IActionResult Confirmation()
+        public IActionResult Confirmation(
+            int? centreId,
+            string candidateNumber,
+            bool approved,
+            DateTime? primaryEmailVerified,
+            string centreName,
+            string? centreSpecificEmail
+        )
         {
-            var candidateNumber = (string?)TempData.Peek("candidateNumber");
-            var approvedNullable = (bool?)TempData.Peek("approved");
-            var centreIdNullable = (int?)TempData.Peek("centreId");
-            TempData.Clear();
-
-            if (candidateNumber == null || approvedNullable == null || centreIdNullable == null)
+            if (centreId == null)
             {
                 return RedirectToAction("Index");
             }
 
-            var approved = (bool)approvedNullable;
-            var centreId = (int)centreIdNullable;
+            var centreIdForContactInformation = approved ? null : centreId;
 
-            var centreIdForContactInformation = approved ? null : (int?)centreId;
-            var viewModel = new ConfirmationViewModel(candidateNumber, approved, centreIdForContactInformation);
-            return View(viewModel);
+            var model = new ConfirmationViewModel(
+                candidateNumber,
+                approved,
+                centreIdForContactInformation,
+                primaryEmailVerified == null,
+                new List<(string centreName, string unverifiedEmail)> { (centreName, centreSpecificEmail) }
+            );
+
+            return View(model);
         }
 
         private string? GetCentreName(int? centreId)

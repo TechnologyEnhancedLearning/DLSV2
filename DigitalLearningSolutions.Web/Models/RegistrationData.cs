@@ -2,7 +2,6 @@
 {
     using System;
     using DigitalLearningSolutions.Web.ViewModels.Register;
-    using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
 
     public class RegistrationData
     {
@@ -22,6 +21,7 @@
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? PrimaryEmail { get; set; }
+        public DateTime? PrimaryEmailVerified { get; set; }
         public string? CentreSpecificEmail { get; set; }
         public int? Centre { get; set; }
 

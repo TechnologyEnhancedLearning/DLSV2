@@ -39,6 +39,7 @@
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -48,6 +49,7 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
@@ -59,6 +61,7 @@
                     registrationService,
                     cryptoService,
                     userDataService,
+                    userService,
                     promptsService,
                     featureManager,
                     supervisorDelegateService
@@ -156,6 +159,7 @@
                 registrationService,
                 cryptoService,
                 userDataService,
+                userService,
                 promptsService,
                 featureManager,
                 supervisorDelegateService
@@ -229,6 +233,7 @@
                 registrationService,
                 cryptoService,
                 userDataService,
+                userService,
                 promptsService,
                 featureManager,
                 supervisorDelegateService

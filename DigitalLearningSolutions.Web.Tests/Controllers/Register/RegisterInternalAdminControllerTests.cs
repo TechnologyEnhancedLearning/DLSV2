@@ -30,13 +30,14 @@
         private const int DefaultDelegateId = 5;
         private ICentresDataService centresDataService = null!;
         private ICentresService centresService = null!;
-        private IUserDataService userDataService = null!;
-        private IRegistrationService registrationService = null!;
+        private RegisterInternalAdminController controller = null!;
         private IDelegateApprovalsService delegateApprovalsService = null!;
         private IFeatureManager featureManager = null!;
         private IRegisterAdminService registerAdminService = null!;
-        private RegisterInternalAdminController controller = null!;
+        private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
+        private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -44,6 +45,7 @@
             centresDataService = A.Fake<ICentresDataService>();
             centresService = A.Fake<ICentresService>();
             userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             registrationService = A.Fake<IRegistrationService>();
             delegateApprovalsService = A.Fake<IDelegateApprovalsService>();
             featureManager = A.Fake<IFeatureManager>();
@@ -53,6 +55,7 @@
                     centresDataService,
                     centresService,
                     userDataService,
+                    userService,
                     registrationService,
                     delegateApprovalsService,
                     featureManager,
@@ -178,8 +181,8 @@
             ).DoesNothing();
 
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount(
-                id: DefaultDelegateId,
-                userId: DefaultUserId,
+                DefaultDelegateId,
+                DefaultUserId,
                 centreId: DefaultCentreId,
                 approved: isDelegateApproved
             );

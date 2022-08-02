@@ -20,16 +20,18 @@
     {
         private readonly ICentresDataService centresDataService;
         private readonly ICentresService centresService;
-        private readonly IUserDataService userDataService;
-        private readonly IRegistrationService registrationService;
         private readonly IDelegateApprovalsService delegateApprovalsService;
         private readonly IFeatureManager featureManager;
         private readonly IRegisterAdminService registerAdminService;
+        private readonly IRegistrationService registrationService;
+        private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public RegisterInternalAdminController(
             ICentresDataService centresDataService,
             ICentresService centresService,
             IUserDataService userDataService,
+            IUserService userService,
             IRegistrationService registrationService,
             IDelegateApprovalsService delegateApprovalsService,
             IFeatureManager featureManager,
@@ -39,6 +41,7 @@
             this.centresDataService = centresDataService;
             this.centresService = centresService;
             this.userDataService = userDataService;
+            this.userService = userService;
             this.registrationService = registrationService;
             this.delegateApprovalsService = delegateApprovalsService;
             this.featureManager = featureManager;
@@ -125,13 +128,22 @@
                 }
             }
 
-            return RedirectToAction("Confirmation");
+            return RedirectToAction("Confirmation", new { centreId = model.Centre });
         }
 
         [HttpGet]
-        public IActionResult Confirmation()
+        public IActionResult Confirmation(int centreId)
         {
-            return View();
+            var userId = User.GetUserIdKnownNotNull();
+            var (unverifiedPrimaryEmail, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
+
+            var model = new AdminConfirmationViewModel(
+                unverifiedPrimaryEmail != null,
+                unverifiedCentreEmails.Where(uce => uce.centreId == centreId)
+                    .Select(uce => (uce.centreName, uce.centreEmail)).ToList()
+            );
+
+            return View(model);
         }
     }
 }

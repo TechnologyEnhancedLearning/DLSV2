@@ -1,4 +1,8 @@
-﻿@{
+﻿@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.Register
+@model AdminConfirmationViewModel
+
+@{
   ViewData["Title"] = "Registration confirmation";
 }
 
@@ -10,6 +14,12 @@
     <p class="nhsuk-body-l">
       Your email matched details stored with the centre, so your centre manager account has successfully been created.
     </p>
+
+    <vc:verify-email-warning-if-appropriate
+      show-centre-emails-and-resend-button="true"
+      mention-blocked-actions-on-choose-a-centre-page="false"
+      primary-email-is-unverified="@Model.PrimaryEmailIsUnverified"
+      unverified-centre-emails="@Model.UnverifiedCentreEmails" />
 
     <vc:action-link link-text="Log in" asp-controller="Login" asp-action="Index" />
   </div>

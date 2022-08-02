@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Register
-@model PersonalInformationViewModel
+@model AdminConfirmationViewModel
 
 @{
   ViewData["Title"] = "Admin registration complete";
@@ -12,6 +12,12 @@
     <p class="nhsuk-body-l">
       Your email address matched details stored with the centre, so your centre manager account has successfully been created.
     </p>
+
+    <vc:verify-email-warning-if-appropriate
+      show-centre-emails-and-resend-button="true"
+      mention-blocked-actions-on-choose-a-centre-page="false"
+      primary-email-is-unverified="@Model.PrimaryEmailIsUnverified"
+      unverified-centre-emails="@Model.UnverifiedCentreEmails" />
 
     <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
   </div>

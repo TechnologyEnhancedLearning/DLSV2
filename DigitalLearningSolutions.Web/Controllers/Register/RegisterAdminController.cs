@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -22,9 +23,10 @@
         private readonly ICentresService centresService;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IRegisterAdminService registerAdminService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
-        private readonly IRegisterAdminService registerAdminService;
+        private readonly IUserService userService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
@@ -33,6 +35,7 @@
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
             IUserDataService userDataService,
+            IUserService userService,
             IRegisterAdminService registerAdminService
         )
         {
@@ -42,6 +45,7 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.userDataService = userDataService;
+            this.userService = userService;
             this.registerAdminService = registerAdminService;
         }
 
@@ -206,7 +210,14 @@
                 var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
                 registrationService.RegisterCentreManager(registrationModel, true);
 
-                return RedirectToAction("Confirmation");
+                return RedirectToAction(
+                    "Confirmation",
+                    new
+                    {
+                        unverifiedCentreEmails = new List<(string centreName, string? centreSpecificEmail)>
+                            { (model.Centre, model.CentreSpecificEmail) },
+                    }
+                );
             }
             catch (DelegateCreationFailedException e)
             {
@@ -227,10 +238,16 @@
         }
 
         [HttpGet]
-        public IActionResult Confirmation()
+        public IActionResult Confirmation(List<(string centreName, string? centreSpecificEmail)> unverifiedCentreEmails)
         {
             TempData.Clear();
-            return View();
+
+            var model = new AdminConfirmationViewModel(
+                true,
+                unverifiedCentreEmails
+            );
+
+            return View(model);
         }
 
         private void SetAdminRegistrationData(int centreId)

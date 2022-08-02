@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
@@ -42,8 +41,8 @@
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
-        private IUserService userService = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -329,15 +328,15 @@
             var data = RegistrationDataHelper.GetDefaultInternalDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.CreateDelegateAccountForNewUser(
-                        A<DelegateRegistrationModel>._,
+                    () => registrationService.CreateDelegateAccountForExistingUser(
+                        A<InternalDelegateRegistrationModel>._,
+                        A<int>._,
                         A<string>._,
-                        A<bool>._,
                         A<bool>._,
                         A<int>._
                     )
                 )
-                .Returns((candidateNumber, true));
+                .Returns((candidateNumber, true, false));
             A.CallTo(() => request.Headers).Returns(
                 new HeaderDictionary(
                     new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }
@@ -383,14 +382,13 @@
 
             // Then
             A.CallTo(
-                    () =>
-                        registrationService.CreateDelegateAccountForNewUser(
-                            A<DelegateRegistrationModel>._,
-                            IpAddress,
-                            false,
-                            false,
-                            SupervisorDelegateId
-                        )
+                    () => registrationService.CreateDelegateAccountForExistingUser(
+                        A<InternalDelegateRegistrationModel>._,
+                        A<int>._,
+                        A<string>._,
+                        A<bool>._,
+                        A<int>._
+                    )
                 )
                 .MustNotHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
