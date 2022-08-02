@@ -406,12 +406,12 @@
             DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup.GroupId });
             A.CallTo(
                 () => groupsDataService.AddDelegateToGroup(
-                    A<int>._,
-                    A<int>._,
+                    reusableDelegateDetails.Id,
+                    unsynchronisedGroup.GroupId,
                     A<DateTime>._,
                     A<int>._
                 )
-            ).MustHaveHappenedOnceExactly();
+            ).MustNotHaveHappened();
         }
 
         [Test]
@@ -453,12 +453,12 @@
             DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup.GroupId });
             A.CallTo(
                 () => groupsDataService.AddDelegateToGroup(
-                    A<int>._,
-                    A<int>._,
+                    reusableDelegateDetails.Id,
+                    unsynchronisedGroup.GroupId,
                     A<DateTime>._,
                     A<int>._
                 )
-            ).MustHaveHappenedOnceExactly();
+            ).MustNotHaveHappened();
         }
 
         private void DelegateMustHaveBeenRemovedFromGroups(IEnumerable<int> groupIds)
