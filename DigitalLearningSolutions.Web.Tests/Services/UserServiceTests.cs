@@ -187,7 +187,6 @@
                         accountDetailsData.ProfessionalRegistrationNumber,
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
-                        null,
                         detailsLastChecked,
                         accountDetailsData.UserId,
                         shouldUpdateProfileImage
@@ -254,7 +253,6 @@
                         accountDetailsData.ProfessionalRegistrationNumber,
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
-                        null,
                         detailsLastChecked,
                         accountDetailsData.UserId,
                         shouldUpdateProfileImage
@@ -394,7 +392,6 @@
                         accountDetailsData.ProfessionalRegistrationNumber,
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
-                        null,
                         detailsLastChecked,
                         accountDetailsData.UserId,
                         changesMadeBySameUser
@@ -430,7 +427,6 @@
                         accountDetailsData.ProfessionalRegistrationNumber,
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
-                        null,
                         detailsLastChecked,
                         accountDetailsData.UserId,
                         changesMadeBySameUser

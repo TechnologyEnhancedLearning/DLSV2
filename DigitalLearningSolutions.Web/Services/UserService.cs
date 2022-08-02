@@ -27,7 +27,6 @@ namespace DigitalLearningSolutions.Web.Services
         void UpdateUserDetails(
             EditAccountDetailsData editAccountDetailsData,
             bool changeMadeBySameUser,
-            DateTime? emailVerified = null,
             DateTime? detailsLastChecked = null
         );
 
@@ -344,13 +343,9 @@ namespace DigitalLearningSolutions.Web.Services
         public void UpdateUserDetails(
             EditAccountDetailsData editAccountDetailsData,
             bool changeMadeBySameUser,
-            DateTime? emailVerified = null,
             DateTime? detailsLastChecked = null
         )
         {
-            // TODO: HEEDLS-915 Set EmailVerified to null if primary email was changed
-            // In 916 I set this to true temporarily for ease of adjusting the tests
-
             userDataService.UpdateUser(
                 editAccountDetailsData.FirstName,
                 editAccountDetailsData.Surname,
@@ -359,7 +354,6 @@ namespace DigitalLearningSolutions.Web.Services
                 editAccountDetailsData.ProfessionalRegistrationNumber,
                 editAccountDetailsData.HasBeenPromptedForPrn,
                 editAccountDetailsData.JobGroupId,
-                emailVerified,
                 detailsLastChecked ?? clockUtility.UtcNow,
                 editAccountDetailsData.UserId,
                 changeMadeBySameUser

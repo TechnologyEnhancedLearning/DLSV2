@@ -196,7 +196,6 @@
                     professionalRegNumber,
                     true,
                     jobGroupId,
-                    null,
                     DateTime.Now,
                     61188
                 );

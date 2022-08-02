@@ -54,7 +54,6 @@
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
             int jobGroupId,
-            DateTime? emailVerified,
             DateTime detailsLastChecked,
             int userId,
             bool changeMadeBySameUser = false
