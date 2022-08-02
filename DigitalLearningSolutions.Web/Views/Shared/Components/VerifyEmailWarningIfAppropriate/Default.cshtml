@@ -25,7 +25,7 @@
       </p>
     }
 
-    @if (Model.ShowCentreEmailsAndResendButton) {
+    @if (Model.ShowCentreEmailsDetailedList) {
       <partial name="_CentreEmailsDetailedListWithResendButton" model="@Model" />
     } else {
       <partial name="_CentreEmailsShortSummary" model="@Model" />

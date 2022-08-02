@@ -26,9 +26,12 @@
 <p>
   An email with a verification link has been sent to @numSpecificPhrases.thisAddress.
   Please click the @numSpecificPhrases.link to verify your email @numSpecificPhrases.address.
-  Check your Junk @numSpecificPhrases.folder if you can’t find @numSpecificPhrases.it, or you can resend @numSpecificPhrases.it by clicking the button below.
+  Check your Junk @numSpecificPhrases.folder if you can’t find @numSpecificPhrases.it, or you can resend @numSpecificPhrases.it
+  @(Model.ShowResendButton ? "by clicking the button below." : "by visiting the My account page.")
 </p>
 
-<button class="nhsuk-button nhsuk-button--secondary">
-  Resend verification @numSpecificPhrases.email
-</button>
+@if (Model.ShowResendButton) {
+  <button class="nhsuk-button nhsuk-button--secondary">
+    Resend verification @numSpecificPhrases.email
+  </button>
+}

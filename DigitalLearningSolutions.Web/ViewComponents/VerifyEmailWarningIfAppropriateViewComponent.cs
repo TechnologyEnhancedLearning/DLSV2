@@ -7,14 +7,16 @@
     public class VerifyEmailWarningIfAppropriateViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
-            bool showCentreEmailsAndResendButton,
+            bool showCentreEmailsDetailedList,
+            bool showResendButton,
             bool mentionBlockedActionsOnChooseACentrePage,
             bool primaryEmailIsUnverified,
             List<(string centreName, string? centreSpecificEmail)> unverifiedCentreEmails
         )
         {
             var model = new VerifyEmailWarningIfAppropriateViewModel(
-                showCentreEmailsAndResendButton,
+                showCentreEmailsDetailedList,
+                showResendButton,
                 mentionBlockedActionsOnChooseACentrePage,
                 primaryEmailIsUnverified,
                 unverifiedCentreEmails

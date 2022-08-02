@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Authorization;
@@ -16,6 +17,7 @@
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [Authorize(Policy = CustomPolicies.BasicUser)]
+    [ServiceFilter(typeof(VerifyUserHasVerifiedPrimaryEmail))]
     public class RegisterInternalAdminController : Controller
     {
         private readonly ICentresDataService centresDataService;

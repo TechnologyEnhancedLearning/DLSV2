@@ -295,8 +295,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                     "Confirmation",
                     new
                     {
-                        centreId, candidateNumber, approved, data.PrimaryEmailVerified,
-                        model.Centre, model.CentreSpecificEmail,
+                        centreId,
+                        candidateNumber,
+                        approved,
+                        data.PrimaryEmailVerified,
+                        data.CentreSpecificEmail,
                     }
                 );
             }
@@ -324,7 +327,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             string candidateNumber,
             bool approved,
             DateTime? primaryEmailVerified,
-            string centreName,
             string? centreSpecificEmail
         )
         {
@@ -334,6 +336,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
 
             var centreIdForContactInformation = approved ? null : centreId;
+            var centreName = GetCentreName(centreId);
 
             var model = new ConfirmationViewModel(
                 candidateNumber,

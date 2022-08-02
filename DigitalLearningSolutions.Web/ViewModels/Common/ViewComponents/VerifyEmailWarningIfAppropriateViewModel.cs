@@ -10,17 +10,20 @@
         public readonly bool MultipleCentreEmailsAreUnverified;
         public readonly bool MultipleEmailsAreUnverified;
         public readonly bool PrimaryEmailIsUnverified;
-        public readonly bool ShowCentreEmailsAndResendButton;
+        public readonly bool ShowCentreEmailsDetailedList;
+        public readonly bool ShowResendButton;
         public readonly List<(string centreName, string unverifiedEmail)> UnverifiedCentreEmails;
 
         public VerifyEmailWarningIfAppropriateViewModel(
-            bool showCentreEmailsAndResendButton,
+            bool showCentreEmailsDetailedList,
+            bool showResendButton,
             bool mentionBlockedActionsOnChooseACentrePage,
             bool primaryEmailIsUnverified,
             List<(string centreName, string unverifiedEmail)> unverifiedCentreEmails
         )
         {
-            ShowCentreEmailsAndResendButton = showCentreEmailsAndResendButton;
+            ShowCentreEmailsDetailedList = showCentreEmailsDetailedList;
+            ShowResendButton = showResendButton;
             MentionBlockedActionsOnChooseACentrePage = mentionBlockedActionsOnChooseACentrePage;
             PrimaryEmailIsUnverified = primaryEmailIsUnverified;
             UnverifiedCentreEmails = unverifiedCentreEmails;

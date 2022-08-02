@@ -214,8 +214,8 @@
                     "Confirmation",
                     new
                     {
-                        unverifiedCentreEmails = new List<(string centreName, string? centreSpecificEmail)>
-                            { (model.Centre, model.CentreSpecificEmail) },
+                        centreId = data.Centre,
+                        centreSpecificEmail = data.CentreSpecificEmail,
                     }
                 );
             }
@@ -238,13 +238,15 @@
         }
 
         [HttpGet]
-        public IActionResult Confirmation(List<(string centreName, string? centreSpecificEmail)> unverifiedCentreEmails)
+        public IActionResult Confirmation(int centreId, string? centreSpecificEmail)
         {
             TempData.Clear();
 
+            var centreName = centresDataService.GetCentreName(centreId);
+
             var model = new AdminConfirmationViewModel(
                 true,
-                unverifiedCentreEmails
+                new List<(string centreName, string unverifiedEmail)> { (centreName, centreSpecificEmail) }
             );
 
             return View(model);
