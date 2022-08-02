@@ -41,6 +41,12 @@
             "AddNewFrameworkDataGuid"
         );
 
+        public static readonly MultiPageFormDataFeature EditAssessmentQuestion = new MultiPageFormDataFeature(
+            6,
+            nameof(EditAssessmentQuestion),
+            "EditAssessmentQuestionsDataGuid"
+        );
+
         public readonly string TempDataKey;
 
         private MultiPageFormDataFeature(int id, string name, string tempDataKey) : base(id, name)

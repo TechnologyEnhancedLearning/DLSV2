@@ -7,9 +7,8 @@
     using System.Linq;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Data.Models.SessionData.Frameworks;
-    using Microsoft.AspNetCore.Http;
-    using System;
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Enums;
 
     public partial class FrameworksController
     {
@@ -120,40 +119,6 @@
             if (userRole < 2) return StatusCode(403);
             TempData.Clear();
             var sessionAssessmentQuestion = new SessionAssessmentQuestion();
-            if (!Request.Cookies.ContainsKey(CookieName))
-            {
-                var id = Guid.NewGuid();
-
-                Response.Cookies.Append(
-                    CookieName,
-                    id.ToString(),
-                    new CookieOptions
-                    {
-                        Expires = DateTimeOffset.UtcNow.AddDays(30)
-                    });
-                sessionAssessmentQuestion.Id = id;
-            }
-            else
-            {
-                if (Request.Cookies.TryGetValue(CookieName, out string idString))
-                {
-                    sessionAssessmentQuestion.Id = Guid.Parse(idString);
-                }
-                else
-                {
-                    var id = Guid.NewGuid();
-
-                    Response.Cookies.Append(
-                        CookieName,
-                        id.ToString(),
-                        new CookieOptions
-                        {
-                            Expires = DateTimeOffset.UtcNow.AddDays(30)
-                        });
-
-                    sessionAssessmentQuestion.Id = id;
-                }
-            }
             var assessmentQuestionDetail = new AssessmentQuestionDetail()
             {
                 AddedByAdminId = adminId,
@@ -169,7 +134,11 @@
             }
             sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
             sessionAssessmentQuestion.LevelDescriptors = levelDescriptors;
-            TempData.Set(sessionAssessmentQuestion);
+            multiPageFormService.SetMultiPageFormData(
+                sessionAssessmentQuestion,
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             return RedirectToAction("EditAssessmentQuestion", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
         }
 
@@ -183,13 +152,20 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            SessionAssessmentQuestion sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             if (sessionAssessmentQuestion == null)
             {
                 return StatusCode(404);
             }
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
-            TempData.Set(sessionAssessmentQuestion);
+            multiPageFormService.SetMultiPageFormData(
+                sessionAssessmentQuestion,
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             string name = null;
             if (frameworkCompetencyId > 0)
             {
@@ -288,11 +264,18 @@
             {
                 assessmentQuestionDetail.MinValue = 0;
                 assessmentQuestionDetail.MaxValue = 1;
-                var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+                var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
+                    MultiPageFormDataFeature.EditAssessmentQuestion,
+                    TempData
+                );
                 if (sessionAssessmentQuestion != null)
                 {
                     sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
-                    TempData.Set(sessionAssessmentQuestion);
+                    multiPageFormService.SetMultiPageFormData(
+                        sessionAssessmentQuestion,
+                        MultiPageFormDataFeature.EditAssessmentQuestion,
+                        TempData
+                    );
                 }
                 else
                 {
@@ -304,11 +287,18 @@
             }
             else
             {
-                SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+                SessionAssessmentQuestion sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
+                    MultiPageFormDataFeature.EditAssessmentQuestion,
+                    TempData
+                );
                 if (sessionAssessmentQuestion != null)
                 {
                     sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
-                    TempData.Set(sessionAssessmentQuestion);
+                    multiPageFormService.SetMultiPageFormData(
+                        sessionAssessmentQuestion,
+                        MultiPageFormDataFeature.EditAssessmentQuestion,
+                        TempData
+                    );
                 }
                 else
                 {
@@ -326,11 +316,18 @@
             {
                 return StatusCode(403);
             }
-            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             if (sessionAssessmentQuestion != null)
             {
                 var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
-                TempData.Set(sessionAssessmentQuestion);
+                multiPageFormService.SetMultiPageFormData(
+                    sessionAssessmentQuestion,
+                    MultiPageFormDataFeature.EditAssessmentQuestion,
+                    TempData
+                );
                 var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
                 if (detailFramework != null)
                 {
@@ -366,11 +363,18 @@
             {
                 return StatusCode(403);
             }
-            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             if (sessionAssessmentQuestion != null)
             {
                 sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
-                TempData.Set(sessionAssessmentQuestion);
+                multiPageFormService.SetMultiPageFormData(
+                    sessionAssessmentQuestion,
+                    MultiPageFormDataFeature.EditAssessmentQuestion,
+                    TempData
+                );
             }
 
             if (assessmentQuestionDetail.AssessmentQuestionInputTypeID == 1)
@@ -391,13 +395,20 @@
             {
                 return StatusCode(403);
             }
-            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             if (sessionAssessmentQuestion == null)
             {
                 return StatusCode(404);
             }
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
-            TempData.Set(sessionAssessmentQuestion);
+            multiPageFormService.SetMultiPageFormData(
+                sessionAssessmentQuestion,
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
             if (detailFramework == null)
             {
@@ -420,11 +431,18 @@
             {
                 return RedirectToAction("EditAssessmentQuestionOptions", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            SessionAssessmentQuestion sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             if (sessionAssessmentQuestion != null)
             {
                 sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
-                TempData.Set(sessionAssessmentQuestion);
+                multiPageFormService.SetMultiPageFormData(
+                    sessionAssessmentQuestion,
+                    MultiPageFormDataFeature.EditAssessmentQuestion,
+                    TempData
+                );
             }
             else
             {
@@ -440,10 +458,17 @@
             {
                 return StatusCode(403);
             }
-            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             if (sessionAssessmentQuestion == null) return StatusCode(404);
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
-            TempData.Set(sessionAssessmentQuestion);
+            multiPageFormService.SetMultiPageFormData(
+                sessionAssessmentQuestion,
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             if (level < assessmentQuestionDetail.MinValue)
             {
                 return RedirectToAction("EditAssessmentQuestionScoring", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
@@ -473,7 +498,10 @@
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/LevelDescriptor/{level}")]
         public IActionResult AssessmentQuestionLevelDescriptor(LevelDescriptor levelDescriptor, int frameworkId, int level, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
-            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(LevelDescriptor.LevelLabel));
@@ -496,7 +524,11 @@
                 sessionAssessmentQuestion.LevelDescriptors.Remove(existingDescriptor);
             }
             sessionAssessmentQuestion.LevelDescriptors.Add(levelDescriptor);
-            TempData.Set(sessionAssessmentQuestion);
+            multiPageFormService.SetMultiPageFormData(
+                sessionAssessmentQuestion,
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
 
             if (level >= assessmentQuestionDetail.MaxValue)
@@ -522,11 +554,18 @@
             {
                 return StatusCode(403);
             }
-            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             if (sessionAssessmentQuestion == null) return StatusCode(404);
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             var levelDescriptors = sessionAssessmentQuestion.LevelDescriptors;
-            TempData.Set(sessionAssessmentQuestion);
+            multiPageFormService.SetMultiPageFormData(
+                sessionAssessmentQuestion,
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             var assessmentQuestion = new Data.Models.SelfAssessments.AssessmentQuestion()
             {
                 Id = assessmentQuestionDetail.ID,
@@ -557,7 +596,10 @@
         public IActionResult SubmitAssessmentQuestion(int frameworkId, bool addToExisting, int frameworkCompetencyId = 0)
         {
             var adminId = GetAdminId();
-            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            var sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
+                MultiPageFormDataFeature.EditAssessmentQuestion,
+                TempData
+            );
             if (sessionAssessmentQuestion == null) return StatusCode(404);
             var assessmentQuestion = sessionAssessmentQuestion.AssessmentQuestionDetail;
             var newId = assessmentQuestion.ID;
