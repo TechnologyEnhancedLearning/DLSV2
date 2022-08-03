@@ -26,7 +26,6 @@
         private readonly IRegisterAdminService registerAdminService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
-        private readonly IUserService userService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
@@ -35,7 +34,6 @@
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
             IUserDataService userDataService,
-            IUserService userService,
             IRegisterAdminService registerAdminService
         )
         {
@@ -45,7 +43,6 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.userDataService = userDataService;
-            this.userService = userService;
             this.registerAdminService = registerAdminService;
         }
 

@@ -31,7 +31,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
-        private readonly IUserService userService;
 
         public RegisterController(
             ICentresDataService centresDataService,
@@ -39,7 +38,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IRegistrationService registrationService,
             ICryptoService cryptoService,
             IUserDataService userDataService,
-            IUserService userService,
             PromptsService promptsService,
             IFeatureManager featureManager,
             ISupervisorDelegateService supervisorDelegateService
@@ -50,7 +48,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
             this.userDataService = userDataService;
-            this.userService = userService;
             this.promptsService = promptsService;
             this.featureManager = featureManager;
             this.supervisorDelegateService = supervisorDelegateService;

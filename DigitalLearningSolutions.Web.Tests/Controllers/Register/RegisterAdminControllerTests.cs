@@ -28,7 +28,6 @@
         private IRegisterAdminService registerAdminService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
-        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -39,7 +38,6 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
-            userService = A.Fake<IUserService>();
             registerAdminService = A.Fake<IRegisterAdminService>();
             controller = new RegisterAdminController(
                     centresDataService,
@@ -48,7 +46,6 @@
                     jobGroupsDataService,
                     registrationService,
                     userDataService,
-                    userService,
                     registerAdminService
                 )
                 .WithDefaultContext()

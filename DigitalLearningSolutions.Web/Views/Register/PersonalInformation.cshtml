@@ -9,8 +9,7 @@
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-8" method="post" asp-action="PersonalInformation">
 
-      @if (errorHasOccurred)
-      {
+      @if (errorHasOccurred) {
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.PrimaryEmail), nameof(Model.CentreSpecificEmail) })" />
       }
 
@@ -18,8 +17,7 @@
         <h1 class="nhsuk-heading-xl">Register</h1>
         <input type="hidden" asp-for="IsCentreSpecificRegistration" value="@Model.IsCentreSpecificRegistration" />
 
-        @if (Model.IsCentreSpecificRegistration)
-        {
+        @if (Model.IsCentreSpecificRegistration) {
           <p class="nhsuk-body-l">
             Please enter your personal details to start the registration process
             to access all Digital Learning Solutions services at <b>@Model.CentreName</b>.
@@ -28,9 +26,7 @@
             </a>
           </p>
           <input type="hidden" asp-for="Centre" />
-        }
-        else
-        {
+        } else {
           <p class="nhsuk-body-l">
             Please select your centre to start the registration process
             to access all Digital Learning Solutions services.
@@ -47,8 +43,7 @@
         }
       </div>
 
-      @if (!Model.IsCentreSpecificRegistration)
-      {
+      @if (!Model.IsCentreSpecificRegistration) {
         <p class="nhsuk-body-l">
           Now enter your personal details.
         </p>
@@ -99,5 +94,9 @@
     <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Login" asp-action="Index" role="button">
       Log in
     </a>
+
+    <div class="nhsuk-u-margin-top-3">
+      <vc:cancel-link asp-controller="Home" asp-action="Index" />
+    </div>
   </div>
 </div>
