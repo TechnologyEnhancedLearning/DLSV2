@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -20,8 +21,8 @@
             this.userService = userService;
         }
 
-        [Route("/VerifyEmail/{emailVerificationReason}")]
-        public IActionResult Index(string? emailVerificationReason)
+        [Route("/VerifyYourEmail/{emailVerificationReason}")]
+        public IActionResult Index(EmailVerificationReason? emailVerificationReason)
         {
             if (emailVerificationReason == null)
             {
