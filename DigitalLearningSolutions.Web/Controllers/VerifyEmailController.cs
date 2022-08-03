@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System.Transactions;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -45,11 +46,15 @@
                 return View("VerificationLinkExpired");
             }
 
+            using var transaction = new TransactionScope();
+
             userService.SetEmailVerified(
                 emailVerificationDetails.UserId,
                 emailVerificationDetails.Email,
                 clockUtility.UtcNow
             );
+
+            transaction.Complete();
 
             return View();
         }
