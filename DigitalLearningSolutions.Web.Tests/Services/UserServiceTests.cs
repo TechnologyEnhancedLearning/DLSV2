@@ -1063,6 +1063,154 @@
             result.centreEmails.Should().Contain((3, "centre3", "centre@3.email"));
         }
 
+        [Test]
+        public void GetEmailVerificationDetails_returns_details_related_to_primary_email_if_code_and_email_match()
+        {
+            // Given
+            const string email = "email@email.com";
+            const string code = "code";
+            var emailVerificationDetails = new EmailVerificationDetails
+            {
+                UserId = 1,
+                Email = email,
+                EmailVerificationHash = code,
+                EmailVerified = null,
+                EmailVerificationHashCreatedDate = new DateTime(2022, 1, 1),
+            };
+
+            A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails(code)).Returns(emailVerificationDetails);
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(null);
+
+            // When
+            var result = userService.GetEmailVerificationDetails(email, code);
+
+            // Then
+            result.Should().Be(emailVerificationDetails);
+        }
+
+        [Test]
+        public void GetEmailVerificationDetails_returns_details_related_to_centre_email_if_code_and_email_match()
+        {
+            // Given
+            const string email = "email@email.com";
+            const string code = "code";
+            var emailVerificationDetails = new EmailVerificationDetails
+            {
+                UserId = 1,
+                Email = email,
+                EmailVerificationHash = code,
+                EmailVerified = null,
+                EmailVerificationHashCreatedDate = new DateTime(2022, 1, 1),
+            };
+
+            A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails(code)).Returns(null);
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(emailVerificationDetails);
+
+            // When
+            var result = userService.GetEmailVerificationDetails(email, code);
+
+            // Then
+            result.Should().Be(emailVerificationDetails);
+        }
+
+        [Test]
+        public void GetEmailVerificationDetails_returns_null_if_code_and_email_do_not_match()
+        {
+            // Given
+            const string email = "email@email.com";
+            const string code = "code";
+            var emailVerificationDetails = new EmailVerificationDetails
+            {
+                UserId = 1,
+                Email = email,
+                EmailVerificationHash = code,
+                EmailVerified = null,
+                EmailVerificationHashCreatedDate = new DateTime(2022, 1, 1),
+            };
+
+            A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails(code)).Returns(null);
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(null);
+
+            // When
+            var result = userService.GetEmailVerificationDetails(email, code);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetEmailVerificationDetails_returns_null_if_code_matches_Users_record_with_different_email()
+        {
+            // Given
+            const string code = "code";
+            var emailVerificationDetails = new EmailVerificationDetails
+            {
+                UserId = 1,
+                Email = "email@email.com",
+                EmailVerificationHash = code,
+                EmailVerified = null,
+                EmailVerificationHashCreatedDate = new DateTime(2022, 1, 1),
+            };
+
+            A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails(code)).Returns(emailVerificationDetails);
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(null);
+
+            // When
+            var result = userService.GetEmailVerificationDetails("different@email.com", code);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void
+            GetEmailVerificationDetails_returns_null_if_code_matches_UserCentreDetails_record_with_different_email()
+        {
+            // Given
+            const string code = "code";
+            var emailVerificationDetails = new EmailVerificationDetails
+            {
+                UserId = 1,
+                Email = "email@email.com",
+                EmailVerificationHash = code,
+                EmailVerified = null,
+                EmailVerificationHashCreatedDate = new DateTime(2022, 1, 1),
+            };
+
+            A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails(code)).Returns(null);
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(emailVerificationDetails);
+
+            // When
+            var result = userService.GetEmailVerificationDetails("different@email.com", code);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetEmailVerificationDetails_throws_exception_if_code_and_email_match_both_primary_and_centre_email()
+        {
+            const string email = "email@email.com";
+            const string code = "code";
+            var emailVerificationDetails = new EmailVerificationDetails
+            {
+                UserId = 1,
+                Email = email,
+                EmailVerificationHash = code,
+                EmailVerified = null,
+                EmailVerificationHashCreatedDate = new DateTime(2022, 1, 1),
+            };
+
+            A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails(code)).Returns(emailVerificationDetails);
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(emailVerificationDetails);
+
+            // When
+            void MethodBeingTested() => userService.GetEmailVerificationDetails(email, code);
+
+            // Then
+            Assert.Throws<Exception>(MethodBeingTested);
+        }
+
         private void AssertAdminPermissionsCalledCorrectly(
             int adminId,
             AdminRoles adminRoles,

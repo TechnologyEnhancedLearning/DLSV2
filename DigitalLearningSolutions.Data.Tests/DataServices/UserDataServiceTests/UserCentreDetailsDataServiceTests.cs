@@ -399,6 +399,60 @@
             updatedUserCentreDetails.Item3.Should().Be(email);
         }
 
+        [Test]
+        public void GetCentreEmailVerificationDetails_returns_expected_value()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const int centreId = 2;
+            const string email = "unverified@email.com";
+            const string code = "code";
+            var createdDate = new DateTime(2022, 1, 1);
+
+            GivenEmailVerificationHashLinkedToUserCentreDetails(userId, centreId, email, code, createdDate);
+
+            // When
+            var result = userDataService.GetCentreEmailVerificationDetails(code);
+
+            // Then
+            result!.UserId.Should().Be(userId);
+            result.Email.Should().Be(email);
+            result.EmailVerificationHash.Should().Be(code);
+            result.EmailVerified.Should().BeNull();
+            result.EmailVerificationHashCreatedDate.Should().Be(createdDate);
+        }
+
+        [Test]
+        public void SetCentreEmailVerified_sets_EmailVerified_and_EmailVerificationHashId()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const int centreId = 2;
+            const string email = "unverified@email.com";
+            const string code = "code";
+            var createdDate = new DateTime(2022, 1, 1);
+            var verifiedDate = new DateTime(2022, 1, 3);
+
+            GivenEmailVerificationHashLinkedToUserCentreDetails(userId, centreId, email, code, createdDate);
+
+            // When
+            userDataService.SetCentreEmailVerified(userId, email, verifiedDate);
+
+            // Then
+            var (emailVerifiedAfterUpdate, emailVerificationHashIdAfterUpdate) =
+                connection.QuerySingle<(DateTime?, int?)>(
+                    @"SELECT EmailVerified, EmailVerificationHashID FROM UserCentreDetails WHERE UserID = @userId AND Email = @email",
+                    new { userId, email }
+                );
+
+            emailVerifiedAfterUpdate.Should().BeSameDateAs(verifiedDate);
+            emailVerificationHashIdAfterUpdate.Should().BeNull();
+        }
+
         private void GivenUnclaimedUserExists(int userId, int centreId, string email, string hash)
         {
             connection.Execute(
@@ -411,6 +465,26 @@
                             (UserID, CentreID, RegistrationConfirmationHash, DateRegistered, CandidateNumber)
                         VALUES (@userId, @centreId, @hash, GETDATE(), 'CN1001')",
                 new { userId, centreId, hash }
+            );
+        }
+
+        private void GivenEmailVerificationHashLinkedToUserCentreDetails(
+            int userId,
+            int centreId,
+            string email,
+            string hash,
+            DateTime createdDate
+        )
+        {
+            var emailVerificationHashesId = connection.QuerySingle<int>(
+                @"INSERT INTO EmailVerificationHashes (EmailVerificationHash, CreatedDate) OUTPUT Inserted.ID VALUES (@hash, @createdDate);",
+                new { hash, createdDate }
+            );
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email, EmailVerificationHashID)
+                    VALUES (@userId, @centreId, @email, @emailVerificationHashesId)",
+                new { userId, centreId, email, emailVerificationHashesId }
             );
         }
     }
