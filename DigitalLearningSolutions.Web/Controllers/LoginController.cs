@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
@@ -27,6 +28,7 @@
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
         private readonly IUserService userService;
+        private readonly IConfigDataService configDataService;
         private readonly IClockUtility clockUtility;
 
         public LoginController(
@@ -34,7 +36,8 @@
             ISessionService sessionService,
             ILogger<LoginController> logger,
             IUserService userService,
-            IClockUtility clockUtility
+            IClockUtility clockUtility,
+            IConfigDataService configDataService
         )
         {
             this.loginService = loginService;
@@ -42,6 +45,7 @@
             this.logger = logger;
             this.userService = userService;
             this.clockUtility = clockUtility;
+            this.configDataService = configDataService;
         }
 
         public IActionResult Index(string? returnUrl = null)
@@ -64,6 +68,7 @@
             }
 
             var loginResult = loginService.AttemptLogin(model.Username!.Trim(), model.Password!);
+
             switch (loginResult.LoginAttemptResult)
             {
                 case LoginAttemptResult.InvalidCredentials:
@@ -74,7 +79,9 @@
                 case LoginAttemptResult.AccountLocked:
                     return View("AccountLocked");
                 case LoginAttemptResult.InactiveAccount:
-                    return View("AccountInactive");
+                    var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+                    var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
+                    return View("AccountInactive", inactiveAccountModel);
                 case LoginAttemptResult.LogIntoSingleCentre:
                     return await LogIntoCentreAsync(
                         loginResult.UserEntity!,
