@@ -80,10 +80,14 @@ namespace DigitalLearningSolutions.Web.Services
 
         bool ShouldForceDetailsCheck(UserEntity userEntity, int centreIdToCheck);
 
+        AdminEntity? GetAdminById(int adminId);
+
         (string? primaryEmail, List<(int centreId, string centreName, string centreEmail)> centreEmails)
             GetUnverifiedEmailsForUser(int userId);
 
-        AdminEntity? GetAdminById(int adminId);
+        EmailVerificationDetails? GetEmailVerificationDetails(string email, string code);
+
+        void SetEmailVerified(int userId, string email, DateTime verifiedDateTime);
     }
 
     public class UserService : IUserService
@@ -409,6 +413,35 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 userDataService.SetCentreEmail(userId, centreId, email);
             }
+        }
+
+        public EmailVerificationDetails? GetEmailVerificationDetails(string email, string code)
+        {
+            var primaryEmailVerificationDetails = userDataService.GetPrimaryEmailVerificationDetails(code);
+            var centreEmailVerificationDetails = userDataService.GetCentreEmailVerificationDetails(code);
+
+            if (primaryEmailVerificationDetails != null && centreEmailVerificationDetails != null)
+            {
+                throw new Exception("Did not expect multiple records to match email verification code");
+            }
+
+            if (email == primaryEmailVerificationDetails?.Email)
+            {
+                return primaryEmailVerificationDetails;
+            }
+
+            if (email == centreEmailVerificationDetails?.Email)
+            {
+                return centreEmailVerificationDetails;
+            }
+
+            return null;
+        }
+
+        public void SetEmailVerified(int userId, string email, DateTime verifiedDateTime)
+        {
+            userDataService.SetPrimaryEmailVerified(userId, verifiedDateTime);
+            userDataService.SetCentreEmailVerified(userId, email, verifiedDateTime);
         }
 
         private bool NewUserRolesExceedAvailableSpots(
