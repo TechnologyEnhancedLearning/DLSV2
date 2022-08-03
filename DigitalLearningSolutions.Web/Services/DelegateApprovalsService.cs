@@ -32,12 +32,14 @@
         private readonly IEmailService emailService;
         private readonly ILogger<DelegateApprovalsService> logger;
         private readonly IUserDataService userDataService;
+        private readonly ISessionDataService sessionDataService;
 
         public DelegateApprovalsService(
             IUserDataService userDataService,
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IEmailService emailService,
             ICentresDataService centresDataService,
+            ISessionDataService sessionDataService,
             ILogger<DelegateApprovalsService> logger,
             IConfiguration config
         )
@@ -46,6 +48,7 @@
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
+            this.sessionDataService = sessionDataService;
             this.logger = logger;
             this.config = config;
         }
@@ -117,7 +120,15 @@
                 );
             }
 
-            userDataService.RemoveDelegateAccount(delegateId);
+            if (sessionDataService.HasDelegateGotSessions(delegateId))
+            {
+                userDataService.DeactivateDelegateUser(delegateId);
+            }
+            else
+            {
+                userDataService.RemoveDelegateAccount(delegateId);
+            }
+
             SendRejectionEmail(delegateEntity);
         }
 

@@ -82,6 +82,13 @@
                     var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
                     var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
                     return View("AccountInactive", inactiveAccountModel);
+                case LoginAttemptResult.UnverifiedEmail:
+                    await CentrelessLogInAsync(loginResult.UserEntity!, model.RememberMe);
+                    return RedirectToAction(
+                        "Index",
+                        "VerifyYourEmail",
+                        new { emailVerificationReason = EmailVerificationReason.EmailNotVerified }
+                    );
                 case LoginAttemptResult.LogIntoSingleCentre:
                     return await LogIntoCentreAsync(
                         loginResult.UserEntity!,
@@ -107,11 +114,20 @@
         public IActionResult ChooseACentre(DlsSubApplication dlsSubApplication, string? returnUrl)
         {
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
-            var chooseACentreAccountViewModels = loginService.GetChooseACentreAccountViewModels(userEntity);
+
+            var unverifiedCentreEmails =
+                userService.GetUnverifiedEmailsForUser(userEntity!.UserAccount.Id).centreEmails.ToList();
+            var idsOfCentresWithUnverifiedEmails = unverifiedCentreEmails.Select(uce => uce.centreId).ToList();
+
+            var chooseACentreAccountViewModels =
+                loginService.GetChooseACentreAccountViewModels(userEntity, idsOfCentresWithUnverifiedEmails);
+
             var model = new ChooseACentreViewModel(
                 chooseACentreAccountViewModels.OrderByDescending(account => account.IsActiveAdmin)
                     .ThenBy(account => account.CentreName).ToList(),
-                returnUrl
+                returnUrl,
+                userEntity.UserAccount.EmailVerified.HasValue,
+                unverifiedCentreEmails
             );
 
             return View("ChooseACentre", model);
@@ -119,6 +135,7 @@
 
         [HttpPost]
         [Authorize(Policy = CustomPolicies.BasicUser)]
+        [ServiceFilter(typeof(VerifyUserHasVerifiedPrimaryEmail))]
         public async Task<IActionResult> ChooseCentre(int centreId, string? returnUrl)
         {
             var userEntity = userService.GetUserById(User.GetUserIdKnownNotNull());
@@ -127,6 +144,13 @@
             if (centreAccountSet?.IsCentreActive != true)
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
+            }
+
+            var centreEmailIsUnverified = !loginService.CentreEmailIsVerified(userEntity.UserAccount.Id, centreId);
+
+            if (centreEmailIsUnverified)
+            {
+                return RedirectToAction("Index", "VerifyYourEmail");
             }
 
             var rememberMe = (await HttpContext.AuthenticateAsync()).Properties.IsPersistent;
