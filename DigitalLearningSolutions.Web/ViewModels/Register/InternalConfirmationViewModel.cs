@@ -10,15 +10,15 @@
             bool approved,
             bool hasAdminAccountAtCentre,
             int? centreId,
-            bool primaryEmailIsUnverified,
-            List<(int centreId, string centreName, string? centreSpecificEmail)> unverifiedCentreEmails
+            string? unverifiedPrimaryEmail,
+            IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> unverifiedCentreEmails
         )
         {
             CandidateNumber = candidateNumber;
             Approved = approved;
             HasAdminAccountAtCentre = hasAdminAccountAtCentre;
             CentreId = centreId;
-            PrimaryEmailIsUnverified = primaryEmailIsUnverified;
+            UnverifiedPrimaryEmail = unverifiedPrimaryEmail;
             UnverifiedCentreEmails =
                 unverifiedCentreEmails.Select(uce => (uce.centreName, uce.centreSpecificEmail)).ToList();
         }
@@ -27,7 +27,7 @@
         public bool Approved { get; }
         public bool HasAdminAccountAtCentre { get; }
         public int? CentreId { get; }
-        public bool PrimaryEmailIsUnverified { get; }
+        public string? UnverifiedPrimaryEmail { get; }
         public List<(string centreName, string? centreSpecificEmail)> UnverifiedCentreEmails { get; }
     }
 }

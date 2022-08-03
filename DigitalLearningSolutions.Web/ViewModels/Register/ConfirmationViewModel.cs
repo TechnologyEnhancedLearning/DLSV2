@@ -8,21 +8,21 @@
             string candidateNumber,
             bool approved,
             int? centreId,
-            bool primaryEmailIsUnverified,
+            string? unverifiedPrimaryEmail,
             List<(string centreName, string? centreSpecificEmail)> unverifiedCentreEmails
         )
         {
             CandidateNumber = candidateNumber;
             Approved = approved;
             CentreId = centreId;
-            PrimaryEmailIsUnverified = primaryEmailIsUnverified;
+            UnverifiedPrimaryEmail = unverifiedPrimaryEmail;
             UnverifiedCentreEmails = unverifiedCentreEmails;
         }
 
         public string CandidateNumber { get; set; }
         public bool Approved { get; set; }
         public int? CentreId { get; set; }
-        public bool PrimaryEmailIsUnverified { get; }
+        public string? UnverifiedPrimaryEmail { get; }
         public List<(string centreName, string? centreSpecificEmail)> UnverifiedCentreEmails { get; }
     }
 }

@@ -293,7 +293,7 @@
                 approved,
                 userHasAdminAccountAtCentre,
                 centreId,
-                unverifiedPrimaryEmail != null,
+                unverifiedPrimaryEmail,
                 unverifiedCentreEmails.Where(uce => uce.centreId == centreId).ToList()
             );
 

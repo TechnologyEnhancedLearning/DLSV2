@@ -8,7 +8,7 @@
 }
 
 @if (Model.PrimaryEmailIsUnverified || Model.AtLeastOneCentreEmailIsUnverified) {
-  <div class="nhsuk-warning-callout">
+  <div class="nhsuk-warning-callout word-break">
     <h2 class="nhsuk-warning-callout__label">
       <span role="text">
         <span class="nhsuk-u-visually-hidden">Important: </span>
@@ -16,20 +16,12 @@
       </span>
     </h2>
 
-    @if (Model.PrimaryEmailIsUnverified) {
-      <p>
-        Your primary email address has not been verified yet. You will not be able to
-        @(Model.MentionBlockedActionsOnChooseACentrePage ?
-          "choose a centre, reactivate an account, or register at a new centre until it you verify the address." :
-          "access any centre accounts until you verify the address.")
-      </p>
+    @if (Model.IsRegistrationJourney) {
+      <partial name="_VerifyEmailTextForRegistration" model="@Model" />
+    } else if (Model.IsMyAccountPage) {
+      <partial name="_VerifyEmailTextAndResendButtonForMyAccount" model="@Model" />
+    } else if (Model.IsChooseACentrePage) {
+      <partial name="_VerifyEmailTextForChooseACentre" model="@Model" />
     }
-
-    @if (Model.ShowCentreEmailsDetailedList) {
-      <partial name="_CentreEmailsDetailedListWithResendButton" model="@Model" />
-    } else {
-      <partial name="_CentreEmailsShortSummary" model="@Model" />
-    }
-
   </div>
 }

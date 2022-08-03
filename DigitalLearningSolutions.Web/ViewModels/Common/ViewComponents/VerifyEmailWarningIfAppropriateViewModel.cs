@@ -6,27 +6,29 @@
     public class VerifyEmailWarningIfAppropriateViewModel
     {
         public readonly bool AtLeastOneCentreEmailIsUnverified;
-        public readonly bool MentionBlockedActionsOnChooseACentrePage;
+        public readonly bool IsChooseACentrePage;
+        public readonly bool IsMyAccountPage;
+        public readonly bool IsRegistrationJourney;
         public readonly bool MultipleCentreEmailsAreUnverified;
         public readonly bool MultipleEmailsAreUnverified;
         public readonly bool PrimaryEmailIsUnverified;
-        public readonly bool ShowCentreEmailsDetailedList;
-        public readonly bool ShowResendButton;
         public readonly List<(string centreName, string unverifiedEmail)> UnverifiedCentreEmails;
+        public readonly string? UnverifiedPrimaryEmail;
 
         public VerifyEmailWarningIfAppropriateViewModel(
-            bool showCentreEmailsDetailedList,
-            bool showResendButton,
-            bool mentionBlockedActionsOnChooseACentrePage,
-            bool primaryEmailIsUnverified,
+            bool isChooseACentrePage,
+            bool isMyAccountPage,
+            bool isRegistrationJourney,
+            string? unverifiedPrimaryEmail,
             List<(string centreName, string unverifiedEmail)> unverifiedCentreEmails
         )
         {
-            ShowCentreEmailsDetailedList = showCentreEmailsDetailedList;
-            ShowResendButton = showResendButton;
-            MentionBlockedActionsOnChooseACentrePage = mentionBlockedActionsOnChooseACentrePage;
-            PrimaryEmailIsUnverified = primaryEmailIsUnverified;
+            IsChooseACentrePage = isChooseACentrePage;
+            IsMyAccountPage = isMyAccountPage;
+            IsRegistrationJourney = isRegistrationJourney;
+            UnverifiedPrimaryEmail = unverifiedPrimaryEmail;
             UnverifiedCentreEmails = unverifiedCentreEmails;
+            PrimaryEmailIsUnverified = !string.IsNullOrWhiteSpace(unverifiedPrimaryEmail);
             AtLeastOneCentreEmailIsUnverified = UnverifiedCentreEmails.Any();
             MultipleCentreEmailsAreUnverified = UnverifiedCentreEmails.Count > 1;
             MultipleEmailsAreUnverified = UnverifiedCentreEmails.Count + (PrimaryEmailIsUnverified ? 1 : 0) > 1;

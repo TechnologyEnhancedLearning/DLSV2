@@ -3,23 +3,28 @@
 
 @{
   ViewData["Title"] = "Admin registration complete";
+  var emailsAreVerified = !Model.UnverifiedCentreEmails.Any();
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Admin registration complete</h1>
+    <h1 id="page-heading" class="nhsuk-heading-xl">Admin registration complete</h1>
 
     <p class="nhsuk-body-l">
       Your email address matched details stored with the centre, so your centre manager account has successfully been created.
     </p>
 
     <vc:verify-email-warning-if-appropriate
-      show-centre-emails-detailed-list="true"
-      show-resend-button="false"
-      mention-blocked-actions-on-choose-a-centre-page="false"
-      primary-email-is-unverified="@Model.PrimaryEmailIsUnverified"
+      is-choose-a-centre-page="false"
+      is-my-account-page="false"
+      is-registration-journey="true"
+      unverified-primary-email="@Model.UnverifiedPrimaryEmail"
       unverified-centre-emails="@Model.UnverifiedCentreEmails" />
 
-    <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
+    @if (emailsAreVerified) {
+      <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
+    } else {
+      <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="View My account" />
+    }
   </div>
 </div>

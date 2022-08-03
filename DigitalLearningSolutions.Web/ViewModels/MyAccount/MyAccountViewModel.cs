@@ -56,7 +56,7 @@
             AllCentreSpecificEmails = allCentreSpecificEmails;
             DlsSubApplication = dlsSubApplication;
             SwitchCentreReturnUrl = switchCentreReturnUrl;
-            PrimaryEmailIsUnverified = userAccount.EmailVerified == null;
+            UnverifiedPrimaryEmail = userAccount.EmailVerified == null ? PrimaryEmail : null;
             UnverifiedCentreEmails =
                 unverifiedCentreEmails.Select(uce => (uce.centreName, uce.centreSpecificEmail)).ToList();
         }
@@ -66,7 +66,7 @@
 
         public string PrimaryEmail { get; set; }
 
-        public bool PrimaryEmailIsUnverified { get; }
+        public string? UnverifiedPrimaryEmail { get; }
 
         public string? DelegateNumber { get; set; }
 

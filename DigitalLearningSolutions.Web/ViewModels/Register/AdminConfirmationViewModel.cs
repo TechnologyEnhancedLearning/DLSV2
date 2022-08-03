@@ -5,15 +5,15 @@
     public class AdminConfirmationViewModel
     {
         public AdminConfirmationViewModel(
-            bool primaryEmailIsUnverified,
+            string? unverifiedPrimaryEmail,
             List<(string centreName, string unverifiedEmail)> unverifiedCentreEmails
         )
         {
-            PrimaryEmailIsUnverified = primaryEmailIsUnverified;
+            UnverifiedPrimaryEmail = unverifiedPrimaryEmail;
             UnverifiedCentreEmails = unverifiedCentreEmails;
         }
 
-        public bool PrimaryEmailIsUnverified { get; }
+        public string? UnverifiedPrimaryEmail { get; }
         public List<(string centreName, string unverifiedEmail)> UnverifiedCentreEmails { get; }
     }
 }

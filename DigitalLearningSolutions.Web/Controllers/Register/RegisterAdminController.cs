@@ -216,6 +216,7 @@
                     "Confirmation",
                     new
                     {
+                        primaryEmail = data.PrimaryEmail,
                         centreId = data.Centre,
                         centreSpecificEmail = data.CentreSpecificEmail,
                     }
@@ -240,14 +241,14 @@
         }
 
         [HttpGet]
-        public IActionResult Confirmation(int centreId, string? centreSpecificEmail)
+        public IActionResult Confirmation(string primaryEmail, int centreId, string? centreSpecificEmail)
         {
             TempData.Clear();
 
             var centreName = centresDataService.GetCentreName(centreId);
 
             var model = new AdminConfirmationViewModel(
-                true,
+                primaryEmail,
                 new List<(string centreName, string unverifiedEmail)> { (centreName, centreSpecificEmail) }
             );
 

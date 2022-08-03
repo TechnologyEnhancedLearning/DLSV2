@@ -21,10 +21,10 @@
     </div>
 
     <vc:verify-email-warning-if-appropriate
-      show-centre-emails-detailed-list="true"
-      show-resend-button="false"
-      mention-blocked-actions-on-choose-a-centre-page="false"
-      primary-email-is-unverified="@Model.PrimaryEmailIsUnverified"
+      is-choose-a-centre-page="false"
+      is-my-account-page="false"
+      is-registration-journey="true"
+      unverified-primary-email="@Model.UnverifiedPrimaryEmail"
       unverified-centre-emails="@Model.UnverifiedCentreEmails" />
 
     @if (!Model.Approved) {
@@ -43,6 +43,8 @@
         </p>
       </div>
       <vc:centre-contact-info centre-id="@Model.CentreId.GetValueOrDefault()" />
+    } else {
+      <vc:action-link link-text="Log in" asp-controller="Login" asp-action="Index" />
     }
   </div>
 </div>

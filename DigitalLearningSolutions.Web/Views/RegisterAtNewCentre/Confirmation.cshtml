@@ -4,6 +4,7 @@
 
 @{
   ViewData["Title"] = "Registration confirmation";
+  var emailsAreVerified = Model.UnverifiedPrimaryEmail == null && !Model.UnverifiedCentreEmails.Any();
 }
 
 <div class="nhsuk-grid-row">
@@ -22,18 +23,24 @@
     </div>
 
     <vc:verify-email-warning-if-appropriate
-      show-centre-emails-detailed-list="true"
-      show-resend-button="false"
-      mention-blocked-actions-on-choose-a-centre-page="false"
-      primary-email-is-unverified="@Model.PrimaryEmailIsUnverified"
+      is-choose-a-centre-page="false"
+      is-my-account-page="false"
+      is-registration-journey="true"
+      unverified-primary-email="@Model.UnverifiedPrimaryEmail"
       unverified-centre-emails="@Model.UnverifiedCentreEmails" />
+
+    @if (emailsAreVerified) {
+      <vc:action-link asp-controller="Login" asp-action="ChooseACentre" link-text="Switch centre" />
+    } else {
+      <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="View My account" />
+    }
 
     @if (Model.HasAdminAccountAtCentre) {
       <p>
         You will need to log out and in again before you can access the Learning Portal.
       </p>
       <partial name="_LogoutForm" model="@ButtonType.Secondary" />
-    } else if (Model.Approved) {
+    } else if (Model.Approved && emailsAreVerified) {
       <p>
         You can now log into your new account.
       </p>
@@ -44,7 +51,7 @@
         role="button">
         Switch centre
       </a>
-    } else {
+    } else if (!Model.Approved) {
       <div class="nhsuk-warning-callout">
         <h2 class="nhsuk-warning-callout__label">
           <span role="text">

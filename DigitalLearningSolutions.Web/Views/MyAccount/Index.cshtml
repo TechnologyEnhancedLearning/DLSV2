@@ -16,10 +16,10 @@
 }
 
 <vc:verify-email-warning-if-appropriate
-  show-centre-emails-detailed-list="true"
-  show-resend-button="true"
-  mention-blocked-actions-on-choose-a-centre-page="false"
-  primary-email-is-unverified="@Model.PrimaryEmailIsUnverified"
+  is-choose-a-centre-page="false"
+  is-my-account-page="true"
+  is-registration-journey="false"
+  unverified-primary-email="@Model.UnverifiedPrimaryEmail"
   unverified-centre-emails="@Model.UnverifiedCentreEmails" />
 
 <div class="nhsuk-grid-row">

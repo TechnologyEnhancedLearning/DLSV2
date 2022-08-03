@@ -300,7 +300,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                         centreId,
                         candidateNumber,
                         approved,
-                        data.PrimaryEmailVerified,
+                        unverifiedPrimaryEmail = data.PrimaryEmailVerified == null ? data.PrimaryEmail : null,
                         data.CentreSpecificEmail,
                     }
                 );
@@ -328,7 +328,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             int? centreId,
             string candidateNumber,
             bool approved,
-            DateTime? primaryEmailVerified,
+            string? unverifiedPrimaryEmail,
             string? centreSpecificEmail
         )
         {
@@ -344,7 +344,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 candidateNumber,
                 approved,
                 centreIdForContactInformation,
-                primaryEmailVerified == null,
+                unverifiedPrimaryEmail,
                 new List<(string centreName, string unverifiedEmail)> { (centreName, centreSpecificEmail) }
             );
 

@@ -145,7 +145,7 @@
             var (unverifiedPrimaryEmail, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
 
             var model = new AdminConfirmationViewModel(
-                unverifiedPrimaryEmail != null,
+                unverifiedPrimaryEmail,
                 unverifiedCentreEmails.Where(uce => uce.centreId == centreId)
                     .Select(uce => (uce.centreName, uce.centreEmail)).ToList()
             );

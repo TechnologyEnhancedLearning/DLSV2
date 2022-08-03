@@ -108,8 +108,8 @@
         {
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
 
-            var unverifiedCentreEmails =
-                userService.GetUnverifiedEmailsForUser(userEntity!.UserAccount.Id).centreEmails;
+            var (unverifiedPrimaryEmail, unverifiedCentreEmails) =
+                userService.GetUnverifiedEmailsForUser(userEntity!.UserAccount.Id);
             var idsOfCentresWithUnverifiedEmails = unverifiedCentreEmails.Select(uce => uce.centreId).ToList();
 
             var chooseACentreAccountViewModels =
@@ -119,7 +119,7 @@
                 chooseACentreAccountViewModels.OrderByDescending(account => account.IsActiveAdmin)
                     .ThenBy(account => account.CentreName).ToList(),
                 returnUrl,
-                userEntity.UserAccount.EmailVerified.HasValue,
+                unverifiedPrimaryEmail,
                 unverifiedCentreEmails
             );
 

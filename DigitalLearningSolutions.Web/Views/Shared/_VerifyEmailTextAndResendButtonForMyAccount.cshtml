@@ -12,13 +12,20 @@
   };
 }
 
+@if (Model.PrimaryEmailIsUnverified) {
+  <p>
+    Your primary email <strong>@Model.UnverifiedPrimaryEmail</strong> has not been verified yet.
+    You will not be able to access any centre accounts until you verify the address.
+  </p>
+}
+
 @if (Model.AtLeastOneCentreEmailIsUnverified) {
   foreach (var ((centreName, email), index) in Model.UnverifiedCentreEmails.Select((email, index) => (email, index))) {
     <p>
-      Your email address @(email) has
+      Your centre email <strong>@email</strong> has
       @(Model.PrimaryEmailIsUnverified && index >= 0 || !Model.PrimaryEmailIsUnverified && index >= 1 ? "also" : "")
       not been verified yet.
-      You will not be able to access <strong>@(centreName)</strong> until you verify the address.
+      You will not be able to access <strong>@centreName</strong> until you verify the address.
     </p>
   }
 }
@@ -26,12 +33,10 @@
 <p>
   An email with a verification link has been sent to @numSpecificPhrases.thisAddress.
   Please click the @numSpecificPhrases.link to verify your email @numSpecificPhrases.address.
-  Check your Junk @numSpecificPhrases.folder if you can’t find @numSpecificPhrases.it, or you can resend @numSpecificPhrases.it
-  @(Model.ShowResendButton ? "by clicking the button below." : "by visiting the My account page.")
+  Check your Junk @numSpecificPhrases.folder if you can’t find @numSpecificPhrases.it,
+  or you can resend @numSpecificPhrases.it by clicking the button below.
 </p>
 
-@if (Model.ShowResendButton) {
-  <button class="nhsuk-button nhsuk-button--secondary">
-    Resend verification @numSpecificPhrases.email
-  </button>
-}
+<button class="nhsuk-button nhsuk-button--secondary">
+  Resend verification @numSpecificPhrases.email
+</button>
