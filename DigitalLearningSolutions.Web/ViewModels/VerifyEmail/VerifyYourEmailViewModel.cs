@@ -4,12 +4,12 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
 
-    public class VerifyEmailViewModel
+    public class VerifyYourEmailViewModel
     {
         public const string CentreEmailExplanation =
             "You will not be able to access that account until you verify the address.";
 
-        public VerifyEmailViewModel(
+        public VerifyYourEmailViewModel(
             EmailVerificationReason emailVerificationReason,
             string? primaryEmail,
             IReadOnlyCollection<(int centreId, string centreName, string centreEmail)> centreSpecificEmails

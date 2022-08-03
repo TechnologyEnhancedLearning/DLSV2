@@ -7,7 +7,7 @@
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public class VerifyEmailViewModelTests
+    public class VerifyYourEmailViewModelTests
     {
         private static readonly object[] SourceParams =
         {
@@ -57,7 +57,7 @@
         )
         {
             // When
-            var model = new VerifyEmailViewModel(
+            var model = new VerifyYourEmailViewModel(
                 EmailVerificationReason.EmailNotVerified,
                 primaryEmail,
                 centreSpecificEmails

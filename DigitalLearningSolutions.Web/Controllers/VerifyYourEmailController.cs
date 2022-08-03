@@ -31,7 +31,7 @@
 
             var userId = User.GetUserIdKnownNotNull();
             var (unverifiedPrimaryEmail, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
-            var model = new VerifyEmailViewModel(
+            var model = new VerifyYourEmailViewModel(
                 emailVerificationReason,
                 unverifiedPrimaryEmail,
                 unverifiedCentreEmails.ToList()

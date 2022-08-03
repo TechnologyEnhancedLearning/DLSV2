@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.VerifyEmail
-@model VerifyEmailViewModel
+@model VerifyYourEmailViewModel
 
 @if (Model.PrimaryEmail != null) {
   var primaryEmailOnlyExplanation = Model.SingleUnverifiedEmail
@@ -16,12 +16,12 @@
   @if (Model.SingleUnverifiedEmail) {
     var emailChangedText = $"You've updated your email address for your account at {firstCentreName}." +
                            $" An email with a verification link has been sent to {firstCentreEmail}." +
-                           $" Please click the link to verify your email address. {VerifyEmailViewModel.CentreEmailExplanation}";
+                           $" Please click the link to verify your email address. {VerifyYourEmailViewModel.CentreEmailExplanation}";
 
     <p class="nhsuk-body-m">@emailChangedText</p>
   } else {
     var firstEmailChangedText = $"You've updated your email address for your account at {firstCentreName}:" +
-                                $" {firstCentreEmail}. {VerifyEmailViewModel.CentreEmailExplanation}";
+                                $" {firstCentreEmail}. {VerifyYourEmailViewModel.CentreEmailExplanation}";
 
     <p class="nhsuk-body-m">@firstEmailChangedText</p>
   }
