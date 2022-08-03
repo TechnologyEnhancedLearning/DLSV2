@@ -44,7 +44,25 @@
         public static readonly MultiPageFormDataFeature EditAssessmentQuestion = new MultiPageFormDataFeature(
             6,
             nameof(EditAssessmentQuestion),
-            "EditAssessmentQuestionsDataGuid"
+            "EditAssessmentQuestionDataGuid"
+        );
+
+        public static readonly MultiPageFormDataFeature EditSignpostingParameter = new MultiPageFormDataFeature(
+            7,
+            nameof(EditSignpostingParameter),
+            "EditSignpostingParameterDataGuid"
+        );
+
+        public static readonly MultiPageFormDataFeature AddCompetencyLearningResourceSummary = new MultiPageFormDataFeature(
+            8,
+            nameof(AddCompetencyLearningResourceSummary),
+            "AddCompetencyLearningResourceSummaryDataGuid"
+        );
+
+        public static readonly MultiPageFormDataFeature EditCompetencyLearningResources = new MultiPageFormDataFeature(
+            9,
+            nameof(EditCompetencyLearningResources),
+            "EditCompetencyLearningResourcesDataGuid"
         );
 
         public readonly string TempDataKey;
