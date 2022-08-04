@@ -130,11 +130,15 @@
             connection.EnsureOpen();
             var transaction = connection.BeginTransaction();
 
+            // TODO: 915 - replace false with call to IsEmailVerifiedForUser
+            var emailIsVerifiedForUser = false;
+            var emailShouldBeVerified = emailIsVerifiedForUser || !delegateRegistrationModel.IsSelfRegistered;
+
             userDataService.SetCentreEmail(
                 userId,
                 delegateRegistrationModel.Centre,
                 delegateRegistrationModel.CentreSpecificEmail,
-                null,
+                emailShouldBeVerified ? (DateTime?)null : clockUtility.UtcNow,
                 transaction
             );
 
@@ -286,17 +290,21 @@
             int centreId,
             string? centreSpecificEmail,
             int userId,
-            bool selfRegistered,
+            bool isSelfRegistered,
             IDbTransaction transaction
         )
         {
             if (!string.IsNullOrWhiteSpace(centreSpecificEmail))
             {
+                // TODO: 915 - replace false with call to IsEmailVerifiedForUser
+                var emailIsVerifiedForUser = false;
+                var emailShouldBeVerified = emailIsVerifiedForUser || !isSelfRegistered;
+
                 userDataService.SetCentreEmail(
                     userId,
                     centreId,
                     centreSpecificEmail,
-                    selfRegistered ? (DateTime?)null : clockUtility.UtcNow,
+                    emailShouldBeVerified ? (DateTime?)null : clockUtility.UtcNow,
                     transaction
                 );
             }
