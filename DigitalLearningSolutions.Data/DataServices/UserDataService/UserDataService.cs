@@ -56,6 +56,7 @@
             int jobGroupId,
             DateTime detailsLastChecked,
             int userId,
+            DateTime? emailVerified = null,
             bool changeMadeBySameUser = false
         );
 
@@ -188,6 +189,10 @@
             int newUserIdForUserCentreDetails,
             int centreId
         );
+
+        bool IsPrimaryEmailBeingChangedForUser(int userId, string newPrimaryEmail);
+
+        bool IsCentreEmailBeingChangedForUserAtCentre(int userId, int centreId, string? newCentreEmail);
     }
 
     public partial class UserDataService : IUserDataService
@@ -327,6 +332,16 @@
                 @"DELETE FROM Users WHERE ID = @userId",
                 new { userId }
             );
+        }
+
+        public bool IsPrimaryEmailBeingChangedForUser(int userId, string newPrimaryEmail)
+        {
+            var primaryEmail = connection.Query<string>(
+                @"SELECT PrimaryEmail FROM Users WHERE ID = @userId",
+                new { userId }
+            ).SingleOrDefault();
+
+            return !string.Equals(primaryEmail, newPrimaryEmail);
         }
     }
 }

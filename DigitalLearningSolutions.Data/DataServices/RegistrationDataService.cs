@@ -129,13 +129,20 @@
             connection.EnsureOpen();
             var transaction = connection.BeginTransaction();
 
-            userDataService.SetCentreEmail(
-                userId,
-                delegateRegistrationModel.Centre,
-                delegateRegistrationModel.CentreSpecificEmail,
-                null,
-                transaction
-            );
+            if (userDataService.IsCentreEmailBeingChangedForUserAtCentre(
+                    userId,
+                    delegateRegistrationModel.Centre,
+                    delegateRegistrationModel.CentreSpecificEmail
+                ))
+            {
+                userDataService.SetCentreEmail(
+                    userId,
+                    delegateRegistrationModel.Centre,
+                    delegateRegistrationModel.CentreSpecificEmail,
+                    null,
+                    transaction
+                );
+            }
 
             ReregisterDelegateAccount(
                 delegateRegistrationModel,
@@ -284,7 +291,7 @@
             IDbTransaction transaction
         )
         {
-            if (!string.IsNullOrWhiteSpace(centreSpecificEmail))
+            if (userDataService.IsCentreEmailBeingChangedForUserAtCentre(userId, centreId, centreSpecificEmail))
             {
                 userDataService.SetCentreEmail(
                     userId,

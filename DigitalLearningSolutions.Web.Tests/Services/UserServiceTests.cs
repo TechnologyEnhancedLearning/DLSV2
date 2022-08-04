@@ -166,6 +166,13 @@
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var detailsLastChecked = new DateTime(2022, 1, 1);
             A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+            A.CallTo(
+                () => userDataService.IsCentreEmailBeingChangedForUserAtCentre(
+                    accountDetailsData.UserId,
+                    centreId,
+                    centreEmail
+                )
+            ).Returns(true);
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -188,6 +195,7 @@
                         accountDetailsData.JobGroupId,
                         detailsLastChecked,
                         accountDetailsData.UserId,
+                        null,
                         shouldUpdateProfileImage
                     )
                 )
@@ -254,6 +262,7 @@
                         accountDetailsData.JobGroupId,
                         detailsLastChecked,
                         accountDetailsData.UserId,
+                        null,
                         shouldUpdateProfileImage
                     )
                 )
@@ -312,6 +321,13 @@
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var detailsLastChecked = new DateTime(2022, 1, 1);
             A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+            A.CallTo(
+                () => userDataService.IsCentreEmailBeingChangedForUserAtCentre(
+                    accountDetailsData.UserId,
+                    centreId,
+                    centreEmail
+                )
+            ).Returns(true);
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -344,6 +360,13 @@
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var detailsLastChecked = new DateTime(2022, 1, 1);
             A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+            A.CallTo(
+                () => userDataService.IsCentreEmailBeingChangedForUserAtCentre(
+                    accountDetailsData.UserId,
+                    centreId,
+                    centreEmail
+                )
+            ).Returns(true);
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -393,12 +416,11 @@
                         accountDetailsData.JobGroupId,
                         detailsLastChecked,
                         accountDetailsData.UserId,
+                        null,
                         changesMadeBySameUser
                     )
                 )
                 .MustHaveHappened();
-
-            A.CallTo(() => clockUtility.UtcNow).MustNotHaveHappened();
         }
 
         [Test]
@@ -428,6 +450,7 @@
                         accountDetailsData.JobGroupId,
                         detailsLastChecked,
                         accountDetailsData.UserId,
+                        null,
                         changesMadeBySameUser
                     )
                 )
@@ -451,6 +474,8 @@
             A.CallTo(
                 () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, null, A<IDbTransaction?>._)
             ).DoesNothing();
+            A.CallTo(() => userDataService.IsCentreEmailBeingChangedForUserAtCentre(A<int>._, A<int>._, A<string?>._))
+                .Returns(true);
 
             // When
             userService.SetCentreEmails(userId, centreEmailsByCentreId);

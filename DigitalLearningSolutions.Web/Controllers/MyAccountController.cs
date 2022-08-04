@@ -37,6 +37,7 @@
         private readonly PromptsService promptsService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
+        private readonly IEmailVerificationService emailVerificationService;
 
         public MyAccountController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
@@ -44,6 +45,7 @@
             IUserDataService userDataService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
+            IEmailVerificationService emailVerificationService,
             PromptsService registrationPromptsService,
             ILogger<MyAccountController> logger,
             IConfiguration config
@@ -54,6 +56,7 @@
             this.userDataService = userDataService;
             this.imageResizeService = imageResizeService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.emailVerificationService = emailVerificationService;
             promptsService = registrationPromptsService;
             this.logger = logger;
             this.config = config;
@@ -239,8 +242,25 @@
                 delegateAccount?.Id
             );
 
+            var modifiedEmails = new List<(string, int?)>();
+
+            if (userDataService.IsPrimaryEmailBeingChangedForUser(userId, accountDetailsData.Email))
+            {
+                modifiedEmails.Add((accountDetailsData.Email, null));
+            }
+
             if (centreId.HasValue)
             {
+                if (formData.CentreSpecificEmail != null && userDataService.IsCentreEmailBeingChangedForUserAtCentre(
+                        userId,
+                        centreId.Value,
+                        formData.CentreSpecificEmail
+                    ))
+                {
+                    modifiedEmails.Add((formData.CentreSpecificEmail, centreId.Value));
+                }
+
+                emailVerificationService.SendVerificationEmails(userEntity!.UserAccount, modifiedEmails);
                 userService.UpdateUserDetailsAndCentreSpecificDetails(
                     accountDetailsData,
                     delegateDetailsData,
@@ -251,6 +271,15 @@
             }
             else
             {
+                foreach (var (centre, email) in formData.CentreSpecificEmailsByCentreId)
+                {
+                    if (email != null &&
+                        userDataService.IsCentreEmailBeingChangedForUserAtCentre(userId, centre, email))
+                    {
+                        modifiedEmails.Add((email, centre));
+                    }
+                }
+
                 userService.UpdateUserDetails(accountDetailsData, true);
                 userService.SetCentreEmails(userId, formData.CentreSpecificEmailsByCentreId);
             }

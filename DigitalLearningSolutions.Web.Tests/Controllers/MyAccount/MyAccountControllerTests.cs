@@ -37,6 +37,7 @@
         private IUrlHelper urlHelper = null!;
         private IUserService userService = null!;
         private IUserDataService userDataService = null!;
+        private IEmailVerificationService emailVerificationService = null!;
 
         [SetUp]
         public void Setup()
@@ -47,6 +48,7 @@
             userDataService = A.Fake<IUserDataService>();
             imageResizeService = A.Fake<ImageResizeService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            emailVerificationService = A.Fake<IEmailVerificationService>();
             promptsService = new PromptsService(centreRegistrationPromptsService);
             logger = A.Fake<ILogger<MyAccountController>>();
             urlHelper = A.Fake<IUrlHelper>();
@@ -188,6 +190,7 @@
                     userDataService,
                     imageResizeService,
                     jobGroupsDataService,
+                    emailVerificationService,
                     promptsService,
                     logger,
                     config
@@ -261,6 +264,7 @@
                     userDataService,
                     imageResizeService,
                     jobGroupsDataService,
+                    emailVerificationService,
                     promptsService,
                     logger,
                     config
@@ -674,6 +678,7 @@
                 userDataService,
                 imageResizeService,
                 jobGroupsDataService,
+                emailVerificationService,
                 promptsService,
                 logger,
                 config

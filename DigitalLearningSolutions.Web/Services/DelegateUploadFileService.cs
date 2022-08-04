@@ -15,6 +15,7 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
 
@@ -30,6 +31,7 @@ namespace DigitalLearningSolutions.Web.Services
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IPasswordResetService passwordResetService;
+        private readonly IClockUtility clockUtility;
         private readonly IConfiguration configuration;
 
         public DelegateUploadFileService(
@@ -38,6 +40,7 @@ namespace DigitalLearningSolutions.Web.Services
             IRegistrationService registrationService,
             ISupervisorDelegateService supervisorDelegateService,
             IPasswordResetService passwordResetService,
+            IClockUtility clockUtility,
             IConfiguration configuration
         )
         {
@@ -46,6 +49,7 @@ namespace DigitalLearningSolutions.Web.Services
             this.registrationService = registrationService;
             this.supervisorDelegateService = supervisorDelegateService;
             this.passwordResetService = passwordResetService;
+            this.clockUtility = clockUtility;
             this.configuration = configuration;
         }
 
@@ -162,12 +166,18 @@ namespace DigitalLearningSolutions.Web.Services
                     delegateEntity.DelegateAccount.Id
                 );
 
-                if (delegateRow.Email != delegateEntity.EmailForCentreNotifications)
+                if (delegateRow.Email != delegateEntity.EmailForCentreNotifications &&
+                    userDataService.IsCentreEmailBeingChangedForUserAtCentre(
+                        delegateEntity.UserAccount.Id,
+                        delegateEntity.DelegateAccount.CentreId,
+                        delegateRow.Email
+                    ))
                 {
                     userDataService.SetCentreEmail(
                         delegateEntity.UserAccount.Id,
                         delegateEntity.DelegateAccount.CentreId,
-                        delegateRow.Email
+                        delegateRow.Email,
+                        clockUtility.UtcNow
                     );
                 }
 

@@ -201,5 +201,15 @@
                 new { currentUserIdForUserCentreDetails, newUserIdForUserCentreDetails, centreId }
             );
         }
+
+        public bool IsCentreEmailBeingChangedForUserAtCentre(int userId, int centreId, string? newCentreEmail)
+        {
+            var centreEmail = connection.Query<string>(
+                @"SELECT Email FROM UserCentreDetails WHERE UserID = @userId AND CentreID = @centreId",
+                new { userId, centreId }
+            ).SingleOrDefault();
+
+            return !string.Equals(centreEmail, newCentreEmail);
+        }
     }
 }

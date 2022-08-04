@@ -84,6 +84,7 @@
                 A.Fake<IUserDataService>(),
                 A.Fake<IImageResizeService>(),
                 A.Fake<IJobGroupsDataService>(),
+                A.Fake<IEmailVerificationService>(),
                 A.Fake<PromptsService>(),
                 A.Fake<ILogger<MyAccountController>>(),
                 A.Fake<IConfiguration>()
@@ -146,6 +147,7 @@
                 A.Fake<IUserDataService>(),
                 A.Fake<IImageResizeService>(),
                 A.Fake<IJobGroupsDataService>(),
+                A.Fake<IEmailVerificationService>(),
                 A.Fake<PromptsService>(),
                 A.Fake<ILogger<MyAccountController>>(),
                 A.Fake<IConfiguration>()

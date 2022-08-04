@@ -346,6 +346,7 @@ namespace DigitalLearningSolutions.Web.Services
             DateTime? detailsLastChecked = null
         )
         {
+            var currentTime = clockUtility.UtcNow;
             userDataService.UpdateUser(
                 editAccountDetailsData.FirstName,
                 editAccountDetailsData.Surname,
@@ -354,8 +355,9 @@ namespace DigitalLearningSolutions.Web.Services
                 editAccountDetailsData.ProfessionalRegistrationNumber,
                 editAccountDetailsData.HasBeenPromptedForPrn,
                 editAccountDetailsData.JobGroupId,
-                detailsLastChecked ?? clockUtility.UtcNow,
+                detailsLastChecked ?? currentTime,
                 editAccountDetailsData.UserId,
+                changeMadeBySameUser ? (DateTime?)null : currentTime,
                 changeMadeBySameUser
             );
         }
@@ -368,7 +370,7 @@ namespace DigitalLearningSolutions.Web.Services
             bool changeMadeBySameUser
         )
         {
-            var detailsLastChecked = clockUtility.UtcNow;
+            var currentTime = clockUtility.UtcNow;
 
             if (delegateDetailsData != null)
             {
@@ -389,25 +391,35 @@ namespace DigitalLearningSolutions.Web.Services
                     delegateDetailsData.Answer4,
                     delegateDetailsData.Answer5,
                     delegateDetailsData.Answer6,
-                    detailsLastChecked
+                    currentTime
                 );
             }
 
-            UpdateUserDetails(editAccountDetailsData, changeMadeBySameUser, detailsLastChecked);
+            UpdateUserDetails(editAccountDetailsData, changeMadeBySameUser, currentTime);
 
-            userDataService.SetCentreEmail(
-                editAccountDetailsData.UserId,
-                centreId,
-                centreEmail,
-                changeMadeBySameUser ? (DateTime?)null : clockUtility.UtcNow
-            );
+            if (userDataService.IsCentreEmailBeingChangedForUserAtCentre(
+                    editAccountDetailsData.UserId,
+                    centreId,
+                    centreEmail
+                ))
+            {
+                userDataService.SetCentreEmail(
+                    editAccountDetailsData.UserId,
+                    centreId,
+                    centreEmail,
+                    changeMadeBySameUser ? (DateTime?)null : currentTime
+                );
+            }
         }
 
         public void SetCentreEmails(int userId, Dictionary<int, string?> centreEmailsByCentreId)
         {
             foreach (var (centreId, email) in centreEmailsByCentreId)
             {
-                userDataService.SetCentreEmail(userId, centreId, email);
+                if (userDataService.IsCentreEmailBeingChangedForUserAtCentre(userId, centreId, email))
+                {
+                    userDataService.SetCentreEmail(userId, centreId, email);
+                }
             }
         }
 
