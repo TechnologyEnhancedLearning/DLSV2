@@ -304,7 +304,7 @@
                     userId,
                     centreId,
                     centreSpecificEmail,
-                    emailShouldBeVerified ? (DateTime?)null : clockUtility.UtcNow,
+                    emailShouldBeVerified ? clockUtility.UtcNow : (DateTime?)null,
                     transaction
                 );
             }

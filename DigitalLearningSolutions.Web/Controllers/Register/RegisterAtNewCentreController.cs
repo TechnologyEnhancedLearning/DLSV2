@@ -287,6 +287,7 @@
 
             var (unverifiedPrimaryEmail, unverifiedCentreEmails) =
                 userService.GetUnverifiedEmailsForUser(userId);
+            var (_, centreName, unverifiedCentreEmail) = unverifiedCentreEmails.First(uce => uce.centreId == centreId);
 
             var model = new InternalConfirmationViewModel(
                 candidateNumber,
@@ -294,7 +295,8 @@
                 userHasAdminAccountAtCentre,
                 centreId,
                 unverifiedPrimaryEmail,
-                unverifiedCentreEmails.Where(uce => uce.centreId == centreId).ToList()
+                unverifiedCentreEmail,
+                centreName
             );
 
             return View(model);

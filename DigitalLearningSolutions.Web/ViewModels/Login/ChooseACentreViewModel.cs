@@ -15,14 +15,13 @@
         {
             CentreUserDetails = centreUserDetails;
             ReturnUrl = returnUrl;
-            UnverifiedPrimaryEmail = unverifiedPrimaryEmail;
-            UnverifiedCentreEmails =
-                unverifiedCentreEmails.Select(uce => (uce.centreName, uce.centreSpecificEmail)).ToList();
+            PrimaryEmailIsVerified = unverifiedPrimaryEmail == null;
+            NumberOfUnverifiedCentreEmails = unverifiedCentreEmails.Count();
         }
 
         public List<ChooseACentreAccountViewModel> CentreUserDetails { get; set; }
         public string? ReturnUrl { get; set; }
-        public string? UnverifiedPrimaryEmail { get; set; }
-        public List<(string centreName, string? centreSpecificEmail)> UnverifiedCentreEmails { get; set; }
+        public bool PrimaryEmailIsVerified { get; set; }
+        public int NumberOfUnverifiedCentreEmails { get; set; }
     }
 }

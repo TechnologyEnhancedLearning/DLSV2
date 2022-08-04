@@ -342,7 +342,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 approved,
                 centreIdForContactInformation,
                 unverifiedPrimaryEmail,
-                new List<(string centreName, string unverifiedEmail)> { (centreName, centreSpecificEmail) }
+                centreSpecificEmail,
+                centreName!
             );
 
             return View(model);

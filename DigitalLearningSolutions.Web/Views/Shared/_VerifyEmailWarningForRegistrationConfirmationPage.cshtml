@@ -1,0 +1,38 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model ConfirmationVerifyEmailWarningViewModel
+
+@{
+  var primaryEmailIsUnverified = Model.UnverifiedPrimaryEmail != null;
+
+  var numSpecificPhrases = new {
+    address = primaryEmailIsUnverified ? "addresses" : "address",
+    thisAddress = primaryEmailIsUnverified ? "each of the addresses above" : "this address",
+    link = primaryEmailIsUnverified ? "links" : "link",
+    folder = primaryEmailIsUnverified ? "folders" : "folder",
+    it = primaryEmailIsUnverified ? "them" : "it",
+  };
+}
+
+<div class="nhsuk-warning-callout word-break">
+  <partial name="_VerifyEmailWarningHeading" model="@Model.NumberOfUnverifiedEmails" />
+
+  @if (primaryEmailIsUnverified) {
+    <p>
+      You need to verify your primary email address <strong>@Model.UnverifiedPrimaryEmail</strong>
+      and your centre email address <strong>@Model.UnverifiedCentreEmail</strong>
+      to access your account at <strong>@Model.CentreName</strong>.
+    </p>
+  } else {
+    <p>
+      You need to verify your centre email address <strong>@Model.UnverifiedCentreEmail</strong>
+      to access your account at <strong>@Model.CentreName</strong>.
+    </p>
+  }
+
+  <p>
+    An email with a verification link has been sent to @numSpecificPhrases.thisAddress.
+    Please click the @numSpecificPhrases.link to verify your email @numSpecificPhrases.address.
+    Check your Junk @numSpecificPhrases.folder if you can’t find @numSpecificPhrases.it, or you can resend @numSpecificPhrases.it
+    by visiting the My account page.
+  </p>
+</div>

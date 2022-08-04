@@ -15,12 +15,9 @@
   <partial name="_AutoNavMenuItems" model="Model.DlsSubApplication" />
 }
 
-<vc:verify-email-warning-if-appropriate
-  is-choose-a-centre-page="false"
-  is-my-account-page="true"
-  is-registration-journey="false"
-  unverified-primary-email="@Model.UnverifiedPrimaryEmail"
-  unverified-centre-emails="@Model.UnverifiedCentreEmails" />
+@if (!Model.PrimaryEmailIsVerified || Model.UnverifiedCentreEmails.Count > 0) {
+  <partial name="../Shared/_VerifyEmailWarningForMyAccountPage" model="@Model" />
+}
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
@@ -43,7 +40,6 @@
         </a>
       </div>
     </div>
-
 
     <partial name="_MyDetailsCard" model="Model" />
 

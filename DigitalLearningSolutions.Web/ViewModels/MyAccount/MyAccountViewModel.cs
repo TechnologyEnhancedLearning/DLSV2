@@ -56,17 +56,19 @@
             AllCentreSpecificEmails = allCentreSpecificEmails;
             DlsSubApplication = dlsSubApplication;
             SwitchCentreReturnUrl = switchCentreReturnUrl;
-            UnverifiedPrimaryEmail = userAccount.EmailVerified == null ? PrimaryEmail : null;
+            PrimaryEmailIsVerified = userAccount.EmailVerified != null;
             UnverifiedCentreEmails =
                 unverifiedCentreEmails.Select(uce => (uce.centreName, uce.centreSpecificEmail)).ToList();
+            NumberOfUnverifiedEmails = (PrimaryEmailIsVerified ? 0 : 1) + UnverifiedCentreEmails.Count;
         }
 
         public int? CentreId { get; set; }
+
         public string? CentreName { get; set; }
 
         public string PrimaryEmail { get; set; }
 
-        public string? UnverifiedPrimaryEmail { get; }
+        public bool PrimaryEmailIsVerified { get; }
 
         public string? DelegateNumber { get; set; }
 
@@ -92,7 +94,8 @@
             set;
         }
 
-        public List<(string centreName, string? centreSpecificEmail)>? UnverifiedCentreEmails { get; set; }
+        public List<(string centreName, string? centreSpecificEmail)> UnverifiedCentreEmails { get; set; }
+        public int NumberOfUnverifiedEmails { get; set; }
 
         public DlsSubApplication DlsSubApplication { get; set; }
 

@@ -4,6 +4,7 @@
 
 @{
   ViewData["Title"] = "Registration confirmation";
+  var verifyEmailWarningViewModel = new ConfirmationVerifyEmailWarningViewModel(Model.UnverifiedPrimaryEmail, Model.UnverifiedCentreEmail, Model.CentreName);
 }
 
 <div class="nhsuk-grid-row">
@@ -15,12 +16,7 @@
       Your email matched details stored with the centre, so your centre manager account has successfully been created.
     </p>
 
-    <vc:verify-email-warning-if-appropriate
-      is-choose-a-centre-page="false"
-      is-my-account-page="false"
-      is-registration-journey="true"
-      unverified-primary-email="@Model.UnverifiedPrimaryEmail"
-      unverified-centre-emails="@Model.UnverifiedCentreEmails" />
+    <partial name="_VerifyEmailWarningForRegistrationConfirmationPage" model="@verifyEmailWarningViewModel" />
 
     <vc:action-link link-text="Log in" asp-controller="Login" asp-action="Index" />
   </div>

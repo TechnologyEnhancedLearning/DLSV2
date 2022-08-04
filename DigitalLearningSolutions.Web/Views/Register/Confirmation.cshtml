@@ -3,6 +3,7 @@
 
 @{
   ViewData["Title"] = "Registration confirmation";
+  var verifyEmailWarningViewModel = new ConfirmationVerifyEmailWarningViewModel(Model.UnverifiedPrimaryEmail, Model.UnverifiedCentreEmail, Model.CentreName);
 }
 
 <div class="nhsuk-grid-row">
@@ -20,12 +21,7 @@
       <p>Your delegate number is <span class="nhsuk-u-font-weight-bold">@Model.CandidateNumber</span></p>
     </div>
 
-    <vc:verify-email-warning-if-appropriate
-      is-choose-a-centre-page="false"
-      is-my-account-page="false"
-      is-registration-journey="true"
-      unverified-primary-email="@Model.UnverifiedPrimaryEmail"
-      unverified-centre-emails="@Model.UnverifiedCentreEmails" />
+    <partial name="_VerifyEmailWarningForRegistrationConfirmationPage" model="@verifyEmailWarningViewModel" />
 
     @if (!Model.Approved) {
       <div class="nhsuk-warning-callout">

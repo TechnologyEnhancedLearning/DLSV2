@@ -1,8 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Register
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class InternalConfirmationViewModel
     {
         public InternalConfirmationViewModel(
@@ -11,7 +8,8 @@
             bool hasAdminAccountAtCentre,
             int? centreId,
             string? unverifiedPrimaryEmail,
-            IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> unverifiedCentreEmails
+            string? unverifiedCentreEmail,
+            string centreName
         )
         {
             CandidateNumber = candidateNumber;
@@ -19,8 +17,8 @@
             HasAdminAccountAtCentre = hasAdminAccountAtCentre;
             CentreId = centreId;
             UnverifiedPrimaryEmail = unverifiedPrimaryEmail;
-            UnverifiedCentreEmails =
-                unverifiedCentreEmails.Select(uce => (uce.centreName, uce.centreSpecificEmail)).ToList();
+            UnverifiedCentreEmail = unverifiedCentreEmail;
+            CentreName = centreName;
         }
 
         public string CandidateNumber { get; }
@@ -28,6 +26,7 @@
         public bool HasAdminAccountAtCentre { get; }
         public int? CentreId { get; }
         public string? UnverifiedPrimaryEmail { get; }
-        public List<(string centreName, string? centreSpecificEmail)> UnverifiedCentreEmails { get; }
+        public string? UnverifiedCentreEmail { get; }
+        public string CentreName { get; }
     }
 }

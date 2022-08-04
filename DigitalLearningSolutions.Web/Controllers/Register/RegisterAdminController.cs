@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -244,10 +243,7 @@
 
             var centreName = centresDataService.GetCentreName(centreId);
 
-            var model = new AdminConfirmationViewModel(
-                primaryEmail,
-                new List<(string centreName, string unverifiedEmail)> { (centreName, centreSpecificEmail) }
-            );
+            var model = new AdminConfirmationViewModel(primaryEmail, centreSpecificEmail, centreName!);
 
             return View(model);
         }
