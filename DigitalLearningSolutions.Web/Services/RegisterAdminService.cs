@@ -25,7 +25,7 @@
 
         public bool IsRegisterAdminAllowed(int centreId, int? loggedInUserId = null)
         {
-            var adminsAtCentre = userDataService.GetAdminsByCentreId(centreId).ToList();
+            var adminsAtCentre = userDataService.GetActiveAdminsByCentreId(centreId).ToList();
             var currentUserIsAlreadyAdminOfCentre =
                 loggedInUserId.HasValue &&
                 userDataService.GetAdminAccountsByUserId(loggedInUserId.Value).Any(

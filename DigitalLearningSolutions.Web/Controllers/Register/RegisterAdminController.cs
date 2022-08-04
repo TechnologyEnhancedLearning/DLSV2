@@ -283,7 +283,7 @@
                 userDataService
             );
 
-            RegistrationEmailValidator.ValidateEmailForCentreManagerIfNecessary(
+            RegistrationEmailValidator.ValidateEmailsForCentreManagerIfNecessary(
                 model.PrimaryEmail,
                 model.CentreSpecificEmail,
                 model.Centre,

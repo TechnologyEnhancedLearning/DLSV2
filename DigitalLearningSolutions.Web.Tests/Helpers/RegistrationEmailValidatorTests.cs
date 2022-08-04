@@ -347,7 +347,7 @@
 
         [Test]
         public void
-            ValidateEmailForCentreManagerIfNecessary_adds_error_message_when_neither_primary_nor_centre_email_is_valid_for_centre_manager()
+            ValidateEmailsForCentreManagerIfNecessary_adds_error_message_when_neither_primary_nor_centre_email_is_valid_for_centre_manager()
         {
             // Given
             A.CallTo(
@@ -359,7 +359,7 @@
             ).Returns(false);
 
             // When
-            RegistrationEmailValidator.ValidateEmailForCentreManagerIfNecessary(
+            RegistrationEmailValidator.ValidateEmailsForCentreManagerIfNecessary(
                 DefaultPrimaryEmail,
                 DefaultCentreSpecificEmail,
                 DefaultCentreId,
@@ -377,7 +377,7 @@
 
         [Test]
         public void
-            ValidateEmailForCentreManagerIfNecessary_does_not_add_error_message_when_either_primary_or_centre_email_is_valid_for_centre_manager()
+            ValidateEmailsForCentreManagerIfNecessary_does_not_add_error_message_when_either_primary_or_centre_email_is_valid_for_centre_manager()
         {
             // Given
             A.CallTo(
@@ -389,7 +389,7 @@
             ).Returns(true);
 
             // When
-            RegistrationEmailValidator.ValidateEmailForCentreManagerIfNecessary(
+            RegistrationEmailValidator.ValidateEmailsForCentreManagerIfNecessary(
                 DefaultPrimaryEmail,
                 DefaultCentreSpecificEmail,
                 DefaultCentreId,
@@ -404,7 +404,7 @@
 
         [Test]
         public void
-            ValidateEmailForCentreManagerIfNecessary_does_not_add_another_error_message_when_the_model_is_already_invalid()
+            ValidateEmailsForCentreManagerIfNecessary_does_not_add_another_error_message_when_the_model_is_already_invalid()
         {
             // Given
             modelState.AddModelError(DefaultFieldName, DefaultErrorMessage);
@@ -418,7 +418,7 @@
             ).Returns(false);
 
             // When
-            RegistrationEmailValidator.ValidateEmailForCentreManagerIfNecessary(
+            RegistrationEmailValidator.ValidateEmailsForCentreManagerIfNecessary(
                 DefaultPrimaryEmail,
                 DefaultCentreSpecificEmail,
                 DefaultCentreId,
@@ -436,10 +436,10 @@
 
         [Test]
         public void
-            ValidateEmailForCentreManagerIfNecessary_does_nothing_if_centreId_is_null()
+            ValidateEmailsForCentreManagerIfNecessary_does_nothing_if_centreId_is_null()
         {
             // When
-            RegistrationEmailValidator.ValidateEmailForCentreManagerIfNecessary(
+            RegistrationEmailValidator.ValidateEmailsForCentreManagerIfNecessary(
                 DefaultPrimaryEmail,
                 DefaultCentreSpecificEmail,
                 null,

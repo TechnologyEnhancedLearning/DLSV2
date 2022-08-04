@@ -61,7 +61,7 @@
             }
         }
 
-        public static void ValidateEmailForCentreManagerIfNecessary(
+        public static void ValidateEmailsForCentreManagerIfNecessary(
             string? primaryEmail,
             string? centreEmail,
             int? centreId,

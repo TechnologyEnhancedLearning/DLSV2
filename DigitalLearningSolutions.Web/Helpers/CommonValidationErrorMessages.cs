@@ -9,7 +9,7 @@
         public const string InvalidEmail = "Enter an email in the correct format, like name@example.com";
         public const string WhitespaceInEmail = "Email must not contain any whitespace characters";
         public const string EmailInUse = "This email is already in use";
-        public const string EmailInUseAtCentre = "This email is in already use by another user at the centre";
+        public const string EmailInUseAtCentre = "This email is already in use by another user at the centre";
 
         public const string EmailInUseDuringDelegateRegistration =
             "A user with this email address is already registered; if this is you, please log in and register at this centre via the My Account page";

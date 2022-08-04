@@ -30,7 +30,7 @@
         public void IsRegisterAdminAllowed_with_centre_autoregistered_true_returns_false()
         {
             // Given
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
+            A.CallTo(() => userDataService.GetActiveAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((true, DefaultCentreEmail));
 
@@ -45,7 +45,7 @@
         public void IsRegisterAdminAllowed_with_centre_autoregisteremail_null_returns_false()
         {
             // Given
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
+            A.CallTo(() => userDataService.GetActiveAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, null));
 
@@ -60,7 +60,7 @@
         public void IsRegisterAdminAllowed_with_centre_autoregisteremail_whitespace_returns_false()
         {
             // Given
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
+            A.CallTo(() => userDataService.GetActiveAdminsByCentreId(DefaultCentreId)).Returns(new List<AdminEntity>());
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, "   "));
 
@@ -80,7 +80,7 @@
                 isCentreManager: true,
                 active: true
             );
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId))
+            A.CallTo(() => userDataService.GetActiveAdminsByCentreId(DefaultCentreId))
                 .Returns(new List<AdminEntity> { adminEntity });
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, DefaultCentreEmail));
@@ -96,7 +96,7 @@
         public void IsRegisterAdminAllowed_with_inactive_centre_returns_false()
         {
             // Given
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId))
+            A.CallTo(() => userDataService.GetActiveAdminsByCentreId(DefaultCentreId))
                 .Returns(new List<AdminEntity>());
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, DefaultCentreEmail));
@@ -120,7 +120,7 @@
                 centreId: DefaultCentreId
             );
 
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId))
+            A.CallTo(() => userDataService.GetActiveAdminsByCentreId(DefaultCentreId))
                 .Returns(new List<AdminEntity>());
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, DefaultCentreEmail));
@@ -140,7 +140,7 @@
         public void IsRegisterAdminAllowed_with_correct_data_returns_true()
         {
             // Given
-            A.CallTo(() => userDataService.GetAdminsByCentreId(DefaultCentreId))
+            A.CallTo(() => userDataService.GetActiveAdminsByCentreId(DefaultCentreId))
                 .Returns(new List<AdminEntity>());
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(DefaultCentreId))
                 .Returns((false, DefaultCentreEmail));
