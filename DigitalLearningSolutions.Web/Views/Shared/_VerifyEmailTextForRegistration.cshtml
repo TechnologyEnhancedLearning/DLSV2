@@ -13,13 +13,13 @@
 
 @if (Model.PrimaryEmailIsUnverified) {
   <p>
-    You need to verify your primary email <strong>@Model.UnverifiedPrimaryEmail</strong>
-    and your centre email <strong>@Model.UnverifiedCentreEmails.First().unverifiedEmail</strong>
+    You need to verify your primary email address <strong>@Model.UnverifiedPrimaryEmail</strong>
+    and your centre email address <strong>@Model.UnverifiedCentreEmails.First().unverifiedEmail</strong>
     to access your account at <strong>@Model.UnverifiedCentreEmails.First().centreName</strong>.
   </p>
 } else {
   <p>
-    You need to verify your centre email <strong>@Model.UnverifiedCentreEmails.First().unverifiedEmail</strong>
+    You need to verify your centre email address <strong>@Model.UnverifiedCentreEmails.First().unverifiedEmail</strong>
     to access your account at <strong>@Model.UnverifiedCentreEmails.First().centreName</strong>.
   </p>
 }

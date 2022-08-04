@@ -14,7 +14,7 @@
 
 @if (Model.PrimaryEmailIsUnverified) {
   <p>
-    Your primary email <strong>@Model.UnverifiedPrimaryEmail</strong> has not been verified yet.
+    Your primary email address <strong>@Model.UnverifiedPrimaryEmail</strong> has not been verified yet.
     You will not be able to access any centre accounts until you verify the address.
   </p>
 }
@@ -22,7 +22,7 @@
 @if (Model.AtLeastOneCentreEmailIsUnverified) {
   foreach (var ((centreName, email), index) in Model.UnverifiedCentreEmails.Select((email, index) => (email, index))) {
     <p>
-      Your centre email <strong>@email</strong> has
+      Your centre email address <strong>@email</strong> has
       @(Model.PrimaryEmailIsUnverified && index >= 0 || !Model.PrimaryEmailIsUnverified && index >= 1 ? "also" : "")
       not been verified yet.
       You will not be able to access <strong>@centreName</strong> until you verify the address.

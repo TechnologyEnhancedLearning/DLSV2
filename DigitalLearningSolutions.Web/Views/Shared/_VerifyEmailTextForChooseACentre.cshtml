@@ -5,14 +5,14 @@
   var numSpecificPhrases = new {
     address = Model.MultipleCentreEmailsAreUnverified ? "addresses" : "address",
     anUnverifiedCentreEmail = Model.MultipleCentreEmailsAreUnverified ?
-      "multiple unverified centre emails" : "an unverified centre emails",
+      "multiple unverified centre email addresses" : "an unverified centre email address",
     accountThatUsesIt = Model.MultipleCentreEmailsAreUnverified ? "accounts that use them" : "account that uses it",
   };
 }
 
 @if (Model.PrimaryEmailIsUnverified) {
   <p>
-    Your primary email has not been verified yet. You will not be able to
+    Your primary email address has not been verified yet. You will not be able to
     choose a centre, reactivate an account, or register at a new centre until it you verify the address.
   </p>
 }
@@ -20,6 +20,7 @@
 @if (Model.AtLeastOneCentreEmailIsUnverified) {
   <p>
     You @(Model.PrimaryEmailIsUnverified ? "also" : null) have @numSpecificPhrases.anUnverifiedCentreEmail.
-    You will not be able to access the centre @numSpecificPhrases.accountThatUsesIt until you have verified the @numSpecificPhrases.address.
+    You will not be able to access the centre @numSpecificPhrases.accountThatUsesIt
+    until you have verified the @numSpecificPhrases.address.
   </p>
 }
