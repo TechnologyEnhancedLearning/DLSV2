@@ -138,7 +138,7 @@
                 userId,
                 delegateRegistrationModel.Centre,
                 delegateRegistrationModel.CentreSpecificEmail,
-                emailShouldBeVerified ? (DateTime?)null : clockUtility.UtcNow,
+                emailShouldBeVerified ? currentTime : (DateTime?)null,
                 transaction
             );
 
