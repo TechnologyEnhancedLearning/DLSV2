@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'windows'
+        label 'js1-windows02.zoo.lan'
     }
     environment {
         DlsRefactor_ConnectionStrings__UnitTestConnection = credentials('uar-ci-db-connection-string')
