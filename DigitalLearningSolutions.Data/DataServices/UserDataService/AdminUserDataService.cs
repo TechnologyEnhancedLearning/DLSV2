@@ -155,7 +155,7 @@
             ).SingleOrDefault();
         }
 
-        public IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId)
+        public IEnumerable<AdminEntity> GetActiveAdminsByCentreId(int centreId)
         {
             var sql = $@"{BaseAdminEntitySelectQuery} WHERE aa.centreID = @centreId AND aa.Active = 1 AND u.Active = 1";
 

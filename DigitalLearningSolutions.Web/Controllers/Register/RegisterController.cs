@@ -119,11 +119,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             // Check this email and centre combination doesn't already exist in case we were redirected
             // back here by the user trying to submit the final page of the form
-            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(
-                model,
-                ModelState,
-                userDataService
-            );
+            ValidateEmailAddresses(model);
 
             return View(model);
         }
@@ -132,11 +128,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
-            RegistrationEmailValidator.ValidateEmailAddressesForDelegateRegistration(
-                model,
-                ModelState,
-                userDataService
-            );
+            ValidateEmailAddresses(model);
 
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
@@ -395,6 +387,25 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             model.Centre = centresDataService.GetCentreName((int)data.Centre!);
             model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
             model.DelegateRegistrationPrompts = GetDelegateRegistrationPromptsFromData(data);
+        }
+
+        private void ValidateEmailAddresses(PersonalInformationViewModel model)
+        {
+            RegistrationEmailValidator.ValidatePrimaryEmailIfNecessary(
+                model.PrimaryEmail,
+                nameof(PersonalInformationViewModel.PrimaryEmail),
+                ModelState,
+                userDataService,
+                CommonValidationErrorMessages.EmailInUseDuringDelegateRegistration
+            );
+
+            RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
+                model.CentreSpecificEmail,
+                model.Centre,
+                nameof(PersonalInformationViewModel.CentreSpecificEmail),
+                ModelState,
+                userDataService
+            );
         }
     }
 }

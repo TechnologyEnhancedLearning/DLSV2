@@ -118,9 +118,10 @@
         [Test]
         [TestCase("primary@email")]
         [TestCase("PRIMARY@EMAIL")]
-        public void DoEmailsMatchCentre_calls_dataService_and_returns_true_if_primary_email_matches_case_insensitively(
-            string primaryEmail
-        )
+        public void
+            IsAnEmailValidForCentreManager_calls_dataService_and_returns_true_if_primary_email_matches_case_insensitively(
+                string primaryEmail
+            )
         {
             // Given
             const int centreId = 1;
@@ -136,9 +137,10 @@
         [Test]
         [TestCase("centre@email")]
         [TestCase("CENTRE@EMAIL")]
-        public void DoEmailsMatchCentre_calls_dataService_and_returns_true_if_centre_email_matches_case_insensitively(
-            string centreEmail
-        )
+        public void
+            IsAnEmailValidForCentreManager_calls_dataService_and_returns_true_if_centre_email_matches_case_insensitively(
+                string centreEmail
+            )
         {
             // Given
             const int centreId = 1;
@@ -152,7 +154,7 @@
         }
 
         [Test]
-        public void DoEmailsMatchCentre_calls_dataService_and_returns_false_if_email_does_not_match()
+        public void IsAnEmailValidForCentreManager_calls_dataService_and_returns_false_if_email_does_not_match()
         {
             // Given
             const int centreId = 1;

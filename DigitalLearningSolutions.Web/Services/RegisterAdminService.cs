@@ -6,8 +6,9 @@
 
     public interface IRegisterAdminService
     {
-        bool IsRegisterAdminAllowed(int centreId);
+        bool IsRegisterAdminAllowed(int centreId, int? loggedInUserId = null);
     }
+
     public class RegisterAdminService : IRegisterAdminService
     {
         private readonly IUserDataService userDataService;
@@ -22,13 +23,23 @@
             this.centresDataService = centresDataService;
         }
 
-        public bool IsRegisterAdminAllowed(int centreId)
+        public bool IsRegisterAdminAllowed(int centreId, int? loggedInUserId = null)
         {
-            var admins = userDataService.GetAdminsByCentreId(centreId);
+            var adminsAtCentre = userDataService.GetActiveAdminsByCentreId(centreId).ToList();
+            var currentUserIsAlreadyAdminOfCentre =
+                loggedInUserId.HasValue &&
+                userDataService.GetAdminAccountsByUserId(loggedInUserId.Value).Any(
+                    adminAccount => adminAccount.CentreId == centreId
+                );
+
             var centre = centresDataService.GetCentreDetailsById(centreId);
-            var hasCentreManagerAdmin = admins.Any(admin => admin.AdminAccount.IsCentreManager);
+            var hasCentreManagerAdmin = adminsAtCentre.Any(admin => admin.AdminAccount.IsCentreManager);
             var (autoRegistered, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
-            return centre?.Active == true && !hasCentreManagerAdmin && !autoRegistered &&
+
+            return centre?.Active == true &&
+                   !currentUserIsAlreadyAdminOfCentre &&
+                   !hasCentreManagerAdmin &&
+                   !autoRegistered &&
                    !string.IsNullOrWhiteSpace(autoRegisterManagerEmail);
         }
     }

@@ -300,20 +300,15 @@
 
         private void ValidateEmailAddress(InternalPersonalInformationViewModel model)
         {
-            var userId = User.GetUserIdKnownNotNull();
-
-            if (
-                model.Centre != null && model.CentreSpecificEmail != null &&
-                userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
-                    model.CentreSpecificEmail,
-                    model.Centre.Value,
-                    userId
-                )
-            )
+            if (model.Centre != null)
             {
-                ModelState.AddModelError(
+                RegistrationEmailValidator.ValidateCentreEmailWithUserIdIfNecessary(
+                    model.CentreSpecificEmail,
+                    model.Centre,
+                    User.GetUserIdKnownNotNull(),
                     nameof(PersonalInformationViewModel.CentreSpecificEmail),
-                    "This email is already in use by another user"
+                    ModelState,
+                    userDataService
                 );
             }
         }

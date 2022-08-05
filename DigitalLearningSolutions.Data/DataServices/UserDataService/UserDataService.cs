@@ -12,7 +12,7 @@
     {
         AdminEntity? GetAdminById(int id);
 
-        IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId);
+        IEnumerable<AdminEntity> GetActiveAdminsByCentreId(int centreId);
 
         AdminUser? GetAdminUserById(int id);
 
