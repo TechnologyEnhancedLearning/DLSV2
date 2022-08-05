@@ -3,11 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -38,6 +40,7 @@
         private IUserService userService = null!;
         private IUserDataService userDataService = null!;
         private IEmailVerificationService emailVerificationService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void Setup()
@@ -50,6 +53,7 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             emailVerificationService = A.Fake<IEmailVerificationService>();
             promptsService = new PromptsService(centreRegistrationPromptsService);
+            clockUtility = A.Fake<IClockUtility>();
             logger = A.Fake<ILogger<MyAccountController>>();
             urlHelper = A.Fake<IUrlHelper>();
 
@@ -72,7 +76,7 @@
         }
 
         [Test]
-        public void EditDetailsPostSave_with_invalid_model_doesnt_call_services()
+        public async Task EditDetailsPostSave_with_invalid_model_doesnt_call_services()
         {
             // Given
             var myAccountController = GetMyAccountController().WithMockUser(true, null);
@@ -82,7 +86,7 @@
             myAccountController.ModelState.AddModelError(nameof(MyAccountEditDetailsFormData.Email), "Required");
 
             // When
-            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+            var result = await myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
             A.CallTo(
@@ -111,7 +115,7 @@
         }
 
         [Test]
-        public void EditDetailsPostSave_with_missing_delegate_answers_fails_validation()
+        public async Task EditDetailsPostSave_with_missing_delegate_answers_fails_validation()
         {
             // Given
             const int centreId = 2;
@@ -146,7 +150,7 @@
             );
 
             // When
-            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+            var result = await myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
             A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(A<string>._, A<int>._))
@@ -173,7 +177,7 @@
         [TestCase(false, false, true)]
         [TestCase(false, true, true)]
         [TestCase(false, false, false)]
-        public void EditDetailsPostSave_with_duplicate_email_fails_validation(
+        public async Task EditDetailsPostSave_with_duplicate_email_fails_validation(
             bool centreSpecificEmailIsNull,
             bool primaryEmailIsDuplicate,
             bool centreEmailIsDuplicate = false
@@ -192,6 +196,7 @@
                     jobGroupsDataService,
                     emailVerificationService,
                     promptsService,
+                    clockUtility,
                     logger,
                     config
                 ).WithDefaultContext()
@@ -225,7 +230,7 @@
             var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, centreId);
 
             // When
-            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+            var result = await myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
             if (primaryEmailIsDuplicate)
@@ -253,7 +258,7 @@
         }
 
         [Test]
-        public void EditDetailsPostSave_validates_duplicate_centre_specific_emails()
+        public async Task EditDetailsPostSave_validates_duplicate_centre_specific_emails()
         {
             // Given
             const string primaryEmail = "primary@email.com";
@@ -266,6 +271,7 @@
                     jobGroupsDataService,
                     emailVerificationService,
                     promptsService,
+                    clockUtility,
                     logger,
                     config
                 ).WithDefaultContext()
@@ -310,7 +316,7 @@
             var expectedModel = GetBasicMyAccountEditDetailsViewModel(formData, null);
 
             // When
-            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+            var result = await myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
             A.CallTo(
@@ -355,7 +361,7 @@
         }
 
         [Test]
-        public void
+        public async Task
             EditDetailsPostSave_for_admin_only_user_with_missing_delegate_answers_doesnt_fail_validation_or_update_delegate()
         {
             // Given
@@ -382,7 +388,7 @@
                 .Returns(false);
 
             // When
-            var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
+            var result = await myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
 
             // Then
             A.CallTo(
@@ -400,7 +406,7 @@
         }
 
         [Test]
-        public void EditDetailsPostSave_with_valid_info_and_valid_return_url_redirects_to_return_url()
+        public async Task EditDetailsPostSave_with_valid_info_and_valid_return_url_redirects_to_return_url()
         {
             // Given
             const int userId = 2;
@@ -439,14 +445,14 @@
             A.CallTo(() => urlHelper.IsLocalUrl(returnUrl)).Returns(true);
 
             // When
-            var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
+            var result = await myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
 
             // Then
             result.Should().BeRedirectResult().WithUrl(returnUrl);
         }
 
         [Test]
-        public void EditDetailsPostSave_with_valid_info_and_invalid_return_url_redirects_to_index()
+        public async Task EditDetailsPostSave_with_valid_info_and_invalid_return_url_redirects_to_index()
         {
             // Given
             const int userId = 2;
@@ -486,7 +492,7 @@
                 .DoesNothing();
 
             // When
-            var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
+            var result = await myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index").WithRouteValue(
@@ -496,7 +502,7 @@
         }
 
         [Test]
-        public void EditDetailsPostSave_without_previewing_profile_image_fails_validation()
+        public async Task EditDetailsPostSave_without_previewing_profile_image_fails_validation()
         {
             // Given
             const int centreId = 2;
@@ -528,7 +534,7 @@
             );
 
             // When
-            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+            var result = await myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
@@ -538,7 +544,7 @@
         }
 
         [Test]
-        public void EditDetailsPost_with_unexpected_action_returns_error()
+        public async Task EditDetailsPost_with_unexpected_action_returns_error()
         {
             // Given
             var myAccountController = GetMyAccountController().WithMockUser(true);
@@ -546,14 +552,14 @@
             var model = new MyAccountEditDetailsFormData();
 
             // When
-            var result = myAccountController.EditDetails(model, action, DlsSubApplication.Default);
+            var result = await myAccountController.EditDetails(model, action, DlsSubApplication.Default);
 
             // Then
             result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
 
         [Test]
-        public void EditDetailsPost_with_no_centreId_updates_user_details_and_all_centre_specific_emails()
+        public async Task EditDetailsPost_with_no_centreId_updates_user_details_and_all_centre_specific_emails()
         {
             // Given
             const int userId = 2;
@@ -581,7 +587,7 @@
                 .DoesNothing();
 
             // When
-            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+            var result = await myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
             A.CallTo(
@@ -623,7 +629,7 @@
         }
 
         [Test]
-        public void EditDetailsPost_with_no_centreId_and_bad_centre_specific_emails_fails_validation()
+        public async Task EditDetailsPost_with_no_centreId_and_bad_centre_specific_emails_fails_validation()
         {
             // Given
             const int userId = 2;
@@ -640,7 +646,7 @@
             myAccountController.ModelState.AddModelError(nameof(MyAccountEditDetailsFormData.Email), "Required");
 
             // When
-            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
+            var result = await myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
@@ -680,6 +686,7 @@
                 jobGroupsDataService,
                 emailVerificationService,
                 promptsService,
+                clockUtility,
                 logger,
                 config
             ).WithDefaultContext();

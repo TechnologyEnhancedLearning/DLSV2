@@ -3,10 +3,13 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -15,6 +18,7 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -38,6 +42,7 @@
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
         private readonly IEmailVerificationService emailVerificationService;
+        private readonly IClockUtility clockUtility;
 
         public MyAccountController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
@@ -47,6 +52,7 @@
             IJobGroupsDataService jobGroupsDataService,
             IEmailVerificationService emailVerificationService,
             PromptsService registrationPromptsService,
+            IClockUtility clockUtility,
             ILogger<MyAccountController> logger,
             IConfiguration config
         )
@@ -58,6 +64,7 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.emailVerificationService = emailVerificationService;
             promptsService = registrationPromptsService;
+            this.clockUtility = clockUtility;
             this.logger = logger;
             this.config = config;
         }
@@ -147,7 +154,7 @@
 
         [NoCaching]
         [HttpPost("EditDetails")]
-        public IActionResult EditDetails(
+        public async Task<IActionResult> EditDetails(
             MyAccountEditDetailsFormData formData,
             string action,
             DlsSubApplication dlsSubApplication
@@ -155,14 +162,14 @@
         {
             return action switch
             {
-                "save" => EditDetailsPostSave(formData, dlsSubApplication),
+                "save" => await EditDetailsPostSave(formData, dlsSubApplication),
                 "previewImage" => EditDetailsPostPreviewImage(formData, dlsSubApplication),
                 "removeImage" => EditDetailsPostRemoveImage(formData, dlsSubApplication),
                 _ => new StatusCodeResult(500),
             };
         }
 
-        private IActionResult EditDetailsPostSave(
+        private async Task<IActionResult> EditDetailsPostSave(
             MyAccountEditDetailsFormData formData,
             DlsSubApplication dlsSubApplication
         )
@@ -243,9 +250,11 @@
             );
 
             var modifiedEmails = new List<(string, int?)>();
+            var shouldLogIntoCentrelessAccount = false;
 
             if (userDataService.IsPrimaryEmailBeingChangedForUser(userId, accountDetailsData.Email))
             {
+                shouldLogIntoCentrelessAccount = true;
                 modifiedEmails.Add((accountDetailsData.Email, null));
             }
 
@@ -257,6 +266,7 @@
                         formData.CentreSpecificEmail
                     ))
                 {
+                    shouldLogIntoCentrelessAccount = true;
                     modifiedEmails.Add((formData.CentreSpecificEmail, centreId.Value));
                 }
 
@@ -282,6 +292,11 @@
 
                 userService.UpdateUserDetails(accountDetailsData, true);
                 userService.SetCentreEmails(userId, formData.CentreSpecificEmailsByCentreId);
+            }
+
+            if (shouldLogIntoCentrelessAccount)
+            {
+                await LogOutAndLogIntoCentrelessAccount(userEntity!.UserAccount);
             }
 
             return this.RedirectToReturnUrl(formData.ReturnUrl, logger) ?? RedirectToAction(
@@ -443,6 +458,20 @@
             var delegateAccount = user?.GetCentreAccountSet(centreId)?.DelegateAccount;
 
             return delegateAccount is { Active: true } ? delegateAccount : null;
+        }
+
+        private async Task LogOutAndLogIntoCentrelessAccount(UserAccount userAccount)
+        {
+            var claims = LoginClaimsHelper.GetClaimsForCentrelessSignIn(userAccount);
+            var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
+            var authProperties = new AuthenticationProperties
+            {
+                AllowRefresh = true,
+                IssuedUtc = clockUtility.UtcNow,
+            };
+
+            await HttpContext.Logout();
+            await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
         }
     }
 }
