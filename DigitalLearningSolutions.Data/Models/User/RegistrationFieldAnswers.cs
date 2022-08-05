@@ -26,7 +26,7 @@
             Answer6 = answer6;
         }
 
-        public RegistrationFieldAnswers(DelegateDetailsData delegateDetailsData, int jobGroupId)
+        public RegistrationFieldAnswers(DelegateDetailsData delegateDetailsData, int jobGroupId, int centreId)
         {
             Answer1 = delegateDetailsData.Answer1;
             Answer2 = delegateDetailsData.Answer2;
@@ -35,6 +35,7 @@
             Answer5 = delegateDetailsData.Answer5;
             Answer6 = delegateDetailsData.Answer6;
             JobGroupId = jobGroupId;
+            CentreId = centreId;
         }
 
         public int CentreId { get; set; }
