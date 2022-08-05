@@ -295,6 +295,62 @@
             transaction.Complete();
         }
 
+        // TODO HEEDLS-1018 rename this
+        public void SynchroniseJobGroupsOnOtherCentres(
+            int delegateId,
+            int oldJobGroupId,
+            int newJobGroupId,
+            AccountDetailsData accountDetailsData,
+            string? centreEmail
+        )
+        {
+            if (oldJobGroupId == newJobGroupId)
+            {
+                return;
+            }
+
+            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
+            var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userId);
+            // possibly exclude existing account here
+
+            foreach (var account in delegateAccounts)
+            {
+                var groupsLinkedToJobGroup = GetGroupsLinkedToJobGroupForCentre(account.CentreId).ToList();
+
+                var oldJobGroupName = jobGroupsDataService.GetJobGroupName(oldJobGroupId);
+                var newJobGroupName = jobGroupsDataService.GetJobGroupName(newJobGroupId);
+
+                // TODO HEEDLS-1018 magic strings?
+
+                var groupToRemoveDelegateFrom = groupsLinkedToJobGroup.Single(
+                    g =>
+                        GroupLabelMatchesAnswer(g.GroupLabel, oldJobGroupName, "Job group")
+                );
+
+                var groupToAddDelegateTo = groupsLinkedToJobGroup.Single(
+                    g =>
+                        GroupLabelMatchesAnswer(g.GroupLabel, newJobGroupName, "Job group")
+                );
+
+                RemoveDelegateFromGroup(delegateId, groupToRemoveDelegateFrom.GroupId);
+
+                groupsDataService.AddDelegateToGroup(
+                    delegateId,
+                    groupToAddDelegateTo.GroupId,
+                    clockUtility.UtcNow,
+                    1
+                );
+
+                EnrolDelegateOnGroupCourses(
+                    delegateId,
+                    account.CentreId,
+                    accountDetailsData,
+                    centreEmail,
+                    groupToAddDelegateTo.GroupId
+                );
+            }
+        }
+
         public void EnrolDelegateOnGroupCourses(
             int delegateId,
             int centreId,
@@ -670,6 +726,14 @@
         {
             return groupsDataService.GetGroupsForCentre(centreId)
                 .Where(g => g.ShouldAddNewRegistrantsToGroup);
+        }
+
+        private IEnumerable<Group> GetGroupsLinkedToJobGroupForCentre(int centreId)
+        {
+            // TODO HEEDLS-1018 magic number in Where clause,
+
+            return groupsDataService.GetGroupsForCentre(centreId)
+                .Where(g => g.LinkedToField == 4);
         }
 
         private static bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string linkedFieldName)
