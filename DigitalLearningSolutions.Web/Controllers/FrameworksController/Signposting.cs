@@ -76,14 +76,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource/Summary")]
-        public IActionResult AddCompetencyLearningResourceSummary(int frameframeworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
+        public IActionResult AddCompetencyLearningResourceSummary(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
-            var session = multiPageFormService.GetMultiPageFormData<CompetencyResourceSummaryViewModel>(
-                MultiPageFormDataFeature.AddCompetencyLearningResourceSummary,
-                TempData
-            );
-            var model = session ?? new CompetencyResourceSummaryViewModel(frameframeworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
-            return View("Developer/AddCompetencyLearningResourceSummary", model);
+            var feature = MultiPageFormDataFeature.AddCompetencyLearningResourceSummary;
+            if(TempData[feature.TempDataKey] == null)
+            {
+                return RedirectToAction("SearchLearningResources", "Frameworks", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
+            }
+
+            var session = multiPageFormService.GetMultiPageFormData<CompetencyResourceSummaryViewModel>(feature, TempData);
+            return View("Developer/AddCompetencyLearningResourceSummary", session);
         }
 
         [HttpPost]

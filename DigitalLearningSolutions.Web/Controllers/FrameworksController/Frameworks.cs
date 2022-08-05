@@ -5,10 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using System.Linq;
-using DigitalLearningSolutions.Web.Extensions;
 using DigitalLearningSolutions.Data.Models.SessionData.Frameworks;
-using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Generic;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
@@ -119,7 +116,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminId();
             TempData.Clear();
-            var sessionNewFramework = new SessionNewFramework();
             var detailFramework = new DetailFramework()
             {
                 BrandID = 6,
@@ -130,7 +126,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 PublishStatusID = 1,
                 UserRole = 3,
             };
-            sessionNewFramework.DetailFramework = detailFramework;
+            var sessionNewFramework = new SessionNewFramework() { DetailFramework = detailFramework };
             multiPageFormService.SetMultiPageFormData(
                 sessionNewFramework,
                 MultiPageFormDataFeature.AddNewFramework,
@@ -158,12 +154,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             else
             {
+                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                {
+                    return StatusCode((int)HttpStatusCode.NotFound);
+                }
+
                 var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
                     MultiPageFormDataFeature.AddNewFramework,
                     TempData
                 );
                 multiPageFormService.SetMultiPageFormData(sessionNewFramework, MultiPageFormDataFeature.AddNewFramework, TempData);
-                if (sessionNewFramework == null) return StatusCode(404);
                 detailFramework = sessionNewFramework.DetailFramework;
                 multiPageFormService.SetMultiPageFormData(
                     sessionNewFramework,
@@ -187,17 +187,23 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             if (actionname == "New")
             {
-                SessionNewFramework sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
-                    MultiPageFormDataFeature.AddNewFramework,
-                    TempData
-                );
-                if (sessionNewFramework == null) return StatusCode(404);
-                sessionNewFramework.DetailFramework = detailFramework;
-                multiPageFormService.SetMultiPageFormData(
-                    sessionNewFramework,
-                    MultiPageFormDataFeature.AddNewFramework,
-                    TempData
-                );
+                if(TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                {
+                    return StatusCode((int)HttpStatusCode.NotFound);
+                }
+                else
+                {
+                    SessionNewFramework sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
+                        MultiPageFormDataFeature.AddNewFramework,
+                        TempData
+                    );
+                    sessionNewFramework.DetailFramework = detailFramework;
+                    multiPageFormService.SetMultiPageFormData(
+                        sessionNewFramework,
+                        MultiPageFormDataFeature.AddNewFramework,
+                        TempData
+                    );
+                }
                 return RedirectToAction("SetNewFrameworkName", new { frameworkname = detailFramework.FrameworkName, actionname });
             }
             var adminId = GetAdminId();
@@ -277,17 +283,23 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             DetailFramework? framework;
             if (actionname == "New")
             {
-                var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
-                    MultiPageFormDataFeature.AddNewFramework,
-                    TempData
-                );
-                if (sessionNewFramework == null) return StatusCode(404);
-                framework = sessionNewFramework.DetailFramework;
-                multiPageFormService.SetMultiPageFormData(
-                    sessionNewFramework,
-                    MultiPageFormDataFeature.AddNewFramework,
-                    TempData
-                );
+                if(TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                {
+                    return StatusCode((int)HttpStatusCode.NotFound);
+                }
+                else
+                {
+                    var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
+                        MultiPageFormDataFeature.AddNewFramework,
+                        TempData
+                    );
+                    framework = sessionNewFramework.DetailFramework;
+                    multiPageFormService.SetMultiPageFormData(
+                        sessionNewFramework,
+                        MultiPageFormDataFeature.AddNewFramework,
+                        TempData
+                    );
+                }
             }
             else
             {
@@ -309,17 +321,23 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             if (actionname == "New")
             {
-                var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
-                    MultiPageFormDataFeature.AddNewFramework,
-                    TempData
-                );
-                if (sessionNewFramework == null) return StatusCode(404);
-                sessionNewFramework.DetailFramework = detailFramework;
-                multiPageFormService.SetMultiPageFormData(
-                    sessionNewFramework,
-                    MultiPageFormDataFeature.AddNewFramework,
-                    TempData
-                );
+                if(TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                {
+                    return StatusCode((int)HttpStatusCode.NotFound);
+                }
+                else
+                {
+                    var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
+                        MultiPageFormDataFeature.AddNewFramework,
+                        TempData
+                    );
+                    sessionNewFramework.DetailFramework = detailFramework;
+                    multiPageFormService.SetMultiPageFormData(
+                        sessionNewFramework,
+                        MultiPageFormDataFeature.AddNewFramework,
+                        TempData
+                    );
+                }
                 return RedirectToAction("FrameworkType", "Frameworks", new { actionname });
             }
             frameworkService.UpdateFrameworkDescription(frameworkId, GetAdminId(), detailFramework.Description);
@@ -337,17 +355,23 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             DetailFramework? framework;
             if (actionname == "New")
             {
-                var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
-                    MultiPageFormDataFeature.AddNewFramework,
-                    TempData
-                );
-                if (sessionNewFramework == null) return StatusCode(404);
-                framework = sessionNewFramework.DetailFramework;
-                multiPageFormService.SetMultiPageFormData(
-                    sessionNewFramework,
-                    MultiPageFormDataFeature.AddNewFramework,
-                    TempData
-                );
+                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                {
+                    return StatusCode((int)HttpStatusCode.NotFound);
+                }
+                else
+                {
+                    var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
+                        MultiPageFormDataFeature.AddNewFramework,
+                        TempData
+                    );
+                    framework = sessionNewFramework.DetailFramework;
+                    multiPageFormService.SetMultiPageFormData(
+                        sessionNewFramework,
+                        MultiPageFormDataFeature.AddNewFramework,
+                        TempData
+                    );
+                }
             }
             else
             {
@@ -369,11 +393,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             if (actionname == "New")
             {
+                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                {
+                    return StatusCode((int)HttpStatusCode.NotFound);
+                }
                 var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
                     MultiPageFormDataFeature.AddNewFramework,
                     TempData
                 );
-                if (sessionNewFramework == null) return StatusCode(404);
                 sessionNewFramework.DetailFramework = detailFramework;
                 multiPageFormService.SetMultiPageFormData(
                     sessionNewFramework,
@@ -396,11 +423,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             DetailFramework? framework;
             if (actionname == "New")
             {
+                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                {
+                    return StatusCode((int)HttpStatusCode.NotFound);
+                }
                 var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
                     MultiPageFormDataFeature.AddNewFramework,
                     TempData
                 );
-                if (sessionNewFramework == null) return StatusCode(404);
                 framework = sessionNewFramework.DetailFramework;
                 multiPageFormService.SetMultiPageFormData(
                     sessionNewFramework,
@@ -455,11 +485,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 logger.LogWarning($"Failed to update branding for frameworkID: {frameworkId} adminId: {adminId}, centreId: {centreId}");
                 return StatusCode(500);
             }
+            if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null | detailFramework == null)
+            {
+                return StatusCode((int)HttpStatusCode.NotFound);
+            }
             var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
                 MultiPageFormDataFeature.AddNewFramework,
                 TempData
             );
-            if (sessionNewFramework == null | detailFramework == null) return StatusCode(404);
             sessionNewFramework.DetailFramework.BrandID = detailFramework.BrandID;
             sessionNewFramework.DetailFramework.Brand = detailFramework.Brand;
             sessionNewFramework.DetailFramework.CategoryID = detailFramework.CategoryID;
@@ -522,12 +555,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
         public IActionResult FrameworkSummary()
         {
+            if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+            {
+                return RedirectToAction("Index");
+            }
+
             var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
                 MultiPageFormDataFeature.AddNewFramework,
                 TempData
             );
-            if (sessionNewFramework == null)
-                return RedirectToAction("Index");
             multiPageFormService.SetMultiPageFormData(
                 sessionNewFramework,
                 MultiPageFormDataFeature.AddNewFramework,
@@ -692,11 +728,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult InsertFramework()
         {
             var adminId = GetAdminId();
+            if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+            {
+                return StatusCode((int)HttpStatusCode.NotFound);
+            }
+
             var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
                 MultiPageFormDataFeature.AddNewFramework,
                 TempData
             );
-            if (sessionNewFramework == null) return StatusCode(404);
             var detailFramework = sessionNewFramework.DetailFramework;
             detailFramework = InsertBrandingCategoryTopicIfRequired(detailFramework);
             if (detailFramework == null || adminId < 1)
