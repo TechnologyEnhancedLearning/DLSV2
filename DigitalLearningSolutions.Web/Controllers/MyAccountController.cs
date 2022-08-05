@@ -251,10 +251,10 @@
 
             var modifiedEmails = new List<(string, int?)>();
             var shouldLogIntoCentrelessAccount = false;
+            bool shouldRedirectToVerifyEmail;
 
             if (userDataService.IsPrimaryEmailBeingChangedForUser(userId, accountDetailsData.Email))
             {
-                shouldLogIntoCentrelessAccount = true;
                 modifiedEmails.Add((accountDetailsData.Email, null));
             }
 
@@ -266,11 +266,12 @@
                         formData.CentreSpecificEmail
                     ))
                 {
-                    shouldLogIntoCentrelessAccount = true;
                     modifiedEmails.Add((formData.CentreSpecificEmail, centreId.Value));
                 }
 
-                emailVerificationService.SendVerificationEmails(userEntity!.UserAccount, modifiedEmails);
+                shouldLogIntoCentrelessAccount =
+                    emailVerificationService.SendVerificationEmails(userEntity!.UserAccount, modifiedEmails);
+                shouldRedirectToVerifyEmail = shouldLogIntoCentrelessAccount;
                 userService.UpdateUserDetailsAndCentreSpecificDetails(
                     accountDetailsData,
                     delegateDetailsData,
@@ -290,6 +291,8 @@
                     }
                 }
 
+                shouldRedirectToVerifyEmail =
+                    emailVerificationService.SendVerificationEmails(userEntity!.UserAccount, modifiedEmails);
                 userService.UpdateUserDetails(accountDetailsData, true);
                 userService.SetCentreEmails(userId, formData.CentreSpecificEmailsByCentreId);
             }
@@ -297,6 +300,12 @@
             if (shouldLogIntoCentrelessAccount)
             {
                 await LogOutAndLogIntoCentrelessAccount(userEntity!.UserAccount);
+            }
+
+            if (shouldRedirectToVerifyEmail)
+            {
+                var emailVerificationReason = EmailVerificationReason.EmailChanged;
+                return RedirectToAction("Index", "VerifyYourEmail", new { emailVerificationReason });
             }
 
             return this.RedirectToReturnUrl(formData.ReturnUrl, logger) ?? RedirectToAction(

@@ -13,7 +13,8 @@
 
     public interface IEmailVerificationService
     {
-        void SendVerificationEmails(UserAccount userAccount, List<(string, int?)> emails);
+        // This method returns true if any email needs verification
+        bool SendVerificationEmails(UserAccount userAccount, List<(string, int?)> emails);
     }
 
     public class EmailVerificationService : IEmailVerificationService
@@ -36,7 +37,7 @@
             this.config = config;
         }
 
-        public void SendVerificationEmails(UserAccount userAccount, List<(string, int?)> emails)
+        public bool SendVerificationEmails(UserAccount userAccount, List<(string, int?)> emails)
         {
             var verifiedEmails = emails.Where(
                 emailCentrePair =>
@@ -45,7 +46,7 @@
             var unverifiedEmails = emails.Where(
                 emailCentrePair =>
                     !emailVerificationDataService.IsEmailVerifiedForUser(userAccount.Id, emailCentrePair.Item1)
-            );
+            ).ToList();
             var currentTime = clockUtility.UtcNow;
 
             foreach (var (email, centreId) in verifiedEmails)
@@ -78,6 +79,8 @@
                     GenerateVerificationEmail(userAccount, hash, emailGroup.Key, config.GetAppRootPath())
                 );
             }
+
+            return unverifiedEmails.Any();
         }
 
         private void UpdateEmailVerificationHashId(int userId, int? centreId, int hashId)
