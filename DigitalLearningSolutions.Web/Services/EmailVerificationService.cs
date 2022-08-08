@@ -128,7 +128,7 @@
                             Please click the following link to verify your email address for Digital Learning Solutions: {verifyEmailUrl.Uri}",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {userAccount.FullName},</p>
-                                <p>Please click the following link to verify your email address for Digital Learning Solutions: <a href=""{verifyEmailUrl.Uri}""></a></p>
+                                <p>Please click the following link to verify your email address for Digital Learning Solutions: <a href=""{verifyEmailUrl.Uri}"">{verifyEmailUrl.Uri}</a></p>
                             </body>",
             };
 
