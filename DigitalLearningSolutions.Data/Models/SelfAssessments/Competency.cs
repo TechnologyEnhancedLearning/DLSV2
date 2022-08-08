@@ -20,6 +20,7 @@
         public bool IncludedInSelfAssessment { get; set; }
         public DateTime? Verified { get; set; }
         public DateTime? Requested { get; set; }
+        public DateTime? EmailSent { get; set; }
         public bool? SignedOff { get; set; }
         public DateTime? SupervisorVerificationRequested { get; set; }
         public int? SupervisorVerificationId { get; set; }

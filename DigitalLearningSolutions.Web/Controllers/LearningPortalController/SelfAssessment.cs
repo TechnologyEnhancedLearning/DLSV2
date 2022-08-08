@@ -824,11 +824,7 @@
             }
 
             var competencies = PopulateCompetencyLevelDescriptors(
-                selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(
-                    selfAssessmentId,
-                    User.GetCandidateIdKnownNotNull())
-                .Where(c => c.SupervisorVerificationRequested.HasValue && !String.IsNullOrEmpty(c.SupervisorName))
-                .OrderBy(c => c.SupervisorVerificationRequested).ToList()
+                selfAssessmentService.GetResultSupervisorVerifications(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList()
             );
             var model = new ReviewConfirmationRequestsViewModel
             {
@@ -1001,7 +997,7 @@
                 User.GetCandidateIdKnownNotNull(),
                 selfAssessmentResultId
             );
-            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId, vocabulary });
+            return RedirectToAction("ReviewConfirmationRequests", new { selfAssessmentId, vocabulary });
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/{supervisorVerificationId}/Withdraw")]

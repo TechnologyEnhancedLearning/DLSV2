@@ -76,11 +76,14 @@
               @competency.SupervisorName<br />
               @competency.SupervisorVerificationRequested?.ToString("dd/MM/yyyy")<br />
               <span style="white-space: nowrap;">
-                <a asp-action="ResendSupervisorVerificationRequest"
-                   asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
-                   asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
-                   asp-route-candidateAssessmentSupervisorId="@competency.CandidateAssessmentSupervisorId"
-                   asp-route-selfAssessmentResultId="@question.ResultId">Resend</a>
+                @if (competency.EmailSent.HasValue && DateTime.UtcNow.Subtract(competency.EmailSent.Value) > TimeSpan.FromHours(1))
+                {
+                  <a asp-action="ResendSupervisorVerificationRequest"
+                     asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+                     asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
+                     asp-route-candidateAssessmentSupervisorId="@competency.CandidateAssessmentSupervisorId"
+                     asp-route-selfAssessmentResultId="@question.ResultId">Resend</a>
+                }
                 <a asp-action="WithdrawSupervisorVerificationRequest"
                    asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
                    asp-route-supervisorVerificationId="@competency.SupervisorVerificationId">Withdraw</a>

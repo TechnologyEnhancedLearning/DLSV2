@@ -37,6 +37,7 @@
         IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId);
 
         IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId);
+        IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int candidateId);
 
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(
             int assessmentQuestionId,
@@ -188,6 +189,11 @@
         public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId)
         {
             return selfAssessmentDataService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, candidateId);
+        }
+
+        public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int candidateId)
+        {
+            return selfAssessmentDataService.GetResultSupervisorVerifications(selfAssessmentId, candidateId);
         }
 
         public IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(

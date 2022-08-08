@@ -272,9 +272,10 @@
             return GroupCompetencyAssessmentQuestions(result);
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId)
+        public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int candidateId)
         {
             const string supervisorFields = @"
+                LAR.EmailSent,
                 LAR.Requested AS SupervisorVerificationRequested,
                 COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS SupervisorName,
                 SelfAssessmentResultSupervisorVerificationId AS SupervisorVerificationId,
@@ -290,6 +291,29 @@
                     FROM {CompetencyTables}
                         INNER JOIN SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID
                         {supervisorTables}
+                    WHERE (LAR.Verified IS NULL)
+                        AND ((LAR.Result IS NOT NULL) OR (LAR.SupportingComments IS NOT NULL))
+                        AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0))
+                        AND ((SA.EnforceRoleRequirementsForSignOff = 0) OR (CAQ.Required = 0))
+						AND (LAR.Requested IS NOT NULL) AND (LAR.Verified IS NULL) 
+                        AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0))
+                    ORDER BY SupervisorVerificationRequested DESC, C.Name",
+                (competency, assessmentQuestion) =>
+                {
+                    competency.AssessmentQuestions.Add(assessmentQuestion);
+                    return competency;
+                },
+                new { selfAssessmentId, candidateId }
+            );
+            return result;
+        }
+
+        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId)
+        {
+            var result = connection.Query<Competency, AssessmentQuestion, Competency>(
+                $@"WITH {LatestAssessmentResults}
+                    SELECT {CompetencyFields}
+                    FROM {CompetencyTables} INNER JOIN SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID
                     WHERE ((LAR.Requested IS NULL) OR (LAR.Requested < DATEADD(week, -1, getUTCDate()))) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL)
                         OR (LAR.SupportingComments IS NOT NULL)) AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0)) AND ((SA.EnforceRoleRequirementsForSignOff = 0) OR (CAQ.Required = 0))
 						OR ((LAR.Requested IS NULL) OR (LAR.Requested < DATEADD(week, -1, getUTCDate()))) AND (LAR.Verified IS NULL) AND (LAR.ResultRAG = 3) AND ((CAOC.IncludedInSelfAssessment = 1) 
