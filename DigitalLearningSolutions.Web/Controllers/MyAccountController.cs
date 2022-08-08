@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -41,6 +42,7 @@
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
         private readonly IEmailVerificationService emailVerificationService;
+        private readonly IClockUtility clockUtility;
 
         public MyAccountController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
@@ -50,6 +52,7 @@
             IJobGroupsDataService jobGroupsDataService,
             IEmailVerificationService emailVerificationService,
             PromptsService registrationPromptsService,
+            IClockUtility clockUtility,
             ILogger<MyAccountController> logger,
             IConfiguration config
         )
@@ -61,6 +64,7 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.emailVerificationService = emailVerificationService;
             promptsService = registrationPromptsService;
+            this.clockUtility = clockUtility;
             this.logger = logger;
             this.config = config;
         }
@@ -289,11 +293,7 @@
                     centreId.Value,
                     true
                 );
-                emailVerificationService.SendVerificationEmails(
-                    userEntity!.UserAccount,
-                    verifiedModifiedEmails,
-                    unverifiedModifiedEmails
-                );
+                emailVerificationService.SendVerificationEmails(userEntity!.UserAccount, unverifiedModifiedEmails);
             }
             else
             {
@@ -315,11 +315,19 @@
 
                 userService.UpdateUserDetails(accountDetailsData, true);
                 userService.SetCentreEmails(userId, formData.CentreSpecificEmailsByCentreId);
-                emailVerificationService.SendVerificationEmails(
-                    userEntity!.UserAccount,
-                    verifiedModifiedEmails,
-                    unverifiedModifiedEmails
-                );
+                emailVerificationService.SendVerificationEmails(userEntity!.UserAccount, unverifiedModifiedEmails);
+            }
+
+            var currentTime = clockUtility.UtcNow;
+
+            foreach (var (_, centre) in verifiedModifiedEmails)
+            {
+                emailVerificationService.UpdateVerificationDateForEmail(userId, centre, currentTime);
+            }
+
+            foreach (var (_, centre) in unverifiedModifiedEmails)
+            {
+                emailVerificationService.UpdateVerificationDateForEmail(userId, centre, null);
             }
 
             if (unverifiedModifiedEmails.Any())

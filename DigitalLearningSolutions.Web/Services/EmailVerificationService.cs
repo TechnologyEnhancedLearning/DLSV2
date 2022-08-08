@@ -13,13 +13,11 @@
 
     public interface IEmailVerificationService
     {
-        public bool AccountEmailRequiresVerification(int userId, string email);
+        bool AccountEmailRequiresVerification(int userId, string email);
 
-        void SendVerificationEmails(
-            UserAccount userAccount,
-            IEnumerable<(string, int?)> verifiedEmails,
-            IList<(string, int?)> unverifiedEmails
-        );
+        void UpdateVerificationDateForEmail(int userId, int? centreId, DateTime? date);
+
+        void SendVerificationEmails(UserAccount userAccount, IEnumerable<(string, int?)> unverifiedEmails);
     }
 
     public class EmailVerificationService : IEmailVerificationService
@@ -47,16 +45,20 @@
             return emailVerificationDataService.AccountEmailRequiresVerification(userId, email);
         }
 
-        public void SendVerificationEmails(
-            UserAccount userAccount,
-            IEnumerable<(string, int?)> verifiedEmails,
-            IList<(string, int?)> unverifiedEmails
-        )
+        public void UpdateVerificationDateForEmail(int userId, int? centreId, DateTime? date)
         {
-            var currentTime = clockUtility.UtcNow;
-            UpdateVerificationDateForEmails(userAccount.Id, verifiedEmails, currentTime);
-            UpdateVerificationDateForEmails(userAccount.Id, unverifiedEmails, null);
+            if (centreId == null)
+            {
+                emailVerificationDataService.UpdateVerificationDateForPrimaryEmail(userId, date);
+            }
+            else
+            {
+                emailVerificationDataService.UpdateVerificationDateForCentreEmail(userId, centreId.Value, date);
+            }
+        }
 
+        public void SendVerificationEmails(UserAccount userAccount, IEnumerable<(string, int?)> unverifiedEmails)
+        {
             foreach (var emailGroup in unverifiedEmails.GroupBy(emailCentrePair => emailCentrePair.Item1))
             {
                 var hash = Guid.NewGuid().ToString();
@@ -86,21 +88,6 @@
                     centreId.Value,
                     hashId
                 );
-            }
-        }
-
-        private void UpdateVerificationDateForEmails(int userId, IEnumerable<(string, int?)> emails, DateTime? date)
-        {
-            foreach (var (_, centreId) in emails)
-            {
-                if (centreId == null)
-                {
-                    emailVerificationDataService.UpdateVerificationDateForPrimaryEmail(userId, date);
-                }
-                else
-                {
-                    emailVerificationDataService.UpdateVerificationDateForCentreEmail(userId, centreId.Value, date);
-                }
             }
         }
 

@@ -196,6 +196,7 @@
                     jobGroupsDataService,
                     emailVerificationService,
                     promptsService,
+                    clockUtility,
                     logger,
                     config
                 ).WithDefaultContext()
@@ -270,6 +271,7 @@
                     jobGroupsDataService,
                     emailVerificationService,
                     promptsService,
+                    clockUtility,
                     logger,
                     config
                 ).WithDefaultContext()
@@ -684,6 +686,7 @@
                 jobGroupsDataService,
                 emailVerificationService,
                 promptsService,
+                clockUtility,
                 logger,
                 config
             ).WithDefaultContext();
