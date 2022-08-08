@@ -72,8 +72,6 @@
         // Supervisor
         IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
 
-        SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int candidateId);
-
         IEnumerable<SupervisorSignOff> GetSupervisorSignOffsForCandidateAssessment(
             int selfAssessmentId,
             int candidateId
@@ -215,11 +213,6 @@
         public SupervisorComment? GetSupervisorComments(int candidateId, int resultId)
         {
             return selfAssessmentDataService.GetSupervisorComments(candidateId, resultId);
-        }
-
-        public SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int candidateId)
-        {
-            return selfAssessmentDataService.GetSupervisorForSelfAssessmentId(selfAssessmentId, candidateId);
         }
 
         public IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(

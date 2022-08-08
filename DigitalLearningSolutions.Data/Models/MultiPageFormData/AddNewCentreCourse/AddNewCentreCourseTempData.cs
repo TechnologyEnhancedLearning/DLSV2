@@ -10,6 +10,8 @@
             SectionContentData = new List<SectionContentTempData>();
         }
 
+        public string? CategoryFilter { get; set; }
+        public string? TopicFilter { get; set; }
         public ApplicationDetails? Application { get; set; }
         public CourseDetailsTempData? CourseDetailsData { get; set; }
         public CourseOptionsTempData? CourseOptionsData { get; set; }

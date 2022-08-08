@@ -726,7 +726,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND Applications.DefaultContentTypeID <> 4
                     GROUP BY Applications.ApplicationID",
                 new
-                    { brandId, threeMonthsAgo }
+                { brandId, threeMonthsAgo }
             );
             return query.ToDictionary<dynamic?, int, int>(
                 entry => entry.ApplicationID,
@@ -812,6 +812,8 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             return connection.Query<CourseDelegateForExport>(
                 $@"SELECT
+                        ap.ApplicationName,
+                        cu.CustomisationName,
                         ca.CandidateID AS DelegateId,
                         ca.CandidateNumber,
                         ca.FirstName AS DelegateFirstName,
@@ -819,11 +821,11 @@ namespace DigitalLearningSolutions.Data.DataServices
                         ca.EmailAddress AS DelegateEmail,
                         ca.Active AS IsDelegateActive,
                         ca.Answer1 AS RegistrationAnswer1,
-                        ca.Answer2 AS RegistrationAnswer1,
-                        ca.Answer3 AS RegistrationAnswer1,
-                        ca.Answer4 AS RegistrationAnswer1,
-                        ca.Answer5 AS RegistrationAnswer1,
-                        ca.Answer6 AS RegistrationAnswer1,
+                        ca.Answer2 AS RegistrationAnswer2,
+                        ca.Answer3 AS RegistrationAnswer3,
+                        ca.Answer4 AS RegistrationAnswer4,
+                        ca.Answer5 AS RegistrationAnswer5,
+                        ca.Answer6 AS RegistrationAnswer6,
                         p.ProgressID,
                         p.PLLocked AS IsProgressLocked,
                         p.SubmittedTime AS LastUpdated,

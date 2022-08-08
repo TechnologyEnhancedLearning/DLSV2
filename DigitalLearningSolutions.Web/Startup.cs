@@ -229,6 +229,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IBrandsService, BrandsService>();
+            services.AddScoped<ISelfAssessmentReportService, SelfAssessmentReportService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -269,6 +270,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICandidateAssessmentDownloadFileService, CandidateAssessmentDownloadFileService>();
             services.AddScoped<IBrandsDataService, BrandsDataService>();
+            services.AddScoped<IDCSAReportDataService, DCSAReportDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)

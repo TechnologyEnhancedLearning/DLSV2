@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/ImportCompetencies", model);
         }
         [HttpPost]
-        [Route("/Framework/{frameworkId}/Structure/Import")]
+        [Route("/Framework/{frameworkId}/{tabname}/Import")]
         public IActionResult StartImport(ImportCompetenciesViewModel model)
         {
             if (!ModelState.IsValid)

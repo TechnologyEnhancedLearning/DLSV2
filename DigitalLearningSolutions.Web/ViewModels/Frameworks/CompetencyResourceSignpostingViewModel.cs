@@ -11,6 +11,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public string Title { get; set; }
         public List<SignpostingCardViewModel> CompetencyResourceLinks { get; set; }
         public IEnumerable<SearchableCompetencyViewModel> Delegates { get; set; }
+        public List<Catalogue> Catalogues { get; set; }
+        public int? CatalogueId { get; set; }
         public string SearchText { get; set; }
         public override int Page { get; set; }
         public bool LearningHubApiError { get; set; }

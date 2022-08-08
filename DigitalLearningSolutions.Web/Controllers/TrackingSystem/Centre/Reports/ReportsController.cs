@@ -18,7 +18,7 @@
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Centre))]
-    [Route("/TrackingSystem/Centre/Reports")]
+    [Route("/TrackingSystem/Centre/Reports/Courses")]
     public class ReportsController : Controller
     {
         private readonly IActivityService activityService;
