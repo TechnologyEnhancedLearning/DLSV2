@@ -2,9 +2,18 @@
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
+    using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Data.Enums;
     using System;
-
+    [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
+    [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Centre))]
+    [Route("/TrackingSystem/Centre/Reports/SelfAssessments")]
     public class SelfAssessmentReportsController : Controller
     {
         private readonly ISelfAssessmentReportService selfAssessmentReportService;
