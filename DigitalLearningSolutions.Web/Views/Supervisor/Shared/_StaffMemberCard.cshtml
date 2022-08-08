@@ -71,16 +71,30 @@
         <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" view-data="@(new ViewDataDictionary(ViewData){{"isSupervisor", Model.IsUserSupervisor}})" />
       }
       </div>
-      <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small"
-         data-return-page-enabled="true"
-         asp-action="@(Model.SupervisorDelegateDetail.CandidateAssessmentCount == 0 ? "RemoveSupervisorDelegate" : "RemoveSupervisorDelegateConfirm")"
-         asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
-         asp-route-returnPageQuery="@Model.ReturnPageQuery">
-        Remove staff member
-      </a>
-
-  </div>
-
+      @if (Model.SupervisorDelegateDetail.CandidateAssessmentCount == 0)
+      {
+        <form method="post">
+          <button class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small" data-return-page-enabled="true"
+                  asp-action="RemoveSupervisorDelegate"
+                  asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+            Remove staff member
+          </button>
+          @Html.Hidden("Id", Model.SupervisorDelegateDetail.ID)
+          @Html.Hidden("DelegateEmail", Model.SupervisorDelegateDetail.DelegateEmail)
+          @Html.Hidden("ConfirmedRemove", true)
+          @Html.HiddenFor(m => m.ReturnPageQuery)
+        </form>
+      }
+      else
+      {
+        <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small" data-return-page-enabled="true"
+              asp-action="RemoveSupervisorDelegateConfirm"
+              asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
+              asp-route-returnPageQuery="@Model.ReturnPageQuery">
+            Remove staff member
+        </a>
+      }
+    </div>
   </details>
   @if (Model.SupervisorDelegateDetail.CandidateID != null)
   {
@@ -95,11 +109,11 @@
   else if (Model.SupervisorDelegateDetail.AddedByDelegate)
   {
         <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
-           aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
-           asp-controller="Supervisor"
-           asp-action="ConfirmSupervise"
-           asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+            aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
+            asp-controller="Supervisor"
+            asp-action="ConfirmSupervise"
+            asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
           Confirm
         </a>
   }
-  </div>
+</div>
