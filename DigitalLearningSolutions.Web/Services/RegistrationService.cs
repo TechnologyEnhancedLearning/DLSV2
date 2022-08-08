@@ -11,7 +11,6 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
@@ -148,26 +147,7 @@ namespace DigitalLearningSolutions.Web.Services
 
             if (!delegateRegistrationModel.Approved)
             {
-                var recipients =
-                    notificationDataService.GetAdminRecipientsForCentreNotification(
-                        delegateRegistrationModel.Centre,
-                        4
-                    );
-
-                foreach (var recipient in recipients)
-                {
-                    if (recipient.Email != null && recipient.FirstName != null)
-                    {
-                        var approvalEmail = GenerateApprovalEmail(
-                            recipient.Email,
-                            recipient.FirstName,
-                            delegateRegistrationModel.FirstName,
-                            delegateRegistrationModel.LastName,
-                            refactoredTrackingSystemEnabled
-                        );
-                        emailService.SendEmail(approvalEmail);
-                    }
-                }
+                SendApprovalEmailToAdmins(delegateRegistrationModel, refactoredTrackingSystemEnabled);
             }
 
             return (candidateNumber, delegateRegistrationModel.Approved);
@@ -262,7 +242,10 @@ namespace DigitalLearningSolutions.Web.Services
                 );
             }
 
-            SendDelegateNeedsApprovalEmailIfNecessary(delegateRegistrationModel, refactoredTrackingSystemEnabled);
+            if (!delegateRegistrationModel.Approved)
+            {
+                SendApprovalEmailToAdmins(delegateRegistrationModel, refactoredTrackingSystemEnabled);
+            }
 
             return (candidateNumber, delegateRegistrationModel.Approved, userHasAdminAccountAtCentre);
         }
@@ -617,25 +600,31 @@ namespace DigitalLearningSolutions.Web.Services
             }
         }
 
-        private void SendDelegateNeedsApprovalEmailIfNecessary(
+        private void SendApprovalEmailToAdmins(
             RegistrationModel delegateRegistrationModel,
             bool refactoredTrackingSystemEnabled
         )
         {
-            if (delegateRegistrationModel.Approved)
-            {
-                return;
-            }
-
-            var (firstName, _, email) = centresDataService.GetCentreManagerDetails(delegateRegistrationModel.Centre);
-            var approvalEmail = GenerateApprovalEmail(
-                email,
-                firstName,
-                delegateRegistrationModel.FirstName,
-                delegateRegistrationModel.LastName,
-                refactoredTrackingSystemEnabled
+            var recipients = notificationDataService.GetAdminRecipientsForCentreNotification(
+                delegateRegistrationModel.Centre,
+                4 // NotificationId 4 is "Delegate registration requires approval"
             );
-            emailService.SendEmail(approvalEmail);
+
+            foreach (var recipient in recipients)
+            {
+                if (recipient.Email != null && recipient.FirstName != null)
+                {
+                    var approvalEmail = GenerateApprovalEmail(
+                        recipient.Email,
+                        recipient.FirstName,
+                        delegateRegistrationModel.FirstName,
+                        delegateRegistrationModel.LastName,
+                        refactoredTrackingSystemEnabled
+                    );
+
+                    emailService.SendEmail(approvalEmail);
+                }
+            }
         }
 
         private Email GenerateApprovalEmail(
