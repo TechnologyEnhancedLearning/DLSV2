@@ -1,6 +1,4 @@
-﻿
-
-namespace DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService
+﻿namespace DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService
 {
     using Dapper;
     using DigitalLearningSolutions.Data.Models.SelfAssessments.Export;

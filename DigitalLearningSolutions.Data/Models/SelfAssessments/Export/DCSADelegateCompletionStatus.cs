@@ -1,7 +1,6 @@
-﻿using System;
-
-namespace DigitalLearningSolutions.Data.Models.SelfAssessments.Export
+﻿namespace DigitalLearningSolutions.Data.Models.SelfAssessments.Export
 {
+    using System;
     public class DCSADelegateCompletionStatus
     {
         public int? EnrolledMonth { get; set; }
