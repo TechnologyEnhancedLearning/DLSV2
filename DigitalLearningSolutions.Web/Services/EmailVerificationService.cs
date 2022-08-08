@@ -13,8 +13,13 @@
 
     public interface IEmailVerificationService
     {
-        // This method returns true if any email needs verification
-        bool SendVerificationEmails(UserAccount userAccount, List<(string, int?)> emails);
+        public bool AccountEmailRequiresVerification(int userId, string email);
+
+        void SendVerificationEmails(
+            UserAccount userAccount,
+            IEnumerable<(string, int?)> verifiedEmails,
+            IList<(string, int?)> unverifiedEmails
+        );
     }
 
     public class EmailVerificationService : IEmailVerificationService
@@ -37,33 +42,20 @@
             this.config = config;
         }
 
-        public bool SendVerificationEmails(UserAccount userAccount, List<(string, int?)> emails)
+        public bool AccountEmailRequiresVerification(int userId, string email)
         {
-            var verifiedEmails = emails.Where(
-                emailCentrePair =>
-                    emailVerificationDataService.IsEmailVerifiedForUser(userAccount.Id, emailCentrePair.Item1)
-            );
-            var unverifiedEmails = emails.Where(
-                emailCentrePair =>
-                    !emailVerificationDataService.IsEmailVerifiedForUser(userAccount.Id, emailCentrePair.Item1)
-            ).ToList();
-            var currentTime = clockUtility.UtcNow;
+            return emailVerificationDataService.AccountEmailRequiresVerification(userId, email);
+        }
 
-            foreach (var (email, centreId) in verifiedEmails)
-            {
-                if (centreId == null)
-                {
-                    emailVerificationDataService.UpdateVerificationDateForPrimaryEmail(userAccount.Id, currentTime);
-                }
-                else
-                {
-                    emailVerificationDataService.UpdateVerificationDateForCentreEmail(
-                        userAccount.Id,
-                        centreId.Value,
-                        currentTime
-                    );
-                }
-            }
+        public void SendVerificationEmails(
+            UserAccount userAccount,
+            IEnumerable<(string, int?)> verifiedEmails,
+            IList<(string, int?)> unverifiedEmails
+        )
+        {
+            var currentTime = clockUtility.UtcNow;
+            UpdateVerificationDateForEmails(userAccount.Id, verifiedEmails, currentTime);
+            UpdateVerificationDateForEmails(userAccount.Id, unverifiedEmails, null);
 
             foreach (var emailGroup in unverifiedEmails.GroupBy(emailCentrePair => emailCentrePair.Item1))
             {
@@ -79,8 +71,6 @@
                     GenerateVerificationEmail(userAccount, hash, emailGroup.Key, config.GetAppRootPath())
                 );
             }
-
-            return unverifiedEmails.Any();
         }
 
         private void UpdateEmailVerificationHashId(int userId, int? centreId, int hashId)
@@ -96,6 +86,21 @@
                     centreId.Value,
                     hashId
                 );
+            }
+        }
+
+        private void UpdateVerificationDateForEmails(int userId, IEnumerable<(string, int?)> emails, DateTime? date)
+        {
+            foreach (var (_, centreId) in emails)
+            {
+                if (centreId == null)
+                {
+                    emailVerificationDataService.UpdateVerificationDateForPrimaryEmail(userId, date);
+                }
+                else
+                {
+                    emailVerificationDataService.UpdateVerificationDateForCentreEmail(userId, centreId.Value, date);
+                }
             }
         }
 

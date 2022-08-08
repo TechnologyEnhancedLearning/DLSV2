@@ -196,7 +196,6 @@
                         accountDetailsData.JobGroupId,
                         detailsLastChecked,
                         accountDetailsData.UserId,
-                        null,
                         shouldUpdateProfileImage
                     )
                 )
@@ -206,7 +205,6 @@
                         accountDetailsData.UserId,
                         centreId,
                         centreEmail,
-                        null,
                         A<IDbTransaction?>._
                     )
                 )
@@ -263,7 +261,6 @@
                         accountDetailsData.JobGroupId,
                         detailsLastChecked,
                         accountDetailsData.UserId,
-                        null,
                         shouldUpdateProfileImage
                     )
                 )
@@ -345,7 +342,6 @@
                     accountDetailsData.UserId,
                     centreId,
                     centreEmail,
-                    null,
                     A<IDbTransaction?>._
                 )
             ).MustHaveHappenedOnceExactly();
@@ -384,7 +380,6 @@
                     accountDetailsData.UserId,
                     centreId,
                     centreEmail,
-                    detailsLastChecked,
                     A<IDbTransaction?>._
                 )
             ).MustHaveHappenedOnceExactly();
@@ -417,7 +412,6 @@
                         accountDetailsData.JobGroupId,
                         detailsLastChecked,
                         accountDetailsData.UserId,
-                        null,
                         changesMadeBySameUser
                     )
                 )
@@ -451,7 +445,6 @@
                         accountDetailsData.JobGroupId,
                         detailsLastChecked,
                         accountDetailsData.UserId,
-                        null,
                         changesMadeBySameUser
                     )
                 )
@@ -473,7 +466,7 @@
             };
 
             A.CallTo(
-                () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, null, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._)
             ).DoesNothing();
             A.CallTo(() => userDataService.IsCentreEmailBeingChangedForUserAtCentre(A<int>._, A<int>._, A<string?>._))
                 .Returns(true);
@@ -483,13 +476,13 @@
 
             // Then
             A.CallTo(
-                () => userDataService.SetCentreEmail(userId, 1, "email@centre1.com", null, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(userId, 1, "email@centre1.com", A<IDbTransaction?>._)
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
-                () => userDataService.SetCentreEmail(userId, 2, "email@centre2.com", null, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(userId, 2, "email@centre2.com", A<IDbTransaction?>._)
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
-                () => userDataService.SetCentreEmail(userId, 3, null, null, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(userId, 3, null, A<IDbTransaction?>._)
             ).MustHaveHappenedOnceExactly();
         }
 
@@ -504,7 +497,7 @@
 
             // Then
             A.CallTo(
-                () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, null, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._)
             ).MustNotHaveHappened();
         }
 

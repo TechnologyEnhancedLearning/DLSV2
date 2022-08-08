@@ -139,7 +139,6 @@
                     userId,
                     delegateRegistrationModel.Centre,
                     delegateRegistrationModel.CentreSpecificEmail,
-                    null,
                     transaction
                 );
             }
@@ -297,7 +296,6 @@
                     userId,
                     centreId,
                     centreSpecificEmail,
-                    null,
                     transaction
                 );
             }

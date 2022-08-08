@@ -357,7 +357,6 @@ namespace DigitalLearningSolutions.Web.Services
                 editAccountDetailsData.JobGroupId,
                 detailsLastChecked ?? currentTime,
                 editAccountDetailsData.UserId,
-                changeMadeBySameUser ? (DateTime?)null : currentTime,
                 changeMadeBySameUser
             );
         }
@@ -406,8 +405,7 @@ namespace DigitalLearningSolutions.Web.Services
                 userDataService.SetCentreEmail(
                     editAccountDetailsData.UserId,
                     centreId,
-                    centreEmail,
-                    changeMadeBySameUser ? (DateTime?)null : currentTime
+                    centreEmail
                 );
             }
         }

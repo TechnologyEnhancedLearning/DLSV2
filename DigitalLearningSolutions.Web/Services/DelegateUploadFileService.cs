@@ -176,8 +176,7 @@ namespace DigitalLearningSolutions.Web.Services
                     userDataService.SetCentreEmail(
                         delegateEntity.UserAccount.Id,
                         delegateEntity.DelegateAccount.CentreId,
-                        delegateRow.Email,
-                        clockUtility.UtcNow
+                        delegateRow.Email
                     );
                 }
 

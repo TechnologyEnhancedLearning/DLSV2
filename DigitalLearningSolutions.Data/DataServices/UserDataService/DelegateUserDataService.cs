@@ -209,7 +209,6 @@
             int jobGroupId,
             DateTime detailsLastChecked,
             int userId,
-            DateTime? emailVerified,
             bool changeMadeBySameUser = false
         )
         {
@@ -225,8 +224,7 @@
                             ProfessionalRegistrationNumber = @professionalRegNumber,
                             HasBeenPromptedForPrn = @hasBeenPromptedForPrn,
                             JobGroupId = @jobGroupId,
-                            DetailsLastChecked = (CASE WHEN @changeMadeBySameUser = 1 THEN @detailsLastChecked ELSE DetailsLastChecked END),
-                            EmailVerified = (CASE WHEN @isPrimaryEmailUpdated = 1 THEN @emailVerified ELSE EmailVerified END)
+                            DetailsLastChecked = (CASE WHEN @changeMadeBySameUser = 1 THEN @detailsLastChecked ELSE DetailsLastChecked END)
                         WHERE ID = @userId",
                 new
                 {
@@ -240,7 +238,6 @@
                     jobGroupId,
                     detailsLastChecked,
                     changeMadeBySameUser,
-                    emailVerified,
                     isPrimaryEmailUpdated,
                 }
             );

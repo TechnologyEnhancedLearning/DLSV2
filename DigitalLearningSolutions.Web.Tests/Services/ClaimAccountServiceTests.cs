@@ -198,7 +198,6 @@
                         DefaultUserId,
                         DefaultCentreId,
                         null,
-                        null,
                         A<IDbTransaction?>._
                     )
                 )
@@ -229,7 +228,6 @@
                     () => userDataService.SetCentreEmail(
                         DefaultUserId,
                         DefaultCentreId,
-                        null,
                         null,
                         A<IDbTransaction?>._
                     )

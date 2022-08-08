@@ -86,7 +86,6 @@
                 A.Fake<IJobGroupsDataService>(),
                 A.Fake<IEmailVerificationService>(),
                 A.Fake<PromptsService>(),
-                A.Fake<IClockUtility>(),
                 A.Fake<ILogger<MyAccountController>>(),
                 A.Fake<IConfiguration>()
             )
@@ -150,7 +149,6 @@
                 A.Fake<IJobGroupsDataService>(),
                 A.Fake<IEmailVerificationService>(),
                 A.Fake<PromptsService>(),
-                A.Fake<IClockUtility>(),
                 A.Fake<ILogger<MyAccountController>>(),
                 A.Fake<IConfiguration>()
             )

@@ -56,7 +56,6 @@
             int jobGroupId,
             DateTime detailsLastChecked,
             int userId,
-            DateTime? emailVerified = null,
             bool changeMadeBySameUser = false
         );
 
@@ -158,7 +157,6 @@
             int userId,
             int centreId,
             string? email,
-            DateTime? emailVerified = null,
             IDbTransaction? transaction = null
         );
 

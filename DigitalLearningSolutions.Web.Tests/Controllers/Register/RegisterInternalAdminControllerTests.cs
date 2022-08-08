@@ -202,7 +202,6 @@
                         DefaultUserId,
                         DefaultCentreId,
                         centreSpecificEmail,
-                        null,
                         A<IDbTransaction?>._
                     )
                 )
@@ -268,7 +267,6 @@
                             A<int>._,
                             A<int>._,
                             A<string?>._,
-                            null,
                             A<IDbTransaction?>._
                         )
                     )

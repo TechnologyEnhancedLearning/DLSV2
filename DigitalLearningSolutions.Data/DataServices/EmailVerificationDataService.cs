@@ -13,11 +13,11 @@
 
         void UpdateEmailVerificationHashIdForCentreEmail(int userId, int centreId, int hashId);
 
-        bool IsEmailVerifiedForUser(int userId, string email);
+        bool AccountEmailRequiresVerification(int userId, string email);
 
-        void UpdateVerificationDateForPrimaryEmail(int userId, DateTime date);
+        void UpdateVerificationDateForPrimaryEmail(int userId, DateTime? date);
 
-        void UpdateVerificationDateForCentreEmail(int userId, int centreId, DateTime date);
+        void UpdateVerificationDateForCentreEmail(int userId, int centreId, DateTime? date);
     }
 
     public class EmailVerificationDataService : IEmailVerificationDataService
@@ -56,7 +56,7 @@
             );
         }
 
-        public bool IsEmailVerifiedForUser(int userId, string email)
+        public bool AccountEmailRequiresVerification(int userId, string email)
         {
             var isEmailVerifiedAsPrimaryEmail = connection.Query<DateTime?>(
                 @"SELECT EmailVerified FROM Users WHERE ID = @userId AND PrimaryEmail = email",
@@ -71,12 +71,12 @@
             return isEmailVerifiedAsPrimaryEmail || isEmailVerifiedAsCentreEmail;
         }
 
-        public void UpdateVerificationDateForPrimaryEmail(int userId, DateTime date)
+        public void UpdateVerificationDateForPrimaryEmail(int userId, DateTime? date)
         {
             connection.Execute(@"UPDATE Users SET EmailVerified = @date WHERE ID = @userId", new { date, userId });
         }
 
-        public void UpdateVerificationDateForCentreEmail(int userId, int centreId, DateTime date)
+        public void UpdateVerificationDateForCentreEmail(int userId, int centreId, DateTime? date)
         {
             connection.Execute(
                 @"UPDATE UserCentreDetails SET EmailVerified = @date WHERE UserID = @userId AND CentreID = @centreId",
