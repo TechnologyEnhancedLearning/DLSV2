@@ -3,13 +3,10 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [Authorize(Policy = CustomPolicies.BasicUser)]
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class VerifyEmailController : Controller
     {
