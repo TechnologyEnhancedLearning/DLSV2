@@ -4,8 +4,10 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
@@ -141,26 +143,26 @@
                 password
             );
 
-            return RedirectToAction(
-                "Confirmation",
-                new
+            TempData.Set(
+                new ClaimAccountConfirmationViewModel
                 {
-                    email = model.Email,
-                    centreName = model.CentreName,
-                    candidateNumber = model.CandidateNumber,
+                    Email = model.Email,
+                    CentreName = model.CentreName,
+                    CandidateNumber = model.CandidateNumber,
+                    WasPasswordSetByAdmin = password == null,
                 }
             );
+
+            return RedirectToAction("Confirmation");
         }
 
         [HttpGet]
-        public IActionResult Confirmation(string email, string centreName, string candidateNumber)
+        [ServiceFilter(typeof(RedirectEmptySessionData<ClaimAccountConfirmationViewModel>))]
+        public IActionResult Confirmation()
         {
-            var model = new ClaimAccountViewModel
-            {
-                Email = email,
-                CentreName = centreName,
-                CandidateNumber = candidateNumber,
-            };
+            var model = TempData.Peek<ClaimAccountConfirmationViewModel>()!;
+
+            TempData.Clear();
 
             return View(model);
         }
