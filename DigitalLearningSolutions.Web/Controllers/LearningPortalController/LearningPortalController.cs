@@ -26,6 +26,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly IFrameworkService frameworkService;
         private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly IMultiPageFormService multiPageFormService;
 
         public LearningPortalController(
             ICentresDataService centresDataService,
@@ -39,7 +40,8 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             IConfiguration config,
             IActionPlanService actionPlanService,
             ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
-            ISearchSortFilterPaginateService searchSortFilterPaginateService
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
+            IMultiPageFormService multiPageFormService
         )
         {
             this.centresDataService = centresDataService;
@@ -54,6 +56,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.actionPlanService = actionPlanService;
             this.candidateAssessmentDownloadFileService = candidateAssessmentDownloadFileService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
+            this.multiPageFormService = multiPageFormService;
         }
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]

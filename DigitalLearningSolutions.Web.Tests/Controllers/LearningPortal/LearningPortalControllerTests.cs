@@ -33,6 +33,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private IFrameworkService frameworkService = null!;
         private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IMultiPageFormService multiPageFormService = null!;
 
         [SetUp]
         public void SetUp()
@@ -75,7 +76,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 config,
                 actionPlanService,
                 candidateAssessmentDownloadFileService,
-                searchSortFilterPaginateService
+                searchSortFilterPaginateService,
+                multiPageFormService
             );
             controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
             controller = controller.WithMockTempData();

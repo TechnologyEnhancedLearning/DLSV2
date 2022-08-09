@@ -73,6 +73,7 @@
                 throw new MultiPageFormDataException("Attempted to get data with no Guid identifier");
             }
 
+            var settings = new JsonSerializerSettings() { ObjectCreationHandling = ObjectCreationHandling.Replace };
             var tempDataGuid = (Guid)tempData.Peek(feature.TempDataKey);
             var existingMultiPageFormData =
                 multiPageFormDataService.GetMultiPageFormDataByGuidAndFeature(tempDataGuid, feature.Name);
@@ -83,7 +84,7 @@
             }
 
             tempData[feature.TempDataKey] = tempDataGuid;
-            return JsonConvert.DeserializeObject<T>(existingMultiPageFormData.Json);
+            return JsonConvert.DeserializeObject<T>(existingMultiPageFormData.Json, settings);
         }
 
         public void ClearMultiPageFormData(MultiPageFormDataFeature feature, ITempDataDictionary tempData)
