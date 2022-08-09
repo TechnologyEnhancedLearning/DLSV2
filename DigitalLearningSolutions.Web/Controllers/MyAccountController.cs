@@ -20,7 +20,6 @@
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
@@ -177,14 +176,14 @@
 
             var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
 
-            ValidateEditDetailsData(ModelState, formData, delegateAccount, centreId);
+            ValidateEditDetailsData(formData, delegateAccount, centreId);
 
             if (!ModelState.IsValid)
             {
                 return ReturnToEditDetailsViewWithErrors(formData, userId, centreId, dlsSubApplication);
             }
 
-            ValidateEmailUniqueness(ModelState, formData, userId, centreId);
+            ValidateEmailUniqueness(formData, userId, centreId);
 
             if (!ModelState.IsValid)
             {
@@ -225,7 +224,6 @@
         }
 
         private void ValidateEditDetailsData(
-            ModelStateDictionary modelState,
             MyAccountEditDetailsFormData formData,
             DelegateAccount? delegateAccount,
             int? centreId
@@ -235,7 +233,7 @@
             // This form potentially (if the user is not logged in to a centre) contains the ability to edit all the user's centre-specific emails,
             // which are validated by a Validate function, so in order to display error messages for them if some other field is ALSO invalid,
             // we must manually call formData.Validate() here.
-            if (!modelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 var validationResults = formData.Validate(new ValidationContext(formData));
 
@@ -243,14 +241,14 @@
                 {
                     foreach (var memberName in error.MemberNames)
                     {
-                        modelState.AddModelError(memberName, error.ErrorMessage);
+                        ModelState.AddModelError(memberName, error.ErrorMessage);
                     }
                 }
             }
 
             if (delegateAccount != null)
             {
-                promptsService.ValidateCentreRegistrationPrompts(formData, centreId!.Value, modelState);
+                promptsService.ValidateCentreRegistrationPrompts(formData, centreId!.Value, ModelState);
             }
 
             if (formData.ProfileImageFile != null)
@@ -262,14 +260,13 @@
             }
 
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
-                modelState,
+                ModelState,
                 formData.HasProfessionalRegistrationNumber,
                 formData.ProfessionalRegistrationNumber
             );
         }
 
         private void ValidateEmailUniqueness(
-            ModelStateDictionary modelState,
             MyAccountEditDetailsFormData formData,
             int userId,
             int? centreId
@@ -277,46 +274,42 @@
         {
             if (userDataService.PrimaryEmailIsInUseByOtherUser(formData.Email!, userId))
             {
-                modelState.AddModelError(
+                ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
-                    CommonValidationErrorMessages.EmailAlreadyInUse
+                    CommonValidationErrorMessages.EmailInUse
                 );
             }
 
             if (centreId.HasValue)
             {
-                ValidateSingleCentreEmail(modelState, formData.CentreSpecificEmail, centreId.Value, userId);
+                ValidateSingleCentreEmail(formData.CentreSpecificEmail, centreId.Value, userId);
             }
             else
             {
-                ValidateCentreEmailsDictionary(modelState, formData.CentreSpecificEmailsByCentreId, userId);
+                ValidateCentreEmailsDictionary(formData.CentreSpecificEmailsByCentreId, userId);
             }
         }
 
-        private void ValidateSingleCentreEmail(ModelStateDictionary modelState, string? email, int centreId, int userId)
+        private void ValidateSingleCentreEmail(string? email, int centreId, int userId)
         {
             if (IsCentreSpecificEmailAlreadyInUse(email, centreId, userId))
             {
-                modelState.AddModelError(
+                ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),
-                    CommonValidationErrorMessages.CentreEmailAlreadyInUse
+                    CommonValidationErrorMessages.EmailInUseAtCentre
                 );
             }
         }
 
-        private void ValidateCentreEmailsDictionary(
-            ModelStateDictionary modelState,
-            Dictionary<int, string?> centreEmailsDictionary,
-            int userId
-        )
+        private void ValidateCentreEmailsDictionary(Dictionary<int, string?> centreEmailsDictionary, int userId)
         {
             foreach (var (centreId, centreEmail) in centreEmailsDictionary)
             {
                 if (IsCentreSpecificEmailAlreadyInUse(centreEmail, centreId, userId))
                 {
-                    modelState.AddModelError(
+                    ModelState.AddModelError(
                         $"{nameof(MyAccountEditDetailsFormData.AllCentreSpecificEmailsDictionary)}_{centreId}",
-                        CommonValidationErrorMessages.CentreEmailAlreadyInUse
+                        CommonValidationErrorMessages.EmailInUseAtCentre
                     );
                 }
             }

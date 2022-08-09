@@ -87,6 +87,7 @@
 
             // Then
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
+
             result.Should().BeNotFoundResult();
         }
 
@@ -95,14 +96,15 @@
         {
             // Given
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
-            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).Returns(false);
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, DefaultUserId)).Returns(false);
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, DefaultUserId))
+                .MustHaveHappenedOnceExactly();
+
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
                 .WithActionName("AccessDenied");
         }
@@ -112,13 +114,12 @@
         {
             // Given
             A.CallTo(() => centresDataService.GetCentreName(DefaultCentreId)).Returns("Some centre");
-            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).Returns(true);
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, DefaultUserId)).Returns(true);
 
             // When
             var result = controller.Index(DefaultCentreId);
 
             // Then
-            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId)).MustHaveHappenedOnceExactly();
             result.Should().BeViewResult().ModelAs<InternalAdminInformationViewModel>();
         }
 
@@ -127,10 +128,13 @@
         {
             // Given
             var model = GetDefaultInternalAdminInformationViewModel();
+
             controller.ModelState.AddModelError(
                 nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
                 "error message"
             );
+
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, DefaultUserId)).Returns(true);
 
             // When
             var result = await controller.Index(model);
@@ -138,6 +142,25 @@
             // Then
             result.Should().BeViewResult().ModelAs<InternalAdminInformationViewModel>();
             controller.ModelState.IsValid.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task IndexPost_with_not_allowed_admin_registration_returns_access_denied()
+        {
+            // Given
+            var model = GetDefaultInternalAdminInformationViewModel();
+
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, DefaultUserId)).Returns(false);
+
+            // When
+            var result = await controller.Index(model);
+
+            // Then
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, DefaultUserId))
+                .MustHaveHappenedOnceExactly();
+
+            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
+                .WithActionName("AccessDenied");
         }
 
         [Test]
@@ -153,6 +176,7 @@
         {
             // Given
             var model = GetDefaultInternalAdminInformationViewModel(centreSpecificEmail);
+
             if (centreSpecificEmail != null)
             {
                 A.CallTo(
@@ -160,6 +184,8 @@
                 ).Returns(false);
                 A.CallTo(() => userDataService.GetCentreEmail(DefaultUserId, DefaultCentreId)).Returns(null);
             }
+
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, DefaultUserId)).Returns(true);
 
             A.CallTo(
                     () => centresService.IsAnEmailValidForCentreManager(

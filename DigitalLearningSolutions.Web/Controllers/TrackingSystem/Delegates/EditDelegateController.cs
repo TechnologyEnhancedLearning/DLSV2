@@ -102,7 +102,7 @@
             {
                 ModelState.AddModelError(
                     nameof(EditDetailsFormData.CentreSpecificEmail),
-                    CommonValidationErrorMessages.CentreEmailAlreadyInUse
+                    CommonValidationErrorMessages.EmailInUseAtCentre
                 );
 
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
