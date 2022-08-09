@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.UserDataServiceTests
 {
+    using System;
     using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -163,6 +164,116 @@
 
             result.Should().BeNull();
             user.Should().NotBeNull();
+        }
+
+        [Test]
+        public void GetPrimaryEmailVerificationDetails_returns_expected_value()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const string email = "unverified@email.com";
+            const string code = "code";
+            var createdDate = new DateTime(2022, 1, 1);
+
+            var userId = GivenEmailVerificationHashLinkedToUser(email, code, createdDate);
+
+            // When
+            var result = userDataService.GetPrimaryEmailVerificationDetails(code);
+
+            // Then
+            result!.UserId.Should().Be(userId);
+            result.Email.Should().Be(email);
+            result.EmailVerificationHash.Should().Be(code);
+            result.EmailVerified.Should().BeNull();
+            result.EmailVerificationHashCreatedDate.Should().Be(createdDate);
+        }
+
+        [Test]
+        public void SetPrimaryEmailVerified_sets_EmailVerified_and_EmailVerificationHashId()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const string email = "unverified@email.com";
+            const string code = "code";
+            var createdDate = new DateTime(2022, 1, 1);
+            var verifiedDate = new DateTime(2022, 1, 3);
+
+            var userId = GivenEmailVerificationHashLinkedToUser(email, code, createdDate);
+
+            // When
+            userDataService.SetPrimaryEmailVerified(userId, email, verifiedDate);
+
+            // Then
+            var (emailVerified, emailVerificationHashId) = connection.QuerySingle<(DateTime?, int?)>(
+                @"SELECT EmailVerified, EmailVerificationHashID FROM Users WHERE ID = @userId",
+                new { userId }
+            );
+
+            emailVerified.Should().BeSameDateAs(verifiedDate);
+            emailVerificationHashId.Should().BeNull();
+        }
+
+        [Test]
+        public void
+            SetPrimaryEmailVerified_does_not_set_EmailVerified_or_EmailVerificationHashId_if_userId_and_email_do_not_match()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const string email = "SetPrimaryEmailVerified@email.com";
+            var oldVerifiedDate = new DateTime(2022, 1, 1);
+            var newVerifiedDate = new DateTime(2022, 1, 3);
+
+            var oldEmailVerificationHashId = connection.QuerySingle<int>(
+                @"INSERT INTO EmailVerificationHashes (EmailVerificationHash, CreatedDate) OUTPUT Inserted.ID VALUES ('code', CURRENT_TIMESTAMP);"
+            );
+
+            connection.Execute(
+                @"UPDATE Users SET PrimaryEmail = @email, EmailVerified = @oldVerifiedDate, EmailVerificationHashID = @oldEmailVerificationHashId WHERE ID = @userId",
+                new { userId, email, oldVerifiedDate, oldEmailVerificationHashId }
+            );
+
+            // When
+            userDataService.SetPrimaryEmailVerified(userId, "different@email.com", newVerifiedDate);
+
+            // Then
+            var (emailVerified, emailVerificationHashId) = connection.QuerySingle<(DateTime?, int?)>(
+                @"SELECT EmailVerified, EmailVerificationHashID FROM Users WHERE ID = @userId",
+                new { userId }
+            );
+
+            emailVerified.Should().BeSameDateAs(oldVerifiedDate);
+            emailVerificationHashId.Should().Be(oldEmailVerificationHashId);
+        }
+
+        private int GivenEmailVerificationHashLinkedToUser(
+            string email,
+            string hash,
+            DateTime createdDate
+        )
+        {
+            var emailVerificationHashesId = connection.QuerySingle<int>(
+                @"INSERT INTO EmailVerificationHashes (EmailVerificationHash, CreatedDate) OUTPUT Inserted.ID VALUES (@hash, @createdDate);",
+                new { hash, createdDate }
+            );
+
+            return connection.QuerySingle<int>(
+                @"INSERT INTO Users (
+                        FirstName,
+                        LastName,
+                        PrimaryEmail,
+                        PasswordHash,
+                        Active,
+                        JobGroupID,
+                        EmailVerificationHashID
+                    )
+                    OUTPUT Inserted.ID
+                    VALUES ('Unverified', 'Email', @email, 'password', 1, 1, @emailVerificationHashesId)",
+                new { email, emailVerificationHashesId }
+            );
         }
     }
 }
