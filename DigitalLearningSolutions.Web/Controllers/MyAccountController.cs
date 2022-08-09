@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -380,13 +381,21 @@
                     centreId.Value,
                     true
                 );
-                emailVerificationService.SendVerificationEmails(userAccount, unverifiedModifiedEmails);
+                emailVerificationService.SendVerificationEmails(
+                    userAccount,
+                    unverifiedModifiedEmails,
+                    config.GetAppRootPath()
+                );
             }
             else
             {
                 userService.UpdateUserDetails(accountDetailsData, true);
                 userService.SetCentreEmails(userAccount.Id, formData.CentreSpecificEmailsByCentreId);
-                emailVerificationService.SendVerificationEmails(userAccount, unverifiedModifiedEmails);
+                emailVerificationService.SendVerificationEmails(
+                    userAccount,
+                    unverifiedModifiedEmails,
+                    config.GetAppRootPath()
+                );
             }
         }
 

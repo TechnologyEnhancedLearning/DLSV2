@@ -4,18 +4,20 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
-    using Microsoft.Extensions.Configuration;
     using MimeKit;
 
     public interface IEmailVerificationService
     {
         bool AccountEmailRequiresVerification(int userId, string email);
 
-        void SendVerificationEmails(UserAccount userAccount, IEnumerable<(string, int?)> unverifiedEmails);
+        void SendVerificationEmails(
+            UserAccount userAccount,
+            IEnumerable<(string, int?)> unverifiedEmails,
+            string baseUrl
+        );
     }
 
     public class EmailVerificationService : IEmailVerificationService
@@ -23,19 +25,16 @@
         private readonly IEmailVerificationDataService emailVerificationDataService;
         private readonly IEmailService emailService;
         private readonly IClockUtility clockUtility;
-        private readonly IConfiguration config;
 
         public EmailVerificationService(
             IEmailVerificationDataService emailVerificationDataService,
             IEmailService emailService,
-            IClockUtility clockUtility,
-            IConfiguration config
+            IClockUtility clockUtility
         )
         {
             this.emailVerificationDataService = emailVerificationDataService;
             this.emailService = emailService;
             this.clockUtility = clockUtility;
-            this.config = config;
         }
 
         public bool AccountEmailRequiresVerification(int userId, string email)
@@ -43,7 +42,11 @@
             return emailVerificationDataService.AccountEmailRequiresVerification(userId, email);
         }
 
-        public void SendVerificationEmails(UserAccount userAccount, IEnumerable<(string, int?)> unverifiedEmails)
+        public void SendVerificationEmails(
+            UserAccount userAccount,
+            IEnumerable<(string, int?)> unverifiedEmails,
+            string baseUrl
+        )
         {
             foreach (var emailGroup in unverifiedEmails.GroupBy(emailCentrePair => emailCentrePair.Item1))
             {
@@ -56,7 +59,7 @@
                 }
 
                 emailService.SendEmail(
-                    GenerateVerificationEmail(userAccount, hash, emailGroup.Key, config.GetAppRootPath())
+                    GenerateVerificationEmail(userAccount, hash, emailGroup.Key, baseUrl)
                 );
             }
         }

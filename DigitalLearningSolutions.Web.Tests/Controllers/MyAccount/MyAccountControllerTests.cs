@@ -108,6 +108,14 @@
                 () => userService.SetCentreEmails(A<int>._, A<Dictionary<int, string?>>._)
             ).MustNotHaveHappened();
 
+            A.CallTo(
+                () => emailVerificationService.SendVerificationEmails(
+                    A<UserAccount>._,
+                    A<IEnumerable<(string, int?)>>._,
+                    A<string>._
+                )
+            ).MustNotHaveHappened();
+
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
         }
 
@@ -397,6 +405,14 @@
                 )
                 .MustHaveHappened();
 
+            A.CallTo(
+                () => emailVerificationService.SendVerificationEmails(
+                    testUserEntity.UserAccount,
+                    A<IEnumerable<(string, int?)>>.That.IsEmpty(),
+                    A<string>._
+                )
+            ).MustHaveHappened();
+
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
@@ -625,6 +641,14 @@
                 () => userService.SetCentreEmails(
                     userId,
                     A<Dictionary<int, string?>>.That.IsSameSequenceAs(centreSpecificEmailsByCentreId)
+                )
+            ).MustHaveHappened();
+
+            A.CallTo(
+                () => emailVerificationService.SendVerificationEmails(
+                    testUserEntity.UserAccount,
+                    A<IEnumerable<(string, int?)>>.That.IsEmpty(),
+                    A<string>._
                 )
             ).MustHaveHappened();
 
