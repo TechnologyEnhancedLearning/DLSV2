@@ -114,6 +114,14 @@
         );
 
         void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails);
+
+        void SynchroniseJobGroupsOnOtherCentres(
+            int delegateId,
+            int oldJobGroupId,
+            int newJobGroupId,
+            AccountDetailsData accountDetailsData,
+            string? centreEmail
+        )
     }
 
     public class GroupsService : IGroupsService

@@ -461,6 +461,21 @@
             ).MustNotHaveHappened();
         }
 
+        // TODO HEEDLS-1018 remember to rename this when you rename the method
+        [Test]
+        public void SynchroniseJobGroupsOnOtherCentres_synchronises_job_groups_at_other_centres()
+        {
+            // Given
+
+            // When
+
+            // Then
+
+            // call to job group on other centre
+            // no call to non-job group on other centre
+            // to call to 
+        }
+
         private void DelegateMustHaveBeenRemovedFromGroups(IEnumerable<int> groupIds)
         {
             foreach (var groupId in groupIds)
