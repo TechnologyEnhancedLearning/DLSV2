@@ -42,7 +42,6 @@
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
         private readonly IEmailVerificationService emailVerificationService;
-        private readonly IClockUtility clockUtility;
 
         public MyAccountController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
@@ -52,7 +51,6 @@
             IJobGroupsDataService jobGroupsDataService,
             IEmailVerificationService emailVerificationService,
             PromptsService registrationPromptsService,
-            IClockUtility clockUtility,
             ILogger<MyAccountController> logger,
             IConfiguration config
         )
@@ -64,7 +62,6 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.emailVerificationService = emailVerificationService;
             promptsService = registrationPromptsService;
-            this.clockUtility = clockUtility;
             this.logger = logger;
             this.config = config;
         }
@@ -249,19 +246,12 @@
                 delegateAccount?.Id
             );
 
-            var verifiedModifiedEmails = new List<(string, int?)>();
             var unverifiedModifiedEmails = new List<(string, int?)>();
 
-            if (userDataService.IsPrimaryEmailBeingChangedForUser(userId, accountDetailsData.Email))
+            if (userDataService.IsPrimaryEmailBeingChangedForUser(userId, accountDetailsData.Email) &&
+                emailVerificationService.AccountEmailRequiresVerification(userId, accountDetailsData.Email))
             {
-                if (emailVerificationService.AccountEmailRequiresVerification(userId, accountDetailsData.Email))
-                {
-                    unverifiedModifiedEmails.Add((accountDetailsData.Email, null));
-                }
-                else
-                {
-                    verifiedModifiedEmails.Add((accountDetailsData.Email, null));
-                }
+                unverifiedModifiedEmails.Add((accountDetailsData.Email, null));
             }
 
             if (centreId.HasValue)
@@ -271,19 +261,13 @@
                         userId,
                         centreId.Value,
                         formData.CentreSpecificEmail
+                    ) &&
+                    emailVerificationService.AccountEmailRequiresVerification(
+                        userId,
+                        formData.CentreSpecificEmail
                     ))
                 {
-                    if (emailVerificationService.AccountEmailRequiresVerification(
-                            userId,
-                            formData.CentreSpecificEmail
-                        ))
-                    {
-                        unverifiedModifiedEmails.Add((formData.CentreSpecificEmail, centreId.Value));
-                    }
-                    else
-                    {
-                        verifiedModifiedEmails.Add((formData.CentreSpecificEmail, centreId.Value));
-                    }
+                    unverifiedModifiedEmails.Add((formData.CentreSpecificEmail, centreId.Value));
                 }
 
                 userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -300,34 +284,16 @@
                 foreach (var (centre, email) in formData.CentreSpecificEmailsByCentreId)
                 {
                     if (!string.IsNullOrWhiteSpace(email) &&
-                        userDataService.IsCentreEmailBeingChangedForUserAtCentre(userId, centre, email))
+                        userDataService.IsCentreEmailBeingChangedForUserAtCentre(userId, centre, email) &&
+                        emailVerificationService.AccountEmailRequiresVerification(userId, email))
                     {
-                        if (emailVerificationService.AccountEmailRequiresVerification(userId, email))
-                        {
-                            unverifiedModifiedEmails.Add((email, centre));
-                        }
-                        else
-                        {
-                            verifiedModifiedEmails.Add((email, centre));
-                        }
+                        unverifiedModifiedEmails.Add((email, centre));
                     }
                 }
 
                 userService.UpdateUserDetails(accountDetailsData, true);
                 userService.SetCentreEmails(userId, formData.CentreSpecificEmailsByCentreId);
                 emailVerificationService.SendVerificationEmails(userEntity!.UserAccount, unverifiedModifiedEmails);
-            }
-
-            var currentTime = clockUtility.UtcNow;
-
-            foreach (var (_, centre) in verifiedModifiedEmails)
-            {
-                emailVerificationService.UpdateVerificationDateForEmail(userId, centre, currentTime);
-            }
-
-            foreach (var (_, centre) in unverifiedModifiedEmails)
-            {
-                emailVerificationService.UpdateVerificationDateForEmail(userId, centre, null);
             }
 
             if (unverifiedModifiedEmails.Any())

@@ -55,6 +55,7 @@
             bool hasBeenPromptedForPrn,
             int jobGroupId,
             DateTime detailsLastChecked,
+            DateTime? emailVerified,
             int userId,
             bool changeMadeBySameUser = false
         );
@@ -157,6 +158,7 @@
             int userId,
             int centreId,
             string? email,
+            DateTime? emailVerified,
             IDbTransaction? transaction = null
         );
 

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Threading.Tasks;
@@ -202,6 +203,7 @@
                         DefaultUserId,
                         DefaultCentreId,
                         centreSpecificEmail,
+                        A<DateTime?>._,
                         A<IDbTransaction?>._
                     )
                 )
@@ -267,6 +269,7 @@
                             A<int>._,
                             A<int>._,
                             A<string?>._,
+                            A<DateTime?>._,
                             A<IDbTransaction?>._
                         )
                     )

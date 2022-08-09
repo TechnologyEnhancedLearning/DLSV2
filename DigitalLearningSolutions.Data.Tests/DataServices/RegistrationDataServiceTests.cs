@@ -24,15 +24,23 @@
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
         private IUserDataService userDataService = null!;
+        private IEmailVerificationDataService emailVerificationDataService = null!;
 
         [SetUp]
         public void SetUp()
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
             userDataService = new UserDataService(connection);
+            emailVerificationDataService = A.Fake<IEmailVerificationDataService>();
             clockUtility = A.Fake<IClockUtility>();
             logger = A.Fake<ILogger<IRegistrationDataService>>();
-            service = new RegistrationDataService(connection, userDataService, clockUtility, logger);
+            service = new RegistrationDataService(
+                connection,
+                userDataService,
+                emailVerificationDataService,
+                clockUtility,
+                logger
+            );
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }
 
@@ -139,6 +147,7 @@
                     3
                 );
             var currentTime = DateTime.Now;
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             const int userId = 2;
 
             // When
@@ -224,6 +233,7 @@
             var currentTime = new DateTime(2022, 06, 27, 11, 03, 12);
             const int userId = 281052;
             const int existingDelegateId = 142559;
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
             // When
             var userBeforeUpdate = userDataService.GetUserAccountById(userId);
@@ -315,6 +325,7 @@
                     centreId,
                     centreSpecificEmail: newCentreEmail
                 );
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
             // When
             service.ReregisterDelegateAccountAndCentreDetailForExistingUser(
@@ -329,7 +340,7 @@
             {
                 var userCentreDetails = connection.GetEmailAndVerifiedDateFromUserCentreDetails(userId, centreId);
                 userCentreDetails.email.Should().Be(newCentreEmail);
-                userCentreDetails.emailVerified.Should().BeNull();
+                userCentreDetails.emailVerified.Should().Be(currentTime);
             }
         }
 
@@ -387,6 +398,7 @@
                 RegistrationModelTestHelper.GetDefaultCentreManagerAccountRegistrationModel(
                     categoryId: 1
                 );
+            A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
             // When
             var id = service.RegisterAdmin(registrationModel);
@@ -418,6 +430,7 @@
                 RegistrationModelTestHelper.GetDefaultCentreManagerAccountRegistrationModel(
                     categoryId: 1
                 );
+            A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
             // When
             var id = service.RegisterAdmin(registrationModel);

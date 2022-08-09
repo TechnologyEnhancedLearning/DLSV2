@@ -31,6 +31,7 @@
         private ISessionDataService sessionDataService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private IEmailVerificationDataService emailVerificationDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -39,6 +40,7 @@
             groupsService = A.Fake<IGroupsService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             sessionDataService = A.Fake<ISessionDataService>();
+            emailVerificationDataService = A.Fake<IEmailVerificationDataService>();
             logger = A.Fake<Logger<IUserService>>();
             clockUtility = A.Fake<IClockUtility>();
             configuration = A.Fake<IConfiguration>();
@@ -48,6 +50,7 @@
                 groupsService,
                 centreContractAdminUsageService,
                 sessionDataService,
+                emailVerificationDataService,
                 logger,
                 clockUtility,
                 configuration
@@ -165,8 +168,8 @@
             const string centreEmail = "test@email.com";
             const bool shouldUpdateProfileImage = true;
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
-            var detailsLastChecked = new DateTime(2022, 1, 1);
-            A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+            var currentTime = new DateTime(2022, 1, 1);
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             A.CallTo(
                 () => userDataService.IsCentreEmailBeingChangedForUserAtCentre(
                     accountDetailsData.UserId,
@@ -194,7 +197,8 @@
                         accountDetailsData.ProfessionalRegistrationNumber,
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
-                        detailsLastChecked,
+                        currentTime,
+                        currentTime,
                         accountDetailsData.UserId,
                         shouldUpdateProfileImage
                     )
@@ -205,6 +209,7 @@
                         accountDetailsData.UserId,
                         centreId,
                         centreEmail,
+                        currentTime,
                         A<IDbTransaction?>._
                     )
                 )
@@ -236,8 +241,8 @@
                 answer6
             );
 
-            var detailsLastChecked = new DateTime(2022, 1, 1);
-            A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+            var currentTime = new DateTime(2022, 1, 1);
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             A.CallTo(() => userDataService.GetDelegateUserById(delegateAccount.Id)).Returns(delegateUser);
 
             // When
@@ -259,7 +264,8 @@
                         accountDetailsData.ProfessionalRegistrationNumber,
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
-                        detailsLastChecked,
+                        currentTime,
+                        currentTime,
                         accountDetailsData.UserId,
                         shouldUpdateProfileImage
                     )
@@ -274,7 +280,7 @@
                         answer4,
                         answer5,
                         answer6,
-                        detailsLastChecked
+                        currentTime
                     )
                 )
                 .MustHaveHappened();
@@ -317,8 +323,8 @@
             const string centreEmail = "test@email.com";
             const bool changeMadeBySameUser = true;
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
-            var detailsLastChecked = new DateTime(2022, 1, 1);
-            A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+            var currentTime = new DateTime(2022, 1, 1);
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             A.CallTo(
                 () => userDataService.IsCentreEmailBeingChangedForUserAtCentre(
                     accountDetailsData.UserId,
@@ -342,6 +348,7 @@
                     accountDetailsData.UserId,
                     centreId,
                     centreEmail,
+                    currentTime,
                     A<IDbTransaction?>._
                 )
             ).MustHaveHappenedOnceExactly();
@@ -355,8 +362,8 @@
             const string centreEmail = "test@email.com";
             const bool changeMadeBySameUser = false;
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
-            var detailsLastChecked = new DateTime(2022, 1, 1);
-            A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+            var currentTime = new DateTime(2022, 1, 1);
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             A.CallTo(
                 () => userDataService.IsCentreEmailBeingChangedForUserAtCentre(
                     accountDetailsData.UserId,
@@ -380,6 +387,7 @@
                     accountDetailsData.UserId,
                     centreId,
                     centreEmail,
+                    currentTime,
                     A<IDbTransaction?>._
                 )
             ).MustHaveHappenedOnceExactly();
@@ -391,13 +399,14 @@
             // Given
             const bool changesMadeBySameUser = true;
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
-            var detailsLastChecked = new DateTime(2022, 1, 1);
+            var currentTime = new DateTime(2022, 1, 1);
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
             // When
             userService.UpdateUserDetails(
                 accountDetailsData,
                 changesMadeBySameUser,
-                detailsLastChecked
+                currentTime
             );
 
             // Then
@@ -410,7 +419,8 @@
                         accountDetailsData.ProfessionalRegistrationNumber,
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
-                        detailsLastChecked,
+                        currentTime,
+                        currentTime,
                         accountDetailsData.UserId,
                         changesMadeBySameUser
                     )
@@ -424,8 +434,8 @@
             // Given
             const bool changesMadeBySameUser = true;
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
-            var detailsLastChecked = new DateTime(2022, 1, 1);
-            A.CallTo(() => clockUtility.UtcNow).Returns(detailsLastChecked);
+            var currentTime = new DateTime(2022, 1, 1);
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
             // When
             userService.UpdateUserDetails(
@@ -443,7 +453,8 @@
                         accountDetailsData.ProfessionalRegistrationNumber,
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
-                        detailsLastChecked,
+                        currentTime,
+                        currentTime,
                         accountDetailsData.UserId,
                         changesMadeBySameUser
                     )
@@ -464,9 +475,17 @@
                 { 2, "email@centre2.com" },
                 { 3, null },
             };
+            var currentTime = new DateTime(2022, 5, 5);
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
             A.CallTo(
-                () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(
+                    A<int>._,
+                    A<int>._,
+                    A<string?>._,
+                    A<DateTime?>._,
+                    A<IDbTransaction?>._
+                )
             ).DoesNothing();
             A.CallTo(() => userDataService.IsCentreEmailBeingChangedForUserAtCentre(A<int>._, A<int>._, A<string?>._))
                 .Returns(true);
@@ -476,13 +495,13 @@
 
             // Then
             A.CallTo(
-                () => userDataService.SetCentreEmail(userId, 1, "email@centre1.com", A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(userId, 1, "email@centre1.com", currentTime, A<IDbTransaction?>._)
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
-                () => userDataService.SetCentreEmail(userId, 2, "email@centre2.com", A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(userId, 2, "email@centre2.com", currentTime, A<IDbTransaction?>._)
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
-                () => userDataService.SetCentreEmail(userId, 3, null, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(userId, 3, null, null, A<IDbTransaction?>._)
             ).MustHaveHappenedOnceExactly();
         }
 
@@ -497,7 +516,13 @@
 
             // Then
             A.CallTo(
-                () => userDataService.SetCentreEmail(A<int>._, A<int>._, A<string?>._, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(
+                    A<int>._,
+                    A<int>._,
+                    A<string?>._,
+                    A<DateTime?>._,
+                    A<IDbTransaction?>._
+                )
             ).MustNotHaveHappened();
         }
 

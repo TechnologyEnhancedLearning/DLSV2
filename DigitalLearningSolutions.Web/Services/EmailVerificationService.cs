@@ -15,8 +15,6 @@
     {
         bool AccountEmailRequiresVerification(int userId, string email);
 
-        void UpdateVerificationDateForEmail(int userId, int? centreId, DateTime? date);
-
         void SendVerificationEmails(UserAccount userAccount, IEnumerable<(string, int?)> unverifiedEmails);
     }
 
@@ -43,18 +41,6 @@
         public bool AccountEmailRequiresVerification(int userId, string email)
         {
             return emailVerificationDataService.AccountEmailRequiresVerification(userId, email);
-        }
-
-        public void UpdateVerificationDateForEmail(int userId, int? centreId, DateTime? date)
-        {
-            if (centreId == null)
-            {
-                emailVerificationDataService.UpdateVerificationDateForPrimaryEmail(userId, date);
-            }
-            else
-            {
-                emailVerificationDataService.UpdateVerificationDateForCentreEmail(userId, centreId.Value, date);
-            }
         }
 
         public void SendVerificationEmails(UserAccount userAccount, IEnumerable<(string, int?)> unverifiedEmails)

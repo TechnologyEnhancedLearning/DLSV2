@@ -39,16 +39,19 @@
         private readonly IDbConnection connection;
         private readonly ILogger<IRegistrationDataService> logger;
         private readonly IUserDataService userDataService;
+        private readonly IEmailVerificationDataService emailVerificationDataService;
 
         public RegistrationDataService(
             IDbConnection connection,
             IUserDataService userDataService,
+            IEmailVerificationDataService emailVerificationDataService,
             IClockUtility clockUtility,
             ILogger<IRegistrationDataService> logger
         )
         {
             this.connection = connection;
             this.userDataService = userDataService;
+            this.emailVerificationDataService = emailVerificationDataService;
             this.clockUtility = clockUtility;
             this.logger = logger;
         }
@@ -135,10 +138,20 @@
                     delegateRegistrationModel.CentreSpecificEmail
                 ))
             {
+                var emailVerified =
+                    string.IsNullOrWhiteSpace(delegateRegistrationModel.CentreSpecificEmail) ||
+                    emailVerificationDataService.AccountEmailRequiresVerification(
+                        userId,
+                        delegateRegistrationModel.CentreSpecificEmail
+                    )
+                        ? (DateTime?)null
+                        : clockUtility.UtcNow;
+
                 userDataService.SetCentreEmail(
                     userId,
                     delegateRegistrationModel.Centre,
                     delegateRegistrationModel.CentreSpecificEmail,
+                    emailVerified,
                     transaction
                 );
             }
@@ -292,10 +305,17 @@
         {
             if (userDataService.IsCentreEmailBeingChangedForUserAtCentre(userId, centreId, centreSpecificEmail))
             {
+                var emailVerified =
+                    string.IsNullOrWhiteSpace(centreSpecificEmail) ||
+                    emailVerificationDataService.AccountEmailRequiresVerification(userId, centreSpecificEmail)
+                        ? (DateTime?)null
+                        : clockUtility.UtcNow;
+
                 userDataService.SetCentreEmail(
                     userId,
                     centreId,
                     centreSpecificEmail,
+                    emailVerified,
                     transaction
                 );
             }

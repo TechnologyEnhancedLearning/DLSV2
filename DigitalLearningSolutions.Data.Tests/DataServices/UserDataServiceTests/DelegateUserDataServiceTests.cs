@@ -198,6 +198,7 @@
                     true,
                     jobGroupId,
                     DateTime.Now,
+                    null,
                     61188
                 );
                 var updatedUser = userDataService.GetDelegateUserById(2)!;

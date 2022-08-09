@@ -28,13 +28,47 @@
             }
 
             // When
-            userDataService.SetCentreEmail(8, 374, email);
+            userDataService.SetCentreEmail(8, 374, email, null);
             var result = connection.Query<string?>(@"SELECT Email FROM UserCentreDetails WHERE UserID = 8")
                 .SingleOrDefault();
             var count = connection.Query<int>(@"SELECT COUNT(*) FROM UserCentreDetails WHERE UserID = 8");
 
             // Then
             result.Should().BeEquivalentTo(email);
+            count.Should().Equal(entriesCount);
+        }
+
+        [Test]
+        [TestCase(true, null, 1)]
+        [TestCase(true, "new@admin.email", 1)]
+        [TestCase(false, null, 0)]
+        [TestCase(false, "new@admin.email", 1)]
+        public void SetCentreEmail_sets_emailVerified_if_provided_and_email_not_empty(
+            bool detailsExist,
+            string? email,
+            int entriesCount
+        )
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            var emailVerified = new DateTime(2022, 2, 2);
+            if (detailsExist)
+            {
+                connection.Execute(
+                    @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
+                        VALUES (8, 374, 'sample@admin.email')"
+                );
+            }
+
+            // When
+            userDataService.SetCentreEmail(8, 374, email, emailVerified);
+            var result = connection.Query<DateTime?>(@"SELECT EmailVerified FROM UserCentreDetails WHERE UserID = 8")
+                .SingleOrDefault();
+            var count = connection.Query<int>(@"SELECT COUNT(*) FROM UserCentreDetails WHERE UserID = 8");
+
+            // Then
+            result.Should().Be(email == null ? (DateTime?)null : emailVerified);
             count.Should().Equal(entriesCount);
         }
 

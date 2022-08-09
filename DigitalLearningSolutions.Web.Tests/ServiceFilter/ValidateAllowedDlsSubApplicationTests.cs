@@ -3,7 +3,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -86,7 +85,6 @@
                 A.Fake<IJobGroupsDataService>(),
                 A.Fake<IEmailVerificationService>(),
                 A.Fake<PromptsService>(),
-                A.Fake<IClockUtility>(),
                 A.Fake<ILogger<MyAccountController>>(),
                 A.Fake<IConfiguration>()
             )
@@ -150,7 +148,6 @@
                 A.Fake<IJobGroupsDataService>(),
                 A.Fake<IEmailVerificationService>(),
                 A.Fake<PromptsService>(),
-                A.Fake<IClockUtility>(),
                 A.Fake<ILogger<MyAccountController>>(),
                 A.Fake<IConfiguration>()
             )

@@ -95,12 +95,14 @@ namespace DigitalLearningSolutions.Web.Services
         private readonly ILogger<IUserService> logger;
         private readonly ISessionDataService sessionDataService;
         private readonly IUserDataService userDataService;
+        private readonly IEmailVerificationDataService emailVerificationDataService;
 
         public UserService(
             IUserDataService userDataService,
             IGroupsService groupsService,
             ICentreContractAdminUsageService centreContractAdminUsageService,
             ISessionDataService sessionDataService,
+            IEmailVerificationDataService emailVerificationDataService,
             ILogger<IUserService> logger,
             IClockUtility clockUtility,
             IConfiguration configuration
@@ -110,6 +112,7 @@ namespace DigitalLearningSolutions.Web.Services
             this.groupsService = groupsService;
             this.centreContractAdminUsageService = centreContractAdminUsageService;
             this.sessionDataService = sessionDataService;
+            this.emailVerificationDataService = emailVerificationDataService;
             this.logger = logger;
             this.clockUtility = clockUtility;
             this.configuration = configuration;
@@ -347,6 +350,13 @@ namespace DigitalLearningSolutions.Web.Services
         )
         {
             var currentTime = clockUtility.UtcNow;
+            var emailVerified = changeMadeBySameUser && emailVerificationDataService.AccountEmailRequiresVerification(
+                editAccountDetailsData.UserId,
+                editAccountDetailsData.Email
+            )
+                ? (DateTime?)null
+                : currentTime;
+
             userDataService.UpdateUser(
                 editAccountDetailsData.FirstName,
                 editAccountDetailsData.Surname,
@@ -356,6 +366,7 @@ namespace DigitalLearningSolutions.Web.Services
                 editAccountDetailsData.HasBeenPromptedForPrn,
                 editAccountDetailsData.JobGroupId,
                 detailsLastChecked ?? currentTime,
+                emailVerified,
                 editAccountDetailsData.UserId,
                 changeMadeBySameUser
             );
@@ -402,21 +413,39 @@ namespace DigitalLearningSolutions.Web.Services
                     centreEmail
                 ))
             {
+                var emailVerified = string.IsNullOrWhiteSpace(centreEmail) || (changeMadeBySameUser &&
+                                                                               emailVerificationDataService
+                                                                                   .AccountEmailRequiresVerification(
+                                                                                       editAccountDetailsData.UserId,
+                                                                                       centreEmail
+                                                                                   ))
+                    ? (DateTime?)null
+                    : currentTime;
+
                 userDataService.SetCentreEmail(
                     editAccountDetailsData.UserId,
                     centreId,
-                    centreEmail
+                    centreEmail,
+                    emailVerified
                 );
             }
         }
 
         public void SetCentreEmails(int userId, Dictionary<int, string?> centreEmailsByCentreId)
         {
+            var currentTime = clockUtility.UtcNow;
+
             foreach (var (centreId, email) in centreEmailsByCentreId)
             {
                 if (userDataService.IsCentreEmailBeingChangedForUserAtCentre(userId, centreId, email))
                 {
-                    userDataService.SetCentreEmail(userId, centreId, email);
+                    var emailVerified =
+                        string.IsNullOrWhiteSpace(email) ||
+                        emailVerificationDataService.AccountEmailRequiresVerification(userId, email)
+                            ? (DateTime?)null
+                            : currentTime;
+
+                    userDataService.SetCentreEmail(userId, centreId, email, emailVerified);
                 }
             }
         }

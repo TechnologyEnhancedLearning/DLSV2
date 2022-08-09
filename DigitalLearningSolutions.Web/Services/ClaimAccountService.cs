@@ -75,7 +75,7 @@
         )
         {
             userDataService.SetPrimaryEmailAndActivate(userId, primaryEmail);
-            userDataService.SetCentreEmail(userId, centreId, null);
+            userDataService.SetCentreEmail(userId, centreId, null, null);
             userDataService.SetRegistrationConfirmationHash(userId, centreId, null);
 
             if (password != null)

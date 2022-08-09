@@ -13,7 +13,6 @@
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.Supervisor;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
@@ -1197,6 +1196,7 @@
                     A<int>._,
                     A<int>._,
                     A<string>._,
+                    A<DateTime?>._,
                     A<IDbTransaction?>._
                 )
             ).DoesNothing();

@@ -13,6 +13,7 @@
             int userId,
             int centreId,
             string? email,
+            DateTime? emailVerified,
             IDbTransaction? transaction = null
         )
         {
@@ -29,6 +30,7 @@
                 userId,
                 centreId,
                 email,
+                emailVerified,
             };
 
             var detailsAlreadyExist = connection.QuerySingle<bool>(
@@ -47,11 +49,10 @@
                 connection.Execute(
                     string.IsNullOrWhiteSpace(email)
                         ? @"UPDATE UserCentreDetails
-                        SET Email = NULL,
-                            EmailVerified = NULL
+                        SET Email = NULL, EmailVerified = NULL
                         WHERE userID = @userId AND centreID = @centreId"
                         : @"UPDATE UserCentreDetails
-                        SET Email = @email
+                        SET Email = @email, EmailVerified = @emailVerified
                         WHERE userID = @userId AND centreID = @centreId",
                     userCentreDetailsValues,
                     transaction
@@ -64,13 +65,15 @@
                     (
                         UserId,
                         CentreId,
-                        Email
+                        Email,
+                        EmailVerified
                     )
                     VALUES
                     (
                         @userId,
                         @centreId,
-                        @email
+                        @email,
+                        @emailVerified
                     )",
                     userCentreDetailsValues,
                     transaction

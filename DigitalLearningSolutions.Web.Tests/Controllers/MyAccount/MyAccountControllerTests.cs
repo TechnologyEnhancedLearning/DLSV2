@@ -9,7 +9,6 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -40,7 +39,6 @@
         private IUserService userService = null!;
         private IUserDataService userDataService = null!;
         private IEmailVerificationService emailVerificationService = null!;
-        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void Setup()
@@ -53,7 +51,6 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             emailVerificationService = A.Fake<IEmailVerificationService>();
             promptsService = new PromptsService(centreRegistrationPromptsService);
-            clockUtility = A.Fake<IClockUtility>();
             logger = A.Fake<ILogger<MyAccountController>>();
             urlHelper = A.Fake<IUrlHelper>();
 
@@ -196,7 +193,6 @@
                     jobGroupsDataService,
                     emailVerificationService,
                     promptsService,
-                    clockUtility,
                     logger,
                     config
                 ).WithDefaultContext()
@@ -271,7 +267,6 @@
                     jobGroupsDataService,
                     emailVerificationService,
                     promptsService,
-                    clockUtility,
                     logger,
                     config
                 ).WithDefaultContext()
@@ -686,7 +681,6 @@
                 jobGroupsDataService,
                 emailVerificationService,
                 promptsService,
-                clockUtility,
                 logger,
                 config
             ).WithDefaultContext();
