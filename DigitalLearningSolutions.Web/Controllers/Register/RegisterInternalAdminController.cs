@@ -132,7 +132,7 @@
 
             if (model.CentreSpecificEmail != null)
             {
-                // TODO: 915 - Send verification link to centre email
+                // TODO: 915 - Send verification link to centre email if not already verified
             }
 
             return RedirectToAction("Confirmation", new { centreId = model.Centre });
@@ -142,11 +142,11 @@
         public IActionResult Confirmation(int centreId)
         {
             var userId = User.GetUserIdKnownNotNull();
-            var (unverifiedPrimaryEmail, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
-            var (_, centreName, unverifiedCentreEmail) = unverifiedCentreEmails.First(uce => uce.centreId == centreId);
+            var (_, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
+            var (_, centreName, unverifiedCentreEmail) = unverifiedCentreEmails.SingleOrDefault(uce => uce.centreId == centreId);
 
             var model = new AdminConfirmationViewModel(
-                unverifiedPrimaryEmail,
+                null,
                 unverifiedCentreEmail,
                 centreName
             );

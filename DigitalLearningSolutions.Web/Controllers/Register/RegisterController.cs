@@ -297,7 +297,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                         centreId,
                         candidateNumber,
                         approved,
-                        unverifiedPrimaryEmail = data.PrimaryEmailVerified == null ? data.PrimaryEmail : null,
+                        unverifiedPrimaryEmail = data.PrimaryEmail,
                         data.CentreSpecificEmail,
                     }
                 );

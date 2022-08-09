@@ -10,14 +10,12 @@
         public DelegateRegistrationData(
             int? centreId,
             int? supervisorDelegateId = null,
-            string? primaryEmail = null,
-            DateTime? primaryEmailVerified = null
+            string? primaryEmail = null
         ) : base(centreId)
         {
             IsCentreSpecificRegistration = centreId.HasValue;
             SupervisorDelegateId = supervisorDelegateId;
             PrimaryEmail = primaryEmail;
-            PrimaryEmailVerified = primaryEmailVerified;
         }
 
         public bool IsCentreSpecificRegistration { get; set; }
