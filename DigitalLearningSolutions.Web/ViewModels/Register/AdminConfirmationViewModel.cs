@@ -3,18 +3,18 @@
     public class AdminConfirmationViewModel
     {
         public AdminConfirmationViewModel(
-            string? unverifiedPrimaryEmail,
-            string? unverifiedCentreEmail,
+            string? primaryEmailIfUnverified,
+            string? centreEmailIfUnverified,
             string centreName
         )
         {
-            UnverifiedPrimaryEmail = unverifiedPrimaryEmail;
-            UnverifiedCentreEmail = unverifiedCentreEmail;
+            PrimaryEmailIfUnverified = primaryEmailIfUnverified;
+            CentreEmailIfUnverified = centreEmailIfUnverified;
             CentreName = centreName;
         }
 
-        public string? UnverifiedPrimaryEmail { get; }
-        public string? UnverifiedCentreEmail { get; }
+        public string? PrimaryEmailIfUnverified { get; }
+        public string? CentreEmailIfUnverified { get; }
         public string CentreName { get; }
     }
 }

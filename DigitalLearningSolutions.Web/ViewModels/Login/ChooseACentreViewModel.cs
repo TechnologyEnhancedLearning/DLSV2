@@ -9,13 +9,13 @@
         public ChooseACentreViewModel(
             List<ChooseACentreAccountViewModel> centreUserDetails,
             string? returnUrl,
-            string? unverifiedPrimaryEmail,
+            string? primaryEmailIfUnverified,
             IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> unverifiedCentreEmails
         )
         {
             CentreUserDetails = centreUserDetails;
             ReturnUrl = returnUrl;
-            PrimaryEmailIsVerified = unverifiedPrimaryEmail == null;
+            PrimaryEmailIsVerified = primaryEmailIfUnverified == null;
             NumberOfUnverifiedCentreEmails = unverifiedCentreEmails.Count();
         }
 

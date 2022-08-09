@@ -79,7 +79,7 @@
                 ? userService.GetAllCentreEmailsForUser(userId).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
-            var (unverifiedPrimaryEmail, unverifiedCentreEmails) =
+            var (_, unverifiedCentreEmails) =
                 userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id);
 
             var switchCentreReturnUrl = StringHelper.GetLocalRedirectUrl(config, SwitchCentreReturnUrl);

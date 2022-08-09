@@ -7,8 +7,8 @@
             bool approved,
             bool hasAdminAccountAtCentre,
             int? centreId,
-            string? unverifiedPrimaryEmail,
-            string? unverifiedCentreEmail,
+            string? primaryEmailIfUnverified,
+            string? centreEmailIfUnverified,
             string centreName
         )
         {
@@ -16,8 +16,8 @@
             Approved = approved;
             HasAdminAccountAtCentre = hasAdminAccountAtCentre;
             CentreId = centreId;
-            UnverifiedPrimaryEmail = unverifiedPrimaryEmail;
-            UnverifiedCentreEmail = unverifiedCentreEmail;
+            PrimaryEmailIfUnverified = primaryEmailIfUnverified;
+            CentreEmailIfUnverified = centreEmailIfUnverified;
             CentreName = centreName;
         }
 
@@ -25,8 +25,8 @@
         public bool Approved { get; }
         public bool HasAdminAccountAtCentre { get; }
         public int? CentreId { get; }
-        public string? UnverifiedPrimaryEmail { get; }
-        public string? UnverifiedCentreEmail { get; }
+        public string? PrimaryEmailIfUnverified { get; }
+        public string? CentreEmailIfUnverified { get; }
         public string CentreName { get; }
     }
 }

@@ -2,7 +2,7 @@
 @model ConfirmationVerifyEmailWarningViewModel
 
 @{
-  var primaryEmailIsUnverified = Model.UnverifiedPrimaryEmail != null;
+  var primaryEmailIsUnverified = Model.PrimaryEmailIfUnverified != null;
 
   var numSpecificPhrases = new {
     address = primaryEmailIsUnverified ? "addresses" : "address",
@@ -18,13 +18,13 @@
 
   @if (primaryEmailIsUnverified) {
     <p>
-      You need to verify your primary email address <strong>@Model.UnverifiedPrimaryEmail</strong>
-      and your centre email address <strong>@Model.UnverifiedCentreEmail</strong>
+      You need to verify your primary email address <strong>@Model.PrimaryEmailIfUnverified</strong>
+      and your centre email address <strong>@Model.CentreEmailIfUnverified</strong>
       to access your account at <strong>@Model.CentreName</strong>.
     </p>
   } else {
     <p>
-      You need to verify your centre email address <strong>@Model.UnverifiedCentreEmail</strong>
+      You need to verify your centre email address <strong>@Model.CentreEmailIfUnverified</strong>
       to access your account at <strong>@Model.CentreName</strong>.
     </p>
   }

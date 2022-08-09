@@ -4,8 +4,8 @@
 
 @{
   ViewData["Title"] = "Registration confirmation";
-  var emailsAreVerified = Model.UnverifiedPrimaryEmail == null && Model.UnverifiedCentreEmail == null;
-  var verifyEmailWarningViewModel = new ConfirmationVerifyEmailWarningViewModel(Model.UnverifiedPrimaryEmail, Model.UnverifiedCentreEmail, Model.CentreName);
+  var emailsAreVerified = Model.PrimaryEmailIfUnverified == null && Model.CentreEmailIfUnverified == null;
+  var verifyEmailWarningViewModel = new ConfirmationVerifyEmailWarningViewModel(Model.PrimaryEmailIfUnverified, Model.CentreEmailIfUnverified, Model.CentreName);
 }
 
 <div class="nhsuk-grid-row">

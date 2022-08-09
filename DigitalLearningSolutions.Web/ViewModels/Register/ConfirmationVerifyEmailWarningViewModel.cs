@@ -3,20 +3,20 @@
     public class ConfirmationVerifyEmailWarningViewModel
     {
         public ConfirmationVerifyEmailWarningViewModel(
-            string? unverifiedPrimaryEmail,
-            string? unverifiedCentreEmail,
+            string? primaryEmailIfUnverified,
+            string? centreEmailIfUnverified,
             string centreName
         )
         {
-            UnverifiedPrimaryEmail = unverifiedPrimaryEmail;
-            UnverifiedCentreEmail = unverifiedCentreEmail;
+            PrimaryEmailIfUnverified = primaryEmailIfUnverified;
+            CentreEmailIfUnverified = centreEmailIfUnverified;
             CentreName = centreName;
             NumberOfUnverifiedEmails =
-                (UnverifiedPrimaryEmail == null ? 0 : 1) + (UnverifiedPrimaryEmail == null ? 0 : 1);
+                (PrimaryEmailIfUnverified == null ? 0 : 1) + (PrimaryEmailIfUnverified == null ? 0 : 1);
         }
 
-        public string? UnverifiedPrimaryEmail { get; }
-        public string? UnverifiedCentreEmail { get; }
+        public string? PrimaryEmailIfUnverified { get; }
+        public string? CentreEmailIfUnverified { get; }
         public string CentreName { get; }
         public int NumberOfUnverifiedEmails { get; }
     }
