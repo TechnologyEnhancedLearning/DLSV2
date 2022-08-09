@@ -31,9 +31,9 @@
 
             if (unverifiedPrimaryEmail != null)
             {
-                context.Result = new RedirectToActionResult(
+                context.Result = controller.RedirectToAction(
+                    "Index",
                     "VerifyYourEmail",
-                    "VerifyEmail",
                     new { emailVerificationReason = EmailVerificationReason.EmailNotVerified }
                 );
             }

@@ -145,7 +145,7 @@
                 result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
                 AssertModelStateErrorIsExpected(
                     result,
-                    "This email is in already use by another user at the centre"
+                    "This email is already in use by another user at the centre"
                 );
             }
         }

@@ -61,7 +61,7 @@
 
             // When
             var returnedAdmins =
-                userDataService.GetAdminsByCentreId(expectedAdminEntity.AdminAccount.CentreId).ToList();
+                userDataService.GetActiveAdminsByCentreId(expectedAdminEntity.AdminAccount.CentreId).ToList();
 
             // Then
             using (new AssertionScope())

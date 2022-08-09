@@ -55,8 +55,9 @@
             new VerifyUserHasVerifiedPrimaryEmail(userService).OnActionExecuting(context);
 
             // Then
-            context.Result.Should().BeRedirectToActionResult().WithControllerName("VerifyEmail")
-                .WithActionName("VerifyYourEmail")
+            context.Result.Should().BeRedirectToActionResult()
+                .WithControllerName("VerifyYourEmail")
+                .WithActionName("Index")
                 .WithRouteValue("emailVerificationReason", EmailVerificationReason.EmailNotVerified);
         }
 

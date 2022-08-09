@@ -481,7 +481,10 @@
             var result = await controllerWithAuthenticatedUser.ChooseCentre(centreId, null);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("VerifyYourEmail").WithActionName("Index");
+            result.Should().BeRedirectToActionResult()
+                .WithControllerName("VerifyYourEmail")
+                .WithActionName("Index")
+                .WithRouteValue("emailVerificationReason", EmailVerificationReason.EmailNotVerified);
         }
 
         [Test]

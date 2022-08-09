@@ -1,6 +1,6 @@
 ﻿@using DigitalLearningSolutions.Data.Enums
 @using DigitalLearningSolutions.Web.ViewModels.VerifyEmail
-@model VerifyEmailViewModel
+@model VerifyYourEmailViewModel
 
 @{
   var title = Model.SingleUnverifiedEmail ? "Verify your email address" : "Verify your email addresses";
@@ -8,7 +8,7 @@
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
+  <div class="nhsuk-grid-column-full word-break">
     <h1 class="nhsuk-heading-xl">@title</h1>
 
     @if (Model.UnverifiedEmailsCount == 0) {

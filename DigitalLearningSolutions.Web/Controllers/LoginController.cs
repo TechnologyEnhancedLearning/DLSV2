@@ -24,12 +24,12 @@
     [SetSelectedTab(nameof(NavMenuTab.LogIn))]
     public class LoginController : Controller
     {
+        private readonly IClockUtility clockUtility;
         private readonly ILogger<LoginController> logger;
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
         private readonly IUserService userService;
         private readonly IConfigDataService configDataService;
-        private readonly IClockUtility clockUtility;
 
         public LoginController(
             ILoginService loginService,
@@ -150,7 +150,11 @@
 
             if (centreEmailIsUnverified)
             {
-                return RedirectToAction("Index", "VerifyYourEmail");
+                return RedirectToAction(
+                    "Index",
+                    "VerifyYourEmail",
+                    new { emailVerificationReason = EmailVerificationReason.EmailNotVerified }
+                );
             }
 
             var rememberMe = (await HttpContext.AuthenticateAsync()).Properties.IsPersistent;
