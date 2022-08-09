@@ -453,6 +453,43 @@
             emailVerificationHashIdAfterUpdate.Should().BeNull();
         }
 
+        [Test]
+        public void
+            SetCentreEmailVerified_does_not_set_EmailVerified_and_EmailVerificationHashId_if_userId_and_email_do_not_match()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const int centreId = 2;
+            const string email = "SetCentreEmailVerified@email.com";
+            var oldVerifiedDate = new DateTime(2022, 1, 1);
+            var newVerifiedDate = new DateTime(2022, 1, 3);
+
+            var oldEmailVerificationHashId = connection.QuerySingle<int>(
+                @"INSERT INTO EmailVerificationHashes (EmailVerificationHash, CreatedDate) OUTPUT Inserted.ID VALUES ('code', CURRENT_TIMESTAMP);"
+            );
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email, EmailVerified, EmailVerificationHashID)
+                    VALUES (@userId, @centreId, @email, @oldVerifiedDate, @oldEmailVerificationHashId)",
+                new { userId, centreId, email, oldVerifiedDate, oldEmailVerificationHashId }
+            );
+
+            // When
+            userDataService.SetCentreEmailVerified(userId, "different@email.com", newVerifiedDate);
+
+            // Then
+            var (emailVerified, emailVerificationHashId) =
+                connection.QuerySingle<(DateTime?, int?)>(
+                    @"SELECT EmailVerified, EmailVerificationHashID FROM UserCentreDetails WHERE UserID = @userId AND Email = @email",
+                    new { userId, email }
+                );
+
+            emailVerified.Should().BeSameDateAs(oldVerifiedDate);
+            emailVerificationHashId.Should().Be(oldEmailVerificationHashId);
+        }
+
         private void GivenUnclaimedUserExists(int userId, int centreId, string email, string hash)
         {
             connection.Execute(

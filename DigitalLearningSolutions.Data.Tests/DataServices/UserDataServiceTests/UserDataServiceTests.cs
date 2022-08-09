@@ -203,7 +203,7 @@
             var userId = GivenEmailVerificationHashLinkedToUser(email, code, createdDate);
 
             // When
-            userDataService.SetPrimaryEmailVerified(userId, verifiedDate);
+            userDataService.SetPrimaryEmailVerified(userId, email, verifiedDate);
 
             // Then
             var (emailVerified, emailVerificationHashId) = connection.QuerySingle<(DateTime?, int?)>(
@@ -213,6 +213,40 @@
 
             emailVerified.Should().BeSameDateAs(verifiedDate);
             emailVerificationHashId.Should().BeNull();
+        }
+
+        [Test]
+        public void
+            SetPrimaryEmailVerified_does_not_set_EmailVerified_or_EmailVerificationHashId_if_userId_and_email_do_not_match()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const string email = "SetPrimaryEmailVerified@email.com";
+            var oldVerifiedDate = new DateTime(2022, 1, 1);
+            var newVerifiedDate = new DateTime(2022, 1, 3);
+
+            var oldEmailVerificationHashId = connection.QuerySingle<int>(
+                @"INSERT INTO EmailVerificationHashes (EmailVerificationHash, CreatedDate) OUTPUT Inserted.ID VALUES ('code', CURRENT_TIMESTAMP);"
+            );
+
+            connection.Execute(
+                @"UPDATE Users SET PrimaryEmail = @email, EmailVerified = @oldVerifiedDate, EmailVerificationHashID = @oldEmailVerificationHashId WHERE ID = @userId",
+                new { userId, email, oldVerifiedDate, oldEmailVerificationHashId }
+            );
+
+            // When
+            userDataService.SetPrimaryEmailVerified(userId, "different@email.com", newVerifiedDate);
+
+            // Then
+            var (emailVerified, emailVerificationHashId) = connection.QuerySingle<(DateTime?, int?)>(
+                @"SELECT EmailVerified, EmailVerificationHashID FROM Users WHERE ID = @userId",
+                new { userId }
+            );
+
+            emailVerified.Should().BeSameDateAs(oldVerifiedDate);
+            emailVerificationHashId.Should().Be(oldEmailVerificationHashId);
         }
 
         private int GivenEmailVerificationHashLinkedToUser(

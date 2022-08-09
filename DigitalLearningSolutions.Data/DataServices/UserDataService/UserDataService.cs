@@ -194,7 +194,7 @@
 
         EmailVerificationDetails? GetCentreEmailVerificationDetails(string code);
 
-        void SetPrimaryEmailVerified(int userId, DateTime verifiedDateTime);
+        void SetPrimaryEmailVerified(int userId, string email, DateTime verifiedDateTime);
 
         void SetCentreEmailVerified(int userId, string email, DateTime verifiedDateTime);
     }
@@ -346,13 +346,13 @@
             ).SingleOrDefault();
         }
 
-        public void SetPrimaryEmailVerified(int userId, DateTime verifiedDateTime)
+        public void SetPrimaryEmailVerified(int userId, string email, DateTime verifiedDateTime)
         {
             connection.Execute(
                 @"UPDATE Users
                     SET EmailVerified = @verifiedDateTime, EmailVerificationHashID = NULL
-                    WHERE ID = @userId AND EmailVerified IS NULL",
-                new { userId, verifiedDateTime }
+                    WHERE ID = @userId AND PrimaryEmail = @email AND EmailVerified IS NULL",
+                new { userId, email, verifiedDateTime }
             );
         }
 

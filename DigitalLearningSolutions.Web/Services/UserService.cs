@@ -440,7 +440,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         public void SetEmailVerified(int userId, string email, DateTime verifiedDateTime)
         {
-            userDataService.SetPrimaryEmailVerified(userId, verifiedDateTime);
+            userDataService.SetPrimaryEmailVerified(userId, email, verifiedDateTime);
             userDataService.SetCentreEmailVerified(userId, email, verifiedDateTime);
         }
 
