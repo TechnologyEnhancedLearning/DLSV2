@@ -14,10 +14,6 @@
         void UpdateEmailVerificationHashIdForCentreEmail(int userId, int centreId, int hashId);
 
         bool AccountEmailRequiresVerification(int userId, string email);
-
-        void UpdateVerificationDateForPrimaryEmail(int userId, DateTime? date);
-
-        void UpdateVerificationDateForCentreEmail(int userId, int centreId, DateTime? date);
     }
 
     public class EmailVerificationDataService : IEmailVerificationDataService

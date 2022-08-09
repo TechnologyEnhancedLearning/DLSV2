@@ -568,6 +568,12 @@
             var (myAccountController, formData) =
                 GetCentrelessControllerAndFormData(userId, centreSpecificEmailsByCentreId);
 
+            var testUserEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(userId),
+                new AdminAccount[] { },
+                new[] { UserTestHelper.GetDefaultDelegateAccount() }
+            );
+
             A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId)).Returns(false);
 
             A.CallTo(
@@ -580,6 +586,8 @@
                     )
                 )
                 .DoesNothing();
+
+            A.CallTo(() => userService.GetUserById(userId)).Returns(testUserEntity);
 
             // When
             var result = await myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);

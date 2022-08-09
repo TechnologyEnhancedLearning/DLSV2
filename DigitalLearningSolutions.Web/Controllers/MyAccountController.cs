@@ -10,7 +10,6 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -21,6 +20,7 @@
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
@@ -171,69 +171,20 @@
             DlsSubApplication dlsSubApplication
         )
         {
-            // Custom Validate functions are not called if the ModelState is invalid due to attribute validation.
-            // This form potentially (if the user is not logged in to a centre) contains the ability to edit all the user's centre-specific emails,
-            // which are validated by a Validate function, so in order to display error messages for them if some other field is ALSO invalid,
-            // we must manually call formData.Validate() here.
-            if (!ModelState.IsValid)
-            {
-                var validationResults = formData.Validate(new ValidationContext(formData));
-
-                foreach (var error in validationResults)
-                {
-                    foreach (var memberName in error.MemberNames)
-                    {
-                        ModelState.AddModelError(memberName, error.ErrorMessage);
-                    }
-                }
-            }
-
             var centreId = User.GetCentreId();
             var userId = User.GetUserIdKnownNotNull();
             var userEntity = userService.GetUserById(userId);
 
             var delegateAccount = GetDelegateAccountIfActive(userEntity, centreId);
 
-            if (delegateAccount != null)
-            {
-                promptsService.ValidateCentreRegistrationPrompts(formData, centreId!.Value, ModelState);
-            }
-
-            if (formData.ProfileImageFile != null)
-            {
-                ModelState.AddModelError(
-                    nameof(MyAccountEditDetailsFormData.ProfileImageFile),
-                    "Preview your new profile picture before saving"
-                );
-            }
-
-            ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
-                ModelState,
-                formData.HasProfessionalRegistrationNumber,
-                formData.ProfessionalRegistrationNumber
-            );
+            ValidateEditDetailsData(ModelState, formData, delegateAccount, centreId);
 
             if (!ModelState.IsValid)
             {
                 return ReturnToEditDetailsViewWithErrors(formData, userId, centreId, dlsSubApplication);
             }
 
-            if (userDataService.PrimaryEmailIsInUseByOtherUser(formData.Email!, userId))
-            {
-                ModelState.AddModelError(
-                    nameof(MyAccountEditDetailsFormData.Email),
-                    CommonValidationErrorMessages.EmailAlreadyInUse
-                );
-            }
-
-            if (centreId.HasValue)
-            {
-                ValidateSingleCentreEmail(formData.CentreSpecificEmail, centreId.Value, userId);
-            }
-            else
-            {
-                ValidateCentreEmailsDictionary(formData.CentreSpecificEmailsByCentreId, userId);
-            }
+            ValidateEmailUniqueness(ModelState, formData, userId, centreId);
 
             if (!ModelState.IsValid)
             {
@@ -246,12 +197,144 @@
                 delegateAccount?.Id
             );
 
+            var unverifiedModifiedEmails = GetUnverifiedModifiedEmails(
+                userId,
+                centreId,
+                accountDetailsData.Email,
+                formData
+            );
+
+            SaveUserDetails(
+                userEntity!.UserAccount,
+                accountDetailsData,
+                delegateDetailsData,
+                formData,
+                centreId,
+                unverifiedModifiedEmails
+            );
+
+            var shouldRedirectToVerifyYourEmail = unverifiedModifiedEmails.Any();
+
+            return await GetRedirectLocation(
+                userEntity.UserAccount,
+                shouldRedirectToVerifyYourEmail,
+                shouldRedirectToVerifyYourEmail && centreId.HasValue,
+                formData.ReturnUrl,
+                dlsSubApplication
+            );
+        }
+
+        private void ValidateEditDetailsData(
+            ModelStateDictionary modelState,
+            MyAccountEditDetailsFormData formData,
+            DelegateAccount? delegateAccount,
+            int? centreId
+        )
+        {
+            // Custom Validate functions are not called if the ModelState is invalid due to attribute validation.
+            // This form potentially (if the user is not logged in to a centre) contains the ability to edit all the user's centre-specific emails,
+            // which are validated by a Validate function, so in order to display error messages for them if some other field is ALSO invalid,
+            // we must manually call formData.Validate() here.
+            if (!modelState.IsValid)
+            {
+                var validationResults = formData.Validate(new ValidationContext(formData));
+
+                foreach (var error in validationResults)
+                {
+                    foreach (var memberName in error.MemberNames)
+                    {
+                        modelState.AddModelError(memberName, error.ErrorMessage);
+                    }
+                }
+            }
+
+            if (delegateAccount != null)
+            {
+                promptsService.ValidateCentreRegistrationPrompts(formData, centreId!.Value, modelState);
+            }
+
+            if (formData.ProfileImageFile != null)
+            {
+                ModelState.AddModelError(
+                    nameof(MyAccountEditDetailsFormData.ProfileImageFile),
+                    "Preview your new profile picture before saving"
+                );
+            }
+
+            ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
+                modelState,
+                formData.HasProfessionalRegistrationNumber,
+                formData.ProfessionalRegistrationNumber
+            );
+        }
+
+        private void ValidateEmailUniqueness(
+            ModelStateDictionary modelState,
+            MyAccountEditDetailsFormData formData,
+            int userId,
+            int? centreId
+        )
+        {
+            if (userDataService.PrimaryEmailIsInUseByOtherUser(formData.Email!, userId))
+            {
+                modelState.AddModelError(
+                    nameof(MyAccountEditDetailsFormData.Email),
+                    CommonValidationErrorMessages.EmailAlreadyInUse
+                );
+            }
+
+            if (centreId.HasValue)
+            {
+                ValidateSingleCentreEmail(modelState, formData.CentreSpecificEmail, centreId.Value, userId);
+            }
+            else
+            {
+                ValidateCentreEmailsDictionary(modelState, formData.CentreSpecificEmailsByCentreId, userId);
+            }
+        }
+
+        private void ValidateSingleCentreEmail(ModelStateDictionary modelState, string? email, int centreId, int userId)
+        {
+            if (IsCentreSpecificEmailAlreadyInUse(email, centreId, userId))
+            {
+                modelState.AddModelError(
+                    nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),
+                    CommonValidationErrorMessages.CentreEmailAlreadyInUse
+                );
+            }
+        }
+
+        private void ValidateCentreEmailsDictionary(
+            ModelStateDictionary modelState,
+            Dictionary<int, string?> centreEmailsDictionary,
+            int userId
+        )
+        {
+            foreach (var (centreId, centreEmail) in centreEmailsDictionary)
+            {
+                if (IsCentreSpecificEmailAlreadyInUse(centreEmail, centreId, userId))
+                {
+                    modelState.AddModelError(
+                        $"{nameof(MyAccountEditDetailsFormData.AllCentreSpecificEmailsDictionary)}_{centreId}",
+                        CommonValidationErrorMessages.CentreEmailAlreadyInUse
+                    );
+                }
+            }
+        }
+
+        private List<(string, int?)> GetUnverifiedModifiedEmails(
+            int userId,
+            int? centreId,
+            string primaryEmail,
+            MyAccountEditDetailsFormData formData
+        )
+        {
             var unverifiedModifiedEmails = new List<(string, int?)>();
 
-            if (userDataService.IsPrimaryEmailBeingChangedForUser(userId, accountDetailsData.Email) &&
-                emailVerificationService.AccountEmailRequiresVerification(userId, accountDetailsData.Email))
+            if (userDataService.IsPrimaryEmailBeingChangedForUser(userId, primaryEmail) &&
+                emailVerificationService.AccountEmailRequiresVerification(userId, primaryEmail))
             {
-                unverifiedModifiedEmails.Add((accountDetailsData.Email, null));
+                unverifiedModifiedEmails.Add((primaryEmail, null));
             }
 
             if (centreId.HasValue)
@@ -269,15 +352,6 @@
                 {
                     unverifiedModifiedEmails.Add((formData.CentreSpecificEmail, centreId.Value));
                 }
-
-                userService.UpdateUserDetailsAndCentreSpecificDetails(
-                    accountDetailsData,
-                    delegateDetailsData,
-                    formData.CentreSpecificEmail,
-                    centreId.Value,
-                    true
-                );
-                emailVerificationService.SendVerificationEmails(userEntity!.UserAccount, unverifiedModifiedEmails);
             }
             else
             {
@@ -290,55 +364,64 @@
                         unverifiedModifiedEmails.Add((email, centre));
                     }
                 }
-
-                userService.UpdateUserDetails(accountDetailsData, true);
-                userService.SetCentreEmails(userId, formData.CentreSpecificEmailsByCentreId);
-                emailVerificationService.SendVerificationEmails(userEntity!.UserAccount, unverifiedModifiedEmails);
             }
 
-            if (unverifiedModifiedEmails.Any())
+            return unverifiedModifiedEmails;
+        }
+
+        private void SaveUserDetails(
+            UserAccount userAccount,
+            EditAccountDetailsData accountDetailsData,
+            DelegateDetailsData? delegateDetailsData,
+            MyAccountEditDetailsFormData formData,
+            int? centreId,
+            IEnumerable<(string, int?)> unverifiedModifiedEmails
+        )
+        {
+            if (centreId.HasValue)
             {
-                if (centreId != null)
+                userService.UpdateUserDetailsAndCentreSpecificDetails(
+                    accountDetailsData,
+                    delegateDetailsData,
+                    formData.CentreSpecificEmail,
+                    centreId.Value,
+                    true
+                );
+                emailVerificationService.SendVerificationEmails(userAccount, unverifiedModifiedEmails);
+            }
+            else
+            {
+                userService.UpdateUserDetails(accountDetailsData, true);
+                userService.SetCentreEmails(userAccount.Id, formData.CentreSpecificEmailsByCentreId);
+                emailVerificationService.SendVerificationEmails(userAccount, unverifiedModifiedEmails);
+            }
+        }
+
+        private async Task<IActionResult> GetRedirectLocation(
+            UserAccount userAccount,
+            bool shouldRedirectToVerifyYourEmail,
+            bool shouldLogIntoCentrelessAccount,
+            string? returnUrl,
+            DlsSubApplication dlsSubApplication
+        )
+        {
+            if (shouldRedirectToVerifyYourEmail)
+            {
+                if (shouldLogIntoCentrelessAccount)
                 {
                     var claim = ((ClaimsIdentity)User.Identity).FindFirst("IsPersistent");
                     var isPersistent = claim != null && Convert.ToBoolean(claim.Value);
                     await HttpContext.Logout();
-                    await this.CentrelessLogInAsync(userEntity.UserAccount, isPersistent);
+                    await this.CentrelessLogInAsync(userAccount, isPersistent);
                 }
-
                 var emailVerificationReason = EmailVerificationReason.EmailChanged;
                 return RedirectToAction("Index", "VerifyYourEmail", new { emailVerificationReason });
             }
 
-            return this.RedirectToReturnUrl(formData.ReturnUrl, logger) ?? RedirectToAction(
+            return this.RedirectToReturnUrl(returnUrl, logger) ?? RedirectToAction(
                 "Index",
                 new { dlsSubApplication = dlsSubApplication.UrlSegment }
             );
-        }
-
-        private void ValidateSingleCentreEmail(string? email, int centreId, int userId)
-        {
-            if (IsCentreSpecificEmailAlreadyInUse(email, centreId, userId))
-            {
-                ModelState.AddModelError(
-                    nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),
-                    CommonValidationErrorMessages.CentreEmailAlreadyInUse
-                );
-            }
-        }
-
-        private void ValidateCentreEmailsDictionary(Dictionary<int, string?> centreEmailsDictionary, int userId)
-        {
-            foreach (var (centreId, centreEmail) in centreEmailsDictionary)
-            {
-                if (IsCentreSpecificEmailAlreadyInUse(centreEmail, centreId, userId))
-                {
-                    ModelState.AddModelError(
-                        $"{nameof(MyAccountEditDetailsFormData.AllCentreSpecificEmailsDictionary)}_{centreId}",
-                        CommonValidationErrorMessages.CentreEmailAlreadyInUse
-                    );
-                }
-            }
         }
 
         private bool IsCentreSpecificEmailAlreadyInUse(string? email, int centreId, int userId)
