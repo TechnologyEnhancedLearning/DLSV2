@@ -338,7 +338,7 @@
 
             var minValue = assessmentQuestion.MinValue;
             var maxValue = assessmentQuestion.MaxValue;
-            if (result != null)
+            if (result > 0)
             {
                 if (result < minValue || result > maxValue)
                 {
