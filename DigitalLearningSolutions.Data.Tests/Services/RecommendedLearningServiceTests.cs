@@ -39,6 +39,7 @@
         private ILearningLogItemsDataService learningLogItemsDataService = null!;
         private IRecommendedLearningService recommendedLearningService = null!;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
+        private IConfigDataService configDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -47,12 +48,14 @@
             learningLogItemsDataService = A.Fake<ILearningLogItemsDataService>();
             learningHubResourceService = A.Fake<ILearningHubResourceService>();
             selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
+            configDataService = A.Fake<IConfigDataService>();
 
             recommendedLearningService = new RecommendedLearningService(
                 selfAssessmentDataService,
                 competencyLearningResourcesDataService,
                 learningHubResourceService,
-                learningLogItemsDataService
+                learningLogItemsDataService,
+                configDataService
             );
         }
 
@@ -211,7 +214,9 @@
                 .With(clr => clr.LearningHubResourceReferenceId = LearningHubResourceReferenceId)
                 .And(clr => clr.LearningResourceReferenceId = LearningResourceReferenceId).Build();
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(A<int>._)
+                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(
+                    A<int>._
+                )
             ).Returns(competencyLearningResources);
 
             GivenLearningHubApiReturnsResources(0);
@@ -226,6 +231,37 @@
                     )
                 )
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task
+            GetRecommendedLearningForSelfAssessment_calls_learning_hub_resource_service_with_only_the_first_MaxSignpostedResources_ids()
+        {
+            // Given
+            GivenLearningHubApiReturnsResources(0);
+
+            A.CallTo(() => configDataService.GetConfigValue("MaxSignpostedResources")).Returns("3");
+
+            A.CallTo(() => selfAssessmentDataService.GetCompetencyIdsForSelfAssessment(SelfAssessmentId))
+                .Returns(new[] { CompetencyId });
+
+            var competencyLearningResources = Builder<CompetencyLearningResource>.CreateListOfSize(50).Build();
+
+            A.CallTo(
+                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(
+                    CompetencyId
+                )
+            ).Returns(competencyLearningResources);
+
+            // When
+            await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId);
+
+            // Then
+            A.CallTo(
+                () => learningHubResourceService.GetBulkResourcesByReferenceIds(
+                    A<List<int>>.That.IsSameSequenceAs(new List<int> { 1, 2, 3 })
+                )
+            ).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -535,7 +571,9 @@
             };
 
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(CompetencyId)
+                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(
+                    CompetencyId
+                )
             ).Returns(new List<CompetencyLearningResource> { competencyLearningResource });
         }
 
@@ -558,7 +596,9 @@
                 .Build();
 
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(CompetencyId)
+                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(
+                    CompetencyId
+                )
             ).Returns(competencyLearningResources);
         }
 
