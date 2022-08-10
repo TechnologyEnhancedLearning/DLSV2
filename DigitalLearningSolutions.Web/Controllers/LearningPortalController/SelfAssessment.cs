@@ -812,10 +812,10 @@
                 MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
                 TempData
             );
-            return RedirectToAction("ReviewConfirmationRequests", new { selfAssessmentId });
+            return RedirectToAction("VerificationPickSupervisor", new { selfAssessmentId });
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Confirmation")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests")]
         public IActionResult ReviewConfirmationRequests(int selfAssessmentId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
@@ -837,7 +837,7 @@
             return View("SelfAssessments/ReviewConfirmationRequests", model);
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Supervisor")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/ChooseSupervisor")]
         public IActionResult VerificationPickSupervisor(int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
@@ -869,7 +869,7 @@
         }
 
         [HttpPost]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Supervisor")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/ChooseSupervisor")]
         public IActionResult VerificationPickSupervisor(VerificationPickSupervisorViewModel model)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
@@ -911,7 +911,7 @@
             return RedirectToAction("VerificationPickResults", new { sessionRequestVerification.SelfAssessmentID });
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Results")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/PickResults")]
         public IActionResult VerificationPickResults(int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
@@ -947,7 +947,7 @@
         }
 
         [HttpPost]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Results")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/PickResults")]
         public IActionResult VerificationPickResults(VerificationPickResultsViewModel model, int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
@@ -982,7 +982,7 @@
             return RedirectToAction("VerificationSummary", new { sessionRequestVerification.SelfAssessmentID });
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Summary")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/Summary")]
         public IActionResult VerificationSummary(int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
@@ -1027,7 +1027,7 @@
             return View("SelfAssessments/VerificationSummary", model);
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Verification/{candidateAssessmentSupervisorId}/{selfAssessmentResultId}/Resend")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Confirmation/{candidateAssessmentSupervisorId}/{selfAssessmentResultId}/Resend")]
         public IActionResult ResendSupervisorVerificationRequest(int selfAssessmentId, string vocabulary, int candidateAssessmentSupervisorId, int selfAssessmentResultId)
         {
 

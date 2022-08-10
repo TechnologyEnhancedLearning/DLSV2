@@ -14,7 +14,8 @@
 @section mobilebacklink
 {
   <p class="nhsuk-breadcrumb__back">
-    <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
+    <a class="nhsuk-breadcrumb__backlink"
+       asp-action="ReviewConfirmationRequests"
        asp-route-vocabulary="@Model.VocabPlural()"
        asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
       Back to @Model.VocabPlural()
