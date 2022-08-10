@@ -11,7 +11,6 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
@@ -331,7 +330,8 @@ namespace DigitalLearningSolutions.Web.Services
             var userId = CreateDelegateAccountForAdmin(registrationModel, registerJourneyContainsTermsAndConditions);
 
             var accountRegistrationModel = new AdminAccountRegistrationModel(registrationModel, userId);
-            registrationDataService.RegisterAdmin(accountRegistrationModel);
+
+            registrationDataService.RegisterAdmin(accountRegistrationModel, true);
 
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
@@ -366,7 +366,18 @@ namespace DigitalLearningSolutions.Web.Services
                 userAccount.ProfileImage
             );
 
-            registrationDataService.RegisterAdmin(new AdminAccountRegistrationModel(registrationModel, userId));
+            // TODO: 915 - replace true with call to AccountEmailRequiresVerification*
+            var centreEmailRequiresVerification = true;
+            /*var centreEmailRequiresVerification =
+                emailVerificationService.AccountEmailRequiresVerification(
+                    userId,
+                    registrationModel.CentreSpecificEmail
+                );*/
+
+            registrationDataService.RegisterAdmin(
+                new AdminAccountRegistrationModel(registrationModel, userId),
+                centreEmailRequiresVerification
+            );
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
             transaction.Complete();
@@ -415,7 +426,15 @@ namespace DigitalLearningSolutions.Web.Services
                     true
                 );
 
-                registrationDataService.RegisterAdmin(adminRegistrationModel);
+                // TODO: 915 - replace true with call to AccountEmailRequiresVerification*
+                var centreEmailRequiresVerification = true;
+                /*var centreEmailRequiresVerification =
+                    emailVerificationService.AccountEmailRequiresVerification(
+                        userId,
+                        registrationModel.CentreSpecificEmail
+                    );*/
+
+                registrationDataService.RegisterAdmin(adminRegistrationModel, centreEmailRequiresVerification);
             }
         }
 
@@ -441,7 +460,8 @@ namespace DigitalLearningSolutions.Web.Services
 
                 var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
-                    registerJourneyContainsTermsAndConditions
+                    registerJourneyContainsTermsAndConditions,
+                    delegateRegistrationModel.IsSelfRegistered
                 );
 
                 groupsService.AddNewDelegateToAppropriateGroups(delegateId, delegateRegistrationModel);
@@ -482,10 +502,20 @@ namespace DigitalLearningSolutions.Web.Services
                 );
             }
 
+            // TODO: 915 - replace true with call to AccountEmailRequiresVerification*
+            var centreEmailRequiresVerification = true;
+            /*var centreEmailRequiresVerification =
+                emailVerificationService.AccountEmailRequiresVerification(
+                    userId,
+                    registrationModel.CentreSpecificEmail
+                );*/
+
             var currentTime = clockUtility.UtcNow;
+
             return registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
                 delegateRegistrationModel,
                 userId,
+                centreEmailRequiresVerification,
                 currentTime
             );
         }
@@ -505,11 +535,20 @@ namespace DigitalLearningSolutions.Web.Services
                 );
             }
 
+            // TODO: 915 - replace true with call to AccountEmailRequiresVerification*
+            var centreEmailRequiresVerification = true;
+            /*var centreEmailRequiresVerification =
+                emailVerificationService.AccountEmailRequiresVerification(
+                    userId,
+                    registrationModel.CentreSpecificEmail
+                );*/
+
             var currentTime = clockUtility.UtcNow;
             registrationDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
                 delegateRegistrationModel,
                 userId,
                 delegateId,
+                centreEmailRequiresVerification,
                 currentTime
             );
         }
@@ -590,7 +629,8 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
-                    registerJourneyContainsTermsAndConditions
+                    registerJourneyContainsTermsAndConditions,
+                    true
                 );
 
                 passwordDataService.SetPasswordByCandidateNumber(
