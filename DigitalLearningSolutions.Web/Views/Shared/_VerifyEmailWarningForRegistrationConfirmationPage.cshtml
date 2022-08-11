@@ -3,26 +3,35 @@
 
 @{
   var primaryEmailIsUnverified = Model.PrimaryEmailIfUnverified != null;
+  var centreEmailIsUnverified = Model.CentreEmailIfUnverified != null;
+  var primaryEmailIsUnverifiedAndSameAsCentreEmail = Model.PrimaryEmailIfUnverified != null && Model.PrimaryEmailIfUnverified == Model.CentreEmailIfUnverified;
+  var multipleEmailsAreUnverified = (primaryEmailIsUnverified ? 1 : 0) + (centreEmailIsUnverified ? 1 : 0) > 1;
 
   var numSpecificPhrases = new {
-    address = primaryEmailIsUnverified ? "addresses" : "address",
-    thisAddress = primaryEmailIsUnverified ? "each of the addresses above" : "this address",
-    link = primaryEmailIsUnverified ? "links" : "link",
-    folder = primaryEmailIsUnverified ? "folders" : "folder",
-    it = primaryEmailIsUnverified ? "them" : "it",
+    address = multipleEmailsAreUnverified ? "addresses" : "address",
+    thisAddress = multipleEmailsAreUnverified ? "each of the addresses above" : "this address",
+    link = multipleEmailsAreUnverified ? "links" : "link",
+    folder = multipleEmailsAreUnverified ? "folders" : "folder",
+    it = multipleEmailsAreUnverified ? "them" : "it",
   };
 }
 
 <div class="nhsuk-warning-callout word-break">
   <partial name="_VerifyEmailWarningHeading" model="@Model.NumberOfUnverifiedEmails" />
 
-  @if (primaryEmailIsUnverified) {
+  @if (primaryEmailIsUnverifiedAndSameAsCentreEmail) {
+    <p>
+      You need to verify your primary email address <strong>@Model.PrimaryEmailIfUnverified</strong>
+      to access <strong>@Model.CentreName</strong>.
+      This is also your centre email address for your account at this centre.
+    </p>
+  } else if (primaryEmailIsUnverified && centreEmailIsUnverified) {
     <p>
       You need to verify your primary email address <strong>@Model.PrimaryEmailIfUnverified</strong>
       and your centre email address <strong>@Model.CentreEmailIfUnverified</strong>
       to access your account at <strong>@Model.CentreName</strong>.
     </p>
-  } else {
+  } else if (centreEmailIsUnverified) {
     <p>
       You need to verify your centre email address <strong>@Model.CentreEmailIfUnverified</strong>
       to access your account at <strong>@Model.CentreName</strong>.
