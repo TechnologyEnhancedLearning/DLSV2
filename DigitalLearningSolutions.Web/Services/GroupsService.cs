@@ -214,6 +214,14 @@
                 centreEmail,
                 groupsForSynchronisation
             );
+
+            SynchroniseJobGroupsOnAllCentres(
+                delegateId,
+                oldRegistrationFieldAnswers.JobGroupId,
+                registrationFieldAnswers.JobGroupId,
+                accountDetailsData,
+                centreEmail
+            );
         }
 
         public void AddNewDelegateToAppropriateGroups(
@@ -224,26 +232,39 @@
             var groupsForSynchronisation =
                 GetGroupsWhichShouldAddNewRegistrantsForCentre(delegateRegistrationModel.Centre).ToList();
 
+            var accountDetailsData = new AccountDetailsData(
+                delegateRegistrationModel.FirstName,
+                delegateRegistrationModel.LastName,
+                delegateRegistrationModel.PrimaryEmail
+            );
+
+            var registrationFieldAnswers = delegateRegistrationModel.GetRegistrationFieldAnswers();
+            var nullRegistrationFieldAnswers = new RegistrationFieldAnswers(
+                delegateRegistrationModel.Centre,
+                0,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            );
+
             UpdateDelegateGroupsBasedOnUserChanges(
                 delegateId,
-                new AccountDetailsData(
-                    delegateRegistrationModel.FirstName,
-                    delegateRegistrationModel.LastName,
-                    delegateRegistrationModel.PrimaryEmail
-                ),
-                delegateRegistrationModel.GetRegistrationFieldAnswers(),
-                new RegistrationFieldAnswers(
-                    delegateRegistrationModel.Centre,
-                    0,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-                ),
+                accountDetailsData,
+                registrationFieldAnswers,
+                nullRegistrationFieldAnswers,
                 delegateRegistrationModel.CentreSpecificEmail,
                 groupsForSynchronisation
+            );
+
+            SynchroniseJobGroupsOnAllCentres(
+                delegateId,
+                nullRegistrationFieldAnswers.JobGroupId,
+                registrationFieldAnswers.JobGroupId,
+                accountDetailsData,
+                delegateRegistrationModel.CentreSpecificEmail
             );
         }
 
