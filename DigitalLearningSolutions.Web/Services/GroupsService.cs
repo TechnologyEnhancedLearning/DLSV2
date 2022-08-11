@@ -115,7 +115,7 @@
 
         void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails);
 
-        void SynchroniseJobGroupsOnAllCentres(
+        void SynchroniseJobGroupsOnOtherCentres(
             int originalDelegateId,
             int oldJobGroupId,
             int newJobGroupId,
@@ -129,6 +129,9 @@
         private const string AddDelegateToGroupAddedByProcess = "AddDelegateToGroup_Refactor";
         private const string AddCourseToGroupAddedByProcess = "AddCourseToDelegateGroup_Refactor";
         private const string EnrolEmailSubject = "New Learning Portal Course Enrolment";
+        private const int JobGroupLinkedFieldNumber = 4;
+        private const string JobGroupLinkedFieldName = "Job group";
+
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IClockUtility clockUtility;
         private readonly IConfiguration configuration;
@@ -215,7 +218,7 @@
                 groupsForSynchronisation
             );
 
-            SynchroniseJobGroupsOnAllCentres(
+            SynchroniseJobGroupsOnOtherCentres(
                 delegateId,
                 oldRegistrationFieldAnswers.JobGroupId,
                 registrationFieldAnswers.JobGroupId,
@@ -257,14 +260,6 @@
                 nullRegistrationFieldAnswers,
                 delegateRegistrationModel.CentreSpecificEmail,
                 groupsForSynchronisation
-            );
-
-            SynchroniseJobGroupsOnAllCentres(
-                delegateId,
-                nullRegistrationFieldAnswers.JobGroupId,
-                registrationFieldAnswers.JobGroupId,
-                accountDetailsData,
-                delegateRegistrationModel.CentreSpecificEmail
             );
         }
 
@@ -317,7 +312,7 @@
             transaction.Complete();
         }
 
-        public void SynchroniseJobGroupsOnAllCentres(
+        public void SynchroniseJobGroupsOnOtherCentres(
             int originalDelegateId,
             int oldJobGroupId,
             int newJobGroupId,
@@ -331,8 +326,8 @@
             }
 
             var userId = userDataService.GetUserIdFromDelegateId(originalDelegateId);
-            var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userId);
-            // possibly exclude existing account here
+            var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userId)
+                .Where(da => da.Id != originalDelegateId);
 
             foreach (var account in delegateAccounts)
             {
@@ -341,16 +336,14 @@
                 var oldJobGroupName = jobGroupsDataService.GetJobGroupName(oldJobGroupId);
                 var newJobGroupName = jobGroupsDataService.GetJobGroupName(newJobGroupId);
 
-                // TODO HEEDLS-1018 magic strings?
-
                 var groupToRemoveDelegateFrom = groupsLinkedToJobGroup.Single(
                     g =>
-                        GroupLabelMatchesAnswer(g.GroupLabel, oldJobGroupName, "Job group")
+                        GroupLabelMatchesAnswer(g.GroupLabel, oldJobGroupName, JobGroupLinkedFieldName)
                 );
 
                 var groupToAddDelegateTo = groupsLinkedToJobGroup.Single(
                     g =>
-                        GroupLabelMatchesAnswer(g.GroupLabel, newJobGroupName, "Job group")
+                        GroupLabelMatchesAnswer(g.GroupLabel, newJobGroupName, JobGroupLinkedFieldName)
                 );
 
                 RemoveDelegateFromGroup(account.Id, groupToRemoveDelegateFrom.GroupId);
@@ -768,10 +761,8 @@
 
         private IEnumerable<Group> GetGroupsLinkedToJobGroupForCentre(int centreId)
         {
-            // TODO HEEDLS-1018 magic number in Where clause,
-
             return groupsDataService.GetGroupsForCentre(centreId)
-                .Where(g => g.LinkedToField == 4);
+                .Where(g => g.LinkedToField == JobGroupLinkedFieldNumber);
         }
 
         private static bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string linkedFieldName)

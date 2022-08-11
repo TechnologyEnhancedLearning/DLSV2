@@ -19,6 +19,20 @@
         {
             var changedLinkedFieldsWithAnswers = new List<LinkedFieldChange>();
 
+            if (newAnswers.JobGroupId != oldAnswers.JobGroupId)
+            {
+                var oldJobGroup = jobGroupsDataService.GetJobGroupName(oldAnswers.JobGroupId);
+                var newJobGroup = jobGroupsDataService.GetJobGroupName(newAnswers.JobGroupId);
+                changedLinkedFieldsWithAnswers.Add(
+                    new LinkedFieldChange(
+                        RegistrationField.JobGroup.LinkedToFieldId,
+                        "Job group",
+                        oldJobGroup,
+                        newJobGroup
+                    )
+                );
+            }
+
             changedLinkedFieldsWithAnswers = changedLinkedFieldsWithAnswers.Concat(
                 AddCustomPromptLinkedFields(oldAnswers, newAnswers, centreRegistrationPromptsService)
             ).ToList();

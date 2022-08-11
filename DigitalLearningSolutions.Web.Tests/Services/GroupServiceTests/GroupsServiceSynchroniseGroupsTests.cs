@@ -463,7 +463,7 @@
         }
 
         [Test]
-        public void SynchroniseJobGroupsOnAllCentres_synchronises_correct_job_groups()
+        public void SynchroniseJobGroupsOnOtherCentres_synchronises_correct_job_groups()
         {
             // Given
             A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
@@ -493,7 +493,7 @@
                 .Returns(newJobGroupGroup.GroupLabel);
 
             // When
-            groupsService.SynchroniseJobGroupsOnAllCentres(
+            groupsService.SynchroniseJobGroupsOnOtherCentres(
                 originalDelegateId,
                 oldJobGroupId,
                 newJobGroupId,
