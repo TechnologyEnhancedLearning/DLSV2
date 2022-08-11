@@ -10,8 +10,7 @@
         {
             return string.Equals(update1.OldEmail, update2.OldEmail) &&
                    string.Equals(update1.NewEmail, update2.NewEmail) &&
-                   update1.NewEmailIsVerified == update2.NewEmailIsVerified &&
-                   update1.CentreId == update2.CentreId;
+                   update1.NewEmailIsVerified == update2.NewEmailIsVerified;
         }
 
         public static bool PossibleEmailUpdateListsMatch(

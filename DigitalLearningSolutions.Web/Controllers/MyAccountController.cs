@@ -1,10 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using System.Security.Claims;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -193,35 +191,31 @@
                 return ReturnToEditDetailsViewWithErrors(formData, userId, centreId, dlsSubApplication);
             }
 
-            var (accountDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToEditAccountDetailsData(
+            var (editAccountDetailsData, delegateDetailsData) = AccountDetailsDataHelper.MapToEditAccountDetailsData(
                 formData,
                 userId,
                 delegateAccount?.Id
             );
 
             var userCentreDetails = userDataService.GetCentreDetailsForUser(userEntity!.UserAccount.Id).ToList();
-            var possibleEmailUpdates = GetPossibleEmailUpdates(
-                userEntity,
-                centreId,
-                accountDetailsData,
-                formData,
-                userCentreDetails
-            );
 
             SaveUserDetails(
                 userEntity.UserAccount,
-                accountDetailsData,
+                editAccountDetailsData,
                 delegateDetailsData,
                 formData,
                 centreId,
                 userCentreDetails
             );
 
-            var unverifiedModifiedEmails = possibleEmailUpdates.Where(
-                update => update.NewEmail != null && update.IsEmailUpdating && !update.NewEmailIsVerified
-            ).ToList();
+            var unverifiedModifiedEmails = GetUnverifiedModifiedEmails(
+                userEntity,
+                centreId,
+                formData,
+                userCentreDetails
+            );
 
-            emailVerificationService.SendVerificationEmails(
+            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                 userEntity.UserAccount,
                 unverifiedModifiedEmails,
                 config.GetAppRootPath()
@@ -305,17 +299,16 @@
             }
         }
 
-        private IEnumerable<PossibleEmailUpdate> GetPossibleEmailUpdates(
+        private List<PossibleEmailUpdate> GetUnverifiedModifiedEmails(
             UserEntity userEntity,
             int? centreId,
-            AccountDetailsData accountDetailsData,
             MyAccountEditDetailsFormData formData,
             List<UserCentreDetails> userCentreDetails
         )
         {
             var isNewPrimaryEmailVerified = emailVerificationService.AccountEmailIsVerifiedForUser(
                 userEntity.UserAccount.Id,
-                accountDetailsData.Email
+                formData.Email!
             );
             var verifiedUserEmails = userCentreDetails.Where(ucd => ucd.Email != null && ucd.EmailVerified != null)
                 .Select(ucd => ucd.Email).ToList();
@@ -324,13 +317,12 @@
                 new PossibleEmailUpdate
                 {
                     OldEmail = userEntity.UserAccount.PrimaryEmail,
-                    NewEmail = accountDetailsData.Email,
+                    NewEmail = formData.Email,
                     NewEmailIsVerified = isNewPrimaryEmailVerified,
-                    CentreId = null,
                 },
             };
 
-            if (centreId != null)
+            if (centreId.HasValue)
             {
                 var userDetailsAtCentre = userCentreDetails.SingleOrDefault(ucd => ucd.CentreId == centreId);
                 possibleEmailUpdates.Add(
@@ -339,7 +331,6 @@
                         OldEmail = userDetailsAtCentre?.Email,
                         NewEmail = formData.CentreSpecificEmail,
                         NewEmailIsVerified = verifiedUserEmails.Contains(formData.CentreSpecificEmail),
-                        CentreId = centreId,
                     }
                 );
             }
@@ -354,13 +345,14 @@
                             OldEmail = userDetailsAtCentre?.Email,
                             NewEmail = centreEmail,
                             NewEmailIsVerified = verifiedUserEmails.Contains(centreEmail),
-                            CentreId = centre,
                         }
                     );
                 }
             }
 
-            return possibleEmailUpdates;
+            return possibleEmailUpdates.Where(
+                update => update.NewEmail != null && update.IsEmailUpdating && !update.NewEmailIsVerified
+            ).ToList();
         }
 
         private void ValidateSingleCentreEmail(string? email, int centreId, int userId)
@@ -390,7 +382,7 @@
 
         private void SaveUserDetails(
             UserAccount userAccount,
-            EditAccountDetailsData accountDetailsData,
+            EditAccountDetailsData editAccountDetailsData,
             DelegateDetailsData? delegateDetailsData,
             MyAccountEditDetailsFormData formData,
             int? centreId,
@@ -400,11 +392,11 @@
             if (centreId.HasValue)
             {
                 userService.UpdateUserDetailsAndCentreSpecificDetails(
-                    accountDetailsData,
+                    editAccountDetailsData,
                     delegateDetailsData,
                     formData.CentreSpecificEmail,
                     centreId.Value,
-                    !string.Equals(userAccount.PrimaryEmail, accountDetailsData.Email),
+                    !string.Equals(userAccount.PrimaryEmail, editAccountDetailsData.Email),
                     !string.Equals(
                         userCentreDetails.Where(ucd => ucd.CentreId == centreId).Select(ucd => ucd.Email)
                             .SingleOrDefault(),
@@ -416,8 +408,8 @@
             else
             {
                 userService.UpdateUserDetails(
-                    accountDetailsData,
-                    !string.Equals(userAccount.PrimaryEmail, accountDetailsData.Email),
+                    editAccountDetailsData,
+                    !string.Equals(userAccount.PrimaryEmail, editAccountDetailsData.Email),
                     true
                 );
                 userService.SetCentreEmails(userAccount.Id, formData.CentreSpecificEmailsByCentreId, userCentreDetails);

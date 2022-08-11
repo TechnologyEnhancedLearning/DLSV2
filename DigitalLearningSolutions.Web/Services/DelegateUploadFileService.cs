@@ -166,8 +166,7 @@ namespace DigitalLearningSolutions.Web.Services
                     delegateEntity.DelegateAccount.Id
                 );
 
-                if (delegateRow.Email != delegateEntity.EmailForCentreNotifications &&
-                    !string.Equals(delegateEntity.EmailForCentreNotifications, delegateRow.Email))
+                if (!string.Equals(delegateEntity.EmailForCentreNotifications, delegateRow.Email))
                 {
                     userDataService.SetCentreEmail(
                         delegateEntity.UserAccount.Id,

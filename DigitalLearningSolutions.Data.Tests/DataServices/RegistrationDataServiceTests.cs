@@ -157,7 +157,7 @@
                     delegateRegistrationModel,
                     userId,
                     currentTime,
-                    new PossibleEmailUpdate()
+                    null
                 );
 
             // Then
@@ -205,7 +205,7 @@
                     delegateRegistrationModel,
                     userId,
                     currentTime,
-                    new PossibleEmailUpdate()
+                    null
                 );
 
             // Then
@@ -251,7 +251,6 @@
                     OldEmail = null,
                     NewEmail = delegateRegistrationModel.CentreSpecificEmail,
                     NewEmailIsVerified = false,
-                    CentreId = delegateRegistrationModel.Centre,
                 }
             );
 
@@ -348,7 +347,6 @@
                     OldEmail = null,
                     NewEmail = delegateRegistrationModel.CentreSpecificEmail,
                     NewEmailIsVerified = false,
-                    CentreId = delegateRegistrationModel.Centre,
                 }
             );
 
@@ -398,7 +396,6 @@
                     OldEmail = existingEmail,
                     NewEmail = null,
                     NewEmailIsVerified = false,
-                    CentreId = delegateRegistrationModel.Centre,
                 }
             );
             var userCentreDetails = connection.GetEmailAndVerifiedDateFromUserCentreDetails(userId, centreId);
@@ -426,7 +423,7 @@
             A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
             // When
-            var id = service.RegisterAdmin(registrationModel, new PossibleEmailUpdate());
+            var id = service.RegisterAdmin(registrationModel, null);
 
             // Then
             var user = userDataService.GetAdminUserById(id)!;
@@ -458,7 +455,7 @@
             A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
             // When
-            var id = service.RegisterAdmin(registrationModel, new PossibleEmailUpdate());
+            var id = service.RegisterAdmin(registrationModel, null);
 
             // Then
             var user = userDataService.GetAdminUserById(id)!;

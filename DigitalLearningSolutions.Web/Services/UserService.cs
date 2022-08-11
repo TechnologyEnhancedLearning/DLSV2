@@ -426,11 +426,10 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 var emailVerified =
                     changeMadeBySameUser &&
-                    !emailVerificationDataService
-                        .AccountEmailIsVerifiedForUser(
-                            editAccountDetailsData.UserId,
-                            centreEmail
-                        )
+                    !emailVerificationDataService.AccountEmailIsVerifiedForUser(
+                        editAccountDetailsData.UserId,
+                        centreEmail
+                    )
                         ? (DateTime?)null
                         : currentTime;
 
@@ -453,11 +452,7 @@ namespace DigitalLearningSolutions.Web.Services
 
             foreach (var (centreId, email) in centreEmailsByCentreId)
             {
-                if (!string.Equals(
-                        email,
-                        userCentreDetails.Where(ucd => ucd.CentreId == centreId).Select(ucd => ucd.Email)
-                            .SingleOrDefault()
-                    ))
+                if (!string.Equals(email, userCentreDetails.SingleOrDefault(ucd => ucd.CentreId == centreId)?.Email))
                 {
                     var emailVerified = emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email)
                         ? currentTime

@@ -17,7 +17,7 @@
             bool registerJourneyContainsTermsAndConditions
         );
 
-        int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate emailUpdate);
+        int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate? emailUpdate);
 
         (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(
             DelegateRegistrationModel delegateRegistrationModel,
@@ -85,7 +85,6 @@
                     OldEmail = null,
                     NewEmail = delegateRegistrationModel.CentreSpecificEmail,
                     NewEmailIsVerified = false,
-                    CentreId = delegateRegistrationModel.Centre,
                 },
                 transaction
             );
@@ -147,11 +146,7 @@
 
             if (emailUpdate.IsEmailUpdating)
             {
-                var emailVerified =
-                    string.IsNullOrWhiteSpace(delegateRegistrationModel.CentreSpecificEmail) ||
-                    !emailUpdate.NewEmailIsVerified
-                        ? (DateTime?)null
-                        : clockUtility.UtcNow;
+                var emailVerified = emailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
 
                 userDataService.SetCentreEmail(
                     userId,
@@ -172,7 +167,7 @@
             transaction.Commit();
         }
 
-        public int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate emailUpdate)
+        public int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate? emailUpdate)
         {
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
@@ -307,11 +302,11 @@
             int centreId,
             string? centreSpecificEmail,
             int userId,
-            PossibleEmailUpdate emailUpdate,
+            PossibleEmailUpdate? emailUpdate,
             IDbTransaction transaction
         )
         {
-            if (emailUpdate.IsEmailUpdating)
+            if (emailUpdate != null && emailUpdate.IsEmailUpdating)
             {
                 var emailVerified = emailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
 

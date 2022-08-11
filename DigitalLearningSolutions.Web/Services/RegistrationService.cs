@@ -203,12 +203,14 @@ namespace DigitalLearningSolutions.Web.Services
 
             try
             {
-                var emailUpdate = new PossibleEmailUpdate
+                var possibleEmailUpdate = new PossibleEmailUpdate
                 {
                     OldEmail = userDataService.GetCentreEmail(userId, internalDelegateRegistrationModel.Centre),
                     NewEmail = delegateRegistrationModel.CentreSpecificEmail,
-                    NewEmailIsVerified = false,
-                    CentreId = internalDelegateRegistrationModel.Centre,
+                    NewEmailIsVerified = emailVerificationDataService.AccountEmailIsVerifiedForUser(
+                        userId,
+                        delegateRegistrationModel.CentreSpecificEmail
+                    ),
                 };
 
                 if (delegateAccountAtCentre == null)
@@ -217,7 +219,7 @@ namespace DigitalLearningSolutions.Web.Services
                         RegisterDelegateAccountAndCentreDetailsForExistingUser(
                             userId,
                             delegateRegistrationModel,
-                            emailUpdate
+                            possibleEmailUpdate
                         );
                 }
                 else
@@ -228,7 +230,7 @@ namespace DigitalLearningSolutions.Web.Services
                         userId,
                         delegateId,
                         delegateRegistrationModel,
-                        emailUpdate
+                        possibleEmailUpdate
                     );
                 }
 
@@ -341,7 +343,6 @@ namespace DigitalLearningSolutions.Web.Services
                     OldEmail = null,
                     NewEmail = registrationModel.CentreSpecificEmail,
                     NewEmailIsVerified = false,
-                    CentreId = registrationModel.Centre,
                 }
             );
 
@@ -385,10 +386,9 @@ namespace DigitalLearningSolutions.Web.Services
                     OldEmail = userDataService.GetCentreEmail(userId, centreId),
                     NewEmail = centreSpecificEmail,
                     NewEmailIsVerified = emailVerificationDataService.AccountEmailIsVerifiedForUser(
-                                             userId,
-                                             centreSpecificEmail
-                                         ),
-                    CentreId = null,
+                        userId,
+                        centreSpecificEmail
+                    ),
                 }
             );
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
@@ -439,7 +439,7 @@ namespace DigitalLearningSolutions.Web.Services
                     true
                 );
 
-                registrationDataService.RegisterAdmin(adminRegistrationModel, new PossibleEmailUpdate());
+                registrationDataService.RegisterAdmin(adminRegistrationModel, null);
             }
         }
 

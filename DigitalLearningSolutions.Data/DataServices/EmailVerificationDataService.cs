@@ -9,9 +9,9 @@
     {
         int CreateEmailVerificationHash(string hash, DateTime created);
 
-        void UpdateEmailVerificationHashIdForPrimaryEmail(int userId, int hashId);
+        void UpdateEmailVerificationHashIdForPrimaryEmail(int userId, string? emailAddress, int hashId);
 
-        void UpdateEmailVerificationHashIdForCentreEmail(int userId, int centreId, int hashId);
+        void UpdateEmailVerificationHashIdForCentreEmails(int userId, string? emailAddress, int hashId);
 
         bool AccountEmailIsVerifiedForUser(int userId, string? email);
     }
@@ -35,21 +35,19 @@
             );
         }
 
-        public void UpdateEmailVerificationHashIdForPrimaryEmail(int userId, int hashId)
+        public void UpdateEmailVerificationHashIdForPrimaryEmail(int userId, string? emailAddress, int hashId)
         {
             connection.Execute(
-                @"UPDATE Users SET EmailVerificationHashID = @hashId WHERE ID = @userId",
-                new { hashId, userId }
+                @"UPDATE Users SET EmailVerificationHashID = @hashId WHERE ID = @userId AND PrimaryEmail = @emailAddress",
+                new { hashId, userId, emailAddress }
             );
         }
 
-        public void UpdateEmailVerificationHashIdForCentreEmail(int userId, int centreId, int hashId)
+        public void UpdateEmailVerificationHashIdForCentreEmails(int userId, string? emailAddress, int hashId)
         {
             connection.Execute(
-                @"UPDATE UserCentreDetails
-                        SET EmailVerificationHashID = @hashId
-                        WHERE UserID = @userId AND CentreID = @centreID",
-                new { hashId, userId, centreId }
+                @"UPDATE UserCentreDetails SET EmailVerificationHashID = @hashId WHERE UserID = @userId AND Email = @emailAddress",
+                new { hashId, userId, emailAddress }
             );
         }
 

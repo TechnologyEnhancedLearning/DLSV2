@@ -51,23 +51,32 @@
         }
 
         [Test]
-        public void SendVerificationEmails_Does_Not_Send_Emails_If_No_Email_Requires_Verification()
+        public void
+            CreateEmailVerificationHashesAndSendVerificationEmails_Does_Not_Send_Emails_If_No_Email_Requires_Verification()
         {
             // Given
             var userAccount = UserTestHelper.GetDefaultUserAccount();
 
             // When
-            emailVerificationService.SendVerificationEmails(userAccount, new List<PossibleEmailUpdate>(), "example.com");
+            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                userAccount,
+                new List<PossibleEmailUpdate>(),
+                "example.com"
+            );
 
             // Then
             A.CallTo(
-                () => emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(A<int>._, A<int>._)
+                () => emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(
+                    A<int>._,
+                    A<string>._,
+                    A<int>._
+                )
             ).MustNotHaveHappened();
 
             A.CallTo(
-                () => emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmail(
+                () => emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmails(
                     A<int>._,
-                    A<int>._,
+                    A<string?>._,
                     A<int>._
                 )
             ).MustNotHaveHappened();
@@ -76,7 +85,8 @@
         }
 
         [Test]
-        public void SendVerificationEmails_Updates_HashId_And_Sends_Email_When_Primary_Email_Requires_Verification()
+        public void
+            CreateEmailVerificationHashesAndSendVerificationEmails_Updates_HashId_And_Sends_Email_When_Primary_Email_Requires_Verification()
         {
             // Given
             var userAccount = UserTestHelper.GetDefaultUserAccount();
@@ -85,14 +95,15 @@
                 .Returns(hashId);
 
             // When
-            emailVerificationService.SendVerificationEmails(
+            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                 userAccount,
-                new List<PossibleEmailUpdate> {new PossibleEmailUpdate
+                new List<PossibleEmailUpdate>
+                {
+                    new PossibleEmailUpdate
                     {
                         OldEmail = "old@email.com",
                         NewEmail = "new@email.com",
                         NewEmailIsVerified = false,
-                        CentreId = null,
                     },
                 },
                 "example.com"
@@ -100,23 +111,19 @@
 
             // Then
             A.CallTo(
-                () => emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(userAccount.Id, hashId)
-            ).MustHaveHappenedOnceExactly();
-
-            A.CallTo(
-                () => emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmail(
-                    A<int>._,
-                    A<int>._,
-                    A<int>._
+                () => emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(
+                    userAccount.Id,
+                    "new@email.com",
+                    hashId
                 )
-            ).MustNotHaveHappened();
+            ).MustHaveHappenedOnceExactly();
 
             A.CallTo(() => emailService.SendEmail(A<Email>._)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
         public void
-            SendVerificationEmails_Updates_HashIds_And_Sends_Single_Email_When_Same_Centre_Email_Requires_Verification_At_Multiple_Centres()
+            CreateEmailVerificationHashesAndSendVerificationEmails_Updates_HashIds_And_Sends_Single_Email_When_Same_Centre_Email_Requires_Verification_At_Multiple_Centres()
         {
             // Given
             var userAccount = UserTestHelper.GetDefaultUserAccount();
@@ -126,20 +133,21 @@
                 .Returns(hashId);
 
             // When
-            emailVerificationService.SendVerificationEmails(
+            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                 userAccount,
-                new List<PossibleEmailUpdate> { new PossibleEmailUpdate
+                new List<PossibleEmailUpdate>
                 {
-                    OldEmail = "centre1@email.com",
-                    NewEmail = email,
-                    NewEmailIsVerified = false,
-                    CentreId = 1,
-                }, new PossibleEmailUpdate
+                    new PossibleEmailUpdate
+                    {
+                        OldEmail = "centre1@email.com",
+                        NewEmail = email,
+                        NewEmailIsVerified = false,
+                    },
+                    new PossibleEmailUpdate
                     {
                         OldEmail = "centre2@email.com",
                         NewEmail = email,
                         NewEmailIsVerified = false,
-                        CentreId = 2,
                     },
                 },
                 "example.com"
@@ -147,21 +155,9 @@
 
             // Then
             A.CallTo(
-                () => emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(userAccount.Id, hashId)
-            ).MustNotHaveHappened();
-
-            A.CallTo(
-                () => emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmail(
+                () => emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmails(
                     userAccount.Id,
-                    1,
-                    hashId
-                )
-            ).MustHaveHappenedOnceExactly();
-
-            A.CallTo(
-                () => emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmail(
-                    userAccount.Id,
-                    2,
+                    email,
                     hashId
                 )
             ).MustHaveHappenedOnceExactly();

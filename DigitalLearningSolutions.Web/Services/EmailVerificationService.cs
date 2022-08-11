@@ -14,7 +14,7 @@
     {
         bool AccountEmailIsVerifiedForUser(int userId, string email);
 
-        void SendVerificationEmails(
+        void CreateEmailVerificationHashesAndSendVerificationEmails(
             UserAccount userAccount,
             IEnumerable<PossibleEmailUpdate> unverifiedEmails,
             string baseUrl
@@ -43,7 +43,7 @@
             return emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email);
         }
 
-        public void SendVerificationEmails(
+        public void CreateEmailVerificationHashesAndSendVerificationEmails(
             UserAccount userAccount,
             IEnumerable<PossibleEmailUpdate> unverifiedEmails,
             string baseUrl
@@ -53,32 +53,20 @@
             {
                 var hash = Guid.NewGuid().ToString();
                 var hashId = emailVerificationDataService.CreateEmailVerificationHash(hash, clockUtility.UtcNow);
+                var emailAddress = emailGroup.Key!;
 
-                foreach (var emailUpdate in emailGroup)
-                {
-                    UpdateEmailVerificationHashId(userAccount.Id, emailUpdate.CentreId, hashId);
-                }
+                UpdateEmailVerificationHashId(userAccount.Id, emailAddress, hashId);
 
                 emailService.SendEmail(
-                    GenerateVerificationEmail(userAccount, hash, emailGroup.Key!, baseUrl)
+                    GenerateVerificationEmail(userAccount, hash, emailAddress, baseUrl)
                 );
             }
         }
 
-        private void UpdateEmailVerificationHashId(int userId, int? centreId, int hashId)
+        private void UpdateEmailVerificationHashId(int userId, string? emailAddress, int hashId)
         {
-            if (centreId == null)
-            {
-                emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(userId, hashId);
-            }
-            else
-            {
-                emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmail(
-                    userId,
-                    centreId.Value,
-                    hashId
-                );
-            }
+            emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(userId, emailAddress, hashId);
+            emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmails(userId, emailAddress, hashId);
         }
 
         private static Email GenerateVerificationEmail(

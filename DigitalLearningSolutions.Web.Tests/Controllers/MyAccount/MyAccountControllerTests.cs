@@ -117,7 +117,7 @@
             ).MustNotHaveHappened();
 
             A.CallTo(
-                () => emailVerificationService.SendVerificationEmails(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
                     A<IEnumerable<PossibleEmailUpdate>>._,
                     A<string>._
@@ -418,7 +418,7 @@
                 .MustHaveHappened();
 
             A.CallTo(
-                () => emailVerificationService.SendVerificationEmails(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     testUserEntity.UserAccount,
                     A<List<PossibleEmailUpdate>>.That.Matches(
                         sequence => PossibleEmailUpdateTestHelper.PossibleEmailUpdateListsMatch(
@@ -430,7 +430,6 @@
                                     OldEmail = testUserEntity.UserAccount.PrimaryEmail,
                                     NewEmail = Email,
                                     NewEmailIsVerified = false,
-                                    CentreId = null,
                                 },
                             }
                         )
@@ -755,26 +754,23 @@
                     OldEmail = testUserEntity.UserAccount.PrimaryEmail,
                     NewEmail = Email,
                     NewEmailIsVerified = false,
-                    CentreId = null,
                 },
                 new PossibleEmailUpdate
                 {
                     OldEmail = null,
                     NewEmail = centreEmail1,
                     NewEmailIsVerified = false,
-                    CentreId = 1,
                 },
                 new PossibleEmailUpdate
                 {
                     OldEmail = null,
                     NewEmail = centreEmail2,
                     NewEmailIsVerified = false,
-                    CentreId = 2,
                 },
             };
 
             A.CallTo(
-                () => emailVerificationService.SendVerificationEmails(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     testUserEntity.UserAccount,
                     A<List<PossibleEmailUpdate>>.That.Matches(
                         sequence => PossibleEmailUpdateTestHelper.PossibleEmailUpdateListsMatch(

@@ -13,7 +13,7 @@
     public class EmailVerificationDataServiceTests
     {
         private SqlConnection connection = null!;
-        private IEmailVerificationDataService emailVerificationDataService;
+        private IEmailVerificationDataService emailVerificationDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -54,7 +54,7 @@
             var hashId = emailVerificationDataService.CreateEmailVerificationHash(hash, currentTime);
 
             // When
-            emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(userId, hashId);
+            emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(userId, "test@gmail.com", hashId);
             var result = connection.Query<int>(
                 @"SELECT EmailVerificationHashID FROM Users WHERE ID = @userId",
                 new { userId }
@@ -65,7 +65,7 @@
         }
 
         [Test]
-        public void UpdateEmailVerificationHashIdForCentreEmail_Updates_Hash_Id()
+        public void UpdateEmailVerificationHashIdForCentreEmails_Updates_Hash_Id()
         {
             using var transaction = new TransactionScope();
 
@@ -82,7 +82,7 @@
             );
 
             // When
-            emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmail(userId, centreId, hashId);
+            emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmails(userId, email, hashId);
             var result = connection.Query<int>(
                 @"SELECT EmailVerificationHashID
                         FROM UserCentreDetails

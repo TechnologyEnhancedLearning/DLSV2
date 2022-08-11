@@ -662,7 +662,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                                     OldEmail = null,
                                     NewEmail = centreManagerModel.CentreSpecificEmail,
                                     NewEmailIsVerified = false,
-                                    CentreId = centreManagerModel.Centre,
                                 }
                             )
                         )
@@ -1071,12 +1070,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                             a.IsTrainer == adminRoles.IsTrainer &&
                             a.IsSupervisor == adminRoles.IsSupervisor
                     ),
-                    A<PossibleEmailUpdate>.That.Matches(
-                        update => PossibleEmailUpdateTestHelper.PossibleEmailUpdatesMatch(
-                            update,
-                            new PossibleEmailUpdate()
-                        )
-                    )
+                    null
                 )
             ).MustHaveHappened();
             UpdateToExistingAdminAccountMustNotHaveHappened();
@@ -1126,7 +1120,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                                         OldEmail = "",
                                         NewEmail = model.CentreSpecificEmail,
                                         NewEmailIsVerified = false,
-                                        CentreId = model.Centre,
                                     }
                                 )
                             ),
@@ -1190,7 +1183,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                                         OldEmail = "",
                                         NewEmail = model.CentreSpecificEmail,
                                         NewEmailIsVerified = false,
-                                        CentreId = model.Centre,
                                     }
                                 )
                             ),
@@ -1253,7 +1245,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                                         OldEmail = "",
                                         NewEmail = model.CentreSpecificEmail,
                                         NewEmailIsVerified = false,
-                                        CentreId = model.Centre,
                                     }
                                 )
                             ),
@@ -1451,7 +1442,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                                 OldEmail = "",
                                 NewEmail = model.CentreSpecificEmail,
                                 NewEmailIsVerified = false,
-                                CentreId = model.Centre,
                             }
                         )
                     )
