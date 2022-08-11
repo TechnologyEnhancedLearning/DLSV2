@@ -1,75 +1,24 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @model MyAccountViewModel
 
 @{
-  var atLeastOneCentreEmailIsUnverified = Model.UnverifiedCentreEmails.Count >= 1;
+  var primaryEmailIfUnverified = Model.PrimaryEmailIsVerified ? null : (string?)Model.PrimaryEmail;
   var multipleEmailsAreUnverified = Model.NumberOfUnverifiedEmails > 1;
-  var primaryEmailIsUnverifiedAndTheSameAsAnUnverifiedCentreEmail = !Model.PrimaryEmailIsVerified && Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail != null;
-  if (primaryEmailIsUnverifiedAndTheSameAsAnUnverifiedCentreEmail) {
-    Model.UnverifiedCentreEmails.Remove(Model.PrimaryEmail);
-  }
-
-  var numSpecificPhrases = new {
-    address = multipleEmailsAreUnverified ? "addresses" : "address",
-    thisAddress = multipleEmailsAreUnverified ? "each of the addresses above" : "this address",
-    link = multipleEmailsAreUnverified ? "links" : "link",
-    folder = multipleEmailsAreUnverified ? "folders" : "folder",
-    it = multipleEmailsAreUnverified ? "them" : "it",
-    email = multipleEmailsAreUnverified ? "emails" : "email",
-  };
 }
 
 <div class="nhsuk-warning-callout word-break">
   <partial name="_VerifyEmailWarningHeading" model="@Model.NumberOfUnverifiedEmails" />
 
-  @if (primaryEmailIsUnverifiedAndTheSameAsAnUnverifiedCentreEmail) {
-    <p>
-      Your primary email address <strong>@Model.PrimaryEmail</strong> has not been verified yet.
-      This is also your centre email address for your account at
-      @foreach (var (centreName, centreIndex) in Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail.Select((centreName, centreIndex) => (centreName, centreIndex))) {
-        var isTheLastCentreNameInList = centreIndex == Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail.Count - 1;
-        @(isTheLastCentreNameInList ? "and " : "")
-        <strong>@centreName@(isTheLastCentreNameInList ? "." : ", ")</strong>
-      }
-      You will not be able to access any centre accounts until you verify the address.
-    </p>
-  } else if (!Model.PrimaryEmailIsVerified) {
-    <p>
-      Your primary email address <strong>@Model.PrimaryEmail</strong> has not been verified yet.
-      You will not be able to access any centre accounts until you verify the address.
-    </p>
-  }
-
-  @if (atLeastOneCentreEmailIsUnverified) {
-    foreach (var ((email, centreNames), index) in Model.UnverifiedCentreEmails.Select((emailAndCentreNames, index) => (emailAndCentreNames, index))) {
-      var isTheFirstEmailListed = Model.PrimaryEmailIsVerified && index == 0;
-      var hasOnlyOneCentre = centreNames.Count == 1;
-      <p>
-        Your centre email address <strong>@email</strong> has
-        @(isTheFirstEmailListed ? "" : "also") not been verified yet.
-        You will not be able to access
-        @if (hasOnlyOneCentre) {
-          <strong>@email</strong>
-        } else {
-          @foreach (var (centreName, centreIndex) in centreNames.Select((centreName, centreIndex) => (centreName, centreIndex))) {
-            var isTheLastCentreNameInList = centreIndex == centreNames.Count - 1;
-            @(isTheLastCentreNameInList ? "or " : "")
-            <strong>@centreName@(isTheLastCentreNameInList ? " " : ", ")</strong>
-          }
-        }
-        until you verify the address.
-      </p>
-    }
-  }
+  <vc:unverified-email-list primary-email-if-unverified="@primaryEmailIfUnverified"
+                            unverified-centre-emails="@Model.UnverifiedCentreEmails" />
 
   <p>
-    An email with a verification link has been sent to @numSpecificPhrases.thisAddress.
-    Please click the @numSpecificPhrases.link to verify your email @numSpecificPhrases.address.
-    Check your Junk @numSpecificPhrases.folder if you can’t find @numSpecificPhrases.it,
-    or you can resend @numSpecificPhrases.it by clicking the button below.
+    @VerifyYourEmailTextHelper.VerifyEmailLinkCommonInfo(multipleEmailsAreUnverified)
+    @VerifyYourEmailTextHelper.DirectionsToResendLinkByClickingButtonBelow(multipleEmailsAreUnverified)
   </p>
 
   <button class="nhsuk-button nhsuk-button--secondary">
-    Resend verification @numSpecificPhrases.email
+    Resend verification @(multipleEmailsAreUnverified ? "emails" : "email")
   </button>
 </div>

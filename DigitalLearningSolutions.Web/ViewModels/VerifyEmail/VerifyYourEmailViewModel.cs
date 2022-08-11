@@ -6,9 +6,6 @@
 
     public class VerifyYourEmailViewModel
     {
-        public const string CentreEmailExplanation =
-            "You will not be able to access that account until you verify the address.";
-
         public VerifyYourEmailViewModel(
             EmailVerificationReason emailVerificationReason,
             string? primaryEmail,

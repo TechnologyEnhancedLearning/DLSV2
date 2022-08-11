@@ -57,11 +57,8 @@
             DlsSubApplication = dlsSubApplication;
             SwitchCentreReturnUrl = switchCentreReturnUrl;
             PrimaryEmailIsVerified = userAccount.EmailVerified != null;
-            UnverifiedCentreEmails = GroupUnverifiedCentreEmailsByEmail(unverifiedCentreEmails);
+            UnverifiedCentreEmails = unverifiedCentreEmails;
             NumberOfUnverifiedEmails = (PrimaryEmailIsVerified ? 0 : 1) + UnverifiedCentreEmails.Count;
-            CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail = UnverifiedCentreEmails.ContainsKey(PrimaryEmail)
-                ? UnverifiedCentreEmails[PrimaryEmail]
-                : null;
         }
 
         public int? CentreId { get; set; }
@@ -96,26 +93,12 @@
             set;
         }
 
-        public Dictionary<string, List<string>> UnverifiedCentreEmails { get; set; }
+        public List<(int centreId, string centreName, string? centreSpecificEmail)> UnverifiedCentreEmails { get; set; }
 
         public int NumberOfUnverifiedEmails { get; set; }
-
-        public List<string>? CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail { get; set; }
 
         public DlsSubApplication DlsSubApplication { get; set; }
 
         public string SwitchCentreReturnUrl { get; set; }
-
-        private Dictionary<string, List<string>> GroupUnverifiedCentreEmailsByEmail(
-            IEnumerable<(int centreId, string centreName, string centreSpecificEmail)> unverifiedCentreEmails
-        )
-        {
-            var centreNamesAndEmails = unverifiedCentreEmails.Select(uce => (uce.centreName, uce.centreSpecificEmail));
-            var groupedEmails = centreNamesAndEmails.GroupBy(uce => uce.centreSpecificEmail);
-            return groupedEmails.ToDictionary(
-                groupedEmail => groupedEmail.Key,
-                groupedEmail => groupedEmail.Select(ge => ge.centreName).ToList()
-            );
-        }
     }
 }

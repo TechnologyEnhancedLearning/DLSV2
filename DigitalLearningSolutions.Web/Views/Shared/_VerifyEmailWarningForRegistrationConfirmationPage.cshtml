@@ -1,19 +1,13 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Register
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ConfirmationVerifyEmailWarningViewModel
 
 @{
   var primaryEmailIsUnverified = Model.PrimaryEmailIfUnverified != null;
   var centreEmailIsUnverified = Model.CentreEmailIfUnverified != null;
-  var primaryEmailIsUnverifiedAndSameAsCentreEmail = Model.PrimaryEmailIfUnverified != null && Model.PrimaryEmailIfUnverified == Model.CentreEmailIfUnverified;
-  var multipleEmailsAreUnverified = (primaryEmailIsUnverified ? 1 : 0) + (centreEmailIsUnverified ? 1 : 0) > 1;
-
-  var numSpecificPhrases = new {
-    address = multipleEmailsAreUnverified ? "addresses" : "address",
-    thisAddress = multipleEmailsAreUnverified ? "each of the addresses above" : "this address",
-    link = multipleEmailsAreUnverified ? "links" : "link",
-    folder = multipleEmailsAreUnverified ? "folders" : "folder",
-    it = multipleEmailsAreUnverified ? "them" : "it",
-  };
+  var primaryEmailIsUnverifiedAndSameAsCentreEmail = primaryEmailIsUnverified && Model.PrimaryEmailIfUnverified == Model.CentreEmailIfUnverified;
+  var multipleEmailsAreUnverified = primaryEmailIsUnverified && centreEmailIsUnverified && !primaryEmailIsUnverifiedAndSameAsCentreEmail;
 }
 
 <div class="nhsuk-warning-callout word-break">
@@ -25,23 +19,22 @@
       to access <strong>@Model.CentreName</strong>.
       This is also your centre email address for your account at this centre.
     </p>
-  } else if (primaryEmailIsUnverified && centreEmailIsUnverified) {
+  } else {
     <p>
-      You need to verify your primary email address <strong>@Model.PrimaryEmailIfUnverified</strong>
-      and your centre email address <strong>@Model.CentreEmailIfUnverified</strong>
-      to access your account at <strong>@Model.CentreName</strong>.
-    </p>
-  } else if (centreEmailIsUnverified) {
-    <p>
-      You need to verify your centre email address <strong>@Model.CentreEmailIfUnverified</strong>
+      You need to verify
+      @if (primaryEmailIsUnverified) {
+        @("your primary email address ")<strong>@Model.PrimaryEmailIfUnverified</strong>
+      }
+      @if (centreEmailIsUnverified) {
+        @(primaryEmailIsUnverified ? "and " : "")
+        @("your centre email address ")<strong>@Model.CentreEmailIfUnverified</strong>
+      }
       to access your account at <strong>@Model.CentreName</strong>.
     </p>
   }
 
   <p>
-    An email with a verification link has been sent to @numSpecificPhrases.thisAddress.
-    Please click the @numSpecificPhrases.link to verify your email @numSpecificPhrases.address.
-    Check your Junk @numSpecificPhrases.folder if you can’t find @numSpecificPhrases.it, or you can resend @numSpecificPhrases.it
-    by visiting the My account page.
+    @VerifyYourEmailTextHelper.VerifyEmailLinkCommonInfo(multipleEmailsAreUnverified)
+    @VerifyYourEmailTextHelper.DirectionsToResendLinkByVisitingMyAccountPage(multipleEmailsAreUnverified)
   </p>
 </div>
