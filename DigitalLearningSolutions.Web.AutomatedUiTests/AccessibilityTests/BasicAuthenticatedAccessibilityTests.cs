@@ -8,8 +8,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
     {
         public BasicAuthenticatedAccessibilityTests(AuthenticatedAccessibilityTestsFixture<Startup> fixture) : base(
             fixture
-        )
-        { }
+        ) { }
 
         [Theory]
         [InlineData("/MyAccount", "My account")]
@@ -40,7 +39,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Centre/Configuration/RegistrationPrompts/1/Remove",
             "Remove delegate registration prompt"
         )]
-        [InlineData("/TrackingSystem/Centre/Reports", "Centre reports")]
+        [InlineData("/TrackingSystem/Centre/Reports/Courses", "Centre reports")]
         [InlineData("/TrackingSystem/Centre/SystemNotifications", "New system notifications")]
         [InlineData("/TrackingSystem/Centre/TopCourses", "Top courses")]
         [InlineData("/TrackingSystem/CourseSetup", "Centre course setup")]
