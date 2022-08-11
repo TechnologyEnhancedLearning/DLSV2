@@ -200,7 +200,7 @@
                 string registrationConfirmationHash
             )
         {
-            var matchingUserAndCentreIds = connection.Query<(int, int, string)>(
+            return connection.QuerySingleOrDefault<(int?, int?, string?)>(
                 @"SELECT ucd.UserID, c.CentreID, c.CentreName
                     FROM UserCentreDetails AS ucd
                     INNER JOIN DelegateAccounts AS da ON da.UserID = ucd.UserID AND da.CentreID = ucd.CentreID
@@ -208,11 +208,7 @@
                     WHERE ucd.Email = @centreSpecificEmail
                         AND da.RegistrationConfirmationHash = @registrationConfirmationHash",
                 new { centreSpecificEmail, registrationConfirmationHash }
-            ).ToList();
-
-            return matchingUserAndCentreIds.Any()
-                ? matchingUserAndCentreIds.Single()
-                : ((int?)null, (int?)null, (string?)null);
+            );
         }
 
         public void LinkUserCentreDetailsToNewUser(
