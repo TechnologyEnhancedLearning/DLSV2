@@ -524,8 +524,6 @@
             A.CallTo(
                 () => groupsDataService.AddDelegateToGroup(A<int>._, nonJobGroupGroup.GroupId, A<DateTime>._, A<int>._)
             ).MustNotHaveHappened();
-
-            // no call to non-job group on other centre
         }
 
         private void DelegateMustHaveBeenRemovedFromGroups(IEnumerable<int> groupIds)

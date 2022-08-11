@@ -332,7 +332,6 @@
             foreach (var account in delegateAccounts)
             {
                 var groupsLinkedToJobGroup = GetGroupsLinkedToJobGroupForCentre(account.CentreId).ToList();
-
                 var oldJobGroupName = jobGroupsDataService.GetJobGroupName(oldJobGroupId);
                 var newJobGroupName = jobGroupsDataService.GetJobGroupName(newJobGroupId);
 
@@ -340,14 +339,12 @@
                     g =>
                         GroupLabelMatchesAnswer(g.GroupLabel, oldJobGroupName, JobGroupLinkedFieldName)
                 );
+                RemoveDelegateFromGroup(account.Id, groupToRemoveDelegateFrom.GroupId);
 
                 var groupToAddDelegateTo = groupsLinkedToJobGroup.Single(
                     g =>
                         GroupLabelMatchesAnswer(g.GroupLabel, newJobGroupName, JobGroupLinkedFieldName)
                 );
-
-                RemoveDelegateFromGroup(account.Id, groupToRemoveDelegateFrom.GroupId);
-
                 AddDelegateToGroupAndEnrolOnGroupCourses(
                     account.Id,
                     accountDetailsData,
