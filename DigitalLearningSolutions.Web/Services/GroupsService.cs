@@ -115,7 +115,7 @@
 
         void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails);
 
-        void SynchroniseJobGroupsOnOtherCentres(
+        void SynchroniseJobGroupsOnAllCentres(
             int originalDelegateId,
             int oldJobGroupId,
             int newJobGroupId,
@@ -296,8 +296,7 @@
             transaction.Complete();
         }
 
-        // TODO HEEDLS-1018 rename this
-        public void SynchroniseJobGroupsOnOtherCentres(
+        public void SynchroniseJobGroupsOnAllCentres(
             int originalDelegateId,
             int oldJobGroupId,
             int newJobGroupId,

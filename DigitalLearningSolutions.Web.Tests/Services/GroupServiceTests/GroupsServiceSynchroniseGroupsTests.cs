@@ -462,9 +462,8 @@
             ).MustNotHaveHappened();
         }
 
-        // TODO HEEDLS-1018 remember to rename this when you rename the method
         [Test]
-        public void SynchroniseJobGroupsOnOtherCentres_synchronises_job_groups_at_other_centres()
+        public void SynchroniseJobGroupsOnAllCentres_synchronises_correct_job_groups()
         {
             // Given
             A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
@@ -494,7 +493,7 @@
                 .Returns(newJobGroupGroup.GroupLabel);
 
             // When
-            groupsService.SynchroniseJobGroupsOnOtherCentres(
+            groupsService.SynchroniseJobGroupsOnAllCentres(
                 originalDelegateId,
                 oldJobGroupId,
                 newJobGroupId,
