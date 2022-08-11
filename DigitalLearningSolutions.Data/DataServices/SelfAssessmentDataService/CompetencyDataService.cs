@@ -291,12 +291,9 @@
                     FROM {CompetencyTables}
                         INNER JOIN SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID
                         {supervisorTables}
-                    WHERE (LAR.Verified IS NULL)
-                        AND ((LAR.Result IS NOT NULL) OR (LAR.SupportingComments IS NOT NULL))
-                        AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0))
-                        AND ((SA.EnforceRoleRequirementsForSignOff = 0) OR (CAQ.Required = 0))
-						AND (LAR.Requested IS NOT NULL) AND (LAR.Verified IS NULL) 
-                        AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0))
+                    WHERE (LAR.Verified IS NULL) 
+	                    AND ((LAR.Result IS NOT NULL) OR (LAR.SupportingComments IS NOT NULL)) 
+	                    AND (LAR.Requested IS NOT NULL)
                     ORDER BY SupervisorVerificationRequested DESC, C.Name",
                 (competency, assessmentQuestion) =>
                 {
