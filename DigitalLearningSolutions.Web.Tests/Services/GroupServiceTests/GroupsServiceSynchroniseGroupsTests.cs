@@ -375,7 +375,10 @@
         public void UpdateSynchronisedDelegateGroupsBasedOnUserChanges_adds_delegate_to_appropriate_groups()
         {
             // Given
-            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer", answer2: "new answer2");
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(
+                answer1: "new answer",
+                answer2: "new answer2"
+            );
             A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
             var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
                 5,
@@ -475,7 +478,7 @@
             var centreEmail = "centreEmail";
 
             var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
-            var delegateAccounts = new List<DelegateAccount>{ delegateAccount };
+            var delegateAccounts = new List<DelegateAccount> { delegateAccount };
 
             var oldJobGroupGroup = GroupTestHelper.GetDefaultGroup(1, linkedToField: 4, groupLabel: "old group");
             var newJobGroupGroup = GroupTestHelper.GetDefaultGroup(2, linkedToField: 4, groupLabel: "new group");
