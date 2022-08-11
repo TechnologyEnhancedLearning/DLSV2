@@ -170,7 +170,7 @@
                     FROM AdminAccounts AS aa
                     INNER JOIN Centres AS c ON c.centreID = aa.CentreID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = aa.UserID AND ucd.CentreID = c.CentreID
-                    WHERE aa.UserID = @userId",
+                    WHERE aa.UserID = @userId AND aa.Active = 1",
                 new { userId }
             );
         }
