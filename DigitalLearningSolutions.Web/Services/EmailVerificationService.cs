@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
@@ -11,11 +12,11 @@
 
     public interface IEmailVerificationService
     {
-        bool AccountEmailRequiresVerification(int userId, string email);
+        bool AccountEmailIsVerifiedForUser(int userId, string email);
 
         void SendVerificationEmails(
             UserAccount userAccount,
-            IEnumerable<(string, int?)> unverifiedEmails,
+            IEnumerable<PossibleEmailUpdate> unverifiedEmails,
             string baseUrl
         );
     }
@@ -37,29 +38,29 @@
             this.clockUtility = clockUtility;
         }
 
-        public bool AccountEmailRequiresVerification(int userId, string email)
+        public bool AccountEmailIsVerifiedForUser(int userId, string email)
         {
-            return emailVerificationDataService.AccountEmailRequiresVerification(userId, email);
+            return emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email);
         }
 
         public void SendVerificationEmails(
             UserAccount userAccount,
-            IEnumerable<(string, int?)> unverifiedEmails,
+            IEnumerable<PossibleEmailUpdate> unverifiedEmails,
             string baseUrl
         )
         {
-            foreach (var emailGroup in unverifiedEmails.GroupBy(emailCentrePair => emailCentrePair.Item1))
+            foreach (var emailGroup in unverifiedEmails.GroupBy(emailUpdate => emailUpdate.NewEmail))
             {
                 var hash = Guid.NewGuid().ToString();
                 var hashId = emailVerificationDataService.CreateEmailVerificationHash(hash, clockUtility.UtcNow);
 
-                foreach (var (_, centreId) in emailGroup)
+                foreach (var emailUpdate in emailGroup)
                 {
-                    UpdateEmailVerificationHashId(userAccount.Id, centreId, hashId);
+                    UpdateEmailVerificationHashId(userAccount.Id, emailUpdate.CentreId, hashId);
                 }
 
                 emailService.SendEmail(
-                    GenerateVerificationEmail(userAccount, hash, emailGroup.Key, baseUrl)
+                    GenerateVerificationEmail(userAccount, hash, emailGroup.Key!, baseUrl)
                 );
             }
         }

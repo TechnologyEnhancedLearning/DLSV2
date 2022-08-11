@@ -19,6 +19,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.Tests.Helpers;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
@@ -49,6 +50,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private INotificationDataService notificationDataService = null!;
+        private IEmailVerificationDataService emailVerificationDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -63,6 +65,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             userService = A.Fake<IUserService>();
             notificationDataService = A.Fake<INotificationDataService>();
             userDataService = A.Fake<IUserDataService>();
+            emailVerificationDataService = A.Fake<IEmailVerificationDataService>();
             clockUtility = A.Fake<IClockUtility>();
             groupsService = A.Fake<IGroupsService>();
 
@@ -94,6 +97,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 notificationDataService,
                 new NullLogger<RegistrationService>(),
                 userService,
+                emailVerificationDataService,
                 clockUtility,
                 groupsService
             );
@@ -400,7 +404,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             A.CallTo(
                 () => groupsService.AddNewDelegateToAppropriateGroups(
                     NewDelegateIdAndCandidateNumber.Item1,
-                    model)
+                    model
+                )
             ).MustHaveHappenedOnceExactly();
         }
 
@@ -421,7 +426,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             A.CallTo(
                 () => groupsService.AddNewDelegateToAppropriateGroups(
                     NewDelegateIdAndCandidateNumber.Item1,
-                    model)
+                    model
+                )
             ).MustHaveHappenedOnceExactly();
         }
 
@@ -639,6 +645,18 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                                  && m.IsSupervisor == centreManagerModel.IsSupervisor
                                  && m.IsNominatedSupervisor == centreManagerModel.IsNominatedSupervisor
                                  && m.Active == centreManagerModel.CentreAccountIsActive
+                        ),
+                        A<PossibleEmailUpdate>.That.Matches(
+                            update => PossibleEmailUpdateTestHelper.PossibleEmailUpdatesMatch(
+                                update,
+                                new PossibleEmailUpdate
+                                {
+                                    OldEmail = null,
+                                    NewEmail = centreManagerModel.CentreSpecificEmail,
+                                    NewEmailIsVerified = false,
+                                    CentreId = centreManagerModel.Centre,
+                                }
+                            )
                         )
                     )
                 )
@@ -710,7 +728,12 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
-            A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._))
+            A.CallTo(
+                    () => registrationDataService.RegisterAdmin(
+                        A<AdminAccountRegistrationModel>._,
+                        A<PossibleEmailUpdate>._
+                    )
+                )
                 .MustNotHaveHappened();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustNotHaveHappened();
@@ -962,7 +985,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             // Then
             action.Should().Throw<AdminCreationFailedException>();
             UpdateToExistingAdminAccountMustNotHaveHappened();
-            A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._))
+            A.CallTo(() => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._, A<PossibleEmailUpdate>._))
                 .MustNotHaveHappened();
         }
 
@@ -1003,7 +1026,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                     )
                 ).MustHaveHappenedOnceExactly();
                 A.CallTo(
-                    () => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._)
+                    () => registrationDataService.RegisterAdmin(A<AdminAccountRegistrationModel>._, A<PossibleEmailUpdate>._)
                 ).MustNotHaveHappened();
             }
         }
@@ -1039,6 +1062,12 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                             a.IsContentCreator == adminRoles.IsContentCreator &&
                             a.IsTrainer == adminRoles.IsTrainer &&
                             a.IsSupervisor == adminRoles.IsSupervisor
+                    ),
+                    A<PossibleEmailUpdate>.That.Matches(
+                        update => PossibleEmailUpdateTestHelper.PossibleEmailUpdatesMatch(
+                            update,
+                            new PossibleEmailUpdate()
+                        )
                     )
                 )
             ).MustHaveHappened();
@@ -1081,6 +1110,18 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                             A<DelegateRegistrationModel>.That.Matches(d => d.Approved),
                             userId,
                             currentTime,
+                            A<PossibleEmailUpdate>.That.Matches(
+                                update => PossibleEmailUpdateTestHelper.PossibleEmailUpdatesMatch(
+                                    update,
+                                    new PossibleEmailUpdate
+                                    {
+                                        OldEmail = "",
+                                        NewEmail = model.CentreSpecificEmail,
+                                        NewEmailIsVerified = false,
+                                        CentreId = model.Centre,
+                                    }
+                                )
+                            ),
                             null
                         )
                 )
@@ -1091,7 +1132,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                     A<DelegateRegistrationModel>._,
                     A<int>._,
                     A<int>._,
-                    A<DateTime>._
+                    A<DateTime>._,
+                    A<PossibleEmailUpdate>._
                 )
             ).MustNotHaveHappened();
             approved.Should().BeTrue();
@@ -1132,6 +1174,18 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                             A<DelegateRegistrationModel>.That.Matches(d => d.Approved),
                             userId,
                             currentTime,
+                            A<PossibleEmailUpdate>.That.Matches(
+                                update => PossibleEmailUpdateTestHelper.PossibleEmailUpdatesMatch(
+                                    update,
+                                    new PossibleEmailUpdate
+                                    {
+                                        OldEmail = "",
+                                        NewEmail = model.CentreSpecificEmail,
+                                        NewEmailIsVerified = false,
+                                        CentreId = model.Centre,
+                                    }
+                                )
+                            ),
                             null
                         )
                 )
@@ -1141,7 +1195,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                     A<DelegateRegistrationModel>._,
                     A<int>._,
                     A<int>._,
-                    A<DateTime>._
+                    A<DateTime>._,
+                    A<PossibleEmailUpdate>._
                 )
             ).MustNotHaveHappened();
             approved.Should().BeTrue();
@@ -1182,6 +1237,18 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                             A<DelegateRegistrationModel>.That.Matches(d => !d.Approved),
                             userId,
                             currentTime,
+                            A<PossibleEmailUpdate>.That.Matches(
+                                update => PossibleEmailUpdateTestHelper.PossibleEmailUpdatesMatch(
+                                    update,
+                                    new PossibleEmailUpdate
+                                    {
+                                        OldEmail = "",
+                                        NewEmail = model.CentreSpecificEmail,
+                                        NewEmailIsVerified = false,
+                                        CentreId = model.Centre,
+                                    }
+                                )
+                            ),
                             null
                         )
                 )
@@ -1191,7 +1258,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                     A<DelegateRegistrationModel>._,
                     A<int>._,
                     A<int>._,
-                    A<DateTime>._
+                    A<DateTime>._,
+                    A<PossibleEmailUpdate>._
                 )
             ).MustNotHaveHappened();
             approved.Should().BeFalse();
@@ -1222,9 +1290,10 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                             m.Answer4 == model.Answer4 &&
                             m.Answer5 == model.Answer5 &&
                             m.Answer6 == model.Answer6
-                        ),
+                    ),
                     userId,
                     A<DateTime>._,
+                    A<PossibleEmailUpdate>._,
                     A<IDbTransaction?>._
                 )
             ).Returns((delegateId, "fake"));
@@ -1252,7 +1321,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                             m.Answer6 == model.Answer6 &&
                             m.JobGroup == userEntity.UserAccount.JobGroupId &&
                             m.Centre == model.Centre
-                            ))
+                    )
+                )
             ).MustHaveHappenedOnceExactly();
         }
 
@@ -1283,6 +1353,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                             A<DelegateRegistrationModel>._,
                             A<int>._,
                             A<DateTime>._,
+                            A<PossibleEmailUpdate>._,
                             A<IDbTransaction>._
                         )
                 )
@@ -1292,7 +1363,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                     A<DelegateRegistrationModel>._,
                     A<int>._,
                     A<int>._,
-                    A<DateTime>._
+                    A<DateTime>._,
+                    A<PossibleEmailUpdate>._
                 )
             ).MustNotHaveHappened();
             var expectedError =
@@ -1341,6 +1413,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                             A<DelegateRegistrationModel>._,
                             A<int>._,
                             A<DateTime>._,
+                            A<PossibleEmailUpdate>._,
                             A<IDbTransaction>._
                         )
                 )
@@ -1361,7 +1434,19 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                     ),
                     userId,
                     existingDelegateId,
-                    currentTime
+                    currentTime,
+                    A<PossibleEmailUpdate>.That.Matches(
+                        update => PossibleEmailUpdateTestHelper.PossibleEmailUpdatesMatch(
+                            update,
+                            new PossibleEmailUpdate
+                            {
+                                OldEmail = "",
+                                NewEmail = model.CentreSpecificEmail,
+                                NewEmailIsVerified = false,
+                                CentreId = model.Centre,
+                            }
+                        )
+                    )
                 )
             ).MustHaveHappenedOnceExactly();
         }

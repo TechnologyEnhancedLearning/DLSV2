@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -19,6 +20,7 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -197,20 +199,32 @@
                 delegateAccount?.Id
             );
 
-            var unverifiedModifiedEmails = GetUnverifiedModifiedEmails(
-                userId,
+            var userCentreDetails = userDataService.GetCentreDetailsForUser(userEntity!.UserAccount.Id).ToList();
+            var possibleEmailUpdates = GetPossibleEmailUpdates(
+                userEntity,
                 centreId,
-                accountDetailsData.Email,
-                formData
+                accountDetailsData,
+                formData,
+                userCentreDetails
             );
 
             SaveUserDetails(
-                userEntity!.UserAccount,
+                userEntity.UserAccount,
                 accountDetailsData,
                 delegateDetailsData,
                 formData,
                 centreId,
-                unverifiedModifiedEmails
+                userCentreDetails
+            );
+
+            var unverifiedModifiedEmails = possibleEmailUpdates.Where(
+                update => update.NewEmail != null && update.IsEmailUpdating && !update.NewEmailIsVerified
+            ).ToList();
+
+            emailVerificationService.SendVerificationEmails(
+                userEntity.UserAccount,
+                unverifiedModifiedEmails,
+                config.GetAppRootPath()
             );
 
             var shouldRedirectToVerifyYourEmail = unverifiedModifiedEmails.Any();
@@ -291,6 +305,64 @@
             }
         }
 
+        private IEnumerable<PossibleEmailUpdate> GetPossibleEmailUpdates(
+            UserEntity userEntity,
+            int? centreId,
+            AccountDetailsData accountDetailsData,
+            MyAccountEditDetailsFormData formData,
+            List<UserCentreDetails> userCentreDetails
+        )
+        {
+            var isNewPrimaryEmailVerified = emailVerificationService.AccountEmailIsVerifiedForUser(
+                userEntity.UserAccount.Id,
+                accountDetailsData.Email
+            );
+            var verifiedUserEmails = userCentreDetails.Where(ucd => ucd.Email != null && ucd.EmailVerified != null)
+                .Select(ucd => ucd.Email).ToList();
+            var possibleEmailUpdates = new List<PossibleEmailUpdate>
+            {
+                new PossibleEmailUpdate
+                {
+                    OldEmail = userEntity.UserAccount.PrimaryEmail,
+                    NewEmail = accountDetailsData.Email,
+                    NewEmailIsVerified = isNewPrimaryEmailVerified,
+                    CentreId = null,
+                },
+            };
+
+            if (centreId != null)
+            {
+                var userDetailsAtCentre = userCentreDetails.SingleOrDefault(ucd => ucd.CentreId == centreId);
+                possibleEmailUpdates.Add(
+                    new PossibleEmailUpdate
+                    {
+                        OldEmail = userDetailsAtCentre?.Email,
+                        NewEmail = formData.CentreSpecificEmail,
+                        NewEmailIsVerified = verifiedUserEmails.Contains(formData.CentreSpecificEmail),
+                        CentreId = centreId,
+                    }
+                );
+            }
+            else
+            {
+                foreach (var (centre, centreEmail) in formData.CentreSpecificEmailsByCentreId)
+                {
+                    var userDetailsAtCentre = userCentreDetails.SingleOrDefault(ucd => ucd.CentreId == centre);
+                    possibleEmailUpdates.Add(
+                        new PossibleEmailUpdate
+                        {
+                            OldEmail = userDetailsAtCentre?.Email,
+                            NewEmail = centreEmail,
+                            NewEmailIsVerified = verifiedUserEmails.Contains(centreEmail),
+                            CentreId = centre,
+                        }
+                    );
+                }
+            }
+
+            return possibleEmailUpdates;
+        }
+
         private void ValidateSingleCentreEmail(string? email, int centreId, int userId)
         {
             if (IsCentreSpecificEmailAlreadyInUse(email, centreId, userId))
@@ -316,60 +388,13 @@
             }
         }
 
-        private List<(string, int?)> GetUnverifiedModifiedEmails(
-            int userId,
-            int? centreId,
-            string primaryEmail,
-            MyAccountEditDetailsFormData formData
-        )
-        {
-            var unverifiedModifiedEmails = new List<(string, int?)>();
-
-            if (userDataService.IsPrimaryEmailBeingChangedForUser(userId, primaryEmail) &&
-                emailVerificationService.AccountEmailRequiresVerification(userId, primaryEmail))
-            {
-                unverifiedModifiedEmails.Add((primaryEmail, null));
-            }
-
-            if (centreId.HasValue)
-            {
-                if (!string.IsNullOrWhiteSpace(formData.CentreSpecificEmail) &&
-                    userDataService.IsCentreEmailBeingChangedForUserAtCentre(
-                        userId,
-                        centreId.Value,
-                        formData.CentreSpecificEmail
-                    ) &&
-                    emailVerificationService.AccountEmailRequiresVerification(
-                        userId,
-                        formData.CentreSpecificEmail
-                    ))
-                {
-                    unverifiedModifiedEmails.Add((formData.CentreSpecificEmail, centreId.Value));
-                }
-            }
-            else
-            {
-                foreach (var (centre, email) in formData.CentreSpecificEmailsByCentreId)
-                {
-                    if (!string.IsNullOrWhiteSpace(email) &&
-                        userDataService.IsCentreEmailBeingChangedForUserAtCentre(userId, centre, email) &&
-                        emailVerificationService.AccountEmailRequiresVerification(userId, email))
-                    {
-                        unverifiedModifiedEmails.Add((email, centre));
-                    }
-                }
-            }
-
-            return unverifiedModifiedEmails;
-        }
-
         private void SaveUserDetails(
             UserAccount userAccount,
             EditAccountDetailsData accountDetailsData,
             DelegateDetailsData? delegateDetailsData,
             MyAccountEditDetailsFormData formData,
             int? centreId,
-            IEnumerable<(string, int?)> unverifiedModifiedEmails
+            List<UserCentreDetails> userCentreDetails
         )
         {
             if (centreId.HasValue)
@@ -379,43 +404,49 @@
                     delegateDetailsData,
                     formData.CentreSpecificEmail,
                     centreId.Value,
+                    !string.Equals(userAccount.PrimaryEmail, accountDetailsData.Email),
+                    !string.Equals(
+                        userCentreDetails.Where(ucd => ucd.CentreId == centreId).Select(ucd => ucd.Email)
+                            .SingleOrDefault(),
+                        formData.CentreSpecificEmail
+                    ),
                     true
-                );
-                emailVerificationService.SendVerificationEmails(
-                    userAccount,
-                    unverifiedModifiedEmails,
-                    config.GetAppRootPath()
                 );
             }
             else
             {
-                userService.UpdateUserDetails(accountDetailsData, true);
-                userService.SetCentreEmails(userAccount.Id, formData.CentreSpecificEmailsByCentreId);
-                emailVerificationService.SendVerificationEmails(
-                    userAccount,
-                    unverifiedModifiedEmails,
-                    config.GetAppRootPath()
+                userService.UpdateUserDetails(
+                    accountDetailsData,
+                    !string.Equals(userAccount.PrimaryEmail, accountDetailsData.Email),
+                    true
                 );
+                userService.SetCentreEmails(userAccount.Id, formData.CentreSpecificEmailsByCentreId, userCentreDetails);
             }
         }
 
         private async Task<IActionResult> GetRedirectLocation(
             UserAccount userAccount,
             bool shouldRedirectToVerifyYourEmail,
-            bool shouldLogIntoCentrelessAccount,
+            bool shouldLogOutOfCentre,
             string? returnUrl,
             DlsSubApplication dlsSubApplication
         )
         {
             if (shouldRedirectToVerifyYourEmail)
             {
-                if (shouldLogIntoCentrelessAccount)
+                if (shouldLogOutOfCentre)
                 {
-                    var claim = ((ClaimsIdentity)User.Identity).FindFirst("IsPersistent");
-                    var isPersistent = claim != null && Convert.ToBoolean(claim.Value);
+                    var isPersistent = (await HttpContext.AuthenticateAsync()).Properties.IsPersistent;
+
                     await HttpContext.Logout();
                     await this.CentrelessLogInAsync(userAccount, isPersistent);
+
+                    // HttpContext.Logout() causes a Cache-Control: no-cache header to be set.
+                    // We are about to redirect to Index, which uses NoCachingAttribute, which also adds this header.
+                    // If the header is already present, NoCachingAttribute will throw an exception, so we need to remove it first.
+                    HttpContext.Response.Headers.Remove("Cache-Control");
                 }
+
                 var emailVerificationReason = EmailVerificationReason.EmailChanged;
                 return RedirectToAction("Index", "VerifyYourEmail", new { emailVerificationReason });
             }

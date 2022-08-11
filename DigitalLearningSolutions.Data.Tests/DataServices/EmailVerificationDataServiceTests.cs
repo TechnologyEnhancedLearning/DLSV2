@@ -95,7 +95,7 @@
         }
 
         [Test]
-        public void AccountEmailRequiresVerification_Returns_False_When_Email_Verified_As_Primary_Email()
+        public void AccountEmailIsVerifiedForUser_Returns_True_When_Email_Verified_As_Primary_Email()
         {
             using var transaction = new TransactionScope();
 
@@ -109,14 +109,14 @@
             );
 
             // When
-            var result = emailVerificationDataService.AccountEmailRequiresVerification(userId, email);
+            var result = emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email);
 
             // Then
-            result.Should().BeFalse();
+            result.Should().BeTrue();
         }
 
         [Test]
-        public void AccountEmailRequiresVerification_Returns_False_When_Email_Verified_As_Centre_Email()
+        public void AccountEmailIsVerifiedForUser_Returns_True_When_Email_Verified_As_Centre_Email()
         {
             using var transaction = new TransactionScope();
 
@@ -132,14 +132,14 @@
             );
 
             // When
-            var result = emailVerificationDataService.AccountEmailRequiresVerification(userId, email);
+            var result = emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email);
 
             // Then
-            result.Should().BeFalse();
+            result.Should().BeTrue();
         }
 
         [Test]
-        public void AccountEmailRequiresVerification_Returns_True_When_Email_Requires_Verification()
+        public void AccountEmailIsVerifiedForUser_Returns_False_When_Email_Requires_Verification()
         {
             using var transaction = new TransactionScope();
 
@@ -148,10 +148,10 @@
             const string email = "some@email.com";
 
             // When
-            var result = emailVerificationDataService.AccountEmailRequiresVerification(userId, email);
+            var result = emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email);
 
             // Then
-            result.Should().BeTrue();
+            result.Should().BeFalse();
         }
     }
 }

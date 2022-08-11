@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
@@ -34,16 +35,16 @@
         [Test]
         [TestCase(false)]
         [TestCase(true)]
-        public void AccountEmailRequiresVerification_Returns_Expected_Result(bool expectedResult)
+        public void AccountEmailIsVerifiedForUser_Returns_Expected_Result(bool expectedResult)
         {
             // Given
             const int userId = 2;
             const string email = "test@email.com";
-            A.CallTo(() => emailVerificationDataService.AccountEmailRequiresVerification(userId, email))
+            A.CallTo(() => emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email))
                 .Returns(expectedResult);
 
             // When
-            var result = emailVerificationService.AccountEmailRequiresVerification(userId, email);
+            var result = emailVerificationService.AccountEmailIsVerifiedForUser(userId, email);
 
             // Then
             result.Should().Be(expectedResult);
@@ -56,7 +57,7 @@
             var userAccount = UserTestHelper.GetDefaultUserAccount();
 
             // When
-            emailVerificationService.SendVerificationEmails(userAccount, new List<(string, int?)>(), "example.com");
+            emailVerificationService.SendVerificationEmails(userAccount, new List<PossibleEmailUpdate>(), "example.com");
 
             // Then
             A.CallTo(
@@ -86,7 +87,14 @@
             // When
             emailVerificationService.SendVerificationEmails(
                 userAccount,
-                new List<(string, int?)> { ("primary@email.com", null) },
+                new List<PossibleEmailUpdate> {new PossibleEmailUpdate
+                    {
+                        OldEmail = "old@email.com",
+                        NewEmail = "new@email.com",
+                        NewEmailIsVerified = false,
+                        CentreId = null,
+                    },
+                },
                 "example.com"
             );
 
@@ -120,7 +128,20 @@
             // When
             emailVerificationService.SendVerificationEmails(
                 userAccount,
-                new List<(string, int?)> { (email, 1), (email, 2) },
+                new List<PossibleEmailUpdate> { new PossibleEmailUpdate
+                {
+                    OldEmail = "centre1@email.com",
+                    NewEmail = email,
+                    NewEmailIsVerified = false,
+                    CentreId = 1,
+                }, new PossibleEmailUpdate
+                    {
+                        OldEmail = "centre2@email.com",
+                        NewEmail = email,
+                        NewEmailIsVerified = false,
+                        CentreId = 2,
+                    },
+                },
                 "example.com"
             );
 

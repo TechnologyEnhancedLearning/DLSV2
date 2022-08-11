@@ -5,6 +5,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Logging;
@@ -16,12 +17,13 @@
             bool registerJourneyContainsTermsAndConditions
         );
 
-        int RegisterAdmin(AdminAccountRegistrationModel registrationModel);
+        int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate emailUpdate);
 
         (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             DateTime currentTime,
+            PossibleEmailUpdate emailUpdate,
             IDbTransaction? transaction = null
         );
 
@@ -29,7 +31,8 @@
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             int delegateId,
-            DateTime currentTime
+            DateTime currentTime,
+            PossibleEmailUpdate emailUpdate
         );
     }
 
@@ -77,6 +80,13 @@
                 delegateRegistrationModel,
                 userIdToLinkDelegateAccountTo,
                 currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = null,
+                    NewEmail = delegateRegistrationModel.CentreSpecificEmail,
+                    NewEmailIsVerified = false,
+                    CentreId = delegateRegistrationModel.Centre,
+                },
                 transaction
             );
 
@@ -89,6 +99,7 @@
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             DateTime currentTime,
+            PossibleEmailUpdate emailUpdate,
             IDbTransaction? transaction = null
         )
         {
@@ -104,6 +115,7 @@
                 delegateRegistrationModel.Centre,
                 delegateRegistrationModel.CentreSpecificEmail,
                 userId,
+                emailUpdate,
                 transaction
             );
 
@@ -126,24 +138,18 @@
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             int delegateId,
-            DateTime currentTime
+            DateTime currentTime,
+            PossibleEmailUpdate emailUpdate
         )
         {
             connection.EnsureOpen();
             var transaction = connection.BeginTransaction();
 
-            if (userDataService.IsCentreEmailBeingChangedForUserAtCentre(
-                    userId,
-                    delegateRegistrationModel.Centre,
-                    delegateRegistrationModel.CentreSpecificEmail
-                ))
+            if (emailUpdate.IsEmailUpdating)
             {
                 var emailVerified =
                     string.IsNullOrWhiteSpace(delegateRegistrationModel.CentreSpecificEmail) ||
-                    emailVerificationDataService.AccountEmailRequiresVerification(
-                        userId,
-                        delegateRegistrationModel.CentreSpecificEmail
-                    )
+                    !emailUpdate.NewEmailIsVerified
                         ? (DateTime?)null
                         : clockUtility.UtcNow;
 
@@ -166,7 +172,7 @@
             transaction.Commit();
         }
 
-        public int RegisterAdmin(AdminAccountRegistrationModel registrationModel)
+        public int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate emailUpdate)
         {
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
@@ -175,6 +181,7 @@
                 registrationModel.CentreId,
                 registrationModel.CentreSpecificEmail,
                 registrationModel.UserId,
+                emailUpdate,
                 transaction
             );
 
@@ -300,16 +307,13 @@
             int centreId,
             string? centreSpecificEmail,
             int userId,
+            PossibleEmailUpdate emailUpdate,
             IDbTransaction transaction
         )
         {
-            if (userDataService.IsCentreEmailBeingChangedForUserAtCentre(userId, centreId, centreSpecificEmail))
+            if (emailUpdate.IsEmailUpdating)
             {
-                var emailVerified =
-                    string.IsNullOrWhiteSpace(centreSpecificEmail) ||
-                    emailVerificationDataService.AccountEmailRequiresVerification(userId, centreSpecificEmail)
-                        ? (DateTime?)null
-                        : clockUtility.UtcNow;
+                var emailVerified = emailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
 
                 userDataService.SetCentreEmail(
                     userId,

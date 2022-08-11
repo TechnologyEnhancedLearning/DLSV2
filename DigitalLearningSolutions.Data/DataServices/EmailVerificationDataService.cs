@@ -13,7 +13,7 @@
 
         void UpdateEmailVerificationHashIdForCentreEmail(int userId, int centreId, int hashId);
 
-        bool AccountEmailRequiresVerification(int userId, string email);
+        bool AccountEmailIsVerifiedForUser(int userId, string? email);
     }
 
     public class EmailVerificationDataService : IEmailVerificationDataService
@@ -53,8 +53,13 @@
             );
         }
 
-        public bool AccountEmailRequiresVerification(int userId, string email)
+        public bool AccountEmailIsVerifiedForUser(int userId, string? email)
         {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return false;
+            }
+
             var isEmailVerifiedAsPrimaryEmail = connection.Query<DateTime?>(
                 @"SELECT EmailVerified FROM Users WHERE ID = @userId AND PrimaryEmail = @email",
                 new { userId, email }
@@ -65,7 +70,7 @@
                 new { userId, email }
             ).Any(date => date != null);
 
-            return !isEmailVerifiedAsPrimaryEmail && !isEmailVerifiedAsCentreEmail;
+            return isEmailVerifiedAsPrimaryEmail || isEmailVerifiedAsCentreEmail;
         }
     }
 }

@@ -8,7 +8,6 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
@@ -170,13 +169,6 @@
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var currentTime = new DateTime(2022, 1, 1);
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
-            A.CallTo(
-                () => userDataService.IsCentreEmailBeingChangedForUserAtCentre(
-                    accountDetailsData.UserId,
-                    centreId,
-                    centreEmail
-                )
-            ).Returns(true);
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -184,6 +176,8 @@
                 null,
                 centreEmail,
                 centreId,
+                false,
+                true,
                 shouldUpdateProfileImage
             );
 
@@ -198,8 +192,9 @@
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
                         currentTime,
-                        currentTime,
+                        null,
                         accountDetailsData.UserId,
+                        false,
                         shouldUpdateProfileImage
                     )
                 )
@@ -209,7 +204,7 @@
                         accountDetailsData.UserId,
                         centreId,
                         centreEmail,
-                        currentTime,
+                        null,
                         A<IDbTransaction?>._
                     )
                 )
@@ -251,6 +246,8 @@
                 delegateDetailsData,
                 null,
                 1,
+                false,
+                true,
                 shouldUpdateProfileImage
             );
 
@@ -265,8 +262,9 @@
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
                         currentTime,
-                        currentTime,
+                        null,
                         accountDetailsData.UserId,
+                        false,
                         shouldUpdateProfileImage
                     )
                 )
@@ -325,13 +323,6 @@
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var currentTime = new DateTime(2022, 1, 1);
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
-            A.CallTo(
-                () => userDataService.IsCentreEmailBeingChangedForUserAtCentre(
-                    accountDetailsData.UserId,
-                    centreId,
-                    centreEmail
-                )
-            ).Returns(true);
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -339,6 +330,8 @@
                 null,
                 centreEmail,
                 centreId,
+                false,
+                true,
                 changeMadeBySameUser
             );
 
@@ -348,7 +341,7 @@
                     accountDetailsData.UserId,
                     centreId,
                     centreEmail,
-                    currentTime,
+                    null,
                     A<IDbTransaction?>._
                 )
             ).MustHaveHappenedOnceExactly();
@@ -364,13 +357,6 @@
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var currentTime = new DateTime(2022, 1, 1);
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
-            A.CallTo(
-                () => userDataService.IsCentreEmailBeingChangedForUserAtCentre(
-                    accountDetailsData.UserId,
-                    centreId,
-                    centreEmail
-                )
-            ).Returns(true);
 
             // When
             userService.UpdateUserDetailsAndCentreSpecificDetails(
@@ -378,6 +364,8 @@
                 null,
                 centreEmail,
                 centreId,
+                false,
+                true,
                 changeMadeBySameUser
             );
 
@@ -405,6 +393,7 @@
             // When
             userService.UpdateUserDetails(
                 accountDetailsData,
+                false,
                 changesMadeBySameUser,
                 currentTime
             );
@@ -420,8 +409,9 @@
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
                         currentTime,
-                        currentTime,
+                        null,
                         accountDetailsData.UserId,
+                        false,
                         changesMadeBySameUser
                     )
                 )
@@ -440,6 +430,7 @@
             // When
             userService.UpdateUserDetails(
                 accountDetailsData,
+                false,
                 changesMadeBySameUser
             );
 
@@ -454,8 +445,9 @@
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
                         currentTime,
-                        currentTime,
+                        null,
                         accountDetailsData.UserId,
+                        false,
                         changesMadeBySameUser
                     )
                 )
@@ -465,7 +457,8 @@
         }
 
         [Test]
-        public void SetCentreEmails_calls_UserDataService_SetCentreEmail_for_each_item_in_given_dictionary()
+        public void
+            SetCentreEmails_calls_UserDataService_SetCentreEmail_for_each_item_in_given_dictionary_that_gets_modified()
         {
             // Given
             const int userId = 2;
@@ -475,8 +468,7 @@
                 { 2, "email@centre2.com" },
                 { 3, null },
             };
-            var currentTime = new DateTime(2022, 5, 5);
-            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
+            A.CallTo(() => clockUtility.UtcNow).Returns(new DateTime(2022, 5, 5));
 
             A.CallTo(
                 () => userDataService.SetCentreEmail(
@@ -487,22 +479,20 @@
                     A<IDbTransaction?>._
                 )
             ).DoesNothing();
-            A.CallTo(() => userDataService.IsCentreEmailBeingChangedForUserAtCentre(A<int>._, A<int>._, A<string?>._))
-                .Returns(true);
 
             // When
-            userService.SetCentreEmails(userId, centreEmailsByCentreId);
+            userService.SetCentreEmails(userId, centreEmailsByCentreId, new List<UserCentreDetails>());
 
             // Then
             A.CallTo(
-                () => userDataService.SetCentreEmail(userId, 1, "email@centre1.com", currentTime, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(userId, 1, "email@centre1.com", null, A<IDbTransaction?>._)
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
-                () => userDataService.SetCentreEmail(userId, 2, "email@centre2.com", currentTime, A<IDbTransaction?>._)
+                () => userDataService.SetCentreEmail(userId, 2, "email@centre2.com", null, A<IDbTransaction?>._)
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => userDataService.SetCentreEmail(userId, 3, null, null, A<IDbTransaction?>._)
-            ).MustHaveHappenedOnceExactly();
+            ).MustNotHaveHappened();
         }
 
         [Test]
@@ -512,7 +502,7 @@
             var centreEmailsByCentreId = new Dictionary<int, string?>();
 
             // When
-            userService.SetCentreEmails(2, centreEmailsByCentreId);
+            userService.SetCentreEmails(2, centreEmailsByCentreId, new List<UserCentreDetails>());
 
             // Then
             A.CallTo(

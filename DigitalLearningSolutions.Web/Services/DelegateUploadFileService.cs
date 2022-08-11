@@ -167,11 +167,7 @@ namespace DigitalLearningSolutions.Web.Services
                 );
 
                 if (delegateRow.Email != delegateEntity.EmailForCentreNotifications &&
-                    userDataService.IsCentreEmailBeingChangedForUserAtCentre(
-                        delegateEntity.UserAccount.Id,
-                        delegateEntity.DelegateAccount.CentreId,
-                        delegateRow.Email
-                    ))
+                    !string.Equals(delegateEntity.EmailForCentreNotifications, delegateRow.Email))
                 {
                     userDataService.SetCentreEmail(
                         delegateEntity.UserAccount.Id,

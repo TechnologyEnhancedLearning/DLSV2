@@ -210,11 +210,10 @@
             DateTime detailsLastChecked,
             DateTime? emailVerified,
             int userId,
+            bool isPrimaryEmailUpdated,
             bool changeMadeBySameUser = false
         )
         {
-            var isPrimaryEmailUpdated = IsPrimaryEmailBeingChangedForUser(userId, primaryEmail);
-
             connection.Execute(
                 @"UPDATE Users
                         SET

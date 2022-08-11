@@ -7,6 +7,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using FakeItEasy;
@@ -155,7 +156,8 @@
                 service.RegisterDelegateAccountAndCentreDetailForExistingUser(
                     delegateRegistrationModel,
                     userId,
-                    currentTime
+                    currentTime,
+                    new PossibleEmailUpdate()
                 );
 
             // Then
@@ -202,7 +204,8 @@
                 service.RegisterDelegateAccountAndCentreDetailForExistingUser(
                     delegateRegistrationModel,
                     userId,
-                    currentTime
+                    currentTime,
+                    new PossibleEmailUpdate()
                 );
 
             // Then
@@ -242,7 +245,14 @@
                 delegateRegistrationModel,
                 userId,
                 existingDelegateId,
-                currentTime
+                currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = null,
+                    NewEmail = delegateRegistrationModel.CentreSpecificEmail,
+                    NewEmailIsVerified = false,
+                    CentreId = delegateRegistrationModel.Centre,
+                }
             );
 
             // Then
@@ -332,7 +342,14 @@
                 delegateRegistrationModel,
                 userId,
                 existingDelegateId,
-                currentTime
+                currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = null,
+                    NewEmail = delegateRegistrationModel.CentreSpecificEmail,
+                    NewEmailIsVerified = false,
+                    CentreId = delegateRegistrationModel.Centre,
+                }
             );
 
             // Then
@@ -340,7 +357,7 @@
             {
                 var userCentreDetails = connection.GetEmailAndVerifiedDateFromUserCentreDetails(userId, centreId);
                 userCentreDetails.email.Should().Be(newCentreEmail);
-                userCentreDetails.emailVerified.Should().Be(currentTime);
+                userCentreDetails.emailVerified.Should().Be(null);
             }
         }
 
@@ -352,6 +369,7 @@
 
             // Given
             var currentTime = new DateTime(2022, 06, 27, 11, 03, 12);
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             const int userId = 281052;
             const int existingDelegateId = 142559;
             const int centreId = 121;
@@ -374,7 +392,14 @@
                 delegateRegistrationModel,
                 userId,
                 existingDelegateId,
-                currentTime
+                currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = existingEmail,
+                    NewEmail = null,
+                    NewEmailIsVerified = false,
+                    CentreId = delegateRegistrationModel.Centre,
+                }
             );
             var userCentreDetails = connection.GetEmailAndVerifiedDateFromUserCentreDetails(userId, centreId);
 
@@ -401,7 +426,7 @@
             A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
             // When
-            var id = service.RegisterAdmin(registrationModel);
+            var id = service.RegisterAdmin(registrationModel, new PossibleEmailUpdate());
 
             // Then
             var user = userDataService.GetAdminUserById(id)!;
@@ -433,7 +458,7 @@
             A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
             // When
-            var id = service.RegisterAdmin(registrationModel);
+            var id = service.RegisterAdmin(registrationModel, new PossibleEmailUpdate());
 
             // Then
             var user = userDataService.GetAdminUserById(id)!;

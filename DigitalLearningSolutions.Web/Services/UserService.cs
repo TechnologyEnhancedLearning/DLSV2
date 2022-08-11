@@ -26,6 +26,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         void UpdateUserDetails(
             EditAccountDetailsData editAccountDetailsData,
+            bool isPrimaryEmailUpdated,
             bool changeMadeBySameUser,
             DateTime? detailsLastChecked = null
         );
@@ -35,10 +36,16 @@ namespace DigitalLearningSolutions.Web.Services
             DelegateDetailsData? delegateDetailsData,
             string? centreEmail,
             int centreId,
+            bool isPrimaryEmailUpdated,
+            bool isCentreEmailUpdated,
             bool changeMadeBySameUser
         );
 
-        void SetCentreEmails(int userId, Dictionary<int, string?> centreEmailsByCentreId);
+        void SetCentreEmails(
+            int userId,
+            Dictionary<int, string?> centreEmailsByCentreId,
+            List<UserCentreDetails> userCentreDetails
+        );
 
         void ResetFailedLoginCount(UserAccount userAccount);
 
@@ -345,12 +352,13 @@ namespace DigitalLearningSolutions.Web.Services
 
         public void UpdateUserDetails(
             EditAccountDetailsData editAccountDetailsData,
+            bool isPrimaryEmailUpdated,
             bool changeMadeBySameUser,
             DateTime? detailsLastChecked = null
         )
         {
             var currentTime = clockUtility.UtcNow;
-            var emailVerified = changeMadeBySameUser && emailVerificationDataService.AccountEmailRequiresVerification(
+            var emailVerified = changeMadeBySameUser && !emailVerificationDataService.AccountEmailIsVerifiedForUser(
                 editAccountDetailsData.UserId,
                 editAccountDetailsData.Email
             )
@@ -368,6 +376,7 @@ namespace DigitalLearningSolutions.Web.Services
                 detailsLastChecked ?? currentTime,
                 emailVerified,
                 editAccountDetailsData.UserId,
+                isPrimaryEmailUpdated,
                 changeMadeBySameUser
             );
         }
@@ -377,6 +386,8 @@ namespace DigitalLearningSolutions.Web.Services
             DelegateDetailsData? delegateDetailsData,
             string? centreEmail,
             int centreId,
+            bool isPrimaryEmailUpdated,
+            bool isCentreEmailUpdated,
             bool changeMadeBySameUser
         )
         {
@@ -405,22 +416,19 @@ namespace DigitalLearningSolutions.Web.Services
                 );
             }
 
-            UpdateUserDetails(editAccountDetailsData, changeMadeBySameUser, currentTime);
+            UpdateUserDetails(editAccountDetailsData, isPrimaryEmailUpdated, changeMadeBySameUser, currentTime);
 
-            if (userDataService.IsCentreEmailBeingChangedForUserAtCentre(
-                    editAccountDetailsData.UserId,
-                    centreId,
-                    centreEmail
-                ))
+            if (isCentreEmailUpdated)
             {
-                var emailVerified = string.IsNullOrWhiteSpace(centreEmail) || (changeMadeBySameUser &&
-                                                                               emailVerificationDataService
-                                                                                   .AccountEmailRequiresVerification(
-                                                                                       editAccountDetailsData.UserId,
-                                                                                       centreEmail
-                                                                                   ))
-                    ? (DateTime?)null
-                    : currentTime;
+                var emailVerified =
+                    changeMadeBySameUser &&
+                    !emailVerificationDataService
+                        .AccountEmailIsVerifiedForUser(
+                            editAccountDetailsData.UserId,
+                            centreEmail
+                        )
+                        ? (DateTime?)null
+                        : currentTime;
 
                 userDataService.SetCentreEmail(
                     editAccountDetailsData.UserId,
@@ -431,19 +439,25 @@ namespace DigitalLearningSolutions.Web.Services
             }
         }
 
-        public void SetCentreEmails(int userId, Dictionary<int, string?> centreEmailsByCentreId)
+        public void SetCentreEmails(
+            int userId,
+            Dictionary<int, string?> centreEmailsByCentreId,
+            List<UserCentreDetails> userCentreDetails
+        )
         {
             var currentTime = clockUtility.UtcNow;
 
             foreach (var (centreId, email) in centreEmailsByCentreId)
             {
-                if (userDataService.IsCentreEmailBeingChangedForUserAtCentre(userId, centreId, email))
+                if (!string.Equals(
+                        email,
+                        userCentreDetails.Where(ucd => ucd.CentreId == centreId).Select(ucd => ucd.Email)
+                            .SingleOrDefault()
+                    ))
                 {
-                    var emailVerified =
-                        string.IsNullOrWhiteSpace(email) ||
-                        emailVerificationDataService.AccountEmailRequiresVerification(userId, email)
-                            ? (DateTime?)null
-                            : currentTime;
+                    var emailVerified = emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email)
+                        ? currentTime
+                        : (DateTime?)null;
 
                     userDataService.SetCentreEmail(userId, centreId, email, emailVerified);
                 }

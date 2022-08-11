@@ -6,6 +6,7 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public partial class UserDataService
     {
@@ -201,14 +202,12 @@
             );
         }
 
-        public bool IsCentreEmailBeingChangedForUserAtCentre(int userId, int centreId, string? newCentreEmail)
+        public IEnumerable<UserCentreDetails> GetCentreDetailsForUser(int userId)
         {
-            var centreEmail = connection.Query<string>(
-                @"SELECT Email FROM UserCentreDetails WHERE UserID = @userId AND CentreID = @centreId",
-                new { userId, centreId }
-            ).SingleOrDefault();
-
-            return !string.Equals(centreEmail, newCentreEmail);
+            return connection.Query<UserCentreDetails>(
+                @"SELECT ID, UserID, CentreID, Email, EmailVerified FROM UserCentreDetails WHERE UserID = @userId",
+                new { userId }
+            );
         }
     }
 }

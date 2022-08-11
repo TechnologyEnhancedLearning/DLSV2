@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
-    using System.Data;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -231,6 +230,8 @@
                         A<DelegateDetailsData>._,
                         centreSpecificEmail,
                         delegateEntity.DelegateAccount.CentreId,
+                        false,
+                        true,
                         false
                     )
                 ).MustHaveHappened();
@@ -277,6 +278,8 @@
                         A<DelegateDetailsData>._,
                         centreSpecificEmail,
                         delegateEntity.DelegateAccount.CentreId,
+                        false,
+                        false,
                         false
                     )
                 ).MustHaveHappened();
@@ -324,6 +327,8 @@
                         A<DelegateDetailsData>._,
                         null,
                         delegateEntity.DelegateAccount.CentreId,
+                        false,
+                        false,
                         false
                     )
                 ).MustHaveHappened();
@@ -372,6 +377,8 @@
                         A<DelegateDetailsData>._,
                         null,
                         delegateEntity.DelegateAccount.CentreId,
+                        false,
+                        false,
                         false
                     )
                 ).MustHaveHappened();
@@ -421,6 +428,8 @@
                         A<DelegateDetailsData>._,
                         newCentreSpecificEmail,
                         delegateEntity.DelegateAccount.CentreId,
+                        false,
+                        true,
                         false
                     )
                 ).MustHaveHappened();
