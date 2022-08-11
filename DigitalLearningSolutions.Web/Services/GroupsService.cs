@@ -116,12 +116,12 @@
         void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails);
 
         void SynchroniseJobGroupsOnOtherCentres(
-            int delegateId,
+            int originalDelegateId,
             int oldJobGroupId,
             int newJobGroupId,
             AccountDetailsData accountDetailsData,
             string? centreEmail
-        )
+        );
     }
 
     public class GroupsService : IGroupsService
@@ -283,19 +283,12 @@
 
                 foreach (var groupToAddDelegateTo in groupsToAddDelegateTo)
                 {
-                    groupsDataService.AddDelegateToGroup(
+                    AddDelegateToGroupAndEnrolOnGroupCourses(
                         delegateId,
-                        groupToAddDelegateTo.GroupId,
-                        clockUtility.UtcNow,
-                        1
-                    );
-
-                    EnrolDelegateOnGroupCourses(
-                        delegateId,
-                        registrationFieldAnswers.CentreId,
                         accountDetailsData,
                         centreEmail,
-                        groupToAddDelegateTo.GroupId
+                        groupToAddDelegateTo,
+                        registrationFieldAnswers.CentreId
                     );
                 }
             }
@@ -305,7 +298,7 @@
 
         // TODO HEEDLS-1018 rename this
         public void SynchroniseJobGroupsOnOtherCentres(
-            int delegateId,
+            int originalDelegateId,
             int oldJobGroupId,
             int newJobGroupId,
             AccountDetailsData accountDetailsData,
@@ -317,7 +310,7 @@
                 return;
             }
 
-            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
+            var userId = userDataService.GetUserIdFromDelegateId(originalDelegateId);
             var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userId);
             // possibly exclude existing account here
 
@@ -340,23 +333,40 @@
                         GroupLabelMatchesAnswer(g.GroupLabel, newJobGroupName, "Job group")
                 );
 
-                RemoveDelegateFromGroup(delegateId, groupToRemoveDelegateFrom.GroupId);
+                RemoveDelegateFromGroup(account.Id, groupToRemoveDelegateFrom.GroupId);
 
-                groupsDataService.AddDelegateToGroup(
-                    delegateId,
-                    groupToAddDelegateTo.GroupId,
-                    clockUtility.UtcNow,
-                    1
-                );
-
-                EnrolDelegateOnGroupCourses(
-                    delegateId,
-                    account.CentreId,
+                AddDelegateToGroupAndEnrolOnGroupCourses(
+                    account.Id,
                     accountDetailsData,
                     centreEmail,
-                    groupToAddDelegateTo.GroupId
+                    groupToAddDelegateTo,
+                    account.CentreId
                 );
             }
+        }
+
+        private void AddDelegateToGroupAndEnrolOnGroupCourses(
+            int delegateId,
+            AccountDetailsData accountDetailsData,
+            string? centreEmail,
+            Group groupToAddDelegateTo,
+            int centreId
+        )
+        {
+            groupsDataService.AddDelegateToGroup(
+                delegateId,
+                groupToAddDelegateTo.GroupId,
+                clockUtility.UtcNow,
+                1
+            );
+
+            EnrolDelegateOnGroupCourses(
+                delegateId,
+                centreId,
+                accountDetailsData,
+                centreEmail,
+                groupToAddDelegateTo.GroupId
+            );
         }
 
         public void EnrolDelegateOnGroupCourses(
