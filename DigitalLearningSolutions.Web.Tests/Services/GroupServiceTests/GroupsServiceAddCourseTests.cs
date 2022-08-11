@@ -563,6 +563,44 @@
         }
 
         [Test]
+        public void AddCourseToGroup_does_not_send_email_to_delegates_without_required_notification_preference()
+        {
+            // Given
+            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(
+                customisationId: 13,
+                applicationName: "application",
+                customisationName: "customisation",
+                completeWithinMonths: 0
+            );
+            SetupEnrolProcessFakes(
+                GenericNewProgressId,
+                GenericRelatedTutorialId,
+                notifyDelegates: false
+            );
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
+
+            // When
+            groupsService.AddCourseToGroup(
+                groupCourse.GroupId,
+                groupCourse.CustomisationId,
+                0,
+                1,
+                true,
+                1,
+                CentreId
+            );
+
+            // Then
+            A.CallTo(
+                () => emailService.ScheduleEmail(
+                    A<Email>._,
+                    A<string>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
         public void AddCourseToGroup_sends_correct_email_with_additional_CompleteByDate()
         {
             // Given

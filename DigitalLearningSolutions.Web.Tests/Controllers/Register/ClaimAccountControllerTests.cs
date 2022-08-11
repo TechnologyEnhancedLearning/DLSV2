@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -202,11 +203,18 @@
                 )
             ).MustHaveHappenedOnceExactly();
 
+            controller.TempData.Peek<ClaimAccountConfirmationViewModel>().Should().BeEquivalentTo(
+                new ClaimAccountConfirmationViewModel
+                {
+                    Email = model.Email,
+                    CentreName = model.CentreName,
+                    CandidateNumber = model.CandidateNumber,
+                    WasPasswordSetByAdmin = true,
+                }
+            );
+
             result.Should().BeRedirectToActionResult()
-                .WithActionName("Confirmation")
-                .WithRouteValue("email", model.Email)
-                .WithRouteValue("centreName", model.CentreName)
-                .WithRouteValue("candidateNumber", model.CandidateNumber);
+                .WithActionName("Confirmation");
         }
 
         [Test]
@@ -343,11 +351,18 @@
                 )
             ).MustHaveHappenedOnceExactly();
 
+            controller.TempData.Peek<ClaimAccountConfirmationViewModel>().Should().BeEquivalentTo(
+                new ClaimAccountConfirmationViewModel
+                {
+                    Email = model.Email,
+                    CentreName = model.CentreName,
+                    CandidateNumber = model.CandidateNumber,
+                    WasPasswordSetByAdmin = false,
+                }
+            );
+
             result.Should().BeRedirectToActionResult()
-                .WithActionName("Confirmation")
-                .WithRouteValue("email", model.Email)
-                .WithRouteValue("centreName", model.CentreName)
-                .WithRouteValue("candidateNumber", model.CandidateNumber);
+                .WithActionName("Confirmation");
         }
 
         [Test]
@@ -502,23 +517,28 @@
         }
 
         [Test]
-        public void Confirmation_returns_view_model()
+        public void Confirmation_clears_TempData_and_returns_view_model()
         {
             // Given
-            var model = new ClaimAccountViewModel
+            var model = new ClaimAccountConfirmationViewModel
             {
                 Email = DefaultEmail,
                 CentreName = DefaultCentreName,
                 CandidateNumber = DefaultCandidateNumber,
+                WasPasswordSetByAdmin = true,
             };
 
+            controller.TempData.Set(model);
+
             // When
-            var result = controller.Confirmation(model.Email, model.CentreName, model.CandidateNumber);
+            var result = controller.Confirmation();
 
             // Then
+            controller.TempData.Peek<ClaimAccountConfirmationViewModel>().Should().BeNull();
+
             result.Should().BeViewResult()
                 .WithDefaultViewName()
-                .ModelAs<ClaimAccountViewModel>().Should().BeEquivalentTo(model);
+                .ModelAs<ClaimAccountConfirmationViewModel>().Should().BeEquivalentTo(model);
         }
 
         [Test]

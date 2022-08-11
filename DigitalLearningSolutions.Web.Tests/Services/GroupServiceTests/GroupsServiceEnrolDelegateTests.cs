@@ -693,5 +693,52 @@
             ).MustHaveHappened();
         }
 
+        [Test]
+        public void
+            EnrolDelegateOnGroupCourses_does_not_send_email_to_delegates_without_required_notification_preference()
+        {
+            // Given
+            const string centreEmail = "test@email.com";
+            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(
+                customisationId: 13,
+                applicationName: "application",
+                customisationName: "customisation",
+                completeWithinMonths: 0
+            );
+            var oldDelegateDetails = UserTestHelper.GetDefaultDelegateUser(
+                firstName: "oldFirst",
+                lastName: "oldLast",
+                emailAddress: "oldEmail"
+            );
+            var newAccountDetails = UserTestHelper.GetDefaultAccountDetailsData(
+                firstName: "newFirst",
+                surname: "newLast",
+                email: "newEmail"
+            );
+            SetupEnrolProcessFakes(
+                GenericNewProgressId,
+                GenericRelatedTutorialId,
+                notifyDelegates: false
+            );
+            SetUpAddDelegateEnrolProcessFakes(groupCourse);
+
+            // When
+            groupsService.EnrolDelegateOnGroupCourses(
+                oldDelegateDetails.Id,
+                oldDelegateDetails.CentreId,
+                newAccountDetails,
+                centreEmail,
+                8
+            );
+
+            // Then
+            A.CallTo(
+                () => emailService.ScheduleEmail(
+                    A<Email>._,
+                    A<string>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
+        }
     }
 }

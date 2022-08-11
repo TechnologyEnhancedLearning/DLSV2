@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
@@ -23,18 +24,20 @@
     [SetSelectedTab(nameof(NavMenuTab.LogIn))]
     public class LoginController : Controller
     {
+        private readonly IClockUtility clockUtility;
         private readonly ILogger<LoginController> logger;
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
         private readonly IUserService userService;
-        private readonly IClockUtility clockUtility;
+        private readonly IConfigDataService configDataService;
 
         public LoginController(
             ILoginService loginService,
             ISessionService sessionService,
             ILogger<LoginController> logger,
             IUserService userService,
-            IClockUtility clockUtility
+            IClockUtility clockUtility,
+            IConfigDataService configDataService
         )
         {
             this.loginService = loginService;
@@ -42,6 +45,7 @@
             this.logger = logger;
             this.userService = userService;
             this.clockUtility = clockUtility;
+            this.configDataService = configDataService;
         }
 
         public IActionResult Index(string? returnUrl = null)
@@ -64,6 +68,7 @@
             }
 
             var loginResult = loginService.AttemptLogin(model.Username!.Trim(), model.Password!);
+
             switch (loginResult.LoginAttemptResult)
             {
                 case LoginAttemptResult.InvalidCredentials:
@@ -74,7 +79,9 @@
                 case LoginAttemptResult.AccountLocked:
                     return View("AccountLocked");
                 case LoginAttemptResult.InactiveAccount:
-                    return View("AccountInactive");
+                    var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
+                    var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
+                    return View("AccountInactive", inactiveAccountModel);
                 case LoginAttemptResult.UnverifiedEmail:
                     await this.CentrelessLogInAsync(loginResult.UserEntity!.UserAccount, model.RememberMe);
                     return RedirectToAction(
@@ -143,7 +150,11 @@
 
             if (centreEmailIsUnverified)
             {
-                return RedirectToAction("Index", "VerifyYourEmail");
+                return RedirectToAction(
+                    "Index",
+                    "VerifyYourEmail",
+                    new { emailVerificationReason = EmailVerificationReason.EmailNotVerified }
+                );
             }
 
             var rememberMe = (await HttpContext.AuthenticateAsync()).Properties.IsPersistent;

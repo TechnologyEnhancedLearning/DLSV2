@@ -6,6 +6,7 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
 
     public partial class UserDataService
@@ -124,6 +125,32 @@
                     WHERE UserID = @userId AND CentreID = @centreId",
                 new { userId, centreId }
             ).SingleOrDefault();
+        }
+
+        public EmailVerificationDetails? GetCentreEmailVerificationDetails(string code)
+        {
+            return connection.Query<EmailVerificationDetails>(
+                @"SELECT
+                        u.UserId,
+                        u.Email,
+                        u.EmailVerified,
+                        h.EmailVerificationHash,
+                        h.CreatedDate AS EmailVerificationHashCreatedDate
+                    FROM UserCentreDetails u
+                    JOIN EmailVerificationHashes h ON h.ID = u.EmailVerificationHashID
+                    WHERE h.EmailVerificationHash = @code",
+                new { code }
+            ).SingleOrDefault();
+        }
+
+        public void SetCentreEmailVerified(int userId, string email, DateTime verifiedDateTime)
+        {
+            connection.Execute(
+                @"UPDATE UserCentreDetails
+                    SET EmailVerified = @verifiedDateTime, EmailVerificationHashID = NULL
+                    WHERE UserID = @userId AND Email = @email AND EmailVerified IS NULL",
+                new { userId, email, verifiedDateTime }
+            );
         }
 
         public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(

@@ -1,0 +1,17 @@
+﻿@{
+  ViewData["Title"] = "Verification link expired";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+
+    <p class="nhsuk-body-m">The link you have used to verify your email has expired.</p>
+    <p class="nhsuk-body-m">Email verification links expire after 3 days.</p>
+    <p class="nhsuk-body-m">Please log in and visit the My account page to send a new verification link.</p>
+
+    <div class="nhsuk-u-margin-top-5">
+      <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="My account" />
+    </div>
+  </div>
+</div>
