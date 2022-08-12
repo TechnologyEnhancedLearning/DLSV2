@@ -7,6 +7,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public partial class UserDataService
     {
@@ -50,8 +51,7 @@
                 connection.Execute(
                     string.IsNullOrWhiteSpace(email)
                         ? @"UPDATE UserCentreDetails
-                        SET Email = NULL,
-                            EmailVerified = NULL
+                        SET Email = NULL, EmailVerified = NULL
                         WHERE userID = @userId AND centreID = @centreId"
                         : @"UPDATE UserCentreDetails
                         SET Email = @email, EmailVerified = @emailVerified
@@ -119,17 +119,17 @@
 
         public string? GetCentreEmail(int userId, int centreId)
         {
-            return connection.Query<string?>(
+            return connection.QuerySingleOrDefault<string>(
                 @"SELECT Email
                     FROM UserCentreDetails
                     WHERE UserID = @userId AND CentreID = @centreId",
                 new { userId, centreId }
-            ).SingleOrDefault();
+            );
         }
 
         public EmailVerificationDetails? GetCentreEmailVerificationDetails(string code)
         {
-            return connection.Query<EmailVerificationDetails>(
+            return connection.QuerySingleOrDefault<EmailVerificationDetails>(
                 @"SELECT
                         u.UserId,
                         u.Email,
@@ -140,7 +140,7 @@
                     JOIN EmailVerificationHashes h ON h.ID = u.EmailVerificationHashID
                     WHERE h.EmailVerificationHash = @code",
                 new { code }
-            ).SingleOrDefault();
+            );
         }
 
         public void SetCentreEmailVerified(int userId, string email, DateTime verifiedDateTime)
@@ -222,6 +222,14 @@
                     SET UserID = @newUserIdForUserCentreDetails
                     WHERE UserID = @currentUserIdForUserCentreDetails AND CentreID = @centreId",
                 new { currentUserIdForUserCentreDetails, newUserIdForUserCentreDetails, centreId }
+            );
+        }
+
+        public IEnumerable<UserCentreDetails> GetCentreDetailsForUser(int userId)
+        {
+            return connection.Query<UserCentreDetails>(
+                @"SELECT ID, UserID, CentreID, Email, EmailVerified FROM UserCentreDetails WHERE UserID = @userId",
+                new { userId }
             );
         }
     }

@@ -15,6 +15,7 @@
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FluentAssertions;
@@ -42,6 +43,7 @@
         private IRegistrationService registrationService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void SetUp()
@@ -57,9 +59,12 @@
             passwordResetService = A.Fake<IPasswordResetService>();
             groupsService = A.Fake<IGroupsService>();
             configuration = A.Fake<IConfiguration>();
+            clockUtility = A.Fake<IClockUtility>();
 
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(A<string>._))
                 .Returns(UserTestHelper.GetDefaultDelegateEntity());
+
+            A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
             delegateUploadFileService = new DelegateUploadFileService(
                 jobGroupsDataService,
@@ -68,6 +73,7 @@
                 supervisorDelegateService,
                 passwordResetService,
                 groupsService,
+                clockUtility,
                 configuration
             );
         }
@@ -1389,7 +1395,7 @@
                     A<int>._,
                     A<int>._,
                     A<string>._,
-                    null,
+                    A<DateTime?>._,
                     A<IDbTransaction?>._
                 )
             ).DoesNothing();

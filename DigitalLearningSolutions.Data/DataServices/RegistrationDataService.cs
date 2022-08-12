@@ -5,6 +5,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Logging;
@@ -16,12 +17,13 @@
             bool registerJourneyContainsTermsAndConditions
         );
 
-        int RegisterAdmin(AdminAccountRegistrationModel registrationModel);
+        int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate? possibleEmailUpdate);
 
         (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             DateTime currentTime,
+            PossibleEmailUpdate? possibleEmailUpdate,
             IDbTransaction? transaction = null
         );
 
@@ -29,7 +31,8 @@
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             int delegateId,
-            DateTime currentTime
+            DateTime currentTime,
+            PossibleEmailUpdate possibleEmailUpdate
         );
     }
 
@@ -39,16 +42,19 @@
         private readonly IDbConnection connection;
         private readonly ILogger<IRegistrationDataService> logger;
         private readonly IUserDataService userDataService;
+        private readonly IEmailVerificationDataService emailVerificationDataService;
 
         public RegistrationDataService(
             IDbConnection connection,
             IUserDataService userDataService,
+            IEmailVerificationDataService emailVerificationDataService,
             IClockUtility clockUtility,
             ILogger<IRegistrationDataService> logger
         )
         {
             this.connection = connection;
             this.userDataService = userDataService;
+            this.emailVerificationDataService = emailVerificationDataService;
             this.clockUtility = clockUtility;
             this.logger = logger;
         }
@@ -74,6 +80,12 @@
                 delegateRegistrationModel,
                 userIdToLinkDelegateAccountTo,
                 currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = null,
+                    NewEmail = delegateRegistrationModel.CentreSpecificEmail,
+                    NewEmailIsVerified = false,
+                },
                 transaction
             );
 
@@ -86,6 +98,7 @@
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             DateTime currentTime,
+            PossibleEmailUpdate? possibleEmailUpdate,
             IDbTransaction? transaction = null
         )
         {
@@ -101,6 +114,7 @@
                 delegateRegistrationModel.Centre,
                 delegateRegistrationModel.CentreSpecificEmail,
                 userId,
+                possibleEmailUpdate,
                 transaction
             );
 
@@ -123,19 +137,25 @@
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             int delegateId,
-            DateTime currentTime
+            DateTime currentTime,
+            PossibleEmailUpdate possibleEmailUpdate
         )
         {
             connection.EnsureOpen();
             var transaction = connection.BeginTransaction();
 
-            userDataService.SetCentreEmail(
-                userId,
-                delegateRegistrationModel.Centre,
-                delegateRegistrationModel.CentreSpecificEmail,
-                null,
-                transaction
-            );
+            if (possibleEmailUpdate.IsEmailUpdating)
+            {
+                var emailVerified = possibleEmailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
+
+                userDataService.SetCentreEmail(
+                    userId,
+                    delegateRegistrationModel.Centre,
+                    delegateRegistrationModel.CentreSpecificEmail,
+                    emailVerified,
+                    transaction
+                );
+            }
 
             ReregisterDelegateAccount(
                 delegateRegistrationModel,
@@ -147,7 +167,10 @@
             transaction.Commit();
         }
 
-        public int RegisterAdmin(AdminAccountRegistrationModel registrationModel)
+        public int RegisterAdmin(
+            AdminAccountRegistrationModel registrationModel,
+            PossibleEmailUpdate? possibleEmailUpdate
+        )
         {
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
@@ -156,6 +179,7 @@
                 registrationModel.CentreId,
                 registrationModel.CentreSpecificEmail,
                 registrationModel.UserId,
+                possibleEmailUpdate,
                 transaction
             );
 
@@ -281,16 +305,19 @@
             int centreId,
             string? centreSpecificEmail,
             int userId,
+            PossibleEmailUpdate? possibleEmailUpdate,
             IDbTransaction transaction
         )
         {
-            if (!string.IsNullOrWhiteSpace(centreSpecificEmail))
+            if (possibleEmailUpdate != null && possibleEmailUpdate.IsEmailUpdating)
             {
+                var emailVerified = possibleEmailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
+
                 userDataService.SetCentreEmail(
                     userId,
                     centreId,
                     centreSpecificEmail,
-                    null,
+                    emailVerified,
                     transaction
                 );
             }
