@@ -16,7 +16,7 @@
         {
             // given
             Driver.LogUserInAsAdminAndDelegate(BaseUrl);
-            const string reportsEditFiltersUrl = "/TrackingSystem/Centre/Reports/EditFilters";
+            const string reportsEditFiltersUrl = "/TrackingSystem/Centre/Reports/Courses/EditFilters";
 
             // when
             Driver.Navigate().GoToUrl(BaseUrl + reportsEditFiltersUrl);
