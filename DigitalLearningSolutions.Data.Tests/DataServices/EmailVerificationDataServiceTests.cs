@@ -23,7 +23,7 @@
         }
 
         [Test]
-        public void CreateEmailVerificationHash_Creates_Hash()
+        public void CreateEmailVerificationHash_creates_hash()
         {
             using var transaction = new TransactionScope();
 
@@ -43,7 +43,7 @@
         }
 
         [Test]
-        public void UpdateEmailVerificationHashIdForPrimaryEmail_Updates_Hash_Id()
+        public void UpdateEmailVerificationHashIdForPrimaryEmail_updates_hashId()
         {
             using var transaction = new TransactionScope();
 
@@ -53,6 +53,11 @@
             var currentTime = DateTime.UtcNow;
             var hashId = emailVerificationDataService.CreateEmailVerificationHash(hash, currentTime);
 
+            var hashIdBeforeUpdate = connection.QuerySingle<int?>(
+                "SELECT EmailVerificationHashID FROM Users WHERE ID = @userId",
+                new { userId }
+            );
+
             // When
             emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(userId, "test@gmail.com", hashId);
             var result = connection.Query<int>(
@@ -61,11 +66,12 @@
             ).SingleOrDefault();
 
             // Then
+            hashIdBeforeUpdate.Should().NotBe(hashId);
             result.Should().Be(hashId);
         }
 
         [Test]
-        public void UpdateEmailVerificationHashIdForCentreEmails_Updates_Hash_Id()
+        public void UpdateEmailVerificationHashIdForCentreEmails_updates_hasId()
         {
             using var transaction = new TransactionScope();
 
@@ -95,63 +101,53 @@
         }
 
         [Test]
-        public void AccountEmailIsVerifiedForUser_Returns_True_When_Email_Verified_As_Primary_Email()
-        {
-            using var transaction = new TransactionScope();
-
-            // Given
-            const int userId = 2;
-            const string email = "test@gmail.com";
-            var currentTime = DateTime.UtcNow;
-            connection.Execute(
-                @"UPDATE Users SET EmailVerified = @currentTime WHERE ID = @userId",
-                new { currentTime, userId }
-            );
-
-            // When
-            var result = emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email);
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void AccountEmailIsVerifiedForUser_Returns_True_When_Email_Verified_As_Centre_Email()
+        [TestCase(false, false, false)]
+        [TestCase(false, true, true)]
+        [TestCase(true, false, true)]
+        [TestCase(true, true, true)]
+        public void AccountEmailIsVerifiedForUser_returns_expected_value(
+            bool primaryEmailIsVerified,
+            bool centreEmailIsVerified,
+            bool expectedResult
+        )
         {
             using var transaction = new TransactionScope();
 
             // Given
             const int userId = 2;
             const int centreId = 2;
-            const string email = "centre@email.com";
+            const string email = "test@gmail.com";
             var currentTime = DateTime.UtcNow;
-            connection.Execute(
-                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email, EmailVerified)
+
+            if (primaryEmailIsVerified)
+            {
+                connection.Execute(
+                    @"UPDATE Users SET EmailVerified = @currentTime WHERE ID = @userId",
+                    new { currentTime, userId }
+                );
+            }
+            else
+            {
+                connection.Execute(
+                    @"UPDATE Users SET EmailVerified = NULL WHERE ID = @userId",
+                    new { userId }
+                );
+            }
+
+            if (centreEmailIsVerified)
+            {
+                connection.Execute(
+                    @"INSERT INTO UserCentreDetails (UserID, CentreID, Email, EmailVerified)
                         VALUES (@userId, @centreId, @email, @currentTime)",
-                new { userId, centreId, email, currentTime }
-            );
+                    new { userId, centreId, email, currentTime }
+                );
+            }
 
             // When
             var result = emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email);
 
             // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void AccountEmailIsVerifiedForUser_Returns_False_When_Email_Requires_Verification()
-        {
-            using var transaction = new TransactionScope();
-
-            // Given
-            const int userId = 2;
-            const string email = "some@email.com";
-
-            // When
-            var result = emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, email);
-
-            // Then
-            result.Should().BeFalse();
+            result.Should().Be(expectedResult);
         }
     }
 }

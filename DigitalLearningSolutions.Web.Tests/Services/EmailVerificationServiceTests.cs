@@ -35,7 +35,7 @@
         [Test]
         [TestCase(false)]
         [TestCase(true)]
-        public void AccountEmailIsVerifiedForUser_Returns_Expected_Result(bool expectedResult)
+        public void AccountEmailIsVerifiedForUser_returns_expected_result(bool expectedResult)
         {
             // Given
             const int userId = 2;
@@ -52,7 +52,7 @@
 
         [Test]
         public void
-            CreateEmailVerificationHashesAndSendVerificationEmails_Does_Not_Send_Emails_If_No_Email_Requires_Verification()
+            CreateEmailVerificationHashesAndSendVerificationEmails_does_not_send_emails_if_no_email_requires_verification()
         {
             // Given
             var userAccount = UserTestHelper.GetDefaultUserAccount();
@@ -86,7 +86,7 @@
 
         [Test]
         public void
-            CreateEmailVerificationHashesAndSendVerificationEmails_Updates_HashId_And_Sends_Email_When_Primary_Email_Requires_Verification()
+            CreateEmailVerificationHashesAndSendVerificationEmails_updates_hashId_and_sends_email_when_primary_email_requires_verification()
         {
             // Given
             var userAccount = UserTestHelper.GetDefaultUserAccount();
@@ -123,7 +123,7 @@
 
         [Test]
         public void
-            CreateEmailVerificationHashesAndSendVerificationEmails_Updates_HashIds_And_Sends_Single_Email_When_Same_Centre_Email_Requires_Verification_At_Multiple_Centres()
+            CreateEmailVerificationHashesAndSendVerificationEmails_updates_hashIds_and_sends_single_email_when_same_centre_email_requires_verification_at_multiple_centres()
         {
             // Given
             var userAccount = UserTestHelper.GetDefaultUserAccount();

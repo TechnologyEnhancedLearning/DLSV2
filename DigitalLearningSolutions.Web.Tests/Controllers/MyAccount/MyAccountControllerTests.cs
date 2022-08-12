@@ -201,18 +201,22 @@
             const int userId = 2;
             const int centreId = 2;
             var centreSpecificEmail = centreSpecificEmailIsNull ? null : "centre@email.com";
-            var myAccountController = new MyAccountController(
-                    centreRegistrationPromptsService,
-                    userService,
-                    userDataService,
-                    imageResizeService,
-                    jobGroupsDataService,
-                    emailVerificationService,
-                    promptsService,
-                    logger,
-                    config
-                ).WithDefaultContext()
-                .WithMockUser(true, centreId, userId: userId, delegateId: null);
+            var myAccountController = GetMyAccountController().WithMockUser(
+                true,
+                centreId,
+                userId: userId,
+                delegateId: null
+            );
+
+            GetAuthenticationServiceAuthenticateAsyncReturnsSuccess(myAccountController, false);
+
+            A.CallTo(() => userService.GetUserById(userId)).Returns(
+                new UserEntity(
+                    UserTestHelper.GetDefaultUserAccount(),
+                    new AdminAccount[] { },
+                    new[] { UserTestHelper.GetDefaultDelegateAccount() }
+                )
+            );
 
             A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(primaryEmail, userId))
                 .Returns(primaryEmailIsDuplicate);
@@ -275,17 +279,7 @@
             // Given
             const string primaryEmail = "primary@email.com";
             const int userId = 2;
-            var myAccountController = new MyAccountController(
-                    centreRegistrationPromptsService,
-                    userService,
-                    userDataService,
-                    imageResizeService,
-                    jobGroupsDataService,
-                    emailVerificationService,
-                    promptsService,
-                    logger,
-                    config
-                ).WithDefaultContext()
+            var myAccountController = GetMyAccountController()
                 .WithMockUser(true, null, userId: userId, delegateId: null);
 
             var allCentreSpecificEmailsDictionary = new Dictionary<string, string?>
@@ -383,9 +377,9 @@
                 userId: userId,
                 centreId: centreId,
                 delegateId: null
-            ).WithMockServices();
+            );
 
-            GivenMyAccountControllerAuthenticateAsyncReturnsSuccess(myAccountController);
+            GetAuthenticationServiceAuthenticateAsyncReturnsSuccess(myAccountController, false);
 
             var model = GetBasicMyAccountEditDetailsFormData();
 
@@ -417,27 +411,6 @@
                 )
                 .MustHaveHappened();
 
-            A.CallTo(
-                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                    testUserEntity.UserAccount,
-                    A<List<PossibleEmailUpdate>>.That.Matches(
-                        sequence => PossibleEmailUpdateTestHelper.PossibleEmailUpdateListsMatch(
-                            sequence,
-                            new List<PossibleEmailUpdate>
-                            {
-                                new PossibleEmailUpdate
-                                {
-                                    OldEmail = testUserEntity.UserAccount.PrimaryEmail,
-                                    NewEmail = Email,
-                                    NewEmailIsVerified = false,
-                                },
-                            }
-                        )
-                    ),
-                    A<string>._
-                )
-            ).MustHaveHappened();
-
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
@@ -450,12 +423,26 @@
 
             var myAccountController = GetMyAccountController()
                 .WithMockUser(true, centreId, userId: userId, delegateId: null)
-                .WithMockServices()
                 .WithMockUrlHelper(urlHelper);
 
-            GivenMyAccountControllerAuthenticateAsyncReturnsSuccess(myAccountController);
+            GetAuthenticationServiceAuthenticateAsyncReturnsSuccess(myAccountController, false);
 
-            var model = GetBasicMyAccountEditDetailsFormData();
+            var testUserEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(primaryEmail: Email),
+                new AdminAccount[] { },
+                new[] { UserTestHelper.GetDefaultDelegateAccount() }
+            );
+
+            A.CallTo(() => userService.GetUserById(userId)).Returns(testUserEntity);
+
+            var model = new MyAccountEditDetailsFormData
+            {
+                FirstName = testUserEntity.UserAccount.FirstName,
+                LastName = testUserEntity.UserAccount.LastName,
+                Email = "unverified_email@test.com",
+                JobGroupId = testUserEntity.UserAccount.JobGroupId,
+                HasProfessionalRegistrationNumber = false,
+            };
 
             A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
                 .Returns(false);
@@ -485,8 +472,91 @@
             var result = await myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
 
             // Then
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    testUserEntity.UserAccount,
+                    A<IEnumerable<PossibleEmailUpdate>>._,
+                    A<string>._
+                )
+            ).MustHaveHappenedOnceExactly();
+
             result.Should().BeRedirectToActionResult().WithControllerName("VerifyYourEmail").WithActionName("Index")
                 .WithRouteValue("emailVerificationReason", EmailVerificationReason.EmailChanged);
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task
+            EditDetailsPostSave_logs_out_of_centre_account_when_email_needs_verification_preserves_isPersistent(
+                bool isPersistent
+            )
+        {
+            // Given
+            const int userId = 2;
+            const int centreId = 2;
+
+            var myAccountController = GetMyAccountController()
+                .WithMockUser(true, centreId, userId: userId, delegateId: null)
+                .WithMockUrlHelper(urlHelper);
+
+            var authenticationService =
+                GetAuthenticationServiceAuthenticateAsyncReturnsSuccess(myAccountController, isPersistent);
+
+            var testUserEntity = new UserEntity(
+                UserTestHelper.GetDefaultUserAccount(),
+                new AdminAccount[] { },
+                new[] { UserTestHelper.GetDefaultDelegateAccount() }
+            );
+
+            A.CallTo(() => userService.GetUserById(userId)).Returns(testUserEntity);
+
+            var model = GetBasicMyAccountEditDetailsFormData();
+
+            A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId))
+                .Returns(false);
+
+            A.CallTo(
+                () => userDataService.CentreSpecificEmailIsInUseAtCentreByOtherUser(
+                    Email,
+                    centreId,
+                    userId
+                )
+            ).Returns(false);
+
+            A.CallTo(
+                    () => userService.UpdateUserDetailsAndCentreSpecificDetails(
+                        A<EditAccountDetailsData>._,
+                        A<DelegateDetailsData>._,
+                        A<string?>._,
+                        A<int>._,
+                        A<bool>._,
+                        A<bool>._,
+                        A<bool>._
+                    )
+                )
+                .DoesNothing();
+
+            // When
+            await myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
+
+            // Then
+            A.CallTo(
+                () => authenticationService.SignOutAsync(
+                    myAccountController.HttpContext,
+                    A<string>._,
+                    A<AuthenticationProperties>._
+                )
+            ).MustHaveHappenedOnceExactly();
+
+            A.CallTo(
+                () => authenticationService.SignInAsync(
+                    myAccountController.HttpContext,
+                    "Identity.Application",
+                    A<ClaimsPrincipal>._,
+                    A<AuthenticationProperties>.That.Matches(props => props.IsPersistent == isPersistent)
+                )
+            ).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -502,14 +572,21 @@
                 .WithMockUser(true, centreId, userId: userId, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
 
-            var model = GetBasicMyAccountEditDetailsFormData();
-            model.ReturnUrl = returnUrl;
-
             var testUserEntity = new UserEntity(
-                UserTestHelper.GetDefaultUserAccount(primaryEmail: Email),
+                UserTestHelper.GetDefaultUserAccount(primaryEmail: Email, emailVerified: true),
                 new[] { UserTestHelper.GetDefaultAdminAccount() },
                 new DelegateAccount[] { }
             );
+
+            var model = new MyAccountEditDetailsFormData
+            {
+                FirstName = testUserEntity.UserAccount.FirstName,
+                LastName = testUserEntity.UserAccount.LastName,
+                Email = Email,
+                JobGroupId = testUserEntity.UserAccount.JobGroupId,
+                HasProfessionalRegistrationNumber = false,
+                ReturnUrl = returnUrl,
+            };
 
             A.CallTo(() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
 
@@ -557,14 +634,21 @@
                 .WithMockUser(true, delegateId: null)
                 .WithMockUrlHelper(urlHelper);
 
-            var model = GetBasicMyAccountEditDetailsFormData();
-            model.ReturnUrl = "/TrackingSystem/Centre/Dashboard";
-
             var testUserEntity = new UserEntity(
-                UserTestHelper.GetDefaultUserAccount(primaryEmail: Email),
+                UserTestHelper.GetDefaultUserAccount(primaryEmail: Email, emailVerified: true),
                 new[] { UserTestHelper.GetDefaultAdminAccount() },
                 new DelegateAccount[] { }
             );
+
+            var model = new MyAccountEditDetailsFormData
+            {
+                FirstName = testUserEntity.UserAccount.FirstName,
+                LastName = testUserEntity.UserAccount.LastName,
+                Email = Email,
+                JobGroupId = testUserEntity.UserAccount.JobGroupId,
+                HasProfessionalRegistrationNumber = false,
+                ReturnUrl = "/TrackingSystem/Centre/Dashboard",
+            };
 
             A.CallTo(() => userService.GetUserById(A<int>._)).Returns(testUserEntity);
 
@@ -846,7 +930,7 @@
                 promptsService,
                 logger,
                 config
-            ).WithDefaultContext();
+            ).WithDefaultContext().WithMockServices().WithMockTempData();
         }
 
         private MyAccountEditDetailsFormData GetBasicMyAccountEditDetailsFormData()
@@ -892,22 +976,27 @@
             );
         }
 
-        private static void GivenMyAccountControllerAuthenticateAsyncReturnsSuccess(MyAccountController controller)
+        private static IAuthenticationService GetAuthenticationServiceAuthenticateAsyncReturnsSuccess(
+            MyAccountController controller,
+            bool isPersistent
+        )
         {
-            A.CallTo(
-                    () => ((IAuthenticationService)controller.HttpContext.RequestServices.GetService(
-                        typeof(IAuthenticationService)
-                    )).AuthenticateAsync(A<HttpContext>._, A<string>._)
-                )
-                .Returns(
-                    AuthenticateResult.Success(
-                        new AuthenticationTicket(
-                            new ClaimsPrincipal(),
-                            new AuthenticationProperties { IsPersistent = false },
-                            "test"
-                        )
-                    )
+            var authenticationService =
+                (IAuthenticationService)controller.HttpContext.RequestServices.GetService(
+                    typeof(IAuthenticationService)
                 );
+
+            A.CallTo(() => authenticationService.AuthenticateAsync(A<HttpContext>._, A<string>._)).Returns(
+                AuthenticateResult.Success(
+                    new AuthenticationTicket(
+                        new ClaimsPrincipal(),
+                        new AuthenticationProperties { IsPersistent = isPersistent },
+                        "test"
+                    )
+                )
+            );
+
+            return authenticationService;
         }
     }
 }

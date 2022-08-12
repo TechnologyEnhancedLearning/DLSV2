@@ -23,7 +23,7 @@
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             DateTime currentTime,
-            PossibleEmailUpdate emailUpdate,
+            PossibleEmailUpdate? emailUpdate,
             IDbTransaction? transaction = null
         );
 
@@ -98,7 +98,7 @@
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             DateTime currentTime,
-            PossibleEmailUpdate emailUpdate,
+            PossibleEmailUpdate? emailUpdate,
             IDbTransaction? transaction = null
         )
         {

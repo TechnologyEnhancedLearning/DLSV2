@@ -159,8 +159,15 @@
         }
 
         [Test]
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
         public void
-            UpdateUserDetailsAndCentreSpecificDetails_with_null_delegate_details_only_updates_user_and_centre_email()
+            UpdateUserDetailsAndCentreSpecificDetails_with_null_delegate_details_only_updates_user_and_centre_email(
+                bool isPrimaryEmailUpdated,
+                bool isCentreEmailUpdated
+            )
         {
             // Given
             const int centreId = 1;
@@ -176,8 +183,8 @@
                 null,
                 centreEmail,
                 centreId,
-                false,
-                true,
+                isPrimaryEmailUpdated,
+                isCentreEmailUpdated,
                 shouldUpdateProfileImage
             );
 
@@ -194,21 +201,39 @@
                         currentTime,
                         null,
                         accountDetailsData.UserId,
-                        false,
+                        isPrimaryEmailUpdated,
                         shouldUpdateProfileImage
                     )
                 )
                 .MustHaveHappened();
-            A.CallTo(
-                    () => userDataService.SetCentreEmail(
-                        accountDetailsData.UserId,
-                        centreId,
-                        centreEmail,
-                        null,
-                        A<IDbTransaction?>._
+
+            if (isCentreEmailUpdated)
+            {
+                A.CallTo(
+                        () => userDataService.SetCentreEmail(
+                            accountDetailsData.UserId,
+                            centreId,
+                            centreEmail,
+                            null,
+                            A<IDbTransaction?>._
+                        )
                     )
-                )
-                .MustHaveHappened();
+                    .MustHaveHappened();
+            }
+            else
+            {
+                A.CallTo(
+                        () => userDataService.SetCentreEmail(
+                            A<int>._,
+                            A<int>._,
+                            A<string?>._,
+                            A<DateTime?>._,
+                            A<IDbTransaction?>._
+                        )
+                    )
+                    .MustNotHaveHappened();
+            }
+
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).MustNotHaveHappened();
         }
 
@@ -382,7 +407,9 @@
         }
 
         [Test]
-        public void UpdateUserDetails_updates_user()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void UpdateUserDetails_updates_user(bool isPrimaryEmailUpdated)
         {
             // Given
             const bool changesMadeBySameUser = true;
@@ -393,7 +420,7 @@
             // When
             userService.UpdateUserDetails(
                 accountDetailsData,
-                false,
+                isPrimaryEmailUpdated,
                 changesMadeBySameUser,
                 currentTime
             );
@@ -411,7 +438,7 @@
                         currentTime,
                         null,
                         accountDetailsData.UserId,
-                        false,
+                        isPrimaryEmailUpdated,
                         changesMadeBySameUser
                     )
                 )
