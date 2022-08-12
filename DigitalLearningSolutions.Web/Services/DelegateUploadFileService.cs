@@ -183,7 +183,7 @@ namespace DigitalLearningSolutions.Web.Services
                     ),
                     new RegistrationFieldAnswers(
                         delegateEntity.DelegateAccount.CentreId,
-                        delegateEntity.UserAccount.JobGroupId,
+                        delegateRow.JobGroupId.Value,
                         delegateRow.Answer1,
                         delegateRow.Answer2,
                         delegateRow.Answer3,

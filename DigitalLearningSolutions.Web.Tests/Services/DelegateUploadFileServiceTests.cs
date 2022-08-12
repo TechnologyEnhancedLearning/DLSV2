@@ -603,7 +603,7 @@
                     A<RegistrationFieldAnswers>.That.Matches(
                         answers =>
                             answers.CentreId == candidateNumberDelegate.DelegateAccount.CentreId &&
-                            answers.JobGroupId == candidateNumberDelegate.UserAccount.JobGroupId &&
+                            answers.JobGroupId == Int32.Parse(row.JobGroupID) &&
                             answers.Answer1 == row.Answer1 &&
                             answers.Answer2 == row.Answer2 &&
                             answers.Answer3 == row.Answer3 &&
