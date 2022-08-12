@@ -31,6 +31,7 @@ namespace DigitalLearningSolutions.Web.Services
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IPasswordResetService passwordResetService;
+        private readonly IGroupsService groupsService;
         private readonly IClockUtility clockUtility;
         private readonly IConfiguration configuration;
 
@@ -40,6 +41,7 @@ namespace DigitalLearningSolutions.Web.Services
             IRegistrationService registrationService,
             ISupervisorDelegateService supervisorDelegateService,
             IPasswordResetService passwordResetService,
+            IGroupsService groupsService,
             IClockUtility clockUtility,
             IConfiguration configuration
         )
@@ -49,6 +51,7 @@ namespace DigitalLearningSolutions.Web.Services
             this.registrationService = registrationService;
             this.supervisorDelegateService = supervisorDelegateService;
             this.passwordResetService = passwordResetService;
+            this.groupsService = groupsService;
             this.clockUtility = clockUtility;
             this.configuration = configuration;
         }
@@ -175,6 +178,36 @@ namespace DigitalLearningSolutions.Web.Services
                         clockUtility.UtcNow
                     );
                 }
+
+                groupsService.UpdateSynchronisedDelegateGroupsBasedOnUserChanges(
+                    delegateEntity.DelegateAccount.Id,
+                    new AccountDetailsData(
+                        delegateRow.FirstName!,
+                        delegateRow.LastName!,
+                        delegateEntity.UserAccount.PrimaryEmail
+                    ),
+                    new RegistrationFieldAnswers(
+                        delegateEntity.DelegateAccount.CentreId,
+                        delegateEntity.UserAccount.JobGroupId,
+                        delegateRow.Answer1,
+                        delegateRow.Answer2,
+                        delegateRow.Answer3,
+                        delegateRow.Answer4,
+                        delegateRow.Answer5,
+                        delegateRow.Answer6
+                    ),
+                    new RegistrationFieldAnswers(
+                        delegateEntity.DelegateAccount.CentreId,
+                        delegateEntity.UserAccount.JobGroupId,
+                        delegateEntity.DelegateAccount.Answer1,
+                        delegateEntity.DelegateAccount.Answer2,
+                        delegateEntity.DelegateAccount.Answer3,
+                        delegateEntity.DelegateAccount.Answer4,
+                        delegateEntity.DelegateAccount.Answer5,
+                        delegateEntity.DelegateAccount.Answer6
+                    ),
+                    delegateRow.Email
+                );
 
                 delegateRow.RowStatus = RowStatus.Updated;
             }

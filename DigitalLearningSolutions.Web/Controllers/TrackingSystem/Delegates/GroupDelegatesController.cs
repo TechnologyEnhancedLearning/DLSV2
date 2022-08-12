@@ -178,6 +178,11 @@
             var groupDelegates = groupsService.GetGroupDelegates(groupId).ToList();
             var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
 
+            if (delegateUser == null)
+            {
+                return NotFound();
+            }
+
             var progressId = groupsService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId);
 
             var model = new RemoveGroupDelegateViewModel(

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Threading.Tasks;
@@ -8,7 +9,6 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.ViewModels.Register;
     using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
     using FakeItEasy;
     using FluentAssertions;
@@ -38,7 +38,7 @@
         }
 
         [Test]
-        public void GetAccountDetailsForCompletingRegistration_returns_expected_model()
+        public void GetAccountDetailsForClaimAccount_returns_expected_model()
         {
             // Given
             var delegateAccountToBeClaimed = UserTestHelper.GetDefaultDelegateAccount(
@@ -49,6 +49,8 @@
             A.CallTo(() => userDataService.GetUserAccountByPrimaryEmail(DefaultEmail)).Returns(null);
             A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId))
                 .Returns(new List<DelegateAccount> { delegateAccountToBeClaimed });
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(DefaultUserId))
+                .Returns(new List<AdminAccount>());
             A.CallTo(() => configDataService.GetConfigValue(ConfigDataService.SupportEmail))
                 .Returns(DefaultSupportEmail);
 
@@ -85,7 +87,7 @@
         [TestCase(DefaultUserId + 1, true)]
         [TestCase(DefaultUserId + 1, false)]
         public void
-            GetAccountDetailsForCompletingRegistration_returns_model_with_correct_EmailIsTaken(
+            GetAccountDetailsForClaimAccount_returns_model_with_correct_EmailIsTaken(
                 int? loggedInUserId,
                 bool otherUserWithEmailExists
             )
@@ -101,6 +103,8 @@
                 .Returns(userAccountMatchingEmail);
             A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId))
                 .Returns(new List<DelegateAccount> { delegateAccountToBeClaimed });
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(DefaultUserId))
+                .Returns(new List<AdminAccount>());
 
             // When
             var result = claimAccountService.GetAccountDetailsForClaimAccount(
@@ -119,7 +123,7 @@
         [TestCase(true, true)]
         [TestCase(false, false)]
         public void
-            GetAccountDetailsForCompletingRegistration_returns_model_with_correct_EmailIsTakenByActiveUser(
+            GetAccountDetailsForClaimAccount_returns_model_with_correct_EmailIsTakenByActiveUser(
                 bool otherUserWithEmailIsActive,
                 bool expectedUserMatchingEmailIsActive
             )
@@ -135,6 +139,8 @@
                 .Returns(userAccountMatchingEmail);
             A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId))
                 .Returns(new List<DelegateAccount> { delegateAccountToBeClaimed });
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(DefaultUserId))
+                .Returns(new List<AdminAccount>());
 
             // When
             var result = claimAccountService.GetAccountDetailsForClaimAccount(
@@ -151,7 +157,7 @@
         [Test]
         [TestCase(DefaultPasswordHash, true)]
         [TestCase("", false)]
-        public void GetAccountDetailsForCompletingRegistration_returns_model_with_correct_PasswordSet(
+        public void GetAccountDetailsForClaimAccount_returns_model_with_correct_PasswordSet(
             string passwordHash,
             bool expectedPasswordSet
         )
@@ -166,6 +172,8 @@
             A.CallTo(() => userDataService.GetUserAccountById(DefaultUserId)).Returns(userAccountToBeClaimed);
             A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId))
                 .Returns(new List<DelegateAccount> { delegateAccountToBeClaimed });
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(DefaultUserId))
+                .Returns(new List<AdminAccount>());
 
             // When
             var result = claimAccountService.GetAccountDetailsForClaimAccount(
@@ -177,6 +185,111 @@
 
             // Then
             result.WasPasswordSetByAdmin.Should().Be(expectedPasswordSet);
+        }
+
+        [Test]
+        public void
+            GetAccountDetailsForClaimAccount_throws_exception_when_user_to_be_claimed_no_delegate_accounts()
+        {
+            // Given
+            var userAccountToBeClaimed = UserTestHelper.GetDefaultUserAccount();
+
+            A.CallTo(() => userDataService.GetUserAccountById(DefaultUserId)).Returns(userAccountToBeClaimed);
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId))
+                .Returns(new List<DelegateAccount>());
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(DefaultUserId))
+                .Returns(new List<AdminAccount>());
+
+            // When
+            void MethodBeingTested() => claimAccountService.GetAccountDetailsForClaimAccount(
+                DefaultUserId,
+                DefaultCentreId,
+                DefaultCentreName,
+                DefaultEmail
+            );
+
+            // Then
+            Assert.Throws<Exception>(MethodBeingTested);
+        }
+
+        [Test]
+        public void
+            GetAccountDetailsForClaimAccount_throws_exception_when_user_to_be_claimed_has_more_than_one_delegate_account()
+        {
+            // Given
+            var userAccountToBeClaimed = UserTestHelper.GetDefaultUserAccount();
+            var delegateAccountToBeClaimed = UserTestHelper.GetDefaultDelegateAccount(centreId: DefaultCentreId);
+            var otherDelegateAccount = UserTestHelper.GetDefaultDelegateAccount(centreId: DefaultCentreId + 1);
+
+            A.CallTo(() => userDataService.GetUserAccountById(DefaultUserId)).Returns(userAccountToBeClaimed);
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId))
+                .Returns(new List<DelegateAccount> { delegateAccountToBeClaimed, otherDelegateAccount });
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(DefaultUserId))
+                .Returns(new List<AdminAccount>());
+
+            // When
+            void MethodBeingTested() => claimAccountService.GetAccountDetailsForClaimAccount(
+                DefaultUserId,
+                DefaultCentreId,
+                DefaultCentreName,
+                DefaultEmail
+            );
+
+            // Then
+            Assert.Throws<Exception>(MethodBeingTested);
+        }
+
+        [Test]
+        public void
+            GetAccountDetailsForClaimAccount_throws_exception_when_user_to_be_claimed_does_not_have_delegate_account_at_expected_centre()
+        {
+            // Given
+            var userAccountToBeClaimed = UserTestHelper.GetDefaultUserAccount();
+            var delegateAccountToBeClaimed = UserTestHelper.GetDefaultDelegateAccount(centreId: DefaultCentreId + 1);
+
+            A.CallTo(() => userDataService.GetUserAccountById(DefaultUserId)).Returns(userAccountToBeClaimed);
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId))
+                .Returns(new List<DelegateAccount> { delegateAccountToBeClaimed });
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(DefaultUserId))
+                .Returns(new List<AdminAccount>());
+
+            // When
+            void MethodBeingTested() => claimAccountService.GetAccountDetailsForClaimAccount(
+                DefaultUserId,
+                DefaultCentreId,
+                DefaultCentreName,
+                DefaultEmail
+            );
+
+            // Then
+            Assert.Throws<Exception>(MethodBeingTested);
+        }
+
+        [Test]
+        public void
+            GetAccountDetailsForClaimAccount_throws_exception_when_user_to_be_claimed_has_any_admin_accounts()
+        {
+            // Given
+            var userAccountToBeClaimed = UserTestHelper.GetDefaultUserAccount();
+            var delegateAccountToBeClaimed = UserTestHelper.GetDefaultDelegateAccount(centreId: DefaultCentreId);
+            var adminAccount = UserTestHelper.GetDefaultAdminAccount(centreId: DefaultCentreId);
+
+            A.CallTo(() => userDataService.GetUserAccountById(DefaultUserId)).Returns(userAccountToBeClaimed);
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId))
+                .Returns(new List<DelegateAccount> { delegateAccountToBeClaimed });
+            A.CallTo(() => userDataService.GetAdminAccountsByUserId(DefaultUserId))
+                .Returns(new List<AdminAccount> { adminAccount });
+
+            // When
+            void MethodBeingTested() => claimAccountService.GetAccountDetailsForClaimAccount(
+                DefaultUserId,
+                DefaultCentreId,
+                DefaultCentreName,
+                DefaultEmail
+            );
+
+            // Then
+            Assert.Throws<Exception>(MethodBeingTested);
         }
 
         [Test]

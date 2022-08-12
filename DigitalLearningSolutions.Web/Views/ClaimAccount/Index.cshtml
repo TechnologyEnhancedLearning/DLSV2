@@ -38,25 +38,27 @@
         </p>
       }
     } else {
-      <p class="nhsuk-body-m">
-        <b>Recommended:</b> If you have used DLS in the past (for example, at another NHS trust or university), we recommend that you link this record to your existing login.
+      <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">I am an existing DLS user</h2>
+      <p class="nhsuk-hint">
+        If you have used DLS in the past (for example, at another organisation or university), we <b>recommend</b> that you link this record to your existing login.
       </p>
 
       <vc:action-link
         asp-controller="ClaimAccount"
         asp-action="LinkDlsAccount"
         asp-all-route-data="@routeData"
-        link-text="Use existing login" />
+        link-text="Use existing login and link delegate record" />
 
-      <p class="nhsuk-body-m">
-        <b>Alternative:</b> If you have never accessed DLS before, please activate this delegate record to log in. A new DLS user account will be created.
+      <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">I am a new DLS user</h2>
+      <p class="nhsuk-hint">
+        If you have never accessed DLS before, please activate this delegate record to log in. A new DLS user account will be created.
       </p>
 
       <vc:action-link
         asp-controller="ClaimAccount"
         asp-action="CompleteRegistration"
         asp-all-route-data="@routeData"
-        link-text="Activate delegate record" />
+        link-text="Create new login and activate delegate record" />
     }
   </div>
 </div>

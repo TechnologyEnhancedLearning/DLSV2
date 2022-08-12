@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Services
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
@@ -49,8 +50,22 @@
         {
             var userMatchingEmail = userDataService.GetUserAccountByPrimaryEmail(email);
             var userAccountToBeClaimed = userDataService.GetUserAccountById(userIdForRegistration);
-            var delegateAccountToBeClaimed = userDataService.GetDelegateAccountsByUserId(userIdForRegistration)
-                .SingleOrDefault(da => da.CentreId == centreId);
+            var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userIdForRegistration).ToList();
+            var adminAccounts = userDataService.GetAdminAccountsByUserId(userIdForRegistration).ToList();
+
+            if (
+                delegateAccounts.Count != 1 ||
+                adminAccounts.Count != 0 ||
+                delegateAccounts.Any(da => da.CentreId != centreId)
+            )
+            {
+                throw new Exception(
+                    "Expected user account being claimed to only have one delegate account at the correct centre"
+                );
+            }
+
+            var delegateAccountToBeClaimed = delegateAccounts.First();
+
             var supportEmail = configDataService.GetConfigValue(ConfigDataService.SupportEmail);
 
             return new ClaimAccountViewModel
