@@ -14,11 +14,17 @@
   <p>
     Your primary email address <strong>@Model.PrimaryEmailIfUnverified</strong> has not been verified yet.
     This is also your centre email address for your account at
+
     @foreach (var (centreName, centreIndex) in Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail!
       .Select((centreName, centreIndex) => (centreName, centreIndex))) {
       var isTheLastCentreNameInList = centreIndex == Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail.Count - 1;
+
       @(isTheLastCentreNameInList && Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail.Count > 1 ? "and " : "")
-      <strong>@centreName@(isTheLastCentreNameInList ? "." : ", ")</strong>
+      <strong>
+        @(centreName +
+          (isTheLastCentreNameInList ? "." : "") +
+          (!isTheLastCentreNameInList && Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail.Count > 2 ? ", " : " "))
+      </strong>
     }
     @VerifyYourEmailTextHelper.UnverifiedPrimaryEmailConsequences
   </p>
@@ -49,7 +55,7 @@
           var isTheLastCentreNameInList = centreIndex == centreNames.Count - 1;
 
           @(isTheLastCentreNameInList ? "or " : "")
-          <strong>@centreName@(isTheLastCentreNameInList ? " " : ", ")</strong>
+          <strong>@(centreName + (isTheLastCentreNameInList ? " " : ", "))</strong>
         }
       }
 

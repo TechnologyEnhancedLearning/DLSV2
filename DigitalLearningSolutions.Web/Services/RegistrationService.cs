@@ -366,7 +366,7 @@ namespace DigitalLearningSolutions.Web.Services
                 userAccount.ProfileImage
             );
 
-            // TODO: 915 - replace true with call to AccountEmailRequiresVerification*
+            // TODO: 915 - replace true with call to AccountEmailRequiresVerification
             var centreEmailRequiresVerification = true;
             /*var centreEmailRequiresVerification =
                 emailVerificationService.AccountEmailRequiresVerification(
@@ -426,7 +426,7 @@ namespace DigitalLearningSolutions.Web.Services
                     true
                 );
 
-                // TODO: 915 - replace true with call to AccountEmailRequiresVerification*
+                // TODO: 915 - replace true with call to AccountEmailRequiresVerification
                 var centreEmailRequiresVerification = true;
                 /*var centreEmailRequiresVerification =
                     emailVerificationService.AccountEmailRequiresVerification(
@@ -502,7 +502,7 @@ namespace DigitalLearningSolutions.Web.Services
                 );
             }
 
-            // TODO: 915 - replace true with call to AccountEmailRequiresVerification*
+            // TODO: 915 - replace true with call to AccountEmailRequiresVerification
             var centreEmailRequiresVerification = true;
             /*var centreEmailRequiresVerification =
                 emailVerificationService.AccountEmailRequiresVerification(
@@ -535,7 +535,7 @@ namespace DigitalLearningSolutions.Web.Services
                 );
             }
 
-            // TODO: 915 - replace true with call to AccountEmailRequiresVerification*
+            // TODO: 915 - replace true with call to AccountEmailRequiresVerification
             var centreEmailRequiresVerification = true;
             /*var centreEmailRequiresVerification =
                 emailVerificationService.AccountEmailRequiresVerification(

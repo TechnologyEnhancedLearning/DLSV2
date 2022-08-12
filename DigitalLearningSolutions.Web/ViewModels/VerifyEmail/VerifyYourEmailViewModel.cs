@@ -16,7 +16,8 @@
             PrimaryEmail = primaryEmail;
             CentreSpecificEmails = centreSpecificEmails;
             UnverifiedEmailsCount = centreSpecificEmails.Count + (primaryEmail == null ? 0 : 1);
-            SingleUnverifiedEmail = UnverifiedEmailsCount == 1;
+            SingleUnverifiedEmail = UnverifiedEmailsCount == 1 ||
+                                    CentreSpecificEmails.Select(cse => cse.centreEmail).All(e => e == primaryEmail);
             CentreEmailsExcludingFirstParagraph =
                 primaryEmail == null ? centreSpecificEmails.Skip(1) : centreSpecificEmails;
         }

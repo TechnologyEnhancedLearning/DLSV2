@@ -4,7 +4,7 @@
 
 @{
   var primaryEmailIfUnverified = Model.PrimaryEmailIsVerified ? null : (string?)Model.PrimaryEmail;
-  var multipleEmailsAreUnverified = Model.NumberOfUnverifiedEmails > 1;
+  var multipleEmailsAreUnverified = Model.NumberOfUnverifiedEmails > 1 && !Model.UnverifiedCentreEmails.Select(uce => uce.centreSpecificEmail).All(e => e == Model.PrimaryEmail);
 }
 
 <div class="nhsuk-warning-callout word-break">
