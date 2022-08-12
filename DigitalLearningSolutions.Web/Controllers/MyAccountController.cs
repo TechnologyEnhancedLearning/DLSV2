@@ -216,7 +216,7 @@
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.Email),
-                    CommonValidationErrorMessages.EmailAlreadyInUse
+                    CommonValidationErrorMessages.EmailInUse
                 );
             }
 
@@ -268,7 +268,7 @@
             {
                 ModelState.AddModelError(
                     nameof(MyAccountEditDetailsFormData.CentreSpecificEmail),
-                    CommonValidationErrorMessages.CentreEmailAlreadyInUse
+                    CommonValidationErrorMessages.EmailInUseAtCentre
                 );
             }
         }
@@ -281,7 +281,7 @@
                 {
                     ModelState.AddModelError(
                         $"{nameof(MyAccountEditDetailsFormData.AllCentreSpecificEmailsDictionary)}_{centreId}",
-                        CommonValidationErrorMessages.CentreEmailAlreadyInUse
+                        CommonValidationErrorMessages.EmailInUseAtCentre
                     );
                 }
             }

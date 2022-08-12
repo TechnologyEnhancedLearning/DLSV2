@@ -235,50 +235,50 @@
             const string delegateOnlyCentreEmail = "centre2@email.com";
             const string adminOnlyCentreEmail = "centre3@email.com";
             const string adminAndDelegateCentreEmail = "centre101@email.com";
-            var delegateOnlyCentreName = connection.Query<string>(
+
+            var delegateOnlyCentreName = connection.QuerySingleOrDefault<string>(
                 @"SELECT CentreName FROM Centres WHERE CentreID = @delegateOnlyCentreId",
                 new { delegateOnlyCentreId }
-            ).SingleOrDefault();
-            var adminOnlyCentreName = connection.Query<string>(
+            );
+
+            var adminOnlyCentreName = connection.QuerySingleOrDefault<string>(
                 @"SELECT CentreName FROM Centres WHERE CentreID = @adminOnlyCentreId",
                 new { adminOnlyCentreId }
-            ).SingleOrDefault();
-            var adminAndDelegateCentreName = connection.Query<string>(
+            );
+
+            var adminAndDelegateCentreName = connection.QuerySingleOrDefault<string>(
                 @"SELECT CentreName FROM Centres WHERE CentreID = @adminAndDelegateCentreId",
                 new { adminAndDelegateCentreId }
-            ).SingleOrDefault();
-            var nullCentreEmailCentreName = connection.Query<string>(
+            );
+
+            var nullCentreEmailCentreName = connection.QuerySingleOrDefault<string>(
                 @"SELECT CentreName FROM Centres WHERE CentreID = @nullCentreEmailCentreId",
                 new { nullCentreEmailCentreId }
-            ).SingleOrDefault();
-
-            connection.Execute(
-                @"INSERT INTO AdminAccounts (UserID, CentreID) VALUES (@userId, @adminOnlyCentreId)",
-                new { userId, adminOnlyCentreId }
-            );
-            connection.Execute(
-                @"INSERT INTO AdminAccounts (UserID, CentreID) VALUES (@userId, @nullCentreEmailCentreId)",
-                new { userId, nullCentreEmailCentreId }
-            );
-            connection.Execute(
-                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)VALUES (@userId, @delegateOnlyCentreId, @delegateOnlyCentreEmail)",
-                new { userId, delegateOnlyCentreId, delegateOnlyCentreEmail }
             );
 
             connection.Execute(
-                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
-                VALUES (@userId, @adminOnlyCentreId, @adminOnlyCentreEmail)",
-                new { userId, adminOnlyCentreId, adminOnlyCentreEmail }
+                @"INSERT INTO AdminAccounts (UserID, CentreID, Active) VALUES
+                    (@userId, @adminOnlyCentreId, 1),
+                    (@userId, @nullCentreEmailCentreId, 1)",
+                new { userId, adminOnlyCentreId, nullCentreEmailCentreId }
             );
 
             connection.Execute(
-                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
-                VALUES (@userId, @adminAndDelegateCentreId, @adminAndDelegateCentreEmail)",
-                new { userId, adminAndDelegateCentreId, adminAndDelegateCentreEmail }
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES
+                    (@userId, @delegateOnlyCentreId, @delegateOnlyCentreEmail),
+                    (@userId, @adminOnlyCentreId, @adminOnlyCentreEmail),
+                    (@userId, @adminAndDelegateCentreId, @adminAndDelegateCentreEmail)",
+                new
+                {
+                    userId,
+                    delegateOnlyCentreId, delegateOnlyCentreEmail,
+                    adminOnlyCentreId, adminOnlyCentreEmail,
+                    adminAndDelegateCentreId, adminAndDelegateCentreEmail,
+                }
             );
 
             // When
-            var result = userDataService.GetAllCentreEmailsForUser(1).ToList();
+            var result = userDataService.GetAllCentreEmailsForUser(userId).ToList();
 
             // Then
             result.Count.Should().Be(4);
@@ -289,6 +289,50 @@
                 (adminAndDelegateCentreId, adminAndDelegateCentreName, adminAndDelegateCentreEmail)
             );
             result.Should().ContainEquivalentOf((nullCentreEmailCentreId, nullCentreEmailCentreName, (string?)null));
+        }
+
+        [Test]
+        public void GetAllCentreEmailsForUser_does_not_return_emails_for_inactive_admin_accounts()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int centreId = 3;
+            const string email = "inactive_admin@email.com";
+
+            var userId = connection.QuerySingle<int>(
+                @"INSERT INTO Users
+                (
+                    PrimaryEmail,
+                    PasswordHash,
+                    FirstName,
+                    LastName,
+                    JobGroupID,
+                    Active,
+                    FailedLoginCount,
+                    HasBeenPromptedForPrn,
+                    HasDismissedLhLoginWarning
+                )
+                OUTPUT Inserted.ID
+                VALUES
+                ('inactive_admin_primary@email.com', 'password', 'test', 'user', 1, 1, 0, 1, 1)"
+            );
+
+            connection.Execute(
+                @"INSERT INTO AdminAccounts (UserID, CentreID, Active) VALUES (@userId, @centreId, 0)",
+                new { userId, centreId }
+            );
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES (@userId, @centreId, @email)",
+                new { userId, centreId, email }
+            );
+
+            // When
+            var result = userDataService.GetAllCentreEmailsForUser(userId).ToList();
+
+            // Then
+            result.Count.Should().Be(0);
         }
 
         [Test]
@@ -399,6 +443,97 @@
             updatedUserCentreDetails.Item3.Should().Be(email);
         }
 
+        [Test]
+        public void GetCentreEmailVerificationDetails_returns_expected_value()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const int centreId = 2;
+            const string email = "unverified@email.com";
+            const string code = "code";
+            var createdDate = new DateTime(2022, 1, 1);
+
+            GivenEmailVerificationHashLinkedToUserCentreDetails(userId, centreId, email, code, createdDate);
+
+            // When
+            var result = userDataService.GetCentreEmailVerificationDetails(code);
+
+            // Then
+            result!.UserId.Should().Be(userId);
+            result.Email.Should().Be(email);
+            result.EmailVerificationHash.Should().Be(code);
+            result.EmailVerified.Should().BeNull();
+            result.EmailVerificationHashCreatedDate.Should().Be(createdDate);
+        }
+
+        [Test]
+        public void SetCentreEmailVerified_sets_EmailVerified_and_EmailVerificationHashId()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const int centreId = 2;
+            const string email = "unverified@email.com";
+            const string code = "code";
+            var createdDate = new DateTime(2022, 1, 1);
+            var verifiedDate = new DateTime(2022, 1, 3);
+
+            GivenEmailVerificationHashLinkedToUserCentreDetails(userId, centreId, email, code, createdDate);
+
+            // When
+            userDataService.SetCentreEmailVerified(userId, email, verifiedDate);
+
+            // Then
+            var (emailVerifiedAfterUpdate, emailVerificationHashIdAfterUpdate) =
+                connection.QuerySingle<(DateTime?, int?)>(
+                    @"SELECT EmailVerified, EmailVerificationHashID FROM UserCentreDetails WHERE UserID = @userId AND Email = @email",
+                    new { userId, email }
+                );
+
+            emailVerifiedAfterUpdate.Should().BeSameDateAs(verifiedDate);
+            emailVerificationHashIdAfterUpdate.Should().BeNull();
+        }
+
+        [Test]
+        public void
+            SetCentreEmailVerified_does_not_set_EmailVerified_and_EmailVerificationHashId_if_userId_and_email_do_not_match()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const int centreId = 2;
+            const string email = "SetCentreEmailVerified@email.com";
+            var oldVerifiedDate = new DateTime(2022, 1, 1);
+            var newVerifiedDate = new DateTime(2022, 1, 3);
+
+            var oldEmailVerificationHashId = connection.QuerySingle<int>(
+                @"INSERT INTO EmailVerificationHashes (EmailVerificationHash, CreatedDate) OUTPUT Inserted.ID VALUES ('code', CURRENT_TIMESTAMP);"
+            );
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email, EmailVerified, EmailVerificationHashID)
+                    VALUES (@userId, @centreId, @email, @oldVerifiedDate, @oldEmailVerificationHashId)",
+                new { userId, centreId, email, oldVerifiedDate, oldEmailVerificationHashId }
+            );
+
+            // When
+            userDataService.SetCentreEmailVerified(userId, "different@email.com", newVerifiedDate);
+
+            // Then
+            var (emailVerified, emailVerificationHashId) =
+                connection.QuerySingle<(DateTime?, int?)>(
+                    @"SELECT EmailVerified, EmailVerificationHashID FROM UserCentreDetails WHERE UserID = @userId AND Email = @email",
+                    new { userId, email }
+                );
+
+            emailVerified.Should().BeSameDateAs(oldVerifiedDate);
+            emailVerificationHashId.Should().Be(oldEmailVerificationHashId);
+        }
+
         private void GivenUnclaimedUserExists(int userId, int centreId, string email, string hash)
         {
             connection.Execute(
@@ -411,6 +546,26 @@
                             (UserID, CentreID, RegistrationConfirmationHash, DateRegistered, CandidateNumber)
                         VALUES (@userId, @centreId, @hash, GETDATE(), 'CN1001')",
                 new { userId, centreId, hash }
+            );
+        }
+
+        private void GivenEmailVerificationHashLinkedToUserCentreDetails(
+            int userId,
+            int centreId,
+            string email,
+            string hash,
+            DateTime createdDate
+        )
+        {
+            var emailVerificationHashesId = connection.QuerySingle<int>(
+                @"INSERT INTO EmailVerificationHashes (EmailVerificationHash, CreatedDate) OUTPUT Inserted.ID VALUES (@hash, @createdDate);",
+                new { hash, createdDate }
+            );
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email, EmailVerificationHashID)
+                    VALUES (@userId, @centreId, @email, @emailVerificationHashesId)",
+                new { userId, centreId, email, emailVerificationHashesId }
             );
         }
     }

@@ -38,6 +38,7 @@
         private DelegateUploadFileService delegateUploadFileService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IPasswordResetService passwordResetService = null!;
+        private IGroupsService groupsService = null!;
         private IRegistrationService registrationService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
@@ -54,6 +55,7 @@
             registrationService = A.Fake<IRegistrationService>(x => x.Strict());
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
             passwordResetService = A.Fake<IPasswordResetService>();
+            groupsService = A.Fake<IGroupsService>();
             configuration = A.Fake<IConfiguration>();
 
             A.CallTo(() => userDataService.GetDelegateByCandidateNumber(A<string>._))
@@ -65,6 +67,7 @@
                 registrationService,
                 supervisorDelegateService,
                 passwordResetService,
+                groupsService,
                 configuration
             );
         }
@@ -420,7 +423,7 @@
         }
 
         [Test]
-        public void ProcessDelegateTable_calls_update_with_expected_values()
+        public void ProcessDelegateTable_update_updates_delegate_account()
         {
             // Given
             const string delegateId = "DELEGATE";
@@ -464,6 +467,164 @@
 
             result.ProcessedCount.Should().Be(1);
             result.UpdatedCount.Should().Be(1);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_update_updates_user_details()
+        {
+            // Given
+            const string delegateId = "DELEGATE";
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
+            var table = CreateTableFromData(new[] { row });
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
+
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId))
+                .Returns(false);
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
+                .Returns(candidateNumberDelegate);
+
+            CallsToUserDataServiceUpdatesDoNothing();
+
+            // When
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+
+            // Then
+            A.CallTo(
+                () => userDataService.UpdateUserDetails(
+                    row.FirstName,
+                    row.LastName,
+                    candidateNumberDelegate.UserAccount.PrimaryEmail,
+                    Int32.Parse(row.JobGroupID),
+                    candidateNumberDelegate.UserAccount.Id
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void ProcessDelegateTable_update_updates_centre_email_when_email_is_changed()
+        {
+            // Given
+            const string delegateId = "DELEGATE";
+            const string oldEmail = "old_email@test.com";
+            const string newEmail = "new_email@test.com";
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, emailAddress: newEmail);
+            var table = CreateTableFromData(new[] { row });
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(
+                candidateNumber: delegateId,
+                centreSpecificEmail: oldEmail
+            );
+
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(newEmail, CentreId))
+                .Returns(false);
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
+                .Returns(candidateNumberDelegate);
+
+            CallsToUserDataServiceUpdatesDoNothing();
+
+            // When
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+
+            // Then
+            A.CallTo(
+                () => userDataService.SetCentreEmail(
+                    candidateNumberDelegate.UserAccount.Id,
+                    candidateNumberDelegate.DelegateAccount.CentreId,
+                    newEmail,
+                    A<DateTime?>._,
+                    A<IDbTransaction?>._
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void ProcessDelegateTable_update_does_not_call_SetCentreEmail_when_email_is_unchanged()
+        {
+            // Given
+            const string delegateId = "DELEGATE";
+            const string email = "email@test.com";
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId, emailAddress: email);
+            var table = CreateTableFromData(new[] { row });
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(
+                candidateNumber: delegateId,
+                centreSpecificEmail: email
+            );
+
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre(email, CentreId))
+                .Returns(false);
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
+                .Returns(candidateNumberDelegate);
+
+            CallsToUserDataServiceUpdatesDoNothing();
+
+            // When
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+
+            // Then
+            A.CallTo(
+                () => userDataService.SetCentreEmail(
+                    A<int>._,
+                    A<int>._,
+                    A<string>._,
+                    null,
+                    A<IDbTransaction?>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void ProcessDelegateTable_update_updates_delegate_groups()
+        {
+            // Given
+            const string delegateId = "DELEGATE";
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
+            var table = CreateTableFromData(new[] { row });
+            var candidateNumberDelegate = UserTestHelper.GetDefaultDelegateEntity(candidateNumber: delegateId);
+
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId))
+                .Returns(false);
+            A.CallTo(() => userDataService.GetDelegateByCandidateNumber(delegateId))
+                .Returns(candidateNumberDelegate);
+
+            CallsToUserDataServiceUpdatesDoNothing();
+
+            // When
+            delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+
+            // Then
+            A.CallTo(
+                () => groupsService.UpdateSynchronisedDelegateGroupsBasedOnUserChanges(
+                    candidateNumberDelegate.DelegateAccount.Id,
+                    A<AccountDetailsData>.That.Matches(
+                        data =>
+                            data.FirstName == row.FirstName &&
+                            data.Surname == row.LastName &&
+                            data.Email == candidateNumberDelegate.UserAccount.PrimaryEmail
+                    ),
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        answers =>
+                            answers.CentreId == candidateNumberDelegate.DelegateAccount.CentreId &&
+                            answers.JobGroupId == candidateNumberDelegate.UserAccount.JobGroupId &&
+                            answers.Answer1 == row.Answer1 &&
+                            answers.Answer2 == row.Answer2 &&
+                            answers.Answer3 == row.Answer3 &&
+                            answers.Answer4 == row.Answer4 &&
+                            answers.Answer5 == row.Answer5 &&
+                            answers.Answer6 == row.Answer6
+                    ),
+                    A<RegistrationFieldAnswers>.That.Matches(
+                        answers =>
+                            answers.CentreId == candidateNumberDelegate.DelegateAccount.CentreId &&
+                            answers.JobGroupId == candidateNumberDelegate.UserAccount.JobGroupId &&
+                            answers.Answer1 == candidateNumberDelegate.DelegateAccount.Answer1 &&
+                            answers.Answer2 == candidateNumberDelegate.DelegateAccount.Answer2 &&
+                            answers.Answer3 == candidateNumberDelegate.DelegateAccount.Answer3 &&
+                            answers.Answer4 == candidateNumberDelegate.DelegateAccount.Answer4 &&
+                            answers.Answer5 == candidateNumberDelegate.DelegateAccount.Answer5 &&
+                            answers.Answer6 == candidateNumberDelegate.DelegateAccount.Answer6
+                    ),
+                    row.EmailAddress
+                )
+            ).MustHaveHappened();
         }
 
         [Test]
@@ -1133,18 +1294,53 @@
         private void AssertCreateOrUpdateDelegateWereNotCalled()
         {
             A.CallTo(
-                    () => userDataService.UpdateDelegateAccount(
-                        A<int>._,
-                        A<bool>._,
-                        A<string>._,
-                        A<string>._,
-                        A<string>._,
-                        A<string>._,
-                        A<string>._,
-                        A<string>._
-                    )
+                () => userDataService.UpdateUserDetails(
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
                 )
-                .MustNotHaveHappened();
+            ).MustNotHaveHappened();
+
+            A.CallTo(
+                () => userDataService.UpdateDelegateAccount(
+                    A<int>._,
+                    A<bool>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._
+                )
+            ).MustNotHaveHappened();
+
+            A.CallTo(
+                () => userDataService.SetCentreEmail(
+                    A<int>._,
+                    A<int>._,
+                    A<string>._,
+                    null,
+                    A<IDbTransaction?>._
+                )
+            ).MustNotHaveHappened();
+
+            A.CallTo(
+                () =>
+                    userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).MustNotHaveHappened();
+
+            A.CallTo(
+                () => groupsService.UpdateSynchronisedDelegateGroupsBasedOnUserChanges(
+                    A<int>._,
+                    A<AccountDetailsData>._,
+                    A<RegistrationFieldAnswers>._,
+                    A<RegistrationFieldAnswers>._,
+                    A<string?>._
+                )
+            ).MustNotHaveHappened();
+
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
@@ -1174,6 +1370,7 @@
                     A<int>._
                 )
             ).DoesNothing();
+
             A.CallTo(
                 () => userDataService.UpdateDelegateAccount(
                     A<int>._,
@@ -1186,6 +1383,7 @@
                     A<string>._
                 )
             ).DoesNothing();
+
             A.CallTo(
                 () => userDataService.SetCentreEmail(
                     A<int>._,
@@ -1199,6 +1397,16 @@
             A.CallTo(
                 () =>
                     userDataService.UpdateDelegateProfessionalRegistrationNumber(A<int>._, A<string?>._, A<bool>._)
+            ).DoesNothing();
+
+            A.CallTo(
+                () => groupsService.UpdateSynchronisedDelegateGroupsBasedOnUserChanges(
+                    A<int>._,
+                    A<AccountDetailsData>._,
+                    A<RegistrationFieldAnswers>._,
+                    A<RegistrationFieldAnswers>._,
+                    A<string?>._
+                )
             ).DoesNothing();
         }
 

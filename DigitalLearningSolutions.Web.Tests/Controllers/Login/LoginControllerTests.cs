@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
@@ -37,6 +38,7 @@
         private ILoginService loginService = null!;
         private ISessionService sessionService = null!;
         private IUrlHelper urlHelper = null!;
+        private IConfigDataService configDataService = null!;
         private IUserService userService = null!;
 
         [SetUp]
@@ -47,11 +49,19 @@
             logger = A.Fake<ILogger<LoginController>>();
             userService = A.Fake<IUserService>();
             urlHelper = A.Fake<IUrlHelper>();
+            configDataService = A.Fake<IConfigDataService>();
             clockUtility = A.Fake<IClockUtility>();
 
             A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
-            controller = new LoginController(loginService, sessionService, logger, userService, clockUtility)
+            controller = new LoginController(
+                    loginService,
+                    sessionService,
+                    logger,
+                    userService,
+                    clockUtility,
+                    configDataService
+                )
                 .WithDefaultContext()
                 .WithMockUser(false)
                 .WithMockTempData()
@@ -68,7 +78,8 @@
                     sessionService,
                     logger,
                     userService,
-                    clockUtility
+                    clockUtility,
+                    configDataService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true)
@@ -470,7 +481,10 @@
             var result = await controllerWithAuthenticatedUser.ChooseCentre(centreId, null);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("VerifyYourEmail").WithActionName("Index");
+            result.Should().BeRedirectToActionResult()
+                .WithControllerName("VerifyYourEmail")
+                .WithActionName("Index")
+                .WithRouteValue("emailVerificationReason", EmailVerificationReason.EmailNotVerified);
         }
 
         [Test]

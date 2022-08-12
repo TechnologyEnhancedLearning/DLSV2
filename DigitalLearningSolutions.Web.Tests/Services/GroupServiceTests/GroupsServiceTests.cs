@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -52,6 +53,7 @@
         private IProgressDataService progressDataService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
         private IUserDataService userDataService = null!;
+        private INotificationPreferencesDataService notificationPreferencesDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -66,6 +68,7 @@
             logger = A.Fake<ILogger<IGroupsService>>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>(x => x.Strict());
             userDataService = A.Fake<IUserDataService>();
+            notificationPreferencesDataService = A.Fake<INotificationPreferencesDataService>();
 
             A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
                 JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
@@ -86,7 +89,8 @@
                 configuration,
                 centreRegistrationPromptsService,
                 logger,
-                userDataService
+                userDataService,
+                notificationPreferencesDataService
             );
         }
 
@@ -757,7 +761,8 @@
         private void SetupEnrolProcessFakes(
             int newProgressId,
             int relatedTutorialId,
-            Progress? progress = null
+            Progress? progress = null,
+            bool notifyDelegates = true
         )
         {
             A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
@@ -779,6 +784,15 @@
             ).Returns(newProgressId);
             A.CallTo(() => tutorialContentDataService.GetTutorialIdsForCourse(A<int>._))
                 .Returns(new List<int> { relatedTutorialId });
+
+            if (notifyDelegates)
+            {
+                A.CallTo(() => notificationPreferencesDataService.GetNotificationPreferencesForDelegate(A<int>._))
+                    .Returns(
+                        new List<NotificationPreference>
+                            { new NotificationPreference { NotificationId = 10, Accepted = true } }
+                    );
+            }
         }
 
         private void SetUpAddDelegateEnrolProcessFakes(GroupCourse groupCourse)

@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Progress;
@@ -130,6 +131,7 @@
         private readonly IProgressDataService progressDataService;
         private readonly ITutorialContentDataService tutorialContentDataService;
         private readonly IUserDataService userDataService;
+        private readonly INotificationPreferencesDataService notificationPreferencesDataService;
 
         public GroupsService(
             IGroupsDataService groupsDataService,
@@ -141,7 +143,8 @@
             IConfiguration configuration,
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
             ILogger<IGroupsService> logger,
-            IUserDataService userDataService
+            IUserDataService userDataService,
+            INotificationPreferencesDataService notificationPreferencesDataService
         )
         {
             this.groupsDataService = groupsDataService;
@@ -154,6 +157,7 @@
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.logger = logger;
             this.userDataService = userDataService;
+            this.notificationPreferencesDataService = notificationPreferencesDataService;
         }
 
         public int AddDelegateGroup(
@@ -303,6 +307,9 @@
             var groupCourses = GetUsableGroupCoursesForCentre(groupId, centreId);
             var fullName = newDetails.FirstName + " " + newDetails.Surname;
 
+            var delegateNotificationPreferences =
+                notificationPreferencesDataService.GetNotificationPreferencesForDelegate(delegateId).ToList();
+
             foreach (var groupCourse in groupCourses)
             {
                 EnrolDelegateOnGroupCourse(
@@ -311,7 +318,8 @@
                     fullName,
                     addedByAdminId,
                     groupCourse,
-                    false
+                    false,
+                    delegateNotificationPreferences
                 );
             }
         }
@@ -506,13 +514,15 @@
             foreach (var groupDelegate in groupDelegates)
             {
                 var fullName = groupDelegate.FirstName + " " + groupDelegate.LastName;
+
                 EnrolDelegateOnGroupCourse(
                     groupDelegate.DelegateId,
                     groupDelegate.EmailForCentreNotifications,
                     fullName,
                     addedByAdminId,
                     groupCourse,
-                    true
+                    true,
+                    notificationPreferencesDataService.GetNotificationPreferencesForDelegate(groupDelegate.DelegateId)
                 );
             }
 
@@ -575,22 +585,27 @@
             string delegateUserFullName,
             int? addedByAdminId,
             GroupCourse groupCourse,
-            bool isAddCourseToGroup
+            bool isAddCourseToGroup,
+            IEnumerable<NotificationPreference> delegateNotificationPreferences
         )
         {
             var completeByDate = groupCourse.CompleteWithinMonths != 0
                 ? (DateTime?)clockUtility.UtcNow.AddMonths(groupCourse.CompleteWithinMonths)
                 : null;
 
-            var candidateProgressOnCourse =
-                progressDataService.GetDelegateProgressForCourse(
-                    delegateUserId,
-                    groupCourse.CustomisationId
-                );
-            var existingRecordsToUpdate =
-                candidateProgressOnCourse.Where(
-                    p => ProgressShouldBeUpdatedOnEnrolment(p, isAddCourseToGroup)
-                ).ToList();
+            var candidateProgressOnCourse = progressDataService.GetDelegateProgressForCourse(
+                delegateUserId,
+                groupCourse.CustomisationId
+            );
+
+            var existingRecordsToUpdate = candidateProgressOnCourse.Where(
+                p => ProgressShouldBeUpdatedOnEnrolment(p, isAddCourseToGroup)
+            ).ToList();
+
+            var shouldNotificationEmailBeSent = delegateNotificationPreferences.Any(
+                // NotificationId 10 is "New course enrollment"
+                preference => preference.NotificationId == 10 && preference.Accepted
+            );
 
             if (existingRecordsToUpdate.Any())
             {
@@ -599,6 +614,7 @@
                     var updatedSupervisorAdminId = groupCourse.SupervisorAdminId > 0 && !isAddCourseToGroup
                         ? groupCourse.SupervisorAdminId.Value
                         : progressRecord.SupervisorAdminId;
+
                     progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         progressRecord.ProgressId,
                         updatedSupervisorAdminId,
@@ -628,15 +644,20 @@
                 }
             }
 
-            var email = BuildEnrolmentEmail(
-                delegateUserEmailAddress,
-                delegateUserFullName,
-                groupCourse,
-                completeByDate
-            );
-            var addedByProcess =
-                isAddCourseToGroup ? AddCourseToGroupAddedByProcess : AddDelegateToGroupAddedByProcess;
-            emailService.ScheduleEmail(email, addedByProcess);
+            if (shouldNotificationEmailBeSent)
+            {
+                var email = BuildEnrolmentEmail(
+                    delegateUserEmailAddress,
+                    delegateUserFullName,
+                    groupCourse,
+                    completeByDate
+                );
+
+                var addedByProcess =
+                    isAddCourseToGroup ? AddCourseToGroupAddedByProcess : AddDelegateToGroupAddedByProcess;
+
+                emailService.ScheduleEmail(email, addedByProcess);
+            }
         }
 
         private IEnumerable<Group> GetGroupsWhichShouldUpdateWhenUserDetailsChangeForCentre(int centreId)

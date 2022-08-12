@@ -67,7 +67,7 @@
             );
 
             var centreId = User.GetCentreIdKnownNotNull();
-            var adminsAtCentre = userDataService.GetAdminsByCentreId(centreId);
+            var adminsAtCentre = userDataService.GetActiveAdminsByCentreId(centreId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
 
@@ -104,7 +104,7 @@
             var centreId = User.GetCentreIdKnownNotNull();
             var loggedInAdmin = userDataService.GetAdminById(User.GetAdminId()!.Value);
 
-            var adminsAtCentre = userDataService.GetAdminsByCentreId(centreId);
+            var adminsAtCentre = userDataService.GetActiveAdminsByCentreId(centreId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var model = new AllAdminsViewModel(
                 adminsAtCentre,

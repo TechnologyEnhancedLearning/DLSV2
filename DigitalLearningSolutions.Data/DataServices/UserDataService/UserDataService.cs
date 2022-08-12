@@ -6,13 +6,14 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserDataService
     {
         AdminEntity? GetAdminById(int id);
 
-        IEnumerable<AdminEntity> GetAdminsByCentreId(int centreId);
+        IEnumerable<AdminEntity> GetActiveAdminsByCentreId(int centreId);
 
         AdminUser? GetAdminUserById(int id);
 
@@ -188,6 +189,14 @@
             int newUserIdForUserCentreDetails,
             int centreId
         );
+
+        EmailVerificationDetails? GetPrimaryEmailVerificationDetails(string code);
+
+        EmailVerificationDetails? GetCentreEmailVerificationDetails(string code);
+
+        void SetPrimaryEmailVerified(int userId, string email, DateTime verifiedDateTime);
+
+        void SetCentreEmailVerified(int userId, string email, DateTime verifiedDateTime);
     }
 
     public partial class UserDataService : IUserDataService
@@ -307,6 +316,32 @@
             connection.Execute(
                 @"UPDATE Users SET PrimaryEmail = @email, Active = 1 WHERE ID = @userId",
                 new { email, userId }
+            );
+        }
+
+        public EmailVerificationDetails? GetPrimaryEmailVerificationDetails(string code)
+        {
+            return connection.Query<EmailVerificationDetails>(
+                @"SELECT
+                        u.Id AS UserId,
+                        u.PrimaryEmail AS Email,
+                        u.EmailVerified,
+                        h.EmailVerificationHash,
+                        h.CreatedDate AS EmailVerificationHashCreatedDate
+                    FROM Users u
+                    JOIN EmailVerificationHashes h ON h.ID = u.EmailVerificationHashID
+                    WHERE h.EmailVerificationHash = @code",
+                new { code }
+            ).SingleOrDefault();
+        }
+
+        public void SetPrimaryEmailVerified(int userId, string email, DateTime verifiedDateTime)
+        {
+            connection.Execute(
+                @"UPDATE Users
+                    SET EmailVerified = @verifiedDateTime, EmailVerificationHashID = NULL
+                    WHERE ID = @userId AND PrimaryEmail = @email AND EmailVerified IS NULL",
+                new { userId, email, verifiedDateTime }
             );
         }
 

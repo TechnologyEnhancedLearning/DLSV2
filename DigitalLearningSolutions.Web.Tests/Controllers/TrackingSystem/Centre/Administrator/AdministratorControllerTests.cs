@@ -65,10 +65,10 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userDataService.GetAdminsByCentreId(A<int>._)).MustHaveHappened();
+                A.CallTo(() => userDataService.GetActiveAdminsByCentreId(A<int>._)).MustHaveHappened();
                 A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
                     .MustHaveHappened();
-                A.CallTo(() => userDataService.GetAdminsByCentreId(A<int>._)).MustHaveHappened();
+                A.CallTo(() => userDataService.GetActiveAdminsByCentreId(A<int>._)).MustHaveHappened();
                 A.CallTo(
                     () => searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                         A<IEnumerable<AdminEntity>>._,

@@ -54,12 +54,15 @@
         public IActionResult Index(int? centreId = null)
         {
             var centreName = centreId == null ? null : centresDataService.GetCentreName(centreId.Value);
+
             if (centreName == null)
             {
                 return NotFound();
             }
 
-            if (!registerAdminService.IsRegisterAdminAllowed(centreId.Value))
+            var userId = User.GetUserIdKnownNotNull();
+
+            if (!registerAdminService.IsRegisterAdminAllowed(centreId.Value, userId))
             {
                 return RedirectToAction("AccessDenied", "LearningSolutions");
             }
@@ -80,11 +83,26 @@
         {
             var userId = User.GetUserIdKnownNotNull();
 
-            RegistrationEmailValidator.ValidateEmailsForInternalAdminRegistration(
+            if (!registerAdminService.IsRegisterAdminAllowed(model.Centre!.Value, userId))
+            {
+                return RedirectToAction("AccessDenied", "LearningSolutions");
+            }
+
+            RegistrationEmailValidator.ValidateCentreEmailWithUserIdIfNecessary(
+                model.CentreSpecificEmail,
+                model.Centre,
                 userId,
-                model,
+                nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
                 ModelState,
-                userDataService,
+                userDataService
+            );
+
+            RegistrationEmailValidator.ValidateEmailsForCentreManagerIfNecessary(
+                model.PrimaryEmail,
+                model.CentreSpecificEmail,
+                model.Centre,
+                nameof(InternalAdminInformationViewModel.CentreSpecificEmail),
+                ModelState,
                 centresService
             );
 

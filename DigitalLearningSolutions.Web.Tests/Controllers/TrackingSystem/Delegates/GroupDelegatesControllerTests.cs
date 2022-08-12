@@ -215,5 +215,31 @@
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
             }
         }
+
+        [Test]
+        public void RemoveGroupDelegate_get_returns_NotFound_if_the_delegate_is_not_in_the_group()
+        {
+            // Given
+            const int groupId = 1;
+            const int delegateId = 2;
+            const int delegateIdNotInGroup = 3;
+
+            A.CallTo(() => groupsService.GetGroupName(groupId, 2)).Returns("Group");
+            A.CallTo(() => groupsService.GetGroupDelegates(groupId))
+                .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = delegateId } });
+
+            // When
+            var result = groupDelegatesController.RemoveGroupDelegate(
+                groupId,
+                delegateIdNotInGroup,
+                new ReturnPageQuery()
+            );
+
+            // Then
+            result.Should().BeNotFoundResult();
+
+            A.CallTo(() => groupsService.RemoveDelegateFromGroup(A<int>._, A<int>._, A<bool>._))
+                .MustNotHaveHappened();
+        }
     }
 }

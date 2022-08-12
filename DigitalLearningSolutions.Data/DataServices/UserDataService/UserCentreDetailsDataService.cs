@@ -6,6 +6,7 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models;
 
     public partial class UserDataService
     {
@@ -126,6 +127,32 @@
             ).SingleOrDefault();
         }
 
+        public EmailVerificationDetails? GetCentreEmailVerificationDetails(string code)
+        {
+            return connection.Query<EmailVerificationDetails>(
+                @"SELECT
+                        u.UserId,
+                        u.Email,
+                        u.EmailVerified,
+                        h.EmailVerificationHash,
+                        h.CreatedDate AS EmailVerificationHashCreatedDate
+                    FROM UserCentreDetails u
+                    JOIN EmailVerificationHashes h ON h.ID = u.EmailVerificationHashID
+                    WHERE h.EmailVerificationHash = @code",
+                new { code }
+            ).SingleOrDefault();
+        }
+
+        public void SetCentreEmailVerified(int userId, string email, DateTime verifiedDateTime)
+        {
+            connection.Execute(
+                @"UPDATE UserCentreDetails
+                    SET EmailVerified = @verifiedDateTime, EmailVerificationHashID = NULL
+                    WHERE UserID = @userId AND Email = @email AND EmailVerified IS NULL",
+                new { userId, email, verifiedDateTime }
+            );
+        }
+
         public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(
             int userId
         )
@@ -143,7 +170,7 @@
                     FROM AdminAccounts AS aa
                     INNER JOIN Centres AS c ON c.centreID = aa.CentreID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = aa.UserID AND ucd.CentreID = c.CentreID
-                    WHERE aa.UserID = @userId",
+                    WHERE aa.UserID = @userId AND aa.Active = 1",
                 new { userId }
             );
         }
@@ -173,7 +200,7 @@
                 string registrationConfirmationHash
             )
         {
-            var matchingUserAndCentreIds = connection.Query<(int, int, string)>(
+            return connection.QuerySingleOrDefault<(int?, int?, string?)>(
                 @"SELECT ucd.UserID, c.CentreID, c.CentreName
                     FROM UserCentreDetails AS ucd
                     INNER JOIN DelegateAccounts AS da ON da.UserID = ucd.UserID AND da.CentreID = ucd.CentreID
@@ -181,11 +208,7 @@
                     WHERE ucd.Email = @centreSpecificEmail
                         AND da.RegistrationConfirmationHash = @registrationConfirmationHash",
                 new { centreSpecificEmail, registrationConfirmationHash }
-            ).ToList();
-
-            return matchingUserAndCentreIds.Any()
-                ? matchingUserAndCentreIds.Single()
-                : ((int?)null, (int?)null, (string?)null);
+            );
         }
 
         public void LinkUserCentreDetailsToNewUser(
