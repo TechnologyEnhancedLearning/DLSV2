@@ -138,7 +138,8 @@
                 userId,
                 centreEmailRequiresVerification,
                 delegateRegistrationModel.IsSelfRegistered,
-                transaction
+                transaction,
+                currentTime
             );
 
             var (delegateId, candidateNumber) = RegisterDelegateAccountAndReturnCandidateNumberAndDelegateId(
@@ -300,7 +301,8 @@
             int userId,
             bool centreEmailRequiresVerification,
             bool isSelfRegistered,
-            IDbTransaction transaction
+            IDbTransaction transaction,
+            DateTime? currentTime = null
         )
         {
             if (!string.IsNullOrWhiteSpace(centreSpecificEmail))
@@ -311,7 +313,7 @@
                     userId,
                     centreId,
                     centreSpecificEmail,
-                    shouldSetEmailAsVerified ? clockUtility.UtcNow : (DateTime?)null,
+                    shouldSetEmailAsVerified ? currentTime ?? clockUtility.UtcNow : (DateTime?)null,
                     transaction
                 );
             }

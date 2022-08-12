@@ -137,7 +137,10 @@
             // Given
             const string centreSpecificEmail = "centre@email.com";
             const bool centreEmailRequiresVerification = false;
-            var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
+            var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                centre: 3,
+                centreSpecificEmail: centreSpecificEmail
+            );
             var currentTime = new DateTime(2022, 6, 16, 9, 41, 30);
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
@@ -166,7 +169,10 @@
             // Given
             const string centreSpecificEmail = "centre@email.com";
             const bool centreEmailRequiresVerification = false;
-            var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
+            var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                centre: 3,
+                centreSpecificEmail: centreSpecificEmail
+            );
             var currentTime = new DateTime(2022, 6, 16, 9, 41, 30);
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
@@ -374,7 +380,7 @@
             const int userId = 281052;
             const int existingDelegateId = 142559;
             const int centreId = 121;
-            const bool centreEmailRequiresVerification = false;
+            const bool centreEmailRequiresVerification = true;
             var newCentreEmail = "newCentreEmailTest@test.com";
             var delegateRegistrationModel =
                 RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
@@ -415,7 +421,7 @@
             const int existingDelegateId = 142559;
             const int centreId = 121;
             const string existingEmail = "existingEmail@test.com";
-            const bool centreEmailRequiresVerification = false;
+            const bool centreEmailRequiresVerification = true;
             var existingEmailVerified = new DateTime(2022, 10, 4, 12, 12, 12);
             var delegateRegistrationModel =
                 RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
@@ -460,7 +466,7 @@
             const int userId = 281052;
             const int existingDelegateId = 142559;
             const int centreId = 121;
-            const bool centreEmailRequiresVerification = true;
+            const bool centreEmailRequiresVerification = false;
             var newCentreEmail = "newCentreEmailTest@test.com";
             var delegateRegistrationModel =
                 RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
