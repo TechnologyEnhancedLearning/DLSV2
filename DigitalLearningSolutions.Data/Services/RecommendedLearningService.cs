@@ -76,32 +76,42 @@
 
             var uniqueLearningHubReferenceIds = competencyLearningResources.Select(
                 clr => clr.LearningHubResourceReferenceId
-            ).Distinct();
+            ).Distinct().ToList();
 
             var resources =
-                await learningHubResourceService.GetBulkResourcesByReferenceIds(
-                    hasMaxSignpostedResources
-                        ? uniqueLearningHubReferenceIds.Take(maxSignpostedResources).ToList()
-                        : uniqueLearningHubReferenceIds.ToList()
-                );
+                learningHubResourceService.GetResourceReferenceDetailsByReferenceIds(uniqueLearningHubReferenceIds);
 
             var delegateLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId);
 
-            var recommendedResources = resources.bulkResourceReferences.ResourceReferences.Select(
-                rr => GetPopulatedRecommendedResource(
-                    selfAssessmentId,
-                    delegateId,
-                    resourceReferences[rr.RefId],
-                    delegateLearningLogItems,
-                    rr,
-                    competencyLearningResources
+            var recommendedResources = resources.Select(
+                    rr => GetPopulatedRecommendedResource(
+                        selfAssessmentId,
+                        delegateId,
+                        resourceReferences[rr.RefId],
+                        delegateLearningLogItems,
+                        rr,
+                        competencyLearningResources
+                    )
                 )
-            );
+                .WhereNotNull()
+                .OrderByDescending(resource => resource.RecommendationScore);
 
-            return (
-                recommendedResources.WhereNotNull().OrderByDescending(resource => resource.RecommendationScore),
-                resources.apiIsAccessible
-            );
+            var bestRecommendedResources = hasMaxSignpostedResources
+                ? recommendedResources.Take(maxSignpostedResources).ToList()
+                : recommendedResources.ToList();
+
+            var apiResources =
+                await learningHubResourceService.GetBulkResourcesByReferenceIds(
+                    bestRecommendedResources.Select(resource => resource.LearningHubReferenceId).ToList()
+                );
+
+            var recommendedResourcesPresentInApi = bestRecommendedResources.Where(
+                resource => !apiResources.bulkResourceReferences.UnmatchedResourceReferenceIds.Contains(
+                    resource.LearningHubReferenceId
+                )
+            ).ToList();
+
+            return (recommendedResourcesPresentInApi, apiResources.apiIsAccessible);
         }
 
         private RecommendedResource? GetPopulatedRecommendedResource(
