@@ -58,10 +58,10 @@
                 return false;
             }
 
-            var isEmailVerifiedAsPrimaryEmail = connection.Query<DateTime?>(
+            var isEmailVerifiedAsPrimaryEmail = connection.QuerySingleOrDefault<DateTime?>(
                 @"SELECT EmailVerified FROM Users WHERE ID = @userId AND PrimaryEmail = @email",
                 new { userId, email }
-            ).SingleOrDefault() != null;
+            ) != null;
 
             var isEmailVerifiedAsCentreEmail = connection.Query<DateTime?>(
                 @"SELECT EmailVerified FROM UserCentreDetails WHERE UserID = @userId AND Email = @email",

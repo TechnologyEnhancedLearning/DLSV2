@@ -119,17 +119,17 @@
 
         public string? GetCentreEmail(int userId, int centreId)
         {
-            return connection.Query<string?>(
+            return connection.QuerySingleOrDefault<string>(
                 @"SELECT Email
                     FROM UserCentreDetails
                     WHERE UserID = @userId AND CentreID = @centreId",
                 new { userId, centreId }
-            ).SingleOrDefault();
+            );
         }
 
         public EmailVerificationDetails? GetCentreEmailVerificationDetails(string code)
         {
-            return connection.Query<EmailVerificationDetails>(
+            return connection.QuerySingleOrDefault<EmailVerificationDetails>(
                 @"SELECT
                         u.UserId,
                         u.Email,
@@ -140,7 +140,7 @@
                     JOIN EmailVerificationHashes h ON h.ID = u.EmailVerificationHashID
                     WHERE h.EmailVerificationHash = @code",
                 new { code }
-            ).SingleOrDefault();
+            );
         }
 
         public void SetCentreEmailVerified(int userId, string email, DateTime verifiedDateTime)

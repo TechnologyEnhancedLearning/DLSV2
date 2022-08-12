@@ -33,10 +33,10 @@
 
             // When
             var result = emailVerificationDataService.CreateEmailVerificationHash(hash, currentTime);
-            var hashId = connection.Query<int>(
+            var hashId = connection.QuerySingleOrDefault<int>(
                 @"SELECT ID FROM EmailVerificationHashes WHERE EmailVerificationHash = @hash",
                 new { hash }
-            ).SingleOrDefault();
+            );
 
             // Then
             result.Should().Be(hashId);
@@ -60,10 +60,10 @@
 
             // When
             emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(userId, "test@gmail.com", hashId);
-            var result = connection.Query<int>(
+            var result = connection.QuerySingleOrDefault<int>(
                 @"SELECT EmailVerificationHashID FROM Users WHERE ID = @userId",
                 new { userId }
-            ).SingleOrDefault();
+            );
 
             // Then
             hashIdBeforeUpdate.Should().NotBe(hashId);
@@ -89,12 +89,12 @@
 
             // When
             emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmails(userId, email, hashId);
-            var result = connection.Query<int>(
+            var result = connection.QuerySingleOrDefault<int>(
                 @"SELECT EmailVerificationHashID
                         FROM UserCentreDetails
                         WHERE UserID = @userId AND CentreID = @centreId",
                 new { userId, centreId }
-            ).SingleOrDefault();
+            );
 
             // Then
             result.Should().Be(hashId);

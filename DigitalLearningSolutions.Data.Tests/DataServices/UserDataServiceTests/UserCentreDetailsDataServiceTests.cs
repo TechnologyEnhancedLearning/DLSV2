@@ -29,8 +29,8 @@
 
             // When
             userDataService.SetCentreEmail(8, 374, email, null);
-            var result = connection.Query<string?>(@"SELECT Email FROM UserCentreDetails WHERE UserID = 8")
-                .SingleOrDefault();
+            var result =
+                connection.QuerySingleOrDefault<string>(@"SELECT Email FROM UserCentreDetails WHERE UserID = 8");
             var count = connection.Query<int>(@"SELECT COUNT(*) FROM UserCentreDetails WHERE UserID = 8");
 
             // Then
@@ -63,8 +63,10 @@
 
             // When
             userDataService.SetCentreEmail(8, 374, email, emailVerified);
-            var result = connection.Query<DateTime?>(@"SELECT EmailVerified FROM UserCentreDetails WHERE UserID = 8")
-                .SingleOrDefault();
+            var result =
+                connection.QuerySingleOrDefault<DateTime?>(
+                    @"SELECT EmailVerified FROM UserCentreDetails WHERE UserID = 8"
+                );
             var count = connection.Query<int>(@"SELECT COUNT(*) FROM UserCentreDetails WHERE UserID = 8");
 
             // Then
@@ -379,10 +381,10 @@
             const string confirmationHash = "hash";
             const int centreId = 3;
             const int userId = 1;
-            var centreName = connection.Query<string>(
+            var centreName = connection.QuerySingleOrDefault<string>(
                 @"SELECT CentreName FROM Centres WHERE CentreID = @centreId",
                 new { centreId }
-            ).SingleOrDefault();
+            );
 
             GivenUnclaimedUserExists(userId, centreId, email, confirmationHash);
 
