@@ -153,7 +153,11 @@
                 )
             ).MustHaveHappenedOnceExactly();
 
-            A.CallTo(() => emailService.SendEmail(A<Email>._)).MustHaveHappenedTwiceExactly();
+            A.CallTo(() => emailService.SendEmail(A<Email>.That.Matches(email => email.To[0] == newEmail1)))
+                .MustHaveHappenedOnceExactly();
+
+            A.CallTo(() => emailService.SendEmail(A<Email>.That.Matches(email => email.To[0] == newEmail2)))
+                .MustHaveHappenedOnceExactly();
         }
     }
 }
