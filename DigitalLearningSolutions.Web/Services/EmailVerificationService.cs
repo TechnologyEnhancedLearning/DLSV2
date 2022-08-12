@@ -49,7 +49,7 @@
             string baseUrl
         )
         {
-            foreach (var emailGroup in unverifiedEmails.GroupBy(emailUpdate => emailUpdate.NewEmail))
+            foreach (var emailGroup in unverifiedEmails.GroupBy(possibleEmailUpdate => possibleEmailUpdate.NewEmail))
             {
                 var hash = Guid.NewGuid().ToString();
                 var hashId = emailVerificationDataService.CreateEmailVerificationHash(hash, clockUtility.UtcNow);

@@ -159,20 +159,24 @@
         }
 
         [Test]
-        [TestCase(false, false)]
-        [TestCase(false, true)]
-        [TestCase(true, false)]
-        [TestCase(true, true)]
+        [TestCase(false, false, false)]
+        [TestCase(false, false, true)]
+        [TestCase(false, true, false)]
+        [TestCase(false, true, true)]
+        [TestCase(true, false, false)]
+        [TestCase(true, false, false)]
+        [TestCase(true, true, false)]
+        [TestCase(true, true, true)]
         public void
             UpdateUserDetailsAndCentreSpecificDetails_with_null_delegate_details_only_updates_user_and_centre_email(
                 bool isPrimaryEmailUpdated,
-                bool isCentreEmailUpdated
+                bool isCentreEmailUpdated,
+                bool changesMadeBySameUser
             )
         {
             // Given
             const int centreId = 1;
             const string centreEmail = "test@email.com";
-            const bool shouldUpdateProfileImage = true;
             var accountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
             var currentTime = new DateTime(2022, 1, 1);
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
@@ -185,7 +189,7 @@
                 centreId,
                 isPrimaryEmailUpdated,
                 isCentreEmailUpdated,
-                shouldUpdateProfileImage
+                changesMadeBySameUser
             );
 
             // Then
@@ -199,10 +203,10 @@
                         accountDetailsData.HasBeenPromptedForPrn,
                         accountDetailsData.JobGroupId,
                         currentTime,
-                        null,
+                        changesMadeBySameUser ? (DateTime?)null : currentTime,
                         accountDetailsData.UserId,
                         isPrimaryEmailUpdated,
-                        shouldUpdateProfileImage
+                        changesMadeBySameUser
                     )
                 )
                 .MustHaveHappened();
@@ -214,7 +218,7 @@
                             accountDetailsData.UserId,
                             centreId,
                             centreEmail,
-                            null,
+                            changesMadeBySameUser ? (DateTime?)null : currentTime,
                             A<IDbTransaction?>._
                         )
                     )

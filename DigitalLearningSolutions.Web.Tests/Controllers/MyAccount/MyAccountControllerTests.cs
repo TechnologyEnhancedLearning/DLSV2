@@ -420,6 +420,7 @@
             // Given
             const int userId = 2;
             const int centreId = 2;
+            const string newEmail = "unverified_email@test.com";
 
             var myAccountController = GetMyAccountController()
                 .WithMockUser(true, centreId, userId: userId, delegateId: null)
@@ -439,7 +440,7 @@
             {
                 FirstName = testUserEntity.UserAccount.FirstName,
                 LastName = testUserEntity.UserAccount.LastName,
-                Email = "unverified_email@test.com",
+                Email = newEmail,
                 JobGroupId = testUserEntity.UserAccount.JobGroupId,
                 HasProfessionalRegistrationNumber = false,
             };
@@ -475,7 +476,20 @@
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     testUserEntity.UserAccount,
-                    A<IEnumerable<PossibleEmailUpdate>>._,
+                    A<List<PossibleEmailUpdate>>.That.Matches(
+                        sequence => PossibleEmailUpdateTestHelper.PossibleEmailUpdateListsMatch(
+                            sequence,
+                            new List<PossibleEmailUpdate>
+                            {
+                                new PossibleEmailUpdate
+                                {
+                                    OldEmail = Email,
+                                    NewEmail = newEmail,
+                                    NewEmailIsVerified = false,
+                                },
+                            }
+                        )
+                    ),
                     A<string>._
                 )
             ).MustHaveHappenedOnceExactly();

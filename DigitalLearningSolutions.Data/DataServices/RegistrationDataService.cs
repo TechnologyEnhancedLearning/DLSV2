@@ -17,13 +17,13 @@
             bool registerJourneyContainsTermsAndConditions
         );
 
-        int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate? emailUpdate);
+        int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate? possibleEmailUpdate);
 
         (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             DateTime currentTime,
-            PossibleEmailUpdate? emailUpdate,
+            PossibleEmailUpdate? possibleEmailUpdate,
             IDbTransaction? transaction = null
         );
 
@@ -32,7 +32,7 @@
             int userId,
             int delegateId,
             DateTime currentTime,
-            PossibleEmailUpdate emailUpdate
+            PossibleEmailUpdate possibleEmailUpdate
         );
     }
 
@@ -98,7 +98,7 @@
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             DateTime currentTime,
-            PossibleEmailUpdate? emailUpdate,
+            PossibleEmailUpdate? possibleEmailUpdate,
             IDbTransaction? transaction = null
         )
         {
@@ -114,7 +114,7 @@
                 delegateRegistrationModel.Centre,
                 delegateRegistrationModel.CentreSpecificEmail,
                 userId,
-                emailUpdate,
+                possibleEmailUpdate,
                 transaction
             );
 
@@ -138,15 +138,15 @@
             int userId,
             int delegateId,
             DateTime currentTime,
-            PossibleEmailUpdate emailUpdate
+            PossibleEmailUpdate possibleEmailUpdate
         )
         {
             connection.EnsureOpen();
             var transaction = connection.BeginTransaction();
 
-            if (emailUpdate.IsEmailUpdating)
+            if (possibleEmailUpdate.IsEmailUpdating)
             {
-                var emailVerified = emailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
+                var emailVerified = possibleEmailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
 
                 userDataService.SetCentreEmail(
                     userId,
@@ -167,7 +167,10 @@
             transaction.Commit();
         }
 
-        public int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate? emailUpdate)
+        public int RegisterAdmin(
+            AdminAccountRegistrationModel registrationModel,
+            PossibleEmailUpdate? possibleEmailUpdate
+        )
         {
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
@@ -176,7 +179,7 @@
                 registrationModel.CentreId,
                 registrationModel.CentreSpecificEmail,
                 registrationModel.UserId,
-                emailUpdate,
+                possibleEmailUpdate,
                 transaction
             );
 
@@ -302,13 +305,13 @@
             int centreId,
             string? centreSpecificEmail,
             int userId,
-            PossibleEmailUpdate? emailUpdate,
+            PossibleEmailUpdate? possibleEmailUpdate,
             IDbTransaction transaction
         )
         {
-            if (emailUpdate != null && emailUpdate.IsEmailUpdating)
+            if (possibleEmailUpdate != null && possibleEmailUpdate.IsEmailUpdating)
             {
-                var emailVerified = emailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
+                var emailVerified = possibleEmailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
 
                 userDataService.SetCentreEmail(
                     userId,

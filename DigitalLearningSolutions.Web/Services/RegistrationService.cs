@@ -495,7 +495,7 @@ namespace DigitalLearningSolutions.Web.Services
         private (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailsForExistingUser(
             int userId,
             DelegateRegistrationModel delegateRegistrationModel,
-            PossibleEmailUpdate emailUpdate
+            PossibleEmailUpdate possibleEmailUpdate
         )
         {
             if (delegateRegistrationModel.CentreSpecificEmail != null)
@@ -512,7 +512,7 @@ namespace DigitalLearningSolutions.Web.Services
                 delegateRegistrationModel,
                 userId,
                 currentTime,
-                emailUpdate
+                possibleEmailUpdate
             );
         }
 
@@ -520,7 +520,7 @@ namespace DigitalLearningSolutions.Web.Services
             int userId,
             int delegateId,
             DelegateRegistrationModel delegateRegistrationModel,
-            PossibleEmailUpdate emailUpdate
+            PossibleEmailUpdate possibleEmailUpdate
         )
         {
             if (delegateRegistrationModel.CentreSpecificEmail != null)
@@ -538,7 +538,7 @@ namespace DigitalLearningSolutions.Web.Services
                 userId,
                 delegateId,
                 currentTime,
-                emailUpdate
+                possibleEmailUpdate
             );
         }
 

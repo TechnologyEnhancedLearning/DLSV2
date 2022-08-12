@@ -86,11 +86,13 @@
 
         [Test]
         public void
-            CreateEmailVerificationHashesAndSendVerificationEmails_updates_hashId_and_sends_email_when_primary_email_requires_verification()
+            CreateEmailVerificationHashesAndSendVerificationEmails_updates_hashIds_and_sends_single_email_for_each_unverified_email()
         {
             // Given
             var userAccount = UserTestHelper.GetDefaultUserAccount();
             const int hashId = 1;
+            const string newEmail1 = "new1@email.com";
+            const string newEmail2 = "new2@email.com";
             A.CallTo(() => emailVerificationDataService.CreateEmailVerificationHash(A<string>._, A<DateTime>._))
                 .Returns(hashId);
 
@@ -101,8 +103,20 @@
                 {
                     new PossibleEmailUpdate
                     {
-                        OldEmail = "old@email.com",
-                        NewEmail = "new@email.com",
+                        OldEmail = "old1@email.com",
+                        NewEmail = newEmail1,
+                        NewEmailIsVerified = false,
+                    },
+                    new PossibleEmailUpdate
+                    {
+                        OldEmail = "old2@email.com",
+                        NewEmail = newEmail2,
+                        NewEmailIsVerified = false,
+                    },
+                    new PossibleEmailUpdate
+                    {
+                        OldEmail = null,
+                        NewEmail = newEmail2,
                         NewEmailIsVerified = false,
                     },
                 },
@@ -113,56 +127,33 @@
             A.CallTo(
                 () => emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(
                     userAccount.Id,
-                    "new@email.com",
+                    newEmail1,
                     hashId
                 )
             ).MustHaveHappenedOnceExactly();
-
-            A.CallTo(() => emailService.SendEmail(A<Email>._)).MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public void
-            CreateEmailVerificationHashesAndSendVerificationEmails_updates_hashIds_and_sends_single_email_when_same_centre_email_requires_verification_at_multiple_centres()
-        {
-            // Given
-            var userAccount = UserTestHelper.GetDefaultUserAccount();
-            const int hashId = 1;
-            const string email = "centre@email.com";
-            A.CallTo(() => emailVerificationDataService.CreateEmailVerificationHash(A<string>._, A<DateTime>._))
-                .Returns(hashId);
-
-            // When
-            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                userAccount,
-                new List<PossibleEmailUpdate>
-                {
-                    new PossibleEmailUpdate
-                    {
-                        OldEmail = "centre1@email.com",
-                        NewEmail = email,
-                        NewEmailIsVerified = false,
-                    },
-                    new PossibleEmailUpdate
-                    {
-                        OldEmail = "centre2@email.com",
-                        NewEmail = email,
-                        NewEmailIsVerified = false,
-                    },
-                },
-                "example.com"
-            );
-
-            // Then
+            A.CallTo(
+                () => emailVerificationDataService.UpdateEmailVerificationHashIdForPrimaryEmail(
+                    userAccount.Id,
+                    newEmail2,
+                    hashId
+                )
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmails(
                     userAccount.Id,
-                    email,
+                    newEmail1,
+                    hashId
+                )
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => emailVerificationDataService.UpdateEmailVerificationHashIdForCentreEmails(
+                    userAccount.Id,
+                    newEmail2,
                     hashId
                 )
             ).MustHaveHappenedOnceExactly();
 
-            A.CallTo(() => emailService.SendEmail(A<Email>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => emailService.SendEmail(A<Email>._)).MustHaveHappenedTwiceExactly();
         }
     }
 }

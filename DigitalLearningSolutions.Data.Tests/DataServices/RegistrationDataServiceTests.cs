@@ -471,7 +471,7 @@
             {
                 var userCentreDetails = connection.GetEmailAndVerifiedDateFromUserCentreDetails(userId, centreId);
                 userCentreDetails.email.Should().Be(newCentreEmail);
-                userCentreDetails.emailVerified.Should().Be(null);
+                userCentreDetails.emailVerified.Should().BeNull();
             }
         }
 
