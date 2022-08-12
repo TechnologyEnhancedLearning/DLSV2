@@ -83,7 +83,7 @@
                 verifyEmailUrl.Path += '/';
             }
 
-            verifyEmailUrl.Path += "VerifyYourEmail";
+            verifyEmailUrl.Path += "VerifyEmail";
             verifyEmailUrl.Query = $"code={emailVerificationHash}&email={emailAddress}";
             const string emailSubject = "Digital Learning Solutions - Verify your email address";
 
