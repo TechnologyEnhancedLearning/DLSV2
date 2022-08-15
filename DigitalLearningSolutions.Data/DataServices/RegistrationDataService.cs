@@ -5,6 +5,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Logging;
@@ -17,13 +18,13 @@
             bool centreEmailRequiresVerification
         );
 
-        int RegisterAdmin(AdminAccountRegistrationModel registrationModel, bool centreEmailRequiresVerification);
+        int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate? possibleEmailUpdate);
 
         (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
-            bool centreEmailRequiresVerification,
             DateTime currentTime,
+            PossibleEmailUpdate? possibleEmailUpdate,
             IDbTransaction? transaction = null
         );
 
@@ -31,8 +32,8 @@
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
             int delegateId,
-            bool centreEmailRequiresVerification,
-            DateTime currentTime
+            DateTime currentTime,
+            PossibleEmailUpdate possibleEmailUpdate
         );
     }
 
@@ -42,16 +43,19 @@
         private readonly IDbConnection connection;
         private readonly ILogger<IRegistrationDataService> logger;
         private readonly IUserDataService userDataService;
+        private readonly IEmailVerificationDataService emailVerificationDataService;
 
         public RegistrationDataService(
             IDbConnection connection,
             IUserDataService userDataService,
+            IEmailVerificationDataService emailVerificationDataService,
             IClockUtility clockUtility,
             ILogger<IRegistrationDataService> logger
         )
         {
             this.connection = connection;
             this.userDataService = userDataService;
+            this.emailVerificationDataService = emailVerificationDataService;
             this.clockUtility = clockUtility;
             this.logger = logger;
         }
@@ -77,8 +81,13 @@
             var (delegateId, candidateNumber) = RegisterDelegateAccountAndCentreDetailForExistingUser(
                 delegateRegistrationModel,
                 userIdToLinkDelegateAccountTo,
-                centreEmailRequiresVerification,
                 currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = null,
+                    NewEmail = delegateRegistrationModel.CentreSpecificEmail,
+                    NewEmailIsVerified = false,
+                },
                 transaction
             );
 
@@ -87,40 +96,11 @@
             return (delegateId, candidateNumber);
         }
 
-        public void ReregisterDelegateAccountAndCentreDetailForExistingUser(
-            DelegateRegistrationModel delegateRegistrationModel,
-            int userId,
-            int delegateId,
-            bool centreEmailRequiresVerification,
-            DateTime currentTime
-        )
-        {
-            connection.EnsureOpen();
-            var transaction = connection.BeginTransaction();
-
-            userDataService.SetCentreEmail(
-                userId,
-                delegateRegistrationModel.Centre,
-                delegateRegistrationModel.CentreSpecificEmail,
-                centreEmailRequiresVerification ? (DateTime?)null : currentTime,
-                transaction
-            );
-
-            ReregisterDelegateAccount(
-                delegateRegistrationModel,
-                delegateId,
-                currentTime,
-                transaction
-            );
-
-            transaction.Commit();
-        }
-
         public (int delegateId, string candidateNumber) RegisterDelegateAccountAndCentreDetailForExistingUser(
             DelegateRegistrationModel delegateRegistrationModel,
             int userId,
-            bool centreEmailRequiresVerification,
             DateTime currentTime,
+            PossibleEmailUpdate? possibleEmailUpdate,
             IDbTransaction? transaction = null
         )
         {
@@ -136,10 +116,8 @@
                 delegateRegistrationModel.Centre,
                 delegateRegistrationModel.CentreSpecificEmail,
                 userId,
-                centreEmailRequiresVerification,
-                delegateRegistrationModel.IsSelfRegistered,
-                transaction,
-                currentTime
+                possibleEmailUpdate,
+                transaction
             );
 
             var (delegateId, candidateNumber) = RegisterDelegateAccountAndReturnCandidateNumberAndDelegateId(
@@ -157,9 +135,43 @@
             return (delegateId, candidateNumber);
         }
 
+        public void ReregisterDelegateAccountAndCentreDetailForExistingUser(
+            DelegateRegistrationModel delegateRegistrationModel,
+            int userId,
+            int delegateId,
+            DateTime currentTime,
+            PossibleEmailUpdate possibleEmailUpdate
+        )
+        {
+            connection.EnsureOpen();
+            var transaction = connection.BeginTransaction();
+
+            if (possibleEmailUpdate.IsEmailUpdating)
+            {
+                var emailVerified = possibleEmailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
+
+                userDataService.SetCentreEmail(
+                    userId,
+                    delegateRegistrationModel.Centre,
+                    delegateRegistrationModel.CentreSpecificEmail,
+                    emailVerified,
+                    transaction
+                );
+            }
+
+            ReregisterDelegateAccount(
+                delegateRegistrationModel,
+                delegateId,
+                currentTime,
+                transaction
+            );
+
+            transaction.Commit();
+        }
+
         public int RegisterAdmin(
             AdminAccountRegistrationModel registrationModel,
-            bool centreEmailRequiresVerification
+            PossibleEmailUpdate? possibleEmailUpdate
         )
         {
             connection.EnsureOpen();
@@ -169,8 +181,7 @@
                 registrationModel.CentreId,
                 registrationModel.CentreSpecificEmail,
                 registrationModel.UserId,
-                centreEmailRequiresVerification,
-                true,
+                possibleEmailUpdate,
                 transaction
             );
 
@@ -299,21 +310,20 @@
             int centreId,
             string? centreSpecificEmail,
             int userId,
-            bool centreEmailRequiresVerification,
-            bool isSelfRegistered,
+            PossibleEmailUpdate? possibleEmailUpdate,
             IDbTransaction transaction,
             DateTime? currentTime = null
         )
         {
-            if (!string.IsNullOrWhiteSpace(centreSpecificEmail))
+            if (possibleEmailUpdate != null && possibleEmailUpdate.IsEmailUpdating)
             {
-                var shouldSetEmailAsVerified = !centreEmailRequiresVerification || !isSelfRegistered;
+                var emailVerified = possibleEmailUpdate.NewEmailIsVerified || possibleEmailUpdate.EmailSetByAdmin ? currentTime ?? clockUtility.UtcNow : (DateTime?)null;
 
                 userDataService.SetCentreEmail(
                     userId,
                     centreId,
                     centreSpecificEmail,
-                    shouldSetEmailAsVerified ? currentTime ?? clockUtility.UtcNow : (DateTime?)null,
+                    emailVerified,
                     transaction
                 );
             }

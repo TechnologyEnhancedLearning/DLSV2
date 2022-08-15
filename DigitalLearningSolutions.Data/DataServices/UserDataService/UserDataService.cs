@@ -56,7 +56,9 @@
             bool hasBeenPromptedForPrn,
             int jobGroupId,
             DateTime detailsLastChecked,
+            DateTime? emailVerified,
             int userId,
+            bool isPrimaryEmailUpdated,
             bool changeMadeBySameUser = false
         );
 
@@ -158,7 +160,7 @@
             int userId,
             int centreId,
             string? email,
-            DateTime? emailVerified = null,
+            DateTime? emailVerified,
             IDbTransaction? transaction = null
         );
 
@@ -189,6 +191,8 @@
             int newUserIdForUserCentreDetails,
             int centreId
         );
+
+        IEnumerable<UserCentreDetails> GetCentreDetailsForUser(int userId);
 
         EmailVerificationDetails? GetPrimaryEmailVerificationDetails(string code);
 

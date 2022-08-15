@@ -1,12 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System;
+    using System.Data;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
     using FakeItEasy;
@@ -23,16 +26,34 @@
         private ILogger<IRegistrationDataService> logger = null!;
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
+        private RegistrationDataService serviceWithFakeUserDataService = null!;
         private IUserDataService userDataService = null!;
+        private IUserDataService fakeUserDataService = null!;
+        private IEmailVerificationDataService emailVerificationDataService = null!;
 
         [SetUp]
         public void SetUp()
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
             userDataService = new UserDataService(connection);
+            fakeUserDataService = A.Fake<IUserDataService>();
+            emailVerificationDataService = A.Fake<IEmailVerificationDataService>();
             clockUtility = A.Fake<IClockUtility>();
             logger = A.Fake<ILogger<IRegistrationDataService>>();
-            service = new RegistrationDataService(connection, userDataService, clockUtility, logger);
+            service = new RegistrationDataService(
+                connection,
+                userDataService,
+                emailVerificationDataService,
+                clockUtility,
+                logger
+            );
+            serviceWithFakeUserDataService = new RegistrationDataService(
+                connection,
+                fakeUserDataService,
+                emailVerificationDataService,
+                clockUtility,
+                logger
+            );
             notificationPreferencesDataService = new NotificationPreferencesDataService(connection);
         }
 
@@ -207,15 +228,16 @@
                     3
                 );
             var currentTime = DateTime.Now;
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             const int userId = 2;
-            const bool centreEmailRequiresVerification = false;
 
             // When
             var (delegateId, candidateNumber) =
                 service.RegisterDelegateAccountAndCentreDetailForExistingUser(
                     delegateRegistrationModel,
                     userId,
-                    centreEmailRequiresVerification,
+                    currentTime,
+                    null
                     currentTime
                 );
 
@@ -257,15 +279,14 @@
                 );
             var currentTime = DateTime.Now;
             const int userId = 2;
-            const bool centreEmailRequiresVerification = false;
 
             // When
             var (delegateId, candidateNumber) =
                 service.RegisterDelegateAccountAndCentreDetailForExistingUser(
                     delegateRegistrationModel,
                     userId,
-                    centreEmailRequiresVerification,
-                    currentTime
+                    currentTime,
+                    null
                 );
 
             // Then
@@ -277,6 +298,109 @@
             userCentreDetailsCount.Should().Be(0);
             candidateNumber.Should().Be("FS352");
             user.CandidateNumber.Should().Be("FS352");
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void RegisterDelegateAccountAndCentreDetailForExistingUser_updates_centre_email_when_email_is_updating(
+            bool isEmailVerified
+        )
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            const int userId = 2;
+            const int centreId = 3;
+            const string centreEmail = "centre@email.com";
+            var currentTime = new DateTime(2022, 2, 2);
+
+            var delegateRegistrationModel =
+                RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                    "forename",
+                    "surname",
+                    "test@gmail.com",
+                    centreId,
+                    centreSpecificEmail: centreEmail
+                );
+
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
+
+            // When
+            serviceWithFakeUserDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                delegateRegistrationModel,
+                userId,
+                currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = null,
+                    NewEmail = centreEmail,
+                    NewEmailIsVerified = isEmailVerified,
+                }
+            );
+
+            // Then
+            A.CallTo(
+                    () => fakeUserDataService.SetCentreEmail(
+                        userId,
+                        centreId,
+                        centreEmail,
+                        isEmailVerified ? currentTime : (DateTime?)null,
+                        A<IDbTransaction?>._
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void
+            RegisterDelegateAccountAndCentreDetailForExistingUser_does_not_update_centre_email_when_email_is_not_updating(
+                bool emailIsVerified
+            )
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            const int userId = 2;
+            const int centreId = 3;
+            const string centreEmail = "centre@email.com";
+            var currentTime = new DateTime(2022, 2, 2);
+
+            var delegateRegistrationModel =
+                RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                    "forename",
+                    "surname",
+                    "test@gmail.com",
+                    centreId,
+                    centreSpecificEmail: centreEmail
+                );
+
+            // When
+            serviceWithFakeUserDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                delegateRegistrationModel,
+                userId,
+                currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = centreEmail,
+                    NewEmail = centreEmail,
+                    NewEmailIsVerified = emailIsVerified,
+                }
+            );
+
+            // Then
+            A.CallTo(
+                    () => fakeUserDataService.SetCentreEmail(
+                        A<int>._,
+                        A<int>._,
+                        A<string?>._,
+                        A<DateTime?>._,
+                        A<IDbTransaction?>._
+                    )
+                )
+                .MustNotHaveHappened();
         }
 
         [Test]
@@ -296,17 +420,22 @@
             var currentTime = new DateTime(2022, 06, 27, 11, 03, 12);
             const int userId = 281052;
             const int existingDelegateId = 142559;
-            const bool centreEmailRequiresVerification = false;
-
-            // When
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             var userBeforeUpdate = userDataService.GetUserAccountById(userId);
             var delegateBeforeUpdate = userDataService.GetDelegateAccountById(existingDelegateId);
+
+            // When
             service.ReregisterDelegateAccountAndCentreDetailForExistingUser(
                 delegateRegistrationModel,
                 userId,
                 existingDelegateId,
-                centreEmailRequiresVerification,
-                currentTime
+                currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = null,
+                    NewEmail = delegateRegistrationModel.CentreSpecificEmail,
+                    NewEmailIsVerified = false,
+                }
             );
 
             // Then
@@ -380,7 +509,6 @@
             const int userId = 281052;
             const int existingDelegateId = 142559;
             const int centreId = 121;
-            const bool centreEmailRequiresVerification = true;
             var newCentreEmail = "newCentreEmailTest@test.com";
             var delegateRegistrationModel =
                 RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
@@ -390,14 +518,20 @@
                     centreId,
                     centreSpecificEmail: newCentreEmail
                 );
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
             // When
             service.ReregisterDelegateAccountAndCentreDetailForExistingUser(
                 delegateRegistrationModel,
                 userId,
                 existingDelegateId,
-                centreEmailRequiresVerification,
-                currentTime
+                currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = null,
+                    NewEmail = delegateRegistrationModel.CentreSpecificEmail,
+                    NewEmailIsVerified = false,
+                }
             );
 
             // Then
@@ -417,11 +551,11 @@
 
             // Given
             var currentTime = new DateTime(2022, 06, 27, 11, 03, 12);
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             const int userId = 281052;
             const int existingDelegateId = 142559;
             const int centreId = 121;
             const string existingEmail = "existingEmail@test.com";
-            const bool centreEmailRequiresVerification = true;
             var existingEmailVerified = new DateTime(2022, 10, 4, 12, 12, 12);
             var delegateRegistrationModel =
                 RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
@@ -440,8 +574,13 @@
                 delegateRegistrationModel,
                 userId,
                 existingDelegateId,
-                centreEmailRequiresVerification,
-                currentTime
+                currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = existingEmail,
+                    NewEmail = null,
+                    NewEmailIsVerified = false,
+                }
             );
             var userCentreDetails = connection.GetEmailAndVerifiedDateFromUserCentreDetails(userId, centreId);
 
@@ -453,6 +592,214 @@
                 userCentreDetails.email.Should().BeNull();
                 userCentreDetails.emailVerified.Should().BeNull();
             }
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void ReregisterDelegateAccountAndCentreDetailForExistingUser_updates_centre_email_when_email_is_updating(
+            bool isEmailVerified
+        )
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            const int userId = 2;
+            const int centreId = 3;
+            const int delegateId = 4;
+            const string oldCentreEmail = "old@centre.email";
+            const string newCentreEmail = "new@centre.email";
+            var currentTime = new DateTime(2022, 2, 2);
+
+            var delegateRegistrationModel =
+                RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                    "forename",
+                    "surname",
+                    "test@gmail.com",
+                    centreId,
+                    centreSpecificEmail: newCentreEmail
+                );
+
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
+
+            // When
+            serviceWithFakeUserDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                delegateRegistrationModel,
+                userId,
+                delegateId,
+                currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = oldCentreEmail,
+                    NewEmail = newCentreEmail,
+                    NewEmailIsVerified = isEmailVerified,
+                }
+            );
+
+            // Then
+            A.CallTo(
+                    () => fakeUserDataService.SetCentreEmail(
+                        userId,
+                        centreId,
+                        newCentreEmail,
+                        isEmailVerified ? currentTime : (DateTime?)null,
+                        A<IDbTransaction?>._
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void
+            ReregisterDelegateAccountAndCentreDetailForExistingUser_does_not_update_centre_email_when_email_is_not_updating(
+                bool emailIsVerified
+            )
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            const int userId = 2;
+            const int centreId = 3;
+            const int delegateId = 4;
+            const string centreEmail = "centre@email.com";
+            var currentTime = new DateTime(2022, 2, 2);
+
+            var delegateRegistrationModel =
+                RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                    "forename",
+                    "surname",
+                    "test@gmail.com",
+                    centreId,
+                    centreSpecificEmail: centreEmail
+                );
+
+            // When
+            serviceWithFakeUserDataService.ReregisterDelegateAccountAndCentreDetailForExistingUser(
+                delegateRegistrationModel,
+                userId,
+                delegateId,
+                currentTime,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = centreEmail,
+                    NewEmail = centreEmail,
+                    NewEmailIsVerified = emailIsVerified,
+                }
+            );
+
+            // Then
+            A.CallTo(
+                    () => fakeUserDataService.SetCentreEmail(
+                        A<int>._,
+                        A<int>._,
+                        A<string?>._,
+                        A<DateTime?>._,
+                        A<IDbTransaction?>._
+                    )
+                )
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void RegisterAdmin_updates_centre_email_when_email_is_updating(bool isEmailVerified)
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            const int userId = 2;
+            const int centreId = 3;
+            const string centreEmail = "centre@email.com";
+            var currentTime = new DateTime(2022, 2, 2);
+
+            var adminAccountRegistrationModel = new AdminAccountRegistrationModel(
+                RegistrationModelTestHelper.GetDefaultAdminRegistrationModel(
+                    "forename",
+                    "surname",
+                    "test@gmail.com",
+                    centreId,
+                    centreSpecificEmail: centreEmail,
+                    categoryId: 1
+                ),
+                userId
+            );
+
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
+
+            // When
+            serviceWithFakeUserDataService.RegisterAdmin(
+                adminAccountRegistrationModel,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = null,
+                    NewEmail = centreEmail,
+                    NewEmailIsVerified = isEmailVerified,
+                }
+            );
+
+            // Then
+            A.CallTo(
+                    () => fakeUserDataService.SetCentreEmail(
+                        userId,
+                        centreId,
+                        centreEmail,
+                        isEmailVerified ? currentTime : (DateTime?)null,
+                        A<IDbTransaction?>._
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void RegisterAdmin_does_not_update_centre_email_when_email_is_not_updating(bool emailIsVerified)
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            const int userId = 2;
+            const int centreId = 3;
+            const string centreEmail = "centre@email.com";
+            var currentTime = new DateTime(2022, 2, 2);
+
+            var adminAccountRegistrationModel = new AdminAccountRegistrationModel(
+                RegistrationModelTestHelper.GetDefaultAdminRegistrationModel(
+                    "forename",
+                    "surname",
+                    "test@gmail.com",
+                    centreId,
+                    centreSpecificEmail: centreEmail,
+                    categoryId: 1
+                ),
+                userId
+            );
+
+            // When
+            serviceWithFakeUserDataService.RegisterAdmin(
+                adminAccountRegistrationModel,
+                new PossibleEmailUpdate
+                {
+                    OldEmail = centreEmail,
+                    NewEmail = centreEmail,
+                    NewEmailIsVerified = emailIsVerified,
+                }
+            );
+
+            // Then
+            A.CallTo(
+                    () => fakeUserDataService.SetCentreEmail(
+                        A<int>._,
+                        A<int>._,
+                        A<string?>._,
+                        A<DateTime?>._,
+                        A<IDbTransaction?>._
+                    )
+                )
+                .MustNotHaveHappened();
         }
 
         [Test]
@@ -509,9 +856,10 @@
                 RegistrationModelTestHelper.GetDefaultCentreManagerAccountRegistrationModel(
                     categoryId: 1
                 );
+            A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
             // When
-            var id = service.RegisterAdmin(registrationModel, centreEmailRequiresVerification);
+            var id = service.RegisterAdmin(registrationModel, null);
 
             // Then
             var user = userDataService.GetAdminUserById(id)!;
@@ -536,14 +884,14 @@
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            const bool centreEmailRequiresVerification = true;
             var registrationModel =
                 RegistrationModelTestHelper.GetDefaultCentreManagerAccountRegistrationModel(
                     categoryId: 1
                 );
+            A.CallTo(() => clockUtility.UtcNow).Returns(DateTime.UtcNow);
 
             // When
-            var id = service.RegisterAdmin(registrationModel, centreEmailRequiresVerification);
+            var id = service.RegisterAdmin(registrationModel, null);
 
             // Then
             var user = userDataService.GetAdminUserById(id)!;

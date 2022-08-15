@@ -83,7 +83,7 @@
                     var inactiveAccountModel = new AccountInactiveViewModel(supportEmail!);
                     return View("AccountInactive", inactiveAccountModel);
                 case LoginAttemptResult.UnverifiedEmail:
-                    await CentrelessLogInAsync(loginResult.UserEntity!, model.RememberMe);
+                    await this.CentrelessLogInAsync(loginResult.UserEntity!.UserAccount, model.RememberMe);
                     return RedirectToAction(
                         "Index",
                         "VerifyYourEmail",
@@ -97,7 +97,7 @@
                         loginResult.CentreToLogInto!.Value
                     );
                 case LoginAttemptResult.ChooseACentre:
-                    await CentrelessLogInAsync(loginResult.UserEntity!, model.RememberMe);
+                    await this.CentrelessLogInAsync(loginResult.UserEntity!.UserAccount, model.RememberMe);
                     return RedirectToAction("ChooseACentre", "Login", new { returnUrl = model.ReturnUrl });
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -207,20 +207,6 @@
                 "MyAccount",
                 new { returnUrl, dlsSubApplication, isCheckDetailsRedirect }
             );
-        }
-
-        private async Task CentrelessLogInAsync(UserEntity userEntity, bool rememberMe)
-        {
-            var claims = LoginClaimsHelper.GetClaimsForCentrelessSignIn(userEntity.UserAccount);
-            var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
-            var authProperties = new AuthenticationProperties
-            {
-                AllowRefresh = true,
-                IsPersistent = rememberMe,
-                IssuedUtc = clockUtility.UtcNow,
-            };
-
-            await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
         }
     }
 }

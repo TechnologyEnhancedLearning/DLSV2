@@ -119,6 +119,8 @@
                 delegateDetailsData,
                 formData.CentreSpecificEmail,
                 centreId,
+                false,
+                !string.Equals(delegateEntity.UserCentreDetails?.Email, formData.CentreSpecificEmail),
                 false
             );
 
