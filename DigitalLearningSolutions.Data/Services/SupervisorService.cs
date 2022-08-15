@@ -45,7 +45,7 @@
         int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
         bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId);
         //DELETE DATA
-        bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId);
+        bool RemoveCandidateAssessmentSupervisor(int supervisorDelegateId);
     }
     public class SupervisorService : ISupervisorService
     {
@@ -538,25 +538,40 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
             return true;
         }
 
-        public bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId)
+        public bool RemoveCandidateAssessmentSupervisor(int supervisorDelegateId)
         {
             var numberOfAffectedRows = connection.Execute(
-         @"DELETE FROM cas
-FROM  CandidateAssessmentSupervisors AS cas INNER JOIN
-         CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
-WHERE (ca.SelfAssessmentID = @selfAssessmentId) AND (cas.SupervisorDelegateId = @supervisorDelegateId)",
-        new { selfAssessmentId, supervisorDelegateId });
+                @"DELETE FROM cas
+	                FROM CandidateAssessmentSupervisors AS cas
+				    LEFT JOIN CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID
+				    LEFT JOIN SelfAssessmentResultSupervisorVerifications AS sarsr ON cas.ID = sarsr.ID
+                    WHERE (cas.SupervisorDelegateId = @supervisorDelegateId)
+					    AND (casv.ID IS NULL)
+					    AND (sarsr.ID IS NULL)",
+                new { supervisorDelegateId });
+
+            if (numberOfAffectedRows < 1)
+            {
+                numberOfAffectedRows = connection.Execute(
+                    @"UPDATE CandidateAssessmentSupervisors SET Removed = getUTCDate()
+                        WHERE SupervisorDelegateId = @supervisorDelegateId",
+                    new { supervisorDelegateId });
+            }
+            numberOfAffectedRows = connection.Execute(
+                @"UPDATE SupervisorDelegates
+                    SET Removed = getUTCDate() 
+                    WHERE ID = @supervisorDelegateId AND NOT EXISTS(
+                        SELECT *
+                        FROM CandidateAssessmentSupervisors
+                        WHERE (SupervisorDelegateId = @supervisorDelegateId) AND (Removed IS NOT NULL))",
+                new { supervisorDelegateId });
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
-                    $"Not removing Candidate Assessment Supervisor as db update failed. selfAssessmentId: {selfAssessmentId}, supervisorDelegateId: {supervisorDelegateId}"
+                    $"Not removing Candidate Assessment Supervisor as db update failed, supervisorDelegateId: {supervisorDelegateId}"
                 );
                 return false;
             }
-            connection.Execute(
-         @"UPDATE SupervisorDelegates SET Removed = getUTCDate() 
-            WHERE ID = @supervisorDelegateId AND (SELECT COUNT(*) FROM CandidateAssessmentSupervisors WHERE SupervisorDelegateId = @supervisorDelegateId) = 0",
-        new { supervisorDelegateId });
             return true;
         }
 
