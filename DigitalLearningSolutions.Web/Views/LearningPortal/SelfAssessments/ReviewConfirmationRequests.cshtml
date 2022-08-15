@@ -30,7 +30,7 @@
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<h1>Competency confirmation requests</h1>
+<h1>@Model.SelfAssessment.Vocabulary confirmation requests</h1>
 @if (Model.Competencies.Any())
 {
   <h2>Outstanding requests</h2>
