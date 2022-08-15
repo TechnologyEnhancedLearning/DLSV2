@@ -15,7 +15,7 @@
         (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions,
-            bool centreEmailRequiresVerification
+            bool isRegisteredByAdmin
         );
 
         int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate? possibleEmailUpdate);
@@ -41,9 +41,9 @@
     {
         private readonly IClockUtility clockUtility;
         private readonly IDbConnection connection;
+        private readonly IEmailVerificationDataService emailVerificationDataService;
         private readonly ILogger<IRegistrationDataService> logger;
         private readonly IUserDataService userDataService;
-        private readonly IEmailVerificationDataService emailVerificationDataService;
 
         public RegistrationDataService(
             IDbConnection connection,
@@ -63,7 +63,7 @@
         public (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions,
-            bool centreEmailRequiresVerification
+            bool isRegisteredByAdmin
         )
         {
             connection.EnsureOpen();
@@ -87,6 +87,7 @@
                     OldEmail = null,
                     NewEmail = delegateRegistrationModel.CentreSpecificEmail,
                     NewEmailIsVerified = false,
+                    IsDelegateEmailSetByAdmin = isRegisteredByAdmin,
                 },
                 transaction
             );
@@ -317,7 +318,10 @@
         {
             if (possibleEmailUpdate != null && possibleEmailUpdate.IsEmailUpdating)
             {
-                var emailVerified = possibleEmailUpdate.NewEmailIsVerified || possibleEmailUpdate.EmailSetByAdmin ? currentTime ?? clockUtility.UtcNow : (DateTime?)null;
+                var emailVerified =
+                    possibleEmailUpdate.NewEmailIsVerified || possibleEmailUpdate.IsDelegateEmailSetByAdmin
+                        ? currentTime ?? clockUtility.UtcNow
+                        : (DateTime?)null;
 
                 userDataService.SetCentreEmail(
                     userId,

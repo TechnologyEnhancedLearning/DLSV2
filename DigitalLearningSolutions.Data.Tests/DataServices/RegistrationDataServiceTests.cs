@@ -23,13 +23,13 @@
     {
         private IClockUtility clockUtility = null!;
         private SqlConnection connection = null!;
+        private IEmailVerificationDataService emailVerificationDataService = null!;
+        private IUserDataService fakeUserDataService = null!;
         private ILogger<IRegistrationDataService> logger = null!;
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
         private RegistrationDataService serviceWithFakeUserDataService = null!;
         private IUserDataService userDataService = null!;
-        private IUserDataService fakeUserDataService = null!;
-        private IEmailVerificationDataService emailVerificationDataService = null!;
 
         [SetUp]
         public void SetUp()
@@ -151,13 +151,13 @@
 
         [Test]
         public void
-            RegisterNewUserAndDelegateAccount_sets_email_verified_to_null_if_centre_email_requires_verification()
+            RegisterNewUserAndDelegateAccount_sets_email_verified_to_null_if_delegate_is_self_registered()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
             const string centreSpecificEmail = "centre@email.com";
-            const bool centreEmailRequiresVerification = false;
+            const bool registeredByAdmin = false;
             var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                 centre: 3,
                 centreSpecificEmail: centreSpecificEmail
@@ -166,10 +166,10 @@
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
             // When
-            var (delegateId, candidateNumber) = service.RegisterNewUserAndDelegateAccount(
+            var (delegateId, _) = service.RegisterNewUserAndDelegateAccount(
                 delegateRegistrationModel,
                 true,
-                centreEmailRequiresVerification
+                registeredByAdmin
             );
 
             // Then
@@ -177,19 +177,19 @@
             using (new AssertionScope())
             {
                 delegateEntity!.UserCentreDetails!.Email.Should().Be(centreSpecificEmail);
-                delegateEntity.UserCentreDetails.EmailVerified.Should().NotBeNull();
+                delegateEntity.UserCentreDetails.EmailVerified.Should().BeNull();
             }
         }
 
         [Test]
         public void
-            RegisterNewUserAndDelegateAccount_sets_email_verified_to_current_time_if_centre_email_does_not_require_verification()
+            RegisterNewUserAndDelegateAccount_sets_email_verified_to_current_time_if_registered_by_adminn()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
             const string centreSpecificEmail = "centre@email.com";
-            const bool centreEmailRequiresVerification = false;
+            const bool registeredByAdmin = true;
             var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
                 centre: 3,
                 centreSpecificEmail: centreSpecificEmail
@@ -198,10 +198,10 @@
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
             // When
-            var (delegateId, candidateNumber) = service.RegisterNewUserAndDelegateAccount(
+            var (delegateId, _) = service.RegisterNewUserAndDelegateAccount(
                 delegateRegistrationModel,
                 true,
-                centreEmailRequiresVerification
+                registeredByAdmin
             );
 
             // Then
@@ -238,7 +238,6 @@
                     userId,
                     currentTime,
                     null
-                    currentTime
                 );
 
             // Then
@@ -721,7 +720,7 @@
                     "surname",
                     "test@gmail.com",
                     centreId,
-                    centreSpecificEmail: centreEmail,
+                    centreEmail,
                     categoryId: 1
                 ),
                 userId
@@ -772,7 +771,7 @@
                     "surname",
                     "test@gmail.com",
                     centreId,
-                    centreSpecificEmail: centreEmail,
+                    centreEmail,
                     categoryId: 1
                 ),
                 userId
@@ -804,7 +803,7 @@
 
         [Test]
         public async Task
-            ReregisterDelegateAccountAndCentreDetailForExistingUser_sets_email_verified_to_current_time_if_email_does_not_require_verification()
+            ReregisterDelegateAccountAndCentreDetailForExistingUser_sets_email_verified_to_current_time_if_user_has_already_verified_new_email()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -813,7 +812,6 @@
             const int userId = 281052;
             const int existingDelegateId = 142559;
             const int centreId = 121;
-            const bool centreEmailRequiresVerification = false;
             var newCentreEmail = "newCentreEmailTest@test.com";
             var delegateRegistrationModel =
                 RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
@@ -825,6 +823,14 @@
                     isSelfRegistered: true
                 );
 
+            var possibleEmailUpdate = new PossibleEmailUpdate
+            {
+                OldEmail = "old@email.com",
+                NewEmail = newCentreEmail,
+                IsDelegateEmailSetByAdmin = false,
+                NewEmailIsVerified = true,
+            };
+
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
             // When
@@ -832,8 +838,8 @@
                 delegateRegistrationModel,
                 userId,
                 existingDelegateId,
-                centreEmailRequiresVerification,
-                currentTime
+                currentTime,
+                possibleEmailUpdate
             );
 
             // Then
@@ -910,7 +916,7 @@
         }
 
         [Test]
-        public void RegisterAdmin_sets_email_verified_to_current_time_if_email_does_not_require_verification()
+        public void RegisterAdmin_sets_email_verified_to_current_time_if_user_has_already_Verified_new_email()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -924,8 +930,16 @@
             var currentTime = new DateTime(2022, 6, 16, 9, 41, 30);
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
+            var possibleEmailUpdate = new PossibleEmailUpdate
+            {
+                OldEmail = "old@email.com",
+                NewEmail = centreSpecificEmail,
+                IsDelegateEmailSetByAdmin = false,
+                NewEmailIsVerified = true,
+            };
+
             // When
-            var id = service.RegisterAdmin(registrationModel, centreEmailRequiresVerification);
+            var id = service.RegisterAdmin(registrationModel, possibleEmailUpdate);
 
             // Then
             var user = userDataService.GetAdminById(id)!;
@@ -937,7 +951,7 @@
         }
 
         [Test]
-        public void RegisterAdmin_sets_email_verified_to_null_if_centre_email_requires_verification()
+        public void RegisterAdmin_sets_email_verified_to_null_if_user_has_not_verified_new_email()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -949,8 +963,16 @@
                     centreSpecificEmail: centreSpecificEmail
                 );
 
+            var possibleEmailUpdate = new PossibleEmailUpdate
+            {
+                OldEmail = "old@email.com",
+                NewEmail = centreSpecificEmail,
+                IsDelegateEmailSetByAdmin = false,
+                NewEmailIsVerified = false,
+            };
+
             // When
-            var id = service.RegisterAdmin(registrationModel, centreEmailRequiresVerification);
+            var id = service.RegisterAdmin(registrationModel, possibleEmailUpdate);
 
             // Then
             var user = userDataService.GetAdminById(id)!;

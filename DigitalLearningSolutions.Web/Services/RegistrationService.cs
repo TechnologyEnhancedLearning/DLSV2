@@ -51,7 +51,8 @@ namespace DigitalLearningSolutions.Web.Services
 
         (int delegateId, string candidateNumber) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
-            bool registerJourneyContainsTermsAndConditions
+            bool registerJourneyContainsTermsAndConditions,
+            bool isRegisteredByAdmin
         );
     }
 
@@ -61,6 +62,7 @@ namespace DigitalLearningSolutions.Web.Services
         private readonly IClockUtility clockUtility;
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
+        private readonly IEmailVerificationDataService emailVerificationDataService;
         private readonly IGroupsService groupsService;
         private readonly ILogger<RegistrationService> logger;
         private readonly INotificationDataService notificationDataService;
@@ -70,7 +72,6 @@ namespace DigitalLearningSolutions.Web.Services
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
-        private readonly IEmailVerificationDataService emailVerificationDataService;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
@@ -126,7 +127,8 @@ namespace DigitalLearningSolutions.Web.Services
 
             var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
-                registerJourneyContainsTermsAndConditions
+                registerJourneyContainsTermsAndConditions,
+                true
             );
 
             passwordDataService.SetPasswordByCandidateNumber(
@@ -282,7 +284,8 @@ namespace DigitalLearningSolutions.Web.Services
 
             var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
-                registerJourneyContainsTermsAndConditions
+                registerJourneyContainsTermsAndConditions,
+                false
             );
 
             var supervisorDelegateRecordIdsMatchingDelegate =
@@ -343,7 +346,7 @@ namespace DigitalLearningSolutions.Web.Services
                     OldEmail = null,
                     NewEmail = registrationModel.CentreSpecificEmail,
                     NewEmailIsVerified = false,
-                    EmailSetByAdmin = false,
+                    IsDelegateEmailSetByAdmin = false,
                 }
             );
 
@@ -446,7 +449,8 @@ namespace DigitalLearningSolutions.Web.Services
 
         public (int delegateId, string candidateNumber) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
-            bool registerJourneyContainsTermsAndConditions
+            bool registerJourneyContainsTermsAndConditions,
+            bool isRegisteredByAdmin
         )
         {
             try
@@ -466,7 +470,8 @@ namespace DigitalLearningSolutions.Web.Services
 
                 var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
-                    registerJourneyContainsTermsAndConditions
+                    registerJourneyContainsTermsAndConditions,
+                    isRegisteredByAdmin
                 );
 
                 groupsService.AddNewDelegateToAppropriateGroups(delegateId, delegateRegistrationModel);
@@ -619,7 +624,8 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
-                    registerJourneyContainsTermsAndConditions
+                    registerJourneyContainsTermsAndConditions,
+                    false
                 );
 
                 passwordDataService.SetPasswordByCandidateNumber(
