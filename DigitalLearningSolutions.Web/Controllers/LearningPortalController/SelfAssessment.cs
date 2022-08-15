@@ -815,10 +815,35 @@
             return RedirectToAction("VerificationPickSupervisor", new { selfAssessmentId });
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Supervisor")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests")]
+        public IActionResult ReviewConfirmationRequests(int selfAssessmentId)
+        {
+            var candidateId = User.GetCandidateIdKnownNotNull();
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+            if (selfAssessment == null)
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)(HttpStatusCode.NotFound) });
+            }
+
+            var competencies = PopulateCompetencyLevelDescriptors(
+                selfAssessmentService.GetResultSupervisorVerifications(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList()
+            );
+            var model = new ReviewConfirmationRequestsViewModel
+            {
+                SelfAssessment = selfAssessment,
+                Competencies = competencies
+            };
+            TempData.Keep();
+            return View("SelfAssessments/ReviewConfirmationRequests", model);
+        }
+
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/ChooseSupervisor")]
         public IActionResult VerificationPickSupervisor(int selfAssessmentId)
         {
-            var sessionRequestVerification = TempData.Peek<SessionRequestVerification>();
+            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
+                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                TempData
+            );
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -844,10 +869,13 @@
         }
 
         [HttpPost]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Supervisor")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/ChooseSupervisor")]
         public IActionResult VerificationPickSupervisor(VerificationPickSupervisorViewModel model)
         {
-            var sessionRequestVerification = TempData.Peek<SessionRequestVerification>();
+            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
+                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                TempData
+            );
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -883,10 +911,13 @@
             return RedirectToAction("VerificationPickResults", new { sessionRequestVerification.SelfAssessmentID });
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Results")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/PickResults")]
         public IActionResult VerificationPickResults(int selfAssessmentId)
         {
-            var sessionRequestVerification = TempData.Peek<SessionRequestVerification>();
+            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
+                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                TempData
+            );
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -916,10 +947,13 @@
         }
 
         [HttpPost]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Results")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/PickResults")]
         public IActionResult VerificationPickResults(VerificationPickResultsViewModel model, int selfAssessmentId)
         {
-            var sessionRequestVerification = TempData.Peek<SessionRequestVerification>();
+            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
+                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                TempData
+            );
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -948,10 +982,13 @@
             return RedirectToAction("VerificationSummary", new { sessionRequestVerification.SelfAssessmentID });
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Summary")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/Summary")]
         public IActionResult VerificationSummary(int selfAssessmentId)
         {
-            var sessionRequestVerification = TempData.Peek<SessionRequestVerification>();
+            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
+                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                TempData
+            );
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -990,10 +1027,35 @@
             return View("SelfAssessments/VerificationSummary", model);
         }
 
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Confirmation/{candidateAssessmentSupervisorId}/{selfAssessmentResultId}/{supervisorVerificationId}/Resend")]
+        public IActionResult ResendSupervisorVerificationRequest(int selfAssessmentId, string vocabulary, int candidateAssessmentSupervisorId, int selfAssessmentResultId, int supervisorVerificationId)
+        {
+
+            frameworkNotificationService.SendResultVerificationRequest(
+                candidateAssessmentSupervisorId,
+                selfAssessmentId,
+                1,
+                User.GetCandidateIdKnownNotNull(),
+                selfAssessmentResultId
+            );
+            supervisorService.UpdateSelfAssessmentResultSupervisorVerificationsEmailSent(supervisorVerificationId);
+            return RedirectToAction("ReviewConfirmationRequests", new { selfAssessmentId, vocabulary });
+        }
+
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/{supervisorVerificationId}/Withdraw")]
+        public IActionResult WithdrawSupervisorVerificationRequest(int selfAssessmentId, int supervisorVerificationId)
+        {
+            supervisorService.RemoveSelfAssessmentResultSupervisorVerificationById(supervisorVerificationId);
+            return RedirectToAction("ReviewConfirmationRequests", new { selfAssessmentId });
+        }
+
         [HttpPost]
         public IActionResult SubmitVerification()
         {
-            var sessionRequestVerification = TempData.Peek<SessionRequestVerification>();
+            var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
+                MultiPageFormDataFeature.AddSelfAssessmentRequestVerification,
+                TempData
+            );
             if (sessionRequestVerification == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
