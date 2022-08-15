@@ -36,6 +36,7 @@
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool UpdateSelfAssessmentResultSupervisorVerifications(int selfAssessmentResultSupervisorVerificationId, string? comments, bool signedOff, int adminId);
+        bool UpdateSelfAssessmentResultSupervisorVerificationsEmailSent(int selfAssessmentResultSupervisorVerificationId);
         int RemoveSelfAssessmentResultSupervisorVerificationById(int id);
         bool RemoveCandidateAssessment(int candidateAssessmentId);
         void UpdateNotificationSent(int supervisorDelegateId);
@@ -390,6 +391,19 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                 return false;
             }
         }
+
+        public bool UpdateSelfAssessmentResultSupervisorVerificationsEmailSent(int selfAssessmentResultSupervisorVerificationId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessmentResultSupervisorVerifications
+                    SET   EmailSent = getUTCDate()
+                    FROM  SelfAssessmentResultSupervisorVerifications 
+                    WHERE ID = @selfAssessmentResultSupervisorVerificationId",
+                new { selfAssessmentResultSupervisorVerificationId }
+                );
+            return numberOfAffectedRows > 0;
+        }
+
         public int RemoveSelfAssessmentResultSupervisorVerificationById(int id)
         {
             var numberOfAffectedRows = connection.Execute(

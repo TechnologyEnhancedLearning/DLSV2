@@ -80,7 +80,8 @@
                   asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
                   asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
                   asp-route-candidateAssessmentSupervisorId="@competency.CandidateAssessmentSupervisorId"
-                  asp-route-selfAssessmentResultId="@question.ResultId">Resend</a>
+                  asp-route-selfAssessmentResultId="@question.ResultId"
+                  asp-route-supervisorVerificationId="@competency.SupervisorVerificationId">Resend</a>
             }
             <a asp-action="WithdrawSupervisorVerificationRequest"
                 asp-route-selfAssessmentId="@Model.SelfAssessment.Id"

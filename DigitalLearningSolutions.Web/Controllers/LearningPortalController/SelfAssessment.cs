@@ -1027,8 +1027,8 @@
             return View("SelfAssessments/VerificationSummary", model);
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Confirmation/{candidateAssessmentSupervisorId}/{selfAssessmentResultId}/Resend")]
-        public IActionResult ResendSupervisorVerificationRequest(int selfAssessmentId, string vocabulary, int candidateAssessmentSupervisorId, int selfAssessmentResultId)
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Confirmation/{candidateAssessmentSupervisorId}/{selfAssessmentResultId}/{supervisorVerificationId}/Resend")]
+        public IActionResult ResendSupervisorVerificationRequest(int selfAssessmentId, string vocabulary, int candidateAssessmentSupervisorId, int selfAssessmentResultId, int supervisorVerificationId)
         {
 
             frameworkNotificationService.SendResultVerificationRequest(
@@ -1038,6 +1038,7 @@
                 User.GetCandidateIdKnownNotNull(),
                 selfAssessmentResultId
             );
+            supervisorService.UpdateSelfAssessmentResultSupervisorVerificationsEmailSent(supervisorVerificationId);
             return RedirectToAction("ReviewConfirmationRequests", new { selfAssessmentId, vocabulary });
         }
 
