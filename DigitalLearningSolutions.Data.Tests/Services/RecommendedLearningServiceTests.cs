@@ -39,6 +39,7 @@
         private ILearningLogItemsDataService learningLogItemsDataService = null!;
         private IRecommendedLearningService recommendedLearningService = null!;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
+        private IConfigDataService configDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -47,12 +48,14 @@
             learningLogItemsDataService = A.Fake<ILearningLogItemsDataService>();
             learningHubResourceService = A.Fake<ILearningHubResourceService>();
             selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
+            configDataService = A.Fake<IConfigDataService>();
 
             recommendedLearningService = new RecommendedLearningService(
                 selfAssessmentDataService,
                 competencyLearningResourcesDataService,
                 learningHubResourceService,
-                learningLogItemsDataService
+                learningLogItemsDataService,
+                configDataService
             );
         }
 
@@ -211,7 +214,9 @@
                 .With(clr => clr.LearningHubResourceReferenceId = LearningHubResourceReferenceId)
                 .And(clr => clr.LearningResourceReferenceId = LearningResourceReferenceId).Build();
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(A<int>._)
+                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(
+                    A<int>._
+                )
             ).Returns(competencyLearningResources);
 
             GivenLearningHubApiReturnsResources(0);
@@ -221,11 +226,72 @@
 
             // Then
             A.CallTo(
+                    () => learningHubResourceService.GetResourceReferenceDetailsByReferenceIds(
+                        A<List<int>>.That.Matches(i => i.Single() == LearningHubResourceReferenceId)
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+
+            A.CallTo(
                     () => learningHubResourceService.GetBulkResourcesByReferenceIds(
                         A<List<int>>.That.Matches(i => i.Single() == LearningHubResourceReferenceId)
                     )
                 )
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task
+            GetRecommendedLearningForSelfAssessment_calls_learning_hub_resource_service_with_only_the_first_MaxSignpostedResources_ids_ordered_by_descending_recommendation_score()
+        {
+            // Given
+            var competencyLearningResources = Builder<CompetencyLearningResource>.CreateListOfSize(50).Build();
+            var resourceReferences =
+                Builder<ResourceReferenceWithResourceDetails>.CreateListOfSize(50)
+                    .All()
+                    .With(rr => rr.Catalogue = new Catalogue { Name = ResourceCatalogue })
+                    .Build()
+                    .ToList();
+
+            var clientResponse = new BulkResourceReferences
+            {
+                ResourceReferences = resourceReferences,
+                UnmatchedResourceReferenceIds = new List<int>(),
+            };
+
+            A.CallTo(() => configDataService.GetConfigValue("MaxSignpostedResources")).Returns("3");
+
+            A.CallTo(() => learningHubResourceService.GetResourceReferenceDetailsByReferenceIds(A<List<int>>._))
+                .Returns(resourceReferences);
+
+            A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
+                .Returns((clientResponse, false));
+
+            A.CallTo(() => selfAssessmentDataService.GetCompetencyIdsForSelfAssessment(SelfAssessmentId))
+                .Returns(new[] { CompetencyId });
+
+            A.CallTo(
+                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(
+                    CompetencyId
+                )
+            ).Returns(competencyLearningResources);
+
+            // When
+            await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId);
+
+            // Then
+            A.CallTo(
+                    () => learningHubResourceService.GetResourceReferenceDetailsByReferenceIds(
+                        A<List<int>>.That.IsSameSequenceAs(Enumerable.Range(1, 50).ToList())
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+
+            A.CallTo(
+                () => learningHubResourceService.GetBulkResourcesByReferenceIds(
+                    A<List<int>>.That.IsSameSequenceAs(new List<int> { 50, 49, 48 })
+                )
+            ).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -535,7 +601,9 @@
             };
 
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(CompetencyId)
+                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(
+                    CompetencyId
+                )
             ).Returns(new List<CompetencyLearningResource> { competencyLearningResource });
         }
 
@@ -558,7 +626,9 @@
                 .Build();
 
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(CompetencyId)
+                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(
+                    CompetencyId
+                )
             ).Returns(competencyLearningResources);
         }
 
@@ -580,7 +650,11 @@
                         Link = ResourceLink,
                     },
                 },
+                UnmatchedResourceReferenceIds = new List<int>(),
             };
+
+            A.CallTo(() => learningHubResourceService.GetResourceReferenceDetailsByReferenceIds(A<List<int>>._))
+                .Returns(clientResponse.ResourceReferences);
 
             A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
                 .Returns((clientResponse, false));

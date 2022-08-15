@@ -165,11 +165,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 );
                 multiPageFormService.SetMultiPageFormData(sessionNewFramework, MultiPageFormDataFeature.AddNewFramework, TempData);
                 detailFramework = sessionNewFramework.DetailFramework;
-                multiPageFormService.SetMultiPageFormData(
-                    sessionNewFramework,
-                    MultiPageFormDataFeature.AddNewFramework,
-                    TempData
-                );
             }
             return View("Developer/Name", detailFramework);
         }
