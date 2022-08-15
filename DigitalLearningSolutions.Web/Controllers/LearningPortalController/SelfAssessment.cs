@@ -510,7 +510,7 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add")]
         public IActionResult AddNewSupervisor(int selfAssessmentId)
         {
-            if(TempData[MultiPageFormDataFeature.AddNewSupervisor] == null)
+            if(TempData[MultiPageFormDataFeature.AddNewSupervisor.TempDataKey] == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)HttpStatusCode.Forbidden });
             }
