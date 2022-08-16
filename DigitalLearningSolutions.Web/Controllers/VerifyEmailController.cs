@@ -10,8 +10,8 @@
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class VerifyEmailController : Controller
     {
-        private readonly IUserService userService;
         private readonly IClockUtility clockUtility;
+        private readonly IUserService userService;
 
         public VerifyEmailController(IUserService userService, IClockUtility clockUtility)
         {
@@ -35,7 +35,7 @@
 
             if (emailVerificationDetails.IsEmailVerified)
             {
-                return View();
+                return View(emailVerificationDetails.CentreIdIfEmailIsForUnapprovedDelegate);
             }
 
             if (emailVerificationDetails.HasVerificationExpired(clockUtility))
@@ -53,7 +53,7 @@
 
             transaction.Complete();
 
-            return View();
+            return View(emailVerificationDetails.CentreIdIfEmailIsForUnapprovedDelegate);
         }
     }
 }

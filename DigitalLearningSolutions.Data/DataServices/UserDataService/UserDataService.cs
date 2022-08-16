@@ -315,17 +315,6 @@
             return PrimaryEmailIsInUseQuery(email, userId);
         }
 
-        private bool PrimaryEmailIsInUseQuery(string email, int? userId)
-        {
-            return connection.QueryFirst<int>(
-                @$"SELECT COUNT(*)
-                    FROM Users
-                    WHERE PrimaryEmail = @email
-                    {(userId == null ? "" : "AND Id <> @userId")}",
-                new { email, userId }
-            ) > 0;
-        }
-
         public void SetPrimaryEmailAndActivate(int userId, string email)
         {
             connection.Execute(
@@ -342,7 +331,8 @@
                         u.PrimaryEmail AS Email,
                         u.EmailVerified,
                         h.EmailVerificationHash,
-                        h.CreatedDate AS EmailVerificationHashCreatedDate
+                        h.CreatedDate AS EmailVerificationHashCreatedDate,
+                        NULL AS IsCentreEmailForUnapprovedDelegate
                     FROM Users u
                     JOIN EmailVerificationHashes h ON h.ID = u.EmailVerificationHashID
                     WHERE h.EmailVerificationHash = @code",
@@ -366,6 +356,17 @@
                 @"DELETE FROM Users WHERE ID = @userId",
                 new { userId }
             );
+        }
+
+        private bool PrimaryEmailIsInUseQuery(string email, int? userId)
+        {
+            return connection.QueryFirst<int>(
+                @$"SELECT COUNT(*)
+                    FROM Users
+                    WHERE PrimaryEmail = @email
+                    {(userId == null ? "" : "AND Id <> @userId")}",
+                new { email, userId }
+            ) > 0;
         }
     }
 }

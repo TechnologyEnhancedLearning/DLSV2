@@ -468,6 +468,38 @@
             result.EmailVerificationHash.Should().Be(code);
             result.EmailVerified.Should().BeNull();
             result.EmailVerificationHashCreatedDate.Should().Be(createdDate);
+            result.CentreIdIfEmailIsForUnapprovedDelegate.Should().Be(null);
+        }
+
+        [Test]
+        public void GetCentreEmailVerificationDetails_returns_expected_value_for_centre_id_if_delegate_is_unapproved()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const int centreId = 2;
+            const string email = "unverified@email.com";
+            const string code = "code";
+            var createdDate = new DateTime(2022, 1, 1);
+
+            GivenEmailVerificationHashLinkedToUserCentreDetails(userId, centreId, email, code, createdDate);
+
+            connection.Execute(
+                @"UPDATE DelegateAccounts SET Approved = 0 Where UserID = @userId AND CentreID = @centreId;",
+                new { userId, centreId }
+            );
+
+            // When
+            var result = userDataService.GetCentreEmailVerificationDetails(code);
+
+            // Then
+            result!.UserId.Should().Be(userId);
+            result.Email.Should().Be(email);
+            result.EmailVerificationHash.Should().Be(code);
+            result.EmailVerified.Should().BeNull();
+            result.EmailVerificationHashCreatedDate.Should().Be(createdDate);
+            result.CentreIdIfEmailIsForUnapprovedDelegate.Should().Be(centreId);
         }
 
         [Test]
