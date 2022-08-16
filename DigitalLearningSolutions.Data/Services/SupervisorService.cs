@@ -573,7 +573,7 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                 @"DELETE FROM cas
 	                FROM CandidateAssessmentSupervisors AS cas
 				    LEFT JOIN CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID
-				    LEFT JOIN SelfAssessmentResultSupervisorVerifications AS sarsr ON cas.ID = sarsr.ID
+				    LEFT JOIN SelfAssessmentResultSupervisorVerifications AS sarsr ON cas.ID = sarsr.CandidateAssessmentSupervisorID
                     WHERE (cas.SupervisorDelegateId = @supervisorDelegateId)
 					    AND (casv.ID IS NULL)
 					    AND (sarsr.ID IS NULL)",
