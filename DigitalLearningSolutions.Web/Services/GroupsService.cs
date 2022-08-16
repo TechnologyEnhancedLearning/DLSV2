@@ -335,23 +335,29 @@
                 var oldJobGroupName = jobGroupsDataService.GetJobGroupName(oldJobGroupId);
                 var newJobGroupName = jobGroupsDataService.GetJobGroupName(newJobGroupId);
 
-                var groupToRemoveDelegateFrom = groupsLinkedToJobGroup.Single(
+                var groupToRemoveDelegateFrom = groupsLinkedToJobGroup.SingleOrDefault(
                     g =>
                         GroupLabelMatchesAnswer(g.GroupLabel, oldJobGroupName, JobGroupLinkedFieldName)
                 );
-                RemoveDelegateFromGroup(account.Id, groupToRemoveDelegateFrom.GroupId);
+                if (groupToRemoveDelegateFrom != null)
+                {
+                    RemoveDelegateFromGroup(account.Id, groupToRemoveDelegateFrom.GroupId);
+                }
 
-                var groupToAddDelegateTo = groupsLinkedToJobGroup.Single(
+                var groupToAddDelegateTo = groupsLinkedToJobGroup.SingleOrDefault(
                     g =>
                         GroupLabelMatchesAnswer(g.GroupLabel, newJobGroupName, JobGroupLinkedFieldName)
                 );
-                AddDelegateToGroupAndEnrolOnGroupCourses(
-                    account.Id,
-                    accountDetailsData,
-                    centreEmail,
-                    groupToAddDelegateTo,
-                    account.CentreId
-                );
+                if (groupToAddDelegateTo != null)
+                {
+                    AddDelegateToGroupAndEnrolOnGroupCourses(
+                        account.Id,
+                        accountDetailsData,
+                        centreEmail,
+                        groupToAddDelegateTo,
+                        account.CentreId
+                    );
+                }
             }
         }
 
