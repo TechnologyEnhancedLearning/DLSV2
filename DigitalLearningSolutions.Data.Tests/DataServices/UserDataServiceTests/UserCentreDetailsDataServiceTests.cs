@@ -459,6 +459,11 @@
 
             GivenEmailVerificationHashLinkedToUserCentreDetails(userId, centreId, email, code, createdDate);
 
+            connection.Execute(
+                @"UPDATE DelegateAccounts SET Approved = 1 Where UserID = @userId AND CentreID = @centreId;",
+                new { userId, centreId }
+            );
+
             // When
             var result = userDataService.GetCentreEmailVerificationDetails(code);
 
@@ -485,15 +490,11 @@
 
             GivenEmailVerificationHashLinkedToUserCentreDetails(userId, centreId, email, code, createdDate);
 
-            connection.Execute(
-                @"UPDATE DelegateAccounts SET Approved = 0 Where UserID = @userId AND CentreID = @centreId;",
-                new { userId, centreId }
-            );
-
             // When
             var result = userDataService.GetCentreEmailVerificationDetails(code);
 
             // Then
+
             result!.UserId.Should().Be(userId);
             result.Email.Should().Be(email);
             result.EmailVerificationHash.Should().Be(code);
