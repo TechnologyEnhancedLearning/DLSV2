@@ -6,13 +6,17 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Tests.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using FakeItEasy;
@@ -20,6 +24,7 @@
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Primitives;
     using Microsoft.FeatureManagement;
     using NUnit.Framework;
@@ -29,28 +34,33 @@
         private const string IpAddress = "1.1.1.1";
         private const int SupervisorDelegateId = 1;
         private ICentresDataService centresDataService = null!;
+        private IConfiguration config = null!;
         private RegisterController controller = null!;
         private ICryptoService cryptoService = null!;
+        private IEmailVerificationService emailVerificationService = null!;
         private IFeatureManager featureManager = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
-
         private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             centresDataService = A.Fake<ICentresDataService>();
             cryptoService = A.Fake<ICryptoService>();
+            emailVerificationService = A.Fake<IEmailVerificationService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
+            userService = A.Fake<IUserService>();
+            config = A.Fake<IConfiguration>();
             request = A.Fake<HttpRequest>();
 
             controller = new RegisterController(
@@ -58,10 +68,13 @@
                     jobGroupsDataService,
                     registrationService,
                     cryptoService,
-                    userDataService,
                     promptsService,
                     featureManager,
-                    supervisorDelegateService
+                    supervisorDelegateService,
+                    emailVerificationService,
+                    userService,
+                    userDataService,
+                    config
                 )
                 .WithDefaultContext()
                 .WithMockRequestContext(request)
@@ -155,10 +168,13 @@
                 jobGroupsDataService,
                 registrationService,
                 cryptoService,
-                userDataService,
                 promptsService,
                 featureManager,
-                supervisorDelegateService
+                supervisorDelegateService,
+                emailVerificationService,
+                userService,
+                userDataService,
+                config
             ).WithDefaultContext().WithMockUser(true);
 
             // When
@@ -228,10 +244,13 @@
                 jobGroupsDataService,
                 registrationService,
                 cryptoService,
-                userDataService,
                 promptsService,
                 featureManager,
-                supervisorDelegateService
+                supervisorDelegateService,
+                emailVerificationService,
+                userService,
+                userDataService,
+                config
             ).WithDefaultContext().WithMockUser(true);
 
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(centreName);
@@ -250,22 +269,8 @@
             // Given
             const string candidateNumber = "TN1";
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
-            controller.TempData.Set(data);
-            A.CallTo(
-                    () => registrationService.CreateDelegateAccountForNewUser(
-                        A<DelegateRegistrationModel>._,
-                        A<string>._,
-                        A<bool>._,
-                        A<bool>._,
-                        A<int>._
-                    )
-                )
-                .Returns((candidateNumber, true));
-            A.CallTo(() => request.Headers).Returns(
-                new HeaderDictionary(
-                    new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }
-                )
-            );
+
+            SetUpFakesForSuccessfulRegistration(candidateNumber, data);
 
             // When
             var result = await controller.Summary(new SummaryViewModel());
@@ -301,6 +306,62 @@
                 )
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
+        }
+
+        [Test]
+        public async Task Summary_post_sends_verification_email_to_primary_and_centre_emails()
+        {
+            // Given
+            const string candidateNumber = "TN1";
+            const int userId = 1;
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
+
+            SetUpFakesForSuccessfulRegistration(candidateNumber, data);
+
+            A.CallTo(() => userDataService.GetUserIdFromUsername(candidateNumber)).Returns(userId);
+            A.CallTo(() => userService.GetUserById(A<int>._)).Returns(UserTestHelper.GetDefaultUserEntity());
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    A<UserAccount>._,
+                    A<List<PossibleEmailUpdate>>._,
+                    A<string>._
+                )
+            ).DoesNothing();
+
+            // When
+            await controller.Summary(new SummaryViewModel());
+
+            // Then
+            A.CallTo(() => userDataService.GetUserIdFromUsername(candidateNumber)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetUserById(userId)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    A<UserAccount>._,
+                    A<List<PossibleEmailUpdate>>.That.Matches(
+                        list => PossibleEmailUpdateTestHelper.PossibleEmailUpdateListsMatch(
+                            list,
+                            new List<PossibleEmailUpdate>
+                            {
+                                new PossibleEmailUpdate
+                                {
+                                    OldEmail = null,
+                                    NewEmail = data.PrimaryEmail,
+                                    NewEmailIsVerified = false,
+                                    IsDelegateEmailSetByAdmin = false,
+                                },
+                                new PossibleEmailUpdate
+                                {
+                                    OldEmail = null,
+                                    NewEmail = data.CentreSpecificEmail,
+                                    NewEmailIsVerified = false,
+                                    IsDelegateEmailSetByAdmin = false,
+                                },
+                            }
+                        )
+                    ),
+                    A<string>._
+                )
+            ).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -437,6 +498,28 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        private void SetUpFakesForSuccessfulRegistration(string candidateNumber, RegistrationData data)
+        {
+            controller.TempData.Set(data);
+
+            A.CallTo(
+                    () => registrationService.CreateDelegateAccountForNewUser(
+                        A<DelegateRegistrationModel>._,
+                        A<string>._,
+                        A<bool>._,
+                        A<bool>._,
+                        A<int>._
+                    )
+                )
+                .Returns((candidateNumber, true));
+
+            A.CallTo(() => request.Headers).Returns(
+                new HeaderDictionary(
+                    new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }
+                )
+            );
         }
     }
 }

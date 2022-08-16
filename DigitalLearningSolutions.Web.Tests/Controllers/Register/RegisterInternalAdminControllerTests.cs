@@ -6,17 +6,20 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Tests.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Primitives;
     using Microsoft.FeatureManagement;
     using NUnit.Framework;
@@ -31,8 +34,10 @@
         private const int DefaultDelegateId = 5;
         private ICentresDataService centresDataService = null!;
         private ICentresService centresService = null!;
+        private IConfiguration config = null!;
         private RegisterInternalAdminController controller = null!;
         private IDelegateApprovalsService delegateApprovalsService = null!;
+        private IEmailVerificationService emailVerificationService = null!;
         private IFeatureManager featureManager = null!;
         private IRegisterAdminService registerAdminService = null!;
         private IRegistrationService registrationService = null!;
@@ -51,6 +56,8 @@
             delegateApprovalsService = A.Fake<IDelegateApprovalsService>();
             featureManager = A.Fake<IFeatureManager>();
             registerAdminService = A.Fake<IRegisterAdminService>();
+            emailVerificationService = A.Fake<IEmailVerificationService>();
+            config = A.Fake<IConfiguration>();
             request = A.Fake<HttpRequest>();
             controller = new RegisterInternalAdminController(
                     centresDataService,
@@ -60,7 +67,9 @@
                     registrationService,
                     delegateApprovalsService,
                     featureManager,
-                    registerAdminService
+                    registerAdminService,
+                    emailVerificationService,
+                    config
                 )
                 .WithDefaultContext()
                 .WithMockRequestContext(request)
@@ -180,6 +189,180 @@
             // Given
             var model = GetDefaultInternalAdminInformationViewModel(centreSpecificEmail);
 
+            SetUpFakesForSuccessfulRegistration(
+                primaryEmail,
+                centreSpecificEmail,
+                hasDelegateAccount,
+                isDelegateApproved
+            );
+
+            // When
+            var result = await controller.Index(model);
+
+            // Then
+            A.CallTo(
+                () => registrationService.CreateCentreManagerForExistingUser(
+                    DefaultUserId,
+                    DefaultCentreId,
+                    centreSpecificEmail
+                )
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId)).MustHaveHappenedOnceExactly();
+
+            if (hasDelegateAccount)
+            {
+                A.CallTo(
+                    () => registrationService.CreateDelegateAccountForExistingUser(
+                        A<InternalDelegateRegistrationModel>._,
+                        A<int>._,
+                        A<string>._,
+                        A<bool>._,
+                        A<int?>._
+                    )
+                ).MustNotHaveHappened();
+
+                if (isDelegateApproved)
+                {
+                    A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._)).MustNotHaveHappened();
+                }
+                else
+                {
+                    A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._))
+                        .MustHaveHappenedOnceExactly();
+                }
+            }
+            else
+            {
+                A.CallTo(
+                    () => registrationService.CreateDelegateAccountForExistingUser(
+                        A<InternalDelegateRegistrationModel>._,
+                        A<int>._,
+                        A<string>._,
+                        A<bool>._,
+                        A<int?>._
+                    )
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._)).MustNotHaveHappened();
+                A.CallTo(
+                        () => userDataService.SetCentreEmail(
+                            A<int>._,
+                            A<int>._,
+                            A<string?>._,
+                            A<DateTime?>._,
+                            A<IDbTransaction?>._
+                        )
+                    )
+                    .MustNotHaveHappened();
+            }
+
+            result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
+        }
+
+        [Test]
+        public async Task
+            IndexPost_with_valid_information_sends_verification_email_to_centre_specific_email_if_unverified()
+        {
+            // Given
+            const string primaryEmail = "primary@Email.com";
+            const string centreSpecificEmail = "centre@Email.com";
+            const bool emailIsVerifiedForUser = false;
+            var model = GetDefaultInternalAdminInformationViewModel(centreSpecificEmail);
+
+            SetUpFakesForSuccessfulRegistration(primaryEmail, centreSpecificEmail, false, true);
+
+            A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
+                .Returns(emailIsVerifiedForUser);
+            A.CallTo(() => userService.GetUserById(A<int>._)).Returns(UserTestHelper.GetDefaultUserEntity());
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    A<UserAccount>._,
+                    A<List<PossibleEmailUpdate>>._,
+                    A<string>._
+                )
+            ).DoesNothing();
+
+            // When
+            await controller.Index(model);
+
+            // Then
+            A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetUserById(A<int>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    A<UserAccount>._,
+                    A<List<PossibleEmailUpdate>>.That.Matches(
+                        list => PossibleEmailUpdateTestHelper.PossibleEmailUpdateListsMatch(
+                            list,
+                            new List<PossibleEmailUpdate>
+                            {
+                                new PossibleEmailUpdate
+                                {
+                                    OldEmail = null,
+                                    NewEmail = centreSpecificEmail,
+                                    NewEmailIsVerified = false,
+                                    IsDelegateEmailSetByAdmin = false,
+                                },
+                            }
+                        )
+                    ),
+                    A<string>._
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task
+            IndexPost_with_valid_information_does_not_send_verification_email_if_centre_specific_email_is_already_verified_for_user()
+        {
+            // Given
+            const string primaryEmail = "primary@Email.com";
+            const string centreSpecificEmail = "centre@Email.com";
+            const bool emailIsVerifiedForUser = true;
+
+            var model = GetDefaultInternalAdminInformationViewModel(centreSpecificEmail);
+
+            SetUpFakesForSuccessfulRegistration(primaryEmail, centreSpecificEmail, false, true);
+
+            A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
+                .Returns(emailIsVerifiedForUser);
+
+            // When
+            await controller.Index(model);
+
+            // Then
+            A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetUserById(A<int>._)).MustNotHaveHappened();
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    A<UserAccount>._,
+                    A<List<PossibleEmailUpdate>>._,
+                    A<string>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        private InternalAdminInformationViewModel GetDefaultInternalAdminInformationViewModel(
+            string? centreSpecificEmail = DefaultCentreSpecificEmail
+        )
+        {
+            return new InternalAdminInformationViewModel
+            {
+                Centre = DefaultCentreId,
+                CentreName = DefaultCentreName,
+                PrimaryEmail = DefaultPrimaryEmail,
+                CentreSpecificEmail = centreSpecificEmail,
+            };
+        }
+
+        private void SetUpFakesForSuccessfulRegistration(
+            string primaryEmail,
+            string? centreSpecificEmail,
+            bool hasDelegateAccount,
+            bool isDelegateApproved
+        )
+        {
             if (centreSpecificEmail != null)
             {
                 A.CallTo(
@@ -245,80 +428,6 @@
                 )
             );
             A.CallTo(() => featureManager.IsEnabledAsync(A<string>._)).Returns(false);
-
-            // When
-            var result = await controller.Index(model);
-
-            // Then
-            A.CallTo(
-                () => registrationService.CreateCentreManagerForExistingUser(
-                    DefaultUserId,
-                    DefaultCentreId,
-                    centreSpecificEmail
-                )
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(DefaultUserId)).MustHaveHappenedOnceExactly();
-
-            if (hasDelegateAccount)
-            {
-                A.CallTo(
-                    () => registrationService.CreateDelegateAccountForExistingUser(
-                        A<InternalDelegateRegistrationModel>._,
-                        A<int>._,
-                        A<string>._,
-                        A<bool>._,
-                        A<int?>._
-                    )
-                ).MustNotHaveHappened();
-
-                if (isDelegateApproved)
-                {
-                    A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._)).MustNotHaveHappened();
-                }
-                else
-                {
-                    A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._))
-                        .MustHaveHappenedOnceExactly();
-                }
-            }
-            else
-            {
-                A.CallTo(
-                    () => registrationService.CreateDelegateAccountForExistingUser(
-                        A<InternalDelegateRegistrationModel>._,
-                        A<int>._,
-                        A<string>._,
-                        A<bool>._,
-                        A<int?>._
-                    )
-                ).MustHaveHappenedOnceExactly();
-                A.CallTo(() => delegateApprovalsService.ApproveDelegate(A<int>._, A<int>._)).MustNotHaveHappened();
-                A.CallTo(
-                        () => userDataService.SetCentreEmail(
-                            A<int>._,
-                            A<int>._,
-                            A<string?>._,
-                            A<DateTime?>._,
-                            A<IDbTransaction?>._
-                        )
-                    )
-                    .MustNotHaveHappened();
-            }
-
-            result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
-        }
-
-        private InternalAdminInformationViewModel GetDefaultInternalAdminInformationViewModel(
-            string? centreSpecificEmail = DefaultCentreSpecificEmail
-        )
-        {
-            return new InternalAdminInformationViewModel
-            {
-                Centre = DefaultCentreId,
-                CentreName = DefaultCentreName,
-                PrimaryEmail = DefaultPrimaryEmail,
-                CentreSpecificEmail = centreSpecificEmail,
-            };
         }
     }
 }

@@ -1176,13 +1176,9 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         {
             // Given
             const int userId = 2;
-            const bool centreEmailRequiresVerification = true;
             var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
             var currentTime = DateTime.Now;
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
-
-            // TODO: 915 - uncomment once the call to AccountEmailRequiresVerification is added
-            // A.CallTo(() => emailVerificationService.AccountEmailRequiresVerification(A<int>._, A<string>._)).Returns(centreEmailRequiresVerification);
 
             // When
             var (_, approved, _) = registrationService.CreateDelegateAccountForExistingUser(
@@ -1415,14 +1411,11 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             // Given
             const int userId = 2;
             const int existingDelegateId = 5;
-            const bool centreEmailRequiresVerification = true;
             var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
             var currentTime = DateTime.Now;
+
             A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
             GivenUserEntityExistsWithDelegate(userId, existingDelegateId, model.Centre, false);
-
-            // TODO: 915 - uncomment once the call to AccountEmailRequiresVerification is added
-            // A.CallTo(() => emailVerificationService.AccountEmailRequiresVerification(userId, A<string>._)).Returns(centreEmailRequiresVerification);
 
             // When
             registrationService.CreateDelegateAccountForExistingUser(
@@ -1490,11 +1483,10 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
         [Test]
         [TestCase(true)]
-        // TODO: 915 - uncomment once the call to AccountEmailRequiresVerification is added
-        //[TestCase(false)]
+        [TestCase(false)]
         public void
             CreateDelegateAccountForExistingUser_calls_data_service_with_correct_value_for_centreEmailRequiresVerification_when_registering_new_delegate_account(
-                bool centreEmailRequiresVerification
+                bool newEmailIsVerifiedForUser
             )
         {
             // Given
@@ -1502,13 +1494,14 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             const string clientIp = ApprovedIpPrefix + ".100";
             var model = RegistrationModelTestHelper.GetDefaultInternalDelegateRegistrationModel();
             var currentTime = DateTime.Now;
-            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
 
-            // TODO: 915 - uncomment once the call to AccountEmailRequiresVerification is added
-            // A.CallTo(() => emailVerificationService.AccountEmailRequiresVerification(userId, A<string>._)).Returns(centreEmailRequiresVerification);
+            A.CallTo(() => clockUtility.UtcNow).Returns(currentTime);
+            A.CallTo(
+                () => emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, model.CentreSpecificEmail)
+            ).Returns(newEmailIsVerifiedForUser);
 
             // When
-            var (_, approved, _) = registrationService.CreateDelegateAccountForExistingUser(
+            registrationService.CreateDelegateAccountForExistingUser(
                 model,
                 userId,
                 clientIp,
@@ -1516,20 +1509,29 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // Then
-
-            // TODO: 915 - uncomment once the call to AccountEmailRequiresVerification is added
-            // A.CallTo(() => emailVerificationService.AccountEmailRequiresVerification(userId, A<string>._)).MustHaveHappenedOnceExactly(centreEmailRequiresVerification);
             A.CallTo(
-                    () =>
-                        registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
-                            A<DelegateRegistrationModel>.That.Matches(d => d.Approved),
-                            userId,
-                            currentTime,
-                            A<PossibleEmailUpdate>._,
-                            null
+                () => emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, model.CentreSpecificEmail)
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => registrationDataService.RegisterDelegateAccountAndCentreDetailForExistingUser(
+                    A<DelegateRegistrationModel>.That.Matches(d => d.Approved),
+                    userId,
+                    currentTime,
+                    A<PossibleEmailUpdate>.That.Matches(
+                        update => PossibleEmailUpdateTestHelper.PossibleEmailUpdatesMatch(
+                            update,
+                            new PossibleEmailUpdate
+                            {
+                                OldEmail = string.Empty,
+                                NewEmail = model.CentreSpecificEmail,
+                                NewEmailIsVerified = newEmailIsVerifiedForUser,
+                                IsDelegateEmailSetByAdmin = false,
+                            }
                         )
+                    ),
+                    null
                 )
-                .MustHaveHappened();
+            ).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -1537,7 +1539,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         [TestCase(false)]
         public void
             CreateDelegateAccountForExistingUser_calls_data_service_with_correct_value_for_NewEmailIsVerified_when_reregistering_delegate(
-                bool newEmailIsVerified
+                bool newEmailIsVerifiedForUser
             )
         {
             // Given
@@ -1552,7 +1554,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             A.CallTo(() => userDataService.GetCentreEmail(userId, model.Centre)).Returns(oldEmail);
             A.CallTo(
                 () => emailVerificationDataService.AccountEmailIsVerifiedForUser(userId, model.CentreSpecificEmail)
-            ).Returns(newEmailIsVerified);
+            ).Returns(newEmailIsVerifiedForUser);
 
             // When
             registrationService.CreateDelegateAccountForExistingUser(
@@ -1579,7 +1581,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                             {
                                 OldEmail = oldEmail,
                                 NewEmail = model.CentreSpecificEmail,
-                                NewEmailIsVerified = newEmailIsVerified,
+                                NewEmailIsVerified = newEmailIsVerifiedForUser,
                                 IsDelegateEmailSetByAdmin = false,
                             }
                         )

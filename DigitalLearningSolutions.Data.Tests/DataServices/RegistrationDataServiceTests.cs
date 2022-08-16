@@ -61,7 +61,7 @@
         public void RegisterNewUserAndDelegateAccount_sets_all_fields_correctly_on_registration()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-            const bool centreEmailRequiresVerification = false;
+            const bool isRegisteredByAdmin = false;
             var dateTime = new DateTime(2022, 6, 16, 9, 41, 30);
             A.CallTo(() => clockUtility.UtcNow).Returns(dateTime);
 
@@ -79,7 +79,7 @@
             var (delegateId, candidateNumber) = service.RegisterNewUserAndDelegateAccount(
                 delegateRegistrationModel,
                 false,
-                centreEmailRequiresVerification
+                isRegisteredByAdmin
             );
 
             // Then
@@ -115,7 +115,6 @@
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            const bool centreEmailRequiresVerification = false;
             var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
             var dateTime = new DateTime(2022, 6, 16, 9, 41, 30);
             A.CallTo(() => clockUtility.UtcNow).Returns(dateTime);
@@ -124,7 +123,7 @@
             var (delegateId, candidateNumber) = service.RegisterNewUserAndDelegateAccount(
                 delegateRegistrationModel,
                 true,
-                centreEmailRequiresVerification
+                false
             );
 
             // Then
@@ -183,7 +182,7 @@
 
         [Test]
         public void
-            RegisterNewUserAndDelegateAccount_sets_email_verified_to_current_time_if_registered_by_adminn()
+            RegisterNewUserAndDelegateAccount_sets_email_verified_to_current_time_if_registered_by_admin()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -438,10 +437,11 @@
             );
 
             // Then
-            var userAfterUpdate = userDataService.GetUserAccountById(userId);
-            var delegateAfterUpdate = userDataService.GetDelegateAccountById(existingDelegateId);
             using (new AssertionScope())
             {
+                var userAfterUpdate = userDataService.GetUserAccountById(userId);
+                var delegateAfterUpdate = userDataService.GetDelegateAccountById(existingDelegateId);
+
                 var oldDateRegistered = new DateTime(2014, 12, 24, 10, 44, 53, 257);
                 var oldCentreSpecificDetailsLastChecked = new DateTime(2022, 04, 27, 16, 31, 29, 897);
                 userBeforeUpdate.Should().NotBeNull();
@@ -857,7 +857,6 @@
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            const bool centreEmailRequiresVerification = true;
             var registrationModel =
                 RegistrationModelTestHelper.GetDefaultCentreManagerAccountRegistrationModel(
                     categoryId: 1
@@ -916,12 +915,11 @@
         }
 
         [Test]
-        public void RegisterAdmin_sets_email_verified_to_current_time_if_user_has_already_Verified_new_email()
+        public void RegisterAdmin_sets_email_verified_to_current_time_if_user_has_already_verified_new_email()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            const bool centreEmailRequiresVerification = false;
             const string centreSpecificEmail = "centre@email.com";
             var registrationModel =
                 RegistrationModelTestHelper.GetDefaultCentreManagerAccountRegistrationModel(
@@ -951,12 +949,11 @@
         }
 
         [Test]
-        public void RegisterAdmin_sets_email_verified_to_null_if_user_has_not_verified_new_email()
+        public void RegisterAdmin_sets_email_verified_to_null_if_email_is_not_already_verified_for_user()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            const bool centreEmailRequiresVerification = true;
             const string centreSpecificEmail = "centre@email.com";
             var registrationModel =
                 RegistrationModelTestHelper.GetDefaultCentreManagerAccountRegistrationModel(

@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -13,6 +14,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
@@ -22,7 +24,9 @@
     {
         private readonly ICentresDataService centresDataService;
         private readonly ICentresService centresService;
+        private readonly IConfiguration config;
         private readonly IDelegateApprovalsService delegateApprovalsService;
+        private readonly IEmailVerificationService emailVerificationService;
         private readonly IFeatureManager featureManager;
         private readonly IRegisterAdminService registerAdminService;
         private readonly IRegistrationService registrationService;
@@ -37,7 +41,9 @@
             IRegistrationService registrationService,
             IDelegateApprovalsService delegateApprovalsService,
             IFeatureManager featureManager,
-            IRegisterAdminService registerAdminService
+            IRegisterAdminService registerAdminService,
+            IEmailVerificationService emailVerificationService,
+            IConfiguration config
         )
         {
             this.centresDataService = centresDataService;
@@ -48,6 +54,8 @@
             this.delegateApprovalsService = delegateApprovalsService;
             this.featureManager = featureManager;
             this.registerAdminService = registerAdminService;
+            this.emailVerificationService = emailVerificationService;
+            this.config = config;
         }
 
         [HttpGet]
@@ -148,9 +156,17 @@
                 }
             }
 
-            if (model.CentreSpecificEmail != null)
+            if (model.CentreSpecificEmail != null &&
+                !emailVerificationService.AccountEmailIsVerifiedForUser(userId, model.CentreSpecificEmail))
             {
-                // TODO: 915 - Send verification link to centre email if not already verified
+                var userEntity = userService.GetUserById(userId);
+                var unverifiedEmails = PossibleEmailUpdateHelper.GetSingleUnverifiedEmail(model.CentreSpecificEmail);
+
+                emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    userEntity!.UserAccount,
+                    unverifiedEmails,
+                    config.GetAppRootPath()
+                );
             }
 
             return RedirectToAction("Confirmation", new { centreId = model.Centre });
@@ -161,7 +177,8 @@
         {
             var userId = User.GetUserIdKnownNotNull();
             var (_, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
-            var (_, centreName, unverifiedCentreEmail) = unverifiedCentreEmails.SingleOrDefault(uce => uce.centreId == centreId);
+            var (_, centreName, unverifiedCentreEmail) =
+                unverifiedCentreEmails.SingleOrDefault(uce => uce.centreId == centreId);
 
             var model = new AdminConfirmationViewModel(
                 null,

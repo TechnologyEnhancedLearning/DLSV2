@@ -40,7 +40,7 @@ namespace DigitalLearningSolutions.Web.Services
             bool registerJourneyContainsTermsAndConditions
         );
 
-        void RegisterCentreManager(
+        int RegisterCentreManager(
             AdminRegistrationModel registrationModel,
             bool registerJourneyContainsTermsAndConditions
         );
@@ -329,7 +329,7 @@ namespace DigitalLearningSolutions.Web.Services
             return candidateNumber;
         }
 
-        public void RegisterCentreManager(
+        public int RegisterCentreManager(
             AdminRegistrationModel registrationModel,
             bool registerJourneyContainsTermsAndConditions
         )
@@ -339,7 +339,7 @@ namespace DigitalLearningSolutions.Web.Services
             var userId = CreateDelegateAccountForAdmin(registrationModel, registerJourneyContainsTermsAndConditions);
 
             var accountRegistrationModel = new AdminAccountRegistrationModel(registrationModel, userId);
-            registrationDataService.RegisterAdmin(
+            var adminId = registrationDataService.RegisterAdmin(
                 accountRegistrationModel,
                 new PossibleEmailUpdate
                 {
@@ -353,6 +353,8 @@ namespace DigitalLearningSolutions.Web.Services
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
             transaction.Complete();
+
+            return adminId;
         }
 
         public void CreateCentreManagerForExistingUser(int userId, int centreId, string? centreSpecificEmail)

@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -17,6 +18,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
@@ -26,6 +28,8 @@
     public class RegisterAtNewCentreController : Controller
     {
         private readonly ICentresDataService centresDataService;
+        private readonly IConfiguration config;
+        private readonly IEmailVerificationService emailVerificationService;
         private readonly IFeatureManager featureManager;
         private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
@@ -35,6 +39,8 @@
 
         public RegisterAtNewCentreController(
             ICentresDataService centresDataService,
+            IConfiguration config,
+            IEmailVerificationService emailVerificationService,
             IFeatureManager featureManager,
             PromptsService promptsService,
             IRegistrationService registrationService,
@@ -44,6 +50,8 @@
         )
         {
             this.centresDataService = centresDataService;
+            this.config = config;
+            this.emailVerificationService = emailVerificationService;
             this.featureManager = featureManager;
             this.promptsService = promptsService;
             this.registrationService = registrationService;
@@ -245,9 +253,17 @@
                         refactoredTrackingSystemEnabled
                     );
 
-                if (data.CentreSpecificEmail != null)
+                if (data.CentreSpecificEmail != null &&
+                    !emailVerificationService.AccountEmailIsVerifiedForUser(userId, data.CentreSpecificEmail))
                 {
-                    // TODO: 915 - Send verification link to centre email if not already verified
+                    var userEntity = userService.GetUserById(userId);
+                    var unverifiedEmails = PossibleEmailUpdateHelper.GetSingleUnverifiedEmail(data.CentreSpecificEmail);
+
+                    emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                        userEntity!.UserAccount,
+                        unverifiedEmails,
+                        config.GetAppRootPath()
+                    );
                 }
 
                 TempData.Clear();
@@ -287,7 +303,8 @@
 
             var (_, unverifiedCentreEmails) =
                 userService.GetUnverifiedEmailsForUser(userId);
-            var (_, centreName, unverifiedCentreEmail) = unverifiedCentreEmails.SingleOrDefault(uce => uce.centreId == centreId);
+            var (_, centreName, unverifiedCentreEmail) =
+                unverifiedCentreEmails.SingleOrDefault(uce => uce.centreId == centreId);
 
             var model = new InternalConfirmationViewModel(
                 candidateNumber,

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Data.Common;
     using System.Linq;
     using System.Threading.Tasks;
@@ -158,6 +159,15 @@
                 IsLocalWorkforceManager = isLocalWorkforceManager,
                 IsNominatedSupervisor = isNominatedSupervisor,
             };
+        }
+
+        public static UserEntity GetDefaultUserEntity()
+        {
+            return new UserEntity(
+                GetDefaultUserAccount(),
+                new List<AdminAccount> { GetDefaultAdminAccount() },
+                new List<DelegateAccount> { GetDefaultDelegateAccount() }
+            );
         }
 
         public static DelegateEntity GetDefaultDelegateEntity(
