@@ -50,7 +50,7 @@
           }
           else
           {
-            <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-0">
+            <p class="@(competency.Description != null ? "nhsuk-u-font-weight-bold" : "") nhsuk-u-margin-bottom-0">
               <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
             </p>
             @if (competency.Description != null)
