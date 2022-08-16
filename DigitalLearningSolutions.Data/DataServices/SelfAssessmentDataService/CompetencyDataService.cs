@@ -195,6 +195,7 @@
                                          sas.CompetencyGroupID = CAOC.CompetencyGroupID
                         WHERE        (sas.SelfAssessmentID = @selfAssessmentId) AND (sas.Optional = 0) OR
                          (sas.SelfAssessmentID = @selfAssessmentId) AND (CAOC.IncludedInSelfAssessment = 1)
+						 GROUP BY sas.CompetencyID, SAS.Ordering
                     ),
                     {LatestAssessmentResults}
                     SELECT {CompetencyFields}
