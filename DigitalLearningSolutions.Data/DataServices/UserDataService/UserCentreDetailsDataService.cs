@@ -162,7 +162,7 @@
                     FROM DelegateAccounts AS da
                     INNER JOIN Centres AS c ON c.CentreID = da.CentreID
                     LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.CentreID = c.CentreID
-                    WHERE da.UserID = @userId
+                    WHERE da.UserID = @userId AND da.Active = 1
 
                     UNION
 
