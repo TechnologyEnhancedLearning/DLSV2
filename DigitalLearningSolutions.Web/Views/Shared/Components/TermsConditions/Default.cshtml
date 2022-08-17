@@ -2,7 +2,7 @@
 @model TermsConditionsViewModel
 
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
-  <fieldset class="nhsuk-fieldset" @(Model.HasError ? "aria-describedby=terms-error" : "")>
+  <fieldset class="nhsuk-fieldset" aria-describedby="terms-error">
     @if (Model.HasError) {
       <span class="nhsuk-error-message" id="terms-error">
         <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
