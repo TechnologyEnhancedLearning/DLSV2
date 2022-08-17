@@ -257,9 +257,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public async Task<IActionResult> Summary(SummaryViewModel model)
         {
-            var data = TempData.Peek<DelegateRegistrationData>()!;
+            var data = TempData.Peek<DelegateRegistrationData>();
 
-            if (data.Centre == null || data.JobGroup == null)
+            if (data!.Centre == null || data.JobGroup == null)
             {
                 return RedirectToAction("Index");
             }

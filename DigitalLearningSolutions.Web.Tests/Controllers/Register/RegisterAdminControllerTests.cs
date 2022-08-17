@@ -298,6 +298,8 @@
             var model = new SummaryViewModel
             {
                 Terms = true,
+                PrimaryEmail = primaryEmail,
+                CentreSpecificEmail = centreSpecificEmail,
             };
 
             var data = new RegistrationData
@@ -387,6 +389,8 @@
             int adminId
         )
         {
+            const int userId = 1;
+
             controller.TempData.Set(data);
             A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, null)).Returns(true);
             if (centreSpecificEmail != null)
@@ -405,10 +409,27 @@
             A.CallTo(
                     () => registrationService.RegisterCentreManager(
                         A<AdminRegistrationModel>._,
-                        false
+                        true
                     )
                 )
                 .Returns(adminId);
+
+            A.CallTo(
+                    () => userDataService.GetUserIdByAdminId(adminId)
+                )
+                .Returns(userId);
+            A.CallTo(
+                    () => userService.GetUserById(userId)
+                )
+                .Returns(UserTestHelper.GetDefaultUserEntity(userId, primaryEmail, centreSpecificEmail));
+            A.CallTo(
+                    () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                        A<UserAccount>._,
+                        A<List<PossibleEmailUpdate>>._,
+                        A<string>._
+                    )
+                )
+                .DoesNothing();
         }
     }
 }

@@ -263,12 +263,10 @@
             IndexPost_with_valid_information_sends_verification_email_to_centre_specific_email_if_unverified()
         {
             // Given
-            const string primaryEmail = "primary@Email.com";
-            const string centreSpecificEmail = "centre@Email.com";
             const bool emailIsVerifiedForUser = false;
-            var model = GetDefaultInternalAdminInformationViewModel(centreSpecificEmail);
+            var model = GetDefaultInternalAdminInformationViewModel();
 
-            SetUpFakesForSuccessfulRegistration(primaryEmail, centreSpecificEmail, false, true);
+            SetUpFakesForSuccessfulRegistration(DefaultPrimaryEmail, DefaultCentreSpecificEmail, false, true);
 
             A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
                 .Returns(emailIsVerifiedForUser);
@@ -299,7 +297,7 @@
                                 new PossibleEmailUpdate
                                 {
                                     OldEmail = null,
-                                    NewEmail = centreSpecificEmail,
+                                    NewEmail = DefaultCentreSpecificEmail,
                                     NewEmailIsVerified = false,
                                     IsDelegateEmailSetByAdmin = false,
                                 },
@@ -316,13 +314,11 @@
             IndexPost_with_valid_information_does_not_send_verification_email_if_centre_specific_email_is_already_verified_for_user()
         {
             // Given
-            const string primaryEmail = "primary@Email.com";
-            const string centreSpecificEmail = "centre@Email.com";
             const bool emailIsVerifiedForUser = true;
 
-            var model = GetDefaultInternalAdminInformationViewModel(centreSpecificEmail);
+            var model = GetDefaultInternalAdminInformationViewModel();
 
-            SetUpFakesForSuccessfulRegistration(primaryEmail, centreSpecificEmail, false, true);
+            SetUpFakesForSuccessfulRegistration(DefaultPrimaryEmail, DefaultCentreSpecificEmail, false, true);
 
             A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
                 .Returns(emailIsVerifiedForUser);

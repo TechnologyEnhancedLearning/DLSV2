@@ -270,10 +270,16 @@
             const string candidateNumber = "TN1";
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
 
-            SetUpFakesForSuccessfulRegistration(candidateNumber, data);
+            var model = new SummaryViewModel
+            {
+                PrimaryEmail = data.PrimaryEmail,
+                CentreSpecificEmail = data.CentreSpecificEmail,
+            };
+
+            SetUpFakesForSuccessfulRegistration(candidateNumber, data, 1);
 
             // When
-            var result = await controller.Summary(new SummaryViewModel());
+            var result = await controller.Summary(model);
 
             // Then
             A.CallTo(
@@ -316,7 +322,13 @@
             const int userId = 1;
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
 
-            SetUpFakesForSuccessfulRegistration(candidateNumber, data);
+            var model = new SummaryViewModel
+            {
+                PrimaryEmail = data.PrimaryEmail,
+                CentreSpecificEmail = data.CentreSpecificEmail,
+            };
+
+            SetUpFakesForSuccessfulRegistration(candidateNumber, data, userId);
 
             A.CallTo(() => userDataService.GetUserIdFromUsername(candidateNumber)).Returns(userId);
             A.CallTo(() => userService.GetUserById(A<int>._)).Returns(UserTestHelper.GetDefaultUserEntity());
@@ -329,7 +341,7 @@
             ).DoesNothing();
 
             // When
-            await controller.Summary(new SummaryViewModel());
+            await controller.Summary(model);
 
             // Then
             A.CallTo(() => userDataService.GetUserIdFromUsername(candidateNumber)).MustHaveHappenedOnceExactly();
@@ -500,7 +512,11 @@
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
-        private void SetUpFakesForSuccessfulRegistration(string candidateNumber, RegistrationData data)
+        private void SetUpFakesForSuccessfulRegistration(
+            string candidateNumber,
+            DelegateRegistrationData data,
+            int userId
+        )
         {
             controller.TempData.Set(data);
 
@@ -520,6 +536,23 @@
                     new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }
                 )
             );
+
+            A.CallTo(
+                    () => userDataService.GetUserIdFromUsername(candidateNumber)
+                )
+                .Returns(userId);
+            A.CallTo(
+                    () => userService.GetUserById(userId)
+                )
+                .Returns(UserTestHelper.GetDefaultUserEntity(userId, data.PrimaryEmail!, data.CentreSpecificEmail));
+            A.CallTo(
+                    () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                        A<UserAccount>._,
+                        A<List<PossibleEmailUpdate>>._,
+                        A<string>._
+                    )
+                )
+                .DoesNothing();
         }
     }
 }

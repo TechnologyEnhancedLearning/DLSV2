@@ -161,12 +161,16 @@
             };
         }
 
-        public static UserEntity GetDefaultUserEntity()
+        public static UserEntity GetDefaultUserEntity(
+            int userId = 2,
+            string primaryEmail = "primary@email.com",
+            string? centreSpecificEmail = "centre@email.com"
+        )
         {
             return new UserEntity(
-                GetDefaultUserAccount(),
-                new List<AdminAccount> { GetDefaultAdminAccount() },
-                new List<DelegateAccount> { GetDefaultDelegateAccount() }
+                GetDefaultUserAccount(userId, primaryEmail),
+                new List<AdminAccount> { GetDefaultAdminAccount(userId: userId) },
+                new List<DelegateAccount> { GetDefaultDelegateAccount(userId: userId) }
             );
         }
 
