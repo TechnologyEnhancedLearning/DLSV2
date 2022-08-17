@@ -28,7 +28,7 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="username"
-                     css-class="nhsuk-u-width-one-half highlight-required-fields" />
+                     css-class="nhsuk-u-width-one-half" />
 
       <vc:text-input asp-for="Password"
                      label="Password"
@@ -37,7 +37,7 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="current-password"
-                     css-class="nhsuk-u-width-one-half highlight-required-fields" />
+                     css-class="nhsuk-u-width-one-half" />
 
       <div class="nhsuk-checkboxes__item">
         <input class="nhsuk-checkboxes__input" type="checkbox" id="RememberMe" spellcheck="false" asp-for="RememberMe"/>
@@ -55,11 +55,6 @@
           <a target="_blank" asp-controller="LearningSolutions" asp-action="Terms">Terms of Use</a>
         </p>
       </div>
-
-      @if (Html.AnyFieldIsRequired(Model))
-      {
-        <partial name="../Shared/_RequiredLegend" />
-      }
       <button class="nhsuk-button" type="submit">Log in</button>
       <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-2" asp-controller="ForgotPassword" asp-action="Index" role="button">
         Forgot password
