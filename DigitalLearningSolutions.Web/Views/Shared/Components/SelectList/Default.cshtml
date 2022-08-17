@@ -1,28 +1,46 @@
 @using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model SelectListViewModel
-
+@{
+    var describedBy = "";
+    @if (Model.HasError)
+    {
+        describedBy = @Model.Name + "-error";
+    }
+    @if (Model.HintText != null)
+    {
+        describedBy += (describedBy != "" ? " " : "");
+        describedBy += @Model.Name + "-hint";
+    }
+}
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")" style="white-space:nowrap">
-  <label class="nhsuk-label" for="@Model.Name">
-    @Model.Label
-  </label>
-  @if (Model.HintText != null) {
-    <div class="nhsuk-hint" id="@Model.Name-hint">
-      @Model.HintText
-    </div>
-  }
-  @if (Model.HasError) {
-    <span class="nhsuk-error-message" id="@Model.Name-error">
-      <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
-    </span>
-  }
-  <select class="nhsuk-select @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
-          aria-describedby="@Model.Name-error @Model.Name-hint"
+    <label class="nhsuk-label" for="@Model.Name">
+        @Model.Label
+    </label>
+    @if (Model.HintText != null)
+    {
+        <div class="nhsuk-hint" id="@Model.Name-hint">
+            @Model.HintText
+        </div>
+    }
+    @if (Model.HasError)
+    {
+        <span class="nhsuk-error-message" id="@Model.Name-error">
+            <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
+        </span>
+    }
+    <select class="nhsuk-select @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
+            @if(describedBy != "" ) {
+    <text>
+        aria-describedby="@describedBy"
+    </text>
+    }
           id="@Model.Id"
           name="@Model.Name"
           value="@Model.Value"
-          asp-items="Model.SelectListOptions">
-    @if (Model.DefaultOption != null) {
-      <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value != null ? "" : "selected")>@Model.DefaultOption</option>
-    }
+          asp-items="Model.SelectListOptions" >
+        @if (Model.DefaultOption != null)
+        {
+              <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value != null ? "" : "selected")>@Model.DefaultOption</option>
+        }
   </select>
 </div>

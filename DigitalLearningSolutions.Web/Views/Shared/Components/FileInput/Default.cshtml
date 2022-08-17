@@ -1,24 +1,41 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model FileInputViewModel
-
+@{
+    var describedBy = "";
+    @if (Model.HasError)
+    {
+        describedBy = @Model.Name + "-error";
+    }
+    @if (Model.HintText != null)
+    {
+        describedBy += (describedBy != "" ? " " : "");
+        describedBy += @Model.Name + "-hint";
+    }
+}
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
-  <label class="nhsuk-label" for="@Model.Name">
-    @Model.Label
-  </label>
-  @if (Model.HintText != null) {
-    <div class="nhsuk-hint" id="@Model.Name-hint">
-      @Model.HintText
-    </div>
-  }
-  @if (Model.HasError)
-  {
-    <span class="nhsuk-error-message" id="@Model.Name-error">
-      <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
-    </span>
-  }
-  <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")" 
-         id="@Model.Id"
-         name="@Model.Name"
-         type="file"
-         aria-describedby="@Model.Name-error @Model.Name-hint" />
+    <label class="nhsuk-label" for="@Model.Name">
+        @Model.Label
+    </label>
+    @if (Model.HintText != null)
+    {
+        <div class="nhsuk-hint" id="@Model.Name-hint">
+            @Model.HintText
+        </div>
+    }
+    @if (Model.HasError)
+    {
+        <span class="nhsuk-error-message" id="@Model.Name-error">
+            <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
+        </span>
+    }
+    <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
+           id="@Model.Id"
+           name="@Model.Name"
+           type="file"
+           @if(describedBy != "" ) {
+    <text>
+        aria-describedby="@describedBy"
+    </text>
+    }
+    />
 </div>
