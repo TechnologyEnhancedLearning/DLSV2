@@ -292,22 +292,15 @@
                          GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.NewValue, changedAnswer.LinkedFieldName)
                 );
 
-                foreach (var groupToRemoveDelegateFrom in groupsToRemoveDelegateFrom)
-                {
-                    RemoveDelegateFromGroup(delegateId, groupToRemoveDelegateFrom.GroupId);
-                }
+                RemoveDelegateFromGroups(delegateId, groupsToRemoveDelegateFrom);
 
-                foreach (var groupToAddDelegateTo in groupsToAddDelegateTo)
-                {
-                    AddDelegateToGroupAndEnrolOnGroupCourses(
-                        delegateId,
-                        accountDetailsData,
-                        centreEmail,
-                        groupToAddDelegateTo.GroupId,
-                        registrationFieldAnswers.CentreId,
-                        true
-                    );
-                }
+                AddDelegateToGroups(
+                    delegateId,
+                    groupsToAddDelegateTo,
+                    accountDetailsData,
+                    centreEmail,
+                    registrationFieldAnswers.CentreId
+                );
             }
 
             transaction.Complete();
@@ -332,34 +325,57 @@
 
             foreach (var account in delegateAccounts)
             {
-                var groupsLinkedToJobGroup = GetGroupsLinkedToJobGroupForCentre(account.CentreId).ToList();
+                var groupsLinkedToJobGroup = GetGroupsWhichShouldUpdateWhenUserDetailsChangeForCentre(account.CentreId)
+                    .Where(g => g.LinkedToField == JobGroupLinkedFieldNumber).ToList();
                 var oldJobGroupName = jobGroupsDataService.GetJobGroupName(oldJobGroupId);
                 var newJobGroupName = jobGroupsDataService.GetJobGroupName(newJobGroupId);
 
-                var groupToRemoveDelegateFrom = groupsLinkedToJobGroup.SingleOrDefault(
+                var groupsToRemoveDelegateFrom = groupsLinkedToJobGroup.Where(
                     g =>
                         GroupLabelMatchesAnswer(g.GroupLabel, oldJobGroupName, JobGroupLinkedFieldName)
                 );
-                if (groupToRemoveDelegateFrom != null)
-                {
-                    RemoveDelegateFromGroup(account.Id, groupToRemoveDelegateFrom.GroupId);
-                }
+                RemoveDelegateFromGroups(account.Id, groupsToRemoveDelegateFrom);
 
-                var groupToAddDelegateTo = groupsLinkedToJobGroup.SingleOrDefault(
+                var groupsToAddDelegateTo = groupsLinkedToJobGroup.Where(
                     g =>
                         GroupLabelMatchesAnswer(g.GroupLabel, newJobGroupName, JobGroupLinkedFieldName)
                 );
-                if (groupToAddDelegateTo != null)
-                {
-                    AddDelegateToGroupAndEnrolOnGroupCourses(
-                        account.Id,
-                        accountDetailsData,
-                        centreEmail,
-                        groupToAddDelegateTo.GroupId,
-                        account.CentreId,
-                        true
-                    );
-                }
+                AddDelegateToGroups(
+                    account.Id,
+                    groupsToAddDelegateTo,
+                    accountDetailsData,
+                    centreEmail,
+                    account.CentreId
+                );
+            }
+        }
+
+        private void RemoveDelegateFromGroups(int delegateId, IEnumerable<Group> groupsToRemoveDelegateFrom)
+        {
+            foreach (var groupToRemoveDelegateFrom in groupsToRemoveDelegateFrom)
+            {
+                RemoveDelegateFromGroup(delegateId, groupToRemoveDelegateFrom.GroupId);
+            }
+        }
+
+        private void AddDelegateToGroups(
+            int delegateId,
+            IEnumerable<Group> groupsToAddDelegateTo,
+            AccountDetailsData accountDetailsData,
+            string? centreEmail,
+            int centreId
+        )
+        {
+            foreach (var groupToAddDelegateTo in groupsToAddDelegateTo)
+            {
+                AddDelegateToGroupAndEnrolOnGroupCourses(
+                    delegateId,
+                    accountDetailsData,
+                    centreEmail,
+                    groupToAddDelegateTo.GroupId,
+                    centreId,
+                    true
+                );
             }
         }
 
@@ -761,12 +777,6 @@
         {
             return groupsDataService.GetGroupsForCentre(centreId)
                 .Where(g => g.ShouldAddNewRegistrantsToGroup);
-        }
-
-        private IEnumerable<Group> GetGroupsLinkedToJobGroupForCentre(int centreId)
-        {
-            return groupsDataService.GetGroupsForCentre(centreId)
-                .Where(g => g.LinkedToField == JobGroupLinkedFieldNumber);
         }
 
         private static bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string linkedFieldName)
