@@ -442,7 +442,7 @@
 
         [Test]
         public void
-            AddDelegateToGroupAndEnrolOnGroupCourses_calls_AddDelegateToGroup_dataService_and_EnrolDelegateOnGroupCourses()
+            AddDelegateToGroup_calls_AddDelegateToGroup_dataService_and_EnrolDelegateOnGroupCourses()
         {
             // Given
             const int groupId = 1;
@@ -458,7 +458,7 @@
                 .DoesNothing();
 
             // When
-            groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(groupId, delegateId, addedByAdminId);
+            groupsService.AddDelegateToGroup(groupId, delegateId, addedByAdminId);
 
             // Then
             A.CallTo(() => groupsDataService.AddDelegateToGroup(delegateId, groupId, dateTime, 0))

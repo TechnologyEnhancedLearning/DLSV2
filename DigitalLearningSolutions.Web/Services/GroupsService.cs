@@ -34,7 +34,7 @@
             bool populateExisting = false
         );
 
-        void AddDelegateToGroupAndEnrolOnGroupCourses(
+        void AddDelegateToGroup(
             int groupId,
             int delegateId,
             int? addedByAdminId = null
@@ -379,7 +379,7 @@
             }
         }
 
-        public void AddDelegateToGroupAndEnrolOnGroupCourses(
+        public void AddDelegateToGroup(
             int groupId,
             int delegateId,
             int? addedByAdminId = null

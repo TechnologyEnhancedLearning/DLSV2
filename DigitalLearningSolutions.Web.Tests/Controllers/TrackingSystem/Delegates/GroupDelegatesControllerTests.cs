@@ -147,7 +147,7 @@
 
             A.CallTo(
                 () =>
-                    groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(
+                    groupsService.AddDelegateToGroup(
                         A<int>._,
                         1,
                         0
