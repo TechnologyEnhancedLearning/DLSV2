@@ -5,6 +5,7 @@
         Dashboard,
         Configuration,
         Administrators,
-        Reports
+        Reports,
+        SelfAssessmentReports
     }
 }

@@ -1,27 +1,28 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@using DigitalLearningSolutions.Web.Helpers
 @model SelfAssessmentCompetencyViewModel
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = errorHasOccurred ? "Error: Self Assessment" : "Self Assessment";
-    ViewData["SelfAssessmentTitle"] = @Model.Assessment.Name;
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  Layout = "SelfAssessments/_Layout";
+  ViewData["Title"] = errorHasOccurred ? "Error: Self Assessment" : "Self Assessment";
+  ViewData["SelfAssessmentTitle"] = @Model.Assessment.Name;
 }
 @section breadcrumbs {
-<li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.Assessment.Id">@(Model.Assessment.Name) introduction</a></li>
-<li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">@(Model.VocabPlural()) menu</a></li>
-<li class="nhsuk-breadcrumb__item">@Model.Competency.Vocabulary @Model.CompetencyNumber</li>
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.Assessment.Id">@(Model.Assessment.Name) introduction</a></li>
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">@(Model.VocabPlural()) home</a></li>
+  <li class="nhsuk-breadcrumb__item">@DisplayStringHelper.Ellipsis(Model.Competency?.Name, 30)</li>
 }
 @section mobilebacklink
 {
-<p class="nhsuk-breadcrumb__back">
+  <p class="nhsuk-breadcrumb__back">
     <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
        asp-route-vocabulary="@Model.VocabPlural()"
        asp-route-selfAssessmentId="@Model.Assessment.Id"
        asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID"
        asp-fragment="comp-@Model.CompetencyNumber">
-        Back to @Model.VocabPlural()
+      Back to @Model.VocabPlural()
     </a>
-</p>
+  </p>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">
@@ -30,128 +31,129 @@
   <vc:error-summary order-of-property-names="@(new[] { nameof(Model) })" />
 }
 <h1 class="competency-group-header nhsuk-u-font-size-32">@Model.Competency.CompetencyGroup</h1>
-<div class=" nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
-    @if (Model.Competency.Description != null && Model.Assessment.UseDescriptionExpanders && !Model.Competency.AlwaysShowDescription)
+<div class=" nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-4">
+  @if (Model.Competency.Description != null && Model.Assessment.UseDescriptionExpanders && !Model.Competency.AlwaysShowDescription)
+  {
+    <details class="nhsuk-details">
+      <summary class="nhsuk-details__summary">
+        <h2 class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-0">
+          <span class="nhsuk-details__summary-text">
+            @Model.Competency.Name
+          </span>
+        </h2>
+      </summary>
+      <div class="nhsuk-details__text">
+        @(Html.Raw(@Model.Competency.Description))
+      </div>
+    </details>
+  }
+  else
+  {
+    <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
+      @Model.Competency.Name
+    </h2>
+    @if (Model.Competency.Description != null)
     {
-        <details class="nhsuk-details">
-            <summary class="nhsuk-details__summary">
-                <h2 class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-0">
-                    <span class="nhsuk-details__summary-text">
-                        @Model.Competency.Name
-                    </span>
-                </h2>
-            </summary>
-            <div class="nhsuk-details__text">
-                @(Html.Raw(@Model.Competency.Description))
-            </div>
-        </details>
+      <p class="nhsuk-body-l">
+        @(Html.Raw(@Model.Competency.Description))
+      </p>
+    }
+  }
+</div>
+<partial name="_CompetencyFlags" model="Model.Competency.CompetencyFlags" />
+<form asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="@Model.CompetencyNumber" asp-route-competencyId="@Model.Competency.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID">
+  @foreach (var question in @Model.Competency.AssessmentQuestions.Select((value, i) => new { i, value }))
+  {
+    if (question.value.AssessmentQuestionInputTypeID == 2)
+    {
+      <partial name="SelfAssessments/_SliderQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
     }
     else
     {
-        <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
-            @Model.Competency.Name
-        </h2>
-        @if (Model.Competency.Description != null)
-        {
-            <p class="nhsuk-body-l">
-                @(Html.Raw(@Model.Competency.Description))
-            </p>
-        }
+      <nhs-form-group nhs-validation-for="Competency.AssessmentQuestions[1].Result">
+        <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
+      </nhs-form-group>
     }
-</div>
-<form asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="@Model.CompetencyNumber" asp-route-competencyId="@Model.Competency.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID">
-    @foreach (var question in @Model.Competency.AssessmentQuestions.Select((value, i) => new { i, value }))
+    @if (question.value.SignedOff != null && question.value.SignedOff == true)
     {
-        if (question.value.AssessmentQuestionInputTypeID == 2)
-        {
-            <partial name="SelfAssessments/_SliderQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
-        }
-        else
-        {
-          <nhs-form-group nhs-validation-for="Competency.AssessmentQuestions[1].Result">
-            <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
-          </nhs-form-group>
-        }
-        @if (question.value.SignedOff != null && question.value.SignedOff == true)
-        {
-            <div class="nhsuk-warning-callout">
-                <h3 class="nhsuk-warning-callout__label">
-                    <span role="text">
-                        <span class="nhsuk-u-visually-hidden">Important: </span>
-                        Response confirmed
-                    </span>
-                </h3>
-                <p>Your self assessment response against this question has been confirmed. Changing your response will reset confirmation.</p>
-            </div>
-        }
-        @if (question.value.IncludeComments)
-        {
-            <partial name="SelfAssessments/_CommentsInput" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
-        }
+      <div class="nhsuk-warning-callout">
+        <h3 class="nhsuk-warning-callout__label">
+          <span role="text">
+            <span class="nhsuk-u-visually-hidden">Important: </span>
+            Response confirmed
+          </span>
+        </h3>
+        <p>Your self assessment response against this question has been confirmed. Changing your response will reset confirmation.</p>
+      </div>
     }
-    <input type="hidden" name="competencyGroupId" value="@Model.Competency.CompetencyGroupID" />
-    <div class="nhsuk-u-margin-top-4">
-        Question @Model.CompetencyNumber of @Model.TotalNumberOfCompetencies
-    </div>
-    <button class="nhsuk-button nhsuk-u-margin-top-1" type="submit">
-        @(Model.Assessment.LinearNavigation ? "Save and continue" : "Submit")
-    </button>
+    @if (question.value.IncludeComments)
+    {
+      <partial name="SelfAssessments/_CommentsInput" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
+    }
+  }
+  <input type="hidden" name="competencyGroupId" value="@Model.Competency.CompetencyGroupID" />
+  <div class="nhsuk-u-margin-top-4">
+    Question @Model.CompetencyNumber of @Model.TotalNumberOfCompetencies
+  </div>
+  <button class="nhsuk-button nhsuk-u-margin-top-1" type="submit">
+    @(Model.Assessment.LinearNavigation ? "Save and continue" : "Submit")
+  </button>
 </form>
 <div class="nhsuk-grid-row">
-    @if (Model.Assessment.LinearNavigation)
-    {
-        <nav class="nhsuk-pagination" role="navigation" aria-label="Pagination">
-            <div class="nhsuk-pagination__list">
-                <div class="pagination-button-container">
-                    <div class="nhsuk-pagination-item--previous" )>
-                        <a class="nhsuk-back-link__link"
-                       asp-action=@(Model.CompetencyNumber == 1 ? "SelfAssessment" : "SelfAssessmentCompetency")
-                       asp-route-selfAssessmentId="@Model.Assessment.Id"
-                       asp-route-competencyNumber=@(Model.CompetencyNumber == 1 ? "" : (Model.CompetencyNumber - 1).ToString())>
-                            <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-                                <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-                            </svg>
-                            @(@Model.CompetencyNumber == 1 ? "Go back" : "Previous " + Model.Competency.Vocabulary.ToLower() )
-                        </a>
-                    </div>
-                </div>
-                <div class="page-indicator-container">
-                    <a class="nhsuk-back-link__link"
-                   asp-action="SelfAssessmentOverview"
-                   asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">
-                        Return to @Model.VocabPlural()
-                    </a>
-                </div>
-                <div class="pagination-button-container">
-                    <div class="nhsuk-pagination-item--next">
-                        <a class="nhsuk-back-link__link skip-link"
-                       asp-action="SelfAssessmentCompetency"
-                       asp-route-selfAssessmentId="@Model.Assessment.Id"
-                       asp-route-competencyNumber="@(Model.CompetencyNumber + 1)">
-                            Skip
-                            <svg class="nhsuk-icon nhsuk-icon__chevron-left" id="skip-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-                                <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    }
-    else
-    {
-        <div class="nhsuk-back-link nhsuk-grid-column-full">
+  @if (Model.Assessment.LinearNavigation)
+  {
+    <nav class="nhsuk-pagination" role="navigation" aria-label="Pagination">
+      <div class="nhsuk-pagination__list">
+        <div class="pagination-button-container">
+          <div class="nhsuk-pagination-item--previous" )>
             <a class="nhsuk-back-link__link"
-           asp-action="SelfAssessmentOverview"
-           asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">
-                <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-                    <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-                </svg>Return to @Model.VocabPlural()
+               asp-action=@(Model.CompetencyNumber == 1 ? "SelfAssessment" : "SelfAssessmentCompetency")
+               asp-route-selfAssessmentId="@Model.Assessment.Id"
+               asp-route-competencyNumber=@(Model.CompetencyNumber == 1 ? "" : (Model.CompetencyNumber - 1).ToString())>
+              <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+              </svg>
+              @(@Model.CompetencyNumber == 1 ? "Go back" : "Previous " + Model.Competency.Vocabulary.ToLower() )
             </a>
+          </div>
         </div>
-    }
+        <div class="page-indicator-container">
+          <a class="nhsuk-back-link__link"
+             asp-action="SelfAssessmentOverview"
+             asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">
+            Return to @Model.VocabPlural() home
+          </a>
+        </div>
+        <div class="pagination-button-container">
+          <div class="nhsuk-pagination-item--next">
+            <a class="nhsuk-back-link__link skip-link"
+               asp-action="SelfAssessmentCompetency"
+               asp-route-selfAssessmentId="@Model.Assessment.Id"
+               asp-route-competencyNumber="@(Model.CompetencyNumber + 1)">
+              Skip
+              <svg class="nhsuk-icon nhsuk-icon__chevron-left" id="skip-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  }
+  else
+  {
+    <div class="nhsuk-back-link nhsuk-grid-column-full">
+      <a class="nhsuk-back-link__link"
+         asp-action="SelfAssessmentOverview"
+         asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+        </svg>Return to @Model.VocabPlural() home
+      </a>
+    </div>
+  }
 </div>
 
 @section scripts {
-<script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
-  }
+  <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
+}

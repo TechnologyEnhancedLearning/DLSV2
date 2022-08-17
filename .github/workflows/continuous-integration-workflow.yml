@@ -24,17 +24,17 @@ jobs:
           node-version: '12'
 
       - name: Typescript install
-        run: npm ci
+        run: yarn install --frozen-lockfile
         working-directory: ./DigitalLearningSolutions.Web
 
       - name: Typescript build
-        run: npm run build:webpack 
+        run: yarn build:webpack
         working-directory: ./DigitalLearningSolutions.Web
 
       - name: Typescript test
-        run: npm run test
+        run: yarn test
         working-directory: ./DigitalLearningSolutions.Web
 
       - name: Typescript lint
-        run: npm run lint
+        run: yarn lint
         working-directory: ./DigitalLearningSolutions.Web

@@ -36,6 +36,7 @@
                 new Claim(CustomClaimTypes.UserCentreReports, adminLoginDetails?.SummaryReports.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.LearnUserAuthenticated, (delegateLoginDetails != null).ToString()),
                 new Claim(CustomClaimTypes.IsSupervisor, adminLoginDetails?.IsSupervisor.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.IsNominatedSupervisor, adminLoginDetails?.IsNominatedSupervisor.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.IsTrainer, adminLoginDetails?.IsTrainer.ToString() ?? "False"),
                 new Claim(
                     CustomClaimTypes.IsFrameworkDeveloper,

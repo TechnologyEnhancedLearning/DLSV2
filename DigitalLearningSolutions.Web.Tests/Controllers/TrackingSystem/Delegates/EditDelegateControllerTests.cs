@@ -86,7 +86,7 @@
                 result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
                 AssertModelStateErrorIsExpected(
                     result,
-                    "A user with this email address is already registered at this centre"
+                    "A user with this email is already registered at this centre"
                 );
             }
         }
@@ -113,7 +113,7 @@
                 result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
                 AssertModelStateErrorIsExpected(
                     result,
-                    "A user with this alias ID is already registered at this centre"
+                    "A user with this alias is already registered at this centre"
                 );
             }
         }

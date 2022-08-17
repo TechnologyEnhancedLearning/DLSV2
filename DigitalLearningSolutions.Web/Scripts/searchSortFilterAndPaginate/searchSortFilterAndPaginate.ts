@@ -143,11 +143,22 @@ export class SearchSortFilterAndPaginate {
     const sortedUniqueElements = _.uniqBy(sortedElements, 'parentIndex');
 
     const resultCount = sortedUniqueElements.length;
-    SearchSortFilterAndPaginate.updateResultCount(resultCount);
+    const itemsPerPage = getItemsPerPageValue();
+    const totalPages = Math.ceil(resultCount / itemsPerPage);
+
+    if (this.page < 1 || this.page > totalPages) {
+      this.updatePageNumberIfPaginated(1, searchableData);
+    }
 
     const paginatedElements = this.paginationEnabled
       ? paginateResults(sortedUniqueElements, this.page)
       : sortedUniqueElements;
+
+    // We keep both updates here (plus the one in paginateResults). This allows pages where
+    // there is only a results count, or only a page number to continue to work
+    SearchSortFilterAndPaginate.updateResultCount(resultCount);
+    this.updateResultCountAndPageNumber(resultCount);
+
     this.displaySearchableElementsAndRunPostDisplayFunction(paginatedElements);
   }
 
@@ -228,6 +239,32 @@ export class SearchSortFilterAndPaginate {
     Details();
   }
 
+  updateResultCountAndPageNumber(count: number): void {
+    const element = <HTMLSpanElement>document.getElementById('result-count-and-page-number');
+    if (element) {
+      const oldMessage = element.innerHTML;
+
+      const newResultCountMessage = count === 1 ? '1 matching result.' : `${count.toString()} matching results.`;
+
+      element.hidden = false;
+      element.setAttribute('aria-hidden', 'false');
+
+      const itemsPerPage = getItemsPerPageValue();
+      const totalPages = Math.ceil(count / itemsPerPage);
+
+      const newPageMessage = `Page ${this.page} of ${totalPages}.`;
+
+      const newMessage = `${newResultCountMessage} ${newPageMessage}`;
+
+      if (newMessage === oldMessage) {
+        // Screen reader does not announce the message if it has not changed
+        element.innerHTML = `${newMessage}&nbsp;`;
+      } else {
+        element.innerHTML = newMessage;
+      }
+    }
+  }
+
   static updateResultCount(count: number): void {
     const resultCounts = <HTMLSpanElement[]>Array.from(document.getElementsByClassName('results-count'));
 
@@ -254,7 +291,7 @@ export class SearchSortFilterAndPaginate {
 
     if (newResultCountMessage === oldResultCountMessage) {
       // Screen reader does not announce the message if it has not changed
-      return `${newResultCountMessage}&nbsp`;
+      return `${newResultCountMessage}&nbsp;`;
     }
 
     return newResultCountMessage;

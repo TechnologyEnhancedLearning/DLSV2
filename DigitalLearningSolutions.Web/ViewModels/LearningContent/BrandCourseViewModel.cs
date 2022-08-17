@@ -15,6 +15,8 @@
             ApplicationName = application.ApplicationName;
             PopularityRating = application.PopularityRating;
             DisplayTime = DisplayStringHelper.GetTimeStringFromMinutes(application.TotalMins);
+            TimeForScreenReader =
+                DisplayStringHelper.GetTimeStringForScreenReaderFromMinutes(application.TotalMins);
             Time = application.TotalMins;
             CategoryName = application.CategoryName;
             CourseTopic = application.CourseTopic;
@@ -23,6 +25,7 @@
         }
 
         public string DisplayTime { get; set; }
+        public string TimeForScreenReader { get; set; }
         public int Time { get; set; }
         public double PopularityRating { get; set; }
         public IEnumerable<BrandCourseSectionViewModel> Sections { get; set; }

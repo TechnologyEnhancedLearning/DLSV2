@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Data;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models;
 
     public interface ISessionDataService
     {
@@ -9,11 +11,15 @@
 
         void StopDelegateSession(int candidateId);
 
-        void UpdateDelegateSessionDuration(int sessionId);
+        void UpdateDelegateSessionDuration(int sessionId, DateTime currentUtcTime);
 
         int StartAdminSession(int adminId);
 
         bool HasAdminGotSessions(int adminId);
+
+        Session? GetSessionById(int sessionId);
+
+        void AddTutorialTimeToSessionDuration(int sessionId, int tutorialTime);
     }
 
     public class SessionDataService : ISessionDataService
@@ -46,12 +52,12 @@
             connection.Query(StopSessionsSql, new { candidateId });
         }
 
-        public void UpdateDelegateSessionDuration(int sessionId)
+        public void UpdateDelegateSessionDuration(int sessionId, DateTime currentUtcTime)
         {
             connection.Query(
-                @"UPDATE Sessions SET Duration = DATEDIFF(minute, LoginTime, GetUTCDate())
+                @"UPDATE Sessions SET Duration = DATEDIFF(minute, LoginTime, @currentUtcTime)
                    WHERE [SessionID] = @sessionId AND Active = 1;",
-                new { sessionId }
+                new { sessionId, currentUtcTime }
             );
         }
 
@@ -71,6 +77,29 @@
             return connection.ExecuteScalar<bool>(
                 "SELECT 1 WHERE EXISTS (SELECT AdminSessionId FROM AdminSessions WHERE AdminID = @adminId)",
                 new { adminId }
+            );
+        }
+
+        public Session? GetSessionById(int sessionId)
+        {
+            return connection.QueryFirstOrDefault<Session>(
+                @"SELECT SessionID,
+                        CandidateID,
+                        CustomisationID,
+                        LoginTime,
+                        Duration,
+                        Active
+                    FROM Sessions WHERE SessionID = @sessionId",
+                new { sessionId }
+            );
+        }
+
+        public void AddTutorialTimeToSessionDuration(int sessionId, int tutorialTime)
+        {
+            connection.Query(
+                @"UPDATE Sessions SET Duration = Duration + @tutorialTime
+                   WHERE SessionID = @sessionId",
+                new { sessionId, tutorialTime }
             );
         }
     }

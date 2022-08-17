@@ -12,10 +12,39 @@
     public class TrackerServiceTests
     {
         private const string DefaultProgressText = "Test progress text";
+        private const string DefaultSessionId = "312";
+
+        private readonly TrackerEndpointQueryParams defaultStoreAspAssessQueryParams = new TrackerEndpointQueryParams
+        {
+            Version = 1,
+            CandidateId = 456,
+            CustomisationId = 1,
+            Score = 1,
+            SectionId = 3,
+        };
+
+        private readonly TrackerEndpointQueryParams defaultStoreAspProgressQueryParams = new TrackerEndpointQueryParams
+        {
+            ProgressId = 101,
+            Version = 1,
+            TutorialId = 123,
+            TutorialTime = 2,
+            TutorialStatus = 3,
+            CandidateId = 456,
+            CustomisationId = 1,
+        };
 
         private readonly Dictionary<TrackerEndpointSessionVariable, string?> emptySessionVariablesDictionary =
             new Dictionary<TrackerEndpointSessionVariable, string?>
                 { { TrackerEndpointSessionVariable.LmGvSectionRow, null } };
+
+        private readonly Dictionary<TrackerEndpointSessionVariable, string?>
+            sessionVariablesForStoreAspProgressNoSession =
+                new Dictionary<TrackerEndpointSessionVariable, string?>
+                {
+                    { TrackerEndpointSessionVariable.LmGvSectionRow, DefaultProgressText },
+                    { TrackerEndpointSessionVariable.LmSessionId, DefaultSessionId },
+                };
 
         private readonly Dictionary<TrackerEndpointSessionVariable, string?> sessionVariablesForStoreAspProgressV2 =
             new Dictionary<TrackerEndpointSessionVariable, string?>
@@ -151,17 +180,8 @@
         public void ProcessQuery_with_StoreAspProgressV2_action_passes_query_params()
         {
             // Given
-            var query = new TrackerEndpointQueryParams
-            {
-                Action = "StoreAspProgressV2",
-                ProgressId = 101,
-                Version = 1,
-                TutorialId = 123,
-                TutorialTime = 2,
-                TutorialStatus = 3,
-                CandidateId = 456,
-                CustomisationId = 1,
-            };
+            var query = defaultStoreAspProgressQueryParams;
+            query.Action = "StoreAspProgressV2";
 
             var expectedResponse = TrackerEndpointResponse.Success;
 
@@ -185,14 +205,96 @@
             result.Should().Be(expectedResponse);
             A.CallTo(
                     () => actionService.StoreAspProgressV2(
-                        query.ProgressId.Value,
-                        query.Version.Value,
+                        query.ProgressId!.Value,
+                        query.Version!.Value,
                         DefaultProgressText,
-                        query.TutorialId.Value,
-                        query.TutorialTime.Value,
-                        query.TutorialStatus.Value,
-                        query.CandidateId.Value,
-                        query.CustomisationId.Value
+                        query.TutorialId!.Value,
+                        query.TutorialTime!.Value,
+                        query.TutorialStatus!.Value,
+                        query.CandidateId!.Value,
+                        query.CustomisationId!.Value
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void ProcessQuery_with_StoreAspProgressNoSession_action_passes_query_params()
+        {
+            // Given
+            var query = defaultStoreAspProgressQueryParams;
+            query.Action = "StoreAspProgressNoSession";
+
+            var expectedResponse = TrackerEndpointResponse.Success;
+
+            A.CallTo(
+                () => actionService.StoreAspProgressNoSession(
+                    A<int>._,
+                    A<int>._,
+                    A<string>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<string>._
+                )
+            ).Returns(expectedResponse);
+
+            // When
+            var result = trackerService.ProcessQuery(query, sessionVariablesForStoreAspProgressNoSession);
+
+            // Then
+            result.Should().Be(expectedResponse);
+            A.CallTo(
+                    () => actionService.StoreAspProgressNoSession(
+                        query.ProgressId!.Value,
+                        query.Version!.Value,
+                        DefaultProgressText,
+                        query.TutorialId!.Value,
+                        query.TutorialTime!.Value,
+                        query.TutorialStatus!.Value,
+                        query.CandidateId!.Value,
+                        query.CustomisationId!.Value,
+                        DefaultSessionId
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void ProcessQuery_with_StoreAspAssessNoSession_action_passes_query_params()
+        {
+            // Given
+            var query = defaultStoreAspAssessQueryParams;
+            query.Action = "StoreAspAssessNoSession";
+
+            var expectedResponse = TrackerEndpointResponse.Success;
+
+            A.CallTo(
+                () => actionService.StoreAspAssessNoSession(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<string>._
+                )
+            ).Returns(expectedResponse);
+
+            // When
+            var result = trackerService.ProcessQuery(query, sessionVariablesForStoreAspProgressNoSession);
+
+            // Then
+            result.Should().Be(expectedResponse);
+            A.CallTo(
+                    () => actionService.StoreAspAssessNoSession(
+                        query.Version!.Value,
+                        query.SectionId!.Value,
+                        query.Score!.Value,
+                        query.CandidateId!.Value,
+                        query.CustomisationId!.Value,
+                        DefaultSessionId
                     )
                 )
                 .MustHaveHappenedOnceExactly();

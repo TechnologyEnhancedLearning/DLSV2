@@ -17,7 +17,7 @@
             ActivityFilterData filterData,
             int? userCategoryFilter,
             ReportsFilterOptions filterOptions,
-            DateTime dataStartDate
+            DateTime? dataStartDate
         )
         {
             JobGroupId = filterData.JobGroupId;
@@ -62,7 +62,7 @@
         public int? EndYear { get; set; }
         public bool EndDate { get; set; }
         public ReportInterval ReportInterval { get; set; }
-        public DateTime DataStart { get; set; }
+        public DateTime? DataStart { get; set; }
         public bool CanFilterCourseCategories { get; set; }
 
         public IEnumerable<SelectListItem> JobGroupOptions { get; set; } = new List<SelectListItem>();

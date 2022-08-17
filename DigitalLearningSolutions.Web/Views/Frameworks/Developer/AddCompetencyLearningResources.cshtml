@@ -1,8 +1,15 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyResourceSignpostingViewModel
 @{
-  ViewData["Title"] = "Add Competency Learning Resource";
-  ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Add Competency Learning Resource";
+    ViewData["Application"] = "Framework Service";
+    var dropdownItems = Model.Catalogues
+          .Select(c => new SelectListItem(
+            text: c.Name + (c.IsRestricted ? " (Restricted)" : ""),
+            value: c.Id.ToString(),
+            selected: c.Id == Model.CatalogueId)
+          ).ToList();
+    dropdownItems.Insert(0, new SelectListItem("Any catalogue", "0", !Model.CatalogueId.HasValue));
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -16,18 +23,31 @@
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
         <li class="nhsuk-breadcrumb__item">
-          <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a>
+          <a class="nhsuk-breadcrumb__link trigger-loader"
+             asp-action="ViewFrameworks"
+             asp-route-tabname="Mine">Frameworks</a>
         </li>
         <li class="nhsuk-breadcrumb__item">
-          <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a>
+          <a class="nhsuk-breadcrumb__link trigger-loader"
+             asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId"
+             asp-route-frameworkId="@Model.FrameworkId"
+             asp-route-tabname="Structure">Framework Structure</a>
         </li>
         <li class="nhsuk-breadcrumb__item">
-          <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Signposting</a>
+          <a class="nhsuk-breadcrumb__link trigger-loader"
+             asp-action="EditCompetencyLearningResources"
+             asp-route-frameworkId="@Model.FrameworkId"
+             asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+             asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Signposting</a>
         </li>
         <li class="nhsuk-breadcrumb__item">Add Resource</li>
       </ol>
       <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Back to Signposting</a>
+        <a class="nhsuk-breadcrumb__backlink"
+           asp-action="EditCompetencyLearningResources"
+           asp-route-frameworkId="@Model.FrameworkId"
+           asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+           asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Back to Signposting</a>
       </p>
     </div>
   </nav>
@@ -46,10 +66,24 @@
     <div class="nhsuk-grid-column-three-quarters">
       <div class="search-box-container" id="search">
         @Html.LabelFor(m => m.SearchText, "Search", new { @class = "nhsuk-u-visually-hidden", @for = "search-field" })
-        @Html.TextBoxFor(m => m.SearchText, new { @class = "search-box", id = "search-field", name = "searchString", type = "search", placeholder = "Search", autocomplete = "off" })
-        <button class="nhsuk-search__submit sort-submit" type="submit" asp-route-page="1" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
+        @Html.TextBoxFor(m => m.SearchText, new { @class = "search-box nhsuk-input", id = "search-field", name = "searchString", type = "search", placeholder = "Search", autocomplete = "off" })
+        <button class="nhsuk-button sort-submit" type="submit"
+                asp-route-page="@Model.Page"
+                asp-route-frameworkId="@Model.FrameworkId"
+                asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+                asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
+                asp-route-catalogueId="@Model.CatalogueId">
           Search
         </button>
+      </div>
+      <div class="filter-value-container">
+        @Html.DropDownListFor(c => c.CatalogueId, dropdownItems,
+          new
+          {
+            @class = "nhsuk-u-width-full nhsuk-select nhsuk-u-margin-bottom-4",
+            aria_label = "Catalogue filter",
+            style = "border-radius: 4px;"
+          })
       </div>
     </div>
   </div>

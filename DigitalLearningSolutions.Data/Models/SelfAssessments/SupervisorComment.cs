@@ -5,9 +5,11 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
     public class SupervisorComment
     {
         public int? AssessmentQuestionID { get; set; }
-        public string? Name { get; set; }        
+        public string? Name { get; set; }
+        public string? SupervisorName { get; set; }
+        public string? RoleName { get; set; }
         public string? Comments { get; set; }
-        public int? CandidateID { get; set; }        
+        public int? CandidateID { get; set; }
         public int? CompetencyID { get; set; }
         public string? CompetencyName { get; set; }
         public int? SelfAssessmentID { get; set; }
@@ -17,5 +19,6 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public int? CompetencyGroupID { get; set; }
         public string? Vocabulary { get; set; }
         public bool SignedOff { get; set; }
+        public string? ReviewerCommentsLabel { get; set; }
     }
 }

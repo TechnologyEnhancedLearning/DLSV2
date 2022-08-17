@@ -23,7 +23,7 @@
         public int UpdatedCount { get; set; }
         public int SkippedCount { get; set; }
 
-        private string MapReasonToErrorMessage(BulkUploadResult.ErrorReason reason)
+        private static string MapReasonToErrorMessage(BulkUploadResult.ErrorReason reason)
         {
             return reason switch
             {
@@ -61,7 +61,15 @@
                     "EmailAddress must be in the correct format, like name@example.com",
                 BulkUploadResult.ErrorReason.WhitespaceInEmail =>
                     "EmailAddress must not contain any whitespace characters",
-                _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null)
+                BulkUploadResult.ErrorReason.HasPrnButMissingPrnValue =>
+                    "HasPRN was set to true, but PRN was not provided. When HasPRN is set to true, PRN is a required field",
+                BulkUploadResult.ErrorReason.PrnButHasPrnIsFalse =>
+                    "HasPRN was set to false, but PRN was provided. When HasPRN is set to false, PRN is required to be empty",
+                BulkUploadResult.ErrorReason.InvalidPrnLength => "PRN must be between 5 and 20 characters",
+                BulkUploadResult.ErrorReason.InvalidPrnCharacters =>
+                    "Invalid PRN format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed",
+                BulkUploadResult.ErrorReason.InvalidHasPrnValue => "HasPRN field could not be read. The HasPRN field should contain 'TRUE' or 'FALSE' or be left blank",
+                _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null),
             };
         }
     }

@@ -5,7 +5,9 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.Progress;
+    using DigitalLearningSolutions.Data.Models.Tracker;
 
     public interface IProgressService
     {
@@ -36,12 +38,18 @@
             int tutorialStatus
         );
 
-        void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress);
+        void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress);
+
+        public SectionAndApplicationDetailsForAssessAttempts? GetSectionAndApplicationDetailsForAssessAttempts(
+            int sectionId,
+            int customisationId
+        );
     }
 
     public class ProgressService : IProgressService
     {
         private readonly IClockService clockService;
+        private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDataService courseDataService;
         private readonly ILearningLogItemsDataService learningLogItemsDataService;
         private readonly INotificationService notificationService;
@@ -52,7 +60,8 @@
             IProgressDataService progressDataService,
             INotificationService notificationService,
             ILearningLogItemsDataService learningLogItemsDataService,
-            IClockService clockService
+            IClockService clockService,
+            ICourseAdminFieldsService courseAdminFieldsService
         )
         {
             this.courseDataService = courseDataService;
@@ -60,6 +69,7 @@
             this.notificationService = notificationService;
             this.learningLogItemsDataService = learningLogItemsDataService;
             this.clockService = clockService;
+            this.courseAdminFieldsService = courseAdminFieldsService;
         }
 
         public void UpdateSupervisor(int progressId, int? newSupervisorId)
@@ -136,6 +146,11 @@
                 return null;
             }
 
+            var coursePrompts = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
+                courseInfo
+            );
+            courseInfo.CourseAdminFields = coursePrompts;
+
             var sections = progressDataService.GetSectionProgressDataForProgressEntry(progressId).ToList();
             foreach (var section in sections)
             {
@@ -143,7 +158,11 @@
                     progressDataService.GetTutorialProgressDataForSection(progressId, section.SectionId);
             }
 
-            return new DetailedCourseProgress(progress, sections, courseInfo);
+            return new DetailedCourseProgress(
+                progress,
+                sections,
+                courseInfo
+            );
         }
 
         public void UpdateCourseAdminFieldForDelegate(
@@ -175,9 +194,9 @@
             progressDataService.UpdateAspProgressTutStat(tutorialId, progressId, tutorialStatus);
         }
 
-        public void CheckProgressForCompletionAndSendEmailIfCompleted(DetailedCourseProgress progress)
+        public void CheckProgressForCompletionAndSendEmailIfCompleted(DelegateCourseInfo progress)
         {
-            if (!(progress is { Completed: null }))
+            if (progress.Completed != null)
             {
                 return;
             }
@@ -194,6 +213,14 @@
                     numLearningLogItemsAffected
                 );
             }
+        }
+
+        public SectionAndApplicationDetailsForAssessAttempts? GetSectionAndApplicationDetailsForAssessAttempts(
+            int sectionId,
+            int customisationId
+        )
+        {
+            return progressDataService.GetSectionAndApplicationDetailsForAssessAttempts(sectionId, customisationId);
         }
     }
 }

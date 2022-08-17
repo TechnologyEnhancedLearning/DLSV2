@@ -382,7 +382,8 @@
             // given
             var startDateString = "2012-06-06";
             var endDateString = "2021-06-06";
-            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2012-06-07"));
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101, A<int?>._))
+                .Returns(DateTime.Parse("2012-06-07"));
 
             // when
             var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
@@ -397,7 +398,8 @@
             // given
             var startDateString = "2022-06-06";
             var endDateString = "2021-06-06";
-            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2000-06-07"));
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101, A<int?>._))
+                .Returns(DateTime.Parse("2000-06-07"));
 
             // when
             var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
@@ -412,7 +414,8 @@
             // given
             var startDateString = "2012-06-06";
             var endDateString = "3021-06-06";
-            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2000-06-07"));
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101, A<int?>._))
+                .Returns(DateTime.Parse("2000-06-07"));
 
             // when
             var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
@@ -427,7 +430,8 @@
             // given
             var startDateString = "once upon a time";
             var endDateString = "2021-06-06";
-            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2000-06-07"));
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101, A<int?>._))
+                .Returns(DateTime.Parse("2000-06-07"));
 
             // when
             var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
@@ -442,7 +446,8 @@
             // given
             var startDateString = "2012-06-06";
             var endDateString = "happily ever after";
-            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2000-06-07"));
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101, A<int?>._))
+                .Returns(DateTime.Parse("2000-06-07"));
 
             // when
             var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
@@ -458,7 +463,8 @@
             // given
             var startDateString = "2012-06-06";
             var endDateString = "2021-06-06";
-            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2000-06-07"));
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101, A<int?>._))
+                .Returns(DateTime.Parse("2000-06-07"));
 
             // when
             var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
@@ -473,7 +479,7 @@
         {
             // given
             var dateWithTime = DateTime.Parse("2020/12/12 12:40:40");
-            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(A<int>._))
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(A<int>._, A<int?>._))
                 .Returns(dateWithTime);
 
             // when

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -100,7 +101,7 @@
         {
             var data = TempData.Peek<RegistrationData>()!;
 
-            var model = new LearnerInformationViewModel(data);
+            var model = new LearnerInformationViewModel(data, true);
             SetJobGroupOptions(model);
 
             return View(model);
@@ -187,7 +188,8 @@
             var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
             registrationService.RegisterCentreManager(
                 registrationModel,
-                data.JobGroup!.Value
+                data.JobGroup!.Value,
+                true
             );
 
             return RedirectToAction("Confirmation");
@@ -225,7 +227,7 @@
         {
             var autoRegisterManagerEmail =
                 centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
-            return email.Equals(autoRegisterManagerEmail);
+            return email.Equals(autoRegisterManagerEmail, StringComparison.CurrentCultureIgnoreCase);
         }
 
         private bool CanProceedWithRegistration(RegistrationData data)
@@ -245,7 +247,7 @@
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
-                    "This email address does not match the one held by the centre"
+                    "This email does not match the one held by the centre"
                 );
             }
 
@@ -253,7 +255,7 @@
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
-                    "An admin user with this email address is already registered"
+                    "An admin user with this email is already registered"
                 );
             }
         }

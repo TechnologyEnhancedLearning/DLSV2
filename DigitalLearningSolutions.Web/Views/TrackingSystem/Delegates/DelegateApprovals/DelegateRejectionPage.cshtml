@@ -1,6 +1,4 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model RejectDelegateViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/delegateApprovals.css")" asp-append-version="true">
@@ -11,11 +9,11 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Reject delegate registration</h1>
+    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
     <p class="nhsuk-body-l">Are you sure you want to reject this user's registration?</p>
 
-    <dl class="nhsuk-summary-list">
+    <dl class="nhsuk-summary-list word-break">
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
           Full name
@@ -26,7 +24,7 @@
       </div>
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Email address
+          Email
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.Email

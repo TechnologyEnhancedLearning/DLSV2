@@ -2,11 +2,20 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
 
     public class EditCourseOptionsFormData
     {
         public EditCourseOptionsFormData() { }
+
+        public EditCourseOptionsFormData(CourseOptionsTempData tempData)
+        {
+            Active = tempData.Active;
+            AllowSelfEnrolment = tempData.AllowSelfEnrolment;
+            DiagnosticObjectiveSelection = tempData.DiagnosticObjectiveSelection;
+            HideInLearningPortal = tempData.HideInLearningPortal;
+        }
 
         public EditCourseOptionsFormData(
             bool allowSelfEnrolment,

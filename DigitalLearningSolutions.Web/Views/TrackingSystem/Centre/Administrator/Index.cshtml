@@ -1,13 +1,11 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Models.Enums
+﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
-@using Microsoft.Extensions.Configuration
 @model CentreAdministratorsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/centreAdministrators.css")" asp-append-version="true">
 
 @{
-  ViewData["Title"] = "Centre Administrators";
+  ViewData["Title"] = "Centre administrators";
 }
 
 <div class="nhsuk-grid-row">
@@ -23,7 +21,7 @@
     }
     <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">
       <div class="nhsuk-u-margin-bottom-4">
-        <h1 class="nhsuk-heading-xl">Centre administrators</h1>
+        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
         <vc:number-of-administrators centre-id="Model.CentreId" />
       </div>

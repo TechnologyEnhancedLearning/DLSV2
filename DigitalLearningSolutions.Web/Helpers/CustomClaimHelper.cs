@@ -131,7 +131,8 @@
 
         public static bool HasSupervisorAdminPermissions(this ClaimsPrincipal user)
         {
-            return user.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true;
+            return user.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true ||
+                   user.GetCustomClaimAsBool(CustomClaimTypes.IsNominatedSupervisor) == true;
         }
 
         public static string GetCandidateNumberKnownNotNull(this ClaimsPrincipal user)

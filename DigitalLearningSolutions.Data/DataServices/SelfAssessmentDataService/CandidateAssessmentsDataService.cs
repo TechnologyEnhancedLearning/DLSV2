@@ -16,7 +16,9 @@
                         SA.Name,
                         SA.Description,
                         SA.IncludesSignposting,
+                        SA.IncludeRequirementsFilters,
                         SA.SupervisorResultsReview AS IsSupervisorResultsReviewed,
+                        SA.ReviewerCommentsLabel,
                         COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
                         COUNT(C.ID) AS NumberOfCompetencies,
                         CA.StartedDate,
@@ -29,7 +31,7 @@
                         1 AS IsSelfAssessment,
                         CA.SubmittedDate
                     FROM CandidateAssessments CA
-                    JOIN SelfAssessments SA
+                        JOIN SelfAssessments SA
                         ON CA.SelfAssessmentID = SA.ID
                     INNER JOIN SelfAssessmentStructure AS SAS
                         ON CA.SelfAssessmentID = SAS.SelfAssessmentID
@@ -38,6 +40,7 @@
                     WHERE CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
+                        SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
                         CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
@@ -55,8 +58,10 @@
                         SA.QuestionLabel,
                         SA.DescriptionLabel,
                         SA.IncludesSignposting,
+                        SA.IncludeRequirementsFilters,
                         SA.SupervisorResultsReview AS IsSupervisorResultsReviewed,
                         SA.SupervisorSelfAssessmentReview,
+                        SA.ReviewerCommentsLabel,
                         SA.EnforceRoleRequirementsForSignOff,
                         COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
                         COUNT(C.ID) AS NumberOfCompetencies,
@@ -90,7 +95,8 @@
                                     FROM SelfAssessmentSupervisorRoles AS SelfAssessmentSupervisorRoles_1
                                     WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)),
                             'Supervisor') AS SignOffRoleName,
-                        SA.SignOffRequestorStatement
+                        SA.SignOffRequestorStatement,
+                        SA.ManageSupervisorsDescription
                     FROM CandidateAssessments CA
                     JOIN SelfAssessments SA
                         ON CA.SelfAssessmentID = SA.ID
@@ -107,11 +113,12 @@
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description,
                         SA.DescriptionLabel, SA.QuestionLabel,
-                        SA.IncludesSignposting, SA.SignOffRequestorStatement, COALESCE(SA.Vocabulary, 'Capability'),
+                        SA.IncludesSignposting, SA.IncludeRequirementsFilters, SA.SignOffRequestorStatement, COALESCE(SA.Vocabulary, 'Capability'),
                         CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID, CA.UserBookmark, CA.UnprocessedUpdates,
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
-                        SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview, SA.EnforceRoleRequirementsForSignOff",
+                        SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
+                        SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription",
                 new { candidateId, selfAssessmentId }
             );
         }

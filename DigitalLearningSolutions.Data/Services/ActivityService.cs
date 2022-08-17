@@ -21,7 +21,7 @@
 
         ReportsFilterOptions GetFilterOptions(int centreId, int? courseCategoryId);
 
-        DateTime GetActivityStartDateForCentre(int centreId);
+        DateTime? GetActivityStartDateForCentre(int centreId, int? courseCategoryId = null);
 
         byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData);
 
@@ -30,6 +30,8 @@
             string endDateString,
             int centreId
         );
+
+        string GetCourseCategoryNameForActivityFilter(int? courseCategoryId);
     }
 
     public class ActivityService : IActivityService
@@ -116,9 +118,10 @@
             return new ReportsFilterOptions(jobGroups, courseCategories, courses);
         }
 
-        public DateTime GetActivityStartDateForCentre(int centreId)
+        public DateTime? GetActivityStartDateForCentre(int centreId, int? courseCategoryId = null)
         {
-            return activityDataService.GetStartOfActivityForCentre(centreId).Date;
+            var activityStart = activityDataService.GetStartOfActivityForCentre(centreId, courseCategoryId);
+            return activityStart?.Date ?? activityStart;
         }
 
         public byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData)
@@ -194,7 +197,8 @@
         )
         {
             var startDateInvalid = !DateTime.TryParse(startDateString, out var startDate);
-            if (startDateInvalid || startDate < GetActivityStartDateForCentre(centreId))
+            var activityStart = GetActivityStartDateForCentre(centreId);
+            if (startDateInvalid || activityStart == null || startDate < activityStart)
             {
                 return null;
             }
@@ -209,20 +213,20 @@
             return (startDate, endDateIsSet ? endDate : (DateTime?)null);
         }
 
+        public string GetCourseCategoryNameForActivityFilter(int? courseCategoryId)
+        {
+            var courseCategoryName = courseCategoryId.HasValue
+                ? courseCategoriesDataService.GetCourseCategoryName(courseCategoryId.Value)
+                : "All";
+            return courseCategoryName ?? "All";
+        }
+
         private string GetJobGroupNameForActivityFilter(int? jobGroupId)
         {
             var jobGroupName = jobGroupId.HasValue
                 ? jobGroupsDataService.GetJobGroupName(jobGroupId.Value)
                 : "All";
             return jobGroupName ?? "All";
-        }
-
-        private string GetCourseCategoryNameForActivityFilter(int? courseCategoryId)
-        {
-            var courseCategoryName = courseCategoryId.HasValue
-                ? courseCategoriesDataService.GetCourseCategoryName(courseCategoryId.Value)
-                : "All";
-            return courseCategoryName ?? "All";
         }
 
         private string GetCourseNameForActivityFilter(int? courseId)

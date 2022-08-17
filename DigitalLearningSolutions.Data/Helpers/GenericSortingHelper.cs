@@ -138,7 +138,7 @@
         public static readonly CourseDelegatesSortByOption LastUpdatedDate = new CourseDelegatesSortByOption(
             2,
             nameof(LastUpdatedDate),
-            "Last updated date",
+            "Last access",
             nameof(CourseDelegate.LastUpdated)
         );
 
@@ -153,7 +153,7 @@
             4,
             nameof(CompleteByDate),
             "Complete by date",
-            nameof(CourseDelegate.CompleteByDate)
+            nameof(CourseDelegate.CompleteBy)
         );
 
         public static readonly CourseDelegatesSortByOption CompletedDate = new CourseDelegatesSortByOption(

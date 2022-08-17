@@ -1,0 +1,41 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
+@model DelegateCourseInfoViewModel
+
+<a class="nhsuk-button"
+   role="button"
+   asp-controller="DelegateProgress"
+   asp-action="Index"
+   asp-route-progressId="@Model.ProgressId"
+   asp-route-accessedVia="@Model.AccessedVia">
+  View progress
+</a>
+
+@if (string.IsNullOrEmpty(Model.Completed) && Model.RemovedDate == null) {
+  <a class="nhsuk-button delete-button"
+     role="button"
+     data-return-page-enabled="true"
+     asp-controller="DelegateProgress"
+     asp-action="ConfirmRemoveFromCourse"
+     asp-route-progressId="@Model.ProgressId"
+     asp-route-delegateId="@Model.DelegateId"
+     asp-route-customisationId="@Model.CustomisationId"
+     asp-route-accessedVia="@Model.AccessedVia"
+     asp-route-returnPageQuery="@Model.ReturnPageQuery">
+    Remove from course
+  </a>
+}
+
+@if (Model.IsProgressLocked) {
+  <a class="nhsuk-button nhsuk-button--secondary"
+     role="button"
+     data-return-page-enabled="true"
+     asp-controller="DelegateProgress"
+     asp-action="UnlockProgress"
+     asp-route-progressId="@Model.ProgressId"
+     asp-route-delegateId="@Model.DelegateId"
+     asp-route-customisationId="@Model.CustomisationId"
+     asp-route-accessedVia="@Model.AccessedVia"
+     asp-route-returnPageQuery="@Model.ReturnPageQuery">
+    Unlock progress
+  </a>
+}

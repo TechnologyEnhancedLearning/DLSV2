@@ -1,32 +1,36 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.Models.Enums
-@using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
 @model CentrePage
 
 <h2 class="side-nav__heading">Centre</h2>
 <ul class="nhsuk-list side-nav__list">
 
-  <vc:side-menu-link asp-action="Index"
-                     asp-controller="Dashboard"
-                     link-text="Dashboard"
-                     is-current-page="Model == CentrePage.Dashboard" />
-
-  <vc:side-menu-link asp-action="Index"
-                     asp-controller="Configuration"
-                     link-text="Configuration"
-                     is-current-page="Model == CentrePage.Configuration" />
-
-  @if (User.HasCentreManagerPermissions()) {
     <vc:side-menu-link asp-action="Index"
+                       asp-controller="Dashboard"
+                       link-text="Dashboard"
+                       is-current-page="Model == CentrePage.Dashboard" />
+
+    <vc:side-menu-link asp-action="Index"
+                       asp-controller="Configuration"
+                       link-text="Configuration"
+                       is-current-page="Model == CentrePage.Configuration" />
+
+    @if (User.HasCentreManagerPermissions())
+    {
+        <vc:side-menu-link asp-action="Index"
                        asp-controller="Administrator"
                        link-text="Administrators"
-                       is-current-page="Model == CentrePage.Administrators" /> 
-  }
+                       is-current-page="Model == CentrePage.Administrators" />
+    }
 
-  <vc:side-menu-link asp-action="Index"
-                     asp-controller="Reports"
-                     link-text="Reports"
-                     is-current-page="Model == CentrePage.Reports" />
+    <vc:side-menu-link asp-action="Index"
+                       asp-controller="Reports"
+                       link-text="Course reports"
+                       is-current-page="Model == CentrePage.Reports" />
+
+    <vc:side-menu-link asp-action="Index"
+                       asp-controller="SelfAssessmentReports"
+                       link-text="Self assessment reports"
+                       is-current-page="Model == CentrePage.SelfAssessmentReports" />
 
 </ul>

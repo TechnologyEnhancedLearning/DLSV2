@@ -1,10 +1,6 @@
-﻿@inject IConfiguration configuration
-@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 @using DigitalLearningSolutions.Web.Extensions
-@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Microsoft.Extensions.Configuration
 @model AddAdminFieldViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
@@ -47,20 +43,20 @@
       <div class="nhsuk-grid-row divider">
         <div class="nhsuk-grid-column-one-half">
           <vc:text-input asp-for="@nameof(Model.Answer)"
-                         label="Add a new answer?"
+                         label="Add a new response?"
                          populate-with-current-value="true"
                          type="text"
                          spell-check="true"
                          autocomplete=""
                          hint-text=""
-                         css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold" />
+                         css-class="nhsuk-u-width-full" />
           <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.AddPromptAction">Add</button>
         </div>
       </div>
 
       <div class="nhsuk-grid-row divider">
         <div class="nhsuk-grid-column-one-half">
-          <p class="nhsuk-label">Want to edit answers in bulk?</p>
+          <p class="nhsuk-label">Want to edit responses in bulk?</p>
           <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.BulkAction">Bulk edit</button>
         </div>
       </div>

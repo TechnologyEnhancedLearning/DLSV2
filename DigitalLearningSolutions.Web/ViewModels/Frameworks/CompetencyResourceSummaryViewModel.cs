@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 {
+    using DigitalLearningSolutions.Web.Helpers;
+
     public class CompetencyResourceSummaryViewModel : BaseSignpostingViewModel
     {
         private string _Link;
-        private string _Catalog;
         private int _ReferenceId;
         public int ReferenceId
         {
@@ -24,7 +25,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         }
 
         public string ResourceName => Resource?.Title ?? String.Empty;
-        public string ResourceType => Resource?.ResourceType ?? String.Empty;
+        public string ResourceType => DisplayStringHelper.AddSpacesToPascalCaseString(Resource?.ResourceType ?? String.Empty);
         public string Description => Resource?.Description ?? String.Empty;
         public string Link
         {
@@ -45,6 +46,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
             }
         }
         public string SelectedCatalogue { get; set; }
+        public int? CatalogueId { get; set; }
         public decimal? Rating { get; set; }
         public string NameOfCompetency { get; set; }
         public string SearchText { get; set; }

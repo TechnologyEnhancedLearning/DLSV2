@@ -32,6 +32,8 @@
             int customisationId,
             int centreId
         );
+
+        int[] GetCourseFieldPromptIdsForCustomisation(int customisationId);
     }
 
     public class CourseAdminFieldsDataService : ICourseAdminFieldsDataService
@@ -67,6 +69,7 @@
                         ON cu.CourseField3PromptID = cp3.CoursePromptID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
                     WHERE ap.ArchivedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4
                         AND cu.CustomisationID = @customisationId",
                 new { customisationId }
             ).Single();
@@ -118,10 +121,12 @@
             return connection.Query<string>(
                 @$"SELECT
                         cp.CoursePrompt
-                    FROM Customisations c
+                    FROM Customisations AS c
+                    INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     LEFT JOIN CoursePrompts cp
                         ON c.CourseField{promptNumber}PromptID = cp.CoursePromptID
-                    WHERE CustomisationID = @customisationId",
+                    WHERE CustomisationID = @customisationId
+                        AND ap.DefaultContentTypeID <> 4",
                 new { customisationId }
             ).Single();
         }
@@ -164,6 +169,26 @@
                         AND RemovedDate IS NULL",
                 new { customisationId, centreId }
             );
+        }
+
+        public int[] GetCourseFieldPromptIdsForCustomisation(
+            int customisationId
+        )
+        {
+            var result = connection.Query<(int, int, int)>(
+                @"SELECT
+                        cu.CourseField1PromptID,
+                        cu.CourseField2PromptID,
+                        cu.CourseField3PromptID
+                    FROM Customisations AS cu
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+                    WHERE CustomisationID = @customisationId
+                        AND ap.ArchivedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4",
+                new { customisationId }
+            ).Single();
+
+            return new [] { result.Item1, result.Item2, result.Item3 };
         }
     }
 }

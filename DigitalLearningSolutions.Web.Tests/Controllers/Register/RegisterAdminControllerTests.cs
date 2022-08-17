@@ -334,7 +334,7 @@
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
-            A.CallTo(() => registrationService.RegisterCentreManager(A<AdminRegistrationModel>._, A<int>._))
+            A.CallTo(() => registrationService.RegisterCentreManager(A<AdminRegistrationModel>._, A<int>._, A<bool>._))
                 .DoesNothing();
 
             // When
@@ -361,7 +361,8 @@
                                 !a.IsSupervisor &&
                                 a.ProfessionalRegistrationNumber == professionalRegistrationNumber
                         ),
-                        jobGroupId
+                        jobGroupId,
+                        true
                     )
                 )
                 .MustHaveHappened();

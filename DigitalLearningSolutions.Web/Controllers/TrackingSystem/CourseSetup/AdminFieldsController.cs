@@ -1,14 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
@@ -29,14 +31,17 @@
         public const string BulkAction = "bulk";
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
+        private readonly IMultiPageFormService multiPageFormService;
 
         public AdminFieldsController(
             ICourseAdminFieldsService courseAdminFieldsService,
-            ICourseAdminFieldsDataService courseAdminFieldsDataService
+            ICourseAdminFieldsDataService courseAdminFieldsDataService,
+            IMultiPageFormService multiPageFormService
         )
         {
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.courseAdminFieldsDataService = courseAdminFieldsDataService;
+            this.multiPageFormService = multiPageFormService;
         }
 
         [HttpGet]
@@ -52,32 +57,57 @@
         }
 
         [HttpGet]
-        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Start")]
+        [Route("{customisationId:int}/AdminFields/Edit/Start/{promptNumber:int}")]
         public IActionResult EditAdminFieldStart(int customisationId, int promptNumber)
-        {
-            return RedirectToAction("EditAdminField", new { customisationId, promptNumber });
-        }
-
-        [HttpGet]
-        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit")]
-        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        public IActionResult EditAdminField(int customisationId, int promptNumber)
         {
             var courseAdminField = courseAdminFieldsService.GetCourseAdminFieldsForCourse(
                     customisationId
                 ).AdminFields
                 .Single(cp => cp.PromptNumber == promptNumber);
 
-            var data = TempData.Get<EditAdminFieldData>();
+            var data = new EditAdminFieldTempData
+            {
+                PromptNumber = courseAdminField.PromptNumber,
+                Prompt = courseAdminField.PromptText,
+                OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(
+                    courseAdminField.Options
+                ),
+                IncludeAnswersTableCaption = true,
+            };
 
-            var model = data?.EditModel ?? new EditAdminFieldViewModel(courseAdminField);
+            multiPageFormService.SetMultiPageFormData(
+                data,
+                MultiPageFormDataFeature.EditAdminField,
+                TempData
+            );
 
-            return View(model);
+            return RedirectToAction("EditAdminField", new { customisationId, promptNumber });
+        }
+
+        [HttpGet]
+        [Route("{customisationId:int}/AdminFields/Edit")]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAdminField) }
+        )]
+        public IActionResult EditAdminField(int customisationId)
+        {
+            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
+                MultiPageFormDataFeature.EditAdminField,
+                TempData
+            );
+
+            return View(new EditAdminFieldViewModel(data));
         }
 
         [HttpPost]
-        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit")]
+        [Route("{customisationId:int}/AdminFields/Edit")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAdminField) }
+        )]
         public IActionResult EditAdminField(
             int customisationId,
             EditAdminFieldViewModel model,
@@ -99,27 +129,35 @@
         }
 
         [HttpGet]
-        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Bulk")]
+        [Route("{customisationId:int}/AdminFields/Edit/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
-        public IActionResult EditAdminFieldAnswersBulk(int customisationId, int promptNumber)
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAdminField) }
+        )]
+        public IActionResult EditAdminFieldAnswersBulk(int customisationId)
         {
-            var data = TempData.Peek<EditAdminFieldData>()!;
+            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
+                MultiPageFormDataFeature.EditAdminField,
+                TempData
+            );
 
             var model = new BulkAdminFieldAnswersViewModel(
-                data.EditModel.OptionsString
+                data.OptionsString
             );
 
             return View("BulkAdminFieldAnswers", model);
         }
 
         [HttpPost]
-        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Bulk")]
+        [Route("{customisationId:int}/AdminFields/Edit/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAdminField) }
+        )]
         public IActionResult EditAdminFieldAnswersBulk(
             int customisationId,
-            int promptNumber,
             BulkAdminFieldAnswersViewModel model
         )
         {
@@ -129,24 +167,30 @@
                 return View("BulkAdminFieldAnswers", model);
             }
 
-            var editData = TempData.Peek<EditAdminFieldData>()!;
-            editData.EditModel.OptionsString =
-                NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
-            TempData.Set(editData);
-
-            return RedirectToAction(
-                "EditAdminField",
-                new { customisationId, promptNumber }
+            var data = multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
+                MultiPageFormDataFeature.EditAdminField,
+                TempData
             );
+            data.OptionsString = NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
+            multiPageFormService.SetMultiPageFormData(
+                data,
+                MultiPageFormDataFeature.EditAdminField,
+                TempData
+            );
+
+            return RedirectToAction("EditAdminField", new { customisationId });
         }
 
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/Add/New")]
         public IActionResult AddAdminFieldNew(int customisationId)
         {
-            var model = new AddAdminFieldViewModel();
-
-            SetAddAdminFieldTempData(model);
+            TempData.Clear();
+            multiPageFormService.SetMultiPageFormData(
+                new AddAdminFieldTempData(),
+                MultiPageFormDataFeature.AddAdminField,
+                TempData
+            );
 
             return RedirectToAction("AddAdminField", new { customisationId });
         }
@@ -154,25 +198,32 @@
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/Add")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddAdminField) }
+        )]
         public IActionResult AddAdminField(int customisationId)
         {
-            var addAdminFieldData = TempData.Peek<AddAdminFieldData>()!;
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                MultiPageFormDataFeature.AddAdminField,
+                TempData
+            );
 
-            SetViewBagAdminFieldNameOptions(addAdminFieldData.AddModel.AdminFieldId);
-
-            var model = addAdminFieldData.AddModel;
-
-            return View(model);
+            SetViewBagAdminFieldNameOptions(data.AdminFieldId);
+            return View(new AddAdminFieldViewModel(data));
         }
 
         [HttpPost]
         [Route("{customisationId:int}/AdminFields/Add")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddAdminField) }
+        )]
         public IActionResult AddAdminField(int customisationId, AddAdminFieldViewModel model, string action)
         {
             UpdateTempDataWithAddAdminFieldModelValues(model);
+            ValidateUniqueAdminFieldId(customisationId, model.AdminFieldId);
 
             if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
             {
@@ -191,12 +242,18 @@
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/Add/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddAdminField) }
+        )]
         public IActionResult AddAdminFieldAnswersBulk(int customisationId)
         {
-            var data = TempData.Peek<AddAdminFieldData>()!;
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                MultiPageFormDataFeature.AddAdminField,
+                TempData
+            );
             var model = new AddBulkAdminFieldAnswersViewModel(
-                data.AddModel.OptionsString
+                data.OptionsString
             );
 
             return View("AddBulkAdminFieldAnswers", model);
@@ -205,7 +262,10 @@
         [HttpPost]
         [Route("{customisationId:int}/AdminFields/Add/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
-        [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
+        [TypeFilter(
+            typeof(RedirectMissingMultiPageFormData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddAdminField) }
+        )]
         public IActionResult AddAdminFieldAnswersBulk(
             int customisationId,
             AddBulkAdminFieldAnswersViewModel model
@@ -217,10 +277,17 @@
                 return View("AddBulkAdminFieldAnswers", model);
             }
 
-            var addData = TempData.Peek<AddAdminFieldData>()!;
-            addData.AddModel.OptionsString =
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                MultiPageFormDataFeature.AddAdminField,
+                TempData
+            );
+            data.OptionsString =
                 NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
-            TempData.Set(addData);
+            multiPageFormService.SetMultiPageFormData(
+                data,
+                MultiPageFormDataFeature.AddAdminField,
+                TempData
+            );
 
             return RedirectToAction(
                 "AddAdminField",
@@ -276,6 +343,8 @@
                 model.OptionsString
             );
 
+            multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.EditAdminField, TempData);
+
             return RedirectToAction("Index", new { customisationId });
         }
 
@@ -291,8 +360,13 @@
 
         private void SetEditAdminFieldTempData(EditAdminFieldViewModel model)
         {
-            var data = new EditAdminFieldData(model);
-            TempData.Set(data);
+            var data = model.ToEditAdminFieldTempData();
+
+            multiPageFormService.SetMultiPageFormData(
+                data,
+                MultiPageFormDataFeature.EditAdminField,
+                TempData
+            );
         }
 
         private IActionResult AddAdminFieldPostSave(int customisationId, AddAdminFieldViewModel model)
@@ -306,11 +380,12 @@
             }
 
             if (courseAdminFieldsService.AddAdminFieldToCourse(
-                customisationId,
-                model.AdminFieldId!.Value,
-                model.OptionsString
-            ))
+                    customisationId,
+                    model.AdminFieldId!.Value,
+                    model.OptionsString
+                ))
             {
+                multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddAdminField, TempData);
                 return RedirectToAction("Index", new { customisationId });
             }
 
@@ -329,8 +404,13 @@
 
         private void SetAddAdminFieldTempData(AddAdminFieldViewModel model)
         {
-            var data = new AddAdminFieldData(model);
-            TempData.Set(data);
+            var data = model.ToAddAdminFieldTempData();
+
+            multiPageFormService.SetMultiPageFormData(
+                data,
+                MultiPageFormDataFeature.AddAdminField,
+                TempData
+            );
         }
 
         private IActionResult RemoveAdminFieldAndRedirect(int customisationId, int promptNumber)
@@ -343,21 +423,10 @@
             EditAdminFieldViewModel model
         )
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(model);
+                ValidateAndSetOptionsString(model);
             }
-
-            var optionsString =
-                NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
-
-            if (optionsString.Length > 1000)
-            {
-                SetTotalAnswersLengthTooLongError(model);
-                return View(model);
-            }
-
-            SetAdminFieldAnswersViewModelOptions(model, optionsString);
 
             return View(model);
         }
@@ -374,20 +443,13 @@
                 return View(model);
             }
 
-            var optionsString =
-                NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
+            ValidateAndSetOptionsString(model);
 
-            if (optionsString.Length > 1000)
+            if (ModelState.IsValid)
             {
-                SetTotalAnswersLengthTooLongError(model);
-                return View(model);
+                UpdateTempDataWithAddAdminFieldModelValues(model);
+                SetViewBagAdminFieldNameOptions(model.AdminFieldId);
             }
-
-            SetAdminFieldAnswersViewModelOptions(model, optionsString);
-
-            UpdateTempDataWithAddAdminFieldModelValues(model);
-
-            SetViewBagAdminFieldNameOptions(model.AdminFieldId);
 
             return View(model);
         }
@@ -452,8 +514,8 @@
 
             ModelState.AddModelError(
                 nameof(AdminFieldAnswersViewModel.Answer),
-                "The complete list of answers must be 1000 characters or fewer " +
-                $"({remainingLengthShownToUser} character{remainingLengthPluralitySuffix} remaining for the new answer, " +
+                "The complete list of responses must be 1000 characters or fewer " +
+                $"({remainingLengthShownToUser} character{remainingLengthPluralitySuffix} remaining for the new response, " +
                 $"{answerLength} character{answerLengthPluralitySuffix} {verb} entered)"
             );
         }
@@ -472,9 +534,25 @@
 
         private void UpdateTempDataWithAddAdminFieldModelValues(AddAdminFieldViewModel model)
         {
-            var data = TempData.Peek<AddAdminFieldData>()!;
-            data.AddModel = model;
-            TempData.Set(data);
+            var data = multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                MultiPageFormDataFeature.AddAdminField,
+                TempData
+            );
+            data.OptionsString = model.OptionsString;
+            data.AdminFieldId = model.AdminFieldId;
+            data.Answer = model.Answer;
+            data.IncludeAnswersTableCaption = model.IncludeAnswersTableCaption;
+            multiPageFormService.SetMultiPageFormData(
+                data,
+                MultiPageFormDataFeature.AddAdminField,
+                TempData
+            );
+        }
+
+        private bool IsOptionsListUnique(List<string> optionsList)
+        {
+            var lowerCaseOptionsList = optionsList.Select(str => str.ToLower()).ToList();
+            return lowerCaseOptionsList.Count() == lowerCaseOptionsList.Distinct().Count();
         }
 
         private void ValidateBulkOptionsString(string? optionsString)
@@ -483,7 +561,7 @@
             {
                 ModelState.AddModelError(
                     nameof(BulkAdminFieldAnswersViewModel.OptionsString),
-                    "The complete list of answers must be 1000 characters or fewer"
+                    "The complete list of responses must be 1000 characters or fewer"
                 );
             }
 
@@ -492,8 +570,58 @@
             {
                 ModelState.AddModelError(
                     nameof(BulkAdminFieldAnswersViewModel.OptionsString),
-                    "Each answer must be 100 characters or fewer"
+                    "Each response must be 100 characters or fewer"
                 );
+            }
+
+            if (!IsOptionsListUnique(optionsList))
+            {
+                ModelState.AddModelError(
+                    nameof(BulkAdminFieldAnswersViewModel.OptionsString),
+                    "The list of responses contains duplicate options"
+                );
+            }
+        }
+
+        private void ValidateUniqueAdminFieldId(int customisationId, int? adminFieldId)
+        {
+            if (adminFieldId == null)
+            {
+                return;
+            }
+
+            var existingIds = courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(customisationId);
+
+            if (existingIds.Any(id => id == adminFieldId))
+            {
+                ModelState.AddModelError(
+                    nameof(AddAdminFieldViewModel.AdminFieldId),
+                    "That field name already exists for this course"
+                );
+            }
+        }
+
+        private void ValidateAndSetOptionsString(AdminFieldAnswersViewModel model)
+        {
+            var optionsString =
+                NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
+
+            if (optionsString.Length > 1000)
+            {
+                SetTotalAnswersLengthTooLongError(model);
+            }
+
+            if (!IsOptionsListUnique(NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(optionsString)))
+            {
+                ModelState.AddModelError(
+                    nameof(AdminFieldAnswersViewModel.Answer),
+                    "That response is already in the list of options"
+                );
+            }
+
+            if (ModelState.IsValid)
+            {
+                SetAdminFieldAnswersViewModelOptions(model, optionsString);
             }
         }
     }

@@ -54,7 +54,7 @@
             }
             catch (UserAccountNotFoundException)
             {
-                ModelState.AddModelError("EmailAddress", "A user with this email address could not be found");
+                ModelState.AddModelError("EmailAddress", "A user with this email could not be found");
 
                 return View(model);
             }

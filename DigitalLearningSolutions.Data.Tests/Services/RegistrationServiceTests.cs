@@ -16,7 +16,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging.Abstractions;
     using NUnit.Framework;
@@ -32,13 +34,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private ICentresDataService centresDataService = null!;
         private IConfiguration config = null!;
         private IEmailService emailService = null!;
-        private IFrameworkNotificationService frameworkNotificationService = null!;
         private IPasswordDataService passwordDataService = null!;
         private IPasswordResetService passwordResetService = null!;
         private IRegistrationDataService registrationDataService = null!;
         private IRegistrationService registrationService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
+        private INotificationDataService notificationDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -50,7 +52,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             centresDataService = A.Fake<ICentresDataService>();
             config = A.Fake<IConfiguration>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
-            frameworkNotificationService = A.Fake<IFrameworkNotificationService>();
+            notificationDataService = A.Fake<INotificationDataService>();
             userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(OldSystemBaseUrl);
@@ -72,8 +74,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 centresDataService,
                 config,
                 supervisorDelegateService,
-                frameworkNotificationService,
                 userDataService,
+                notificationDataService,
                 new NullLogger<RegistrationService>()
             );
         }
@@ -153,17 +155,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () =>
-                    emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval" &&
-                                e.Body.TextBody.Contains(OldSystemBaseUrl + "/tracking/approvedelegates")
-                        )
+                notificationDataService.GetAdminRecipientsForCentreNotification(
+                    model.Centre,
+                    4
                     )
-            ).MustHaveHappened();
+                ).MustHaveHappened();
         }
 
         [Test]
@@ -178,17 +174,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                 () =>
-                    emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval" &&
-                                e.Body.TextBody.Contains(RefactoredSystemBaseUrl + "/TrackingSystem/Delegates/Approve")
-                        )
+                notificationDataService.GetAdminRecipientsForCentreNotification(
+                    model.Centre,
+                    4
                     )
-            ).MustHaveHappened();
+                ).MustHaveHappened();
         }
 
         [Test]
@@ -288,34 +278,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void Registering_delegate_should_send_SupervisorDelegate_email_for_matching_id_record_only()
-        {
-            // Given
-            const int supervisorDelegateId = 2;
-            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
-            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
-
-            // When
-            registrationService.RegisterDelegate(
-                model,
-                string.Empty,
-                false,
-                supervisorDelegateId
-            );
-
-            // Then
-            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId, 0))
-                .MustHaveHappened();
-            A.CallTo(
-                () => frameworkNotificationService.SendSupervisorDelegateAcceptance(
-                    A<int>.That.Matches(id => id != supervisorDelegateId),
-                    A<int>._
-                )
-            ).MustNotHaveHappened();
-        }
-
-        [Test]
         public void Error_when_registering_delegate_returns_error_code()
         {
             // Given
@@ -385,7 +347,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(
@@ -404,7 +366,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(
@@ -420,7 +382,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(
@@ -439,7 +401,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
@@ -448,7 +410,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => registrationDataService.RegisterAdmin(model))
+            A.CallTo(() => registrationDataService.RegisterAdmin(model, true))
                 .MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustHaveHappened(1, Times.Exactly);
@@ -462,7 +424,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
 
             // When
-            Action act = () => registrationService.RegisterCentreManager(model, 1);
+            Action act = () => registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             act.Should().Throw<Exception>();
@@ -476,7 +438,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
 
             // When
-            Action act = () => registrationService.RegisterCentreManager(model, 1);
+            Action act = () => registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             act.Should().Throw<Exception>();
@@ -486,7 +448,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
-            A.CallTo(() => registrationDataService.RegisterAdmin(model))
+            A.CallTo(() => registrationDataService.RegisterAdmin(model, A<bool>._))
                 .MustNotHaveHappened();
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustNotHaveHappened();
@@ -499,7 +461,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            registrationService.RegisterCentreManager(model, 1);
+            registrationService.RegisterCentreManager(model, 1, true);
 
             // Then
             A.CallTo(
@@ -571,7 +533,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     model.Email,
                     NewCandidateNumber,
                     baseUrl,
-                    model.NotifyDate.Value,
+                    model.NotifyDate!.Value,
                     "RegisterDelegateByCentre_Refactor"
                 )
             ).MustHaveHappened(1, Times.Exactly);
@@ -631,23 +593,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void RegisterDelegateByCentre_should_not_send_SupervisorDelegate_email()
-        {
-            // Given
-            const string baseUrl = "base.com";
-            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
-            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
-
-            // When
-            registrationService.RegisterDelegateByCentre(model, baseUrl);
-
-            // Then
-            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(A<int>._, A<int>._))
-                .MustNotHaveHappened();
-        }
-
-        [Test]
         public void RegisterDelegateByCentre_calls_data_service_to_set_prn()
         {
             // Given
@@ -704,7 +649,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void PromoteDelegateToAdmin_throws_email_in_use_AdminCreationFailedException_if_admin_already_exists()
+        public void
+            PromoteDelegateToAdmin_throws_email_in_use_AdminCreationFailedException_if_active_admin_already_exists()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
@@ -719,7 +665,80 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             );
 
             // Then
-            result.Error.Should().Be(AdminCreationError.EmailAlreadyInUse);
+            using (new AssertionScope())
+            {
+                UpdateToExistingAdminAccountMustNotHaveHappened();
+                result.Error.Should().Be(AdminCreationError.EmailAlreadyInUse);
+            }
+        }
+
+        [Test]
+        public void
+            PromoteDelegateToAdmin_throws_email_in_use_AdminCreationFailedException_if_inactive_admin_at_different_centre_already_exists()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var adminUser = UserTestHelper.GetDefaultAdminUser(centreId: 3, active: false);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
+
+            // When
+            var result = Assert.Throws<AdminCreationFailedException>(
+                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                UpdateToExistingAdminAccountMustNotHaveHappened();
+                result.Error.Should().Be(AdminCreationError.EmailAlreadyInUse);
+            }
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_updates_existing_admin_if_inactive_admin_at_same_centre_already_exists()
+        {
+            // Given
+            const int categoryId = 1;
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var adminUser = UserTestHelper.GetDefaultAdminUser(active: false);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
+
+            // When
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, 1);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userDataService.ReactivateAdmin(adminUser.Id)).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => userDataService.UpdateAdminUser(
+                        delegateUser.FirstName!,
+                        delegateUser.LastName,
+                        delegateUser.EmailAddress!,
+                        delegateUser.ProfileImage,
+                        adminUser.Id
+                    )
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(() => passwordDataService.SetPasswordByAdminId(adminUser.Id, delegateUser.Password!))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => userDataService.UpdateAdminUserPermissions(
+                        adminUser.Id,
+                        adminRoles.IsCentreAdmin,
+                        adminRoles.IsSupervisor,
+                        adminRoles.IsNominatedSupervisor,
+                        adminRoles.IsTrainer,
+                        adminRoles.IsContentCreator,
+                        adminRoles.IsContentManager,
+                        adminRoles.ImportOnly,
+                        categoryId
+                    )
+                ).MustHaveHappenedOnceExactly();
+            }
         }
 
         [Test]
@@ -735,27 +754,32 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1);
 
             // Then
-            A.CallTo(
-                () => registrationDataService.RegisterAdmin(
-                    A<AdminRegistrationModel>.That.Matches(
-                        a =>
-                            a.FirstName == delegateUser.FirstName &&
-                            a.LastName == delegateUser.LastName &&
-                            a.Email == delegateUser.EmailAddress &&
-                            a.Centre == delegateUser.CentreId &&
-                            a.PasswordHash == delegateUser.Password &&
-                            a.Active &&
-                            a.Approved &&
-                            a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
-                            !a.IsCentreManager &&
-                            a.IsContentManager == adminRoles.IsContentManager &&
-                            a.ImportOnly == adminRoles.IsCmsAdministrator &&
-                            a.IsContentCreator == adminRoles.IsContentCreator &&
-                            a.IsTrainer == adminRoles.IsTrainer &&
-                            a.IsSupervisor == adminRoles.IsSupervisor
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                    () => registrationDataService.RegisterAdmin(
+                        A<AdminRegistrationModel>.That.Matches(
+                            a =>
+                                a.FirstName == delegateUser.FirstName &&
+                                a.LastName == delegateUser.LastName &&
+                                a.Email == delegateUser.EmailAddress &&
+                                a.Centre == delegateUser.CentreId &&
+                                a.PasswordHash == delegateUser.Password &&
+                                a.Active &&
+                                a.Approved &&
+                                a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
+                                !a.IsCentreManager &&
+                                a.IsContentManager == adminRoles.IsContentManager &&
+                                a.ImportOnly == adminRoles.IsCmsAdministrator &&
+                                a.IsContentCreator == adminRoles.IsContentCreator &&
+                                a.IsTrainer == adminRoles.IsTrainer &&
+                                a.IsSupervisor == adminRoles.IsSupervisor
+                        ),
+                        false
                     )
-                )
-            ).MustHaveHappened();
+                ).MustHaveHappened();
+                UpdateToExistingAdminAccountMustNotHaveHappened();
+            }
         }
 
         private void GivenNoPendingSupervisorDelegateRecordsForEmail()
@@ -779,6 +803,34 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     )
                 )
                 .Returns(supervisorDelegates);
+        }
+
+        private void UpdateToExistingAdminAccountMustNotHaveHappened()
+        {
+            A.CallTo(() => userDataService.ReactivateAdmin(A<int>._)).MustNotHaveHappened();
+            A.CallTo(
+                () => userDataService.UpdateAdminUser(
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<byte[]>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            A.CallTo(() => passwordDataService.SetPasswordByAdminId(A<int>._, A<string>._)).MustNotHaveHappened();
+            A.CallTo(
+                () => userDataService.UpdateAdminUserPermissions(
+                    A<int>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
         }
     }
 }

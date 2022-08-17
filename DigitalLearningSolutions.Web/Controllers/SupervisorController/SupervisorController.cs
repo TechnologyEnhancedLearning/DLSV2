@@ -16,37 +16,43 @@
         private readonly ICommonService commonService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ISelfAssessmentService selfAssessmentService;
+        private readonly IFrameworkService frameworkService;
         private readonly IConfigDataService configDataService;
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IUserDataService userDataService;
         private readonly ILogger<SupervisorController> logger;
         private readonly IConfiguration config;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly IMultiPageFormService multiPageFormService;
 
         public SupervisorController(
            ISupervisorService supervisorService,
            ICommonService commonService,
            IFrameworkNotificationService frameworkNotificationService,
            ISelfAssessmentService selfAssessmentService,
+           IFrameworkService frameworkService,
            IConfigDataService configDataService,
            ICentreRegistrationPromptsService centreRegistrationPromptsService,
            IUserDataService userDataService,
            ILogger<SupervisorController> logger,
            IConfiguration config,
-           ISearchSortFilterPaginateService searchSortFilterPaginateService
+           ISearchSortFilterPaginateService searchSortFilterPaginateService,
+           IMultiPageFormService multiPageFormService
         )
         {
             this.supervisorService = supervisorService;
             this.commonService = commonService;
             this.frameworkNotificationService = frameworkNotificationService;
             this.selfAssessmentService = selfAssessmentService;
+            this.frameworkService = frameworkService;
             this.configDataService = configDataService;
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.userDataService = userDataService;
             this.logger = logger;
             this.config = config;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
-        }
+            this.multiPageFormService = multiPageFormService;
+    }
 
         private int GetCentreId()
         {

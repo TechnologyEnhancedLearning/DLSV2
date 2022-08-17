@@ -23,27 +23,32 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly INotificationService notificationService;
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly ISupervisorService supervisorService;
+        private readonly IFrameworkService frameworkService;
         private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly IMultiPageFormService multiPageFormService;
 
         public LearningPortalController(
             ICentresDataService centresDataService,
             ICourseDataService courseDataService,
             ISelfAssessmentService selfAssessmentService,
             ISupervisorService supervisorService,
+            IFrameworkService frameworkService,
             INotificationService notificationService,
             IFrameworkNotificationService frameworkNotificationService,
             ILogger<LearningPortalController> logger,
             IConfiguration config,
             IActionPlanService actionPlanService,
             ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
-            ISearchSortFilterPaginateService searchSortFilterPaginateService
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
+            IMultiPageFormService multiPageFormService
         )
         {
             this.centresDataService = centresDataService;
             this.courseDataService = courseDataService;
             this.selfAssessmentService = selfAssessmentService;
             this.supervisorService = supervisorService;
+            this.frameworkService = frameworkService;
             this.notificationService = notificationService;
             this.frameworkNotificationService = frameworkNotificationService;
             this.logger = logger;
@@ -51,6 +56,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.actionPlanService = actionPlanService;
             this.candidateAssessmentDownloadFileService = candidateAssessmentDownloadFileService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
+            this.multiPageFormService = multiPageFormService;
         }
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]

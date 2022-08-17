@@ -18,7 +18,7 @@
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Centre))]
-    [Route("/TrackingSystem/Centre/Reports")]
+    [Route("/TrackingSystem/Centre/Reports/Courses")]
     public class ReportsController : Controller
     {
         private readonly IActivityService activityService;
@@ -61,7 +61,9 @@
                 filterModel,
                 evaluationResponseBreakdowns,
                 filterData.StartDate,
-                filterData.EndDate ?? DateTime.Today
+                filterData.EndDate ?? DateTime.Today,
+                activityService.GetActivityStartDateForCentre(centreId, categoryIdFilter) != null,
+                activityService.GetCourseCategoryNameForActivityFilter(categoryIdFilter)
             );
             return View(model);
         }
@@ -106,10 +108,10 @@
         [Route("EditFilters")]
         public IActionResult EditFilters(EditFiltersViewModel model)
         {
+            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
             if (!ModelState.IsValid)
             {
                 var centreId = User.GetCentreId();
-                var categoryIdFilter = User.GetAdminCourseCategoryFilter();
                 var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
                 model.SetUpDropdowns(filterOptions, categoryIdFilter);
                 model.DataStart = activityService.GetActivityStartDateForCentre(centreId);
@@ -120,7 +122,7 @@
                 model.GetValidatedStartDate(),
                 model.GetValidatedEndDate(),
                 model.JobGroupId,
-                model.CourseCategoryId,
+                categoryIdFilter ?? model.CourseCategoryId,
                 model.CustomisationId,
                 model.FilterType,
                 model.ReportInterval
@@ -182,7 +184,7 @@
             string startDate,
             string endDate,
             ReportInterval reportInterval
-            )
+        )
         {
             var centreId = User.GetCentreId();
             var adminCategoryIdFilter = User.GetAdminCourseCategoryFilter();

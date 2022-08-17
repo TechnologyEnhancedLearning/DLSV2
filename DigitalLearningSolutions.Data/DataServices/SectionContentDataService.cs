@@ -164,6 +164,7 @@
                         AND (CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1 OR CustomisationTutorials.Status = 1)
                         AND Customisations.Active = 1
                         AND Tutorials.ArchivedDate IS NULL
+                        AND Applications.DefaultContentTypeID <> 4
                         ORDER BY Tutorials.OrderByNumber, Tutorials.TutorialID",
                 (section, tutorial) =>
                 {

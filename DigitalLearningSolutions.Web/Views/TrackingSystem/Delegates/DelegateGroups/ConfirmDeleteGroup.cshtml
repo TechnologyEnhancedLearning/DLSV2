@@ -1,7 +1,5 @@
-﻿@inject IConfiguration Configuration;
-@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
-@using Microsoft.Extensions.Configuration
 @model ConfirmDeleteGroupViewModel
 
 @{
@@ -19,14 +17,7 @@
   </div>
 </div>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l nhsuk-u-font-weight-bold">
-    Group name:
-  </div>
-  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
-    @Model.GroupLabel
-  </div>
-</div>
+<vc:field-name-value-display display-name="Group name" field-value="@Model.GroupLabel" />
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">

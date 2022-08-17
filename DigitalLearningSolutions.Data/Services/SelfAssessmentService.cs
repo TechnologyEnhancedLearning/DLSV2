@@ -32,11 +32,12 @@
         bool CanDelegateAccessSelfAssessment(int delegateId, int selfAssessmentId);
 
         // Competencies
-        IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId);
+        IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId, int? selfAssessmentResultId = null);
 
         IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId);
 
         IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId);
+        IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int candidateId);
 
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(
             int assessmentQuestionId,
@@ -70,8 +71,6 @@
 
         // Supervisor
         IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
-
-        SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int candidateId);
 
         IEnumerable<SupervisorSignOff> GetSupervisorSignOffsForCandidateAssessment(
             int selfAssessmentId,
@@ -172,9 +171,9 @@
             selfAssessmentDataService.SetCompleteByDate(selfAssessmentId, candidateId, completeByDate);
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId)
+        public IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId, int? selfAssessmentResultId = null)
         {
-            return selfAssessmentDataService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId);
+            return selfAssessmentDataService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId, selfAssessmentResultId);
         }
 
         public IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(
@@ -188,6 +187,11 @@
         public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId)
         {
             return selfAssessmentDataService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, candidateId);
+        }
+
+        public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int candidateId)
+        {
+            return selfAssessmentDataService.GetResultSupervisorVerifications(selfAssessmentId, candidateId);
         }
 
         public IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(
@@ -209,11 +213,6 @@
         public SupervisorComment? GetSupervisorComments(int candidateId, int resultId)
         {
             return selfAssessmentDataService.GetSupervisorComments(candidateId, resultId);
-        }
-
-        public SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int candidateId)
-        {
-            return selfAssessmentDataService.GetSupervisorForSelfAssessmentId(selfAssessmentId, candidateId);
         }
 
         public IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(

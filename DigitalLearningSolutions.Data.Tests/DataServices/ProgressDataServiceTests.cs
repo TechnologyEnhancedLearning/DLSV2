@@ -6,8 +6,10 @@
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Progress;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Data.SqlClient;
@@ -360,6 +362,24 @@
         }
 
         [Test]
+        public void LockProgress_updates_progress_record()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int progressId = 1;
+            var statusBeforeLock = progressTestHelper.GetCourseProgressLockedStatusByProgressId(progressId);
+
+            // When
+            progressDataService.LockProgress(progressId);
+            var statusAfterLocked = progressTestHelper.GetCourseProgressLockedStatusByProgressId(progressId);
+
+            // Then
+            statusBeforeLock.Should().BeFalse();
+            statusAfterLocked.Should().BeTrue();
+        }
+
+        [Test]
         public void GetLearningLogEntries_gets_records_correctly()
         {
             // Given
@@ -682,6 +702,125 @@
             // Then
             var progressCompletedDate = progressTestHelper.GetProgressCompletedDateById(progressId);
             progressCompletedDate.Should().Be(expectedCompletedDate);
+        }
+
+        [Test]
+        public void GetAssessAttemptsForProgressSection_gets_all_appropriate_records()
+        {
+            // Given
+            const int progressId = 1;
+            const int sectionNumber = 2;
+
+            // When
+            var results = progressDataService.GetAssessAttemptsForProgressSection(progressId, sectionNumber);
+
+            // Then
+            var expectedAssessAttemptResults = Builder<AssessAttempt>.CreateListOfSize(2).All()
+                .With(a => a.CandidateId = 1)
+                .With(a => a.CustomisationId = 100)
+                .With(a => a.CustomisationVersion = 1)
+                .With(a => a.AssessInstance = 3)
+                .With(a => a.SectionNumber = 2)
+                .With(a => a.Score = 100)
+                .With(a => a.Status = true)
+                .With(a => a.ProgressId = 1)
+                .TheFirst(1).With(a => a.AssessAttemptId = 3)
+                .And(a => a.Date = new DateTime(2010, 09, 22, 7, 54, 40, 307))
+                .TheLast(1).With(a => a.AssessAttemptId = 4)
+                .And(a => a.Date = new DateTime(2010, 09, 22, 7, 58, 04, 937))
+                .Build();
+            results.Should().BeEquivalentTo(expectedAssessAttemptResults);
+        }
+
+        [Test]
+        public void InsertAssessAttempt_inserts_details_correctly()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int candidateId = 987;
+            const int customisationId = 123;
+            const int customisationVersion = 2;
+            const int sectionNumber = 4;
+            const int score = 42;
+            const bool status = false;
+            const int progressId = 1;
+            var insertionDate = new DateTime(2022, 06, 14, 12, 23, 54, 937);
+
+            // When
+            var recordsPriorToInsertion = progressDataService.GetAssessAttemptsForProgressSection(
+                progressId,
+                sectionNumber
+            );
+
+            progressDataService.InsertAssessAttempt(
+                candidateId,
+                customisationId,
+                customisationVersion,
+                insertionDate,
+                sectionNumber,
+                score,
+                status,
+                progressId
+            );
+            var result = progressDataService.GetAssessAttemptsForProgressSection(
+                progressId,
+                sectionNumber
+            ).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                recordsPriorToInsertion.Count().Should().Be(1);
+                result.Count.Should().Be(2);
+                var insertedRecord = result.OrderByDescending(aa => aa.AssessAttemptId).First();
+                insertedRecord.CandidateId.Should().Be(candidateId);
+                insertedRecord.CustomisationId.Should().Be(customisationId);
+                insertedRecord.CustomisationVersion.Should().Be(customisationVersion);
+                insertedRecord.Date.Should().Be(insertionDate);
+                insertedRecord.AssessInstance.Should().Be(1);
+                insertedRecord.SectionNumber.Should().Be(sectionNumber);
+                insertedRecord.Score.Should().Be(score);
+                insertedRecord.Status.Should().Be(status);
+                insertedRecord.ProgressId.Should().Be(progressId);
+            }
+        }
+
+        [Test]
+        public void GetSectionAndApplicationDetailsForAssessAttempts_gets_all_appropriate_details()
+        {
+            // Given
+            const int sectionId = 1609;
+            const int customisationId = 21072;
+
+            // When
+            var result =
+                progressDataService.GetSectionAndApplicationDetailsForAssessAttempts(sectionId, customisationId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result!.AssessAttempts.Should().Be(2);
+                result.PlaPassThreshold.Should().Be(50);
+                result.SectionNumber.Should().Be(1);
+            }
+        }
+
+        [Test]
+        public void
+            GetSectionAndApplicationDetailsForAssessAttempts_returns_null_if_section_and_customisation_do_not_match()
+        {
+            // Given
+            const int sectionId = 11;
+            const int customisationId = 12;
+
+            // When
+            var result =
+                progressDataService.GetSectionAndApplicationDetailsForAssessAttempts(sectionId, customisationId);
+
+            // Then
+            result.Should().BeNull();
         }
     }
 }

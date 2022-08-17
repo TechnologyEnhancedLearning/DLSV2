@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [Theory]
         [InlineData("/MyAccount", "My account")]
         [InlineData("/MyAccount/EditDetails", "Edit details")]
+        [InlineData("/FindYourCentre", "Find your centre")]
         [InlineData("/Signposting/LaunchLearningResource/3", "View resource \"Test image resource\"")]
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData(
@@ -38,7 +39,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Centre/Configuration/RegistrationPrompts/1/Remove",
             "Remove delegate registration prompt"
         )]
-        [InlineData("/TrackingSystem/Centre/Reports", "Centre reports")]
+        [InlineData("/TrackingSystem/Centre/Reports/Courses", "Centre reports")]
         [InlineData("/TrackingSystem/Centre/SystemNotifications", "New system notifications")]
         [InlineData("/TrackingSystem/Centre/TopCourses", "Top courses")]
         [InlineData("/TrackingSystem/CourseSetup", "Centre course setup")]
@@ -61,7 +62,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Delegates/Groups/5/EditDescription?returnPageQuery=pageNumber%3D1",
             "Edit description for Activities worker or coordinator group (optional)"
         )]
-        [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName?returnPageQuery=pageNumber%3D1", "Edit group name")]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/103/EditGroupName?returnPageQuery=pageNumber%3D1",
+            "Edit group name"
+        )]
         [InlineData("/TrackingSystem/Delegates/Groups/Add", "Add new delegate group")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Activities worker or coordinator")]
         [InlineData(
@@ -87,8 +91,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         )]
         [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]
-        [InlineData("/TrackingSystem/Delegates/3/SetPassword?returnPageQuery=pageNumber%3D1", "Set delegate user password")]
-        [InlineData("/TrackingSystem/Delegates/3/View/100/ViewDelegate/Remove", "Remove enrolment")]
+        [InlineData(
+            "/TrackingSystem/Delegates/3/SetPassword?returnPageQuery=pageNumber%3D1",
+            "Set delegate user password"
+        )]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
@@ -96,20 +102,24 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/CourseDelegates", "Course delegates")]
         [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104", "Delegate progress")]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditSupervisor",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditSupervisor",
             "Edit supervisor for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompleteByDate",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditCompleteByDate",
             "Edit complete by date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/243104/EditCompletionDate",
             "Edit completed date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
-            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/22657/EditAdminField/1",
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/22657/EditAdminField/1",
             "Edit System Access Granted field for Entry Level - Win XP, Office 2003/07 OLD - Standard"
+        )]
+        [InlineData(
+            "/TrackingSystem/Delegates/ViewDelegate/DelegateProgress/22657/Remove",
+            "Remove enrolment"
         )]
         [InlineData(
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/LearningLog",

@@ -3,12 +3,14 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField;
+    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using FakeItEasy;
@@ -20,12 +22,11 @@
 
     public class AdminFieldsControllerTests
     {
-        private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService =
-            A.Fake<ICourseAdminFieldsDataService>();
-
-        private readonly ICourseAdminFieldsService courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
-        private readonly ICourseService courseService = A.Fake<ICourseService>();
         private AdminFieldsController controller = null!;
+        private ICourseAdminFieldsDataService courseAdminFieldsDataService = null!;
+        private ICourseAdminFieldsService courseAdminFieldsService = null!;
+        private ICourseService courseService = null!;
+        private IMultiPageFormService multiPageFormService = null!;
 
         private static IEnumerable<TestCaseData> AddAnswerModelErrorTestData
         {
@@ -34,19 +35,19 @@
                 yield return new TestCaseData(
                     new string('x', 1000),
                     "xx",
-                    "The complete list of answers must be 1000 characters or fewer (0 characters remaining for the new answer, 2 characters were entered)"
+                    "The complete list of responses must be 1000 characters or fewer (0 characters remaining for the new response, 2 characters were entered)"
                 ).SetName("Error_message_shows_zero_characters_remaining_if_options_string_is_at_max_length");
                 yield return new TestCaseData(
                     new string('x', 998),
                     "xx",
-                    "The complete list of answers must be 1000 characters or fewer (0 characters remaining for the new answer, 2 characters were entered)"
+                    "The complete list of responses must be 1000 characters or fewer (0 characters remaining for the new response, 2 characters were entered)"
                 ).SetName(
                     "Error_message_shows_zero_characters_remaining_if_options_string_is_two_less_than_max_length"
                 );
                 yield return new TestCaseData(
                     new string('x', 996),
                     "xxxx",
-                    "The complete list of answers must be 1000 characters or fewer (2 characters remaining for the new answer, 4 characters were entered)"
+                    "The complete list of responses must be 1000 characters or fewer (2 characters remaining for the new response, 4 characters were entered)"
                 ).SetName("Error_message_shows_two_less_than_number_of_characters_remaining_if_possible_to_add_answer");
             }
         }
@@ -54,9 +55,14 @@
         [SetUp]
         public void Setup()
         {
+            courseAdminFieldsDataService = A.Fake<ICourseAdminFieldsDataService>();
+            courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
+            multiPageFormService = A.Fake<IMultiPageFormService>();
+            courseService = A.Fake<ICourseService>();
             controller = new AdminFieldsController(
                     courseAdminFieldsService,
-                    courseAdminFieldsDataService
+                    courseAdminFieldsDataService,
+                    multiPageFormService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -155,6 +161,14 @@
         {
             // Given
             var model = new EditAdminFieldViewModel(1, "Test", "Options");
+            var expectedData = new EditAdminFieldTempData
+            {
+                PromptNumber = model.PromptNumber,
+                Prompt = model.Prompt,
+                OptionsString = model.OptionsString,
+                Answer = model.Answer,
+                IncludeAnswersTableCaption = model.IncludeAnswersTableCaption,
+            };
             const string action = "bulk";
 
             // When
@@ -163,7 +177,7 @@
             // Then
             using (new AssertionScope())
             {
-                AssertEditTempDataIsExpected(model);
+                AssertEditAdminFieldMultiPageFormDataIsUpdatedCorrectly(expectedData);
                 result.Should().BeRedirectToActionResult().WithActionName("EditAdminFieldAnswersBulk");
             }
         }
@@ -188,21 +202,44 @@
             // Given
             var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer");
             var initialEditViewModel = new EditAdminFieldViewModel(1, "Test", "Test");
-            var expectedViewModel = new EditAdminFieldViewModel(1, "Test", "Test\r\nAnswer");
-            var initialTempData = new EditAdminFieldData(initialEditViewModel);
+            var initialTempData = new EditAdminFieldTempData
+            {
+                PromptNumber = initialEditViewModel.PromptNumber,
+                Prompt = initialEditViewModel.Prompt,
+                OptionsString = initialEditViewModel.OptionsString,
+                Answer = initialEditViewModel.Answer,
+                IncludeAnswersTableCaption = initialEditViewModel.IncludeAnswersTableCaption,
+            };
 
-            controller.TempData.Set(initialTempData);
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
+                    MultiPageFormDataFeature.EditAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
 
             A.CallTo(() => courseService.VerifyAdminUserCanManageCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(true);
 
             // When
-            var result = controller.EditAdminFieldAnswersBulk(1, 1, inputViewModel);
+            var result = controller.EditAdminFieldAnswersBulk(1, inputViewModel);
 
             // Then
             using (new AssertionScope())
             {
-                AssertEditTempDataIsExpected(expectedViewModel);
+                A.CallTo(
+                    () => multiPageFormService.SetMultiPageFormData(
+                        A<EditAdminFieldTempData>.That.Matches(
+                            d => d.PromptNumber == initialTempData.PromptNumber &&
+                                 d.Prompt == initialTempData.Prompt &&
+                                 d.Answer == initialTempData.Answer &&
+                                 d.IncludeAnswersTableCaption == initialTempData.IncludeAnswersTableCaption &&
+                                 d.OptionsString == inputViewModel.OptionsString
+                        ),
+                        MultiPageFormDataFeature.EditAdminField,
+                        controller.TempData
+                    )
+                ).MustHaveHappenedOnceExactly();
                 result.Should().BeRedirectToActionResult().WithActionName("EditAdminField");
             }
         }
@@ -214,23 +251,8 @@
             var result = controller.AddAdminFieldNew(1);
 
             // Then
-            controller.TempData.Peek<AddAdminFieldData>().Should().NotBeNull();
+            AssertAddAdminFieldMultiPageFormDataIsUpdatedCorrectly(new AddAdminFieldTempData());
             result.Should().BeRedirectToActionResult().WithActionName("AddAdminField");
-        }
-
-        [Test]
-        public void AddAdminField_post_updates_temp_data_and_redirects()
-        {
-            var expectedPromptModel = new AddAdminFieldViewModel();
-            var initialTempData = new AddAdminFieldData(expectedPromptModel);
-            controller.TempData.Set(initialTempData);
-
-            // When
-            var result = controller.AddAdminField(1);
-
-            // Then
-            AssertAddTempDataIsExpected(expectedPromptModel);
-            result.As<ViewResult>().Model.Should().BeOfType<AddAdminFieldViewModel>();
         }
 
         [Test]
@@ -239,8 +261,14 @@
             // Given
             var model = new AddAdminFieldViewModel(1, "Test");
             const string action = "save";
-            var initialTempData = new AddAdminFieldData(model);
-            controller.TempData.Set(initialTempData);
+            var initialTempData = new AddAdminFieldTempData
+                { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
 
             A.CallTo(
                 () => courseAdminFieldsService.AddAdminFieldToCourse(
@@ -254,6 +282,12 @@
             var result = controller.AddAdminField(100, model, action);
 
             // Then
+            A.CallTo(
+                () => multiPageFormService.ClearMultiPageFormData(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
@@ -263,8 +297,14 @@
             // Given
             var model = new AddAdminFieldViewModel(1, null);
             const string action = "save";
-            var initialTempData = new AddAdminFieldData(model);
-            controller.TempData.Set(initialTempData);
+            var initialTempData = new AddAdminFieldTempData
+                { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
 
             A.CallTo(
                 () => courseAdminFieldsService.AddAdminFieldToCourse(
@@ -287,8 +327,14 @@
             // Given
             var model = new AddAdminFieldViewModel(1, "Test");
             const string action = "save";
-            var initialTempData = new AddAdminFieldData(model);
-            controller.TempData.Set(initialTempData);
+            var initialTempData = new AddAdminFieldTempData
+                { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
 
             A.CallTo(
                 () => courseAdminFieldsService.AddAdminFieldToCourse(
@@ -312,10 +358,27 @@
         public void AddAdminField_add_configures_new_answer_and_updates_temp_data()
         {
             var initialViewModel = new AddAdminFieldViewModel(1, "Test", "Answer");
-            var initialTempData = new AddAdminFieldData(initialViewModel);
-            controller.TempData.Set(initialTempData);
+            var initialTempData = new AddAdminFieldTempData
+            {
+                AdminFieldId = initialViewModel.AdminFieldId,
+                OptionsString = initialViewModel.OptionsString,
+                Answer = initialViewModel.Answer,
+                IncludeAnswersTableCaption = initialViewModel.IncludeAnswersTableCaption,
+            };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
 
-            var expectedViewModel = new AddAdminFieldViewModel(1, "Test\r\nAnswer");
+            var expectedData = new AddAdminFieldTempData
+            {
+                AdminFieldId = 1,
+                OptionsString = "Test\r\nAnswer",
+                Answer = null,
+                IncludeAnswersTableCaption = initialViewModel.IncludeAnswersTableCaption,
+            };
             const string action = "addPrompt";
 
             // When
@@ -325,7 +388,7 @@
             // Then
             using (new AssertionScope())
             {
-                AssertAddTempDataIsExpected(expectedViewModel);
+                AssertAddAdminFieldMultiPageFormDataIsUpdatedCorrectly(expectedData);
                 result.As<ViewResult>().Model.Should().BeOfType<AddAdminFieldViewModel>();
                 AssertNumberOfConfiguredAnswersOnView(result, 2);
             }
@@ -335,20 +398,27 @@
         public void AddAdminField_adds_answer_without_admin_field_selected()
         {
             var initialViewModel = new AddAdminFieldViewModel(null, null, "Answer");
-            var initialTempData = new AddAdminFieldData(initialViewModel);
-            controller.TempData.Set(initialTempData);
+            var initialTempData = new AddAdminFieldTempData
+            {
+                AdminFieldId = initialViewModel.AdminFieldId,
+                OptionsString = initialViewModel.OptionsString,
+                Answer = initialViewModel.Answer,
+                IncludeAnswersTableCaption = initialViewModel.IncludeAnswersTableCaption,
+            };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
 
-            var expectedViewModel = new AddAdminFieldViewModel(null, "Answer");
             const string action = "addPrompt";
 
             // When
             controller.AddAdminField(1, initialViewModel, action);
 
             // Then
-            using (new AssertionScope())
-            {
-                AssertAddTempDataIsExpected(expectedViewModel);
-            }
+            AssertAddAdminFieldMultiPageFormDataIsUpdatedCorrectly(initialTempData);
         }
 
         [Test]
@@ -364,8 +434,14 @@
         {
             // Given
             var initialViewModel = new AddAdminFieldViewModel(1, optionsString, newAnswerInput);
-            var initialTempData = new AddAdminFieldData(initialViewModel);
-            controller.TempData.Set(initialTempData);
+            var initialTempData = new AddAdminFieldTempData
+                { AdminFieldId = initialViewModel.AdminFieldId, OptionsString = initialViewModel.OptionsString };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
             const string action = "addPrompt";
 
             // When
@@ -386,8 +462,14 @@
             // Given
             var model = new AddAdminFieldViewModel(1, "Test\r\nAnswer");
             const string action = "delete0";
-            var initialTempData = new AddAdminFieldData(model);
-            controller.TempData.Set(initialTempData);
+            var initialTempData = new AddAdminFieldTempData
+                { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
 
             // When
             var result = controller.AddAdminField(1, model, action);
@@ -405,8 +487,14 @@
         {
             var model = new AddAdminFieldViewModel(null, "Test\r\nAnswer");
             const string action = "delete0";
-            var initialTempData = new AddAdminFieldData(model);
-            controller.TempData.Set(initialTempData);
+            var initialTempData = new AddAdminFieldTempData
+                { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
 
             // When
             var result = controller.AddAdminField(1, model, action);
@@ -425,8 +513,19 @@
             // Given
             var model = new AddAdminFieldViewModel(1, "Options");
             const string action = "bulk";
-            var initialTempData = new AddAdminFieldData(model);
-            controller.TempData.Set(initialTempData);
+            var initialTempData = new AddAdminFieldTempData
+            {
+                AdminFieldId = model.AdminFieldId,
+                OptionsString = model.OptionsString,
+                Answer = model.Answer,
+                IncludeAnswersTableCaption = model.IncludeAnswersTableCaption,
+            };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
 
             // When
             var result = controller.AddAdminField(1, model, action);
@@ -434,7 +533,7 @@
             // Then
             using (new AssertionScope())
             {
-                AssertAddTempDataIsExpected(model);
+                AssertAddAdminFieldMultiPageFormDataIsUpdatedCorrectly(initialTempData);
                 result.Should().BeRedirectToActionResult().WithActionName("AddAdminFieldAnswersBulk");
             }
         }
@@ -445,8 +544,14 @@
             // Given
             var model = new AddAdminFieldViewModel(null, "Options");
             const string action = "bulk";
-            var initialTempData = new AddAdminFieldData(model);
-            controller.TempData.Set(initialTempData);
+            var initialTempData = new AddAdminFieldTempData
+                { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
 
             // When
             var result = controller.AddAdminField(1, model, action);
@@ -454,7 +559,7 @@
             // Then
             using (new AssertionScope())
             {
-                AssertAddTempDataIsExpected(model);
+                AssertAddAdminFieldMultiPageFormDataIsUpdatedCorrectly(initialTempData);
                 result.Should().BeRedirectToActionResult().WithActionName("AddAdminFieldAnswersBulk");
             }
         }
@@ -465,8 +570,14 @@
             // Given
             var model = new AddAdminFieldViewModel();
             const string action = "deletetest";
-            var initialTempData = new AddAdminFieldData(model);
-            controller.TempData.Set(initialTempData);
+            var initialTempData = new AddAdminFieldTempData
+                { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
 
             // When
             var result = controller.AddAdminField(1, model, action);
@@ -481,10 +592,15 @@
             // Given
             var inputViewModel = new AddBulkAdminFieldAnswersViewModel("Test\r\nAnswer", 1);
             var initialAddViewModel = new AddAdminFieldViewModel(1, "Test");
-            var expectedViewModel = new AddAdminFieldViewModel(1, "Test\r\nAnswer");
-            var initialTempData = new AddAdminFieldData(initialAddViewModel);
-
-            controller.TempData.Set(initialTempData);
+            var expectedData = new AddAdminFieldTempData { AdminFieldId = 1, OptionsString = "Test\r\nAnswer" };
+            var initialTempData = new AddAdminFieldTempData
+                { AdminFieldId = initialAddViewModel.AdminFieldId, OptionsString = initialAddViewModel.OptionsString };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
 
             // When
             var result = controller.AddAdminFieldAnswersBulk(1, inputViewModel);
@@ -492,7 +608,7 @@
             // Then
             using (new AssertionScope())
             {
-                AssertAddTempDataIsExpected(expectedViewModel);
+                AssertAddAdminFieldMultiPageFormDataIsUpdatedCorrectly(expectedData);
                 result.Should().BeRedirectToActionResult().WithActionName("AddAdminField");
             }
         }
@@ -551,6 +667,122 @@
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
+        [Test]
+        public void AddAdminField_adds_model_error_if_field_name_is_already_in_use()
+        {
+            // Given
+            var model = new AddAdminFieldViewModel(1, "test");
+            var initialTempData = new AddAdminFieldTempData
+                { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
+            const string action = "save";
+
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseFieldPromptIdsForCustomisation(A<int>._))
+                .Returns(new[] { 1, 0, 0 });
+
+            // When
+            var result = controller.AddAdminField(100, model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<AddAdminFieldViewModel>();
+                AssertModelStateErrorIsExpected(result, "That field name already exists for this course");
+            }
+        }
+
+        [Test]
+        public void AddAdminField_adds_model_error_if_trimmed_case_insensitive_answer_is_already_in_options_list()
+        {
+            // Given
+            var model = new AddAdminFieldViewModel(1, "test", "  tEsT  ");
+            var initialTempData = new AddAdminFieldTempData
+                { AdminFieldId = model.AdminFieldId, OptionsString = model.OptionsString };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<AddAdminFieldTempData>(
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
+            const string action = "addPrompt";
+
+            // When
+            var result = controller.AddAdminField(1, model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<AddAdminFieldViewModel>();
+                AssertModelStateErrorIsExpected(result, "That response is already in the list of options");
+            }
+        }
+
+        [Test]
+        public void EditAdminField_adds_model_error_if_trimmed_case_insensitive_answer_is_already_in_options_list()
+        {
+            // Given
+            var model = new EditAdminFieldViewModel(1, "prompt", "test");
+            model.Answer = "  tEsT  ";
+            var initialTempData = new EditAdminFieldTempData
+                { PromptNumber = model.PromptNumber, Prompt = model.Prompt, OptionsString = model.OptionsString };
+            A.CallTo(
+                () => multiPageFormService.GetMultiPageFormData<EditAdminFieldTempData>(
+                    MultiPageFormDataFeature.EditAdminField,
+                    controller.TempData
+                )
+            ).Returns(initialTempData);
+            const string action = "addPrompt";
+
+            // When
+            var result = controller.EditAdminField(1, model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<EditAdminFieldViewModel>();
+                AssertModelStateErrorIsExpected(result, "That response is already in the list of options");
+            }
+        }
+
+        [Test]
+        public void AddAdminFieldAnswersBulk_adds_model_error_if_trimmed_case_insensitive_bulk_edit_is_not_unique()
+        {
+            // Given
+            var model = new AddBulkAdminFieldAnswersViewModel("test\r\n   tEsT   ");
+
+            // When
+            var result = controller.AddAdminFieldAnswersBulk(1, model);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<AddBulkAdminFieldAnswersViewModel>();
+                AssertModelStateErrorIsExpected(result, "The list of responses contains duplicate options");
+            }
+        }
+
+        [Test]
+        public void EditAdminFieldAnswersBulk_adds_model_error_if_trimmed_case_insensitive_bulk_edit_is_not_unique()
+        {
+            // Given
+            var model = new BulkAdminFieldAnswersViewModel("test\r\n   tEsT   ");
+
+            // When
+            var result = controller.EditAdminFieldAnswersBulk(1, model);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<BulkAdminFieldAnswersViewModel>();
+                AssertModelStateErrorIsExpected(result, "The list of responses contains duplicate options");
+            }
+        }
+
         private static void AssertNumberOfConfiguredAnswersOnView(IActionResult result, int expectedCount)
         {
             result.Should().BeViewResult();
@@ -558,23 +790,50 @@
                 .Be(expectedCount);
         }
 
-        private void AssertEditTempDataIsExpected(EditAdminFieldViewModel expectedData)
-        {
-            controller.TempData.Peek<EditAdminFieldData>()!.EditModel.Should()
-                .BeEquivalentTo(expectedData);
-        }
-
-        private void AssertAddTempDataIsExpected(AddAdminFieldViewModel expectedData)
-        {
-            controller.TempData.Peek<AddAdminFieldData>()!.AddModel.Should()
-                .BeEquivalentTo(expectedData);
-        }
-
         private static void AssertModelStateErrorIsExpected(IActionResult result, string expectedErrorMessage)
         {
             var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
                 .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
             errorMessage.Should().BeEquivalentTo(expectedErrorMessage);
+        }
+
+        private void AssertAddAdminFieldMultiPageFormDataIsUpdatedCorrectly(
+            AddAdminFieldTempData expectedTempData
+        )
+        {
+            A.CallTo(
+                () => multiPageFormService.SetMultiPageFormData(
+                    A<AddAdminFieldTempData>.That.Matches(
+                        d => d.AdminFieldId == expectedTempData.AdminFieldId &&
+                             d.OptionsString == expectedTempData.OptionsString &&
+                             d.Answer == expectedTempData.Answer &&
+                             d.IncludeAnswersTableCaption ==
+                             expectedTempData.IncludeAnswersTableCaption
+                    ),
+                    MultiPageFormDataFeature.AddAdminField,
+                    controller.TempData
+                )
+            ).MustHaveHappened();
+        }
+
+        private void AssertEditAdminFieldMultiPageFormDataIsUpdatedCorrectly(
+            EditAdminFieldTempData expectedTempData
+        )
+        {
+            A.CallTo(
+                () => multiPageFormService.SetMultiPageFormData(
+                    A<EditAdminFieldTempData>.That.Matches(
+                        d => d.PromptNumber == expectedTempData.PromptNumber &&
+                             d.Prompt == expectedTempData.Prompt &&
+                             d.OptionsString == expectedTempData.OptionsString &&
+                             d.Answer == expectedTempData.Answer &&
+                             d.IncludeAnswersTableCaption ==
+                             expectedTempData.IncludeAnswersTableCaption
+                    ),
+                    MultiPageFormDataFeature.EditAdminField,
+                    controller.TempData
+                )
+            ).MustHaveHappened();
         }
     }
 }

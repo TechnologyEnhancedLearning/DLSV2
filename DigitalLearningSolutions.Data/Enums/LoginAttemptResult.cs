@@ -7,7 +7,6 @@
         InactiveCentre,
         AccountNotApproved,
         AccountLocked,
-        InvalidPassword,
-        InvalidUsername
+        InvalidCredentials
     }
 }

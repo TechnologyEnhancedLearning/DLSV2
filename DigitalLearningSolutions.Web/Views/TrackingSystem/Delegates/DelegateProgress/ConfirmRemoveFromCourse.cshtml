@@ -1,0 +1,55 @@
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@model RemoveFromCourseViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Remove enrolment" : "Remove enrolment";
+
+  var cancelLinkRouteData = new Dictionary<string, string>();
+
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+    cancelLinkRouteData.Add("customisationId", Model.CustomisationId.ToString());
+  } else {
+    cancelLinkRouteData.Add("delegateId", Model.DelegateId.ToString());
+  }
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
+    }
+    <h1 class="nhsuk-heading-xl">Remove enrolment</h1>
+  </div>
+</div>
+
+<vc:field-name-value-display display-name="Delegate" field-value="@Model.Name" />
+<vc:field-name-value-display display-name="Activity" field-value="@Model.CourseName" />
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <form class="nhsuk-u-margin-bottom-3"
+          asp-action="ExecuteRemoveFromCourse"
+          asp-route-progressId="@Model.ProgressId"
+          asp-route-accessedVia="@Model.AccessedVia">
+      <input type="hidden" asp-for="DelegateId" />
+      <input type="hidden" asp-for="ProgressId" />
+      <input type="hidden" asp-for="CustomisationId" />
+      <input type="hidden" asp-for="@Model.Name" />
+      <input type="hidden" asp-for="@Model.CourseName" />
+      <input type="hidden" asp-for="@Model.ReturnPageQuery" />
+
+      <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
+                          label="I am sure that I wish to remove this enrolment"
+                          hint-text="This action will remove the activity from the delegate’s Current Activities list and archive their progress." />
+
+      <button class="nhsuk-button delete-button" role="button" type="submit">Remove enrolment</button>
+    </form>
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+      <vc:cancel-link-with-return-page-query asp-controller="CourseDelegates" asp-action="Index" route-data="@cancelLinkRouteData" return-page-query="@Model.ReturnPageQuery!.Value" />
+    } else {
+      <vc:cancel-link asp-controller=ViewDelegate asp-action="Index" asp-all-route-data="@cancelLinkRouteData" />
+    }
+  </div>
+</div>

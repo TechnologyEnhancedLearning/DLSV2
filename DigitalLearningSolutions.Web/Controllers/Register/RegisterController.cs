@@ -135,7 +135,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return RedirectToAction("Index");
             }
 
-            var model = new LearnerInformationViewModel(data);
+            var model = new LearnerInformationViewModel(data, true);
             PopulateLearnerInformationExtraFields(model, data);
             return View(model);
         }
@@ -320,7 +320,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
-                    "A user with this email address is already registered at this centre"
+                    "A user with this email is already registered at this centre"
                 );
             }
         }

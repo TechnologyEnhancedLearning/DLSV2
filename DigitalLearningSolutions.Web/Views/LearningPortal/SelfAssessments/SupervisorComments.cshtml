@@ -2,101 +2,101 @@
 @model SupervisorCommentsViewModel
 
 @{
-  Layout = "SelfAssessments/_Layout";
-  ViewData["Title"] = "Supervisor comments";
-  ViewData["Application"] = "Supervisor notes";
-  var supervisorName = string.IsNullOrWhiteSpace(Model.SelfAssessmentSupervisor?.SupervisorName) ?
-    "Supervisor" : Model.SelfAssessmentSupervisor.SupervisorName;
+    Layout = "SelfAssessments/_Layout";
+    ViewData["Title"] = "Supervisor comments";
+    ViewData["Application"] = "Supervisor notes";
+    var supervisorName = string.IsNullOrWhiteSpace(Model.SupervisorComment.SupervisorName) ?
+      "Supervisor" : Model.SupervisorComment.SupervisorName;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
 @section breadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item">
-          <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment"
-             asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID">
-            @(Model.SupervisorComment != null ? $"{Model.SupervisorComment.Name} introduction" : "")
-          </a>
-        </li>
-        <li class="nhsuk-breadcrumb__item">
-          <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview"
-             asp-route-vocabulary="@Model.VocabPlural()"
-             asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID"
-             asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
-             asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">
-            @(Model.VocabPlural()) menu
-          </a>
-        </li>
-        <li class="nhsuk-breadcrumb__item">@Model.SelfAssessmentSupervisor.RoleName notes</li>
-      </ol>
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment"
+                   asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID">
+                        @(Model.SupervisorComment != null ? $"{Model.SupervisorComment.Name} introduction" : "")
+                    </a>
+                </li>
+                <li class="nhsuk-breadcrumb__item">
+                    <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview"
+                   asp-route-vocabulary="@Model.VocabPlural()"
+                   asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID"
+                   asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
+                   asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">
+                        @(Model.VocabPlural()) menu
+                    </a>
+                </li>
+                <li class="nhsuk-breadcrumb__item">@Model.SupervisorComment.RoleName notes</li>
+            </ol>
 
-    </div>
-  </nav>
+        </div>
+    </nav>
 }
-@section mobilebacklink
-{
-  <p class="nhsuk-breadcrumb__back">
-    <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
+    @section mobilebacklink
+    {
+    <p class="nhsuk-breadcrumb__back">
+        <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
        asp-route-vocabulary="@Model.VocabPlural()"
        asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID"
        asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
        asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">
-      Back to @Model.VocabPlural()
-    </a>
-  </p>
+            Back to @Model.VocabPlural()
+        </a>
+    </p>
 }
-  <div>
-    <h1>@Model.SupervisorComment?.CompetencyName</h1>
-    <div class="nhsuk-care-card nhsuk-care-card--non-urgent">
-      <div class="nhsuk-care-card__heading-container">
-        <h2 class="nhsuk-care-card__heading">
-          <span role="text">
-            Reviewer: @supervisorName
-          </span>
-        </h2>
-        <span class="nhsuk-care-card__arrow" aria-hidden="true"></span>
-      </div>
-      <div class="nhsuk-care-card__content">
-        <dl class="nhsuk-summary-list nhsuk-summary-list--no-border">
-          <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Date of review
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.SupervisorComment.Verified?.ToShortDateString()
-          </dd>
-      </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Status
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.AssessmentQuestion" />
-        </dd>
-      </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Confirmer comments
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.SupervisorComment.Comments
-        </dd>
-      </div>
-      </dl>
-    </div>
-  </div>
+    <div>
+        <h1>@Model.SupervisorComment?.CompetencyName</h1>
+        <div class="nhsuk-care-card nhsuk-care-card--non-urgent">
+            <div class="nhsuk-care-card__heading-container">
+                <h2 class="nhsuk-care-card__heading">
+                    <span role="text">
+                        Reviewer: @supervisorName
+                    </span>
+                </h2>
+                <span class="nhsuk-care-card__arrow" aria-hidden="true"></span>
+            </div>
+            <div class="nhsuk-care-card__content">
+                <dl class="nhsuk-summary-list nhsuk-summary-list--no-border">
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Date of review
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            @Model.SupervisorComment.Verified?.ToShortDateString()
+                        </dd>
+                    </div>
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Status
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.AssessmentQuestion" />
+                        </dd>
+                    </div>
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            @(Model.SupervisorComment.ReviewerCommentsLabel == null ? "Reviewer comments": Model.SupervisorComment.ReviewerCommentsLabel.ToString())
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            @Model.SupervisorComment.Comments
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
 
-  <div class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()"
-       asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID"
-       asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
-       asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">
-      <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" height="24" width="24">
-        <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-      </svg>
-      Back
-    </a>
-  </div>
-  </div>
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()"
+           asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID"
+           asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
+           asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" height="24" width="24">
+                    <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+                </svg>
+                Back
+            </a>
+        </div>
+    </div>

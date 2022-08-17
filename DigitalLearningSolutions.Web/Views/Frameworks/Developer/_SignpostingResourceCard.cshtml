@@ -15,7 +15,7 @@
     @if (!String.IsNullOrEmpty(Model.Resource.ResourceType))
     {
       <div class="nhsuk-grid-row nhsuk-u-margin-left-1 nhsuk-u-clear">
-        <strong class="nhsuk-tag nhsuk-tag--@(SignpostingHelper.DisplayTagColour(Model.Resource.ResourceType))">@Model.Resource.ResourceType</strong>
+        <strong class="nhsuk-tag nhsuk-tag--@(SignpostingHelper.DisplayTagColour(Model.Resource.ResourceType))">@DisplayStringHelper.AddSpacesToPascalCaseString(Model.Resource.ResourceType)</strong>
       </div>
     }
     <div class="nhsuk-u-margin-left-1 nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-3">
@@ -23,12 +23,15 @@
     </div>
     @if (Model.Catalogues.Count() > 0)
     {
-      <div class="nhsuk-u-font-weight-bold nhsuk-u-margin-left-1 nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2">
-        Catalogues
-      </div>
       <form method="post" role="search" asp-controller="Frameworks">
         <div class="nhsuk-card__content nhsuk-u-margin-1 nhsuk-u-padding-0">
           <dl class="nhsuk-summary-list">
+            <div class="nhsuk-summary-list__row">
+              <dt class="nhsuk-summary-list__key">
+                Catalogues
+              </dt>
+              <dd class="nhsuk-summary-list__value"></dd>
+            </div>
             @foreach(var catalogue in Model.Catalogues)
             {
               <div class="nhsuk-summary-list__row">
@@ -40,7 +43,9 @@
                       asp-controller="SignpostingSso"
                       asp-action="ViewResource"
                       asp-route-resourceReferenceId="@Model.ReferenceId">Preview</a>
-                  <button class="nhsuk-button small-edit-button" asp-action="AddCompetencyLearningResourceSummary" asp-route-SelectedCatalogue="@catalogue">
+                  <button class="nhsuk-button small-edit-button"
+                      asp-action="AddCompetencyLearningResourceSummary"
+                      asp-route-SelectedCatalogue="@catalogue">
                     Select
                   </button>
                 </dd>
@@ -52,6 +57,8 @@
         @Html.HiddenFor(m => m.FrameworkCompetencyGroupId)
         @Html.HiddenFor(m => m.FrameworkCompetencyId)
         @Html.Hidden("ReferenceId", Model.ReferenceId)
+        @Html.Hidden("CatalogueId", parent.CatalogueId)
+        @Html.Hidden("Page", parent.Page)
         @Html.Hidden("Resource.Title", Model.Resource?.Title)
         @Html.Hidden("Resource.ResourceType", Model.Resource?.ResourceType)
         @Html.HiddenFor(m => m.Resource.Description)

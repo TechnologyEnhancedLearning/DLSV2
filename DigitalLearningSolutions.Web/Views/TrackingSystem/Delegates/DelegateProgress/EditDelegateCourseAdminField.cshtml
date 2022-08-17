@@ -11,24 +11,10 @@
 
   var routeParamsForBackLink = new Dictionary<string, string?>();
 
-  // TODO: HEEDLS-862 Account for all possible access routes in back link
-  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates) && Model.ReturnPageQuery == null) {
-    routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
-    routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
-  } else if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+  if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
-  }
-}
-
-@*TODO: HEEDLS-862 - Change these breadcrumbs to account for all access routes*@
-
-@section NavBreadcrumbs {
-  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesProgressBreadcrumbs.cshtml" model="(Model.CustomisationId, Model.ProgressId)" />
-  } else {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateProgressBreadcrumbs.cshtml" model="(Model.DelegateId, Model.ProgressId)" />
   }
 }
 
@@ -40,14 +26,7 @@
 
     <h1 class="nhsuk-heading-xl word-break">@pageTitle</h1>
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
-        Delegate
-      </div>
-      <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold word-break">
-        @Model.DelegateName
-      </div>
-    </div>
+    <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-one-half">
@@ -55,14 +34,14 @@
         <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
           <input type="hidden" asp-for="DelegateId" />
           <input type="hidden" asp-for="ProgressId" />
-          <input type="hidden" asp-for="CustomisationId"/>
-          <input type="hidden" asp-for="ReturnPageQuery"/>
+          <input type="hidden" asp-for="CustomisationId" />
+          <input type="hidden" asp-for="ReturnPageQuery" />
 
           @if (Model.Options.Count > 0) {
             <div class="nhsuk-radios nhsuk-u-margin-bottom-4">
-              @foreach (var radio in Model.Radios) {
+              @foreach (var (radio, index) in Model.Radios.Select((r, i) => (r, i))) {
                 var isBlankOption = radio.Value == string.Empty;
-                var radioId = isBlankOption ? blankRadioId : radio.Value;
+                var radioId = $"{(isBlankOption ? blankRadioId : radio.Value)}-{index}";
                 <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3 @(isBlankOption ? "nhsuk-u-margin-top-6" : "")">
                   <input class="nhsuk-radios__input"
                          id="@radioId"
@@ -93,10 +72,8 @@
       </div>
     </div>
 
-    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates) && Model.ReturnPageQuery == null) {
-      <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
-    } else if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
-      <vc:cancel-link-with-return-page-query asp-controller="CourseDelegates" asp-action="Index" route-data="@routeParamsForBackLink" return-page-query="@Model.ReturnPageQuery.Value" />
+    @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+      <vc:cancel-link-with-return-page-query asp-controller="CourseDelegates" asp-action="Index" route-data="@routeParamsForBackLink" return-page-query="@Model.ReturnPageQuery!.Value" />
     } else {
       <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
     }

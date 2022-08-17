@@ -2,16 +2,17 @@
 
 - IDE
   - Option 1: [JetBrains Rider](https://www.jetbrains.com/rider/)
-    - In addition to the setup described in this readme, you'll have to run `npm run dev` manually to build the JS and SASS.
+    - In addition to the setup described in this readme, you'll have to run `yarn dev` manually to build the JS and SASS.
   - Option 2: [Visual Studio Professional 2022](https://visualstudio.microsoft.com/downloads/)
-      - Make sure you have the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension. This means you won't have to run `npm run dev` manually to build the JS and SASS.
+      - Make sure you have the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension. This means you won't have to run `yarn dev` manually to build the JS and SASS.
 - SQL Server 2019
 - [SQL Server Management Studio 18](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15)
-- [Git](https://git-scm.com/)
-- [NPM](https://www.npmjs.com/get-npm)
-- [SASS](http://www.sass-lang.com/install) for the command line
+- [Git](https://git-scm.com/download)
+- [Node](https://nodejs.org/en/download/) at least version 12.x
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/) at least version 1.22.x
+- [SASS](https://www.sass-lang.com/install) for the command line
     - Specifically, follow the "Install Anywhere (Standalone)" guide. Simply download and extract the files somewhere, and point PATH at the dart-sass folder. This should allow you to use the "sass" command.
-    - You don't want to install it via NPM, as those are JavaScript versions that perform significantly worse.
+    - You don't want to install it via Yarn, as those are JavaScript versions that perform significantly worse.
     - At time of writing (2022-03-14), we are using [version 1.49.9 of dart-sass](https://github.com/sass/dart-sass/releases/tag/1.49.9)
 
 # Getting the code
@@ -19,7 +20,7 @@
 Checkout the `digitallearningsolutions` repository from [GitHub](https://github.com/TechnologyEnhancedLearning/DLSV2):
 
 ```bash
-git checkout https://github.com/TechnologyEnhancedLearning/DLSV2.git
+git clone git@github.com:TechnologyEnhancedLearning/DLSV2.git
 ```
 
 You should now be able to open the solution in your IDE by finding and double-clicking the `DigitalLearningSolutions.sln` file.
@@ -35,6 +36,27 @@ Git auto-CRLF should be turned off - otherwise Git will convert your local CRLF 
 In JetBrains Rider the text editor settings can be set in `Settings > Editor > File Encodings` (UTF-8, with BOM) and `Settings > Editor > Code Style` (CRLF).
 
 To turn off git autoCrlf, run `git config --global core.autocrlf false` in a terminal.
+
+# Secret config settings
+Certain features of the system rely on having API keys and secrets available (as do some tests).
+
+Talk to the project team to get these secrets for you to store in the secrets manager.
+
+## Secrets manager
+We use Microsoft’s [Secret Manager](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows#secret-manager) to look after our secrets locally, so they don’t get tracked (or deleted) by git.
+
+It stores a GUID in the Web project’s csproj which points .NET to a json file in your appsettings when you run the application.
+
+Namely: `~\AppData\Roaming\Microsoft\UserSecrets\7ea176d2-09f5-4e3a-a3fa-7f3229882b70\secrets.json`
+
+## Environment variables
+We're using environment variables to set any settings we don't want to have committed to source control (e.g. database connection string on uat as it includes a password). In addition to the default .net core environment variables we're using any variables set with the prefix `DlsRefactor{EnvironmentName}_`. The prefix will be removed when reading the variable, see https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-3.1#environment-variables for details.
+
+For example, if you want to set the db connection string on uat then set an environment variable called DlsRefactorUAT_ConnectionStrings:DefaultConnection to the connection string you want (`__` can be used instead of `:` in situations where it's not possible to use `:` such as in a jenkinsfile or on a mac). This will override the ConnectionStrings:DefaultConnection set in the appSettings file.
+
+To set an environment variable you can either:
+1. When running locally you can specify environment variables in launchSettings.json.
+2. For a deployed instance you can set the environment variable in IIS manager on the server the app is deployed to. See https://stackoverflow.com/questions/31049152/publish-to-iis-setting-environment-variable for details. **NB** deploying will remove any environment variables for the site you're deploying to. Therefore to set an environment variable permanently you need to set it for the whole IIS server in IIS manager and lock it.
 
 # Setting up the database
 
@@ -149,7 +171,9 @@ To allow loading pages from the old code in an iframe (which is necessary for tu
 
 The project should now build. Confirm this via *Build* → *Build Solution* (or `CTRL+SHIFT+B`).
 
-You can now run the app by clicking the play button (▶), which should say *IIS Express*.
+You can now run the app:
+* In Visual Studio, click the play button (▶), which should say *IIS Express*.
+* In Rider, select *DigitalLearningSolutions.Web: IIS Express* from the Run Configurations dropdown, and then click the Run button.
 
 This should launch the website at: [https://localhost:44363/](https://localhost:44363/)
 
@@ -190,12 +214,12 @@ Open the file and click the icon to the left of the class name.
 Open the solution explorer. Right click the test project you want (DigitalLearningSolutions.Web.Tests, DigitalLearningSolutions.Data.Tests, etc.) and select "Run tests".
 
 ## Typescript tests
-The typescrpt tests are run using Jasmine, and can be found in `DigitalLearningSolutions.Web/Scripts/spec`. The tests can be run using the Task Runner Explorer, or from the terminal using `npm t` inside DigitalLearningSolutions.Web.
+The typescript tests are run using Jasmine, and can be found in `DigitalLearningSolutions.Web/Scripts/spec`. The tests can be run using the Task Runner Explorer, or from the terminal using `yarn test` inside DigitalLearningSolutions.Web.
 
 ## Typescript linting
 The typescript is linted with eslint. In Visual Studio, go to `Tools>Options>Text Editor>Javascript/Typescript>Linting>General` and tick "Enable ESLint".  This should highlight any lint errors in the editor. It's not the most reliable, and if in doubt, run the lint manually.
 
-Linting can be run with `npm run lint` inside `DigitalLearningSolutions.Web`. `npm run lint-fix` may autofix some errors.
+Linting can be run with `yarn lint` inside `DigitalLearningSolutions.Web`. `yarn lint-fix` may autofix some errors.
 
 # Troubleshooting
 
@@ -208,7 +232,7 @@ This might be a result of the css directory not being built.
 
 It should have been automatically built by the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension. Check if you have it installed in Visual Studio.
 
-Otherwise, you can work around it by manually building the css by opening a console in the project directory and running `npm run dev` (for development) or `npm run build`.
+Otherwise, you can work around it by manually building the css by opening a console in the project directory and running `yarn dev` (for development) or `yarn build`.
 
 ## npm error when opening the project in Visual Studio
 If you see an error that looks something like:
@@ -219,7 +243,7 @@ This can be fixed by making sure PATH is on the top of the 'External Web Tools' 
 1. Open the options menu in Visual Studio (F4).
 2. Search for 'External Web Tools'.
 3. In the list select `$(PATH)` and use the up arrow button to move it to the top of the list.
-4. Restart Visual Studio or double click the build command in the Task Runner Explorer to rerun the npm build.
+4. Restart Visual Studio or double click the build command in the Task Runner Explorer to rerun the yarn build.
 5. This might cause the build to fail, if tools such as SASS can no longer be found. If this occurs:
     1. Delete the `node_modules` folder in `DigitalLearningSolutions.Web`
     2. Run the install command in the Task Runner Explorer to reinstall the `node_modules`
@@ -234,6 +258,17 @@ but sometimes Rider doesn't build referenced projects when you'd expect it to,
 so you may need to build Data.Migrations manually in order for new migrations to get picked up.
 
 Build the Data.Migrations project manually and run the failing tests again - they should pass now.
+
+## Test discovery failing in Rider
+
+Rider may fail to discover or update tests and show you an error file starting with
+```
+Unfortunately, it's impossible to discover unit tests in some of your projects. :(
+Below you can find the error details for each project.
+```
+And then stack traces indicating `no element with id <id>`.
+
+This issue can be resolved by invalidating caches in File > Invalidate Caches.
 
 # Logging
 We're using [serilog](https://serilog.net/), specifically [serilog for .net core](https://nblumhardt.com/2019/10/serilog-in-aspnetcore-3/). This will automatically log:
@@ -293,15 +328,6 @@ In order to set up your dev environment to send emails, make the following chang
 The recipient addresses can be set with Centres.NotifyEmail and Candidates.EmailAddress, and a course can be locked using Progress.PLLocked
 
 On test, the centre email is heedlstest@mailinator.com, and the user email is heedlstestuser@mailinator.com. These can be viewed by visiting [mailinator.com](https://www.mailinator.com/) and entering the email address at the top of the page.
-
-# Environment variables
-We're using environment variables to set any settings we don't want to have committed to source control (e.g. database connection string on uat as it includes a password). In addition to the default .net core environment variables we're using any variables set with the prefix `DlsRefactor{EnvironmentName}_`. The prefix will be removed when reading the variable, see https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-3.1#environment-variables for details.
-
-For example, if you want to set the db connection string on uat then set an environment variable called DlsRefactorUAT_ConnectionStrings:DefaultConnection to the connection string you want (`__` can be used instead of `:` in situations where it's not possible to use `:` such as in a jenkinsfile or on a mac). This will override the ConnectionStrings:DefaultConnection set in the appSettings file.
-
-To set an environment variable you can either:
-1. When running locally you can specify environment variables in launchSettings.json.
-2. For a deployed instance you can set the environment variable in IIS manager on the server the app is deployed to. See https://stackoverflow.com/questions/31049152/publish-to-iis-setting-environment-variable for details. **NB** deploying will remove any environment variables for the site you're deploying to. Therefore to set an environment variable permanently you need to set it for the whole IIS server in IIS manager and lock it.
 
 # GitHub Actions
 We have a GitHub Actions workflow set up. See `.github/workflows/continuous-integration-workflow.yml` for the config. This will build and test the code. If it fails it will email the committer. You can also see the build results on any open pull requests or in the actions tab of the repository: https://github.com/TechnologyEnhancedLearning/DLSV2/actions.

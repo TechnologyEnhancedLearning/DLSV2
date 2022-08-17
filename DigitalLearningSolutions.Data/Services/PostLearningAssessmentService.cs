@@ -143,7 +143,8 @@
                         AND Customisations.IsAssessed = 1
                         AND Sections.SectionID = @sectionId
                         AND Sections.ArchivedDate IS NULL
-                        AND Sections.PLAssessPath IS NOT NULL;",
+                        AND Sections.PLAssessPath IS NOT NULL
+                        AND Applications.DefaultContentTypeID <> 4;",
                 new { customisationId, candidateId, sectionId }
             );
         }
@@ -182,6 +183,7 @@
                         AND Sections.SectionID = @sectionId
                         AND Sections.ArchivedDate IS NULL
                         AND Sections.PLAssessPath IS NOT NULL
+                        AND Applications.DefaultContentTypeID <> 4
                     ORDER BY
                         Tutorials.OrderByNumber,
                         Tutorials.TutorialID",

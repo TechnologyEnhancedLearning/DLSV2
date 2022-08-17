@@ -1,15 +1,19 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Notifications;
 
     public interface INotificationDataService
     {
         UnlockData? GetUnlockData(int progressId);
 
         ProgressCompletionData? GetProgressCompletionData(int progressId, int candidateId, int customisationId);
+
+        IEnumerable<NotificationRecipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId);
     }
 
     public class NotificationDataService : INotificationDataService
@@ -40,7 +44,8 @@
                             ON progress.CustomisationID = customisations.CustomisationID
                         INNER JOIN Applications AS applications
                             ON customisations.ApplicationID = applications.ApplicationID
-                    WHERE  (progress.ProgressID = @progressID)",
+                    WHERE  (progress.ProgressID = @progressID)
+                        AND applications.DefaultContentTypeID <> 4",
                 new { progressId }
             ).FirstOrDefault();
         }
@@ -72,9 +77,22 @@
                             ON progress.CustomisationID = customisations.CustomisationID
                         INNER JOIN Applications AS applications
                             ON customisations.ApplicationID = applications.ApplicationID
-                    WHERE (progress.ProgressID = @progressId)",
+                    WHERE (progress.ProgressID = @progressId) AND applications.ArchivedDate IS NULL
+                        AND applications.DefaultContentTypeID <> 4",
                 new { progressId, candidateId, customisationId }
             );
+        }
+        public IEnumerable<NotificationRecipient> GetAdminRecipientsForCentreNotification(int centreId, int notificationId)
+        {
+            var recipients = connection.Query<NotificationRecipient>(
+
+                @"SELECT au.Forename as FirstName, au.Surname as LastName, au.Email
+                    FROM     NotificationUsers AS nu INNER JOIN
+                         AdminUsers AS au ON nu.AdminUserID = au.AdminID AND au.Active = 1
+                    WHERE  (nu.NotificationID = @notificationId) AND (au.CentreID = @centreId)",
+                new { notificationId, centreId }
+                );
+            return recipients;
         }
     }
 }

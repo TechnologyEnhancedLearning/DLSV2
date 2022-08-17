@@ -30,8 +30,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private INotificationService notificationService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
         private ISupervisorService supervisorService = null!;
+        private IFrameworkService frameworkService = null!;
         private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IMultiPageFormService multiPageFormService = null!;
 
         [SetUp]
         public void SetUp()
@@ -41,6 +43,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
             courseDataService = A.Fake<ICourseDataService>();
             selfAssessmentService = A.Fake<ISelfAssessmentService>();
             supervisorService = A.Fake<ISupervisorService>();
+            frameworkService = A.Fake<IFrameworkService>();
             notificationService = A.Fake<INotificationService>();
             frameworkNotificationService = A.Fake<IFrameworkNotificationService>();
             candidateAssessmentDownloadFileService = A.Fake<ICandidateAssessmentDownloadFileService>();
@@ -66,13 +69,15 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 courseDataService,
                 selfAssessmentService,
                 supervisorService,
+                frameworkService,
                 notificationService,
                 frameworkNotificationService,
                 logger,
                 config,
                 actionPlanService,
                 candidateAssessmentDownloadFileService,
-                searchSortFilterPaginateService
+                searchSortFilterPaginateService,
+                multiPageFormService
             );
             controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
             controller = controller.WithMockTempData();
