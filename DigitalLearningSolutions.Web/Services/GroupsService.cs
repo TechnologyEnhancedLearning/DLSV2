@@ -303,8 +303,9 @@
                         delegateId,
                         accountDetailsData,
                         centreEmail,
-                        groupToAddDelegateTo,
-                        registrationFieldAnswers.CentreId
+                        groupToAddDelegateTo.GroupId,
+                        registrationFieldAnswers.CentreId,
+                        true
                     );
                 }
             }
@@ -354,26 +355,62 @@
                         account.Id,
                         accountDetailsData,
                         centreEmail,
-                        groupToAddDelegateTo,
-                        account.CentreId
+                        groupToAddDelegateTo.GroupId,
+                        account.CentreId,
+                        true
                     );
                 }
             }
+        }
+
+        public void AddDelegateToGroupAndEnrolOnGroupCourses(
+            int groupId,
+            int delegateId,
+            int? addedByAdminId = null
+        )
+        {
+            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+            var delegateEntity = userDataService.GetDelegateById(delegateId)!;
+
+            var accountDetailsData = new EditAccountDetailsData(
+                delegateId,
+                delegateUser.FirstName!,
+                delegateUser.LastName,
+                delegateUser.EmailAddress!,
+                delegateUser.JobGroupId,
+                delegateUser.ProfessionalRegistrationNumber,
+                delegateUser.HasBeenPromptedForPrn,
+                delegateUser.ProfileImage
+            );
+
+            using var transaction = new TransactionScope();
+
+            AddDelegateToGroupAndEnrolOnGroupCourses(
+                delegateUser.Id,
+                accountDetailsData,
+                delegateEntity.EmailForCentreNotifications,
+                groupId,
+                delegateUser.CentreId,
+                false
+            );
+
+            transaction.Complete();
         }
 
         private void AddDelegateToGroupAndEnrolOnGroupCourses(
             int delegateId,
             AccountDetailsData accountDetailsData,
             string? centreEmail,
-            Group groupToAddDelegateTo,
-            int centreId
+            int groupId,
+            int centreId,
+            bool addedByFieldLink
         )
         {
             groupsDataService.AddDelegateToGroup(
                 delegateId,
-                groupToAddDelegateTo.GroupId,
+                groupId,
                 clockUtility.UtcNow,
-                1
+                addedByFieldLink ? 1 : 0
             );
 
             EnrolDelegateOnGroupCourses(
@@ -381,7 +418,7 @@
                 centreId,
                 accountDetailsData,
                 centreEmail,
-                groupToAddDelegateTo.GroupId
+                groupId
             );
         }
 
@@ -426,42 +463,6 @@
             groupsDataService.DeleteGroupDelegates(groupId);
             groupsDataService.DeleteGroupCustomisations(groupId);
             groupsDataService.DeleteGroup(groupId);
-
-            transaction.Complete();
-        }
-
-        public void AddDelegateToGroupAndEnrolOnGroupCourses(
-            int groupId,
-            int delegateId,
-            int? addedByAdminId = null
-        )
-        {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
-            var delegateEntity = userDataService.GetDelegateById(delegateId)!;
-
-            using var transaction = new TransactionScope();
-
-            groupsDataService.AddDelegateToGroup(delegateId, groupId, clockUtility.UtcNow, 0);
-
-            var accountDetailsData = new EditAccountDetailsData(
-                delegateId,
-                delegateUser.FirstName!,
-                delegateUser.LastName,
-                delegateUser.EmailAddress!,
-                delegateUser.JobGroupId,
-                delegateUser.ProfessionalRegistrationNumber,
-                delegateUser.HasBeenPromptedForPrn,
-                delegateUser.ProfileImage
-            );
-
-            EnrolDelegateOnGroupCourses(
-                delegateUser.Id,
-                delegateUser.CentreId,
-                accountDetailsData,
-                delegateEntity.EmailForCentreNotifications,
-                groupId,
-                addedByAdminId
-            );
 
             transaction.Complete();
         }
