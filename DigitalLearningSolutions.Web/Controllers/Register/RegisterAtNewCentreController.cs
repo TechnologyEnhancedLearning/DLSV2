@@ -261,7 +261,7 @@
 
                     emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                         userEntity!.UserAccount,
-                        unverifiedEmails,
+                        unverifiedEmails.Select(ue => ue.NewEmail).ToList(),
                         config.GetAppRootPath()
                     );
                 }

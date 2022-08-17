@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -341,7 +342,7 @@
 
             emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                 userEntity!.UserAccount,
-                unverifiedEmails,
+                unverifiedEmails.Select(ue => ue.NewEmail).ToList(),
                 config.GetAppRootPath()
             );
         }

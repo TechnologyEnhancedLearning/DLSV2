@@ -2,6 +2,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -456,7 +457,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                 userEntity!.UserAccount,
-                unverifiedEmails,
+                unverifiedEmails.Select(ue => ue.NewEmail).ToList(),
                 config.GetAppRootPath()
             );
         }

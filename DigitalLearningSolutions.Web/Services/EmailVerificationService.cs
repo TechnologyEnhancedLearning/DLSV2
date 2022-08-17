@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
@@ -16,16 +15,16 @@
 
         void CreateEmailVerificationHashesAndSendVerificationEmails(
             UserAccount userAccount,
-            IEnumerable<PossibleEmailUpdate> unverifiedEmails,
+            List<string> unverifiedEmails,
             string baseUrl
         );
     }
 
     public class EmailVerificationService : IEmailVerificationService
     {
-        private readonly IEmailVerificationDataService emailVerificationDataService;
-        private readonly IEmailService emailService;
         private readonly IClockUtility clockUtility;
+        private readonly IEmailService emailService;
+        private readonly IEmailVerificationDataService emailVerificationDataService;
 
         public EmailVerificationService(
             IEmailVerificationDataService emailVerificationDataService,
@@ -45,15 +44,15 @@
 
         public void CreateEmailVerificationHashesAndSendVerificationEmails(
             UserAccount userAccount,
-            IEnumerable<PossibleEmailUpdate> unverifiedEmails,
+            List<string> unverifiedEmails,
             string baseUrl
         )
         {
-            foreach (var emailGroup in unverifiedEmails.GroupBy(possibleEmailUpdate => possibleEmailUpdate.NewEmail))
+            foreach (var email in unverifiedEmails.Distinct())
             {
                 var hash = Guid.NewGuid().ToString();
                 var hashId = emailVerificationDataService.CreateEmailVerificationHash(hash, clockUtility.UtcNow);
-                var emailAddress = emailGroup.Key!;
+                var emailAddress = email!;
 
                 UpdateEmailVerificationHashId(userAccount.Id, emailAddress, hashId);
 

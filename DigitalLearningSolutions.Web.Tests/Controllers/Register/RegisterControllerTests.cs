@@ -6,7 +6,6 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -16,7 +15,6 @@
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.Tests.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using FakeItEasy;
@@ -335,7 +333,7 @@
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
-                    A<List<PossibleEmailUpdate>>._,
+                    A<List<string>>._,
                     A<string>._
                 )
             ).DoesNothing();
@@ -349,28 +347,7 @@
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
-                    A<List<PossibleEmailUpdate>>.That.Matches(
-                        list => PossibleEmailUpdateTestHelper.PossibleEmailUpdateListsMatch(
-                            list,
-                            new List<PossibleEmailUpdate>
-                            {
-                                new PossibleEmailUpdate
-                                {
-                                    OldEmail = null,
-                                    NewEmail = data.PrimaryEmail,
-                                    NewEmailIsVerified = false,
-                                    IsDelegateEmailSetByAdmin = false,
-                                },
-                                new PossibleEmailUpdate
-                                {
-                                    OldEmail = null,
-                                    NewEmail = data.CentreSpecificEmail,
-                                    NewEmailIsVerified = false,
-                                    IsDelegateEmailSetByAdmin = false,
-                                },
-                            }
-                        )
-                    ),
+                    A<List<string>>._,
                     A<string>._
                 )
             ).MustHaveHappenedOnceExactly();
@@ -548,7 +525,7 @@
             A.CallTo(
                     () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                         A<UserAccount>._,
-                        A<List<PossibleEmailUpdate>>._,
+                        A<List<string>>._,
                         A<string>._
                     )
                 )

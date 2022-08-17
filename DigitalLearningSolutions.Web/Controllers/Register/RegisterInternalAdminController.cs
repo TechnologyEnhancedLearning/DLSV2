@@ -164,7 +164,7 @@
 
                 emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     userEntity!.UserAccount,
-                    unverifiedEmails,
+                    unverifiedEmails.Select(ume => ume.NewEmail).ToList(),
                     config.GetAppRootPath()
                 );
             }

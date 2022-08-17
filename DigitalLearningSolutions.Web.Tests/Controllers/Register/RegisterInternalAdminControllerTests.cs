@@ -6,7 +6,6 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -274,7 +273,7 @@
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
-                    A<List<PossibleEmailUpdate>>._,
+                    A<List<string>>._,
                     A<string>._
                 )
             ).DoesNothing();
@@ -289,19 +288,10 @@
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
-                    A<List<PossibleEmailUpdate>>.That.Matches(
-                        list => PossibleEmailUpdateTestHelper.PossibleEmailUpdateListsMatch(
+                    A<List<string>>.That.Matches(
+                        list => ListTestHelper.ListOfStringsMatch(
                             list,
-                            new List<PossibleEmailUpdate>
-                            {
-                                new PossibleEmailUpdate
-                                {
-                                    OldEmail = null,
-                                    NewEmail = DefaultCentreSpecificEmail,
-                                    NewEmailIsVerified = false,
-                                    IsDelegateEmailSetByAdmin = false,
-                                },
-                            }
+                            new List<string> { DefaultCentreSpecificEmail }
                         )
                     ),
                     A<string>._
@@ -333,7 +323,7 @@
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
-                    A<List<PossibleEmailUpdate>>._,
+                    A<List<string>>._,
                     A<string>._
                 )
             ).MustNotHaveHappened();
