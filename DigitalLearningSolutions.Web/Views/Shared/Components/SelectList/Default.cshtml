@@ -25,8 +25,4 @@
       <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value != null ? "" : "selected")>@Model.DefaultOption</option>
     }
   </select>
-  @if (Model.Required)
-  {
-    <partial name="_RequiredField" />
-  }
 </div>

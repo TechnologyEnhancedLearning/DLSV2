@@ -26,10 +26,5 @@
          type="@Model.Type"
          spellcheck="@Model.SpellCheck"
          autocomplete="@Model.Autocomplete"
-         @Html.Raw(Model.HasError ? $"aria-invalid=\"true\" aria-errormessage=\"{Model.Name}-error\"" : null)
-         aria-describedby="@(Model.Name)-description @Html.Raw(Model.HasError ? $"{Model.Name}-error": null) @(!String.IsNullOrEmpty(Model.HintText) ? $"{Model.Name}-hint" : "")" />
-  @if (Model.Required)
-  {
-    <partial name="_RequiredField" />
-  }
+         aria-describedby="@Model.Name-error @Model.Name-hint" />
 </div>

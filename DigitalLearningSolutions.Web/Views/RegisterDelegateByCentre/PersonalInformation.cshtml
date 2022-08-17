@@ -35,7 +35,7 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="given-name"
-                     css-class="nhsuk-u-width-one-half highlight-required-fields" />
+                     css-class="nhsuk-u-width-one-half" />
 
       <vc:text-input asp-for="LastName"
                      label="Last name"
@@ -44,7 +44,7 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="family-name"
-                     css-class="nhsuk-u-width-one-half highlight-required-fields" />
+                     css-class="nhsuk-u-width-one-half" />
 
       <vc:text-input asp-for="Email"
                      label="Email"
@@ -53,7 +53,7 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="email"
-                     css-class="nhsuk-u-width-one-half highlight-required-fields" />
+                     css-class="nhsuk-u-width-one-half" />
 
       <vc:text-input asp-for="Alias"
                      label="Alias (optional)"
@@ -62,11 +62,8 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete=""
-                     css-class="nhsuk-u-width-one-half highlight-required-fields" />
-      @if(Html.AnyFieldIsRequired(Model))
-      {
-        <partial name="../Shared/_RequiredLegend" />
-      }
+                     css-class="nhsuk-u-width-one-half" />
+					 
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 

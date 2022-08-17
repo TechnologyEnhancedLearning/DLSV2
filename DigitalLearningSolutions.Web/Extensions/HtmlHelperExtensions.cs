@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
     using System.Globalization;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
@@ -51,13 +50,6 @@
                 kvp => kvp.Key,
                 kvp => Convert.ToString(kvp.Value, CultureInfo.InvariantCulture)
             );
-        }
-
-        public static bool AnyFieldIsRequired<TModel>(this IHtmlHelper helper, TModel model)
-        {
-            return typeof(TModel)
-                    .GetProperties()
-                    .Any(p => Attribute.IsDefined(p, typeof(RequiredAttribute)));
         }
     }
 }
