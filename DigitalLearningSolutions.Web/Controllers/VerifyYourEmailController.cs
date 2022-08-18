@@ -51,7 +51,6 @@
             return View(model);
         }
 
-        [HttpPost]
         public IActionResult ResendVerificationEmails()
         {
             var userId = User.GetUserIdKnownNotNull();

@@ -776,8 +776,6 @@
                 new[] { UserTestHelper.GetDefaultDelegateAccount() }
             );
 
-            var expectedUnverifiedEmailsList = new List<string> { Email, centreEmail1, centreEmail2 };
-
             A.CallTo(() => userDataService.PrimaryEmailIsInUseByOtherUser(Email, userId)).Returns(false);
 
             A.CallTo(

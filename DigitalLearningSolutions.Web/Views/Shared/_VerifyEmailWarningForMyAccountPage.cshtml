@@ -18,10 +18,7 @@
     @VerifyYourEmailTextHelper.DirectionsToResendLinkByClickingButtonBelow(multipleEmailsAreUnverified)
   </p>
 
-  <button class="nhsuk-button nhsuk-button--secondary">
+  <a class="nhsuk-button nhsuk-button--secondary" asp-controller="VerifyYourEmail" asp-action="ResendVerificationEmails" role="button">
     Resend verification @(multipleEmailsAreUnverified ? "emails" : "email")
-  </button>
-  <a class="nhsuk-button heading-button nhsuk-u-margin-bottom-5" asp-controller="VerifyEmail" asp-action="AddCourseNew" role="button">
-    Add
   </a>
 </div>

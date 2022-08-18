@@ -316,16 +316,6 @@
 
             SetUpFakesForSuccessfulRegistration(primaryEmail, centreSpecificEmail, data, adminId);
 
-            A.CallTo(() => userDataService.GetUserIdByAdminId(adminId)).Returns(userId);
-            A.CallTo(() => userService.GetUserById(userId)).Returns(UserTestHelper.GetDefaultUserEntity());
-            A.CallTo(
-                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                    A<UserAccount>._,
-                    A<List<string>>._,
-                    A<string>._
-                )
-            ).DoesNothing();
-
             // When
             controller.Summary(model);
 

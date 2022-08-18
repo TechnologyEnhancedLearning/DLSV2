@@ -109,7 +109,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             // Given
             const string clientIp = ApprovedIpPrefix + ".100";
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            var centreEmailRequiresVerification = model.IsSelfRegistered;
 
             // When
             var (_, approved) = registrationService.CreateDelegateAccountForNewUser(
@@ -125,7 +124,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                         registrationDataService.RegisterNewUserAndDelegateAccount(
                             A<DelegateRegistrationModel>.That.Matches(d => d.Approved),
                             false,
-                            centreEmailRequiresVerification
+                            false
                         )
                 )
                 .MustHaveHappened();
@@ -137,7 +136,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            var centreEmailRequiresVerification = model.IsSelfRegistered;
 
             // When
             registrationService.CreateDelegateAccountForNewUser(
@@ -153,7 +151,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                         registrationDataService.RegisterNewUserAndDelegateAccount(
                             A<DelegateRegistrationModel>.That.Matches(d => d.Approved),
                             false,
-                            centreEmailRequiresVerification
+                            false
                         )
                 )
                 .MustHaveHappened();
@@ -164,7 +162,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         {
             // Given
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            var centreEmailRequiresVerification = model.IsSelfRegistered;
 
             // When
             registrationService.CreateDelegateAccountForNewUser(
@@ -180,7 +177,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                         registrationDataService.RegisterNewUserAndDelegateAccount(
                             A<DelegateRegistrationModel>.That.Matches(d => !d.Approved),
                             false,
-                            centreEmailRequiresVerification
+                            false
                         )
                 )
                 .MustHaveHappened();
@@ -202,18 +199,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // Then
-            A.CallTo(
-                    () => emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval"
-                        )
-                    )
-                )
-                .MustHaveHappenedOnceExactly();
+            RegistrationRequiresApprovalEmailMustHaveBeenSentTo(ApproverEmail);
         }
 
         [Test]
@@ -232,18 +218,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // Then
-            A.CallTo(
-                    () => emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval"
-                        )
-                    )
-                )
-                .MustHaveHappenedOnceExactly();
+            RegistrationRequiresApprovalEmailMustHaveBeenSentTo(ApproverEmail);
         }
 
         [Test]
@@ -315,7 +290,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             const int delegateId = 777;
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
-            var centreEmailRequiresVerification = model.IsSelfRegistered;
             GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
 
             A.CallTo(
@@ -388,18 +362,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // Then
-            A.CallTo(
-                    () => emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval"
-                        )
-                    )
-                )
-                .MustHaveHappened(expectedEmailToBeSent ? 1 : 0, Times.Exactly);
+            RegistrationRequiresApprovalEmailMustHaveBeenSentTo(ApproverEmail, expectedEmailToBeSent ? 1 : 0);
         }
 
         [Test]
@@ -1608,18 +1571,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // Then
-            A.CallTo(
-                () =>
-                    emailService.SendEmail(
-                        A<Email>.That.Matches(
-                            e =>
-                                e.To[0] == ApproverEmail &&
-                                e.Cc.IsNullOrEmpty() &&
-                                e.Bcc.IsNullOrEmpty() &&
-                                e.Subject == "Digital Learning Solutions Registration Requires Approval"
-                        )
-                    )
-            ).MustHaveHappened();
+            RegistrationRequiresApprovalEmailMustHaveBeenSentTo(ApproverEmail);
         }
 
         [Test]
@@ -1770,19 +1722,19 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 );
         }
 
-        private void RegistrationRequiresApprovalEmailMustHaveBeenSentTo(NotificationRecipient notificationRecipient)
+        private void RegistrationRequiresApprovalEmailMustHaveBeenSentTo(string recipientEmail, int numberOfTimes = 1)
         {
             A.CallTo(
                 () => emailService.SendEmail(
                     A<Email>.That.Matches(
                         email =>
-                            email.To[0] == notificationRecipient.Email && email.To.Length == 1 &&
+                            email.To[0] == recipientEmail && email.To.Length == 1 &&
                             email.Cc.IsNullOrEmpty() &&
                             email.Bcc.IsNullOrEmpty() &&
                             email.Subject == "Digital Learning Solutions Registration Requires Approval"
                     )
                 )
-            ).MustHaveHappened();
+            ).MustHaveHappened(numberOfTimes, Times.Exactly);
         }
     }
 }

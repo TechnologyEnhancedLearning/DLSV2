@@ -210,8 +210,8 @@
 
                 CreateEmailVerificationHashesAndSendVerificationEmails(
                     adminId,
-                    model.PrimaryEmail!,
-                    model.CentreSpecificEmail
+                    registrationModel.PrimaryEmail!,
+                    registrationModel.CentreSpecificEmail
                 );
 
                 return RedirectToAction(

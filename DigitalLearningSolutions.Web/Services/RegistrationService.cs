@@ -128,7 +128,7 @@ namespace DigitalLearningSolutions.Web.Services
             var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
                 registerJourneyContainsTermsAndConditions,
-                true
+                false
             );
 
             passwordDataService.SetPasswordByCandidateNumber(
@@ -285,7 +285,7 @@ namespace DigitalLearningSolutions.Web.Services
             var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
                 registerJourneyContainsTermsAndConditions,
-                false
+                true
             );
 
             var supervisorDelegateRecordIdsMatchingDelegate =
