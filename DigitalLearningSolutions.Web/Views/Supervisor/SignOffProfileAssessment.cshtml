@@ -176,7 +176,7 @@
                 Sign-off profile self-assessment
               </label>
               <div class="nhsuk-hint nhsuk-summary-list" id="cb-verify-item-hint">
-                @(Model.SelfAssessmentResultSummary.SignOffSupervisorStatement == null ?
+                @Html.Raw(Model.SelfAssessmentResultSummary.SignOffSupervisorStatement == null ?
                   "I confirm that this profile self-assessment accurately captures" +
                   $" {Model.SupervisorDelegate.FirstName} {Model.SupervisorDelegate.LastName}'s " +
                   "current capability in the areas assessed." :
