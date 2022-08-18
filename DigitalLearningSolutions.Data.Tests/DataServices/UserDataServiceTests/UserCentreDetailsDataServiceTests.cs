@@ -455,13 +455,14 @@
             const int centreId = 2;
             const string email = "unverified@email.com";
             const string code = "code";
+            const bool delegateIsApproved = true;
             var createdDate = new DateTime(2022, 1, 1);
 
             GivenEmailVerificationHashLinkedToUserCentreDetails(userId, centreId, email, code, createdDate);
 
             connection.Execute(
-                @"UPDATE DelegateAccounts SET Approved = 1 Where UserID = @userId AND CentreID = @centreId;",
-                new { userId, centreId }
+                @"UPDATE DelegateAccounts SET Approved = @delegateIsApproved Where UserID = @userId AND CentreID = @centreId;",
+                new { delegateIsApproved, userId, centreId }
             );
 
             // When

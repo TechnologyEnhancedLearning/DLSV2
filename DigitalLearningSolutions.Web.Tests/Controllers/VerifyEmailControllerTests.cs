@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Common;
     using NUnit.Framework;
 
     public class VerifyEmailControllerTests
@@ -152,6 +153,7 @@
         {
             // Given
             const int userId = 1;
+            const int centreIdForUnapprovedDelegate = 2;
             var now = new DateTime(2022, 1, 1);
 
             var emailVerificationDetails = new EmailVerificationDetails
@@ -161,7 +163,7 @@
                 EmailVerificationHash = Code,
                 EmailVerified = null,
                 EmailVerificationHashCreatedDate = now,
-                CentreIdIfEmailIsForUnapprovedDelegate = 2,
+                CentreIdIfEmailIsForUnapprovedDelegate = centreIdForUnapprovedDelegate,
             };
 
             A.CallTo(() => clockUtility.UtcNow).Returns(now);
@@ -172,7 +174,7 @@
             var result = controller.Index(Email, Code);
 
             // Then
-            result.Should().BeViewResult().ModelAs<int>();
+            result.Should().BeViewResult().ModelAs<int>().IsSameOrEqualTo(centreIdForUnapprovedDelegate);
         }
     }
 }

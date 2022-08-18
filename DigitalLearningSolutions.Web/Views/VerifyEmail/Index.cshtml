@@ -2,6 +2,7 @@
 
 @{
   ViewData["Title"] = "Your email address has been verified";
+  var centreIdIfEmailIsForUnapprovedDelegate = Model;
 }
 
 <div class="nhsuk-grid-row">
@@ -16,7 +17,7 @@
       </div>
     } else {
       <partial name="_UnapprovedAccountWarning" />
-      <vc:centre-contact-info centre-id="@(Model.GetValueOrDefault())" />
+      <vc:centre-contact-info centre-id="@(centreIdIfEmailIsForUnapprovedDelegate.GetValueOrDefault())" />
     }
   </div>
 </div>
