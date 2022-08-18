@@ -129,7 +129,7 @@
         {
             var adminId = User.GetAdminId();
 
-            groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(
+            groupsService.AddDelegateToGroup(
                 groupId,
                 delegateId,
                 adminId
