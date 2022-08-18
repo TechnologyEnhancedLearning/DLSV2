@@ -41,6 +41,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         private IConfiguration config = null!;
         private IEmailService emailService = null!;
         private IEmailVerificationDataService emailVerificationDataService = null!;
+        private IEmailVerificationService emailVerificationService = null!;
         private IGroupsService groupsService = null!;
         private INotificationDataService notificationDataService = null!;
         private IPasswordDataService passwordDataService = null!;
@@ -67,6 +68,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             emailVerificationDataService = A.Fake<IEmailVerificationDataService>();
             clockUtility = A.Fake<IClockUtility>();
             groupsService = A.Fake<IGroupsService>();
+            emailVerificationService = A.Fake<IEmailVerificationService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(OldSystemBaseUrl);
             A.CallTo(() => config["AppRootPath"]).Returns(RefactoredSystemBaseUrl);
@@ -99,7 +101,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 userService,
                 emailVerificationDataService,
                 clockUtility,
-                groupsService
+                groupsService,
+                emailVerificationService
             );
         }
 
@@ -111,7 +114,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            var (_, approved) = registrationService.CreateDelegateAccountForNewUser(
+            var (_, approved) = registrationService.RegisterDelegateForNewUser(
                 model,
                 clientIp,
                 false,
@@ -138,7 +141,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.CreateDelegateAccountForNewUser(
+            registrationService.RegisterDelegateForNewUser(
                 model,
                 "::1",
                 false,
@@ -164,7 +167,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.CreateDelegateAccountForNewUser(
+            registrationService.RegisterDelegateForNewUser(
                 model,
                 "987.654.321.100",
                 false,
@@ -191,7 +194,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             GivenAdminsToNotifyHaveEmails(new[] { ApproverEmail });
 
             // When
-            registrationService.CreateDelegateAccountForNewUser(
+            registrationService.RegisterDelegateForNewUser(
                 model,
                 string.Empty,
                 false,
@@ -210,7 +213,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             GivenAdminsToNotifyHaveEmails(new[] { ApproverEmail });
 
             // When
-            registrationService.CreateDelegateAccountForNewUser(
+            registrationService.RegisterDelegateForNewUser(
                 model,
                 string.Empty,
                 true,
@@ -228,7 +231,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.CreateDelegateAccountForNewUser(
+            registrationService.RegisterDelegateForNewUser(
                 model,
                 "123.456.789.100",
                 false,
@@ -246,7 +249,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.CreateDelegateAccountForNewUser(
+            registrationService.RegisterDelegateForNewUser(
                 model,
                 string.Empty,
                 false,
@@ -271,7 +274,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
 
             // When
             var candidateNumber =
-                registrationService.CreateDelegateAccountForNewUser(
+                registrationService.RegisterDelegateForNewUser(
                         model,
                         string.Empty,
                         false,
@@ -297,7 +300,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             ).Returns((delegateId, "CANDIDATE_NUMBER"));
 
             // When
-            registrationService.CreateDelegateAccountForNewUser(
+            registrationService.RegisterDelegateForNewUser(
                 model,
                 string.Empty,
                 false,
@@ -322,7 +325,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             GivenNoPendingSupervisorDelegateRecordsForEmail();
 
             // When
-            registrationService.CreateDelegateAccountForNewUser(
+            registrationService.RegisterDelegateForNewUser(
                 model,
                 string.Empty,
                 false,
@@ -353,7 +356,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.CreateDelegateAccountForNewUser(
+            registrationService.RegisterDelegateForNewUser(
                 model,
                 string.Empty,
                 false,
@@ -372,7 +375,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.CreateDelegateAccountForNewUser(
+            registrationService.RegisterDelegateForNewUser(
                 model,
                 string.Empty,
                 false,
@@ -386,6 +389,99 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                     model
                 )
             ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void Registering_delegate_generates_verification_hashes_and_sends_emails_to_primary_and_centre_emails()
+        {
+            // Given
+            const string primaryEmail = "primary@email.com";
+            const string centreSpecificEmail = "centre@email.com";
+            const string clientIp = ApprovedIpPrefix + ".100";
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                primaryEmail: primaryEmail,
+                centreSpecificEmail: centreSpecificEmail
+            );
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+
+            A.CallTo(() => userService.GetUserByEmailAddress(A<string>._)).Returns(userAccount);
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    A<UserAccount>._,
+                    A<List<string>>._,
+                    A<string>._
+                )
+            ).DoesNothing();
+
+            // When
+            registrationService.RegisterDelegateForNewUser(
+                model,
+                clientIp,
+                false,
+                false
+            );
+
+            // Then
+            A.CallTo(() => userService.GetUserByEmailAddress(primaryEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    userAccount,
+                    A<List<string>>.That.Matches(
+                        list => ListTestHelper.ListOfStringsMatch(
+                            list,
+                            new List<string> { primaryEmail, centreSpecificEmail }
+                        )
+                    ),
+                    A<string>._
+                )
+            ).DoesNothing();
+        }
+
+        [Test]
+        public void
+            Registering_delegate_generates_verification_hash_and_sends_email_to_primary_only_if_centre_email_is_null()
+        {
+            // Given
+            const string primaryEmail = "primary@email.com";
+            const string? centreSpecificEmail = null;
+            const string clientIp = ApprovedIpPrefix + ".100";
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                primaryEmail: primaryEmail,
+                centreSpecificEmail: centreSpecificEmail
+            );
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+
+            A.CallTo(() => userService.GetUserByEmailAddress(A<string>._)).Returns(userAccount);
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    A<UserAccount>._,
+                    A<List<string>>._,
+                    A<string>._
+                )
+            ).DoesNothing();
+
+            // When
+            registrationService.RegisterDelegateForNewUser(
+                model,
+                clientIp,
+                false,
+                false
+            );
+
+            // Then
+            A.CallTo(() => userService.GetUserByEmailAddress(primaryEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    userAccount,
+                    A<List<string>>.That.Matches(
+                        list => ListTestHelper.ListOfStringsMatch(
+                            list,
+                            new List<string> { primaryEmail }
+                        )
+                    ),
+                    A<string>._
+                )
+            ).DoesNothing();
         }
 
         [Test]
@@ -419,7 +515,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 .Returns(true);
 
             // When
-            Action act = () => registrationService.CreateDelegateAccountForNewUser(
+            Action act = () => registrationService.RegisterDelegateForNewUser(
                 model,
                 string.Empty,
                 false,
@@ -457,7 +553,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 .Returns(true);
 
             // When
-            Action act = () => registrationService.CreateDelegateAccountForNewUser(
+            Action act = () => registrationService.RegisterDelegateForNewUser(
                 model,
                 string.Empty,
                 false,
@@ -492,7 +588,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            var (_, approved) = registrationService.CreateDelegateAccountForNewUser(
+            var (_, approved) = registrationService.RegisterDelegateForNewUser(
                 model,
                 clientIp,
                 false,
@@ -1488,7 +1584,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                                 OldEmail = string.Empty,
                                 NewEmail = model.CentreSpecificEmail,
                                 NewEmailIsVerified = newEmailIsVerifiedForUser,
-                                IsDelegateEmailSetByAdmin = false,
                             }
                         )
                     ),
@@ -1545,7 +1640,6 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                                 OldEmail = oldEmail,
                                 NewEmail = model.CentreSpecificEmail,
                                 NewEmailIsVerified = newEmailIsVerifiedForUser,
-                                IsDelegateEmailSetByAdmin = false,
                             }
                         )
                     )

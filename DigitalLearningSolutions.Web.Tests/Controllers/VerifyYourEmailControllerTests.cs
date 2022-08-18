@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.Tests.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.VerifyEmail;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -60,7 +59,7 @@
             var result = controller.ResendVerificationEmails();
 
             // Then
-            result.Should().BeViewResult().WithViewName("Index").ModelAs<VerifyYourEmailViewModel>();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
             A.CallTo(() => userService.GetUserById(UserId)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userService.GetUnverifiedEmailsForUser(UserId)).MustHaveHappenedOnceExactly();
             A.CallTo(

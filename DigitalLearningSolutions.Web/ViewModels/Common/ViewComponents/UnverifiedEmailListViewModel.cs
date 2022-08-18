@@ -6,9 +6,7 @@
     public class UnverifiedEmailListViewModel
     {
         public readonly bool AtLeastOneCentreEmailIsUnverified;
-        public readonly List<string>? CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail;
         public readonly string? PrimaryEmailIfUnverified;
-        public readonly bool PrimaryEmailIsUnverifiedAndTheSameAsAnUnverifiedCentreEmail;
         public readonly bool PrimaryEmailIsVerified;
         public readonly Dictionary<string, List<string>> UnverifiedCentreEmails;
 
@@ -21,12 +19,14 @@
             UnverifiedCentreEmails = unverifiedCentreEmails;
             PrimaryEmailIsVerified = string.IsNullOrWhiteSpace(primaryEmailIfUnverified);
             AtLeastOneCentreEmailIsUnverified = unverifiedCentreEmails.Any();
-            CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail =
-                PrimaryEmailIfUnverified != null && UnverifiedCentreEmails.ContainsKey(PrimaryEmailIfUnverified)
-                    ? UnverifiedCentreEmails[PrimaryEmailIfUnverified]
-                    : null;
-            PrimaryEmailIsUnverifiedAndTheSameAsAnUnverifiedCentreEmail =
-                !PrimaryEmailIsVerified && CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail != null;
         }
+
+        public List<string>? CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail =>
+            PrimaryEmailIfUnverified != null && UnverifiedCentreEmails.ContainsKey(PrimaryEmailIfUnverified)
+                ? UnverifiedCentreEmails[PrimaryEmailIfUnverified]
+                : null;
+
+        public bool PrimaryEmailIsUnverifiedAndTheSameAsAnUnverifiedCentreEmail => !PrimaryEmailIsVerified &&
+            CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail != null;
     }
 }

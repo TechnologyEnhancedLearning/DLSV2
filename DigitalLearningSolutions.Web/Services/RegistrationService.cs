@@ -8,6 +8,7 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
@@ -18,7 +19,7 @@ namespace DigitalLearningSolutions.Web.Services
 
     public interface IRegistrationService
     {
-        (string candidateNumber, bool approved) CreateDelegateAccountForNewUser(
+        (string candidateNumber, bool approved) RegisterDelegateForNewUser(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
@@ -40,7 +41,7 @@ namespace DigitalLearningSolutions.Web.Services
             bool registerJourneyContainsTermsAndConditions
         );
 
-        int RegisterCentreManager(
+        void RegisterCentreManager(
             AdminRegistrationModel registrationModel,
             bool registerJourneyContainsTermsAndConditions
         );
@@ -63,6 +64,7 @@ namespace DigitalLearningSolutions.Web.Services
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
         private readonly IEmailVerificationDataService emailVerificationDataService;
+        private readonly IEmailVerificationService emailVerificationService;
         private readonly IGroupsService groupsService;
         private readonly ILogger<RegistrationService> logger;
         private readonly INotificationDataService notificationDataService;
@@ -87,7 +89,8 @@ namespace DigitalLearningSolutions.Web.Services
             IUserService userService,
             IEmailVerificationDataService emailVerificationDataService,
             IClockUtility clockUtility,
-            IGroupsService groupsService
+            IGroupsService groupsService,
+            IEmailVerificationService emailVerificationService
         )
         {
             this.registrationDataService = registrationDataService;
@@ -105,9 +108,10 @@ namespace DigitalLearningSolutions.Web.Services
             this.emailVerificationDataService = emailVerificationDataService;
             this.clockUtility = clockUtility;
             this.groupsService = groupsService;
+            this.emailVerificationService = emailVerificationService;
         }
 
-        public (string candidateNumber, bool approved) CreateDelegateAccountForNewUser(
+        public (string candidateNumber, bool approved) RegisterDelegateForNewUser(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
@@ -154,6 +158,17 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 SendApprovalEmailToAdmins(delegateRegistrationModel, refactoredTrackingSystemEnabled);
             }
+
+            var userAccount = userService.GetUserByEmailAddress(delegateRegistrationModel.PrimaryEmail);
+            var unverifiedEmails = new List<string>
+                    { delegateRegistrationModel.PrimaryEmail, delegateRegistrationModel.CentreSpecificEmail }
+                .Where(email => email != null).ToList();
+
+            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                userAccount!,
+                unverifiedEmails,
+                config.GetAppRootPath()
+            );
 
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
@@ -329,7 +344,7 @@ namespace DigitalLearningSolutions.Web.Services
             return candidateNumber;
         }
 
-        public int RegisterCentreManager(
+        public void RegisterCentreManager(
             AdminRegistrationModel registrationModel,
             bool registerJourneyContainsTermsAndConditions
         )
@@ -339,22 +354,19 @@ namespace DigitalLearningSolutions.Web.Services
             var userId = CreateDelegateAccountForAdmin(registrationModel, registerJourneyContainsTermsAndConditions);
 
             var accountRegistrationModel = new AdminAccountRegistrationModel(registrationModel, userId);
-            var adminId = registrationDataService.RegisterAdmin(
+            registrationDataService.RegisterAdmin(
                 accountRegistrationModel,
                 new PossibleEmailUpdate
                 {
                     OldEmail = null,
                     NewEmail = registrationModel.CentreSpecificEmail,
                     NewEmailIsVerified = false,
-                    IsDelegateEmailSetByAdmin = false,
                 }
             );
 
             centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
             transaction.Complete();
-
-            return adminId;
         }
 
         public void CreateCentreManagerForExistingUser(int userId, int centreId, string? centreSpecificEmail)

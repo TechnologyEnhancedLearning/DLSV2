@@ -8,12 +8,15 @@
   if (primaryEmailIsSameAsAnUnverifiedCentreEmail) {
     Model.UnverifiedCentreEmails.Remove(Model.PrimaryEmailIfUnverified);
   }
+  var numSpecificPhrases = new {
+    account = Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail?.Count == 1 ? "account" : "accounts",
+  };
 }
 
 @if (Model.PrimaryEmailIsUnverifiedAndTheSameAsAnUnverifiedCentreEmail) {
   <p>
     Your primary email address <strong>@Model.PrimaryEmailIfUnverified</strong> has not been verified yet.
-    This is also your centre email address for your account at
+    This is also your centre email address for your @numSpecificPhrases.account at
 
     @foreach (var (centreName, centreIndex) in Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail!
       .Select((centreName, centreIndex) => (centreName, centreIndex))) {

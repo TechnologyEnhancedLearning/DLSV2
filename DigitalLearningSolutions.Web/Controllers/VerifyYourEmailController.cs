@@ -74,13 +74,7 @@
                 config.GetCurrentSystemBaseUrl()
             );
 
-            var model = new VerifyYourEmailViewModel(
-                EmailVerificationReason.EmailNotVerified,
-                primaryEmailIfUnverified,
-                unverifiedCentreEmails.ToList()
-            );
-
-            return View("Index", model);
+            return RedirectToAction("Index", EmailVerificationReason.EmailNotVerified);
         }
     }
 }

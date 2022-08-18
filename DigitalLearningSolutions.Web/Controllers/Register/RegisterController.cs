@@ -2,13 +2,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -19,7 +17,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
@@ -27,16 +24,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     public class RegisterController : Controller
     {
         private readonly ICentresDataService centresDataService;
-        private readonly IConfiguration config;
         private readonly ICryptoService cryptoService;
-        private readonly IEmailVerificationService emailVerificationService;
         private readonly IFeatureManager featureManager;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
-        private readonly IUserService userService;
 
         public RegisterController(
             ICentresDataService centresDataService,
@@ -46,10 +40,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             PromptsService promptsService,
             IFeatureManager featureManager,
             ISupervisorDelegateService supervisorDelegateService,
-            IEmailVerificationService emailVerificationService,
-            IUserService userService,
-            IUserDataService userDataService,
-            IConfiguration config
+            IUserDataService userDataService
         )
         {
             this.centresDataService = centresDataService;
@@ -59,10 +50,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.promptsService = promptsService;
             this.featureManager = featureManager;
             this.supervisorDelegateService = supervisorDelegateService;
-            this.emailVerificationService = emailVerificationService;
-            this.userService = userService;
             this.userDataService = userDataService;
-            this.config = config;
         }
 
         public IActionResult Index(int? centreId = null, string? inviteId = null)
@@ -282,19 +270,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             try
             {
                 var (candidateNumber, approved) =
-                    registrationService.CreateDelegateAccountForNewUser(
+                    registrationService.RegisterDelegateForNewUser(
                         RegistrationMappingHelper.MapSelfRegistrationToDelegateRegistrationModel(data),
                         userIp,
                         refactoredTrackingSystemEnabled,
                         true,
                         data.SupervisorDelegateId
                     );
-
-                CreateEmailVerificationHashesAndSendVerificationEmails(
-                    candidateNumber,
-                    model.PrimaryEmail!,
-                    model.CentreSpecificEmail
-                );
 
                 TempData.Clear();
 
@@ -439,26 +421,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 nameof(PersonalInformationViewModel.CentreSpecificEmail),
                 ModelState,
                 userDataService
-            );
-        }
-
-        private void CreateEmailVerificationHashesAndSendVerificationEmails(
-            string candidateNumber,
-            string primaryEmail,
-            string? centreSpecificEmail
-        )
-        {
-            var userId = userDataService.GetUserIdFromUsername(candidateNumber);
-            var userEntity = userService.GetUserById((int)userId!);
-            var unverifiedEmails = PossibleEmailUpdateHelper.GetUnverifiedPrimaryAndCentreEmails(
-                primaryEmail,
-                centreSpecificEmail
-            );
-
-            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                userEntity!.UserAccount,
-                unverifiedEmails.Select(ue => ue.NewEmail).ToList(),
-                config.GetAppRootPath()
             );
         }
     }

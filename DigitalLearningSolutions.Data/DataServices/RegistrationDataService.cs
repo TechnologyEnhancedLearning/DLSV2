@@ -86,8 +86,7 @@
                 {
                     OldEmail = null,
                     NewEmail = delegateRegistrationModel.CentreSpecificEmail,
-                    NewEmailIsVerified = false,
-                    IsDelegateEmailSetByAdmin = isRegisteredByAdmin,
+                    NewEmailIsVerified = isRegisteredByAdmin,
                 },
                 transaction
             );
@@ -319,9 +318,7 @@
             if (possibleEmailUpdate != null && possibleEmailUpdate.IsEmailUpdating)
             {
                 var emailVerified =
-                    possibleEmailUpdate.NewEmailIsVerified || possibleEmailUpdate.IsDelegateEmailSetByAdmin
-                        ? currentTime ?? clockUtility.UtcNow
-                        : (DateTime?)null;
+                    possibleEmailUpdate.NewEmailIsVerified ? currentTime ?? clockUtility.UtcNow : (DateTime?)null;
 
                 userDataService.SetCentreEmail(
                     userId,

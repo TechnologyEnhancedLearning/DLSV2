@@ -320,8 +320,7 @@
             controller.Summary(model);
 
             // Then
-            A.CallTo(() => userDataService.GetUserIdByAdminId(adminId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.GetUserById(userId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetUserByEmailAddress(primaryEmail)).MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
@@ -385,16 +384,16 @@
                         true
                     )
                 )
-                .Returns(adminId);
+                .DoesNothing();
 
             A.CallTo(
                     () => userDataService.GetUserIdByAdminId(adminId)
                 )
                 .Returns(userId);
             A.CallTo(
-                    () => userService.GetUserById(userId)
+                    () => userService.GetUserByEmailAddress(primaryEmail)
                 )
-                .Returns(UserTestHelper.GetDefaultUserEntity(userId, primaryEmail, centreSpecificEmail));
+                .Returns(UserTestHelper.GetDefaultUserAccount(userId, primaryEmail));
             A.CallTo(
                     () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                         A<UserAccount>._,

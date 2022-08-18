@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
@@ -159,12 +160,11 @@
             if (model.CentreSpecificEmail != null &&
                 !emailVerificationService.AccountEmailIsVerifiedForUser(userId, model.CentreSpecificEmail))
             {
-                var userEntity = userService.GetUserById(userId);
-                var unverifiedEmails = PossibleEmailUpdateHelper.GetSingleUnverifiedEmail(model.CentreSpecificEmail);
+                var userAccount = userService.GetUserByEmailAddress(model.PrimaryEmail);
 
                 emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                    userEntity!.UserAccount,
-                    unverifiedEmails.Select(ume => ume.NewEmail).ToList(),
+                    userAccount!,
+                    new List<string> { model.CentreSpecificEmail },
                     config.GetAppRootPath()
                 );
             }

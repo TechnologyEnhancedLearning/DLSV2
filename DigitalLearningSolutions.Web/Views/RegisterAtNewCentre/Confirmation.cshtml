@@ -28,7 +28,7 @@
     }
 
     @if (!Model.Approved) {
-      <partial name="_UnapprovedAccountWarning" model="@verifyEmailWarningViewModel" />
+      <partial name="_UnapprovedAccountWarning" />
     }
 
     @if (Model.HasAdminAccountAtCentre) {

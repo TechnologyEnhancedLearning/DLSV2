@@ -827,7 +827,6 @@
             {
                 OldEmail = "old@email.com",
                 NewEmail = newCentreEmail,
-                IsDelegateEmailSetByAdmin = false,
                 NewEmailIsVerified = true,
             };
 
@@ -932,7 +931,6 @@
             {
                 OldEmail = "old@email.com",
                 NewEmail = centreSpecificEmail,
-                IsDelegateEmailSetByAdmin = false,
                 NewEmailIsVerified = true,
             };
 
@@ -964,7 +962,6 @@
             {
                 OldEmail = "old@email.com",
                 NewEmail = centreSpecificEmail,
-                IsDelegateEmailSetByAdmin = false,
                 NewEmailIsVerified = false,
             };
 

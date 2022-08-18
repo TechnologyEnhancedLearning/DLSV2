@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -206,10 +207,9 @@
             try
             {
                 var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
-                var adminId = registrationService.RegisterCentreManager(registrationModel, true);
+                registrationService.RegisterCentreManager(registrationModel, true);
 
                 CreateEmailVerificationHashesAndSendVerificationEmails(
-                    adminId,
                     registrationModel.PrimaryEmail!,
                     registrationModel.CentreSpecificEmail
                 );
@@ -327,22 +327,21 @@
         }
 
         private void CreateEmailVerificationHashesAndSendVerificationEmails(
-            int adminId,
             string primaryEmail,
             string? centreSpecificEmail
         )
         {
-            var userId = userDataService.GetUserIdByAdminId(adminId);
-            var userEntity = userService.GetUserById((int)userId!);
+            var userAccount = userService.GetUserByEmailAddress(primaryEmail);
 
-            var unverifiedEmails = PossibleEmailUpdateHelper.GetUnverifiedPrimaryAndCentreEmails(
-                primaryEmail,
-                centreSpecificEmail
-            );
+            var unverifiedEmails = new List<string> { primaryEmail };
+            if (centreSpecificEmail != null)
+            {
+                unverifiedEmails.Add(centreSpecificEmail);
+            }
 
             emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                userEntity!.UserAccount,
-                unverifiedEmails.Select(ue => ue.NewEmail).ToList(),
+                userAccount!,
+                unverifiedEmails.ToList(),
                 config.GetAppRootPath()
             );
         }

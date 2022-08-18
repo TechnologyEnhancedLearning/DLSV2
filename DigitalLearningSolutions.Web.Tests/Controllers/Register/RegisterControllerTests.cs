@@ -7,8 +7,6 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -22,7 +20,6 @@
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Primitives;
     using Microsoft.FeatureManagement;
     using NUnit.Framework;
@@ -32,10 +29,8 @@
         private const string IpAddress = "1.1.1.1";
         private const int SupervisorDelegateId = 1;
         private ICentresDataService centresDataService = null!;
-        private IConfiguration config = null!;
         private RegisterController controller = null!;
         private ICryptoService cryptoService = null!;
-        private IEmailVerificationService emailVerificationService = null!;
         private IFeatureManager featureManager = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private PromptsService promptsService = null!;
@@ -43,22 +38,18 @@
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
-        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             centresDataService = A.Fake<ICentresDataService>();
             cryptoService = A.Fake<ICryptoService>();
-            emailVerificationService = A.Fake<IEmailVerificationService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
-            userService = A.Fake<IUserService>();
-            config = A.Fake<IConfiguration>();
             request = A.Fake<HttpRequest>();
 
             controller = new RegisterController(
@@ -69,10 +60,7 @@
                     promptsService,
                     featureManager,
                     supervisorDelegateService,
-                    emailVerificationService,
-                    userService,
-                    userDataService,
-                    config
+                    userDataService
                 )
                 .WithDefaultContext()
                 .WithMockRequestContext(request)
@@ -169,10 +157,7 @@
                 promptsService,
                 featureManager,
                 supervisorDelegateService,
-                emailVerificationService,
-                userService,
-                userDataService,
-                config
+                userDataService
             ).WithDefaultContext().WithMockUser(true);
 
             // When
@@ -245,10 +230,7 @@
                 promptsService,
                 featureManager,
                 supervisorDelegateService,
-                emailVerificationService,
-                userService,
-                userDataService,
-                config
+                userDataService
             ).WithDefaultContext().WithMockUser(true);
 
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(centreName);
@@ -282,7 +264,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.CreateDelegateAccountForNewUser(
+                        registrationService.RegisterDelegateForNewUser(
                             A<DelegateRegistrationModel>.That.Matches(
                                 d =>
                                     d.FirstName == data.FirstName &&
@@ -313,47 +295,6 @@
         }
 
         [Test]
-        public async Task Summary_post_sends_verification_email_to_primary_and_centre_emails()
-        {
-            // Given
-            const string candidateNumber = "TN1";
-            const int userId = 1;
-            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
-
-            var model = new SummaryViewModel
-            {
-                PrimaryEmail = data.PrimaryEmail,
-                CentreSpecificEmail = data.CentreSpecificEmail,
-            };
-
-            SetUpFakesForSuccessfulRegistration(candidateNumber, data, userId);
-
-            A.CallTo(() => userDataService.GetUserIdFromUsername(candidateNumber)).Returns(userId);
-            A.CallTo(() => userService.GetUserById(A<int>._)).Returns(UserTestHelper.GetDefaultUserEntity());
-            A.CallTo(
-                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                    A<UserAccount>._,
-                    A<List<string>>._,
-                    A<string>._
-                )
-            ).DoesNothing();
-
-            // When
-            await controller.Summary(model);
-
-            // Then
-            A.CallTo(() => userDataService.GetUserIdFromUsername(candidateNumber)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.GetUserById(userId)).MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                    A<UserAccount>._,
-                    A<List<string>>._,
-                    A<string>._
-                )
-            ).MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
         public async Task Summary_post_returns_redirect_to_index_view_with_missing_centre()
         {
             // Given
@@ -367,7 +308,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.CreateDelegateAccountForNewUser(
+                        registrationService.RegisterDelegateForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
@@ -393,7 +334,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.CreateDelegateAccountForNewUser(
+                        registrationService.RegisterDelegateForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
@@ -419,7 +360,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.CreateDelegateAccountForNewUser(
+                        registrationService.RegisterDelegateForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
@@ -438,7 +379,7 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.CreateDelegateAccountForNewUser(
+                    () => registrationService.RegisterDelegateForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
@@ -467,7 +408,7 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.CreateDelegateAccountForNewUser(
+                    () => registrationService.RegisterDelegateForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
@@ -498,7 +439,7 @@
             controller.TempData.Set(data);
 
             A.CallTo(
-                    () => registrationService.CreateDelegateAccountForNewUser(
+                    () => registrationService.RegisterDelegateForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
@@ -518,18 +459,6 @@
                     () => userDataService.GetUserIdFromUsername(candidateNumber)
                 )
                 .Returns(userId);
-            A.CallTo(
-                    () => userService.GetUserById(userId)
-                )
-                .Returns(UserTestHelper.GetDefaultUserEntity(userId, data.PrimaryEmail!, data.CentreSpecificEmail));
-            A.CallTo(
-                    () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
-                        A<UserAccount>._,
-                        A<List<string>>._,
-                        A<string>._
-                    )
-                )
-                .DoesNothing();
         }
     }
 }

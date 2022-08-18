@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Login
 {
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.ViewModels;
 
     public class ChooseACentreViewModel
@@ -10,13 +9,13 @@
             List<ChooseACentreAccountViewModel> centreUserDetails,
             string? returnUrl,
             bool primaryEmailIsVerified,
-            IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> unverifiedCentreEmails
+            int numberOfUnverifiedCentreEmails
         )
         {
             CentreUserDetails = centreUserDetails;
             ReturnUrl = returnUrl;
             PrimaryEmailIsVerified = primaryEmailIsVerified;
-            NumberOfUnverifiedCentreEmails = unverifiedCentreEmails.Count();
+            NumberOfUnverifiedCentreEmails = numberOfUnverifiedCentreEmails;
         }
 
         public List<ChooseACentreAccountViewModel> CentreUserDetails { get; set; }

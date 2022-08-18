@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Models
 {
-    using System;
     using DigitalLearningSolutions.Web.ViewModels.Register;
 
     public class DelegateRegistrationData : RegistrationData
