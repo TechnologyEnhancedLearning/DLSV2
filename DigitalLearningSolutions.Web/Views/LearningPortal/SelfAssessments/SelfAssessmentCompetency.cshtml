@@ -113,7 +113,7 @@
               <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
                 <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
               </svg>
-              @(@Model.CompetencyNumber == 1 ? "Go back" : "Previous " + Model.Competency.Vocabulary.ToLower() )
+              <span class="nhsuk-pagination__page">@(@Model.CompetencyNumber == 1 ? "Go back" : "Previous " + Model.Competency.Vocabulary.ToLower() )</span>
             </a>
           </div>
         </div>
@@ -121,19 +121,20 @@
           <a class="nhsuk-back-link__link"
              asp-action="SelfAssessmentOverview"
              asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">
-            Return to @Model.VocabPlural() home
+            <span class="nhsuk-pagination__page">Return to @Model.VocabPlural() home</span>
           </a>
         </div>
-        <div class="pagination-button-container">
+        <div class="pagination-button-container nhsuk-u-margin-right-6">
           <div class="nhsuk-pagination-item--next">
             <a class="nhsuk-back-link__link skip-link"
                asp-action="SelfAssessmentCompetency"
                asp-route-selfAssessmentId="@Model.Assessment.Id"
                asp-route-competencyNumber="@(Model.CompetencyNumber + 1)">
-              Skip question
+              <span class="nhsuk-pagination__page">Skip question</span>
+              <span>
               <svg class="nhsuk-icon nhsuk-icon__chevron-left" id="skip-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
                 <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
-              </svg>
+              </svg></span>
             </a>
           </div>
         </div>
