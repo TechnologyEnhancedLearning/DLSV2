@@ -40,7 +40,11 @@
            type="@Model.Type"
            spellcheck="@Model.SpellCheck"
            autocomplete="@Model.Autocomplete"
-           @if(describedBy != "" ) {
+           @if(Model.HasError)
+           {
+    <text>aria-invalid="true"</text>
+    }
+    @if(describedBy != "" ) {
     <text>
         aria-describedby="@describedBy"
     </text>

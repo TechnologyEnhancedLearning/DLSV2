@@ -37,6 +37,10 @@
          type="@Model.Type"
          pattern="[0-9]*"
          inputmode="numeric"
+         @if(Model.HasError)
+           {
+             <text>aria-invalid="true"</text>
+           }
          @if(describedBy != "" ) {
     <text>
         aria-describedby="@describedBy"

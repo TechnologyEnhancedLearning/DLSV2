@@ -34,6 +34,10 @@
         aria-describedby="@describedBy"
     </text>
     }
+    @if(Model.HasError)
+           {
+             <text>aria-invalid="true"</text>
+           }
           id="@Model.Id"
           name="@Model.Name"
           value="@Model.Value"
