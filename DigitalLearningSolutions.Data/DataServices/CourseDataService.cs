@@ -40,6 +40,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
 
+        IEnumerable<CourseAssessmentDetails> GetNonArchivedCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
+
         IEnumerable<ApplicationDetails> GetApplicationsAvailableToCentreByCategory(int centreId, int? categoryId);
 
         IEnumerable<ApplicationDetails> GetApplicationsByBrandId(int brandId);
@@ -475,16 +477,14 @@ namespace DigitalLearningSolutions.Data.DataServices
             return names;
         }
 
-        public IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
-        {
-            const string tutorialWithLearningCountQuery =
-                @"SELECT COUNT(ct.TutorialID)
+        private const string tutorialWithLearningCountQuery =
+            @"SELECT COUNT(ct.TutorialID)
                 FROM CustomisationTutorials AS ct
                 INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
                 WHERE ct.Status = 1 AND ct.CustomisationID = c.CustomisationID";
 
-            const string tutorialWithDiagnosticCountQuery =
-                @"SELECT COUNT(ct.TutorialID)
+        private const string tutorialWithDiagnosticCountQuery =
+            @"SELECT COUNT(ct.TutorialID)
                 FROM CustomisationTutorials AS ct
                 INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
                 INNER JOIN Customisations AS c ON c.CustomisationID = ct.CustomisationID
@@ -492,8 +492,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 WHERE ct.DiagStatus = 1 AND a.DiagAssess = 1 AND ct.CustomisationID = c.CustomisationID
                     AND a.ArchivedDate IS NULL AND a.DefaultContentTypeID <> 4";
 
-            return connection.Query<CourseAssessmentDetails>(
-                $@"SELECT
+        private readonly string CourseAssessmentDetailsQuery = $@"SELECT
                         c.CustomisationID,
                         c.CentreID,
                         c.ApplicationID,
@@ -509,11 +508,23 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
                     INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
-                    --WHERE ap.ArchivedDate IS NULL
-                        AND (c.CentreID = @centreId OR c.AllCentres = 1)
+                    WHERE (c.CentreID = @centreId OR c.AllCentres = 1)
                         AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreID) AND (Active = 1))
-                        AND ap.DefaultContentTypeID <> 4",
+                        AND ap.DefaultContentTypeID <> 4";
+
+        public IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
+        {
+            return connection.Query<CourseAssessmentDetails>(
+                CourseAssessmentDetailsQuery,
+                new { centreId, categoryId }
+            );
+        }
+
+        public IEnumerable<CourseAssessmentDetails> GetNonArchivedCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
+        {
+            return connection.Query<CourseAssessmentDetails>(
+                @$"{CourseAssessmentDetailsQuery} AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
         }
