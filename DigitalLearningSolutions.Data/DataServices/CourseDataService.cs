@@ -28,6 +28,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId);
 
+        IEnumerable<CourseStatistics> GetNonArchivedCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId);
+
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
 
         DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId);
@@ -143,6 +145,33 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
+
+        private readonly string CourseStatisticsQuery = @$"SELECT
+                        cu.CustomisationID,
+                        cu.CentreID,
+                        cu.Active,
+                        cu.AllCentres,
+                        ap.ApplicationId,
+                        ap.ApplicationName,
+                        cu.CustomisationName,
+                        {DelegateCountQuery},
+                        {CompletedCountQuery},
+                        {AllAttemptsQuery},
+                        {AttemptsPassedQuery},
+                        cu.HideInLearnerPortal,
+                        cc.CategoryName,
+                        ct.CourseTopic,
+                        cu.LearningTimeMins AS LearningMinutes,
+                        cu.IsAssessed
+                    FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                    INNER JOIN dbo.CourseCategories AS cc ON cc.CourseCategoryID = ap.CourseCategoryID
+                    INNER JOIN dbo.CourseTopics AS ct ON ct.CourseTopicID = ap.CourseTopicId
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                        AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
+                        AND ca.CentreID = @centreId
+                        AND ap.DefaultContentTypeID <> 4";
 
         private readonly string selectDelegateCourseInfoQuery =
             @$"SELECT
@@ -320,33 +349,18 @@ namespace DigitalLearningSolutions.Data.DataServices
         )
         {
             return connection.Query<CourseStatistics>(
-                @$"SELECT
-                        cu.CustomisationID,
-                        cu.CentreID,
-                        cu.Active,
-                        cu.AllCentres,
-                        ap.ApplicationId,
-                        ap.ApplicationName,
-                        cu.CustomisationName,
-                        {DelegateCountQuery},
-                        {CompletedCountQuery},
-                        {AllAttemptsQuery},
-                        {AttemptsPassedQuery},
-                        cu.HideInLearnerPortal,
-                        cc.CategoryName,
-                        ct.CourseTopic,
-                        cu.LearningTimeMins AS LearningMinutes,
-                        cu.IsAssessed
-                    FROM dbo.Customisations AS cu
-                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
-                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
-                    INNER JOIN dbo.CourseCategories AS cc ON cc.CourseCategoryID = ap.CourseCategoryID
-                    INNER JOIN dbo.CourseTopics AS ct ON ct.CourseTopicID = ap.CourseTopicId
-                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                        AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
-                        AND ca.CentreID = @centreId
-                        --AND ap.ArchivedDate IS NULL
-                        AND ap.DefaultContentTypeID <> 4",
+                CourseStatisticsQuery,
+                new { centreId, categoryId }
+            );
+        }
+
+        public IEnumerable<CourseStatistics> GetNonArchivedCourseStatisticsAtCentreFilteredByCategory(
+            int centreId,
+            int? categoryId
+        )
+        {
+            return connection.Query<CourseStatistics>(
+                @$"{CourseStatisticsQuery} AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
         }
