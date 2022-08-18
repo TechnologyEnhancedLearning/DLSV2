@@ -309,7 +309,6 @@ namespace DigitalLearningSolutions.Data.DataServices
                             AND cu.Active = 1
                             AND cu.CentreID = @centreId
                             AND ca.CentreID = @centreId
-                            AND ap.ArchivedDate IS NULL
                             AND ap.DefaultContentTypeID <> 4",
                 new { centreId, adminCategoryId }
             );
@@ -346,7 +345,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
                         AND ca.CentreID = @centreId
-                        AND ap.ArchivedDate IS NULL
+                        --AND ap.ArchivedDate IS NULL
                         AND ap.DefaultContentTypeID <> 4",
                 new { centreId, categoryId }
             );
@@ -357,7 +356,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             return connection.Query<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
-                        AND ap.ArchivedDate IS NULL
+                        --AND ap.ArchivedDate IS NULL
                         AND pr.RemovedDate IS NULL
                         AND ap.DefaultContentTypeID <> 4",
                 new { delegateId }
@@ -369,7 +368,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             return connection.QuerySingleOrDefault<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.ProgressID = @progressId
-                        AND ap.ArchivedDate IS NULL
+                        --AND ap.ArchivedDate IS NULL
                         AND ap.DefaultContentTypeID <> 4",
                 new { progressId }
             );
@@ -496,7 +495,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
                     INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
-                    WHERE ap.ArchivedDate IS NULL
+                    --WHERE ap.ArchivedDate IS NULL
                         AND (c.CentreID = @centreId OR c.AllCentres = 1)
                         AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreID) AND (Active = 1))
@@ -567,7 +566,6 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     WHERE cn.CentreID = @centreID
                         AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                        AND ap.ArchivedDate IS NULL
                         AND ap.DefaultContentTypeID <> 4",
                 new { centreId, categoryId }
             );
