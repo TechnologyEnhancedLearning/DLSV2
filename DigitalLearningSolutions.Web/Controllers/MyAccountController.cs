@@ -83,7 +83,7 @@
                 );
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                ? userService.GetAllActiveCentreEmailsForUser(userId).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
             var (_, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id);
@@ -130,7 +130,7 @@
                     : new List<EditDelegateRegistrationPromptViewModel>();
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                ? userService.GetAllActiveCentreEmailsForUser(userId).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
             var model = new MyAccountEditDetailsViewModel(
@@ -468,7 +468,7 @@
                 : new List<EditDelegateRegistrationPromptViewModel>();
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllCentreEmailsForUser(userId).Select(
+                ? userService.GetAllActiveCentreEmailsForUser(userId).Select(
                     row =>
                     {
                         string? email = null;
@@ -515,7 +515,7 @@
                 : new List<EditDelegateRegistrationPromptViewModel>();
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                ? userService.GetAllActiveCentreEmailsForUser(userId).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
             if (ModelState.IsValid && formData.ProfileImageFile != null)
@@ -558,7 +558,7 @@
                 : new List<EditDelegateRegistrationPromptViewModel>();
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                ? userService.GetAllActiveCentreEmailsForUser(userId).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
             var model = new MyAccountEditDetailsViewModel(

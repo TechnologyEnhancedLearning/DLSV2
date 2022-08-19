@@ -1025,7 +1025,7 @@
         [Test]
         [TestCase(true)]
         [TestCase(false)]
-        public void GetAllCentreEmailsForUser_returns_centre_email_list(bool isEmpty)
+        public void GetAllActiveCentreEmailsForUser_returns_centre_email_list(bool isEmpty)
         {
             // Given
             const int userId = 1;
@@ -1035,12 +1035,12 @@
 
             var centreEmailList = new List<(int centreId, string centreName, string? centreEmail)>
                 { (centreId, centreName, centreEmail) };
-            A.CallTo(() => userDataService.GetAllCentreEmailsForUser(userId)).Returns(
+            A.CallTo(() => userDataService.GetAllActiveCentreEmailsForUser(userId)).Returns(
                 isEmpty ? new List<(int centreId, string centreName, string? centreSpecificEmail)>() : centreEmailList
             );
 
             // When
-            var result = userService.GetAllCentreEmailsForUser(userId);
+            var result = userService.GetAllActiveCentreEmailsForUser(userId);
 
             // Then
             result.Should().BeEquivalentTo(

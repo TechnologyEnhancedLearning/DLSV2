@@ -153,7 +153,7 @@
             );
         }
 
-        public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(
+        public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllActiveCentreEmailsForUser(
             int userId
         )
         {

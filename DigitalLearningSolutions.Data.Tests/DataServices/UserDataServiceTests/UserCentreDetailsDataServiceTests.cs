@@ -224,7 +224,7 @@
         }
 
         [Test]
-        public void GetAllCentreEmailsForUser_returns_centre_email_list()
+        public void GetAllActiveCentreEmailsForUser_returns_centre_email_list()
         {
             using var transaction = new TransactionScope();
 
@@ -280,7 +280,7 @@
             );
 
             // When
-            var result = userDataService.GetAllCentreEmailsForUser(userId).ToList();
+            var result = userDataService.GetAllActiveCentreEmailsForUser(userId).ToList();
 
             // Then
             result.Count.Should().Be(4);
@@ -294,7 +294,7 @@
         }
 
         [Test]
-        public void GetAllCentreEmailsForUser_does_not_return_emails_for_inactive_admin_accounts()
+        public void GetAllActiveCentreEmailsForUser_does_not_return_emails_for_inactive_admin_accounts()
         {
             using var transaction = new TransactionScope();
 
@@ -331,14 +331,14 @@
             );
 
             // When
-            var result = userDataService.GetAllCentreEmailsForUser(userId).ToList();
+            var result = userDataService.GetAllActiveCentreEmailsForUser(userId).ToList();
 
             // Then
             result.Count.Should().Be(0);
         }
 
         [Test]
-        public void GetAllCentreEmailsForUser_does_not_return_emails_for_inactive_delegate_accounts()
+        public void GetAllActiveCentreEmailsForUser_does_not_return_emails_for_inactive_delegate_accounts()
         {
             using var transaction = new TransactionScope();
 
@@ -375,14 +375,14 @@
             );
 
             // When
-            var result = userDataService.GetAllCentreEmailsForUser(userId).ToList();
+            var result = userDataService.GetAllActiveCentreEmailsForUser(userId).ToList();
 
             // Then
             result.Count.Should().Be(0);
         }
 
         [Test]
-        public void GetAllCentreEmailsForUser_returns_empty_list_when_user_has_no_centre_accounts()
+        public void GetAllActiveCentreEmailsForUser_returns_empty_list_when_user_has_no_centre_accounts()
         {
             using var transaction = new TransactionScope();
 
@@ -392,7 +392,7 @@
             connection.Execute(@"DELETE FROM AdminAccounts WHERE UserID = @userId", new { userId });
 
             // When
-            var result = userDataService.GetAllCentreEmailsForUser(userId);
+            var result = userDataService.GetAllActiveCentreEmailsForUser(userId);
 
             // Then
             result.Should().BeEmpty();
