@@ -820,7 +820,7 @@
                             Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
                             model.NotifyDate == WelcomeEmailDate &&
                             model.IsSelfRegistered == false &&
-                            model.UserIsActive == false &&
+                            model.UserIsActive == true &&
                             model.CentreAccountIsActive == true &&
                             model.Approved == true &&
                             model.PasswordHash == null

@@ -98,7 +98,7 @@
                 data.Answer6,
                 false,
                 true,
-                false,
+                true,
                 data.ProfessionalRegistrationNumber,
                 true,
                 data.WelcomeEmailDate
@@ -127,7 +127,7 @@
                 delegateTableRow.Answer6,
                 false,
                 delegateTableRow.Active!.Value,
-                false,
+                true,
                 delegateTableRow.Prn,
                 true,
                 welcomeEmailDate

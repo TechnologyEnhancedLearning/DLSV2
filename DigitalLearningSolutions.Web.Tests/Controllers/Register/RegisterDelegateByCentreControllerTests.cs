@@ -339,7 +339,7 @@
                                     d.Answer5 == data.Answer5 &&
                                     d.Answer6 == data.Answer6 &&
                                     d.CentreAccountIsActive &&
-                                    !d.UserIsActive &&
+                                    d.UserIsActive &&
                                     d.Approved &&
                                     !d.IsSelfRegistered &&
                                     d.NotifyDate == data.WelcomeEmailDate &&
