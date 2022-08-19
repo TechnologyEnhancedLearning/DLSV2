@@ -156,7 +156,7 @@
             );
         }
 
-        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
+        private IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
             GetNonArchivedCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
                 int centreId,
                 int? categoryId,

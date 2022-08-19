@@ -408,7 +408,6 @@ namespace DigitalLearningSolutions.Data.DataServices
             return connection.Query<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
-                        --AND ap.ArchivedDate IS NULL
                         AND pr.RemovedDate IS NULL
                         AND ap.DefaultContentTypeID <> 4",
                 new { delegateId }
@@ -420,7 +419,6 @@ namespace DigitalLearningSolutions.Data.DataServices
             return connection.QuerySingleOrDefault<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.ProgressID = @progressId
-                        --AND ap.ArchivedDate IS NULL
                         AND ap.DefaultContentTypeID <> 4",
                 new { progressId }
             );
