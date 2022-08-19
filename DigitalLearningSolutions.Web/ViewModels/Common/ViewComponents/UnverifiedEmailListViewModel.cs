@@ -8,7 +8,7 @@
         public readonly bool AtLeastOneCentreEmailIsUnverified;
         public readonly string? PrimaryEmailIfUnverified;
         public readonly bool PrimaryEmailIsVerified;
-        public readonly Dictionary<string, List<string>> UnverifiedCentreEmails;
+        public readonly Dictionary<string, List<string>> UnverifiedCentreEmailsDifferentFromPrimaryEmail;
 
         public UnverifiedEmailListViewModel(
             string? primaryEmailIfUnverified,
@@ -16,17 +16,33 @@
         )
         {
             PrimaryEmailIfUnverified = primaryEmailIfUnverified;
-            UnverifiedCentreEmails = unverifiedCentreEmails;
             PrimaryEmailIsVerified = string.IsNullOrWhiteSpace(primaryEmailIfUnverified);
             AtLeastOneCentreEmailIsUnverified = unverifiedCentreEmails.Any();
+
+            CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail =
+                !PrimaryEmailIsVerified && unverifiedCentreEmails.ContainsKey(PrimaryEmailIfUnverified!)
+                    ? unverifiedCentreEmails[PrimaryEmailIfUnverified]
+                    : null;
+            PrimaryEmailIsUnverifiedAndTheSameAsAnUnverifiedCentreEmail =
+                !PrimaryEmailIsVerified && CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail != null;
+            UnverifiedCentreEmailsDifferentFromPrimaryEmail =
+                GetUnverifiedCentreEmailsDifferentFromPrimaryEmail(unverifiedCentreEmails);
         }
 
-        public List<string>? CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail =>
-            PrimaryEmailIfUnverified != null && UnverifiedCentreEmails.ContainsKey(PrimaryEmailIfUnverified)
-                ? UnverifiedCentreEmails[PrimaryEmailIfUnverified]
-                : null;
+        public List<string>? CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail { get; set; }
+        public bool PrimaryEmailIsUnverifiedAndTheSameAsAnUnverifiedCentreEmail { get; set; }
 
-        public bool PrimaryEmailIsUnverifiedAndTheSameAsAnUnverifiedCentreEmail => !PrimaryEmailIsVerified &&
-            CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail != null;
+        private Dictionary<string, List<string>> GetUnverifiedCentreEmailsDifferentFromPrimaryEmail(
+            Dictionary<string, List<string>> unverifiedCentreEmails
+        )
+        {
+            if (PrimaryEmailIsUnverifiedAndTheSameAsAnUnverifiedCentreEmail)
+            {
+                unverifiedCentreEmails.Remove(PrimaryEmailIfUnverified!);
+                return unverifiedCentreEmails;
+            }
+
+            return unverifiedCentreEmails;
+        }
     }
 }
