@@ -40,6 +40,11 @@
                 return new LoginResult(LoginAttemptResult.InvalidCredentials);
             }
 
+            if (userEntity.DelegateAccounts.Any(da => da.IsYetToBeClaimed))
+            {
+                return new LoginResult(LoginAttemptResult.UnclaimedDelegateAccount);
+            }
+
             var verificationResult = userVerificationService.VerifyUserEntity(password, userEntity);
 
             if (verificationResult.PasswordMatchesAtLeastOneAccountPassword &&
