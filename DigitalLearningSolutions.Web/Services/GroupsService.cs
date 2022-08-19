@@ -710,6 +710,7 @@
                 p => ProgressShouldBeUpdatedOnEnrolment(p, isAddCourseToGroup)
             ).ToList();
 
+            // TODO HEEDLS-1018 notifications should also not be sent if the delegate is not active
             var shouldNotificationEmailBeSent = delegateNotificationPreferences.Any(
                 // NotificationId 10 is "New course enrollment"
                 preference => preference.NotificationId == 10 && preference.Accepted
