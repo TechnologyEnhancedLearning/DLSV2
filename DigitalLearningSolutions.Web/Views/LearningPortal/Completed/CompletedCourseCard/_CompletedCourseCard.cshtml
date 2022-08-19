@@ -8,7 +8,7 @@
                 @Model.Name @(Model.ArchivedDate == null ? "" : " - ARCHIVED")
             </span>
         </summary>
-        <dl class="nhsuk-details__text">
+        <div class="nhsuk-details__text">
             <div class="nhsuk-grid-row">
                 <partial name="Shared/_TagRow" model="@Model" />
             </div>
@@ -16,6 +16,7 @@
                 <partial name="Shared/_Dates" model="@Model" view-data="@(new ViewDataDictionary(ViewData) { { "showActions", true } })" />
                 <partial name="Shared/_Scores" model="@Model" view-data="@(new ViewDataDictionary(ViewData) { { "showActions", true } })" />
             </dl>
+            </div>
     </details>
 
     <div class="flex-row">
