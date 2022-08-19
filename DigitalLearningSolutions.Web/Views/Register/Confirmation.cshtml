@@ -3,6 +3,7 @@
 
 @{
   ViewData["Title"] = "Registration confirmation";
+  var verifyEmailWarningViewModel = new ConfirmationVerifyEmailWarningViewModel(Model.PrimaryEmailIfUnverified, Model.CentreEmailIfUnverified, Model.CentreName);
 }
 
 <div class="nhsuk-grid-row">
@@ -19,6 +20,9 @@
       <span class="nhsuk-u-visually-hidden">Information: </span>
       <p>Your delegate number is <span class="nhsuk-u-font-weight-bold">@Model.CandidateNumber</span></p>
     </div>
+
+    <partial name="_VerifyEmailWarningForRegistrationConfirmationPage" model="@verifyEmailWarningViewModel" />
+
     @if (!Model.Approved) {
       <div class="nhsuk-warning-callout">
         <h2 class="nhsuk-warning-callout__label">
@@ -35,6 +39,8 @@
         </p>
       </div>
       <vc:centre-contact-info centre-id="@Model.CentreId.GetValueOrDefault()" />
+    } else {
+      <vc:action-link link-text="Log in" asp-controller="Login" asp-action="Index" />
     }
   </div>
 </div>

@@ -69,7 +69,7 @@
                 model.EmailVerificationReason.Should().BeEquivalentTo(EmailVerificationReason.EmailNotVerified);
                 model.PrimaryEmail.Should().BeEquivalentTo(primaryEmail);
                 model.CentreSpecificEmails.Should().BeEquivalentTo(centreSpecificEmails);
-                model.UnverifiedEmailsCount.Should().Be(unverifiedEmailsCount);
+                model.DistinctUnverifiedEmailsCount.Should().Be(unverifiedEmailsCount);
                 model.SingleUnverifiedEmail.Should().Be(singleUnverifiedEmail);
                 model.CentreEmailsExcludingFirstParagraph.Should().BeEquivalentTo(centreEmailsExcludingFirstParagraph);
             }

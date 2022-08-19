@@ -8,6 +8,7 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
@@ -18,7 +19,7 @@ namespace DigitalLearningSolutions.Web.Services
 
     public interface IRegistrationService
     {
-        (string candidateNumber, bool approved) CreateDelegateAccountForNewUser(
+        (string candidateNumber, bool approved) RegisterDelegateForNewUser(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
@@ -51,7 +52,8 @@ namespace DigitalLearningSolutions.Web.Services
 
         (int delegateId, string candidateNumber) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
-            bool registerJourneyContainsTermsAndConditions
+            bool registerJourneyContainsTermsAndConditions,
+            bool shouldAssumeEmailVerified
         );
     }
 
@@ -61,16 +63,17 @@ namespace DigitalLearningSolutions.Web.Services
         private readonly IClockUtility clockUtility;
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
+        private readonly IEmailVerificationDataService emailVerificationDataService;
+        private readonly IEmailVerificationService emailVerificationService;
         private readonly IGroupsService groupsService;
         private readonly ILogger<RegistrationService> logger;
+        private readonly INotificationDataService notificationDataService;
         private readonly IPasswordDataService passwordDataService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IRegistrationDataService registrationDataService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
-        private readonly INotificationDataService notificationDataService;
         private readonly IUserService userService;
-        private readonly IEmailVerificationDataService emailVerificationDataService;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
@@ -86,7 +89,8 @@ namespace DigitalLearningSolutions.Web.Services
             IUserService userService,
             IEmailVerificationDataService emailVerificationDataService,
             IClockUtility clockUtility,
-            IGroupsService groupsService
+            IGroupsService groupsService,
+            IEmailVerificationService emailVerificationService
         )
         {
             this.registrationDataService = registrationDataService;
@@ -104,9 +108,10 @@ namespace DigitalLearningSolutions.Web.Services
             this.emailVerificationDataService = emailVerificationDataService;
             this.clockUtility = clockUtility;
             this.groupsService = groupsService;
+            this.emailVerificationService = emailVerificationService;
         }
 
-        public (string candidateNumber, bool approved) CreateDelegateAccountForNewUser(
+        public (string candidateNumber, bool approved) RegisterDelegateForNewUser(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
@@ -126,7 +131,8 @@ namespace DigitalLearningSolutions.Web.Services
 
             var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
-                registerJourneyContainsTermsAndConditions
+                registerJourneyContainsTermsAndConditions,
+                false
             );
 
             passwordDataService.SetPasswordByCandidateNumber(
@@ -152,6 +158,17 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 SendApprovalEmailToAdmins(delegateRegistrationModel, refactoredTrackingSystemEnabled);
             }
+
+            var userAccount = userService.GetUserByEmailAddress(delegateRegistrationModel.PrimaryEmail);
+            var unverifiedEmails = new List<string>
+                    { delegateRegistrationModel.PrimaryEmail, delegateRegistrationModel.CentreSpecificEmail }
+                .Where(email => email != null).ToList();
+
+            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                userAccount!,
+                unverifiedEmails,
+                config.GetAppRootPath()
+            );
 
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
@@ -282,7 +299,8 @@ namespace DigitalLearningSolutions.Web.Services
 
             var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
-                registerJourneyContainsTermsAndConditions
+                registerJourneyContainsTermsAndConditions,
+                true
             );
 
             var supervisorDelegateRecordIdsMatchingDelegate =
@@ -445,7 +463,8 @@ namespace DigitalLearningSolutions.Web.Services
 
         public (int delegateId, string candidateNumber) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
-            bool registerJourneyContainsTermsAndConditions
+            bool registerJourneyContainsTermsAndConditions,
+            bool shouldAssumeEmailVerified
         )
         {
             try
@@ -465,7 +484,8 @@ namespace DigitalLearningSolutions.Web.Services
 
                 var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
-                    registerJourneyContainsTermsAndConditions
+                    registerJourneyContainsTermsAndConditions,
+                    shouldAssumeEmailVerified
                 );
 
                 groupsService.AddNewDelegateToAppropriateGroups(delegateId, delegateRegistrationModel);
@@ -618,7 +638,8 @@ namespace DigitalLearningSolutions.Web.Services
             {
                 var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
-                    registerJourneyContainsTermsAndConditions
+                    registerJourneyContainsTermsAndConditions,
+                    false
                 );
 
                 passwordDataService.SetPasswordByCandidateNumber(

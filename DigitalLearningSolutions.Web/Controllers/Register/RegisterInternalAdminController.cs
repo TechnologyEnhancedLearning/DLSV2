@@ -1,48 +1,62 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [Authorize(Policy = CustomPolicies.BasicUser)]
+    [ServiceFilter(typeof(VerifyUserHasVerifiedPrimaryEmail))]
     public class RegisterInternalAdminController : Controller
     {
         private readonly ICentresDataService centresDataService;
         private readonly ICentresService centresService;
-        private readonly IUserDataService userDataService;
-        private readonly IRegistrationService registrationService;
+        private readonly IConfiguration config;
         private readonly IDelegateApprovalsService delegateApprovalsService;
+        private readonly IEmailVerificationService emailVerificationService;
         private readonly IFeatureManager featureManager;
         private readonly IRegisterAdminService registerAdminService;
+        private readonly IRegistrationService registrationService;
+        private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public RegisterInternalAdminController(
             ICentresDataService centresDataService,
             ICentresService centresService,
             IUserDataService userDataService,
+            IUserService userService,
             IRegistrationService registrationService,
             IDelegateApprovalsService delegateApprovalsService,
             IFeatureManager featureManager,
-            IRegisterAdminService registerAdminService
+            IRegisterAdminService registerAdminService,
+            IEmailVerificationService emailVerificationService,
+            IConfiguration config
         )
         {
             this.centresDataService = centresDataService;
             this.centresService = centresService;
             this.userDataService = userDataService;
+            this.userService = userService;
             this.registrationService = registrationService;
             this.delegateApprovalsService = delegateApprovalsService;
             this.featureManager = featureManager;
             this.registerAdminService = registerAdminService;
+            this.emailVerificationService = emailVerificationService;
+            this.config = config;
         }
 
         [HttpGet]
@@ -143,13 +157,36 @@
                 }
             }
 
-            return RedirectToAction("Confirmation");
+            if (model.CentreSpecificEmail != null &&
+                !emailVerificationService.AccountEmailIsVerifiedForUser(userId, model.CentreSpecificEmail))
+            {
+                var userAccount = userService.GetUserAccountById(userId);
+
+                emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    userAccount!,
+                    new List<string> { model.CentreSpecificEmail },
+                    config.GetAppRootPath()
+                );
+            }
+
+            return RedirectToAction("Confirmation", new { centreId = model.Centre });
         }
 
         [HttpGet]
-        public IActionResult Confirmation()
+        public IActionResult Confirmation(int centreId)
         {
-            return View();
+            var userId = User.GetUserIdKnownNotNull();
+            var (_, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userId);
+            var (_, centreName, unverifiedCentreEmail) =
+                unverifiedCentreEmails.SingleOrDefault(uce => uce.centreId == centreId);
+
+            var model = new AdminConfirmationViewModel(
+                null,
+                unverifiedCentreEmail,
+                centreName
+            );
+
+            return View(model);
         }
     }
 }

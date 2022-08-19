@@ -1,33 +1,42 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Tests.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class RegisterAdminControllerTests
     {
         private const int DefaultCentreId = 7;
+        private const int DefaultJobGroupId = 7;
+        private const string DefaultPRN = "PRN1234";
         private const string DefaultPrimaryEmail = "primary@email.com";
         private const string DefaultCentreSpecificEmail = "centre@email.com";
         private ICentresDataService centresDataService = null!;
         private ICentresService centresService = null!;
+        private IConfiguration config = null!;
         private RegisterAdminController controller = null!;
         private ICryptoService cryptoService = null!;
+        private IEmailVerificationService emailVerificationService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private IRegisterAdminService registerAdminService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
-        private IRegisterAdminService registerAdminService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -39,6 +48,9 @@
             registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
             registerAdminService = A.Fake<IRegisterAdminService>();
+            emailVerificationService = A.Fake<IEmailVerificationService>();
+            userService = A.Fake<IUserService>();
+            config = A.Fake<IConfiguration>();
             controller = new RegisterAdminController(
                     centresDataService,
                     centresService,
@@ -46,7 +58,10 @@
                     jobGroupsDataService,
                     registrationService,
                     userDataService,
-                    registerAdminService
+                    registerAdminService,
+                    emailVerificationService,
+                    userService,
+                    config
                 )
                 .WithDefaultContext()
                 .WithMockTempData();
@@ -124,7 +139,10 @@
                     jobGroupsDataService,
                     registrationService,
                     userDataService,
-                    registerAdminService
+                    registerAdminService,
+                    emailVerificationService,
+                    userService,
+                    config
                 )
                 .WithDefaultContext()
                 .WithMockUser(true);
@@ -213,46 +231,25 @@
         )
         {
             // Given
-            const int jobGroupId = 1;
-            const string professionalRegistrationNumber = "PRN1234";
             var model = new SummaryViewModel
             {
                 Terms = true,
             };
+
             var data = new RegistrationData
             {
                 FirstName = "First",
                 LastName = "Name",
                 Centre = DefaultCentreId,
-                JobGroup = jobGroupId,
+                JobGroup = DefaultJobGroupId,
                 PasswordHash = "hash",
                 PrimaryEmail = primaryEmail,
                 CentreSpecificEmail = centreSpecificEmail,
-                ProfessionalRegistrationNumber = professionalRegistrationNumber,
+                ProfessionalRegistrationNumber = DefaultPRN,
                 HasProfessionalRegistrationNumber = true,
             };
-            controller.TempData.Set(data);
-            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, null)).Returns(true);
-            if (centreSpecificEmail != null)
-            {
-                A.CallTo(() => userDataService.GetAdminUserByEmailAddress(centreSpecificEmail)).Returns(null);
-            }
 
-            A.CallTo(
-                    () => centresService.IsAnEmailValidForCentreManager(
-                        primaryEmail,
-                        centreSpecificEmail,
-                        DefaultCentreId
-                    )
-                )
-                .Returns(true);
-            A.CallTo(
-                    () => registrationService.RegisterCentreManager(
-                        A<AdminRegistrationModel>._,
-                        false
-                    )
-                )
-                .DoesNothing();
+            SetUpFakesForSuccessfulRegistration(primaryEmail, centreSpecificEmail, data, 1);
 
             // When
             var result = controller.Summary(model);
@@ -277,14 +274,65 @@
                                 !a.IsContentCreator &&
                                 !a.IsTrainer &&
                                 !a.IsSupervisor &&
-                                a.ProfessionalRegistrationNumber == professionalRegistrationNumber &&
-                                a.JobGroup == jobGroupId
+                                a.ProfessionalRegistrationNumber == DefaultPRN &&
+                                a.JobGroup == DefaultJobGroupId
                         ),
                         true
                     )
                 )
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
+        }
+
+        [Test]
+        public void
+            SummaryPost_with_valid_information_sends_verification_email_to_primary_and_centre_emails()
+        {
+            // Given
+            const string primaryEmail = "primary@email.com";
+            const string? centreSpecificEmail = "centre@email.com";
+            const int adminId = 1;
+            const int userId = 1;
+
+            var model = new SummaryViewModel
+            {
+                Terms = true,
+                PrimaryEmail = primaryEmail,
+                CentreSpecificEmail = centreSpecificEmail,
+            };
+
+            var data = new RegistrationData
+            {
+                FirstName = "First",
+                LastName = "Name",
+                Centre = DefaultCentreId,
+                JobGroup = DefaultJobGroupId,
+                PasswordHash = "hash",
+                PrimaryEmail = primaryEmail,
+                CentreSpecificEmail = centreSpecificEmail,
+                ProfessionalRegistrationNumber = DefaultPRN,
+                HasProfessionalRegistrationNumber = true,
+            };
+
+            SetUpFakesForSuccessfulRegistration(primaryEmail, centreSpecificEmail, data, adminId);
+
+            // When
+            controller.Summary(model);
+
+            // Then
+            A.CallTo(() => userService.GetUserByEmailAddress(primaryEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    A<UserAccount>._,
+                    A<List<string>>.That.Matches(
+                        list => ListTestHelper.ListOfStringsMatch(
+                            list,
+                            new List<string> { data.PrimaryEmail, data.CentreSpecificEmail }
+                        )
+                    ),
+                    A<string>._
+                )
+            ).MustHaveHappenedOnceExactly();
         }
 
         private PersonalInformationViewModel GetDefaultPersonalInformationViewModelAndSetTempData(
@@ -304,6 +352,56 @@
             controller.TempData.Set(data);
 
             return model;
+        }
+
+        private void SetUpFakesForSuccessfulRegistration(
+            string primaryEmail,
+            string? centreSpecificEmail,
+            RegistrationData data,
+            int adminId
+        )
+        {
+            const int userId = 1;
+
+            controller.TempData.Set(data);
+            A.CallTo(() => registerAdminService.IsRegisterAdminAllowed(DefaultCentreId, null)).Returns(true);
+            if (centreSpecificEmail != null)
+            {
+                A.CallTo(() => userDataService.GetAdminUserByEmailAddress(centreSpecificEmail)).Returns(null);
+            }
+
+            A.CallTo(
+                    () => centresService.IsAnEmailValidForCentreManager(
+                        primaryEmail,
+                        centreSpecificEmail,
+                        DefaultCentreId
+                    )
+                )
+                .Returns(true);
+            A.CallTo(
+                    () => registrationService.RegisterCentreManager(
+                        A<AdminRegistrationModel>._,
+                        true
+                    )
+                )
+                .DoesNothing();
+
+            A.CallTo(
+                    () => userDataService.GetUserIdByAdminId(adminId)
+                )
+                .Returns(userId);
+            A.CallTo(
+                    () => userService.GetUserByEmailAddress(primaryEmail)
+                )
+                .Returns(UserTestHelper.GetDefaultUserAccount(userId, primaryEmail));
+            A.CallTo(
+                    () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                        A<UserAccount>._,
+                        A<List<string>>._,
+                        A<string>._
+                    )
+                )
+                .DoesNothing();
         }
     }
 }

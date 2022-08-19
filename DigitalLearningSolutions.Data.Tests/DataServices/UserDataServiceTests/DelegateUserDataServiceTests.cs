@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Transactions;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;

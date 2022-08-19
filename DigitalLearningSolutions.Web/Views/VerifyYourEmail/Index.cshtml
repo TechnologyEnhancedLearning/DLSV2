@@ -11,7 +11,7 @@
   <div class="nhsuk-grid-column-full word-break">
     <h1 class="nhsuk-heading-xl">@title</h1>
 
-    @if (Model.UnverifiedEmailsCount == 0) {
+    @if (Model.DistinctUnverifiedEmailsCount == 0) {
       <p class="nhsuk-body-m"> All your email addresses are verified.</p>
     } else {
       @if (Model.EmailVerificationReason.Equals(EmailVerificationReason.EmailNotVerified)) {

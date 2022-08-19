@@ -35,13 +35,13 @@
         private const string SwitchCentreReturnUrl = "/Home/Welcome";
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IConfiguration config;
+        private readonly IEmailVerificationService emailVerificationService;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly ILogger<MyAccountController> logger;
         private readonly PromptsService promptsService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
-        private readonly IEmailVerificationService emailVerificationService;
 
         public MyAccountController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
@@ -86,7 +86,8 @@
                 ? userService.GetAllActiveCentreEmailsForUser(userId).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
-            var (_, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id);
+            var (_, unverifiedCentreEmails) =
+                userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id);
 
             var switchCentreReturnUrl = StringHelper.GetLocalRedirectUrl(config, SwitchCentreReturnUrl);
 
@@ -217,7 +218,7 @@
 
             emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                 userEntity.UserAccount,
-                unverifiedModifiedEmails,
+                unverifiedModifiedEmails.Select(ume => ume.NewEmail).ToList(),
                 config.GetAppRootPath()
             );
 

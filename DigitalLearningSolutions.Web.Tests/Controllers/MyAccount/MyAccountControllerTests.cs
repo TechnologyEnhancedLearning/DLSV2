@@ -8,7 +8,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -36,14 +35,14 @@
         private const string Email = "test@user.com";
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private IConfiguration config = null!;
+        private IEmailVerificationService emailVerificationService = null!;
         private IImageResizeService imageResizeService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private ILogger<MyAccountController> logger = null!;
         private PromptsService promptsService = null!;
         private IUrlHelper urlHelper = null!;
-        private IUserService userService = null!;
         private IUserDataService userDataService = null!;
-        private IEmailVerificationService emailVerificationService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -119,7 +118,7 @@
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
-                    A<IEnumerable<PossibleEmailUpdate>>._,
+                    A<List<string>>._,
                     A<string>._
                 )
             ).MustNotHaveHappened();
@@ -132,11 +131,11 @@
         {
             // Given
             const int centreId = 2;
-            var myAccountController = GetMyAccountController().WithMockUser(true, centreId, adminId: null);
+            var myAccountController = GetMyAccountController().WithMockUser(true, centreId, null);
 
             var customPromptLists = new List<CentreRegistrationPrompt>
             {
-                PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, mandatory: true)
+                PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, mandatory: true),
             };
 
             var testUserEntity = new UserEntity(
@@ -476,18 +475,10 @@
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     testUserEntity.UserAccount,
-                    A<List<PossibleEmailUpdate>>.That.Matches(
-                        sequence => PossibleEmailUpdateTestHelper.PossibleEmailUpdateListsMatch(
-                            sequence,
-                            new List<PossibleEmailUpdate>
-                            {
-                                new PossibleEmailUpdate
-                                {
-                                    OldEmail = Email,
-                                    NewEmail = newEmail,
-                                    NewEmailIsVerified = false,
-                                },
-                            }
+                    A<List<string>>.That.Matches(
+                        list => ListTestHelper.ListOfStringsMatch(
+                            list,
+                            new List<string> { newEmail }
                         )
                     ),
                     A<string>._
@@ -710,7 +701,7 @@
         {
             // Given
             const int centreId = 2;
-            var myAccountController = GetMyAccountController().WithMockUser(true, centreId, adminId: null);
+            var myAccountController = GetMyAccountController().WithMockUser(true, centreId, null);
 
             var customPromptLists = new List<CentreRegistrationPrompt>
             {
@@ -780,7 +771,7 @@
                 GetCentrelessControllerAndFormData(userId, centreSpecificEmailsByCentreId);
 
             var testUserEntity = new UserEntity(
-                UserTestHelper.GetDefaultUserAccount(userId),
+                UserTestHelper.GetDefaultUserAccount(),
                 new AdminAccount[] { },
                 new[] { UserTestHelper.GetDefaultDelegateAccount() }
             );
@@ -845,35 +836,13 @@
                 )
             ).MustHaveHappened();
 
-            var expectedEmailUpdateSequence = new List<PossibleEmailUpdate>
-            {
-                new PossibleEmailUpdate
-                {
-                    OldEmail = testUserEntity.UserAccount.PrimaryEmail,
-                    NewEmail = Email,
-                    NewEmailIsVerified = false,
-                },
-                new PossibleEmailUpdate
-                {
-                    OldEmail = null,
-                    NewEmail = centreEmail1,
-                    NewEmailIsVerified = false,
-                },
-                new PossibleEmailUpdate
-                {
-                    OldEmail = null,
-                    NewEmail = centreEmail2,
-                    NewEmailIsVerified = false,
-                },
-            };
-
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     testUserEntity.UserAccount,
-                    A<List<PossibleEmailUpdate>>.That.Matches(
-                        sequence => PossibleEmailUpdateTestHelper.PossibleEmailUpdateListsMatch(
-                            sequence,
-                            expectedEmailUpdateSequence
+                    A<List<string>>.That.Matches(
+                        list => ListTestHelper.ListOfStringsMatch(
+                            list,
+                            new List<string> { Email, centreEmail1, centreEmail2 }
                         )
                     ),
                     A<string>._
@@ -964,7 +933,7 @@
             Dictionary<int, string?> centreSpecificEmailsByCentreId
         )
         {
-            var myAccountController = GetMyAccountController().WithMockUser(true, null, null, null, userId: userId);
+            var myAccountController = GetMyAccountController().WithMockUser(true, null, null, null, userId);
 
             var formData = GetBasicMyAccountEditDetailsFormData();
             formData.AllCentreSpecificEmailsDictionary = centreSpecificEmailsByCentreId.ToDictionary(

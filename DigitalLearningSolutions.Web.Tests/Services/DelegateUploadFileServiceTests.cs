@@ -31,19 +31,19 @@
     public class DelegateUploadFileServiceTests
     {
         private const int CentreId = 101;
-        private static readonly DateTime WelcomeEmailDate = new DateTime(3000, 1, 1);
         public const string TestDelegateUploadRelativeFilePath = "/TestData/DelegateUploadTest.xlsx";
-        private IConfiguration configuration = null!;
+        private static readonly DateTime WelcomeEmailDate = new DateTime(3000, 1, 1);
         private static readonly (int, string) NewDelegateIdAndCandidateNumber = (5, "DELEGATE");
+        private IClockUtility clockUtility = null!;
+        private IConfiguration configuration = null!;
 
         private DelegateUploadFileService delegateUploadFileService = null!;
+        private IGroupsService groupsService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IPasswordResetService passwordResetService = null!;
-        private IGroupsService groupsService = null!;
         private IRegistrationService registrationService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
-        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void SetUp()
@@ -412,7 +412,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        true
                     )
                 )
                 .Returns(NewDelegateIdAndCandidateNumber);
@@ -500,7 +501,7 @@
                     row.FirstName,
                     row.LastName,
                     candidateNumberDelegate.UserAccount.PrimaryEmail,
-                    Int32.Parse(row.JobGroupID),
+                    int.Parse(row.JobGroupID),
                     candidateNumberDelegate.UserAccount.Id
                 )
             ).MustHaveHappened();
@@ -609,7 +610,7 @@
                     A<RegistrationFieldAnswers>.That.Matches(
                         answers =>
                             answers.CentreId == candidateNumberDelegate.DelegateAccount.CentreId &&
-                            answers.JobGroupId == Int32.Parse(row.JobGroupID) &&
+                            answers.JobGroupId == int.Parse(row.JobGroupID) &&
                             answers.Answer1 == row.Answer1 &&
                             answers.Answer2 == row.Answer2 &&
                             answers.Answer3 == row.Answer3 &&
@@ -788,7 +789,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        true
                     )
                 )
                 .Returns(NewDelegateIdAndCandidateNumber);
@@ -823,7 +825,8 @@
                             model.Approved == true &&
                             model.PasswordHash == null
                     ),
-                    false
+                    false,
+                    true
                 )
             ).MustHaveHappenedOnceExactly();
 
@@ -852,7 +855,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        true
                     )
                 )
                 .Returns(NewDelegateIdAndCandidateNumber);
@@ -882,7 +886,8 @@
                                 Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
                                 model.NotifyDate == WelcomeEmailDate
                         ),
-                        false
+                        false,
+                        true
                     )
                 )
                 .MustHaveHappened();
@@ -903,7 +908,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        true
                     )
                 )
                 .Returns(NewDelegateIdAndCandidateNumber);
@@ -956,7 +962,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        true
                     )
                 )
                 .Returns(NewDelegateIdAndCandidateNumber);
@@ -984,7 +991,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        true
                     )
                 )
                 .MustHaveHappened();
@@ -1017,7 +1025,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        true
                     )
                 )
                 .Returns(NewDelegateIdAndCandidateNumber);
@@ -1035,7 +1044,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        true
                     )
                 )
                 .MustHaveHappened();
@@ -1060,7 +1070,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        true
                     )
                 )
                 .Returns(NewDelegateIdAndCandidateNumber);
@@ -1078,7 +1089,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        true
                     )
                 )
                 .MustHaveHappened();
@@ -1151,7 +1163,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        true
                     )
                 )
                 .Returns(NewDelegateIdAndCandidateNumber);
@@ -1206,7 +1219,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        true
                     )
                 )
                 .Returns((2, "ANY"));
@@ -1350,7 +1364,8 @@
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
-                        false
+                        false,
+                        A<bool>._
                     )
                 )
                 .MustNotHaveHappened();
