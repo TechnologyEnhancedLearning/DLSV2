@@ -25,13 +25,13 @@
   <fieldset id="HasProfessionalRegistrationNumber" class="nhsuk-fieldset" aria-describedby="professional-registration-hint">
 
     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-      <div class="nhsuk-label">
+      <span class="nhsuk-label">
         Do @subject have a Professional Registration Number?
-      </div>
-      <div class="nhsuk-hint nhsuk-u-margin-bottom-0" id="professional-registration-hint">
+      </span>
+      <span class="nhsuk-hint nhsuk-u-margin-bottom-0" id="professional-registration-hint">
         @capitalisedSubject should have a professional registration number if @subject are a health professional registered with a professional body such as the NMC, GMC or GDC.
         @(isRegisterJourney ? $"If you don't have it to hand, {subject} can provide it later by visiting My account / Edit details." : "")
-      </div>
+      </span>
     </legend>
 
     @if (hasPrnErrorHasOccurred) {
