@@ -408,6 +408,18 @@ namespace DigitalLearningSolutions.Web.Services
                 isPrimaryEmailUpdated,
                 changeMadeBySameUser
             );
+
+            var currentJobGroupId = userDataService.GetUserAccountById(editAccountDetailsData.UserId)!.JobGroupId;
+
+            groupsService.SynchroniseJobGroupsOnOtherCentres(
+                    null,
+                    editAccountDetailsData.UserId,
+                    currentJobGroupId,
+                    editAccountDetailsData.JobGroupId,
+                    new AccountDetailsData(editAccountDetailsData.FirstName,
+                        editAccountDetailsData.Surname,
+                        editAccountDetailsData.Email)
+                );
         }
 
         public void UpdateUserDetailsAndCentreSpecificDetails(
