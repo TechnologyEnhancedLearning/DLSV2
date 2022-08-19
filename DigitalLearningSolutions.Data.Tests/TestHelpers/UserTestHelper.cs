@@ -163,8 +163,7 @@
 
         public static UserEntity GetDefaultUserEntity(
             int userId = 2,
-            string primaryEmail = "primary@email.com",
-            string? centreSpecificEmail = "centre@email.com"
+            string primaryEmail = "primary@email.com"
         )
         {
             return new UserEntity(

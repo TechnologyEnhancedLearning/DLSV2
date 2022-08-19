@@ -15,7 +15,7 @@
         (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions,
-            bool isRegisteredByAdmin
+            bool shouldAssumeEmailVerified
         );
 
         int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate? possibleEmailUpdate);
@@ -60,7 +60,7 @@
         public (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions,
-            bool isRegisteredByAdmin
+            bool shouldAssumeEmailVerified
         )
         {
             connection.EnsureOpen();
@@ -83,7 +83,7 @@
                 {
                     OldEmail = null,
                     NewEmail = delegateRegistrationModel.CentreSpecificEmail,
-                    NewEmailIsVerified = isRegisteredByAdmin,
+                    NewEmailIsVerified = shouldAssumeEmailVerified,
                 },
                 transaction
             );

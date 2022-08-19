@@ -53,7 +53,7 @@ namespace DigitalLearningSolutions.Web.Services
         (int delegateId, string candidateNumber) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions,
-            bool isRegisteredByAdmin
+            bool shouldAssumeEmailVerified
         );
     }
 
@@ -464,7 +464,7 @@ namespace DigitalLearningSolutions.Web.Services
         public (int delegateId, string candidateNumber) CreateAccountAndReturnCandidateNumberAndDelegateId(
             DelegateRegistrationModel delegateRegistrationModel,
             bool registerJourneyContainsTermsAndConditions,
-            bool isRegisteredByAdmin
+            bool shouldAssumeEmailVerified
         )
         {
             try
@@ -485,7 +485,7 @@ namespace DigitalLearningSolutions.Web.Services
                 var (delegateId, candidateNumber) = registrationDataService.RegisterNewUserAndDelegateAccount(
                     delegateRegistrationModel,
                     registerJourneyContainsTermsAndConditions,
-                    isRegisteredByAdmin
+                    shouldAssumeEmailVerified
                 );
 
                 groupsService.AddNewDelegateToAppropriateGroups(delegateId, delegateRegistrationModel);

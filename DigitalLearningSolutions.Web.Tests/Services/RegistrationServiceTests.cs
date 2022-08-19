@@ -404,7 +404,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
             var userAccount = UserTestHelper.GetDefaultUserAccount();
 
-            A.CallTo(() => userService.GetUserByEmailAddress(A<string>._)).Returns(userAccount);
+            A.CallTo(() => userService.GetUserByEmailAddress(primaryEmail)).Returns(userAccount);
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,

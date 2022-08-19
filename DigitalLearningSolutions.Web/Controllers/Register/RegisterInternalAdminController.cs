@@ -160,7 +160,7 @@
             if (model.CentreSpecificEmail != null &&
                 !emailVerificationService.AccountEmailIsVerifiedForUser(userId, model.CentreSpecificEmail))
             {
-                var userAccount = userService.GetUserByEmailAddress(model.PrimaryEmail);
+                var userAccount = userService.GetUserAccountById(userId);
 
                 emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     userAccount!,

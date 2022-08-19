@@ -25,12 +25,12 @@
         private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
         private IClockUtility clockUtility = null!;
         private IConfiguration configuration = null!;
+        private IEmailVerificationDataService emailVerificationDataService = null!;
         private IGroupsService groupsService = null!;
         private ILogger<IUserService> logger = null!;
         private ISessionDataService sessionDataService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
-        private IEmailVerificationDataService emailVerificationDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -918,6 +918,21 @@
         }
 
         [Test]
+        public void GetUserAccountById_calls_data_service_and_returns_user_account()
+        {
+            // Given
+            const int userId = 1;
+            var userAccount = UserTestHelper.GetDefaultUserAccount();
+            A.CallTo(() => userDataService.GetUserAccountById(userId)).Returns(userAccount);
+
+            // When
+            var result = userService.GetUserAccountById(userId);
+
+            // Then
+            result.Should().BeEquivalentTo(userAccount);
+        }
+
+        [Test]
         [TestCase("test@test", false)]
         [TestCase("testtest", true)]
         [TestCase("@testtest", true)]
@@ -1262,7 +1277,10 @@
             A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(emailVerificationDetails);
 
             // When
-            void MethodBeingTested() => userService.GetEmailVerificationDetails(email, code);
+            void MethodBeingTested()
+            {
+                userService.GetEmailVerificationDetails(email, code);
+            }
 
             // Then
             Assert.Throws<Exception>(MethodBeingTested);

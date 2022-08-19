@@ -77,6 +77,8 @@ namespace DigitalLearningSolutions.Web.Services
 
         UserEntity? GetUserByUsername(string username);
 
+        public UserAccount? GetUserAccountById(int userId);
+
         UserAccount? GetUserByEmailAddress(string emailAddress);
 
         string? GetCentreEmail(int userId, int centreId);
@@ -102,11 +104,11 @@ namespace DigitalLearningSolutions.Web.Services
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
         private readonly IClockUtility clockUtility;
         private readonly IConfiguration configuration;
+        private readonly IEmailVerificationDataService emailVerificationDataService;
         private readonly IGroupsService groupsService;
         private readonly ILogger<IUserService> logger;
         private readonly ISessionDataService sessionDataService;
         private readonly IUserDataService userDataService;
-        private readonly IEmailVerificationDataService emailVerificationDataService;
 
         public UserService(
             IUserDataService userDataService,
@@ -275,6 +277,11 @@ namespace DigitalLearningSolutions.Web.Services
             var userId = userDataService.GetUserIdFromUsername(username);
 
             return userId == null ? null : GetUserById(userId.Value);
+        }
+
+        public UserAccount? GetUserAccountById(int userId)
+        {
+            return userDataService.GetUserAccountById(userId);
         }
 
         public UserAccount? GetUserByEmailAddress(string emailAddress)

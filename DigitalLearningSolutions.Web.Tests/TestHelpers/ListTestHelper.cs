@@ -15,7 +15,7 @@
                 return false;
             }
 
-            return list1.All(list2.Contains);
+            return list1.OrderBy(x => x).SequenceEqual(list2.OrderBy(x => x));
         }
     }
 }

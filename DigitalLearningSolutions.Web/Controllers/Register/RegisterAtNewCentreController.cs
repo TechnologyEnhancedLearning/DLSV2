@@ -257,7 +257,7 @@
                 if (data.CentreSpecificEmail != null &&
                     !emailVerificationService.AccountEmailIsVerifiedForUser(userId, data.CentreSpecificEmail))
                 {
-                    var userAccount = userService.GetUserByEmailAddress(User.GetUserPrimaryEmailKnownNotNull());
+                    var userAccount = userService.GetUserAccountById(userId);
 
                     emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                         userAccount!,

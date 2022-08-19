@@ -373,7 +373,7 @@
 
             A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
                 .Returns(emailIsVerifiedForUser);
-            A.CallTo(() => userService.GetUserByEmailAddress(A<string>._))
+            A.CallTo(() => userService.GetUserAccountById(UserId))
                 .Returns(UserTestHelper.GetDefaultUserAccount());
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
@@ -389,7 +389,7 @@
             // Then
             A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => userService.GetUserByEmailAddress(A<string>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetUserAccountById(UserId)).MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
