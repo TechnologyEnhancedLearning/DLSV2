@@ -324,13 +324,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return RedirectToAction("Index");
             }
 
-            var centreIdForContactInformation = approved ? null : centreId;
             var centreName = GetCentreName(centreId);
 
             var model = new ConfirmationViewModel(
                 candidateNumber,
                 approved,
-                centreIdForContactInformation,
+                centreId,
                 unverifiedPrimaryEmail,
                 centreSpecificEmail,
                 centreName!

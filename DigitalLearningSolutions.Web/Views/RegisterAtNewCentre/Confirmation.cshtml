@@ -31,12 +31,7 @@
       <partial name="_UnapprovedAccountWarning" />
     }
 
-    @if (Model.HasAdminAccountAtCentre) {
-      <p>
-        You will need to log out and in again before you can access the Learning Portal.
-      </p>
-      <partial name="_LogoutForm" model="@ButtonType.Secondary" />
-    } else if (Model.Approved && centreEmailIsVerified) {
+    @if (Model.HasAdminAccountAtCentre || Model.Approved && centreEmailIsVerified) {
       <p>
         You can now log into your new account.
       </p>
