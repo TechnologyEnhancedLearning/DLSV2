@@ -293,6 +293,76 @@
             var result = userDataService.GetAllActiveCentreEmailsForUser(userId).ToList();
 
             // Then
+            result.Count.Should().Be(3);
+            result.Should()
+                .ContainEquivalentOf((delegateOnlyCentreId, delegateOnlyCentreName, delegateOnlyCentreEmail));
+            result.Should().ContainEquivalentOf((adminOnlyCentreId, adminOnlyCentreName, adminOnlyCentreEmail));
+            result.Should().ContainEquivalentOf(
+                (adminAndDelegateCentreId, adminAndDelegateCentreName, adminAndDelegateCentreEmail)
+            );
+            result.Should().ContainEquivalentOf((nullCentreEmailCentreId, nullCentreEmailCentreName, (string?)null));
+        }
+
+        [Test]
+        public void GetAllCentreEmailsForUser_returns_centre_email_list()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 1;
+            const int delegateOnlyCentreId = 2;
+            const int adminOnlyCentreId = 3;
+            const int adminAndDelegateCentreId = 101;
+            const int nullCentreEmailCentreId = 4;
+            const string delegateOnlyCentreEmail = "centre2@email.com";
+            const string adminOnlyCentreEmail = "centre3@email.com";
+            const string adminAndDelegateCentreEmail = "centre101@email.com";
+
+            var delegateOnlyCentreName = connection.QuerySingleOrDefault<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @delegateOnlyCentreId",
+                new { delegateOnlyCentreId }
+            );
+
+            var adminOnlyCentreName = connection.QuerySingleOrDefault<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @adminOnlyCentreId",
+                new { adminOnlyCentreId }
+            );
+
+            var adminAndDelegateCentreName = connection.QuerySingleOrDefault<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @adminAndDelegateCentreId",
+                new { adminAndDelegateCentreId }
+            );
+
+            var nullCentreEmailCentreName = connection.QuerySingleOrDefault<string>(
+                @"SELECT CentreName FROM Centres WHERE CentreID = @nullCentreEmailCentreId",
+                new { nullCentreEmailCentreId }
+            );
+
+            connection.Execute(
+                @"INSERT INTO AdminAccounts (UserID, CentreID, Active) VALUES
+                    (@userId, @adminOnlyCentreId, 1),
+                    (@userId, @nullCentreEmailCentreId, 1)",
+                new { userId, adminOnlyCentreId, nullCentreEmailCentreId }
+            );
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES
+                    (@userId, @delegateOnlyCentreId, @delegateOnlyCentreEmail),
+                    (@userId, @adminOnlyCentreId, @adminOnlyCentreEmail),
+                    (@userId, @adminAndDelegateCentreId, @adminAndDelegateCentreEmail)",
+                new
+                {
+                    userId,
+                    delegateOnlyCentreId, delegateOnlyCentreEmail,
+                    adminOnlyCentreId, adminOnlyCentreEmail,
+                    adminAndDelegateCentreId, adminAndDelegateCentreEmail,
+                }
+            );
+
+            // When
+            var result = userDataService.GetAllCentreEmailsForUser(userId).ToList();
+
+            // Then
             result.Count.Should().Be(4);
             result.Should().ContainEquivalentOf((delegateOnlyCentreId, delegateOnlyCentreName, delegateOnlyCentreEmail));
             result.Should().ContainEquivalentOf((adminOnlyCentreId, adminOnlyCentreName, adminOnlyCentreEmail));
@@ -391,6 +461,94 @@
         }
 
         [Test]
+        public void GetAllCentreEmailsForUser_returns_emails_for_inactive_admin_accounts()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int centreId = 3;
+            const string email = "inactive_admin@email.com";
+
+            var userId = connection.QuerySingle<int>(
+                @"INSERT INTO Users
+                (
+                    PrimaryEmail,
+                    PasswordHash,
+                    FirstName,
+                    LastName,
+                    JobGroupID,
+                    Active,
+                    FailedLoginCount,
+                    HasBeenPromptedForPrn,
+                    HasDismissedLhLoginWarning
+                )
+                OUTPUT Inserted.ID
+                VALUES
+                ('inactive_admin_primary@email.com', 'password', 'test', 'user', 1, 1, 0, 1, 1)"
+            );
+
+            connection.Execute(
+                @"INSERT INTO AdminAccounts (UserID, CentreID, Active) VALUES (@userId, @centreId, 0)",
+                new { userId, centreId }
+            );
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES (@userId, @centreId, @email)",
+                new { userId, centreId, email }
+            );
+
+            // When
+            var result = userDataService.GetAllCentreEmailsForUser(userId).ToList();
+
+            // Then
+            result.Count.Should().Be(1);
+        }
+
+        [Test]
+        public void GetAllCentreEmailsForUser_returns_emails_for_inactive_delegate_accounts()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int centreId = 3;
+            const string email = "inactive_delegate@email.com";
+
+            var userId = connection.QuerySingle<int>(
+                @"INSERT INTO Users
+                (
+                    PrimaryEmail,
+                    PasswordHash,
+                    FirstName,
+                    LastName,
+                    JobGroupID,
+                    Active,
+                    FailedLoginCount,
+                    HasBeenPromptedForPrn,
+                    HasDismissedLhLoginWarning
+                )
+                OUTPUT Inserted.ID
+                VALUES
+                ('inactive_delegate_primary@email.com', 'password', 'test', 'user', 1, 1, 0, 1, 1)"
+            );
+
+            connection.Execute(
+                @"INSERT INTO DelegateAccounts (UserID, CentreID, Active, DateRegistered, CandidateNumber) VALUES (@userId, @centreId, 0, GETDATE(), 'TU255')",
+                new { userId, centreId }
+            );
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES (@userId, @centreId, @email)",
+                new { userId, centreId, email }
+            );
+
+            // When
+            var result = userDataService.GetAllCentreEmailsForUser(userId).ToList();
+
+            // Then
+            result.Count.Should().Be(1);
+        }
+
+        [Test]
         public void GetAllActiveCentreEmailsForUser_returns_empty_list_when_user_has_no_centre_accounts()
         {
             using var transaction = new TransactionScope();
@@ -411,6 +569,23 @@
 
             // When
             var result = userDataService.GetAllActiveCentreEmailsForUser(userId);
+
+            // Then
+            result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void GetAllCentreEmailsForUser_returns_empty_list_when_user_has_no_centre_accounts()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int userId = 777;
+            connection.Execute(@"DELETE FROM DelegateAccounts WHERE UserID = @userId", new { userId });
+            connection.Execute(@"DELETE FROM AdminAccounts WHERE UserID = @userId", new { userId });
+
+            // When
+            var result = userDataService.GetAllCentreEmailsForUser(userId);
 
             // Then
             result.Should().BeEmpty();
