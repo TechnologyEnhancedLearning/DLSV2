@@ -28,23 +28,17 @@
             <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
         </span>
     }
-    <select class="nhsuk-select @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
-            @if(describedBy != "" ) {
-    <text>
-        aria-describedby="@describedBy"
-    </text>
+
+    <select asp-for="@Model.Name" asp-items="@Model.SelectListOptions" class="nhsuk-select @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
+            aria-describedby="@(describedBy!= "" ? @describedBy : null)"
+            value="@(Model.Value != null ? @Model.Value : null)"
+            aria-invalid="@(Model.HasError ? "true":"false")"
+            id="@Model.Id"
+            name="@Model.Name">
+            @if (Model.DefaultOption != null)
+            {
+                <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value != null ? "" : "selected")>@Model.DefaultOption</option>
+            }
+        </select>
     }
-    @if(Model.HasError)
-           {
-             <text>aria-invalid="true"</text>
-           }
-          id="@Model.Id"
-          name="@Model.Name"
-          value="@Model.Value"
-          asp-items="Model.SelectListOptions" >
-        @if (Model.DefaultOption != null)
-        {
-              <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value != null ? "" : "selected")>@Model.DefaultOption</option>
-        }
-  </select>
 </div>
