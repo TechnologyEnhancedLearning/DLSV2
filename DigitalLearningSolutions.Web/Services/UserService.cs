@@ -81,7 +81,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         string? GetCentreEmail(int userId, int centreId);
 
-        IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(
+        IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllActiveCentreEmailsForUser(
             int userId
         );
 
@@ -319,11 +319,11 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetCentreEmail(userId, centreId);
         }
 
-        public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(
+        public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllActiveCentreEmailsForUser(
             int userId
         )
         {
-            return userDataService.GetAllCentreEmailsForUser(userId);
+            return userDataService.GetAllActiveCentreEmailsForUser(userId);
         }
 
         public (string? primaryEmail, List<(int centreId, string centreName, string centreEmail)> centreEmails)
