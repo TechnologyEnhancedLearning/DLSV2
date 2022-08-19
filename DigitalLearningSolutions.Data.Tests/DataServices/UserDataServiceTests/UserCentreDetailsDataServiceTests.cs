@@ -458,23 +458,20 @@
             const bool delegateIsApproved = true;
             var createdDate = new DateTime(2022, 1, 1);
 
-            GivenEmailVerificationHashLinkedToUserCentreDetails(userId, centreId, email, code, createdDate);
-
-            connection.Execute(
-                @"UPDATE DelegateAccounts SET Approved = @delegateIsApproved Where UserID = @userId AND CentreID = @centreId;",
-                new { delegateIsApproved, userId, centreId }
+            GivenEmailVerificationHashLinkedToUserCentreDetails(
+                userId,
+                centreId,
+                email,
+                code,
+                createdDate,
+                delegateIsApproved
             );
 
             // When
             var result = userDataService.GetCentreEmailVerificationDetails(code);
 
             // Then
-            result!.UserId.Should().Be(userId);
-            result.Email.Should().Be(email);
-            result.EmailVerificationHash.Should().Be(code);
-            result.EmailVerified.Should().BeNull();
-            result.EmailVerificationHashCreatedDate.Should().Be(createdDate);
-            result.CentreIdIfEmailIsForUnapprovedDelegate.Should().Be(null);
+            result!.CentreIdIfEmailIsForUnapprovedDelegate.Should().Be(null);
         }
 
         [Test]
@@ -488,20 +485,22 @@
             const string email = "unverified@email.com";
             const string code = "code";
             var createdDate = new DateTime(2022, 1, 1);
+            const bool delegateIsApproved = false;
 
-            GivenEmailVerificationHashLinkedToUserCentreDetails(userId, centreId, email, code, createdDate);
+            GivenEmailVerificationHashLinkedToUserCentreDetails(
+                userId,
+                centreId,
+                email,
+                code,
+                createdDate,
+                delegateIsApproved
+            );
 
             // When
             var result = userDataService.GetCentreEmailVerificationDetails(code);
 
             // Then
-
-            result!.UserId.Should().Be(userId);
-            result.Email.Should().Be(email);
-            result.EmailVerificationHash.Should().Be(code);
-            result.EmailVerified.Should().BeNull();
-            result.EmailVerificationHashCreatedDate.Should().Be(createdDate);
-            result.CentreIdIfEmailIsForUnapprovedDelegate.Should().Be(centreId);
+            result!.CentreIdIfEmailIsForUnapprovedDelegate.Should().Be(centreId);
         }
 
         [Test]
@@ -516,8 +515,16 @@
             const string code = "code";
             var createdDate = new DateTime(2022, 1, 1);
             var verifiedDate = new DateTime(2022, 1, 3);
+            const bool delegateIsApproved = true;
 
-            GivenEmailVerificationHashLinkedToUserCentreDetails(userId, centreId, email, code, createdDate);
+            GivenEmailVerificationHashLinkedToUserCentreDetails(
+                userId,
+                centreId,
+                email,
+                code,
+                createdDate,
+                delegateIsApproved
+            );
 
             // When
             userDataService.SetCentreEmailVerified(userId, email, verifiedDate);
@@ -590,12 +597,18 @@
             int centreId,
             string email,
             string hash,
-            DateTime createdDate
+            DateTime createdDate,
+            bool delegateIsApproved
         )
         {
             var emailVerificationHashesId = connection.QuerySingle<int>(
                 @"INSERT INTO EmailVerificationHashes (EmailVerificationHash, CreatedDate) OUTPUT Inserted.ID VALUES (@hash, @createdDate);",
                 new { hash, createdDate }
+            );
+
+            connection.Execute(
+                @"UPDATE DelegateAccounts SET Approved = @delegateIsApproved Where UserID = @userId AND CentreID = @centreId;",
+                new { delegateIsApproved, userId, centreId }
             );
 
             connection.Execute(
