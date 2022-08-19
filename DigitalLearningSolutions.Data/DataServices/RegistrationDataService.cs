@@ -41,21 +41,18 @@
     {
         private readonly IClockUtility clockUtility;
         private readonly IDbConnection connection;
-        private readonly IEmailVerificationDataService emailVerificationDataService;
         private readonly ILogger<IRegistrationDataService> logger;
         private readonly IUserDataService userDataService;
 
         public RegistrationDataService(
             IDbConnection connection,
             IUserDataService userDataService,
-            IEmailVerificationDataService emailVerificationDataService,
             IClockUtility clockUtility,
             ILogger<IRegistrationDataService> logger
         )
         {
             this.connection = connection;
             this.userDataService = userDataService;
-            this.emailVerificationDataService = emailVerificationDataService;
             this.clockUtility = clockUtility;
             this.logger = logger;
         }
@@ -311,14 +308,13 @@
             string? centreSpecificEmail,
             int userId,
             PossibleEmailUpdate? possibleEmailUpdate,
-            IDbTransaction transaction,
-            DateTime? currentTime = null
+            IDbTransaction transaction
         )
         {
             if (possibleEmailUpdate != null && possibleEmailUpdate.IsEmailUpdating)
             {
                 var emailVerified =
-                    possibleEmailUpdate.NewEmailIsVerified ? currentTime ?? clockUtility.UtcNow : (DateTime?)null;
+                    possibleEmailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
 
                 userDataService.SetCentreEmail(
                     userId,

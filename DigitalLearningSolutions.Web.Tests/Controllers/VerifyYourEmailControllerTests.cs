@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
@@ -59,7 +60,10 @@
             var result = controller.ResendVerificationEmails();
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
+            result.Should().BeRedirectToActionResult().WithActionName("Index").WithRouteValue(
+                "emailVerificationReason",
+                EmailVerificationReason.EmailNotVerified
+            );
             A.CallTo(() => userService.GetUserById(UserId)).MustHaveHappenedOnceExactly();
             A.CallTo(() => userService.GetUnverifiedEmailsForUser(UserId)).MustHaveHappenedOnceExactly();
             A.CallTo(

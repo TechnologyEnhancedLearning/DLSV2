@@ -23,7 +23,6 @@
     {
         private IClockUtility clockUtility = null!;
         private SqlConnection connection = null!;
-        private IEmailVerificationDataService emailVerificationDataService = null!;
         private IUserDataService fakeUserDataService = null!;
         private ILogger<IRegistrationDataService> logger = null!;
         private INotificationPreferencesDataService notificationPreferencesDataService = null!;
@@ -37,20 +36,17 @@
             connection = ServiceTestHelper.GetDatabaseConnection();
             userDataService = new UserDataService(connection);
             fakeUserDataService = A.Fake<IUserDataService>();
-            emailVerificationDataService = A.Fake<IEmailVerificationDataService>();
             clockUtility = A.Fake<IClockUtility>();
             logger = A.Fake<ILogger<IRegistrationDataService>>();
             service = new RegistrationDataService(
                 connection,
                 userDataService,
-                emailVerificationDataService,
                 clockUtility,
                 logger
             );
             serviceWithFakeUserDataService = new RegistrationDataService(
                 connection,
                 fakeUserDataService,
-                emailVerificationDataService,
                 clockUtility,
                 logger
             );

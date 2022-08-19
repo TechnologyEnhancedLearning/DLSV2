@@ -74,7 +74,10 @@
                 config.GetCurrentSystemBaseUrl()
             );
 
-            return RedirectToAction("Index", EmailVerificationReason.EmailNotVerified);
+            return RedirectToAction(
+                "Index",
+                new { emailVerificationReason = EmailVerificationReason.EmailNotVerified }
+            );
         }
     }
 }
