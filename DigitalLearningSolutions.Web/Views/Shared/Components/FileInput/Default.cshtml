@@ -32,14 +32,6 @@
            id="@Model.Id"
            name="@Model.Name"
            type="file"
-           @if(Model.HasError)
-           {
-             <text>aria-invalid="true"</text>
-           }
-           @if(describedBy != "" ) {
-    <text>
-        aria-describedby="@describedBy"
-    </text>
-    }
-    />
+           aria-invalid="@(Model.HasError ? "true" : null)"
+           aria-describedby="@(describedBy!= "" ? @describedBy : null)" />
 </div>

@@ -44,16 +44,9 @@
               value="@Model.Value"
               rows="@Model.Rows"
               spellcheck="@Model.SpellCheck"
-              @if(Model.HasError)
-              {
-    <text>aria-invalid="true"</text>
-    }
-              @if(describedBy != "" ) {
-    <text>
-        aria-describedby="@describedBy"
-    </text>
-    }
-    >@Model.Value
+              aria-invalid="@(Model.HasError ? "true" : null)"
+              aria-describedby="@(describedBy!= "" ? @describedBy : null)">
+              @Model.Value
 </textarea>
     @if (Model.CharacterCount.HasValue)
     {

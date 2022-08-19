@@ -32,7 +32,7 @@
     <select asp-for="@Model.Name" asp-items="@Model.SelectListOptions" class="nhsuk-select @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
             aria-describedby="@(describedBy!= "" ? @describedBy : null)"
             value="@(Model.Value != null ? @Model.Value : null)"
-            aria-invalid="@(Model.HasError ? "true":"false")"
+            aria-invalid="@(Model.HasError ? "true" : null)"
             id="@Model.Id"
             name="@Model.Name">
             @if (Model.DefaultOption != null)
