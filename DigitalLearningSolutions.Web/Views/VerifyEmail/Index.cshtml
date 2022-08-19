@@ -1,4 +1,7 @@
-﻿@{
+﻿@using DigitalLearningSolutions.Web.ViewModels.VerifyEmail
+@model EmailVerifiedViewModel
+
+@{
   ViewData["Title"] = "Your email address has been verified";
 }
 
@@ -8,8 +11,13 @@
 
     <p class="nhsuk-body-m">Thank you for verifying your email address.</p>
 
-    <div class="nhsuk-u-margin-top-5">
-      <vc:action-link asp-controller="Home" asp-action="Index" link-text="Return to the Digital Learning Solutions homepage" />
-    </div>
+    @if (Model.CentreIdIfEmailIsForUnapprovedDelegate == null) {
+      <div class="nhsuk-u-margin-top-5">
+        <vc:action-link asp-controller="Home" asp-action="Index" link-text="Return to the Digital Learning Solutions homepage" />
+      </div>
+    } else {
+      <partial name="_UnapprovedAccountWarning" />
+      <vc:centre-contact-info centre-id="@((int)Model.CentreIdIfEmailIsForUnapprovedDelegate)" />
+    }
   </div>
 </div>

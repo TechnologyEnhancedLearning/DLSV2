@@ -187,6 +187,7 @@
             result.EmailVerificationHash.Should().Be(code);
             result.EmailVerified.Should().BeNull();
             result.EmailVerificationHashCreatedDate.Should().Be(createdDate);
+            result.CentreIdIfEmailIsForUnapprovedDelegate.Should().Be(null);
         }
 
         [Test]

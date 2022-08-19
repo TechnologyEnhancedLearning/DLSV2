@@ -5,13 +5,14 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.VerifyEmail;
     using Microsoft.AspNetCore.Mvc;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class VerifyEmailController : Controller
     {
-        private readonly IUserService userService;
         private readonly IClockUtility clockUtility;
+        private readonly IUserService userService;
 
         public VerifyEmailController(IUserService userService, IClockUtility clockUtility)
         {
@@ -33,9 +34,11 @@
                 return NotFound();
             }
 
+            var viewModel = new EmailVerifiedViewModel(emailVerificationDetails.CentreIdIfEmailIsForUnapprovedDelegate);
+
             if (emailVerificationDetails.IsEmailVerified)
             {
-                return View();
+                return View(viewModel);
             }
 
             if (emailVerificationDetails.HasVerificationExpired(clockUtility))
@@ -53,7 +56,7 @@
 
             transaction.Complete();
 
-            return View();
+            return View(viewModel);
         }
     }
 }

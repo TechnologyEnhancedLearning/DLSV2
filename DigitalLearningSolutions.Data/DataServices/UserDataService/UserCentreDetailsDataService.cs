@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
@@ -102,21 +101,6 @@
             return CentreSpecificEmailIsInUseAtCentreQuery(email, centreId, userId);
         }
 
-        private bool CentreSpecificEmailIsInUseAtCentreQuery(
-            string email,
-            int centreId,
-            int? userId
-        )
-        {
-            return connection.QueryFirst<int>(
-                @$"SELECT COUNT(*)
-                    FROM UserCentreDetails
-                    WHERE CentreId = @centreId AND Email = @email
-                    {(userId == null ? "" : "AND UserId <> @userId")}",
-                new { email, centreId, userId }
-            ) > 0;
-        }
-
         public string? GetCentreEmail(int userId, int centreId)
         {
             return connection.QuerySingleOrDefault<string>(
@@ -135,9 +119,12 @@
                         u.Email,
                         u.EmailVerified,
                         h.EmailVerificationHash,
-                        h.CreatedDate AS EmailVerificationHashCreatedDate
+                        h.CreatedDate AS EmailVerificationHashCreatedDate,
+                        IIF(da.Approved = 0, da.CentreID, NULL) AS CentreIdIfEmailIsForUnapprovedDelegate
                     FROM UserCentreDetails u
                     JOIN EmailVerificationHashes h ON h.ID = u.EmailVerificationHashID
+                    JOIN UserCentreDetails ucd ON ucd.Email = u.Email
+                    JOIN DelegateAccounts da ON da.UserID = ucd.UserID AND da.CentreID = ucd.CentreID
                     WHERE h.EmailVerificationHash = @code",
                 new { code }
             );
@@ -231,6 +218,21 @@
                 @"SELECT ID, UserID, CentreID, Email, EmailVerified FROM UserCentreDetails WHERE UserID = @userId",
                 new { userId }
             );
+        }
+
+        private bool CentreSpecificEmailIsInUseAtCentreQuery(
+            string email,
+            int centreId,
+            int? userId
+        )
+        {
+            return connection.QueryFirst<int>(
+                @$"SELECT COUNT(*)
+                    FROM UserCentreDetails
+                    WHERE CentreId = @centreId AND Email = @email
+                    {(userId == null ? "" : "AND UserId <> @userId")}",
+                new { email, centreId, userId }
+            ) > 0;
         }
     }
 }

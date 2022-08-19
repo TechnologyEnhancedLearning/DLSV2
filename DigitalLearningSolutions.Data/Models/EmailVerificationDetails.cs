@@ -10,6 +10,7 @@
         public string EmailVerificationHash { get; set; } = null!;
         public DateTime? EmailVerified { get; set; }
         public DateTime EmailVerificationHashCreatedDate { get; set; }
+        public int? CentreIdIfEmailIsForUnapprovedDelegate { get; set; }
 
         public bool IsEmailVerified => EmailVerified != null;
 

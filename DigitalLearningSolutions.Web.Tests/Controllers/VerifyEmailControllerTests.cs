@@ -6,18 +6,18 @@
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.ViewModels.VerifyEmail;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
 
     public class VerifyEmailControllerTests
     {
-        private IUserService userService = null!;
-        private IClockUtility clockUtility = null!;
-        private VerifyEmailController controller = null!;
-
         private const string Email = "email@email.com";
         private const string Code = "code";
+        private IClockUtility clockUtility = null!;
+        private VerifyEmailController controller = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
@@ -75,6 +75,7 @@
                 Email = Email,
                 EmailVerificationHash = Code,
                 EmailVerified = new DateTime(2022, 1, 1),
+                CentreIdIfEmailIsForUnapprovedDelegate = null,
             };
 
             A.CallTo(() => userService.GetEmailVerificationDetails(Email, Code)).Returns(emailVerificationDetails);
@@ -102,6 +103,7 @@
                 EmailVerificationHash = Code,
                 EmailVerified = null,
                 EmailVerificationHashCreatedDate = threeDaysAgo,
+                CentreIdIfEmailIsForUnapprovedDelegate = null,
             };
 
             A.CallTo(() => clockUtility.UtcNow).Returns(now);
@@ -130,6 +132,7 @@
                 EmailVerificationHash = Code,
                 EmailVerified = null,
                 EmailVerificationHashCreatedDate = now,
+                CentreIdIfEmailIsForUnapprovedDelegate = null,
             };
 
             A.CallTo(() => clockUtility.UtcNow).Returns(now);
@@ -143,6 +146,35 @@
             A.CallTo(() => userService.SetEmailVerified(userId, Email, now)).MustHaveHappenedOnceExactly();
 
             result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public void Index_with_unverified_email_for_unapproved_delegate_passes_centre_id_to_the_view()
+        {
+            // Given
+            const int userId = 1;
+            const int centreIdForUnapprovedDelegate = 2;
+            var now = new DateTime(2022, 1, 1);
+
+            var emailVerificationDetails = new EmailVerificationDetails
+            {
+                UserId = userId,
+                Email = Email,
+                EmailVerificationHash = Code,
+                EmailVerified = null,
+                EmailVerificationHashCreatedDate = now,
+                CentreIdIfEmailIsForUnapprovedDelegate = centreIdForUnapprovedDelegate,
+            };
+
+            A.CallTo(() => clockUtility.UtcNow).Returns(now);
+            A.CallTo(() => userService.GetEmailVerificationDetails(Email, Code)).Returns(emailVerificationDetails);
+            A.CallTo(() => userService.SetEmailVerified(userId, Email, now)).DoesNothing();
+
+            // When
+            var result = controller.Index(Email, Code);
+
+            // Then
+            result.Should().BeViewResult().ModelAs<EmailVerifiedViewModel>();
         }
     }
 }

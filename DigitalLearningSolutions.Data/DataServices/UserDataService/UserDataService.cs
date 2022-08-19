@@ -331,7 +331,8 @@
                         u.PrimaryEmail AS Email,
                         u.EmailVerified,
                         h.EmailVerificationHash,
-                        h.CreatedDate AS EmailVerificationHashCreatedDate
+                        h.CreatedDate AS EmailVerificationHashCreatedDate,
+                        NULL AS IsCentreEmailForUnapprovedDelegate
                     FROM Users u
                     JOIN EmailVerificationHashes h ON h.ID = u.EmailVerificationHashID
                     WHERE h.EmailVerificationHash = @code",
