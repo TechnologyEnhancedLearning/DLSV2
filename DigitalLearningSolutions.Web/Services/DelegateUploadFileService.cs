@@ -16,6 +16,7 @@ namespace DigitalLearningSolutions.Web.Services
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
 
@@ -217,20 +218,20 @@ namespace DigitalLearningSolutions.Web.Services
             }
         }
 
-        private void RegisterDelegate(DelegateTableRow delegateRow, DateTime welcomeEmailDate, int centreId)
+        private void RegisterDelegate(DelegateTableRow delegateTableRow, DateTime welcomeEmailDate, int centreId)
         {
-            var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
+            var model = RegistrationMappingHelper.MapDelegateUploadTableRowToDelegateRegistrationModel(delegateTableRow, welcomeEmailDate, centreId);
 
             var (delegateId, _) =
                 registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(model, false, true);
 
             UpdateUserProfessionalRegistrationNumberIfNecessary(
-                delegateRow.HasPrn,
-                delegateRow.Prn,
+                delegateTableRow.HasPrn,
+                delegateTableRow.Prn,
                 delegateId
             );
 
-            SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, delegateId);
+            SetUpSupervisorDelegateRelations(delegateTableRow.Email!, centreId, delegateId);
 
             passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                 delegateId,
@@ -239,7 +240,7 @@ namespace DigitalLearningSolutions.Web.Services
                 "DelegateBulkUpload_Refactor"
             );
 
-            delegateRow.RowStatus = RowStatus.Registered;
+            delegateTableRow.RowStatus = RowStatus.Registered;
         }
 
         private void UpdateUserProfessionalRegistrationNumberIfNecessary(
