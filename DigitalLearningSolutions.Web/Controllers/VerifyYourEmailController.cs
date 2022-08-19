@@ -71,7 +71,7 @@
             emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                 userEntity!.UserAccount,
                 unverifiedEmails,
-                config.GetCurrentSystemBaseUrl()
+                config.GetAppRootPath()
             );
 
             return RedirectToAction(
