@@ -35,7 +35,7 @@
             @if (currentLearningItemViewModel is CurrentCourseViewModel course && (course.CompleteByDate == null || course.SelfEnrolled))
             {
                 <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
-           aria-describedby="@Model.Id-name"
+           aria-describedby="@Model.Id-name-course"
            aria-label="Edit complete by date"
            data-return-page-enabled="true"
            asp-action="SetCurrentCourseCompleteByDate"
@@ -49,7 +49,7 @@
             {
 
                 <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
-           aria-describedby="@Model.Id-name"
+           aria-describedby="@Model.Id-name-sa"
            aria-label="Edit complete by date"
            data-return-page-enabled="true"
            asp-route-selfAssessmentId="@Model.Id"
@@ -62,7 +62,7 @@
             else if (currentLearningItemViewModel is CurrentLearningResourceViewModel { AbsentInLearningHub: false })
             {
                 <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
-           aria-describedby="@Model.Id-name"
+           aria-describedby="@Model.Id-name-lhr"
            aria-label="Edit complete by date"
            data-return-page-enabled="true"
            asp-action="SetCurrentActionPlanResourceCompleteByDate"
