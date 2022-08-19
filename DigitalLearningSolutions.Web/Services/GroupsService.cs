@@ -116,11 +116,11 @@
         void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails);
 
         void SynchroniseJobGroupsOnOtherCentres(
-            int originalDelegateId,
+            int? originalDelegateId,
+            int userId,
             int oldJobGroupId,
             int newJobGroupId,
-            AccountDetailsData accountDetailsData,
-            string? centreEmail
+            AccountDetailsData accountDetailsData
         );
     }
 
@@ -218,12 +218,13 @@
                 groupsForSynchronisation
             );
 
+            var userId = userDataService.GetUserIdFromDelegateId(delegateId);
             SynchroniseJobGroupsOnOtherCentres(
                 delegateId,
+                userId,
                 oldRegistrationFieldAnswers.JobGroupId,
                 registrationFieldAnswers.JobGroupId,
-                accountDetailsData,
-                centreEmail
+                accountDetailsData
             );
         }
 
@@ -307,21 +308,20 @@
         }
 
         public void SynchroniseJobGroupsOnOtherCentres(
-            int originalDelegateId,
+            int? originalDelegateId,
+            int userId,
             int oldJobGroupId,
             int newJobGroupId,
-            AccountDetailsData accountDetailsData,
-            string? centreEmail
+            AccountDetailsData accountDetailsData
         )
         {
             if (oldJobGroupId == newJobGroupId)
             {
                 return;
             }
-
-            var userId = userDataService.GetUserIdFromDelegateId(originalDelegateId);
             var delegateAccounts = userDataService.GetDelegateAccountsByUserId(userId)
                 .Where(da => da.Id != originalDelegateId);
+            var delegateEmails = userDataService.GetAllCentreEmailsForUser(userId).ToList();
 
             foreach (var account in delegateAccounts)
             {
@@ -340,6 +340,7 @@
                     g =>
                         GroupLabelMatchesAnswer(g.GroupLabel, newJobGroupName, JobGroupLinkedFieldName)
                 );
+                var centreEmail = delegateEmails.SingleOrDefault(e => e.centreId == account.CentreId).centreSpecificEmail;
                 AddDelegateToGroups(
                     account.Id,
                     groupsToAddDelegateTo,
