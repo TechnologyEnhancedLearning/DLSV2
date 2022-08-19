@@ -102,10 +102,10 @@
 <div class="nhsuk-grid-row">
   @if (Model.Assessment.LinearNavigation)
   {
-    <nav class="nhsuk-pagination" role="navigation" aria-label="Pagination">
+    <nav class="nhsuk-pagination" aria-label="Pagination">
       <div class="nhsuk-pagination__list">
         <div class="pagination-button-container">
-          <div class="nhsuk-pagination-item--previous" )>
+          <div class="nhsuk-pagination-item--previous">
             <a class="nhsuk-back-link__link"
                asp-action=@(Model.CompetencyNumber == 1 ? "SelfAssessment" : "SelfAssessmentCompetency")
                asp-route-selfAssessmentId="@Model.Assessment.Id"
@@ -113,7 +113,7 @@
               <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
                 <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
               </svg>
-              <span class="nhsuk-pagination__page">@(@Model.CompetencyNumber == 1 ? "Go back" : "Previous " + Model.Competency.Vocabulary.ToLower() )</span>
+              <span class="nhsuk-pagination__page">@(@Model.CompetencyNumber == 1 ? "Go back" : "Previous " + Model.Competency.Vocabulary.ToLower())</span>
             </a>
           </div>
         </div>
