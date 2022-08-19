@@ -6,9 +6,9 @@
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.ViewModels.VerifyEmail;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
-    using FluentAssertions.Common;
     using NUnit.Framework;
 
     public class VerifyEmailControllerTests
@@ -174,7 +174,7 @@
             var result = controller.Index(Email, Code);
 
             // Then
-            result.Should().BeViewResult().ModelAs<int>().IsSameOrEqualTo(centreIdForUnapprovedDelegate);
+            result.Should().BeViewResult().ModelAs<EmailVerifiedViewModel>();
         }
     }
 }
