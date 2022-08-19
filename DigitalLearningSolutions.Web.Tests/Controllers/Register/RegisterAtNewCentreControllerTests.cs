@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
@@ -17,6 +16,7 @@
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Tests.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using FakeItEasy;
@@ -25,6 +25,7 @@
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Primitives;
     using Microsoft.FeatureManagement;
     using NUnit.Framework;
@@ -32,18 +33,18 @@
     public class RegisterAtNewCentreControllerTests
     {
         private const string IpAddress = "1.1.1.1";
-        private const int SupervisorDelegateId = 1;
         private const int UserId = 2;
         private ICentresDataService centresDataService = null!;
+        private IConfiguration config = null!;
         private RegisterAtNewCentreController controller = null!;
+        private IEmailVerificationService emailVerificationService = null!;
         private IFeatureManager featureManager = null!;
-
         private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
-        private IUserService userService = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -55,10 +56,14 @@
             promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
+            emailVerificationService = A.Fake<IEmailVerificationService>();
+            config = A.Fake<IConfiguration>();
             request = A.Fake<HttpRequest>();
 
             controller = new RegisterAtNewCentreController(
                     centresDataService,
+                    config,
+                    emailVerificationService,
                     featureManager,
                     promptsService,
                     registrationService,
@@ -327,22 +332,8 @@
             // Given
             const string candidateNumber = "TN1";
             var data = RegistrationDataHelper.GetDefaultInternalDelegateRegistrationData();
-            controller.TempData.Set(data);
-            A.CallTo(
-                    () => registrationService.CreateDelegateAccountForNewUser(
-                        A<DelegateRegistrationModel>._,
-                        A<string>._,
-                        A<bool>._,
-                        A<bool>._,
-                        A<int>._
-                    )
-                )
-                .Returns((candidateNumber, true));
-            A.CallTo(() => request.Headers).Returns(
-                new HeaderDictionary(
-                    new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }
-                )
-            );
+
+            SetUpFakesForSuccessfulRegistration(candidateNumber, data);
 
             // When
             var result = await controller.SummaryPost();
@@ -372,6 +363,75 @@
         }
 
         [Test]
+        public async Task Summary_post_sends_verification_email_if_centre_email_is_unverified()
+        {
+            // Given
+            const bool emailIsVerifiedForUser = false;
+            const string centreSpecificEmail = "centre@email.com";
+
+            SetUpFakesForSuccessfulRegistration();
+
+            A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
+                .Returns(emailIsVerifiedForUser);
+            A.CallTo(() => userService.GetUserAccountById(UserId))
+                .Returns(UserTestHelper.GetDefaultUserAccount());
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    A<UserAccount>._,
+                    A<List<string>>._,
+                    A<string>._
+                )
+            ).DoesNothing();
+
+            // When
+            await controller.SummaryPost();
+
+            // Then
+            A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetUserAccountById(UserId)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    A<UserAccount>._,
+                    A<List<string>>.That.Matches(
+                        list => ListTestHelper.ListOfStringsMatch(
+                            list,
+                            new List<string> { centreSpecificEmail }
+                        )
+                    ),
+                    A<string>._
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task Summary_post_does_not_send_verification_email_if_centre_email_is_already_verified_for_user()
+        {
+            // Given
+            const bool emailIsVerifiedForUser = true;
+
+            SetUpFakesForSuccessfulRegistration();
+
+            A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
+                .Returns(emailIsVerifiedForUser);
+
+            // When
+            await controller.SummaryPost();
+
+            // Then
+            A.CallTo(() => emailVerificationService.AccountEmailIsVerifiedForUser(A<int>._, A<string>._))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetUserById(A<int>._)).MustNotHaveHappened();
+            A.CallTo(
+                () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                    A<UserAccount>._,
+                    A<List<string>>._,
+                    A<string>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
         public async Task Summary_post_returns_redirect_to_index_view_with_missing_centre()
         {
             // Given
@@ -383,14 +443,13 @@
 
             // Then
             A.CallTo(
-                    () =>
-                        registrationService.CreateDelegateAccountForNewUser(
-                            A<DelegateRegistrationModel>._,
-                            IpAddress,
-                            false,
-                            false,
-                            SupervisorDelegateId
-                        )
+                    () => registrationService.CreateDelegateAccountForExistingUser(
+                        A<InternalDelegateRegistrationModel>._,
+                        A<int>._,
+                        A<string>._,
+                        A<bool>._,
+                        A<int>._
+                    )
                 )
                 .MustNotHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
@@ -481,6 +540,34 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        private void SetUpFakesForSuccessfulRegistration(
+            string? candidateNumber = null,
+            InternalDelegateRegistrationData? data = null
+        )
+        {
+            candidateNumber ??= "TN1";
+            data ??= RegistrationDataHelper.GetDefaultInternalDelegateRegistrationData();
+
+            controller.TempData.Set(data);
+
+            A.CallTo(
+                    () => registrationService.CreateDelegateAccountForExistingUser(
+                        A<InternalDelegateRegistrationModel>._,
+                        A<int>._,
+                        A<string>._,
+                        A<bool>._,
+                        A<int>._
+                    )
+                )
+                .Returns((candidateNumber, true, false));
+
+            A.CallTo(() => request.Headers).Returns(
+                new HeaderDictionary(
+                    new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }
+                )
+            );
         }
     }
 }

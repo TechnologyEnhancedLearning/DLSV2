@@ -37,20 +37,20 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
             ICryptoService cryptoService,
-            IUserDataService userDataService,
             PromptsService promptsService,
             IFeatureManager featureManager,
-            ISupervisorDelegateService supervisorDelegateService
+            ISupervisorDelegateService supervisorDelegateService,
+            IUserDataService userDataService
         )
         {
             this.centresDataService = centresDataService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
-            this.userDataService = userDataService;
             this.promptsService = promptsService;
             this.featureManager = featureManager;
             this.supervisorDelegateService = supervisorDelegateService;
+            this.userDataService = userDataService;
         }
 
         public IActionResult Index(int? centreId = null, string? inviteId = null)
@@ -246,9 +246,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public async Task<IActionResult> Summary(SummaryViewModel model)
         {
-            var data = TempData.Peek<DelegateRegistrationData>()!;
+            var data = TempData.Peek<DelegateRegistrationData>();
 
-            if (data.Centre == null || data.JobGroup == null)
+            if (data!.Centre == null || data.JobGroup == null)
             {
                 return RedirectToAction("Index");
             }
@@ -270,7 +270,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             try
             {
                 var (candidateNumber, approved) =
-                    registrationService.CreateDelegateAccountForNewUser(
+                    registrationService.RegisterDelegateForNewUser(
                         RegistrationMappingHelper.MapSelfRegistrationToDelegateRegistrationModel(data),
                         userIp,
                         refactoredTrackingSystemEnabled,
@@ -279,10 +279,18 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                     );
 
                 TempData.Clear();
-                TempData.Add("candidateNumber", candidateNumber);
-                TempData.Add("approved", approved);
-                TempData.Add("centreId", centreId);
-                return RedirectToAction("Confirmation");
+
+                return RedirectToAction(
+                    "Confirmation",
+                    new
+                    {
+                        centreId,
+                        candidateNumber,
+                        approved,
+                        unverifiedPrimaryEmail = data.PrimaryEmail,
+                        data.CentreSpecificEmail,
+                    }
+                );
             }
             catch (DelegateCreationFailedException e)
             {
@@ -303,24 +311,31 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         }
 
         [HttpGet]
-        public IActionResult Confirmation()
+        public IActionResult Confirmation(
+            int? centreId,
+            string candidateNumber,
+            bool approved,
+            string? unverifiedPrimaryEmail,
+            string? centreSpecificEmail
+        )
         {
-            var candidateNumber = (string?)TempData.Peek("candidateNumber");
-            var approvedNullable = (bool?)TempData.Peek("approved");
-            var centreIdNullable = (int?)TempData.Peek("centreId");
-            TempData.Clear();
-
-            if (candidateNumber == null || approvedNullable == null || centreIdNullable == null)
+            if (centreId == null)
             {
                 return RedirectToAction("Index");
             }
 
-            var approved = (bool)approvedNullable;
-            var centreId = (int)centreIdNullable;
+            var centreName = GetCentreName(centreId);
 
-            var centreIdForContactInformation = approved ? null : (int?)centreId;
-            var viewModel = new ConfirmationViewModel(candidateNumber, approved, centreIdForContactInformation);
-            return View(viewModel);
+            var model = new ConfirmationViewModel(
+                candidateNumber,
+                approved,
+                centreId,
+                unverifiedPrimaryEmail,
+                centreSpecificEmail,
+                centreName!
+            );
+
+            return View(model);
         }
 
         private string? GetCentreName(int? centreId)

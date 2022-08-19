@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.Utilities;
@@ -14,9 +13,9 @@
 
     public class EmailVerificationServiceTests
     {
-        private IEmailVerificationDataService emailVerificationDataService = null!;
-        private IEmailService emailService = null!;
         private IClockUtility clockUtility = null!;
+        private IEmailService emailService = null!;
+        private IEmailVerificationDataService emailVerificationDataService = null!;
         private EmailVerificationService emailVerificationService = null!;
 
         [SetUp]
@@ -60,7 +59,7 @@
             // When
             emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                 userAccount,
-                new List<PossibleEmailUpdate>(),
+                new List<string>(),
                 "example.com"
             );
 
@@ -99,26 +98,11 @@
             // When
             emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                 userAccount,
-                new List<PossibleEmailUpdate>
+                new List<string>
                 {
-                    new PossibleEmailUpdate
-                    {
-                        OldEmail = "old1@email.com",
-                        NewEmail = newEmail1,
-                        NewEmailIsVerified = false,
-                    },
-                    new PossibleEmailUpdate
-                    {
-                        OldEmail = "old2@email.com",
-                        NewEmail = newEmail2,
-                        NewEmailIsVerified = false,
-                    },
-                    new PossibleEmailUpdate
-                    {
-                        OldEmail = null,
-                        NewEmail = newEmail2,
-                        NewEmailIsVerified = false,
-                    },
+                    newEmail1,
+                    newEmail2,
+                    newEmail2,
                 },
                 "example.com"
             );

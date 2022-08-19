@@ -26,14 +26,14 @@ namespace DigitalLearningSolutions.Web.Services
 
     public class DelegateUploadFileService : IDelegateUploadFileService
     {
-        private readonly IJobGroupsDataService jobGroupsDataService;
-        private readonly IUserDataService userDataService;
-        private readonly IRegistrationService registrationService;
-        private readonly ISupervisorDelegateService supervisorDelegateService;
-        private readonly IPasswordResetService passwordResetService;
-        private readonly IGroupsService groupsService;
         private readonly IClockUtility clockUtility;
         private readonly IConfiguration configuration;
+        private readonly IGroupsService groupsService;
+        private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IPasswordResetService passwordResetService;
+        private readonly IRegistrationService registrationService;
+        private readonly ISupervisorDelegateService supervisorDelegateService;
+        private readonly IUserDataService userDataService;
 
         public DelegateUploadFileService(
             IJobGroupsDataService jobGroupsDataService,
@@ -221,7 +221,8 @@ namespace DigitalLearningSolutions.Web.Services
         {
             var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
 
-            var (delegateId, _) = registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(model, false);
+            var (delegateId, _) =
+                registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(model, false, true);
 
             UpdateUserProfessionalRegistrationNumberIfNecessary(
                 delegateRow.HasPrn,

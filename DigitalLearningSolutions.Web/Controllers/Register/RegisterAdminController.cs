@@ -1,9 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -14,17 +17,21 @@
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class RegisterAdminController : Controller
     {
         private readonly ICentresDataService centresDataService;
         private readonly ICentresService centresService;
+        private readonly IConfiguration config;
         private readonly ICryptoService cryptoService;
+        private readonly IEmailVerificationService emailVerificationService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IRegisterAdminService registerAdminService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
-        private readonly IRegisterAdminService registerAdminService;
+        private readonly IUserService userService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
@@ -33,16 +40,22 @@
             IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService,
             IUserDataService userDataService,
-            IRegisterAdminService registerAdminService
+            IRegisterAdminService registerAdminService,
+            IEmailVerificationService emailVerificationService,
+            IUserService userService,
+            IConfiguration config
         )
         {
             this.centresDataService = centresDataService;
             this.centresService = centresService;
             this.cryptoService = cryptoService;
+            this.emailVerificationService = emailVerificationService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.userDataService = userDataService;
             this.registerAdminService = registerAdminService;
+            this.userService = userService;
+            this.config = config;
         }
 
         public IActionResult Index(int? centreId = null)
@@ -196,7 +209,20 @@
                 var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
                 registrationService.RegisterCentreManager(registrationModel, true);
 
-                return RedirectToAction("Confirmation");
+                CreateEmailVerificationHashesAndSendVerificationEmails(
+                    registrationModel.PrimaryEmail!,
+                    registrationModel.CentreSpecificEmail
+                );
+
+                return RedirectToAction(
+                    "Confirmation",
+                    new
+                    {
+                        primaryEmail = data.PrimaryEmail,
+                        centreId = data.Centre,
+                        centreSpecificEmail = data.CentreSpecificEmail,
+                    }
+                );
             }
             catch (DelegateCreationFailedException e)
             {
@@ -217,10 +243,15 @@
         }
 
         [HttpGet]
-        public IActionResult Confirmation()
+        public IActionResult Confirmation(string primaryEmail, int centreId, string? centreSpecificEmail)
         {
             TempData.Clear();
-            return View();
+
+            var centreName = centresDataService.GetCentreName(centreId);
+
+            var model = new AdminConfirmationViewModel(primaryEmail, centreSpecificEmail, centreName!);
+
+            return View(model);
         }
 
         private void SetAdminRegistrationData(int centreId)
@@ -292,6 +323,26 @@
                     : nameof(PersonalInformationViewModel.CentreSpecificEmail),
                 ModelState,
                 centresService
+            );
+        }
+
+        private void CreateEmailVerificationHashesAndSendVerificationEmails(
+            string primaryEmail,
+            string? centreSpecificEmail
+        )
+        {
+            var userAccount = userService.GetUserByEmailAddress(primaryEmail);
+
+            var unverifiedEmails = new List<string> { primaryEmail };
+            if (centreSpecificEmail != null)
+            {
+                unverifiedEmails.Add(centreSpecificEmail);
+            }
+
+            emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                userAccount!,
+                unverifiedEmails.ToList(),
+                config.GetAppRootPath()
             );
         }
     }

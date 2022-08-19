@@ -89,7 +89,7 @@
         }
 
         public static InternalDelegateRegistrationData GetDefaultInternalDelegateRegistrationData(
-            string? email = "test@email.com",
+            string? centreSpecificEmail = "centre@email.com",
             int? centre = 2,
             bool isCentreSpecificRegistration = false,
             int? supervisorDelegateId = 1,
@@ -104,7 +104,7 @@
             return new InternalDelegateRegistrationData
             {
                 Id = Guid.NewGuid(),
-                Email = email,
+                CentreSpecificEmail = centreSpecificEmail,
                 Centre = centre,
                 IsCentreSpecificRegistration = isCentreSpecificRegistration,
                 SupervisorDelegateId = supervisorDelegateId,
@@ -113,7 +113,7 @@
                 Answer3 = answer3,
                 Answer4 = answer4,
                 Answer5 = answer5,
-                Answer6 = answer6
+                Answer6 = answer6,
             };
         }
 

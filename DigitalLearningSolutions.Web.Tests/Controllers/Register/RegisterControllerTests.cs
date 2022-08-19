@@ -33,7 +33,6 @@
         private ICryptoService cryptoService = null!;
         private IFeatureManager featureManager = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
-
         private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private HttpRequest request = null!;
@@ -58,10 +57,10 @@
                     jobGroupsDataService,
                     registrationService,
                     cryptoService,
-                    userDataService,
                     promptsService,
                     featureManager,
-                    supervisorDelegateService
+                    supervisorDelegateService,
+                    userDataService
                 )
                 .WithDefaultContext()
                 .WithMockRequestContext(request)
@@ -155,10 +154,10 @@
                 jobGroupsDataService,
                 registrationService,
                 cryptoService,
-                userDataService,
                 promptsService,
                 featureManager,
-                supervisorDelegateService
+                supervisorDelegateService,
+                userDataService
             ).WithDefaultContext().WithMockUser(true);
 
             // When
@@ -228,10 +227,10 @@
                 jobGroupsDataService,
                 registrationService,
                 cryptoService,
-                userDataService,
                 promptsService,
                 featureManager,
-                supervisorDelegateService
+                supervisorDelegateService,
+                userDataService
             ).WithDefaultContext().WithMockUser(true);
 
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(centreName);
@@ -250,30 +249,22 @@
             // Given
             const string candidateNumber = "TN1";
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
-            controller.TempData.Set(data);
-            A.CallTo(
-                    () => registrationService.CreateDelegateAccountForNewUser(
-                        A<DelegateRegistrationModel>._,
-                        A<string>._,
-                        A<bool>._,
-                        A<bool>._,
-                        A<int>._
-                    )
-                )
-                .Returns((candidateNumber, true));
-            A.CallTo(() => request.Headers).Returns(
-                new HeaderDictionary(
-                    new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }
-                )
-            );
+
+            var model = new SummaryViewModel
+            {
+                PrimaryEmail = data.PrimaryEmail,
+                CentreSpecificEmail = data.CentreSpecificEmail,
+            };
+
+            SetUpFakesForSuccessfulRegistration(candidateNumber, data, 1);
 
             // When
-            var result = await controller.Summary(new SummaryViewModel());
+            var result = await controller.Summary(model);
 
             // Then
             A.CallTo(
                     () =>
-                        registrationService.CreateDelegateAccountForNewUser(
+                        registrationService.RegisterDelegateForNewUser(
                             A<DelegateRegistrationModel>.That.Matches(
                                 d =>
                                     d.FirstName == data.FirstName &&
@@ -317,7 +308,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.CreateDelegateAccountForNewUser(
+                        registrationService.RegisterDelegateForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
@@ -343,7 +334,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.CreateDelegateAccountForNewUser(
+                        registrationService.RegisterDelegateForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
@@ -369,7 +360,7 @@
             // Then
             A.CallTo(
                     () =>
-                        registrationService.CreateDelegateAccountForNewUser(
+                        registrationService.RegisterDelegateForNewUser(
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
@@ -388,7 +379,7 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.CreateDelegateAccountForNewUser(
+                    () => registrationService.RegisterDelegateForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
@@ -417,7 +408,7 @@
             var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
             A.CallTo(
-                    () => registrationService.CreateDelegateAccountForNewUser(
+                    () => registrationService.RegisterDelegateForNewUser(
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
@@ -437,6 +428,37 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        private void SetUpFakesForSuccessfulRegistration(
+            string candidateNumber,
+            DelegateRegistrationData data,
+            int userId
+        )
+        {
+            controller.TempData.Set(data);
+
+            A.CallTo(
+                    () => registrationService.RegisterDelegateForNewUser(
+                        A<DelegateRegistrationModel>._,
+                        A<string>._,
+                        A<bool>._,
+                        A<bool>._,
+                        A<int>._
+                    )
+                )
+                .Returns((candidateNumber, true));
+
+            A.CallTo(() => request.Headers).Returns(
+                new HeaderDictionary(
+                    new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }
+                )
+            );
+
+            A.CallTo(
+                    () => userDataService.GetUserIdFromUsername(candidateNumber)
+                )
+                .Returns(userId);
         }
     }
 }

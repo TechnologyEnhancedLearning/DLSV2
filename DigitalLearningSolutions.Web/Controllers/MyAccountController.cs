@@ -35,13 +35,13 @@
         private const string SwitchCentreReturnUrl = "/Home/Welcome";
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IConfiguration config;
+        private readonly IEmailVerificationService emailVerificationService;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly ILogger<MyAccountController> logger;
         private readonly PromptsService promptsService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
-        private readonly IEmailVerificationService emailVerificationService;
 
         public MyAccountController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
@@ -83,10 +83,11 @@
                 );
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                ? userService.GetAllActiveCentreEmailsForUser(userId).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
-            var (_, unverifiedCentreEmails) = userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id);
+            var (_, unverifiedCentreEmails) =
+                userService.GetUnverifiedEmailsForUser(userEntity.UserAccount.Id);
 
             var switchCentreReturnUrl = StringHelper.GetLocalRedirectUrl(config, SwitchCentreReturnUrl);
 
@@ -130,7 +131,7 @@
                     : new List<EditDelegateRegistrationPromptViewModel>();
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                ? userService.GetAllActiveCentreEmailsForUser(userId).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
             var model = new MyAccountEditDetailsViewModel(
@@ -217,7 +218,7 @@
 
             emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                 userEntity.UserAccount,
-                unverifiedModifiedEmails,
+                unverifiedModifiedEmails.Select(ume => ume.NewEmail).ToList(),
                 config.GetAppRootPath()
             );
 
@@ -468,7 +469,7 @@
                 : new List<EditDelegateRegistrationPromptViewModel>();
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllCentreEmailsForUser(userId).Select(
+                ? userService.GetAllActiveCentreEmailsForUser(userId).Select(
                     row =>
                     {
                         string? email = null;
@@ -515,7 +516,7 @@
                 : new List<EditDelegateRegistrationPromptViewModel>();
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                ? userService.GetAllActiveCentreEmailsForUser(userId).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
             if (ModelState.IsValid && formData.ProfileImageFile != null)
@@ -558,7 +559,7 @@
                 : new List<EditDelegateRegistrationPromptViewModel>();
 
             var allCentreSpecificEmails = centreId == null
-                ? userService.GetAllCentreEmailsForUser(userId).ToList()
+                ? userService.GetAllActiveCentreEmailsForUser(userId).ToList()
                 : new List<(int centreId, string centreName, string? centreSpecificEmail)>();
 
             var model = new MyAccountEditDetailsViewModel(

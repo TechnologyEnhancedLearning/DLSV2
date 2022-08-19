@@ -1,12 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -17,6 +19,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
@@ -26,6 +29,8 @@
     public class RegisterAtNewCentreController : Controller
     {
         private readonly ICentresDataService centresDataService;
+        private readonly IConfiguration config;
+        private readonly IEmailVerificationService emailVerificationService;
         private readonly IFeatureManager featureManager;
         private readonly PromptsService promptsService;
         private readonly IRegistrationService registrationService;
@@ -35,6 +40,8 @@
 
         public RegisterAtNewCentreController(
             ICentresDataService centresDataService,
+            IConfiguration config,
+            IEmailVerificationService emailVerificationService,
             IFeatureManager featureManager,
             PromptsService promptsService,
             IRegistrationService registrationService,
@@ -44,6 +51,8 @@
         )
         {
             this.centresDataService = centresDataService;
+            this.config = config;
+            this.emailVerificationService = emailVerificationService;
             this.featureManager = featureManager;
             this.promptsService = promptsService;
             this.registrationService = registrationService;
@@ -245,12 +254,24 @@
                         refactoredTrackingSystemEnabled
                     );
 
+                if (data.CentreSpecificEmail != null &&
+                    !emailVerificationService.AccountEmailIsVerifiedForUser(userId, data.CentreSpecificEmail))
+                {
+                    var userAccount = userService.GetUserAccountById(userId);
+
+                    emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
+                        userAccount!,
+                        new List<string> { data.CentreSpecificEmail },
+                        config.GetAppRootPath()
+                    );
+                }
+
                 TempData.Clear();
-                TempData.Add("candidateNumber", candidateNumber);
-                TempData.Add("approved", approved);
-                TempData.Add("userHasAdminAccountAtCentre", userHasAdminAccountAtCentre);
-                TempData.Add("centreId", data.Centre);
-                return RedirectToAction("Confirmation");
+
+                return RedirectToAction(
+                    "Confirmation",
+                    new { candidateNumber, approved, userHasAdminAccountAtCentre, centreId = data.Centre }
+                );
             }
             catch (DelegateCreationFailedException e)
             {
@@ -266,31 +287,35 @@
         }
 
         [HttpGet]
-        public IActionResult Confirmation()
+        public IActionResult Confirmation(
+            string candidateNumber,
+            bool approved,
+            bool userHasAdminAccountAtCentre,
+            int? centreId
+        )
         {
-            var candidateNumber = (string?)TempData.Peek("candidateNumber");
-            var approvedNullable = (bool?)TempData.Peek("approved");
-            var centreIdNullable = (int?)TempData.Peek("centreId");
-            var hasAdminAccountNullable = (bool?)TempData.Peek("userHasAdminAccountAtCentre");
-            TempData.Clear();
-
-            if (candidateNumber == null || approvedNullable == null || centreIdNullable == null ||
-                hasAdminAccountNullable == null)
+            if (centreId == null)
             {
                 return RedirectToAction("Index");
             }
 
-            var hasAdminAccount = (bool)hasAdminAccountNullable;
-            var approved = (bool)approvedNullable;
-            var centreId = (int)centreIdNullable;
+            var userId = User.GetUserIdKnownNotNull();
 
-            var viewModel = new InternalConfirmationViewModel(
+            var (_, unverifiedCentreEmails) =
+                userService.GetUnverifiedEmailsForUser(userId);
+            var (_, centreName, unverifiedCentreEmail) =
+                unverifiedCentreEmails.SingleOrDefault(uce => uce.centreId == centreId);
+
+            var model = new InternalConfirmationViewModel(
                 candidateNumber,
                 approved,
-                hasAdminAccount,
-                centreId
+                userHasAdminAccountAtCentre,
+                centreId,
+                unverifiedCentreEmail,
+                centreName
             );
-            return View(viewModel);
+
+            return View(model);
         }
 
         private bool CheckCentreIdValid(int? centreId)

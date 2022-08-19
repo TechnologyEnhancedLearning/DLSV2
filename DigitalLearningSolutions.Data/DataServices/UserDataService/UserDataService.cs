@@ -166,7 +166,7 @@
 
         string? GetCentreEmail(int userId, int centreId);
 
-        IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllCentreEmailsForUser(
+        IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllActiveCentreEmailsForUser(
             int userId
         );
 

@@ -10,13 +10,17 @@
             Id = Guid.NewGuid();
         }
 
-        public InternalDelegateRegistrationData(int? centreId, int? supervisorDelegateId = null, string? email = null)
+        public InternalDelegateRegistrationData(
+            int? centreId,
+            int? supervisorDelegateId = null,
+            string? centreSpecificEmail = null
+        )
         {
             Id = Guid.NewGuid();
             Centre = centreId;
             IsCentreSpecificRegistration = centreId.HasValue;
             SupervisorDelegateId = supervisorDelegateId;
-            Email = email;
+            CentreSpecificEmail = centreSpecificEmail;
         }
 
         public Guid Id { get; set; }
@@ -30,8 +34,6 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
-
-        public string? Email { get; set; }
 
         public virtual void SetPersonalInformation(InternalPersonalInformationViewModel model)
         {

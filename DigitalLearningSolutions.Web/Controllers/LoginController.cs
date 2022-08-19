@@ -25,11 +25,11 @@
     public class LoginController : Controller
     {
         private readonly IClockUtility clockUtility;
+        private readonly IConfigDataService configDataService;
         private readonly ILogger<LoginController> logger;
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
         private readonly IUserService userService;
-        private readonly IConfigDataService configDataService;
 
         public LoginController(
             ILoginService loginService,
@@ -115,8 +115,8 @@
         {
             var userEntity = userService.GetUserById(User.GetUserId()!.Value);
 
-            var unverifiedCentreEmails =
-                userService.GetUnverifiedEmailsForUser(userEntity!.UserAccount.Id).centreEmails.ToList();
+            var (_, unverifiedCentreEmails) =
+                userService.GetUnverifiedEmailsForUser(userEntity!.UserAccount.Id);
             var idsOfCentresWithUnverifiedEmails = unverifiedCentreEmails.Select(uce => uce.centreId).ToList();
 
             var chooseACentreAccountViewModels =
@@ -127,7 +127,7 @@
                     .ThenBy(account => account.CentreName).ToList(),
                 returnUrl,
                 userEntity.UserAccount.EmailVerified.HasValue,
-                unverifiedCentreEmails
+                unverifiedCentreEmails.Count
             );
 
             return View("ChooseACentre", model);

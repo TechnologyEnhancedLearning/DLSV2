@@ -4,7 +4,6 @@
 @model ChooseACentreViewModel
 @{
   ViewData["Title"] = "Choose A Centre";
-  var primaryEmailIsUnverified = Model.PrimaryEmailIsVerified == false;
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/login/chooseACentre.css")" asp-append-version="true">
@@ -12,11 +11,9 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
 
-    <vc:verify-email-warning-if-appropriate
-      show-centre-emails-and-resend-button="false"
-      mention-blocked-actions-on-choose-a-centre-page="true"
-      primary-email-is-unverified="@primaryEmailIsUnverified"
-      unverified-centre-emails="@Model.UnverifiedCentreEmails" />
+    @if (!Model.PrimaryEmailIsVerified || Model.NumberOfUnverifiedCentreEmails > 0) {
+      <partial name="_VerifyEmailWarningForChooseACentrePage" model="@Model" />
+    }
 
     <h1 id="page-heading" class="nhsuk-heading-xl">Choose a centre</h1>
 

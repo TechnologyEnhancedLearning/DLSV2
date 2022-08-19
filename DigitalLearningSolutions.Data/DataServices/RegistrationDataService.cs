@@ -14,7 +14,8 @@
     {
         (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
-            bool registerJourneyContainsTermsAndConditions
+            bool registerJourneyContainsTermsAndConditions,
+            bool shouldAssumeEmailVerified
         );
 
         int RegisterAdmin(AdminAccountRegistrationModel registrationModel, PossibleEmailUpdate? possibleEmailUpdate);
@@ -42,26 +43,24 @@
         private readonly IDbConnection connection;
         private readonly ILogger<IRegistrationDataService> logger;
         private readonly IUserDataService userDataService;
-        private readonly IEmailVerificationDataService emailVerificationDataService;
 
         public RegistrationDataService(
             IDbConnection connection,
             IUserDataService userDataService,
-            IEmailVerificationDataService emailVerificationDataService,
             IClockUtility clockUtility,
             ILogger<IRegistrationDataService> logger
         )
         {
             this.connection = connection;
             this.userDataService = userDataService;
-            this.emailVerificationDataService = emailVerificationDataService;
             this.clockUtility = clockUtility;
             this.logger = logger;
         }
 
         public (int delegateId, string candidateNumber) RegisterNewUserAndDelegateAccount(
             DelegateRegistrationModel delegateRegistrationModel,
-            bool registerJourneyContainsTermsAndConditions
+            bool registerJourneyContainsTermsAndConditions,
+            bool shouldAssumeEmailVerified
         )
         {
             connection.EnsureOpen();
@@ -84,7 +83,7 @@
                 {
                     OldEmail = null,
                     NewEmail = delegateRegistrationModel.CentreSpecificEmail,
-                    NewEmailIsVerified = false,
+                    NewEmailIsVerified = shouldAssumeEmailVerified,
                 },
                 transaction
             );
@@ -267,6 +266,7 @@
                 delegateRegistrationModel.ProfessionalRegistrationNumber,
                 PasswordHash = string.Empty,
                 TermsAgreed = registerJourneyContainsTermsAndConditions ? currentTime : (DateTime?)null,
+                EmailVerified = (DateTime?)null,
                 DetailsLastChecked = currentTime,
             };
 
@@ -281,6 +281,7 @@
                         ProfessionalRegistrationNumber,
                         Active,
                         TermsAgreed,
+                        EmailVerified,
                         DetailsLastChecked
                     )
                     OUTPUT Inserted.ID
@@ -294,6 +295,7 @@
                         @professionalRegistrationNumber,
                         @userIsActive,
                         @termsAgreed,
+                        @emailVerified,
                         @detailsLastChecked
                     )",
                 userValues,
@@ -311,7 +313,8 @@
         {
             if (possibleEmailUpdate != null && possibleEmailUpdate.IsEmailUpdating)
             {
-                var emailVerified = possibleEmailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
+                var emailVerified =
+                    possibleEmailUpdate.NewEmailIsVerified ? clockUtility.UtcNow : (DateTime?)null;
 
                 userDataService.SetCentreEmail(
                     userId,

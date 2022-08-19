@@ -224,7 +224,7 @@
         }
 
         [Test]
-        public void GetAllCentreEmailsForUser_returns_centre_email_list()
+        public void GetAllActiveCentreEmailsForUser_returns_centre_email_list()
         {
             using var transaction = new TransactionScope();
 
@@ -280,7 +280,7 @@
             );
 
             // When
-            var result = userDataService.GetAllCentreEmailsForUser(userId).ToList();
+            var result = userDataService.GetAllActiveCentreEmailsForUser(userId).ToList();
 
             // Then
             result.Count.Should().Be(4);
@@ -294,7 +294,7 @@
         }
 
         [Test]
-        public void GetAllCentreEmailsForUser_does_not_return_emails_for_inactive_admin_accounts()
+        public void GetAllActiveCentreEmailsForUser_does_not_return_emails_for_inactive_admin_accounts()
         {
             using var transaction = new TransactionScope();
 
@@ -331,14 +331,58 @@
             );
 
             // When
-            var result = userDataService.GetAllCentreEmailsForUser(userId).ToList();
+            var result = userDataService.GetAllActiveCentreEmailsForUser(userId).ToList();
 
             // Then
             result.Count.Should().Be(0);
         }
 
         [Test]
-        public void GetAllCentreEmailsForUser_returns_empty_list_when_user_has_no_centre_accounts()
+        public void GetAllActiveCentreEmailsForUser_does_not_return_emails_for_inactive_delegate_accounts()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int centreId = 3;
+            const string email = "inactive_delegate@email.com";
+
+            var userId = connection.QuerySingle<int>(
+                @"INSERT INTO Users
+                (
+                    PrimaryEmail,
+                    PasswordHash,
+                    FirstName,
+                    LastName,
+                    JobGroupID,
+                    Active,
+                    FailedLoginCount,
+                    HasBeenPromptedForPrn,
+                    HasDismissedLhLoginWarning
+                )
+                OUTPUT Inserted.ID
+                VALUES
+                ('inactive_delegate_primary@email.com', 'password', 'test', 'user', 1, 1, 0, 1, 1)"
+            );
+
+            connection.Execute(
+                @"INSERT INTO DelegateAccounts (UserID, CentreID, Active, DateRegistered, CandidateNumber) VALUES (@userId, @centreId, 0, GETDATE(), 'TU255')",
+                new { userId, centreId }
+            );
+
+            connection.Execute(
+                @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES (@userId, @centreId, @email)",
+                new { userId, centreId, email }
+            );
+
+            // When
+            var result = userDataService.GetAllActiveCentreEmailsForUser(userId).ToList();
+
+            // Then
+            result.Count.Should().Be(0);
+        }
+
+        [Test]
+        public void GetAllActiveCentreEmailsForUser_returns_empty_list_when_user_has_no_centre_accounts()
         {
             using var transaction = new TransactionScope();
 
@@ -348,7 +392,7 @@
             connection.Execute(@"DELETE FROM AdminAccounts WHERE UserID = @userId", new { userId });
 
             // When
-            var result = userDataService.GetAllCentreEmailsForUser(userId);
+            var result = userDataService.GetAllActiveCentreEmailsForUser(userId);
 
             // Then
             result.Should().BeEmpty();

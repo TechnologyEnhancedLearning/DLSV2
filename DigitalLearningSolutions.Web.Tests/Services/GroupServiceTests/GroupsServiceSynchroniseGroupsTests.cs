@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions.Execution;
@@ -374,7 +375,10 @@
         public void UpdateSynchronisedDelegateGroupsBasedOnUserChanges_adds_delegate_to_appropriate_groups()
         {
             // Given
-            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(answer1: "new answer", answer2: "new answer2");
+            var centreAnswersData = UserTestHelper.GetDefaultRegistrationFieldAnswers(
+                answer1: "new answer",
+                answer2: "new answer2"
+            );
             A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
             var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
                 5,
@@ -458,6 +462,67 @@
                     A<DateTime>._,
                     A<int>._
                 )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void SynchroniseJobGroupsOnOtherCentres_synchronises_correct_job_groups()
+        {
+            // Given
+            A.CallTo(() => clockUtility.UtcNow).Returns(testDate);
+            var originalDelegateId = 1;
+            var userId = 4;
+            var oldJobGroupId = 2;
+            var newJobGroupId = 3;
+            var accountDetailsData = new AccountDetailsData("test", "tester", "fake@email.com");
+            var centreEmail = "centreEmail";
+
+            var delegateAccount = UserTestHelper.GetDefaultDelegateAccount();
+            var delegateAccounts = new List<DelegateAccount> { delegateAccount };
+
+            var oldJobGroupGroup = GroupTestHelper.GetDefaultGroup(1, linkedToField: 4, groupLabel: "old group");
+            var newJobGroupGroup = GroupTestHelper.GetDefaultGroup(2, linkedToField: 4, groupLabel: "new group");
+            var nonJobGroupGroup = GroupTestHelper.GetDefaultGroup(3, linkedToField: 3, groupLabel: "new group");
+            var groups = new List<Group> { oldJobGroupGroup, newJobGroupGroup, nonJobGroupGroup };
+
+            A.CallTo(() => userDataService.GetUserIdFromDelegateId(originalDelegateId)).Returns(userId);
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(userId)).Returns(delegateAccounts);
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(delegateAccount.CentreId))
+                .Returns(groups);
+
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(oldJobGroupId))
+                .Returns(oldJobGroupGroup.GroupLabel);
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(newJobGroupId))
+                .Returns(newJobGroupGroup.GroupLabel);
+
+            // When
+            groupsService.SynchroniseJobGroupsOnOtherCentres(
+                originalDelegateId,
+                oldJobGroupId,
+                newJobGroupId,
+                accountDetailsData,
+                centreEmail
+            );
+
+            // Then
+            A.CallTo(
+                () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
+                    oldJobGroupGroup.GroupId,
+                    delegateAccount.Id
+                )
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
+                    nonJobGroupGroup.GroupId,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+
+            A.CallTo(
+                () => groupsDataService.AddDelegateToGroup(delegateAccount.Id, newJobGroupGroup.GroupId, testDate, 1)
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => groupsDataService.AddDelegateToGroup(A<int>._, nonJobGroupGroup.GroupId, A<DateTime>._, A<int>._)
             ).MustNotHaveHappened();
         }
 
