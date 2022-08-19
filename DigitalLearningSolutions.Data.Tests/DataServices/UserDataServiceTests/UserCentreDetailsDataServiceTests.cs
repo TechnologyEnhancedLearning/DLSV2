@@ -283,7 +283,7 @@
             var result = userDataService.GetAllActiveCentreEmailsForUser(userId).ToList();
 
             // Then
-            result.Count.Should().Be(3);
+            result.Count.Should().Be(4);
             result.Should()
                 .ContainEquivalentOf((delegateOnlyCentreId, delegateOnlyCentreName, delegateOnlyCentreEmail));
             result.Should().ContainEquivalentOf((adminOnlyCentreId, adminOnlyCentreName, adminOnlyCentreEmail));
@@ -330,7 +330,7 @@
 
             connection.Execute(
                 @"INSERT INTO AdminAccounts (UserID, CentreID, Active) VALUES
-                    (@userId, @adminOnlyCentreId, 1),
+                    (@userId, @adminOnlyCentreId, 0),
                     (@userId, @nullCentreEmailCentreId, 1)",
                 new { userId, adminOnlyCentreId, nullCentreEmailCentreId }
             );
