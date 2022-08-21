@@ -32,7 +32,7 @@
         [Route("Download")]
         public IActionResult DownloadDigitalCapabilityToExcel()
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var dataFile = selfAssessmentReportService.GetDigitalCapabilityExcelExportForCentre(centreId);
             var fileName = $"DLS DCSA Report - Centre {centreId} - downloaded {DateTime.Today:yyyy-MM-dd}.xlsx";
             return File(

@@ -46,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             IActionPlanService actionPlanService,
             ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IMultiPageFormService multiPageFormService
+            IMultiPageFormService multiPageFormService,
             IClockUtility clockUtility
         )
         {

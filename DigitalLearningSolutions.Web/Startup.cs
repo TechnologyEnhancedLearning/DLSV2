@@ -14,6 +14,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.ModelBinders;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Data.ViewModels;
     using DigitalLearningSolutions.Web.Helpers;
