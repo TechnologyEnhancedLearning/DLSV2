@@ -1,8 +1,10 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+﻿@using DigitalLearningSolutions.Data.Utilities
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @using DigitalLearningSolutions.Web.Helpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ReviewConfirmationRequestsViewModel
+@inject IClockUtility clockUtility;
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
   Layout = "SelfAssessments/_Layout";
   ViewData["Title"] = "Self Assessment";
   ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
@@ -74,7 +76,7 @@
           @competency.SupervisorName<br />
           @competency.SupervisorVerificationRequested?.ToString("dd/MM/yyyy")<br />
           <span style="white-space: nowrap;">
-            @if (competency.EmailSent.HasValue && DateTime.UtcNow.Subtract(competency.EmailSent.Value) > TimeSpan.FromHours(1))
+            @if (competency.EmailSent.HasValue && clockUtility.UtcNow.Subtract(competency.EmailSent.Value) > TimeSpan.FromHours(1))
             {
               <a asp-action="ResendSupervisorVerificationRequest"
                   asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
