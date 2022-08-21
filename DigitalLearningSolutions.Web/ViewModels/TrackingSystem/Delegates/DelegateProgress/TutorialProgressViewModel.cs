@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 {
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Progress;
 
     public class TutorialProgressViewModel
     {

@@ -11,39 +11,19 @@
 
         public WelcomeEmailViewModel(DelegateRegistrationByCentreData data)
         {
-            ShouldSendEmail = data.ShouldSendEmail;
-            if (ShouldSendEmail)
-            {
-                Day = data.WelcomeEmailDate!.Value.Day;
-                Month = data.WelcomeEmailDate!.Value.Month;
-                Year = data.WelcomeEmailDate!.Value.Year;
-            }
+            Day = data.WelcomeEmailDate!.Value.Day;
+            Month = data.WelcomeEmailDate!.Value.Month;
+            Year = data.WelcomeEmailDate!.Value.Year;
         }
 
         public int? Day { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }
-        public bool ShouldSendEmail { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (!ShouldSendEmail)
-            {
-                return new List<ValidationResult>();
-            }
-
             return DateValidator.ValidateDate(Day, Month, Year, "Email delivery date", true)
                 .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
-        }
-
-        public void ClearDateIfNotSendEmail()
-        {
-            if (!ShouldSendEmail)
-            {
-                Day = null;
-                Month = null;
-                Year = null;
-            }
         }
     }
 }

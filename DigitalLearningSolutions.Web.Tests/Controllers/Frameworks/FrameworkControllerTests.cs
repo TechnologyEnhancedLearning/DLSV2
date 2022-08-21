@@ -3,8 +3,8 @@
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.FrameworksController;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;

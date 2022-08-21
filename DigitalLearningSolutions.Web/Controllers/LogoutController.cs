@@ -1,15 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    using Microsoft.AspNetCore.Authentication;
+    using System.Threading.Tasks;
+    using DigitalLearningSolutions.Web.Extensions;
     using Microsoft.AspNetCore.Mvc;
 
     public class LogoutController : Controller
     {
         [HttpPost]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            HttpContext.SignOutAsync();
-            HttpContext.Response.Cookies.Delete("ASP.NET_SessionId");
+            await HttpContext.Logout();
             return RedirectToAction("Index", "Home");
         }
     }

@@ -4,6 +4,7 @@
     {
         public int CentreId { get; set; }
         public string CentreName { get; set; }
+        public bool Active { get; set; }
         public int RegionId { get; set; }
         public string RegionName { get; set; }
         public string? NotifyEmail { get; set; }

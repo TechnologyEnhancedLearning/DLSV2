@@ -4,7 +4,7 @@
 
     public static class ConfigurationExtensions
     {
-        public const string UseSignposting = "FeatureManagement:UseSignposting";
+        private const string UseSignposting = "FeatureManagement:UseSignposting";
 
         private const string AppRootPathName = "AppRootPath";
         private const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
@@ -26,6 +26,8 @@
 
         private const string JavascriptSearchSortFilterPaginateItemLimitKey =
             "JavascriptSearchSortFilterPaginateItemLimit";
+
+        private const string MonthsToPromptUserDetailsCheckKey = "MonthsToPromptUserDetailsCheck";
 
         public static string GetAppRootPath(this IConfiguration config)
         {
@@ -105,6 +107,11 @@
         public static int GetJavascriptSearchSortFilterPaginateItemLimit(this IConfiguration config)
         {
             return int.Parse(config[JavascriptSearchSortFilterPaginateItemLimitKey]);
+        }
+
+        public static int GetMonthsToPromptUserDetailsCheck(this IConfiguration config)
+        {
+            return int.Parse(config[MonthsToPromptUserDetailsCheckKey]);
         }
     }
 }

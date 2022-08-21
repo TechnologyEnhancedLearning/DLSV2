@@ -15,7 +15,6 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
-        public string? AliasId { get; set; }
 
         /// <summary>
         ///     This signifies that the user has either seen the PRN fields themselves
@@ -35,9 +34,9 @@
             return new UserReference(Id, UserType.DelegateUser);
         }
 
-        public CentreAnswersData GetCentreAnswersData()
+        public RegistrationFieldAnswers GetRegistrationFieldAnswers()
         {
-            return new CentreAnswersData(
+            return new RegistrationFieldAnswers(
                 CentreId,
                 JobGroupId,
                 Answer1,

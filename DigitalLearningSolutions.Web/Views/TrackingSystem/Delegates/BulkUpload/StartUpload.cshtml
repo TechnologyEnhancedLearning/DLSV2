@@ -1,14 +1,13 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+﻿@using DigitalLearningSolutions.Data.Utilities
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model UploadDelegatesViewModel
+@inject IClockUtility ClockUtility
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Bulk upload/update delegates" : "Bulk upload/update delegates";
   const string dateInputId = "welcome-email-date";
-  var exampleDate = DateTime.Today;
-  var emailDateCss = "nhsuk-checkboxes__conditional"
-                     + (Model.ShouldSendEmail ? "" : " nhsuk-checkboxes__conditional--hidden")
-                     + (errorHasOccurred ? " nhsuk-u-padding-left-5" : "");
+  var exampleDate = ClockUtility.UtcToday;
   var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
 }
 
@@ -21,27 +20,13 @@
     <h1 class="nhsuk-heading-xl">Bulk upload/update delegates</h1>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="StartUpload" enctype="multipart/form-data">
-      <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional nhsuk-u-margin-bottom-4">
-        <div class="nhsuk-checkboxes__item">
-          <input class="nhsuk-checkboxes__input"
-                 asp-for="ShouldSendEmail"
-                 type="checkbox"
-                 value="true"
-                 aria-controls="@dateInputId"
-                 aria-expanded="@Model.ShouldSendEmail">
-          <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="ShouldSendEmail">
-            Send welcome email to registered delegates
-          </label>
-        </div>
-
-        <vc:date-input id="@dateInputId"
-                       label="Deliver email on or after"
-                       day-id="Day"
-                       month-id="Month"
-                       year-id="Year"
-                       css-class="@emailDateCss"
-                       hint-text-lines="@hintTextLines" />
-      </div>
+      <vc:date-input id="@dateInputId"
+                     label="Send welcome email to registered delegates, to be delivered on or after"
+                     day-id="Day"
+                     month-id="Month"
+                     year-id="Year"
+                     css-class="@(errorHasOccurred ? " nhsuk-u-padding-left-5 nhsuk-u-margin-bottom-3" : "")"
+                     hint-text-lines="@hintTextLines" />
 
       <vc:file-input asp-for="@nameof(Model.DelegatesFile)" label="File with updated information" hint-text="" css-class="nhsuk-u-width-one-half" />
 

@@ -5,8 +5,9 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
-    [Authorize(Policy = CustomPolicies.UserOnly)]
+    [Authorize(Policy = CustomPolicies.UserDelegateOnly)]
     public class LearningMenuController : Controller
     {
         private const int MinimumTutorialAverageTimeToIncreaseAuthExpiry = 45;
@@ -28,7 +29,7 @@
         private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
         private readonly IPostLearningAssessmentService postLearningAssessmentService;
         private readonly ICourseCompletionService courseCompletionService;
-        private readonly IClockService clockService;
+        private readonly IClockUtility clockUtility;
 
         public LearningMenuController(
             ILogger<LearningMenuController> logger,
@@ -41,7 +42,7 @@
             IPostLearningAssessmentService postLearningAssessmentService,
             ISessionService sessionService,
             ICourseCompletionService courseCompletionService,
-            IClockService clockService
+            IClockUtility clockUtility
         )
         {
             this.logger = logger;
@@ -54,13 +55,13 @@
             this.diagnosticAssessmentService = diagnosticAssessmentService;
             this.postLearningAssessmentService = postLearningAssessmentService;
             this.courseCompletionService = courseCompletionService;
-            this.clockService = clockService;
+            this.clockUtility = clockUtility;
         }
 
         [Route("/LearningMenu/{customisationId:int}")]
         public IActionResult Index(int customisationId)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             if (config.GetValue<string>("LegacyLearningMenu") != "")
             {
                 if ((config.GetValue<bool>("LegacyLearningMenu") && !configDataService.GetCentreBetaTesting(centreId))|(!config.GetValue<bool>("LegacyLearningMenu") && configDataService.GetCentreBetaTesting(centreId)))
@@ -105,7 +106,7 @@
         [Route("LearningMenu/{customisationId:int}/Password")]
         public IActionResult CoursePassword(int customisationId, bool error = false)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var candidateId = User.GetCandidateIdKnownNotNull();
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
             if (courseContent == null)
@@ -123,7 +124,7 @@
         [Route("LearningMenu/{customisationId:int}/Password")]
         public IActionResult CoursePassword(int customisationId, string? password)
         {
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var candidateId = User.GetCandidateIdKnownNotNull();
             var coursePassword = courseContentService.GetCoursePassword(customisationId);
             if(coursePassword == null)
@@ -164,7 +165,7 @@
         public IActionResult Section(int customisationId, int sectionId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var sectionContent = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             if (sectionContent == null)
@@ -229,7 +230,7 @@
         public IActionResult Diagnostic(int customisationId, int sectionId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var diagnosticAssessment =
                 diagnosticAssessmentService.GetDiagnosticAssessment(customisationId, candidateId, sectionId);
 
@@ -266,7 +267,7 @@
         public IActionResult DiagnosticContent(int customisationId, int sectionId, List<int> checkedTutorials)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var diagnosticContent = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId, checkedTutorials);
 
             if (diagnosticContent == null)
@@ -308,7 +309,7 @@
         public IActionResult PostLearning(int customisationId, int sectionId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var postLearningAssessment =
                 postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
@@ -345,7 +346,7 @@
         public IActionResult PostLearningContent(int customisationId, int sectionId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
             var postLearningContent = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
 
             if (postLearningContent == null)
@@ -386,7 +387,7 @@
         public async Task<IActionResult> Tutorial(int customisationId, int sectionId, int tutorialId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var tutorialInformation =
                 tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
@@ -420,7 +421,7 @@
             sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
-            /* Course progress doesn't get updated if the auth token expires by the end of the tutorials. 
+            /* Course progress doesn't get updated if the auth token expires by the end of the tutorials.
               Some tutorials are longer than the default auth token lifetime of 1 hour, so we set the auth expiry to 8 hours.
               See HEEDLS-637 and HEEDLS-674 for more details */
             if (tutorialInformation.AverageTutorialDuration >= MinimumTutorialAverageTimeToIncreaseAuthExpiry)
@@ -436,7 +437,7 @@
         public IActionResult ContentViewer(int customisationId, int sectionId, int tutorialId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var tutorialContent = tutorialContentDataService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
@@ -479,7 +480,7 @@
         public IActionResult TutorialVideo(int customisationId, int sectionId, int tutorialId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var tutorialVideo = tutorialContentDataService.GetTutorialVideo(customisationId, sectionId, tutorialId);
 
@@ -519,7 +520,7 @@
         public IActionResult CompletionSummary(int customisationId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var centreId = User.GetCentreId();
+            var centreId = User.GetCentreIdKnownNotNull();
 
             var courseCompletion = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
 
@@ -554,8 +555,8 @@
             var authProperties = new AuthenticationProperties
             {
                 AllowRefresh = true,
-                IssuedUtc = clockService.UtcNow,
-                ExpiresUtc = clockService.UtcNow.AddHours(8)
+                IssuedUtc = clockUtility.UtcNow,
+                ExpiresUtc = clockUtility.UtcNow.AddHours(8)
             };
             await HttpContext.SignInAsync("Identity.Application", User, authProperties);
         }

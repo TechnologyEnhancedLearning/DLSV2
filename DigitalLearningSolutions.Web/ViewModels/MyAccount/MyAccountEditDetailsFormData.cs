@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
@@ -9,39 +10,47 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Http;
 
-    public class MyAccountEditDetailsFormData : EditDetailsFormData, IEditProfessionalRegistrationNumbers, IValidatableObject
+    public class MyAccountEditDetailsFormData : EditDetailsFormData, IEditProfessionalRegistrationNumbers,
+        IValidatableObject
     {
         public MyAccountEditDetailsFormData() { }
 
         protected MyAccountEditDetailsFormData(
-            AdminUser? adminUser,
-            DelegateUser? delegateUser,
-            List<(int id, string name)> jobGroups
+            UserAccount userAccount,
+            DelegateAccount? delegateAccount,
+            List<(int id, string name)> jobGroups,
+            string? centreSpecificEmail,
+            List<(int centreId, string centreName, string? centreSpecificEmail)> allCentreSpecificEmails,
+            string? returnUrl,
+            bool isCheckDetailRedirect
         )
         {
-            FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
-            LastName = adminUser?.LastName ?? delegateUser?.LastName;
-            Email = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
-            ProfileImage = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
-
-            IsDelegateUser = delegateUser != null;
-            JobGroupId = jobGroups.Where(jg => jg.name == delegateUser?.JobGroupName).Select(jg => jg.id)
-                .SingleOrDefault();
-
-            Answer1 = delegateUser?.Answer1;
-            Answer2 = delegateUser?.Answer2;
-            Answer3 = delegateUser?.Answer3;
-            Answer4 = delegateUser?.Answer4;
-            Answer5 = delegateUser?.Answer5;
-            Answer6 = delegateUser?.Answer6;
-
-            ProfessionalRegistrationNumber = delegateUser?.ProfessionalRegistrationNumber;
+            FirstName = userAccount.FirstName;
+            LastName = userAccount.LastName;
+            Email = userAccount.PrimaryEmail;
+            ProfileImage = userAccount.ProfileImage;
+            ProfessionalRegistrationNumber = userAccount.ProfessionalRegistrationNumber;
             HasProfessionalRegistrationNumber =
                 ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(
-                    delegateUser?.HasBeenPromptedForPrn,
-                    delegateUser?.ProfessionalRegistrationNumber
+                    userAccount.HasBeenPromptedForPrn,
+                    userAccount.ProfessionalRegistrationNumber
                 );
+            JobGroupId = jobGroups.Where(jg => jg.name == userAccount.JobGroupName).Select(jg => jg.id)
+                .SingleOrDefault();
+
+            IsDelegateUser = delegateAccount != null;
+            Answer1 = delegateAccount?.Answer1;
+            Answer2 = delegateAccount?.Answer2;
+            Answer3 = delegateAccount?.Answer3;
+            Answer4 = delegateAccount?.Answer4;
+            Answer5 = delegateAccount?.Answer5;
+            Answer6 = delegateAccount?.Answer6;
+
+            CentreSpecificEmail = centreSpecificEmail;
+            AllCentreSpecificEmails = allCentreSpecificEmails;
+            ReturnUrl = returnUrl;
             IsSelfRegistrationOrEdit = true;
+            IsCheckDetailRedirect = isCheckDetailRedirect;
         }
 
         protected MyAccountEditDetailsFormData(MyAccountEditDetailsFormData formData)
@@ -49,6 +58,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             FirstName = formData.FirstName;
             LastName = formData.LastName;
             Email = formData.Email;
+            CentreSpecificEmail = formData.CentreSpecificEmail;
             ProfileImageFile = formData.ProfileImageFile;
             ProfileImage = formData.ProfileImage;
             IsDelegateUser = formData.IsDelegateUser;
@@ -61,12 +71,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer6 = formData.Answer6;
             HasProfessionalRegistrationNumber = formData.HasProfessionalRegistrationNumber;
             ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
+            ReturnUrl = formData.ReturnUrl;
             IsSelfRegistrationOrEdit = true;
+            IsCheckDetailRedirect = formData.IsCheckDetailRedirect;
+            AllCentreSpecificEmailsDictionary = formData.AllCentreSpecificEmailsDictionary;
         }
-
-        [Required(ErrorMessage = "Enter your current password")]
-        [DataType(DataType.Password)]
-        public string? Password { get; set; }
 
         public byte[]? ProfileImage { get; set; }
 
@@ -74,5 +83,76 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public IFormFile? ProfileImageFile { get; set; }
 
         public bool IsDelegateUser { get; set; }
+
+        public string? ReturnUrl { get; set; }
+
+        public bool IsCheckDetailRedirect { get; set; }
+
+        public List<(int centreId, string centreName, string? centreSpecificEmail)>? AllCentreSpecificEmails
+        {
+            get;
+            set;
+        }
+
+        public Dictionary<string, string?>? AllCentreSpecificEmailsDictionary { get; set; }
+
+        public Dictionary<int, string?> CentreSpecificEmailsByCentreId =>
+            AllCentreSpecificEmailsDictionary != null
+                ? AllCentreSpecificEmailsDictionary.Where(
+                    row => Int32.TryParse(row.Key, out _)
+                ).ToDictionary(
+                    row => Int32.Parse(row.Key),
+                    row => row.Value
+                )
+                : new Dictionary<int, string?>();
+
+        private bool HasValidated { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var validationResults = new List<ValidationResult>();
+
+            if (HasValidated)
+            {
+                return validationResults;
+            }
+
+            if (AllCentreSpecificEmailsDictionary != null)
+            {
+                var maxLengthAttribute = new MaxLengthAttribute(255);
+                var emailAddressAttribute = new EmailAddressAttribute();
+                var noWhitespaceAttribute = new NoWhitespaceAttribute();
+
+                foreach (var (centreIdString, centreEmail) in AllCentreSpecificEmailsDictionary)
+                {
+                    var memberName = $"{nameof(AllCentreSpecificEmailsDictionary)}_{centreIdString}";
+
+                    if (!maxLengthAttribute.IsValid(centreEmail))
+                    {
+                        validationResults.Add(
+                            new ValidationResult(CommonValidationErrorMessages.TooLongEmail, new[] { memberName })
+                        );
+                    }
+
+                    if (!emailAddressAttribute.IsValid(centreEmail))
+                    {
+                        validationResults.Add(
+                            new ValidationResult(CommonValidationErrorMessages.InvalidEmail, new[] { memberName })
+                        );
+                    }
+
+                    if (!noWhitespaceAttribute.IsValid(centreEmail))
+                    {
+                        validationResults.Add(
+                            new ValidationResult(CommonValidationErrorMessages.WhitespaceInEmail, new[] { memberName })
+                        );
+                    }
+                }
+            }
+
+            HasValidated = true;
+
+            return validationResults;
+        }
     }
 }

@@ -4,8 +4,8 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Signposting;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.IntegrationTests.TestHelpers;
+    using DigitalLearningSolutions.Web.Services;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Extensions.DependencyInjection;

@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Models
+﻿namespace DigitalLearningSolutions.Data.Models.Progress
 {
     public class DetailedTutorialProgress
     {

@@ -1,7 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre
 {
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Reports;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using FakeItEasy;
@@ -16,19 +17,21 @@
         private HttpResponse httpResponse = null!;
         private IActivityService activityService = null!;
         private IEvaluationSummaryService evaluationSummaryService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void Setup()
         {
             activityService = A.Fake<IActivityService>();
             evaluationSummaryService = A.Fake<IEvaluationSummaryService>();
+            clockUtility = A.Fake<IClockUtility>();
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
             const string cookieName = "ReportsFilterCookie";
             const string cookieValue = "";
 
-            reportsController = new ReportsController(activityService, evaluationSummaryService)
+            reportsController = new ReportsController(activityService, evaluationSummaryService, clockUtility)
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()

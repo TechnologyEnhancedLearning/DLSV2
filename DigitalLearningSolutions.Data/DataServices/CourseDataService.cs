@@ -134,16 +134,16 @@ namespace DigitalLearningSolutions.Data.DataServices
         private const string DelegateAllAttemptsQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
                 FROM dbo.AssessAttempts AS aa
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
+                INNER JOIN dbo.DelegateAccounts AS dacc ON dacc.ID = aa.CandidateID
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL
-                AND can.CandidateId = ca.CandidateId) AS AllAttempts";
+                AND dacc.ID = da.ID) AS AllAttempts";
 
         private const string DelegateAttemptsPassedQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
                 FROM dbo.AssessAttempts AS aa
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
+                INNER JOIN dbo.DelegateAccounts AS dacc ON dacc.ID = aa.CandidateID
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
-                AND can.CandidateId = ca.CandidateId) AS AttemptsPassed";
+                AND dacc.ID = da.ID) AS AttemptsPassed";
 
         private const string TutorialWithLearningCountQuery =
             @"SELECT COUNT(ct.TutorialID)
@@ -217,28 +217,32 @@ namespace DigitalLearningSolutions.Data.DataServices
                 {DelegateAttemptsPassedQuery},
                 pr.FirstSubmittedTime AS Enrolled,
                 pr.EnrollmentMethodID AS EnrolmentMethodId,
-                auEnrolledBy.Forename AS EnrolledByForename,
-                auEnrolledBy.Surname AS EnrolledBySurname,
-                auEnrolledBy.Active AS EnrolledByAdminActive,
-                auSupervisor.AdminID AS SupervisorAdminId,
-                auSupervisor.Forename AS SupervisorForename,
-                auSupervisor.Surname AS SupervisorSurname,
-                auSupervisor.Active AS SupervisorAdminActive,
-                ca.CandidateID AS DelegateId,
-                ca.CandidateNumber,
-                ca.FirstName AS DelegateFirstName,
-                ca.LastName AS DelegateLastName,
-                ca.EmailAddress AS DelegateEmail,
-                ca.Active AS IsDelegateActive,
-                ca.HasBeenPromptedForPrn,
-                ca.ProfessionalRegistrationNumber,
-                ca.CentreID AS DelegateCentreId
+                uEnrolledBy.FirstName AS EnrolledByForename,
+                uEnrolledBy.LastName AS EnrolledBySurname,
+                aaEnrolledBy.Active AS EnrolledByAdminActive,
+                aaSupervisor.ID AS SupervisorAdminId,
+                uSupervisor.FirstName AS SupervisorForename,
+                uSupervisor.LastName AS SupervisorSurname,
+                aaSupervisor.Active AS SupervisorAdminActive,
+                da.ID AS DelegateId,
+                da.CandidateNumber,
+                u.FirstName AS DelegateFirstName,
+                u.LastName AS DelegateLastName,
+                COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
+                da.Active AS IsDelegateActive,
+                u.HasBeenPromptedForPrn,
+                u.ProfessionalRegistrationNumber,
+                da.CentreID AS DelegateCentreId
             FROM Customisations cu
-            INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
-            INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
-            LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = pr.SupervisorAdminId
-            LEFT OUTER JOIN AdminUsers auEnrolledBy ON auEnrolledBy.AdminID = pr.EnrolledByAdminID
-            INNER JOIN Candidates AS ca ON ca.CandidateID = pr.CandidateID";
+            INNER JOIN Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+            INNER JOIN Progress AS pr ON pr.CustomisationID = cu.CustomisationID
+            LEFT OUTER JOIN AdminAccounts AS aaSupervisor ON aaSupervisor.ID = pr.SupervisorAdminId
+            LEFT OUTER JOIN Users AS uSupervisor ON uSupervisor.ID = aaSupervisor.UserID
+            LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy ON aaEnrolledBy.ID = pr.EnrolledByAdminID
+            LEFT OUTER JOIN Users AS uEnrolledBy ON uEnrolledBy.ID = aaEnrolledBy.UserID
+            INNER JOIN DelegateAccounts AS da ON da.ID = pr.CandidateID
+            INNER JOIN Users AS u ON u.ID = da.UserID
+            LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID";
 
         private readonly string courseAssessmentDetailsQuery = $@"SELECT
                         c.CustomisationID,
@@ -435,7 +439,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                                         WHERE cap.ApplicationID = cu.ApplicationID AND
                                             cap.CentreID = @centreID AND
                                             cap.Active = 1)))
-                        AND ca.CentreID = @centreId
+                        AND da.CentreID = @centreId
                         AND pr.CustomisationID = @customisationId
                         AND ap.DefaultContentTypeID <> 4",
                 new { customisationId, centreId }
@@ -835,22 +839,22 @@ namespace DigitalLearningSolutions.Data.DataServices
                 $@"SELECT
                         ap.ApplicationName,
                         cu.CustomisationName,
-                        ca.CandidateID AS DelegateId,
-                        ca.CandidateNumber,
-                        ca.FirstName AS DelegateFirstName,
-                        ca.LastName AS DelegateLastName,
-                        ca.EmailAddress AS DelegateEmail,
-                        ca.Active AS IsDelegateActive,
-                        ca.Answer1 AS RegistrationAnswer1,
-                        ca.Answer2 AS RegistrationAnswer2,
-                        ca.Answer3 AS RegistrationAnswer3,
-                        ca.Answer4 AS RegistrationAnswer4,
-                        ca.Answer5 AS RegistrationAnswer5,
-                        ca.Answer6 AS RegistrationAnswer6,
+                        da.ID AS DelegateId,
+                        da.CandidateNumber,
+                        u.FirstName AS DelegateFirstName,
+                        u.LastName AS DelegateLastName,
+                        COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
+                        da.Active AS IsDelegateActive,
+                        da.Answer1 AS RegistrationAnswer1,
+                        da.Answer2 AS RegistrationAnswer2,
+                        da.Answer3 AS RegistrationAnswer3,
+                        da.Answer4 AS RegistrationAnswer4,
+                        da.Answer5 AS RegistrationAnswer5,
+                        da.Answer6 AS RegistrationAnswer6,
                         p.ProgressID,
                         p.PLLocked AS IsProgressLocked,
                         p.SubmittedTime AS LastUpdated,
-                        ca.DateRegistered AS Enrolled,
+                        da.DateRegistered AS Enrolled,
                         p.CompleteByDate AS CompleteBy,
                         p.RemovedDate,
                         p.Completed,
@@ -863,11 +867,13 @@ namespace DigitalLearningSolutions.Data.DataServices
                         p.Answer3,
                         {DelegateAllAttemptsQuery},
                         {DelegateAllAttemptsQuery}
-                    FROM Candidates AS ca
-                    INNER JOIN Progress AS p ON p.CandidateID = ca.CandidateID
-                    INNER JOIN Customisations cu ON cu.CustomisationID = p.CustomisationID
+                    FROM DelegateAccounts AS da
+                    INNER JOIN Users AS u on u.ID = da.UserID
+                    INNER JOIN Progress AS p ON p.CandidateID = da.ID
+                    LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.centreID = da.centreID
+                    INNER JOIN Customisations AS cu ON cu.CustomisationID = p.CustomisationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
-                    WHERE ca.CentreID = @centreId
+                    WHERE da.CentreID = @centreId
                         AND p.CustomisationID = @customisationId
                         AND ap.DefaultContentTypeID <> 4",
                 new { customisationId, centreId }

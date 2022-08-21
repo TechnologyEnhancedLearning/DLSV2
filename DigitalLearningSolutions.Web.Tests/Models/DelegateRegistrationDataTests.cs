@@ -9,7 +9,8 @@
     {
         private const string FirstName = "Test";
         private const string LastName = "User";
-        private const string Email = "test@email.com";
+        private const string PrimaryEmail = "test@email.com";
+        private const string CentreSpecificEmail = "centre@email.com";
         private const int CentreId = 5;
         private const int JobGroupId = 10;
         private const string Answer1 = "a1";
@@ -28,7 +29,8 @@
                 FirstName = FirstName,
                 LastName = LastName,
                 Centre = CentreId,
-                Email = Email
+                PrimaryEmail = PrimaryEmail,
+                CentreSpecificEmail = CentreSpecificEmail,
             };
             var data = new DelegateRegistrationData();
 
@@ -38,7 +40,8 @@
             // Then
             data.FirstName.Should().Be(FirstName);
             data.LastName.Should().Be(LastName);
-            data.Email.Should().Be(Email);
+            data.PrimaryEmail.Should().Be(PrimaryEmail);
+            data.CentreSpecificEmail.Should().Be(CentreSpecificEmail);
             data.Centre.Should().Be(CentreId);
         }
 
@@ -54,7 +57,7 @@
                 Answer3 = Answer3,
                 Answer4 = Answer4,
                 Answer5 = Answer5,
-                Answer6 = Answer6
+                Answer6 = Answer6,
             };
             var data = new DelegateRegistrationData();
 
@@ -78,7 +81,7 @@
             var data = new DelegateRegistrationData
             {
                 Answer1 = Answer1, Answer2 = Answer2, Answer3 = Answer3, Answer4 = Answer4, Answer5 = Answer5,
-                Answer6 = Answer6
+                Answer6 = Answer6,
             };
 
             // When

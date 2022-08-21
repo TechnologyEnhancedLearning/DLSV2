@@ -14,21 +14,9 @@
     <h1 id="page-heading" class="nhsuk-heading-xl">
       Delegate registration complete
     </h1>
-    @if (Model.EmailWillBeSent) {
-      <p class="nhsuk-body-l">
-        A welcome message will be sent to the email provided, on the date specified, inviting the delegate to set their password and confirm their registration.
-      </p>
-    } else {
-      if (Model.PasswordSet) {
-        <p class="nhsuk-body-l">
-          You should contact the delegate to inform them of their login details and recommend that they change their password using the My account interface after login.
-        </p>
-      } else {
-        <p class="nhsuk-body-l">
-          The delegate has been registered but no welcome email has been sent. You can send the welcome email at a later date from the All Delegates interface using the Send Welcome Emails button.
-        </p>
-      }
-    }
+    <p class="nhsuk-body-l">
+      A welcome message will be sent to the email provided, on the date specified, inviting the delegate to confirm their registration.
+    </p>
     <div class="nhsuk-inset-text">
       <span class="nhsuk-u-visually-hidden">Information: </span>
       <p>Delegate number <span class="nhsuk-u-font-weight-bold">@Model.DelegateNumber</span></p>

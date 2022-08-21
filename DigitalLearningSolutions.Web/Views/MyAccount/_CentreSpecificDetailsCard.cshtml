@@ -1,0 +1,51 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@model MyAccountViewModel
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content nhsuk-u-padding-bottom-2">
+    <h2 class="nhsuk-card__heading">
+      Centre-specific details
+    </h2>
+    <div class="nhsuk-card__description">
+      <dl class="nhsuk-summary-list details-list-with-button">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Centre
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.CentreName" />
+        </div>
+
+        @{
+          var centreSpecificEmailModel = new CentreSpecificEmailDetailsViewModel(
+            Model.PrimaryEmail,
+            Model.CentreSpecificEmail,
+            null
+            );
+        }
+        <partial name="_CentreSpecificEmailDetailsSection" model="@centreSpecificEmailModel" />
+
+        @if (!string.IsNullOrWhiteSpace(Model.DelegateNumber)) {
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Candidate number
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.DelegateNumber" />
+          </div>
+        }
+
+        @if (Model.DateRegistered != null) {
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Date registered
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.DateRegistered" />
+          </div>
+        }
+
+        @foreach (var customField in Model.DelegateRegistrationPrompts) {
+          <partial name="../Shared/_CustomPromptBasicSummaryListRow" model="@customField" />
+        }
+      </dl>
+    </div>
+  </div>
+</div>

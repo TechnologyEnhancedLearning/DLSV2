@@ -2,22 +2,27 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Models;
 
     public static class RegistrationMappingHelper
     {
+        private static readonly IClockUtility ClockUtility = new ClockUtility();
+
         public static AdminRegistrationModel MapToCentreManagerAdminRegistrationModel(RegistrationData data)
         {
             return new AdminRegistrationModel(
                 data.FirstName!,
                 data.LastName!,
-                data.Email!,
+                data.PrimaryEmail!,
+                data.CentreSpecificEmail,
                 data.Centre!.Value,
                 data.PasswordHash!,
                 true,
                 true,
                 data.ProfessionalRegistrationNumber,
-                0,
+                data.JobGroup!.Value,
+                null,
                 true,
                 true,
                 false,
@@ -36,7 +41,8 @@
             return new DelegateRegistrationModel(
                 data.FirstName!,
                 data.LastName!,
-                data.Email!,
+                data.PrimaryEmail!,
+                data.CentreSpecificEmail,
                 data.Centre!.Value,
                 data.JobGroup!.Value,
                 data.PasswordHash!,
@@ -48,8 +54,26 @@
                 data.Answer6,
                 true,
                 true,
+                true,
                 data.ProfessionalRegistrationNumber,
-                notifyDate: DateTime.Now
+                notifyDate: ClockUtility.UtcNow
+            );
+        }
+
+        public static InternalDelegateRegistrationModel
+            MapInternalDelegateRegistrationDataToInternalDelegateRegistrationModel(
+                InternalDelegateRegistrationData data
+            )
+        {
+            return new InternalDelegateRegistrationModel(
+                data.Centre!.Value,
+                data.CentreSpecificEmail,
+                data.Answer1,
+                data.Answer2,
+                data.Answer3,
+                data.Answer4,
+                data.Answer5,
+                data.Answer6
             );
         }
 
@@ -60,7 +84,8 @@
             return new DelegateRegistrationModel(
                 data.FirstName!,
                 data.LastName!,
-                data.Email!,
+                Guid.NewGuid().ToString(),
+                data.CentreSpecificEmail,
                 data.Centre!.Value,
                 data.JobGroup!.Value,
                 data.PasswordHash,
@@ -72,9 +97,9 @@
                 data.Answer6,
                 false,
                 true,
+                false,
                 data.ProfessionalRegistrationNumber,
                 true,
-                data.Alias,
                 data.WelcomeEmailDate
             );
         }

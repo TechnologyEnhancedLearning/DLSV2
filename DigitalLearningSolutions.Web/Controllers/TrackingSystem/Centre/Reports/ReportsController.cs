@@ -5,10 +5,11 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -23,24 +24,27 @@
     {
         private readonly IActivityService activityService;
         private readonly IEvaluationSummaryService evaluationSummaryService;
+        private readonly IClockUtility clockUtility;
 
         public ReportsController(
             IActivityService activityService,
-            IEvaluationSummaryService evaluationSummaryService
+            IEvaluationSummaryService evaluationSummaryService,
+            IClockUtility clockUtility
         )
         {
             this.activityService = activityService;
             this.evaluationSummaryService = evaluationSummaryService;
+            this.clockUtility = clockUtility;
         }
 
         public IActionResult Index()
         {
-            var centreId = User.GetCentreId();
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryIdFilter = User.GetAdminCategoryId();
 
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
-            Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
+            Response.Cookies.SetReportsFilterCookie(filterData, clockUtility.UtcNow);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
 
@@ -61,7 +65,7 @@
                 filterModel,
                 evaluationResponseBreakdowns,
                 filterData.StartDate,
-                filterData.EndDate ?? DateTime.Today,
+                filterData.EndDate ?? clockUtility.UtcToday,
                 activityService.GetActivityStartDateForCentre(centreId, categoryIdFilter) != null,
                 activityService.GetCourseCategoryNameForActivityFilter(categoryIdFilter)
             );
@@ -72,8 +76,8 @@
         [Route("Data")]
         public IEnumerable<ActivityDataRowModel> GetGraphData()
         {
-            var centreId = User.GetCentreId();
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryIdFilter = User.GetAdminCategoryId();
 
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
@@ -87,8 +91,8 @@
         [Route("EditFilters")]
         public IActionResult EditFilters()
         {
-            var centreId = User.GetCentreId();
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var categoryIdFilter = User.GetAdminCategoryId();
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
             var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
@@ -108,10 +112,10 @@
         [Route("EditFilters")]
         public IActionResult EditFilters(EditFiltersViewModel model)
         {
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var categoryIdFilter = User.GetAdminCategoryId();
             if (!ModelState.IsValid)
             {
-                var centreId = User.GetCentreId();
+                var centreId = User.GetCentreIdKnownNotNull();
                 var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
                 model.SetUpDropdowns(filterOptions, categoryIdFilter);
                 model.DataStart = activityService.GetActivityStartDateForCentre(centreId);
@@ -128,7 +132,7 @@
                 model.ReportInterval
             );
 
-            Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
+            Response.Cookies.SetReportsFilterCookie(filterData, clockUtility.UtcNow);
 
             return RedirectToAction("Index");
         }
@@ -144,8 +148,8 @@
             ReportInterval reportInterval
         )
         {
-            var centreId = User.GetCentreId();
-            var adminCategoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var adminCategoryIdFilter = User.GetAdminCategoryId();
 
             var dateRange =
                 activityService.GetValidatedUsageStatsDateRange(startDate, endDate, centreId);
@@ -167,7 +171,7 @@
 
             var dataFile = activityService.GetActivityDataFileForCentre(centreId, filterData);
 
-            var fileName = $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx";
+            var fileName = $"Activity data for centre {centreId} downloaded {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
             return File(
                 dataFile,
                 FileHelper.GetContentTypeFromFileName(fileName),
@@ -186,8 +190,8 @@
             ReportInterval reportInterval
         )
         {
-            var centreId = User.GetCentreId();
-            var adminCategoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var centreId = User.GetCentreIdKnownNotNull();
+            var adminCategoryIdFilter = User.GetAdminCategoryId();
 
             var dateRange =
                 activityService.GetValidatedUsageStatsDateRange(startDate, endDate, centreId);
@@ -208,7 +212,7 @@
             );
 
             var content = evaluationSummaryService.GetEvaluationSummaryFileForCentre(centreId, filterData);
-            var fileName = $"DLS Evaluation Stats {DateTime.Today:yyyy-MM-dd}.xlsx";
+            var fileName = $"DLS Evaluation Stats {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),

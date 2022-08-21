@@ -1,10 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 {
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

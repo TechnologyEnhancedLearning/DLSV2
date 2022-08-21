@@ -23,12 +23,10 @@
 
         protected AdminRolesViewModel() { }
 
-        protected AdminRolesViewModel(User user, int centreId) : base(user)
-        {
-            CentreId = centreId;
-        }
+        protected AdminRolesViewModel(User user, int centreId) : base(user, centreId) { }
 
-        public int CentreId { get; set; }
+        protected AdminRolesViewModel(string firstName, string lastName, int centreId, int userId) : base(firstName, lastName, centreId, userId) { }
+
         public IEnumerable<SelectListItem> LearningCategories { get; set; }
 
         public bool NotAllRolesDisplayed =>

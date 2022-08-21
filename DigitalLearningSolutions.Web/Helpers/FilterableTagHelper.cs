@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.User;
@@ -9,11 +10,11 @@
 
     public static class FilterableTagHelper
     {
-        public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForAdminUser(AdminUser adminUser)
+        public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForAdmin(AdminEntity admin)
         {
             var tags = new List<SearchableTagViewModel>();
 
-            if (adminUser.IsLocked)
+            if (admin.UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold)
             {
                 tags.Add(new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsLocked));
             }
@@ -22,37 +23,37 @@
                 tags.Add(new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsNotLocked, true));
             }
 
-            if (adminUser.IsCentreAdmin)
+            if (admin.AdminAccount.IsCentreAdmin)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CentreAdministrator));
             }
 
-            if (adminUser.IsSupervisor)
+            if (admin.AdminAccount.IsSupervisor)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.Supervisor));
             }
 
-            if(adminUser.IsNominatedSupervisor)
+            if (admin.AdminAccount.IsNominatedSupervisor)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.NominatedSupervisor));
             }
 
-            if (adminUser.IsTrainer)
+            if (admin.AdminAccount.IsTrainer)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.Trainer));
             }
 
-            if (adminUser.IsContentCreator)
+            if (admin.AdminAccount.IsContentCreator)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.ContentCreatorLicense));
             }
 
-            if (adminUser.IsCmsAdministrator)
+            if (admin.AdminAccount.IsCmsAdministrator)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CmsAdministrator));
             }
 
-            if (adminUser.IsCmsManager)
+            if (admin.AdminAccount.IsCmsManager)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CmsManager));
             }

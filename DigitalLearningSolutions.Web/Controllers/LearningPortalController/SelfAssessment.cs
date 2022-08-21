@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SessionData.SelfAssessments;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -525,7 +526,7 @@
                 TempData
             );
             var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
-                User.GetCentreId(),
+                User.GetCentreIdKnownNotNull(),
                 selfAssessmentId,
                 User.GetCandidateIdKnownNotNull()
             );
@@ -550,7 +551,7 @@
             if (!ModelState.IsValid)
             {
                 var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(
-               User.GetCentreId(),
+               User.GetCentreIdKnownNotNull(),
                sessionAddSupervisor.SelfAssessmentID,
                User.GetCandidateIdKnownNotNull()
            );
@@ -751,12 +752,13 @@
                 TempData
             );
             var candidateId = User.GetCandidateIdKnownNotNull();
+            var delegateEntity = userDataService.GetDelegateById(candidateId);
             var supervisorDelegateId = supervisorService.AddSuperviseDelegate(
                 sessionAddSupervisor.SupervisorAdminId,
                 candidateId,
-                User.GetUserEmail() ?? throw new InvalidOperationException(),
+                delegateEntity!.EmailForCentreNotifications,
                 sessionAddSupervisor.SupervisorEmail ?? throw new InvalidOperationException(),
-                User.GetCentreId()
+                User.GetCentreIdKnownNotNull()
             );
             supervisorService.InsertCandidateAssessmentSupervisor(
                 candidateId,
@@ -1232,7 +1234,7 @@
         public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string vocabulary)
         {
             var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, GetCandidateId());
-            var fileName = $"DLS {vocabulary} Assessment Export {DateTime.Today:yyyy-MM-dd}.xlsx";
+            var fileName = $"DLS {vocabulary} Assessment Export {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
             return File(
                 content,
                 FileHelper.GetContentTypeFromFileName(fileName),

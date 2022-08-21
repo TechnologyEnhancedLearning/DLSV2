@@ -2,7 +2,6 @@
 {
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.LearningSolutions;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
@@ -183,6 +182,16 @@
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("LearningPortal")
                 .WithActionName("AccessDenied");
+        }
+
+        [Test]
+        public void PleaseLogout_returns_default_view()
+        {
+            // When
+            var result = controller.PleaseLogout();
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName();
         }
     }
 }

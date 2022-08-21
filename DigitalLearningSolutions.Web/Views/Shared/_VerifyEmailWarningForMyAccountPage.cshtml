@@ -1,0 +1,24 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@model MyAccountViewModel
+
+@{
+  var primaryEmailIfUnverified = Model.PrimaryEmailIsVerified ? null : (string?)Model.PrimaryEmail;
+  var multipleEmailsAreUnverified = Model.NumberOfUnverifiedEmails > 1 && !Model.UnverifiedCentreEmails.Select(uce => uce.centreSpecificEmail).All(e => e == Model.PrimaryEmail);
+}
+
+<div class="nhsuk-warning-callout word-break">
+  <partial name="_VerifyEmailWarningHeading" model="@Model.NumberOfUnverifiedEmails" />
+
+  <vc:unverified-email-list primary-email-if-unverified="@primaryEmailIfUnverified"
+                            unverified-centre-emails="@Model.UnverifiedCentreEmails" />
+
+  <p>
+    @VerifyYourEmailTextHelper.VerifyEmailLinkCommonInfo(multipleEmailsAreUnverified)
+    @VerifyYourEmailTextHelper.DirectionsToResendLinkByClickingButtonBelow(multipleEmailsAreUnverified)
+  </p>
+
+  <a class="nhsuk-button nhsuk-button--secondary" asp-controller="VerifyYourEmail" asp-action="ResendVerificationEmails" role="button">
+    Resend verification @(multipleEmailsAreUnverified ? "emails" : "email")
+  </a>
+</div>

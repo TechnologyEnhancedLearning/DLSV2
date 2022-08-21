@@ -4,10 +4,11 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
@@ -29,6 +30,7 @@
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
         private IUserService userService = null!;
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
+        private IClockUtility clockUtility = null!;
 
         [SetUp]
         public void Setup()
@@ -40,6 +42,7 @@
             passwordResetService = A.Fake<IPasswordResetService>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
             config = A.Fake<IConfiguration>();
+            clockUtility = A.Fake<IClockUtility>();
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
@@ -52,7 +55,8 @@
                     passwordResetService,
                     userService,
                     searchSortFilterPaginateService,
-                    config
+                    config,
+                    clockUtility
                 )
                 .WithMockHttpContext(httpRequest, CookieName, cookieValue, httpResponse)
                 .WithMockUser(true)

@@ -1,0 +1,11 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.VerifyEmail
+@model VerifyYourEmailViewModel
+
+<vc:unverified-email-list primary-email-if-unverified="@Model.PrimaryEmail"
+                          unverified-centre-emails="@Model.CentreSpecificEmails.ToList()" />
+
+<p class="nhsuk-body-m">
+  @VerifyYourEmailTextHelper.VerifyEmailLinkCommonInfo(!Model.SingleUnverifiedEmail)
+  @VerifyYourEmailTextHelper.DirectionsToResendLinkByVisitingMyAccountPage(!Model.SingleUnverifiedEmail)
+</p>

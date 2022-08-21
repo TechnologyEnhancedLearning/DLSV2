@@ -2,8 +2,8 @@
 {
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -43,7 +43,7 @@
 
         private static bool ProgressRecordIsAccessibleToUser(DelegateCourseInfo details, ClaimsPrincipal user)
         {
-            var centreId = user.GetCentreId();
+            var centreId = user.GetCentreIdKnownNotNull();
 
             if (details.DelegateCentreId != centreId)
             {
@@ -55,7 +55,7 @@
                 return false;
             }
 
-            var categoryId = user.GetAdminCourseCategoryFilter();
+            var categoryId = user.GetAdminCategoryId();
 
             if (details.CourseCategoryId != categoryId && categoryId != null)
             {

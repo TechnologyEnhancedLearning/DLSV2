@@ -89,7 +89,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Delegates/Groups/103/Courses/25/Remove?returnPageQuery=pageNumber%3D1",
             "Are you sure you would like to remove the course Practice Nurse Clinical Supervision - Demo from this group?"
         )]
-        [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
+        [InlineData("/TrackingSystem/Delegates/3/View", "Kevin Whittaker (Developer)")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]
         [InlineData(
             "/TrackingSystem/Delegates/3/SetPassword?returnPageQuery=pageNumber%3D1",
@@ -138,6 +138,12 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Resources", "Resources")]
         [InlineData("/SuperAdmin/Centres", "Centres")]
         [InlineData("/SuperAdmin/System/Faqs", "FAQs")]
+        [InlineData("/VerifyYourEmail/EmailChanged", "Verify your email addresses")]
+        [InlineData("/VerifyYourEmail/EmailNotVerified", "Verify your email addresses")]
+        [InlineData("/ClaimAccount/LinkDlsAccount?email=claimable_user@email.com&code=code", "Link delegate record")]
+        [InlineData("/ClaimAccount/AccountsLinked", "Delegate record linked")]
+        [InlineData("/ClaimAccount/WrongUser", "Link delegate record")]
+        [InlineData("/ClaimAccount/AccountAlreadyExists", "Link delegate record")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when

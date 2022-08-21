@@ -14,10 +14,10 @@
     public class FilterableTagHelperTests
     {
         [Test]
-        public void GetCurrentTagsForAdminUser_should_return_correct_tags()
+        public void GetCurrentTagsForAdmin_should_return_correct_tags()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 5, isContentCreator: true);
+            var admin = UserTestHelper.GetDefaultAdminEntity(failedLoginCount: 5, isContentCreator: true);
             var expectedTags = new List<SearchableTagViewModel>
             {
                 new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsLocked),
@@ -29,7 +29,7 @@
             };
 
             // When
-            var result = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser).ToList();
+            var result = FilterableTagHelper.GetCurrentTagsForAdmin(admin).ToList();
 
             // Then
             using (new AssertionScope())

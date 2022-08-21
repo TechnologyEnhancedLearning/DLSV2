@@ -1,19 +1,19 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Register
 {
-    using System.Collections.Generic;
-
     public class AdminRegistrationModel : RegistrationModel
     {
         public AdminRegistrationModel(
             string firstName,
             string lastName,
-            string email,
+            string primaryEmail,
+            string? centreSpecificEmail,
             int centre,
             string? passwordHash,
-            bool active,
+            bool centreAccountIsActive,
             bool approved,
             string? professionalRegistrationNumber,
-            int categoryId,
+            int jobGroupId,
+            int? categoryId,
             bool isCentreAdmin,
             bool isCentreManager,
             bool isSupervisor,
@@ -23,7 +23,18 @@
             bool isCmsAdmin,
             bool isCmsManager,
             byte[]? profileImage = null
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
+        ) : base(
+            firstName,
+            lastName,
+            primaryEmail,
+            centreSpecificEmail,
+            centre,
+            passwordHash,
+            centreAccountIsActive,
+            approved,
+            professionalRegistrationNumber,
+            jobGroupId
+        )
         {
             CategoryId = categoryId;
             IsCentreAdmin = isCentreAdmin;
@@ -65,50 +76,8 @@
 
         public bool IsContentCreator { get; set; }
 
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
 
         public byte[]? ProfileImage { get; set; }
-
-        public IEnumerable<int> GetNotificationRoles()
-        {
-            var roles = new List<int>();
-
-            if (IsCentreAdmin)
-            {
-                roles.Add(1);
-            }
-
-            if (IsCentreManager)
-            {
-                roles.Add(2);
-            }
-
-            if (IsContentManager)
-            {
-                roles.Add(3);
-            }
-
-            if (IsContentCreator)
-            {
-                roles.Add(4);
-            }
-
-            if (IsSupervisor)
-            {
-                roles.Add(6);
-            }
-
-            if (IsTrainer)
-            {
-                roles.Add(7);
-            }
-
-            if (IsNominatedSupervisor)
-            {
-                roles.Add(8);
-            }
-
-            return roles;
-        }
     }
 }

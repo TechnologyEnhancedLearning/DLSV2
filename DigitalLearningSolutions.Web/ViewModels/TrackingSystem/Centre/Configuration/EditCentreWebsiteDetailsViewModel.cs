@@ -26,7 +26,7 @@
         [Required(ErrorMessage = "Enter an email")]
         [MaxLength(100, ErrorMessage = "Email must be 100 characters or fewer")]
         [EmailAddress(ErrorMessage = "Enter an email in the correct format, like name@example.com")]
-        [NoWhitespace("Email must not contain any whitespace characters")]
+        [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
         public string? CentreEmail { get; set; }
 
         [Required(ErrorMessage = "Enter a postcode")]

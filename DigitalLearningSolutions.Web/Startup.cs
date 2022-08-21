@@ -1,6 +1,5 @@
 namespace DigitalLearningSolutions.Web
 {
-    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.IO;
@@ -15,18 +14,15 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.ModelBinders;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddAdminField;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddRegistrationPrompt;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditAdminField;
-    using DigitalLearningSolutions.Data.Models.MultiPageFormData.EditRegistrationPrompt;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Data.ViewModels;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.ModelBinders;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.Register.ClaimAccount;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;
@@ -67,7 +63,7 @@ namespace DigitalLearningSolutions.Web
                         options.Cookie.Name = ".AspNet.SharedCookie";
                         options.Cookie.Path = "/";
                         options.Events.OnRedirectToLogin = RedirectToLogin;
-                        options.Events.OnRedirectToAccessDenied = RedirectToAccessDenied;
+                        options.Events.OnRedirectToAccessDenied = RedirectToAccessDeniedOrLogout;
                     }
                 );
 
@@ -75,8 +71,20 @@ namespace DigitalLearningSolutions.Web
                 options =>
                 {
                     options.AddPolicy(
-                        CustomPolicies.UserOnly,
-                        policy => CustomPolicies.ConfigurePolicyUserOnly(policy)
+                        CustomPolicies.BasicUser,
+                        policy => CustomPolicies.ConfigurePolicyBasicUser(policy)
+                    );
+                    options.AddPolicy(
+                        CustomPolicies.CentreUser,
+                        policy => CustomPolicies.ConfigurePolicyCentreUser(policy)
+                    );
+                    options.AddPolicy(
+                        CustomPolicies.UserDelegateOnly,
+                        policy => CustomPolicies.ConfigurePolicyUserDelegateOnly(policy)
+                    );
+                    options.AddPolicy(
+                        CustomPolicies.UserAdmin,
+                        policy => CustomPolicies.ConfigurePolicyUserAdmin(policy)
                     );
                     options.AddPolicy(
                         CustomPolicies.UserCentreAdmin,
@@ -175,7 +183,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentreRegistrationPromptsService, CentreRegistrationPromptsService>();
             services.AddScoped<ICentresService, CentresService>();
             services.AddScoped<ICertificateService, CertificateService>();
-            services.AddScoped<IClockService, ClockService>();
+            services.AddScoped<IClockUtility, ClockUtility>();
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<IConfigDataService, ConfigDataService>();
             services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
@@ -230,6 +238,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IBrandsService, BrandsService>();
             services.AddScoped<ISelfAssessmentReportService, SelfAssessmentReportService>();
+            services.AddScoped<IClaimAccountService, ClaimAccountService>();
+            services.AddScoped<IEmailVerificationService, EmailVerificationService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -256,6 +266,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
             services.AddScoped<IPasswordResetDataService, PasswordResetDataService>();
+            services.AddScoped<IRegistrationConfirmationDataService, RegistrationConfirmationDataService>();
             services.AddScoped<IProgressDataService, ProgressDataService>();
             services.AddScoped<IRegionDataService, RegionDataService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
@@ -271,12 +282,14 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICandidateAssessmentDownloadFileService, CandidateAssessmentDownloadFileService>();
             services.AddScoped<IBrandsDataService, BrandsDataService>();
             services.AddScoped<IDCSAReportDataService, DCSAReportDataService>();
+            services.AddScoped<IEmailVerificationDataService, EmailVerificationDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)
         {
             services.AddScoped<PromptsService>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
+            services.AddScoped<IRegisterAdminService, RegisterAdminService>();
         }
 
         private static void RegisterHttpClients(IServiceCollection services)
@@ -290,13 +303,15 @@ namespace DigitalLearningSolutions.Web
         {
             services.AddScoped<RedirectEmptySessionData<RegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
+            services.AddScoped<RedirectEmptySessionData<InternalDelegateRegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationByCentreData>>();
-            services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
+            services.AddScoped<RedirectEmptySessionData<List<ChooseACentreAccountViewModel>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
             services.AddScoped<RedirectEmptySessionData<BulkUploadResult>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
             services.AddScoped<RedirectEmptySessionData<EditLearningPathwayDefaultsData>>();
+            services.AddScoped<RedirectEmptySessionData<ClaimAccountConfirmationViewModel>>();
             services.AddScoped<VerifyAdminUserCanManageCourse>();
             services.AddScoped<VerifyAdminUserCanViewCourse>();
             services.AddScoped<VerifyAdminUserCanAccessGroup>();
@@ -307,6 +322,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyDelegateCanAccessActionPlanResource>();
             services.AddScoped<VerifyDelegateAccessedViaValidRoute>();
             services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
+            services.AddScoped<VerifyUserHasVerifiedPrimaryEmail>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
@@ -344,16 +360,16 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            var applicationPath = new Uri(config.GetAppRootPath()).AbsolutePath.TrimEnd('/');
-            var url = HttpUtility.UrlEncode(applicationPath + context.Request.Path);
+            var url = HttpUtility.UrlEncode(StringHelper.GetLocalRedirectUrl(config, context.Request.Path));
             var queryString = HttpUtility.UrlEncode(context.Request.QueryString.Value);
             context.HttpContext.Response.Redirect(config.GetAppRootPath() + $"/Login?returnUrl={url}{queryString}");
             return Task.CompletedTask;
         }
 
-        private Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
+        private Task RedirectToAccessDeniedOrLogout(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect("/AccessDenied");
+            var redirectTo = context.HttpContext.User.IsMissingUserId() ? "/PleaseLogout" : "/AccessDenied";
+            context.HttpContext.Response.Redirect(config.GetAppRootPath() + redirectTo);
             return Task.CompletedTask;
         }
     }
