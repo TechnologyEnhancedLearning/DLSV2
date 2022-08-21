@@ -3,6 +3,7 @@
     using System.IO;
     using System.Linq;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class ClockUtilityTests
@@ -30,14 +31,17 @@
                 repoRootDir
             ).Trim().Split("\n");
 
-            filenames
-                .Where(
-                    filename =>
-                        filename != string.Empty &&
-                        filename != "DigitalLearningSolutions.Data/Utilities/ClockUtility.cs" &&
-                        filename != "DigitalLearningSolutions.Data.Tests/Utilities/ClockUtilityTests.cs"
-                )
-                .Should().BeEmpty($"Use {useInstead} instead");
+            using (var _ = new AssertionScope())
+            {
+                filenames
+                    .Where(
+                        filename =>
+                            filename != string.Empty &&
+                            filename != "DigitalLearningSolutions.Data/Utilities/ClockUtility.cs" &&
+                            filename != "DigitalLearningSolutions.Data.Tests/Utilities/ClockUtilityTests.cs"
+                    )
+                    .Should().BeEmpty($"Use {useInstead} instead");
+            }
         }
 
         private static string RunCommandAndReturnOutput(string args, string workingDirectory)
