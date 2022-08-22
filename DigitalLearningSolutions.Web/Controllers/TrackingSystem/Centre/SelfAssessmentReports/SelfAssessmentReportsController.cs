@@ -9,6 +9,8 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Data.Enums;
     using System;
+    using DigitalLearningSolutions.Data.Utilities;
+
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
@@ -17,12 +19,15 @@
     public class SelfAssessmentReportsController : Controller
     {
         private readonly ISelfAssessmentReportService selfAssessmentReportService;
+        private readonly IClockUtility clockUtility;
 
         public SelfAssessmentReportsController(
-            ISelfAssessmentReportService selfAssessmentReportService
+            ISelfAssessmentReportService selfAssessmentReportService,
+            IClockUtility clockUtility
         )
         {
             this.selfAssessmentReportService = selfAssessmentReportService;
+            this.clockUtility = clockUtility;
         }
         public IActionResult Index()
         {
@@ -34,7 +39,7 @@
         {
             var centreId = User.GetCentreIdKnownNotNull();
             var dataFile = selfAssessmentReportService.GetDigitalCapabilityExcelExportForCentre(centreId);
-            var fileName = $"DLS DCSA Report - Centre {centreId} - downloaded {DateTime.Today:yyyy-MM-dd}.xlsx";
+            var fileName = $"DLS DCSA Report - Centre {centreId} - downloaded {clockUtility.UtcToday:yyyy-MM-dd}.xlsx";
             return File(
                 dataFile,
                 FileHelper.GetContentTypeFromFileName(fileName),
