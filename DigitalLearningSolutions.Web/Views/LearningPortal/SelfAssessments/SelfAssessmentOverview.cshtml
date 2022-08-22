@@ -169,12 +169,12 @@
     </a>
   }
 }
-<div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
-  <partial name="SelfAssessments/_SelfAssessmentOverallProgress"
-           model="@competencySummaries"
-           view-data="@(new ViewDataDictionary(ViewData) { { "IsSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed } })" />
-  @if (Model.SelfAssessment.IsSupervised)
-  {
+@if (Model.SelfAssessment.IsSupervised)
+{
+  <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
+    <partial name="SelfAssessments/_SelfAssessmentOverallProgress"
+             model="@competencySummaries"
+             view-data="@(new ViewDataDictionary(ViewData) { { "IsSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed } })" />
     <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
     <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
     @if (Model.AllQuestionsVerifiedOrNotRequired())
@@ -213,5 +213,5 @@
         before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.
       </p>
     }
-  }
-</div>
+  </div>
+}
