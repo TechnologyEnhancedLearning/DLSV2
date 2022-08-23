@@ -3,11 +3,6 @@
 @model UnverifiedEmailListViewModel
 
 @{
-  var primaryEmailIsSameAsAnUnverifiedCentreEmail =
-    Model.PrimaryEmailIfUnverified != null && Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail != null;
-  if (primaryEmailIsSameAsAnUnverifiedCentreEmail) {
-    Model.UnverifiedCentreEmails.Remove(Model.PrimaryEmailIfUnverified);
-  }
   var numSpecificPhrases = new {
     account = Model.CentresWhereUnverifiedCentreEmailIsSameAsPrimaryEmail?.Count == 1 ? "account" : "accounts",
   };
@@ -39,7 +34,7 @@
 }
 
 @if (Model.AtLeastOneCentreEmailIsUnverified) {
-  foreach (var ((email, centreNames), index) in Model.UnverifiedCentreEmails
+  foreach (var ((email, centreNames), index) in Model.UnverifiedCentreEmailsDifferentFromPrimaryEmail
     .Select((emailAndCentreNames, index) => (emailAndCentreNames, index))) {
     var isTheFirstEmailListed = Model.PrimaryEmailIsVerified && index == 0;
 

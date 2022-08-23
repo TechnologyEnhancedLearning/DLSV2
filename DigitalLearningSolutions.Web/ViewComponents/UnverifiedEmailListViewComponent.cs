@@ -19,9 +19,12 @@
                 groupedEmail => groupedEmail.Select(ge => ge.centreName).ToList()
             );
 
-            return View(
-                new UnverifiedEmailListViewModel(primaryEmailIfUnverified, dictionaryOfUnverifiedEmailsAndCentreNames)
+            var model = new UnverifiedEmailListViewModel(
+                primaryEmailIfUnverified,
+                dictionaryOfUnverifiedEmailsAndCentreNames
             );
+
+            return View(model);
         }
     }
 }
