@@ -177,7 +177,7 @@
              view-data="@(new ViewDataDictionary(ViewData) { { "IsSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed } })" />
     <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
     <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
-    @if (Model.AllQuestionsVerifiedOrNotRequired())
+    @if (Model.AllQuestionsVerifiedOrNotRequired)
     {
       @if (!Model.SupervisorSignOffs.Any())
       {
