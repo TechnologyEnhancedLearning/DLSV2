@@ -331,7 +331,7 @@
             string? centreSpecificEmail
         )
         {
-            var userAccount = userService.GetUserByEmailAddress(primaryEmail);
+            var userAccount = userService.GetUserAccountByEmailAddress(primaryEmail);
 
             var unverifiedEmails = new List<string> { primaryEmail };
             if (centreSpecificEmail != null)

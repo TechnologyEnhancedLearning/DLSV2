@@ -79,7 +79,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         public UserAccount? GetUserAccountById(int userId);
 
-        UserAccount? GetUserByEmailAddress(string emailAddress);
+        UserAccount? GetUserAccountByEmailAddress(string emailAddress);
 
         string? GetCentreEmail(int userId, int centreId);
 
@@ -284,7 +284,7 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetUserAccountById(userId);
         }
 
-        public UserAccount? GetUserByEmailAddress(string emailAddress)
+        public UserAccount? GetUserAccountByEmailAddress(string emailAddress)
         {
             return userDataService.GetUserAccountByPrimaryEmail(emailAddress);
         }

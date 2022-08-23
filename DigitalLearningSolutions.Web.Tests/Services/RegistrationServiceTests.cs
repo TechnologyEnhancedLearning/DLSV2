@@ -404,7 +404,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
             var userAccount = UserTestHelper.GetDefaultUserAccount();
 
-            A.CallTo(() => userService.GetUserByEmailAddress(primaryEmail)).Returns(userAccount);
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(primaryEmail)).Returns(userAccount);
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
@@ -422,7 +422,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // Then
-            A.CallTo(() => userService.GetUserByEmailAddress(primaryEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(primaryEmail)).MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     userAccount,
@@ -451,7 +451,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
             var userAccount = UserTestHelper.GetDefaultUserAccount();
 
-            A.CallTo(() => userService.GetUserByEmailAddress(A<string>._)).Returns(userAccount);
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(A<string>._)).Returns(userAccount);
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
@@ -469,7 +469,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // Then
-            A.CallTo(() => userService.GetUserByEmailAddress(primaryEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(primaryEmail)).MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     userAccount,

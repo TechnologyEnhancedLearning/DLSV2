@@ -159,7 +159,7 @@ namespace DigitalLearningSolutions.Web.Services
                 SendApprovalEmailToAdmins(delegateRegistrationModel, refactoredTrackingSystemEnabled);
             }
 
-            var userAccount = userService.GetUserByEmailAddress(delegateRegistrationModel.PrimaryEmail);
+            var userAccount = userService.GetUserAccountByEmailAddress(delegateRegistrationModel.PrimaryEmail);
             var unverifiedEmails = new List<string>
                     { delegateRegistrationModel.PrimaryEmail, delegateRegistrationModel.CentreSpecificEmail }
                 .Where(email => email != null).ToList();
