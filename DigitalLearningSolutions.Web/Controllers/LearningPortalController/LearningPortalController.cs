@@ -29,6 +29,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly IFrameworkService frameworkService;
         private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
+        private readonly IMultiPageFormService multiPageFormService;
         private readonly IClockUtility clockUtility;
 
         public LearningPortalController(
@@ -45,6 +46,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             IActionPlanService actionPlanService,
             ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
+            IMultiPageFormService multiPageFormService,
             IClockUtility clockUtility
         )
         {
@@ -61,6 +63,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.actionPlanService = actionPlanService;
             this.candidateAssessmentDownloadFileService = candidateAssessmentDownloadFileService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
+            this.multiPageFormService = multiPageFormService;
             this.clockUtility = clockUtility;
         }
 

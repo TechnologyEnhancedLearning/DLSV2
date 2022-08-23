@@ -104,5 +104,10 @@
 
             return string.Format("{0}...", text.Trim().Substring(0, length));
         }
+
+        public static string RemoveMarkup(string input)
+        {
+            return Regex.Replace(input ?? String.Empty, $"<.*?>|&nbsp;", String.Empty);
+        }
     }
 }

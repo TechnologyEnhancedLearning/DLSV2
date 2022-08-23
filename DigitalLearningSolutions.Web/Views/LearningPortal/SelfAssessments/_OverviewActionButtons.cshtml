@@ -1,7 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
-@using DigitalLearningSolutions.Web.Helpers;
+@using DigitalLearningSolutions.Web.Helpers
 @model SelfAssessmentOverviewViewModel
-@if (Model.NumberOfOptionalCompetencies > 0) {
+@if (Model.NumberOfOptionalCompetencies > 0)
+{
   <a class="nhsuk-button nhsuk-button--secondary trigger-loader"
      asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
      asp-route-vocabulary="@Model.VocabPlural()"
@@ -10,12 +11,13 @@
     Manage optional @Model.VocabPlural().ToLower()
   </a>
 }
-@if (Model.SelfAssessment.IsSupervisorResultsReviewed) {
+@if (Model.SelfAssessment.IsSupervisorResultsReviewed)
+{
   <a class="nhsuk-button nhsuk-button--secondary trigger-loader"
      asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
-     asp-action="StartRequestVerification"
+     asp-action="ReviewConfirmationRequests"
      role="button">
-    Request @Model.SelfAssessment.Vocabulary.ToLower() confirmation
+    @FrameworkVocabularyHelper.FirstLetterToUpper(Model.VocabPlural()) confirmation
   </a>
 }
 <feature name="@(FeatureFlags.CandidateAssessmentExcelExport)">

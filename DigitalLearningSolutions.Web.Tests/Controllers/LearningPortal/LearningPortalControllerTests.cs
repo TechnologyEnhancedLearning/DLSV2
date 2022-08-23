@@ -33,6 +33,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private IFrameworkService frameworkService = null!;
         private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IMultiPageFormService multiPageFormService = null!;
         private IUserDataService userDataService = null!;
         private IClockUtility clockUtility = null!;
 
@@ -80,6 +81,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 actionPlanService,
                 candidateAssessmentDownloadFileService,
                 searchSortFilterPaginateService,
+                multiPageFormService,
                 clockUtility
             );
             controller.ControllerContext = new ControllerContext

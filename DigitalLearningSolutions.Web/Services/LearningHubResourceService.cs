@@ -28,6 +28,10 @@
 
         Task<(BulkResourceReferences bulkResourceReferences, bool apiIsAccessible)>
             GetBulkResourcesByReferenceIdsAndPopulateDeletedDetailsFromDatabase(IList<int> resourceReferenceIds);
+
+        IEnumerable<ResourceReferenceWithResourceDetails> GetResourceReferenceDetailsByReferenceIds(
+            IEnumerable<int> resourceReferenceIds
+        );
     }
 
     public class LearningHubResourceService : ILearningHubResourceService
@@ -63,7 +67,7 @@
                 }
 
                 var fallBackResourceDetails =
-                    GetFallbackDataForResourceReferenceIds(new List<int> { resourceReferenceId }).SingleOrDefault();
+                    GetResourceReferenceDetailsByReferenceIds(new List<int> { resourceReferenceId }).SingleOrDefault();
 
                 return (fallBackResourceDetails, false);
             }
@@ -80,7 +84,7 @@
             }
 
             var fallBackResourceDetails =
-                GetFallbackDataForResourceReferenceIds(new List<int> { resourceReferenceId }).SingleOrDefault();
+                GetResourceReferenceDetailsByReferenceIds(new List<int> { resourceReferenceId }).SingleOrDefault();
 
             if (fallBackResourceDetails != null)
             {
@@ -103,7 +107,7 @@
             }
             catch (LearningHubResponseException)
             {
-                var fallbackResources = GetFallbackDataForResourceReferenceIds(resourceReferenceIds).ToList();
+                var fallbackResources = GetResourceReferenceDetailsByReferenceIds(resourceReferenceIds).ToList();
 
                 var bulkResourceReferences = new BulkResourceReferences
                 {
@@ -128,7 +132,7 @@
             }
 
             var deletedFallbackResources =
-                GetFallbackDataForResourceReferenceIds(bulkResourceResponse.UnmatchedResourceReferenceIds).ToList();
+                GetResourceReferenceDetailsByReferenceIds(bulkResourceResponse.UnmatchedResourceReferenceIds).ToList();
 
             foreach (var resource in deletedFallbackResources)
             {
@@ -143,16 +147,10 @@
             return (bulkResourceResponse, true);
         }
 
-        private IEnumerable<ResourceReferenceWithResourceDetails> GetFallbackDataForResourceReferenceIds(
-            IList<int> resourceReferenceIds
+        public IEnumerable<ResourceReferenceWithResourceDetails> GetResourceReferenceDetailsByReferenceIds(
+            IEnumerable<int> resourceReferenceIds
         )
         {
-            var commaSeparatedListOfIds =
-                new StringBuilder().AppendJoin(", ", resourceReferenceIds.OrderBy(i => i)).ToString();
-            logger.LogWarning(
-                $"Attempting to use fallback data for resource references Ids: {commaSeparatedListOfIds}"
-            );
-
             return learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(resourceReferenceIds);
         }
     }

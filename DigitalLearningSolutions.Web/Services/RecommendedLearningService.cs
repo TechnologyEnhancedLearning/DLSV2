@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -25,18 +26,21 @@
         private readonly ILearningHubResourceService learningHubResourceService;
         private readonly ILearningLogItemsDataService learningLogItemsDataService;
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
+        private readonly IConfigDataService configDataService;
 
         public RecommendedLearningService(
             ISelfAssessmentDataService selfAssessmentDataService,
             ICompetencyLearningResourcesDataService competencyLearningResourcesDataService,
             ILearningHubResourceService learningHubResourceService,
-            ILearningLogItemsDataService learningLogItemsDataService
+            ILearningLogItemsDataService learningLogItemsDataService,
+            IConfigDataService configDataService
         )
         {
             this.selfAssessmentDataService = selfAssessmentDataService;
             this.competencyLearningResourcesDataService = competencyLearningResourcesDataService;
             this.learningHubResourceService = learningHubResourceService;
             this.learningLogItemsDataService = learningLogItemsDataService;
+            this.configDataService = configDataService;
         }
 
         public async Task<(IEnumerable<RecommendedResource> recommendedResources, bool apiIsAccessible)>
@@ -45,42 +49,69 @@
                 int delegateId
             )
         {
-            var competencyIds = selfAssessmentDataService.GetCompetencyIdsForSelfAssessment(selfAssessmentId);
+            var hasMaxSignpostedResources = Int32.TryParse(
+                configDataService.GetConfigValue(ConfigDataService.MaxSignpostedResources),
+                out var maxSignpostedResources
+            );
 
+            var competencyIds = selfAssessmentDataService.GetCompetencyIdsForSelfAssessment(selfAssessmentId);
             var competencyLearningResources = new List<CompetencyLearningResource>();
+
             foreach (var competencyId in competencyIds)
             {
                 var learningHubResourceReferencesForCompetency =
                     competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(
                         competencyId
                     );
+
                 competencyLearningResources.AddRange(learningHubResourceReferencesForCompetency);
             }
 
             var resourceReferences = competencyLearningResources.Select(
                 clr => (clr.LearningHubResourceReferenceId, clr.LearningResourceReferenceId)
-            ).Distinct().ToDictionary(x => x.LearningHubResourceReferenceId, x => x.LearningResourceReferenceId);
+            ).Distinct().ToDictionary(
+                x => x.LearningHubResourceReferenceId,
+                x => x.LearningResourceReferenceId
+            );
 
-            var uniqueLearningHubReferenceIds = competencyLearningResources
-                .Select(clr => clr.LearningHubResourceReferenceId).Distinct().ToList();
+            var uniqueLearningHubReferenceIds = competencyLearningResources.Select(
+                clr => clr.LearningHubResourceReferenceId
+            ).Distinct().ToList();
 
             var resources =
-                await learningHubResourceService.GetBulkResourcesByReferenceIds(uniqueLearningHubReferenceIds);
+                learningHubResourceService.GetResourceReferenceDetailsByReferenceIds(uniqueLearningHubReferenceIds);
 
             var delegateLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId);
 
-            var recommendedResources = resources.bulkResourceReferences.ResourceReferences.Select(
-                rr => GetPopulatedRecommendedResource(
-                    selfAssessmentId,
-                    delegateId,
-                    resourceReferences[rr.RefId],
-                    delegateLearningLogItems,
-                    rr,
-                    competencyLearningResources
+            var recommendedResources = resources.Select(
+                    rr => GetPopulatedRecommendedResource(
+                        selfAssessmentId,
+                        delegateId,
+                        resourceReferences[rr.RefId],
+                        delegateLearningLogItems,
+                        rr,
+                        competencyLearningResources
+                    )
                 )
-            );
+                .WhereNotNull()
+                .OrderByDescending(resource => resource.RecommendationScore);
 
-            return (recommendedResources.WhereNotNull(), resources.apiIsAccessible);
+            var bestRecommendedResources = hasMaxSignpostedResources
+                ? recommendedResources.Take(maxSignpostedResources).ToList()
+                : recommendedResources.ToList();
+
+            var apiResources =
+                await learningHubResourceService.GetBulkResourcesByReferenceIds(
+                    bestRecommendedResources.Select(resource => resource.LearningHubReferenceId).ToList()
+                );
+
+            var recommendedResourcesPresentInApi = bestRecommendedResources.Where(
+                resource => !apiResources.bulkResourceReferences.UnmatchedResourceReferenceIds.Contains(
+                    resource.LearningHubReferenceId
+                )
+            ).ToList();
+
+            return (recommendedResourcesPresentInApi, apiResources.apiIsAccessible);
         }
 
         private RecommendedResource? GetPopulatedRecommendedResource(

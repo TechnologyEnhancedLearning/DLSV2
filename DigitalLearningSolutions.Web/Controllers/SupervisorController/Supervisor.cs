@@ -6,18 +6,16 @@
     using Microsoft.AspNetCore.Mvc;
     using System.Linq;
     using DigitalLearningSolutions.Web.Extensions;
-    using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Enums;
 
     public partial class SupervisorController
     {
-        private const string CookieName = "DLSSupervisorService";
-
         public IActionResult Index()
         {
             var adminId = GetAdminId();
@@ -223,13 +221,14 @@
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/Review")]
-        public IActionResult ReviewDelegateSelfAssessment(int supervisorDelegateId, int candidateAssessmentId)
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/Review/{selfAssessmentResultId}")]
+        public IActionResult ReviewDelegateSelfAssessment(int supervisorDelegateId, int candidateAssessmentId, int? selfAssessmentResultId = null)
         {
             var adminId = GetAdminId();
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var reviewedCompetencies = PopulateCompetencyLevelDescriptors(
-                selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId).ToList()
+                selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId, selfAssessmentResultId).ToList()
             );
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, adminId);
             var model = new ReviewSelfAssessmentViewModel()
@@ -463,46 +462,13 @@
         public IActionResult StartEnrolDelegateOnProfileAssessment(int supervisorDelegateId)
         {
             TempData.Clear();
+
             var sessionEnrolOnRoleProfile = new SessionEnrolOnRoleProfile();
-            if (!Request.Cookies.ContainsKey(CookieName))
-            {
-                var id = Guid.NewGuid();
-
-                Response.Cookies.Append(
-                    CookieName,
-                    id.ToString(),
-                    new CookieOptions
-                    {
-                        Expires = DateTimeOffset.UtcNow.AddDays(30)
-                    }
-                );
-
-                sessionEnrolOnRoleProfile.Id = id;
-            }
-            else
-            {
-                if (Request.Cookies.TryGetValue(CookieName, out string idString))
-                {
-                    sessionEnrolOnRoleProfile.Id = Guid.Parse(idString);
-                }
-                else
-                {
-                    var id = Guid.NewGuid();
-
-                    Response.Cookies.Append(
-                        CookieName,
-                        id.ToString(),
-                        new CookieOptions
-                        {
-                            Expires = DateTimeOffset.UtcNow.AddDays(30)
-                        }
-                    );
-
-                    sessionEnrolOnRoleProfile.Id = id;
-                }
-            }
-
-            TempData.Set(sessionEnrolOnRoleProfile);
+            multiPageFormService.SetMultiPageFormData(
+                sessionEnrolOnRoleProfile,
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
             return RedirectToAction(
                 "EnrolDelegateOnProfileAssessment",
                 "Supervisor",
@@ -513,8 +479,16 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/Profile")]
         public IActionResult EnrolDelegateOnProfileAssessment(int supervisorDelegateId)
         {
-            SessionEnrolOnRoleProfile sessionEnrolOnRoleProfile = TempData.Peek<SessionEnrolOnRoleProfile>();
-            TempData.Set(sessionEnrolOnRoleProfile);
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
+            multiPageFormService.SetMultiPageFormData(
+                sessionEnrolOnRoleProfile,
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
+
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate(
@@ -534,12 +508,19 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/Profile")]
         public IActionResult EnrolSetRoleProfile(int supervisorDelegateId, int selfAssessmentID)
         {
-            SessionEnrolOnRoleProfile sessionEnrolOnRoleProfile = TempData.Peek<SessionEnrolOnRoleProfile>();
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
 
             if (selfAssessmentID < 1)
             {
                 ModelState.AddModelError("selfAssessmentId", "You must select a self assessment");
-                TempData.Set(sessionEnrolOnRoleProfile);
+                multiPageFormService.SetMultiPageFormData(
+                    sessionEnrolOnRoleProfile,
+                    MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                    TempData
+                );
                 var supervisorDelegate =
                     supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
                 var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate(
@@ -556,7 +537,11 @@
             }
 
             sessionEnrolOnRoleProfile.SelfAssessmentID = selfAssessmentID;
-            TempData.Set(sessionEnrolOnRoleProfile);
+            multiPageFormService.SetMultiPageFormData(
+                sessionEnrolOnRoleProfile,
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
             return RedirectToAction(
                 "EnrolDelegateCompleteBy",
                 "Supervisor",
@@ -567,8 +552,15 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/CompleteBy")]
         public IActionResult EnrolDelegateCompleteBy(int supervisorDelegateId, int? day, int? month, int? year)
         {
-            SessionEnrolOnRoleProfile sessionEnrolOnRoleProfile = TempData.Peek<SessionEnrolOnRoleProfile>();
-            TempData.Set(sessionEnrolOnRoleProfile);
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
+            multiPageFormService.SetMultiPageFormData(
+                sessionEnrolOnRoleProfile,
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfile = supervisorService.GetRoleProfileById((int)sessionEnrolOnRoleProfile.SelfAssessmentID);
@@ -590,7 +582,10 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/CompleteBy")]
         public IActionResult EnrolDelegateSetCompleteBy(int supervisorDelegateId, int day, int month, int year)
         {
-            SessionEnrolOnRoleProfile sessionEnrolOnRoleProfile = TempData.Peek<SessionEnrolOnRoleProfile>();
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
             if (day != 0 | month != 0 | year != 0)
             {
                 var validationResult = OldDateValidator.ValidateDate(day, month, year);
@@ -602,7 +597,11 @@
                 {
                     var completeByDate = new DateTime(year, month, day);
                     sessionEnrolOnRoleProfile.CompleteByDate = completeByDate;
-                    TempData.Set(sessionEnrolOnRoleProfile);
+                    multiPageFormService.SetMultiPageFormData(
+                        sessionEnrolOnRoleProfile,
+                        MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                        TempData
+                    );
                 }
             }
 
@@ -619,7 +618,11 @@
             else if (supervisorRoles.Count() == 1)
             {
                 sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId = supervisorRoles.First().ID;
-                TempData.Set(sessionEnrolOnRoleProfile);
+                multiPageFormService.SetMultiPageFormData(
+                    sessionEnrolOnRoleProfile,
+                    MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                    TempData
+                );
             }
 
             return RedirectToAction(
@@ -632,13 +635,19 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/SupervisorRole")]
         public IActionResult EnrolDelegateSupervisorRole(int supervisorDelegateId)
         {
-            SessionEnrolOnRoleProfile sessionEnrolOnRoleProfile = TempData.Peek<SessionEnrolOnRoleProfile>();
-            TempData.Set(sessionEnrolOnRoleProfile);
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
+            multiPageFormService.SetMultiPageFormData(
+                sessionEnrolOnRoleProfile,
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfile = supervisorService.GetRoleProfileById((int)sessionEnrolOnRoleProfile.SelfAssessmentID);
-            var supervisorRoles =
-                supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value);
+            var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnRoleProfile.SelfAssessmentID.Value);
             var model = new EnrolDelegateSupervisorRoleViewModel()
             {
                 SupervisorDelegateDetail = supervisorDelegate,
@@ -657,7 +666,10 @@
             int selfAssessmentSupervisorRoleId
         )
         {
-            SessionEnrolOnRoleProfile sessionEnrolOnRoleProfile = TempData.Peek<SessionEnrolOnRoleProfile>();
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
             if (!ModelState.IsValid)
             {
                 ModelState.ClearErrorsForAllFieldsExcept("SelfAssessmentSupervisorRoleId");
@@ -673,7 +685,11 @@
             }
 
             sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId = selfAssessmentSupervisorRoleId;
-            TempData.Set(sessionEnrolOnRoleProfile);
+            multiPageFormService.SetMultiPageFormData(
+                sessionEnrolOnRoleProfile,
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
             return RedirectToAction(
                 "EnrolDelegateSummary",
                 "Supervisor",
@@ -684,8 +700,15 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/Summary")]
         public IActionResult EnrolDelegateSummary(int supervisorDelegateId)
         {
-            SessionEnrolOnRoleProfile sessionEnrolOnRoleProfile = TempData.Peek<SessionEnrolOnRoleProfile>();
-            TempData.Set(sessionEnrolOnRoleProfile);
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
+            multiPageFormService.SetMultiPageFormData(
+                sessionEnrolOnRoleProfile,
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var roleProfile = supervisorService.GetRoleProfileById((int)sessionEnrolOnRoleProfile.SelfAssessmentID);
@@ -710,7 +733,10 @@
 
         public IActionResult EnrolDelegateConfirm(int delegateId, int supervisorDelegateId)
         {
-            SessionEnrolOnRoleProfile sessionEnrolOnRoleProfile = TempData.Peek<SessionEnrolOnRoleProfile>();
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
             var selfAssessmentId = sessionEnrolOnRoleProfile.SelfAssessmentID;
             var completeByDate = sessionEnrolOnRoleProfile.CompleteByDate;
             var selfAssessmentSupervisorRoleId = sessionEnrolOnRoleProfile.SelfAssessmentSupervisorRoleId;

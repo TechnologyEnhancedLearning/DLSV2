@@ -25,9 +25,8 @@ namespace DigitalLearningSolutions.Web.Models
         public SessionCompetencyLearningResourceSignpostingParameter()
         {
         }
-        public SessionCompetencyLearningResourceSignpostingParameter(string cookieName, IRequestCookieCollection requestCookies, IResponseCookies responseCookies, FrameworkCompetency frameworkCompetency, string resourceName, List<AssessmentQuestion> questions, AssessmentQuestion selectedQuestion, CompareAssessmentQuestionType selectedCompareQuestionType, CompetencyResourceAssessmentQuestionParameter assessmentQuestionParameter)
+        public SessionCompetencyLearningResourceSignpostingParameter(FrameworkCompetency frameworkCompetency, string resourceName, List<AssessmentQuestion> questions, AssessmentQuestion selectedQuestion, CompareAssessmentQuestionType selectedCompareQuestionType, CompetencyResourceAssessmentQuestionParameter assessmentQuestionParameter)
         {
-            var options = new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) };
             FrameworkCompetency = frameworkCompetency;
             ResourceName = resourceName;
             Questions = questions;
@@ -36,17 +35,6 @@ namespace DigitalLearningSolutions.Web.Models
             SelectedCompareQuestionType = selectedCompareQuestionType;
             TriggerValuesConfirmed = false;
             CompareQuestionConfirmed = false;
-
-            if (requestCookies.ContainsKey(cookieName) && requestCookies.TryGetValue(cookieName, out string id))
-            {
-                this.Id = Guid.Parse(id);
-            }
-            else
-            {
-                var guid = Guid.NewGuid();
-                responseCookies.Append(cookieName, guid.ToString(), options);
-                this.Id = guid;
-            }
         }
     }
 }

@@ -1,0 +1,14 @@
+﻿@model IEnumerable<ViewDataDictionary>
+@{
+  var questionsTotal = Model.Sum(c => (int)c["questionsCount"]);
+  var selfAssessedTotal = Model.Sum(c => (int)c["selfAssessedCount"]);
+  var verifiedTotal = Model.Sum(c => (int)c["verifiedCount"]);
+}
+<h2>Overall Progress</h2>
+<p class="nhsuk-body-l">
+  <span class="score">Self assessed: @selfAssessedTotal / @questionsTotal</span>
+  @if ((bool)ViewData["IsSupervisorResultsReviewed"])
+  {
+    <span class="score">Confirmed: @verifiedTotal / @questionsTotal</span>
+  }
+</p>

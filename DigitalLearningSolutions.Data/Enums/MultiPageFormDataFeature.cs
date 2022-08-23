@@ -35,6 +35,60 @@
             "EditAdminFieldDataGuid"
         );
 
+        public static readonly MultiPageFormDataFeature AddNewFramework = new MultiPageFormDataFeature(
+            5,
+            nameof(AddNewFramework),
+            "AddNewFrameworkDataGuid"
+        );
+
+        public static readonly MultiPageFormDataFeature EditAssessmentQuestion = new MultiPageFormDataFeature(
+            6,
+            nameof(EditAssessmentQuestion),
+            "EditAssessmentQuestionDataGuid"
+        );
+
+        public static readonly MultiPageFormDataFeature EditSignpostingParameter = new MultiPageFormDataFeature(
+            7,
+            nameof(EditSignpostingParameter),
+            "EditSignpostingParameterDataGuid"
+        );
+
+        public static readonly MultiPageFormDataFeature AddCompetencyLearningResourceSummary = new MultiPageFormDataFeature(
+            8,
+            nameof(AddCompetencyLearningResourceSummary),
+            "AddCompetencyLearningResourceSummaryDataGuid"
+        );
+
+        public static readonly MultiPageFormDataFeature EditCompetencyLearningResources = new MultiPageFormDataFeature(
+            9,
+            nameof(EditCompetencyLearningResources),
+            "EditCompetencyLearningResourcesDataGuid"
+        );
+
+        public static readonly MultiPageFormDataFeature SearchInSelfAssessmentOverviewGroups = new MultiPageFormDataFeature(
+            10,
+            nameof(SearchInSelfAssessmentOverviewGroups),
+            "SearchInSelfAssessmentOverviewGroupsDataGuid"
+        );
+
+        public static readonly MultiPageFormDataFeature AddSelfAssessmentRequestVerification = new MultiPageFormDataFeature(
+            11,
+            nameof(AddSelfAssessmentRequestVerification),
+            "AddSelfAssessmentRequestVerificationDataGuid"
+        );
+
+        public static readonly MultiPageFormDataFeature AddNewSupervisor = new MultiPageFormDataFeature(
+            12,
+            nameof(AddNewSupervisor),
+            "AddNewSupervisorDataGuid"
+        );
+
+        public static readonly MultiPageFormDataFeature EnrolDelegateOnProfileAssessment = new MultiPageFormDataFeature(
+            13,
+            nameof(EnrolDelegateOnProfileAssessment),
+            "EnrolDelegateOnProfileAssessmentDataGuid"
+        );
+
         public readonly string TempDataKey;
 
         private MultiPageFormDataFeature(int id, string name, string tempDataKey) : base(id, name)

@@ -5,7 +5,7 @@
     ViewData["Application"] = "Framework Service";
     var dropdownItems = Model.Catalogues
           .Select(c => new SelectListItem(
-            text: c.Name,
+            text: c.Name + (c.IsRestricted ? " (Restricted)" : ""),
             value: c.Id.ToString(),
             selected: c.Id == Model.CatalogueId)
           ).ToList();

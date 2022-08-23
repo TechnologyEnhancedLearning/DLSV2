@@ -26,6 +26,7 @@
         private IImportCompetenciesFromFileService importCompetenciesFromFileService = null!;
         private ILearningHubApiClient learningHubApiClient = null!;
         private ISearchSortFilterPaginateService searchSortFilterPaginateService = null!;
+        private IMultiPageFormService multiPageFormService = null!;
 
         [SetUp]
         public void SetUp()
@@ -39,6 +40,7 @@
             competencyLearningResourcesDataService = A.Fake<ICompetencyLearningResourcesDataService>();
             learningHubApiClient = A.Fake<ILearningHubApiClient>();
             searchSortFilterPaginateService = A.Fake<ISearchSortFilterPaginateService>();
+            multiPageFormService = A.Fake<IMultiPageFormService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
@@ -61,7 +63,8 @@
                 importCompetenciesFromFileService,
                 competencyLearningResourcesDataService,
                 learningHubApiClient,
-                searchSortFilterPaginateService
+                searchSortFilterPaginateService,
+                multiPageFormService
             )
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } },

@@ -14,6 +14,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.ModelBinders;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Data.ViewModels;
     using DigitalLearningSolutions.Web.Helpers;
@@ -237,6 +238,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IBrandsService, BrandsService>();
+            services.AddScoped<ISelfAssessmentReportService, SelfAssessmentReportService>();
             services.AddScoped<IClaimAccountService, ClaimAccountService>();
             services.AddScoped<IEmailVerificationService, EmailVerificationService>();
         }
@@ -280,6 +282,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICandidateAssessmentDownloadFileService, CandidateAssessmentDownloadFileService>();
             services.AddScoped<IBrandsDataService, BrandsDataService>();
+            services.AddScoped<IDCSAReportDataService, DCSAReportDataService>();
             services.AddScoped<IEmailVerificationDataService, EmailVerificationDataService>();
         }
 

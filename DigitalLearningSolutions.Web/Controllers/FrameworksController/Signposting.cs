@@ -5,25 +5,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using DigitalLearningSolutions.Web.Extensions;
 using DigitalLearningSolutions.Data.Models.Frameworks;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.Models;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
+using DigitalLearningSolutions.Data.Enums;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     public partial class FrameworksController
     {
         private static List<Catalogue> Catalogues { get; set; }
-        private const string SignpostingFilter = "SignpostingCatalogueIdFilter";
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting")]
         public IActionResult EditCompetencyLearningResources(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId)
         {
             var model = GetSignpostingResourceParameters(frameworkId, frameworkCompetencyId);
-            TempData["CompetencyResourceLinks"] = JsonConvert.SerializeObject(model.CompetencyResourceLinks.ToDictionary(r => r.CompetencyLearningResourceId.Value, r => r.Name));
+            multiPageFormService.SetMultiPageFormData(
+                model,
+                MultiPageFormDataFeature.EditCompetencyLearningResources,
+                TempData
+            );
             return View("Developer/EditCompetencyLearningResources", model);
         }
 
@@ -73,18 +76,26 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource/Summary")]
-        public IActionResult AddCompetencyLearningResourceSummary(int frameframeworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
+        public IActionResult AddCompetencyLearningResourceSummary(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
-            var model = TempData["CompetencyResourceSummaryViewModel"] == null ?
-                new CompetencyResourceSummaryViewModel(frameframeworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
-                : JsonConvert.DeserializeObject<CompetencyResourceSummaryViewModel>((string)TempData["CompetencyResourceSummaryViewModel"]);
-            return View("Developer/AddCompetencyLearningResourceSummary", model);
+            var feature = MultiPageFormDataFeature.AddCompetencyLearningResourceSummary;
+            if(TempData[feature.TempDataKey] == null)
+            {
+                return RedirectToAction("SearchLearningResources", "Frameworks", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
+            }
+
+            var session = multiPageFormService.GetMultiPageFormData<CompetencyResourceSummaryViewModel>(feature, TempData);
+            return View("Developer/AddCompetencyLearningResourceSummary", session);
         }
 
         [HttpPost]
         public IActionResult AddCompetencyLearningResourceSummary(CompetencyResourceSummaryViewModel model)
         {
-            TempData["CompetencyResourceSummaryViewModel"] = JsonConvert.SerializeObject(model);
+            multiPageFormService.SetMultiPageFormData(
+                model,
+                MultiPageFormDataFeature.AddCompetencyLearningResourceSummary,
+                TempData
+            );
             return RedirectToAction("AddCompetencyLearningResourceSummary", "Frameworks", new { model.FrameworkId , model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId});
         }
 
@@ -100,11 +111,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         private string ResourceNameFromCompetencyResourceLinks(int competencyLearningResourceId)
         {
             string resourceName = null;
-            if (TempData.Keys.Contains("CompetencyResourceLinks"))
+            if(TempData[MultiPageFormDataFeature.EditCompetencyLearningResources.TempDataKey] != null)
             {
-                var links = JsonConvert.DeserializeObject<Dictionary<int, string>>(TempData["CompetencyResourceLinks"].ToString());
-                resourceName = links.Keys.Contains(competencyLearningResourceId) ? links[competencyLearningResourceId] : null;
-            }
+                var session = multiPageFormService.GetMultiPageFormData<CompetencyResourceSignpostingViewModel>(
+                    MultiPageFormDataFeature.EditCompetencyLearningResources,
+                    TempData
+                );
+                resourceName = session.CompetencyResourceLinks.FirstOrDefault(r => r.CompetencyLearningResourceId == competencyLearningResourceId)?.Name;
+            };
             return resourceName;
         }
 
@@ -124,17 +138,18 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 : parameter.CompareToRoleRequirements ? CompareAssessmentQuestionType.CompareToRole
                 : CompareAssessmentQuestionType.DontCompare;
             var session = new SessionCompetencyLearningResourceSignpostingParameter(
-                CookieName, Request.Cookies, Response.Cookies,
                 frameworkCompetency: frameworkCompetency,
                 resourceName: resourceNameFromCompetencyResourceLinks ?? frameworkService.GetLearningResourceReferenceByCompetencyLearningResouceId(parameter.CompetencyLearningResourceId).OriginalResourceName,
                 questions: frameworkService.GetCompetencyAssessmentQuestionsByFrameworkCompetencyId(frameworkCompetencyId, adminId).ToList(),
                 selectedQuestion: parameter.AssessmentQuestion,
                 selectedCompareQuestionType: questionType,
                 parameter);
-            TempData.Remove("CompetencyResourceSummaryViewModel");
-            TempData.Remove("CompetencyResourceLinks");
             TempData.Clear();
-            TempData.Set(session);
+            multiPageFormService.SetMultiPageFormData(
+                session,
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
 
             if(session.Questions.Count() == 0)
                 return RedirectToAction("SignpostingSetStatus", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
@@ -151,7 +166,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         public IActionResult CompareSelfAssessmentResultNext(CompareAssessmentQuestionType compareQuestionType, int? compareToQuestionId, int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
-            var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            var session = multiPageFormService.GetMultiPageFormData<SessionCompetencyLearningResourceSignpostingParameter>(
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             var parameter = session.AssessmentQuestionParameter;
             session.SelectedCompareQuestionType = compareQuestionType;
             session.CompareQuestionConfirmed = true;
@@ -173,7 +191,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     parameter.CompareToRoleRequirements = false;
                     break;                
             }
-            TempData.Set(session);
+            multiPageFormService.SetMultiPageFormData(
+                session,
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             return RedirectToAction("SignpostingSetStatus", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
         }
 
@@ -185,7 +207,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 
         private IActionResult ViewFromSession(string view, int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
-            var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            var session = multiPageFormService.GetMultiPageFormData<SessionCompetencyLearningResourceSignpostingParameter>(
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             var model = new CompetencyLearningResourceSignpostingParametersViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
             {
                 FrameworkCompetency = session.FrameworkCompetency?.Name,
@@ -217,16 +242,26 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         public IActionResult SignpostingSetStatusNext(CompetencyLearningResourceSignpostingParametersViewModel model)
         {
-            var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            var session = multiPageFormService.GetMultiPageFormData<SessionCompetencyLearningResourceSignpostingParameter>(
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             session.AssessmentQuestionParameter.Essential = model.AssessmentQuestionParameter.Essential;
-            TempData.Set(session);
+            multiPageFormService.SetMultiPageFormData(
+                session,
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             return RedirectToAction("AddSignpostingParametersSummary", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId });
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/Summary")]
         public IActionResult AddSignpostingParametersSummary(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId)
         {
-            var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            var session = multiPageFormService.GetMultiPageFormData<SessionCompetencyLearningResourceSignpostingParameter>(
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             if (!session.CompareQuestionConfirmed)
             {
                 session.AssessmentQuestionParameter.RelevanceAssessmentQuestion = null;
@@ -237,14 +272,21 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 session.AssessmentQuestionParameter.MinResultMatch = session.AssessmentQuestionParameter.AssessmentQuestion?.MinValue ?? 0;
                 session.AssessmentQuestionParameter.MaxResultMatch = session.AssessmentQuestionParameter.AssessmentQuestion?.MaxValue ?? 0;
             }
-            TempData.Set(session);
+            multiPageFormService.SetMultiPageFormData(
+                session,
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             return ViewFromSession("Developer/AddSignpostingParametersSummary", frameworkId, frameworkCompetencyId, frameworkCompetencyId);
         }
 
         [HttpPost]
         public IActionResult AddSignpostingParametersSummaryConfirm(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId)
         {
-            var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            var session = multiPageFormService.GetMultiPageFormData<SessionCompetencyLearningResourceSignpostingParameter>(
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             frameworkService.EditCompetencyResourceAssessmentQuestionParameter(session.AssessmentQuestionParameter);
             TempData.Clear();
             return RedirectToAction("EditCompetencyLearningResources", "Frameworks", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
@@ -259,7 +301,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 return StatusCode(403);
             }
-            var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            var session = multiPageFormService.GetMultiPageFormData<SessionCompetencyLearningResourceSignpostingParameter>(
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             var model = new CompetencyLearningResourceSignpostingParametersViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
             {
                 FrameworkCompetency = session.FrameworkCompetency.Name,
@@ -268,17 +313,28 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 SelectedQuestion = session.SelectedQuestion,
                 AssessmentQuestionParameter = session.AssessmentQuestionParameter
             };
-            TempData.Set(session);
+            multiPageFormService.SetMultiPageFormData(
+                session,
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             return View("Developer/EditSignpostingParameters", model);
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/Skip")]
         public IActionResult EditSignpostingParametersSkip(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
-            var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            var session = multiPageFormService.GetMultiPageFormData<SessionCompetencyLearningResourceSignpostingParameter>(
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             session.TriggerValuesConfirmed = false;
             session.CompareQuestionConfirmed = false;
-            TempData.Set(session);
+            multiPageFormService.SetMultiPageFormData(
+                session,
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             return RedirectToAction("SignpostingSetStatus", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
         }
 
@@ -286,8 +342,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult EditSignpostingParametersNext(CompetencyLearningResourceSignpostingParametersViewModel model)
         {
             if (model.SelectedQuestion?.ID != null)
-            {                                
-                var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            {
+                var session = multiPageFormService.GetMultiPageFormData<SessionCompetencyLearningResourceSignpostingParameter>(
+                    MultiPageFormDataFeature.EditSignpostingParameter,
+                    TempData
+                );
                 session.CompareQuestionConfirmed = false;
                 session.SelectedQuestion = session.Questions.FirstOrDefault(q => q.ID == model.SelectedQuestion.ID);
                 session.AssessmentQuestionParameter.AssessmentQuestion = session.SelectedQuestion;
@@ -298,7 +357,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     session.SelectedQuestion.MaxValue,
                     session.SelectedQuestion.MinValue == 0).ToList();
                 session.SelectedQuestionRoleRequirements = frameworkService.GetCompetencyAssessmentQuestionRoleRequirementsCount(session.SelectedQuestion.ID, session.FrameworkCompetency.CompetencyID);
-                TempData.Set(session);
+                multiPageFormService.SetMultiPageFormData(
+                    session,
+                    MultiPageFormDataFeature.EditSignpostingParameter,
+                    TempData
+                );
                 return RedirectToAction("SignpostingParametersSetTriggerValues", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId });
             }
             else
@@ -322,17 +385,28 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         public IActionResult SignpostingParametersSetTriggerValuesNext(CompetencyResourceAssessmentQuestionParameter assessmentParameter, int[] selectedLevelValues, int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
-            var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            var session = multiPageFormService.GetMultiPageFormData<SessionCompetencyLearningResourceSignpostingParameter>(
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             var updateSelectedValuesFromSlider = session.SelectedQuestion.AssessmentQuestionInputTypeID == 2;
             bool skipCompare = session.Questions.Count() < 2 && session.SelectedQuestionRoleRequirements == 0;
             session.AssessmentQuestionParameter.MinResultMatch = updateSelectedValuesFromSlider ? assessmentParameter.MinResultMatch : selectedLevelValues.DefaultIfEmpty(0).Min();
             session.AssessmentQuestionParameter.MaxResultMatch = updateSelectedValuesFromSlider ? assessmentParameter.MaxResultMatch : selectedLevelValues.DefaultIfEmpty(0).Max();
             session.TriggerValuesConfirmed = true;
-            TempData.Set(session);
+            multiPageFormService.SetMultiPageFormData(
+                session,
+                MultiPageFormDataFeature.EditSignpostingParameter,
+                TempData
+            );
             if (skipCompare)
             {
                 session.CompareQuestionConfirmed = false;
-                TempData.Set(session);
+                multiPageFormService.SetMultiPageFormData(
+                    session,
+                    MultiPageFormDataFeature.EditSignpostingParameter,
+                    TempData
+                );
                 return RedirectToAction("SignpostingSetStatus", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId }); 
             }                
             else

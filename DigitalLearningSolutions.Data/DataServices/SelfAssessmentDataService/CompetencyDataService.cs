@@ -25,6 +25,8 @@
                     sv.Verified,
                     sv.Comments,
                     sv.SignedOff,
+                    sv.CandidateAssessmentSupervisorID,
+                    sv.EmailSent,
                     0 AS UserIsVerifier,
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM SelfAssessmentResults s
@@ -186,13 +188,14 @@
                         SELECT
                             DENSE_RANK() OVER (ORDER BY SAS.Ordering) as RowNo,
                             sas.CompetencyID
-                        FROM SelfAssessmentStructure as sas
-                        INNER JOIN CandidateAssessments AS CA
-                            ON CA.SelfAssessmentID = @selfAssessmentId AND CA.CandidateID = @candidateId
-                        LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
-                            ON CA.ID = CAOC.CandidateAssessmentID AND sas.CompetencyID = CAOC.CompetencyID
-                                AND sas.CompetencyGroupID = CAOC.CompetencyGroupID
-                        WHERE (sas.SelfAssessmentID = @selfAssessmentId) AND ((sas.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
+                        FROM            SelfAssessmentStructure AS sas INNER JOIN
+                                         CandidateAssessments AS CA ON CA.SelfAssessmentID = @selfAssessmentId AND CA.CandidateID = @candidateId INNER JOIN
+                                         CompetencyAssessmentQuestions AS caq ON sas.CompetencyID = caq.CompetencyID LEFT OUTER JOIN
+                                         CandidateAssessmentOptionalCompetencies AS CAOC ON CA.ID = CAOC.CandidateAssessmentID AND sas.CompetencyID = CAOC.CompetencyID AND 
+                                         sas.CompetencyGroupID = CAOC.CompetencyGroupID
+                        WHERE        (sas.SelfAssessmentID = @selfAssessmentId) AND (sas.Optional = 0) OR
+                         (sas.SelfAssessmentID = @selfAssessmentId) AND (CAOC.IncludedInSelfAssessment = 1)
+						 GROUP BY sas.CompetencyID, SAS.Ordering
                     ),
                     {LatestAssessmentResults}
                     SELECT {CompetencyFields}
@@ -229,13 +232,14 @@
             return GroupCompetencyAssessmentQuestions(result);
         }
 
-        public IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId)
+        public IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId, int? selfAssessmentResultId = null)
         {
+            var resultIdFilter = selfAssessmentResultId.HasValue ? $"ResultID = {selfAssessmentResultId.Value}" : "1=1";
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {SpecificAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {SpecificCompetencyTables}
-                    WHERE (CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0)
+                    WHERE (CAOC.IncludedInSelfAssessment = 1 OR SAS.Optional = 0) AND {resultIdFilter}
                     ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
@@ -267,6 +271,39 @@
                 new { candidateAssessmentId, adminId }
             );
             return GroupCompetencyAssessmentQuestions(result);
+        }
+
+        public IEnumerable<Competency> GetResultSupervisorVerifications(int selfAssessmentId, int candidateId)
+        {
+            const string supervisorFields = @"
+                LAR.EmailSent,
+                LAR.Requested AS SupervisorVerificationRequested,
+                COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS SupervisorName,
+                SelfAssessmentResultSupervisorVerificationId AS SupervisorVerificationId,
+                CandidateAssessmentSupervisorID";
+            const string supervisorTables = @"
+                LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = CandidateAssessmentSupervisorID
+                LEFT OUTER JOIN SupervisorDelegates AS sd ON sd.ID = cas.SupervisorDelegateId AND sd.Removed IS NULL
+                LEFT OUTER JOIN AdminUsers AS au ON au.AdminID = sd.SupervisorAdminID";
+
+            var result = connection.Query<Competency, AssessmentQuestion, Competency>(
+                $@"WITH {LatestAssessmentResults}
+                    SELECT {supervisorFields}, {CompetencyFields}
+                    FROM {CompetencyTables}
+                        INNER JOIN SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID
+                        {supervisorTables}
+                    WHERE (LAR.Verified IS NULL) 
+	                    AND ((LAR.Result IS NOT NULL) OR (LAR.SupportingComments IS NOT NULL)) 
+	                    AND (LAR.Requested IS NOT NULL)
+                    ORDER BY SupervisorVerificationRequested DESC, C.Name",
+                (competency, assessmentQuestion) =>
+                {
+                    competency.AssessmentQuestions.Add(assessmentQuestion);
+                    return competency;
+                },
+                new { selfAssessmentId, candidateId }
+            );
+            return result;
         }
 
         public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId)

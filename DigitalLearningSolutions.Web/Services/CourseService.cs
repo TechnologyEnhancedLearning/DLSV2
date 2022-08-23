@@ -157,6 +157,22 @@
             );
         }
 
+        private IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
+            GetNonArchivedCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
+                int centreId,
+                int? categoryId,
+                bool includeAllCentreCourses = false
+            )
+        {
+            var allCourses = courseDataService.GetNonArchivedCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId);
+            return allCourses.Where(c => c.CentreId == centreId || c.AllCentres && includeAllCentreCourses).Select(
+                c => new CourseStatisticsWithAdminFieldResponseCounts(
+                    c,
+                    courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(c.CustomisationId, centreId)
+                )
+            );
+        }
+
         public IEnumerable<DelegateCourseInfo> GetAllCoursesInCategoryForDelegate(
             int delegateId,
             int centreId,
@@ -242,7 +258,7 @@
             int? categoryId
         )
         {
-            var activeCourses = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId)
+            var activeCourses = courseDataService.GetNonArchivedCoursesAvailableToCentreByCategory(centreId, categoryId)
                 .Where(c => c.Active = true);
             var orderedCourses = activeCourses.OrderBy(c => c.ApplicationName);
             return orderedCourses.Select(c => (c.CustomisationId, c.CourseName));
@@ -336,7 +352,7 @@
         public CentreCourseDetails GetCentreCourseDetails(int centreId, int? categoryId)
         {
             var (courses, categories, topics) = (
-                GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId),
+                GetNonArchivedCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId),
                 courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                     .Select(c => c.CategoryName),
                 courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic));

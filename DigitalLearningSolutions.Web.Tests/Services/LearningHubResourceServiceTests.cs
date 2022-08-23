@@ -462,5 +462,22 @@
                     .MustHaveHappenedOnceExactly();
             }
         }
+
+        [Test]
+        public void GetResourceReferenceDetailsByReferenceIds_calls_data_service()
+        {
+            // Given
+            var resourceReferenceIds = new List<int> { 1, 2, 3 };
+
+            // When
+            learningHubResourceService.GetResourceReferenceDetailsByReferenceIds(resourceReferenceIds);
+
+            // Then
+            A.CallTo(
+                () => learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(
+                    resourceReferenceIds
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
     }
 }
