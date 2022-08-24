@@ -894,7 +894,7 @@
             }
             else
             {
-                return View("RemoveConfirm", supervisorDelegate);
+                return View("NominateSupervisor", supervisorDelegate);
             }
         }
     }
