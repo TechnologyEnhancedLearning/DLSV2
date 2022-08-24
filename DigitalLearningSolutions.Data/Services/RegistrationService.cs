@@ -185,23 +185,16 @@ namespace DigitalLearningSolutions.Data.Services
             }
             else if (adminUser?.Active == true && adminUser.CentreId == delegateUser.CentreId)
             {
-                adminRoles.IsCentreAdmin = adminRoles.IsCentreAdmin || adminUser.IsCentreAdmin;
-                adminRoles.IsContentCreator = adminRoles.IsContentCreator || adminUser.IsContentCreator;
-                adminRoles.IsContentManager = adminRoles.IsContentManager || adminUser.IsContentManager;
-                adminRoles.IsTrainer = adminRoles.IsTrainer || adminUser.IsTrainer;
-                adminRoles.IsSupervisor = adminRoles.IsSupervisor || adminUser.IsSupervisor;
-                adminRoles.IsNominatedSupervisor = adminRoles.IsNominatedSupervisor || adminUser.IsNominatedSupervisor;
-                adminRoles.ImportOnly = adminRoles.ImportOnly || adminUser.ImportOnly;
                 userDataService.UpdateAdminUserPermissions(
                     adminUser.Id,
-                    adminRoles.IsCentreAdmin,
-                    adminRoles.IsSupervisor,
-                    adminRoles.IsNominatedSupervisor,
-                    adminRoles.IsTrainer,
-                    adminRoles.IsContentCreator,
-                    adminRoles.IsContentManager,
-                    adminRoles.ImportOnly,
-                    categoryId
+                    adminRoles.IsCentreAdmin || adminUser.IsCentreAdmin,
+                    adminRoles.IsSupervisor || adminUser.IsSupervisor,
+                    adminRoles.IsNominatedSupervisor || adminUser.IsNominatedSupervisor,
+                    adminRoles.IsTrainer = adminRoles.IsTrainer || adminUser.IsTrainer,
+                    adminRoles.IsContentCreator || adminUser.IsContentCreator,
+                    adminRoles.IsContentManager || adminUser.IsContentManager,
+                    adminRoles.ImportOnly = adminRoles.ImportOnly || adminUser.ImportOnly,
+                    adminUser.CategoryId
                 );
             }
             else if (adminUser == null)
