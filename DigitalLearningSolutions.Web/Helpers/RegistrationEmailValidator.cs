@@ -42,6 +42,27 @@
             }
         }
 
+        public static void ValidateEmailNotHeldAtCentreIfEmailNotYetVerified(
+            string? email,
+            int centreId,
+            string nameOfFieldToValidate,
+            ModelStateDictionary modelState,
+            IUserService userService
+        )
+        {
+            if (!IsValidationNecessary(email, nameOfFieldToValidate, modelState))
+            {
+                return;
+            }
+
+            var emailIsHeldAtCentre = userService.EmailIsHeldAtCentre(email, centreId);
+
+            if (emailIsHeldAtCentre)
+            {
+                modelState.AddModelError(nameOfFieldToValidate, CommonValidationErrorMessages.EmailInUseAtCentre);
+            }
+        }
+
         public static void ValidateCentreEmailWithUserIdIfNecessary(
             string? centreEmail,
             int? centreId,

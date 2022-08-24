@@ -97,6 +97,8 @@ namespace DigitalLearningSolutions.Web.Services
         EmailVerificationDetails? GetEmailVerificationDetails(string email, string code);
 
         void SetEmailVerified(int userId, string email, DateTime verifiedDateTime);
+
+        bool EmailIsHeldAtCentre(string? email, int centreId);
     }
 
     public class UserService : IUserService
@@ -497,6 +499,23 @@ namespace DigitalLearningSolutions.Web.Services
         {
             userDataService.SetPrimaryEmailVerified(userId, email, verifiedDateTime);
             userDataService.SetCentreEmailVerified(userId, email, verifiedDateTime);
+        }
+
+        public bool EmailIsHeldAtCentre(string email, int centreId)
+        {
+            var inUseAsCentreEmailAtCentre = userDataService.CentreSpecificEmailIsInUseAtCentre(email!, centreId);
+
+            var primaryEmailOwnerIsAtCentre = EmailIsHeldAsPrimaryEmailByUserAtCentre(email, centreId);
+
+            return inUseAsCentreEmailAtCentre || primaryEmailOwnerIsAtCentre;
+        }
+
+        private bool EmailIsHeldAsPrimaryEmailByUserAtCentre(string email, int centreId)
+        {
+            var primaryEmailOwner = userDataService.GetUserAccountByPrimaryEmail(email);
+            var primaryEmailOwnerIsAtCentre = primaryEmailOwner != null && userDataService
+                .GetDelegateAccountsByUserId(primaryEmailOwner.Id).Any(da => da.CentreId == centreId);
+            return primaryEmailOwnerIsAtCentre;
         }
 
         private bool NewUserRolesExceedAvailableSpots(
