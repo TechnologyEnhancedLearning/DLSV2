@@ -72,7 +72,7 @@
                     <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" view-data="@(new ViewDataDictionary(ViewData){{"isSupervisor", Model.IsUserSupervisor}})" />
                 }
             </div>
-            @if (Model.SupervisorDelegateDetail.DlsRole == DlsRole.Learner)
+            @if (Model.SupervisorDelegateDetail.DlsRole == DlsRole.Learner && Model.IsUserSupervisor)
             {
                 <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4 button-small"
                data-return-page-enabled="true"
