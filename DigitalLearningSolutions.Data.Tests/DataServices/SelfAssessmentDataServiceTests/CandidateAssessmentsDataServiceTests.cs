@@ -288,6 +288,7 @@
             const int delegateId = 254480;
             var expectedCandidateAssessment = new CandidateAssessment
             {
+                Id = 1,
                 DelegateId = delegateId,
                 SelfAssessmentId = SelfAssessmentId,
                 CompletedDate = null,
