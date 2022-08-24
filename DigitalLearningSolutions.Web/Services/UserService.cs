@@ -328,9 +328,8 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetCentreEmail(userId, centreId);
         }
 
-        public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllActiveCentreEmailsForUser(
-            int userId
-        )
+        public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)>
+            GetAllActiveCentreEmailsForUser(int userId)
         {
             return userDataService.GetAllActiveCentreEmailsForUser(userId);
         }

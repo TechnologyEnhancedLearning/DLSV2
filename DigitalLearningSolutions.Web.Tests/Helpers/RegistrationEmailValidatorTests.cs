@@ -540,7 +540,6 @@
             modelState.IsValid.Should().BeTrue();
         }
 
-
         private static void AssertModelStateErrorIsExpected(string modelProperty, string expectedErrorMessage)
         {
             var errorMessage = modelState[modelProperty].Errors.First().ErrorMessage;
