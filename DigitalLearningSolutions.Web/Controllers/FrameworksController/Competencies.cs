@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System.Net;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
@@ -136,20 +137,24 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 ModelState.Remove(nameof(FrameworkCompetency.Name));
                 ModelState.AddModelError(nameof(FrameworkCompetency.Name), "Please enter a valid competency statement (between 3 and 500 characters)");
-                // do something
                 var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
-                if (detailFramework == null) return StatusCode(404);
+                var competencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, frameworkCompetency?.CompetencyID).ToList();
+                if(competencyFlags != null)
+                    competencyFlags.ForEach(f => f.Selected = selectedFlagIds.Contains(f.FlagId));
+                if (detailFramework == null)
+                    return StatusCode((int)HttpStatusCode.NotFound);
                 var model = new FrameworkCompetencyViewModel()
                 {
                     DetailFramework = detailFramework,
                     FrameworkCompetencyGroupId = frameworkCompetencyId,
                     FrameworkCompetency = frameworkCompetency,
-                };
+                    CompetencyFlags = competencyFlags
+            };
                 return View("Developer/Competency", model);
             }
             var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
-            if (userRole < 2) return StatusCode(403);
+            if (userRole < 2) return StatusCode((int)HttpStatusCode.Forbidden);
             if (frameworkCompetency.Id > 0)
             {
                 frameworkService.UpdateFrameworkCompetency(frameworkCompetencyId, frameworkCompetency.Name, frameworkCompetency.Description, adminId);
@@ -164,7 +169,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId, frameworkCompetencyId }) + "#fc-" + newFrameworkCompetencyId.ToString());
             }
             logger.LogWarning($"Attempt to add framework competency failed for admin {adminId}.");
-            return StatusCode(403);
+            return StatusCode((int)HttpStatusCode.Forbidden);
         }
         public IActionResult MoveFrameworkCompetency(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId, bool step, string direction)
         {
