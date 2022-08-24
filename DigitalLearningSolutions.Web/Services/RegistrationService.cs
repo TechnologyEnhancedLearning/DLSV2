@@ -297,6 +297,14 @@ namespace DigitalLearningSolutions.Web.Services
         {
             using var transaction = new TransactionScope();
 
+            if (userService.EmailIsHeldAtCentre(
+                    delegateRegistrationModel.CentreSpecificEmail,
+                    delegateRegistrationModel.Centre
+                ))
+            {
+                throw new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse);
+            }
+
             var (delegateId, candidateNumber) = CreateAccountAndReturnCandidateNumberAndDelegateId(
                 delegateRegistrationModel,
                 registerJourneyContainsTermsAndConditions,

@@ -39,6 +39,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
         private readonly IClockUtility clockUtility;
+        private readonly IUserService userService;
 
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
@@ -47,7 +48,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IUserDataService userDataService,
             IRegistrationService registrationService,
             IConfiguration config,
-            IClockUtility clockUtility
+            IClockUtility clockUtility,
+            IUserService userService
         )
         {
             this.jobGroupsDataService = jobGroupsDataService;
@@ -57,6 +59,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.cryptoService = cryptoService;
             this.config = config;
             this.clockUtility = clockUtility;
+            this.userService = userService;
         }
 
         [Route("/TrackingSystem/Delegates/Register")]
@@ -279,12 +282,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private void ValidateEmailAddress(RegisterDelegatePersonalInformationViewModel model)
         {
-            RegistrationEmailValidator.ValidateCentreEmailIfNecessary(
+            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetVerified(
                 model.CentreSpecificEmail,
-                model.Centre,
+                model.Centre!.Value,
                 nameof(RegisterDelegatePersonalInformationViewModel.CentreSpecificEmail),
                 ModelState,
-                userDataService
+                userService
             );
         }
 

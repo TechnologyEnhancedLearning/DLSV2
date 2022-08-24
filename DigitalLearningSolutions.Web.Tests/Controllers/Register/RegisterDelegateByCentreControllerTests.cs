@@ -34,6 +34,7 @@
         private PromptsService promptsService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
         private IClockUtility clockUtility = null!;
 
         [SetUp]
@@ -41,6 +42,7 @@
         {
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             promptsService = A.Fake<PromptsService>();
             cryptoService = A.Fake<ICryptoService>();
             registrationService = A.Fake<IRegistrationService>();
@@ -54,7 +56,8 @@
                     userDataService,
                     registrationService,
                     config,
-                    clockUtility
+                    clockUtility,
+                    userService
                 )
                 .WithDefaultContext()
                 .WithMockTempData();
@@ -73,7 +76,7 @@
                 CentreSpecificEmail = duplicateUser.EmailAddress,
             };
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    () => userService.EmailIsHeldAtCentre(
                         model.CentreSpecificEmail!,
                         model.Centre.Value
                     )
@@ -84,13 +87,6 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
-                        model.CentreSpecificEmail!,
-                        model.Centre.Value
-                    )
-                )
-                .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
 
@@ -108,7 +104,7 @@
                 CentreSpecificEmail = duplicateUser.EmailAddress,
             };
             A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
+                    () => userService.EmailIsHeldAtCentre(
                         model.CentreSpecificEmail!,
                         model.Centre.Value
                     )
@@ -119,13 +115,6 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(
-                    () => userDataService.CentreSpecificEmailIsInUseAtCentre(
-                        model.CentreSpecificEmail!,
-                        model.Centre.Value
-                    )
-                )
-                .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
 

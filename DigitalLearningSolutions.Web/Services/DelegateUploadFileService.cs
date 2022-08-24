@@ -35,10 +35,12 @@ namespace DigitalLearningSolutions.Web.Services
         private readonly IRegistrationService registrationService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public DelegateUploadFileService(
             IJobGroupsDataService jobGroupsDataService,
             IUserDataService userDataService,
+            IUserService userService,
             IRegistrationService registrationService,
             ISupervisorDelegateService supervisorDelegateService,
             IPasswordResetService passwordResetService,
@@ -49,6 +51,7 @@ namespace DigitalLearningSolutions.Web.Services
         {
             this.jobGroupsDataService = jobGroupsDataService;
             this.userDataService = userDataService;
+            this.userService = userService;
             this.registrationService = registrationService;
             this.supervisorDelegateService = supervisorDelegateService;
             this.passwordResetService = passwordResetService;
@@ -104,7 +107,7 @@ namespace DigitalLearningSolutions.Web.Services
 
             if (string.IsNullOrEmpty(delegateRow.CandidateNumber))
             {
-                if (userDataService.CentreSpecificEmailIsInUseAtCentre(delegateRow.Email!, centreId))
+                if (userService.EmailIsHeldAtCentre(delegateRow.Email, centreId))
                 {
                     delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
                     return;

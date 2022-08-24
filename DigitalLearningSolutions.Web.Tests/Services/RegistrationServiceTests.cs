@@ -1058,6 +1058,34 @@ namespace DigitalLearningSolutions.Web.Tests.Services
         }
 
         [Test]
+        public void RegisterDelegateByCentre_throws_if_email_already_held_by_a_user_at_the_centre()
+        {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                centreSpecificEmail: "email",
+                centre: 1
+            );
+            A.CallTo(
+                    () => userService.EmailIsHeldAtCentre(
+                        "email",
+                        1
+                    )
+                )
+                .Returns(true);
+
+            // When
+            Action action = () => registrationService.RegisterDelegateByCentre(
+                model,
+                "",
+                false
+            );
+
+            // Then
+            action.Should().Throw<DelegateCreationFailedException>().Which.Error.Should()
+                .Be(DelegateCreationError.EmailAlreadyInUse);
+        }
+
+        [Test]
         public void
             PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_active_admin_already_exists()
         {
