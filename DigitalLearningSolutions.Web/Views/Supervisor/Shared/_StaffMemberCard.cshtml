@@ -1,119 +1,130 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor
+﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.ViewModels.Supervisor
 @model SupervisorDelegateDetailViewModel;
 <div class="searchable-element nhsuk-panel" id="@Model.SupervisorDelegateDetail.ID-card">
-  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
-    <summary class="nhsuk-details__summary">
+    <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+        <summary class="nhsuk-details__summary">
 
-      @if (Model.SupervisorDelegateDetail.CandidateID == null)
-      {
-        <div class="nhsuk-grid-row searchable-element-title">
-          <div class="nhsuk-grid-column-three-quarters">
-            <span class="nhsuk-details__summary-text" id="@Model.SupervisorDelegateDetail.ID-name" name="name" role="heading" aria-level="3">
-              <text>@Model.SupervisorDelegateDetail.DelegateEmail</text>
-            </span>
-          </div>
-          <div class="nhsuk-grid-column-one-quarter">
-            <span class="float-right-additional-information">
-              <strong class="nhsuk-tag nhsuk-tag--red">
-                Not registered
-              </strong>
-            </span>
-          </div>
-        </div>
-      }
-      else
-      {
-        <div class="nhsuk-grid-row">
-          <div class="nhsuk-grid-column-three-quarters searchable-element-title">
-            <span class="nhsuk-details__summary-text" id="@Model.SupervisorDelegateDetail.ID-name" name="name" role="heading" aria-level="3">
-              <text>@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName (@Model.SupervisorDelegateDetail.DelegateEmail)</text>
-            </span>
-          </div>
-        </div>
-      }
-
-    </summary>
-    <div class="nhsuk-details__text">
-      <div class="nhsuk-u-padding-left-3">
-        @if (Model.SupervisorDelegateDetail.CandidateID == null)
-        {
-          <dl class="nhsuk-summary-list">
-            <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              Added
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-              @(Model.SupervisorDelegateDetail.Added.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? Model.SupervisorDelegateDetail.Added.ToShortDateString() : "Today")
-            </dd>
-            <dd class="nhsuk-summary-list__actions">
-            </dd>
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Notification Sent
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @(Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() : "Today")
-          </dd>
-          <dd class="nhsuk-summary-list__actions">
-            @if (Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
+            @if (Model.SupervisorDelegateDetail.CandidateID == null)
             {
-              <a asp-action="ResendInvite" asp-route-reviewId="@Model.SupervisorDelegateDetail.ID">
-                Send reminder
-              </a>
+                <div class="nhsuk-grid-row searchable-element-title">
+                    <div class="nhsuk-grid-column-three-quarters">
+                        <span class="nhsuk-details__summary-text" id="@Model.SupervisorDelegateDetail.ID-name" name="name" role="heading" aria-level="3">
+                            <text>@Model.SupervisorDelegateDetail.DelegateEmail</text>
+                        </span>
+                    </div>
+                    <div class="nhsuk-grid-column-one-quarter">
+                        <span class="float-right-additional-information">
+                            <strong class="nhsuk-tag nhsuk-tag--red">
+                                Not registered
+                            </strong>
+                        </span>
+                    </div>
+                </div>
             }
-          </dd>
+            else
+            {
+                <div class="nhsuk-grid-row">
+                    <div class="nhsuk-grid-column-three-quarters searchable-element-title">
+                        <span class="nhsuk-details__summary-text" id="@Model.SupervisorDelegateDetail.ID-name" name="name" role="heading" aria-level="3">
+                            <text>@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName (@Model.SupervisorDelegateDetail.DelegateEmail)</text>
+                        </span>
+                    </div>
+                </div>
+            }
+
+        </summary>
+        <div class="nhsuk-details__text">
+            <div class="nhsuk-u-padding-left-3">
+                @if (Model.SupervisorDelegateDetail.CandidateID == null)
+                {
+                    <dl class="nhsuk-summary-list">
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Added
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @(Model.SupervisorDelegateDetail.Added.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? Model.SupervisorDelegateDetail.Added.ToShortDateString() : "Today")
+                            </dd>
+                            <dd class="nhsuk-summary-list__actions">
+                            </dd>
+                        </div>
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Notification Sent
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @(Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() : "Today")
+                            </dd>
+                            <dd class="nhsuk-summary-list__actions">
+                                @if (Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
+                                {
+                                    <a asp-action="ResendInvite" asp-route-reviewId="@Model.SupervisorDelegateDetail.ID">
+                                        Send reminder
+                                    </a>
+                                }
+                            </dd>
+                        </div>
+                    </dl>
+                }
+                else
+                {
+                    <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" view-data="@(new ViewDataDictionary(ViewData){{"isSupervisor", Model.IsUserSupervisor}})" />
+                }
+            </div>
+            @if (Model.SupervisorDelegateDetail.DlsRole == DlsRole.Learner)
+            {
+                <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4 button-small"
+               data-return-page-enabled="true"
+               asp-action="NominateSupervisor"
+               asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
+               asp-route-returnPageQuery="@Model.ReturnPageQuery">
+                    Nominate supervisor
+                </a>
+            }
+            @if (Model.SupervisorDelegateDetail.CandidateAssessmentCount == 0)
+            {
+                <form method="post">
+                    <button class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small" data-return-page-enabled="true"
+                        asp-action="RemoveSupervisorDelegate"
+                        asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+                        Remove staff member
+                    </button>
+                    @Html.Hidden("Id", Model.SupervisorDelegateDetail.ID)
+                    @Html.Hidden("DelegateEmail", Model.SupervisorDelegateDetail.DelegateEmail)
+                    @Html.Hidden("ConfirmedRemove", true)
+                    @Html.HiddenFor(m => m.ReturnPageQuery)
+                </form>
+            }
+            else
+            {
+                <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small" data-return-page-enabled="true"
+               asp-action="RemoveSupervisorDelegateConfirm"
+               asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
+               asp-route-returnPageQuery="@Model.ReturnPageQuery">
+                    Remove staff member
+                </a>
+            }
         </div>
-        </dl>
-      }
-      else
-      {
-        <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" view-data="@(new ViewDataDictionary(ViewData){{"isSupervisor", Model.IsUserSupervisor}})" />
-      }
-      </div>
-      @if (Model.SupervisorDelegateDetail.CandidateAssessmentCount == 0)
-      {
-        <form method="post">
-          <button class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small" data-return-page-enabled="true"
-                  asp-action="RemoveSupervisorDelegate"
-                  asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
-            Remove staff member
-          </button>
-          @Html.Hidden("Id", Model.SupervisorDelegateDetail.ID)
-          @Html.Hidden("DelegateEmail", Model.SupervisorDelegateDetail.DelegateEmail)
-          @Html.Hidden("ConfirmedRemove", true)
-          @Html.HiddenFor(m => m.ReturnPageQuery)
-        </form>
-      }
-      else
-      {
-        <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small" data-return-page-enabled="true"
-              asp-action="RemoveSupervisorDelegateConfirm"
-              asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
-              asp-route-returnPageQuery="@Model.ReturnPageQuery">
-            Remove staff member
-        </a>
-      }
-    </div>
-  </details>
-  @if (Model.SupervisorDelegateDetail.CandidateID != null)
-  {
-    <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
-        aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
-        asp-controller="Supervisor"
-        asp-action="DelegateProfileAssessments"
-        asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
-      View self assessments (@Model.SupervisorDelegateDetail.CandidateAssessmentCount)
-    </a>
-  }
-  else if (Model.SupervisorDelegateDetail.AddedByDelegate)
-  {
+    </details>
+    @if (Model.SupervisorDelegateDetail.CandidateID != null)
+    {
         <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
-            aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
-            asp-controller="Supervisor"
-            asp-action="ConfirmSupervise"
-            asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
-          Confirm
+       aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
+       asp-controller="Supervisor"
+       asp-action="DelegateProfileAssessments"
+       asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+            View self assessments (@Model.SupervisorDelegateDetail.CandidateAssessmentCount)
         </a>
-  }
+    }
+    else if (Model.SupervisorDelegateDetail.AddedByDelegate)
+    {
+        <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
+       aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
+       asp-controller="Supervisor"
+       asp-action="ConfirmSupervise"
+       asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+            Confirm
+        </a>
+    }
 </div>

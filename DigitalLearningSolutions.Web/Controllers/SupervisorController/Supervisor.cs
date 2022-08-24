@@ -13,6 +13,7 @@
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models;
 
     public partial class SupervisorController
     {
@@ -175,7 +176,7 @@
         [HttpPost]
         public IActionResult RemoveSupervisorDelegate(SupervisorDelegateViewModel supervisorDelegate)
         {
-            if (ModelState.IsValid && supervisorDelegate.ConfirmedRemove)
+            if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
                 supervisorService.RemoveSupervisorDelegateById(supervisorDelegate.Id, 0, GetAdminID());
                 return RedirectToAction("MyStaffList");
@@ -867,6 +868,34 @@
             }
 
             return View("SignOffHistory", model);
+        }
+
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/NominateSupervisor")]
+        public IActionResult NominateSupervisor(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
+        {
+            var superviseDelegate =
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+            var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
+            return View("NominateSupervisor", model);
+        }
+        [HttpPost]
+        public IActionResult ConfirmNominateSupervisor(SupervisorDelegateViewModel supervisorDelegate)
+        {
+            if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
+            {
+                var categoryId = User.GetAdminCourseCategoryFilter();
+                var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminID(), 0);
+                var adminRoles = new AdminRoles(false, false, true, false, false, false, false);
+                if ( supervisorDelegateDetail.CandidateID != null)
+                {
+                    registrationService.PromoteDelegateToAdmin(adminRoles, (categoryId ?? 0), (int)supervisorDelegateDetail.CandidateID);
+                }
+                return RedirectToAction("MyStaffList");
+            }
+            else
+            {
+                return View("RemoveConfirm", supervisorDelegate);
+            }
         }
     }
 }

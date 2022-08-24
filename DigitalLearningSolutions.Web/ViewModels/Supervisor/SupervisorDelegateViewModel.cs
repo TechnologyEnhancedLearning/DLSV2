@@ -25,7 +25,7 @@
         public string DelegateEmail { get; set; }
         public ReturnPageQuery ReturnPageQuery { get; set; }
 
-        [BooleanMustBeTrue(ErrorMessage = "Confirm you wish to remove this staff member")]
-        public bool ConfirmedRemove { get; set; }
+        [BooleanMustBeTrue(ErrorMessage = "Please tick the checkbox to confirm you wish to perform this action")]
+        public bool ActionConfirmed { get; set; }
     }
 }
