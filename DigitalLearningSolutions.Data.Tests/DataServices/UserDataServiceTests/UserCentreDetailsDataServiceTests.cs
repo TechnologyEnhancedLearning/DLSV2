@@ -515,7 +515,7 @@
             var result = userDataService.GetCentreEmailVerificationDetails(code);
 
             // Then
-            result!.CentreIdIfEmailIsForUnapprovedDelegate.Should().Be(null);
+            result.Single().CentreIdIfEmailIsForUnapprovedDelegate.Should().Be(null);
         }
 
         [Test]
@@ -544,7 +544,7 @@
             var result = userDataService.GetCentreEmailVerificationDetails(code);
 
             // Then
-            result!.CentreIdIfEmailIsForUnapprovedDelegate.Should().Be(centreId);
+            result.Single().CentreIdIfEmailIsForUnapprovedDelegate.Should().Be(centreId);
         }
 
         [Test]

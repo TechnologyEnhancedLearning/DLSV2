@@ -111,9 +111,9 @@
             );
         }
 
-        public EmailVerificationDetails? GetCentreEmailVerificationDetails(string code)
+        public IEnumerable<EmailVerificationDetails> GetCentreEmailVerificationDetails(string code)
         {
-            return connection.QuerySingleOrDefault<EmailVerificationDetails>(
+            return connection.Query<EmailVerificationDetails>(
                 @"SELECT
                         u.UserId,
                         u.Email,

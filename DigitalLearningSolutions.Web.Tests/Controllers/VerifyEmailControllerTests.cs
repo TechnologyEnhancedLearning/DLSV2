@@ -8,6 +8,8 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.VerifyEmail;
     using FakeItEasy;
+    using FizzWare.NBuilder;
+    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
 
@@ -47,7 +49,10 @@
             var result = controller.Index(email, code);
 
             // Then
-            A.CallTo(() => userService.GetEmailVerificationDetails(A<string>._, A<string>._)).MustNotHaveHappened();
+            A.CallTo(
+                    () => userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(A<string>._, A<string>._)
+                )
+                .MustNotHaveHappened();
 
             result.Should().BeNotFoundResult();
         }
@@ -56,7 +61,9 @@
         public void Index_with_non_matching_email_and_code_returns_NotFound()
         {
             // Given
-            A.CallTo(() => userService.GetEmailVerificationDetails(Email, Code)).Returns(null);
+            A.CallTo(() => userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(Email, Code)).Returns(
+                null
+            );
 
             // When
             var result = controller.Index(Email, Code);
@@ -66,48 +73,19 @@
         }
 
         [Test]
-        public void Index_with_verified_email_returns_page_without_updating_records()
-        {
-            // Given
-            var emailVerificationDetails = new EmailVerificationDetails
-            {
-                UserId = 1,
-                Email = Email,
-                EmailVerificationHash = Code,
-                EmailVerified = new DateTime(2022, 1, 1),
-                CentreIdIfEmailIsForUnapprovedDelegate = null,
-            };
-
-            A.CallTo(() => userService.GetEmailVerificationDetails(Email, Code)).Returns(emailVerificationDetails);
-
-            // When
-            var result = controller.Index(Email, Code);
-
-            // Then
-            A.CallTo(() => userService.SetEmailVerified(A<int>._, A<string>._, A<DateTime>._)).MustNotHaveHappened();
-
-            result.Should().BeViewResult().WithDefaultViewName();
-        }
-
-        [Test]
         public void Index_with_expired_verification_returns_link_expired_page_without_updating_records()
         {
             // Given
             var now = new DateTime(2022, 1, 1);
-            var threeDaysAgo = now.AddDays(-3);
+            var fourDaysAgo = now.AddDays(-4);
 
-            var emailVerificationDetails = new EmailVerificationDetails
-            {
-                UserId = 1,
-                Email = Email,
-                EmailVerificationHash = Code,
-                EmailVerified = null,
-                EmailVerificationHashCreatedDate = threeDaysAgo,
-                CentreIdIfEmailIsForUnapprovedDelegate = null,
-            };
+            var verificationData = Builder<EmailVerificationTransactionData>.CreateNew()
+                .With(d => d.HashCreationDate = fourDaysAgo)
+                .Build();
 
             A.CallTo(() => clockUtility.UtcNow).Returns(now);
-            A.CallTo(() => userService.GetEmailVerificationDetails(Email, Code)).Returns(emailVerificationDetails);
+            A.CallTo(() => userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(Email, Code))
+                .Returns(verificationData);
 
             // When
             var result = controller.Index(Email, Code);
@@ -125,18 +103,11 @@
             const int userId = 1;
             var now = new DateTime(2022, 1, 1);
 
-            var emailVerificationDetails = new EmailVerificationDetails
-            {
-                UserId = userId,
-                Email = Email,
-                EmailVerificationHash = Code,
-                EmailVerified = null,
-                EmailVerificationHashCreatedDate = now,
-                CentreIdIfEmailIsForUnapprovedDelegate = null,
-            };
+            var verificationData = new EmailVerificationTransactionData(Email, now, null, userId);
 
             A.CallTo(() => clockUtility.UtcNow).Returns(now);
-            A.CallTo(() => userService.GetEmailVerificationDetails(Email, Code)).Returns(emailVerificationDetails);
+            A.CallTo(() => userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(Email, Code))
+                .Returns(verificationData);
             A.CallTo(() => userService.SetEmailVerified(userId, Email, now)).DoesNothing();
 
             // When
@@ -156,25 +127,24 @@
             const int centreIdForUnapprovedDelegate = 2;
             var now = new DateTime(2022, 1, 1);
 
-            var emailVerificationDetails = new EmailVerificationDetails
-            {
-                UserId = userId,
-                Email = Email,
-                EmailVerificationHash = Code,
-                EmailVerified = null,
-                EmailVerificationHashCreatedDate = now,
-                CentreIdIfEmailIsForUnapprovedDelegate = centreIdForUnapprovedDelegate,
-            };
+            var verificationData = new EmailVerificationTransactionData(
+                Email,
+                now,
+                centreIdForUnapprovedDelegate,
+                userId
+            );
 
             A.CallTo(() => clockUtility.UtcNow).Returns(now);
-            A.CallTo(() => userService.GetEmailVerificationDetails(Email, Code)).Returns(emailVerificationDetails);
+            A.CallTo(() => userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(Email, Code))
+                .Returns(verificationData);
             A.CallTo(() => userService.SetEmailVerified(userId, Email, now)).DoesNothing();
 
             // When
             var result = controller.Index(Email, Code);
 
             // Then
-            result.Should().BeViewResult().ModelAs<EmailVerifiedViewModel>();
+            result.Should().BeViewResult().ModelAs<EmailVerifiedViewModel>().CentreIdIfEmailIsForUnapprovedDelegate
+                .Should().Be(centreIdForUnapprovedDelegate);
         }
     }
 }

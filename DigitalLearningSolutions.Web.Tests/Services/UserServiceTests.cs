@@ -1158,13 +1158,14 @@
             };
 
             A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails(code)).Returns(emailVerificationDetails);
-            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(null);
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code))
+                .Returns(new List<EmailVerificationDetails>());
 
             // When
-            var result = userService.GetEmailVerificationDetails(email, code);
+            var result = userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(email, code);
 
             // Then
-            result.Should().Be(emailVerificationDetails);
+            result!.Email.Should().Be(email);
         }
 
         [Test]
@@ -1183,13 +1184,14 @@
             };
 
             A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails(code)).Returns(null);
-            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(emailVerificationDetails);
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code))
+                .Returns(new[] { emailVerificationDetails });
 
             // When
-            var result = userService.GetEmailVerificationDetails(email, code);
+            var result = userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(email, code);
 
             // Then
-            result.Should().Be(emailVerificationDetails);
+            result!.Email.Should().Be(email);
         }
 
         [Test]
@@ -1200,10 +1202,11 @@
             const string code = "code";
 
             A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails(code)).Returns(null);
-            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(null);
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code))
+                .Returns(new EmailVerificationDetails[] { });
 
             // When
-            var result = userService.GetEmailVerificationDetails(email, code);
+            var result = userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(email, code);
 
             // Then
             result.Should().BeNull();
@@ -1224,10 +1227,12 @@
             };
 
             A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails(code)).Returns(emailVerificationDetails);
-            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(null);
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code))
+                .Returns(new List<EmailVerificationDetails>());
 
             // When
-            var result = userService.GetEmailVerificationDetails("different@email.com", code);
+            var result =
+                userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails("different@email.com", code);
 
             // Then
             result.Should().BeNull();
@@ -1249,41 +1254,15 @@
             };
 
             A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails(code)).Returns(null);
-            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(emailVerificationDetails);
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code))
+                .Returns(new[] { emailVerificationDetails });
 
             // When
-            var result = userService.GetEmailVerificationDetails("different@email.com", code);
+            var result =
+                userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails("different@email.com", code);
 
             // Then
             result.Should().BeNull();
-        }
-
-        [Test]
-        public void GetEmailVerificationDetails_throws_exception_if_code_and_email_match_both_primary_and_centre_email()
-        {
-            // Given
-            const string email = "email@email.com";
-            const string code = "code";
-            var emailVerificationDetails = new EmailVerificationDetails
-            {
-                UserId = 1,
-                Email = email,
-                EmailVerificationHash = code,
-                EmailVerified = null,
-                EmailVerificationHashCreatedDate = new DateTime(2022, 1, 1),
-            };
-
-            A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails(code)).Returns(emailVerificationDetails);
-            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails(code)).Returns(emailVerificationDetails);
-
-            // When
-            void MethodBeingTested()
-            {
-                userService.GetEmailVerificationDetails(email, code);
-            }
-
-            // Then
-            Assert.Throws<Exception>(MethodBeingTested);
         }
 
         [Test]
@@ -1302,6 +1281,51 @@
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => userDataService.SetCentreEmailVerified(userId, email, verifiedDateTime))
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void GetEmailVerificationTransactionData_given_multiple_users_matching_email_hash_throws_exception()
+        {
+            // Given
+            var details = Builder<EmailVerificationDetails>.CreateListOfSize(2).All()
+                .With(d => d.Email = "email")
+                .With(d => d.EmailVerificationHash = "hash")
+                .TheFirst(1).With(d => d.UserId = 1)
+                .TheLast(1).With(d => d.UserId = 2)
+                .Build();
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails("hash")).Returns(details);
+
+            // When
+            Action gettingData = () =>
+                userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails("email", "hash");
+
+            // Then
+            gettingData.Should().Throw<InvalidOperationException>();
+        }
+
+        [Test]
+        public void GetEmailVerificationTransactionData_given_only_verified_emails_matched_returns_null()
+        {
+            // Given
+            var emailVerificationDetails = new EmailVerificationDetails
+            {
+                UserId = 1,
+                Email = "email",
+                EmailVerificationHash = "code",
+                EmailVerified = new DateTime(2022, 1, 1),
+                CentreIdIfEmailIsForUnapprovedDelegate = null,
+            };
+
+            A.CallTo(() => userDataService.GetPrimaryEmailVerificationDetails("code"))
+                .Returns(emailVerificationDetails);
+            A.CallTo(() => userDataService.GetCentreEmailVerificationDetails("code"))
+                .Returns(new[] { emailVerificationDetails });
+
+            // When
+            var result = userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails("email", "code");
+
+            // Then
+            result.Should().BeNull();
         }
 
         private void AssertAdminPermissionsCalledCorrectly(
