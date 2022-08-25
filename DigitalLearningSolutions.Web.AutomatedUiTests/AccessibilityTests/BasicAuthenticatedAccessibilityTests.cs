@@ -39,7 +39,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Centre/Configuration/RegistrationPrompts/1/Remove",
             "Remove delegate registration prompt"
         )]
-        [InlineData("/TrackingSystem/Centre/Reports/Courses", "Centre reports")]
+        [InlineData("/TrackingSystem/Centre/Reports/Courses", "Course reports")]
         [InlineData("/TrackingSystem/Centre/SystemNotifications", "New system notifications")]
         [InlineData("/TrackingSystem/Centre/TopCourses", "Top courses")]
         [InlineData("/TrackingSystem/CourseSetup", "Centre course setup")]
