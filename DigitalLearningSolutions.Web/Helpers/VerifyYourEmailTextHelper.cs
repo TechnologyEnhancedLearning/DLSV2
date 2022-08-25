@@ -2,11 +2,11 @@
 {
     public static class VerifyYourEmailTextHelper
     {
-        public static string UnverifiedCentreEmailConsequences =
+        public const string UnverifiedCentreEmailConsequences =
             "You will not be able to access that account until you verify the address.";
 
-        public static string UnverifiedPrimaryEmailConsequences =>
-            "You can edit your account details, but you cannot access any centre accounts until it is verified.";
+        public const string UnverifiedPrimaryEmailConsequences =
+            "You can edit your account details, but you will not be able to access any centre accounts or register at new centres until it is verified.";
 
         public static string VerifyEmailLinkCommonInfo(bool multipleEmailsAreUnverified)
         {
