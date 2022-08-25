@@ -48,7 +48,7 @@
             {
                 new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsActive),
                 new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsAdmin),
-                new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordSet),
+                new SearchableTagViewModel(DelegateRegistrationCompletionStatusFilterOptions.RegistrationComplete),
                 new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.SelfRegistered)
             };
 
@@ -71,7 +71,7 @@
             {
                 new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsNotActive),
                 new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsNotAdmin, true),
-                new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordNotSet),
+                new SearchableTagViewModel(DelegateRegistrationCompletionStatusFilterOptions.RegistrationIncomplete),
                 new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.RegisteredByCentre)
             };
 
@@ -95,7 +95,7 @@
             {
                 new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsNotActive),
                 new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsNotAdmin, true),
-                new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordNotSet),
+                new SearchableTagViewModel(DelegateRegistrationCompletionStatusFilterOptions.RegistrationIncomplete),
                 new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.SelfRegisteredExternal)
             };
 

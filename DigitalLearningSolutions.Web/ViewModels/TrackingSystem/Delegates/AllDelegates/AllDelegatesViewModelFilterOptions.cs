@@ -10,10 +10,10 @@
 
     public static class AllDelegatesViewModelFilterOptions
     {
-        public static readonly IEnumerable<FilterOptionModel> PasswordStatusOptions = new[]
+        public static readonly IEnumerable<FilterOptionModel> RegistrationStatusOptions = new[]
         {
-            DelegatePasswordStatusFilterOptions.PasswordSet,
-            DelegatePasswordStatusFilterOptions.PasswordNotSet,
+            DelegateRegistrationCompletionStatusFilterOptions.RegistrationComplete,
+            DelegateRegistrationCompletionStatusFilterOptions.RegistrationIncomplete,
         };
 
         public static readonly IEnumerable<FilterOptionModel> AdminStatusOptions = new[]
@@ -42,15 +42,23 @@
         {
             var filters = new List<FilterModel>
             {
-                new FilterModel("PasswordStatus", "Password Status", PasswordStatusOptions),
-                new FilterModel("AdminStatus", "Admin Status", AdminStatusOptions),
-                new FilterModel("ActiveStatus", "Active Status", ActiveStatusOptions),
+                new FilterModel(
+                    DelegateRegistrationCompletionStatusFilterOptions.Group,
+                    "Registration Status",
+                    RegistrationStatusOptions
+                ),
+                new FilterModel(DelegateAdminStatusFilterOptions.Group, "Admin Status", AdminStatusOptions),
+                new FilterModel(DelegateActiveStatusFilterOptions.Group, "Active Status", ActiveStatusOptions),
                 new FilterModel(
                     "JobGroupId",
                     "Job Group",
                     DelegatesViewModelFilters.GetJobGroupOptions(jobGroups)
                 ),
-                new FilterModel("RegistrationType", "Registration Type", RegistrationTypeOptions),
+                new FilterModel(
+                    DelegateRegistrationTypeFilterOptions.Group,
+                    "Registration Type",
+                    RegistrationTypeOptions
+                ),
             };
             filters.AddRange(
                 promptsWithOptions.Select(

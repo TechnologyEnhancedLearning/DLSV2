@@ -7,26 +7,26 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public static class DelegatePasswordStatusFilterOptions
+    public static class DelegateRegistrationCompletionStatusFilterOptions
     {
-        private const string Group = "PasswordStatus";
+        public const string Group = "RegistrationStatus";
 
-        public static readonly FilterOptionModel PasswordSet = new FilterOptionModel(
-            "Password set",
-            FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.IsPasswordSet), "true"),
+        public static readonly FilterOptionModel RegistrationComplete = new FilterOptionModel(
+            "Registration complete",
+            FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.IsRegistrationComplete), "true"),
             FilterStatus.Success
         );
 
-        public static readonly FilterOptionModel PasswordNotSet = new FilterOptionModel(
-            "Password not set",
-            FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.IsPasswordSet), "false"),
+        public static readonly FilterOptionModel RegistrationIncomplete = new FilterOptionModel(
+            "Registration incomplete",
+            FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.IsRegistrationComplete), "false"),
             FilterStatus.Warning
         );
     }
 
     public static class DelegateAdminStatusFilterOptions
     {
-        private const string Group = "AdminStatus";
+        public const string Group = "AdminStatus";
 
         public static readonly FilterOptionModel IsAdmin = new FilterOptionModel(
             "Admin",
@@ -43,7 +43,7 @@
 
     public static class DelegateActiveStatusFilterOptions
     {
-        private const string Group = "ActiveStatus";
+        public const string Group = "ActiveStatus";
 
         public static readonly FilterOptionModel IsActive = new FilterOptionModel(
             "Active",
@@ -60,7 +60,7 @@
 
     public static class DelegateRegistrationTypeFilterOptions
     {
-        private const string Group = "RegistrationType";
+        public const string Group = "RegistrationType";
 
         public static readonly FilterOptionModel SelfRegistered = new FilterOptionModel(
             RegistrationType.SelfRegistered.DisplayText,

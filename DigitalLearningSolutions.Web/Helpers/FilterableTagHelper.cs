@@ -152,9 +152,11 @@
                 delegateUser.Active
                     ? new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsActive)
                     : new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsNotActive),
-                delegateUser.IsPasswordSet
-                    ? new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordSet)
-                    : new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordNotSet),
+                delegateUser.IsRegistrationComplete
+                    ? new SearchableTagViewModel(DelegateRegistrationCompletionStatusFilterOptions.RegistrationComplete)
+                    : new SearchableTagViewModel(
+                        DelegateRegistrationCompletionStatusFilterOptions.RegistrationIncomplete
+                    ),
                 delegateUser.IsAdmin
                     ? new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsAdmin)
                     : new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsNotAdmin, true),
