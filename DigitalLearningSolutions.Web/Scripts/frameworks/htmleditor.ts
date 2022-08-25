@@ -1,8 +1,9 @@
 import { Jodit } from 'jodit';
+import DOMPurify from 'dompurify';
 
 let jodited = false;
 if (jodited === false) {
-  const editor = Jodit.make('.html-editor', {
+  const editor = Jodit.make(".html-editor", {
     buttons: [
       'source', '|',
       'bold',
@@ -57,7 +58,7 @@ if (jodited === false) {
       'ul',
       'ol', '|',
       'undo', 'redo',
-    ],
+    ], 
     style: {
       backgroundColor: '#FFF',
     },
@@ -65,5 +66,9 @@ if (jodited === false) {
 
   if (editor != null) {
     jodited = true;
+    editor.e.on("blur", () => {
+      const clean = DOMPurify.sanitize(editor.editor.innerHTML);
+      editor.editor.innerHTML = clean;
+    });
   }
 }
