@@ -31,6 +31,7 @@
                 da.SelfReg,
                 da.ExternalReg,
                 da.Active,
+                da.RegistrationConfirmationHash,
                 u.HasBeenPromptedForPrn,
                 u.ProfessionalRegistrationNumber,
                 (SELECT ID

@@ -87,6 +87,7 @@
                 da.OldPassword,
                 da.UserID,
                 da.CentreSpecificDetailsLastChecked,
+                da.RegistrationConfirmationHash,
                 u.ID,
                 u.PrimaryEmail,
                 u.PasswordHash,
