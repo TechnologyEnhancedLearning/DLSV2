@@ -469,7 +469,7 @@
             A.CallTo(() => userService.EmailIsHeldAtCentre("email", 1)).Returns(true);
 
             // When
-            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetVerified(
+            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetValidated(
                 "email",
                 1,
                 "EmailField",
@@ -489,7 +489,7 @@
             A.CallTo(() => userService.EmailIsHeldAtCentre("email", 1)).Returns(false);
 
             // When
-            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetVerified(
+            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetValidated(
                 "email",
                 1,
                 "EmailField",
@@ -509,7 +509,7 @@
             modelState.AddModelError("EmailField", DefaultErrorMessage);
 
             // When
-            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetVerified(
+            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetValidated(
                 "email",
                 1,
                 "EmailField",
@@ -528,7 +528,7 @@
             string? email = null;
 
             // When
-            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetVerified(
+            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetValidated(
                 email,
                 1,
                 "EmailField",

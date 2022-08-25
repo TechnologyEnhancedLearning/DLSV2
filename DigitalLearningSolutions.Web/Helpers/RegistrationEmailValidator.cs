@@ -42,7 +42,7 @@
             }
         }
 
-        public static void ValidateEmailNotHeldAtCentreIfEmailNotYetVerified(
+        public static void ValidateEmailNotHeldAtCentreIfEmailNotYetValidated(
             string? email,
             int centreId,
             string nameOfFieldToValidate,

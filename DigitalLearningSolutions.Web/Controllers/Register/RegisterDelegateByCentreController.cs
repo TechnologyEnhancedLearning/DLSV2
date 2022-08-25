@@ -282,7 +282,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private void ValidateEmailAddress(RegisterDelegatePersonalInformationViewModel model)
         {
-            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetVerified(
+            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetValidated(
                 model.CentreSpecificEmail,
                 model.Centre!.Value,
                 nameof(RegisterDelegatePersonalInformationViewModel.CentreSpecificEmail),
