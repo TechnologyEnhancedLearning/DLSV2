@@ -1,4 +1,7 @@
 @using DigitalLearningSolutions.Web.ViewModels.Register
+@using Microsoft.Extensions.Configuration
+@using DigitalLearningSolutions.Web.Extensions
+
 @model PersonalInformationViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -60,7 +63,7 @@
                      hint-text=""
                      autocomplete=""
                      css-class="nhsuk-u-width-one-half" />
-
+					 
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 

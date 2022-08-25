@@ -660,15 +660,24 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
 
             // When
-            var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
-            );
+            registrationService.PromoteDelegateToAdmin(adminRoles, 0, 1);
 
             // Then
             using (new AssertionScope())
             {
-                UpdateToExistingAdminAccountMustNotHaveHappened();
-                result.Error.Should().Be(AdminCreationError.EmailAlreadyInUse);
+                A.CallTo(
+                    () => userDataService.UpdateAdminUserPermissions(
+                        adminUser.Id,
+                        adminRoles.IsCentreAdmin || adminUser.IsCentreAdmin,
+                        adminRoles.IsSupervisor || adminRoles.IsSupervisor,
+                        adminRoles.IsNominatedSupervisor || adminUser.IsNominatedSupervisor,
+                        adminRoles.IsTrainer || adminUser.IsTrainer,
+                        adminRoles.IsContentCreator || adminUser.IsContentCreator,
+                        adminRoles.IsContentManager || adminUser.IsContentManager,
+                        adminRoles.ImportOnly || adminUser.ImportOnly,
+                        adminUser.CategoryId
+                    )
+                ).MustHaveHappenedOnceExactly();
             }
         }
 

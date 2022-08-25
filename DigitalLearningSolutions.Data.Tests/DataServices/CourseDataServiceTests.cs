@@ -290,13 +290,13 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetNumberOfActiveCoursesAtCentreFilteredByCategory_excludes_courses_from_archived_applications()
+        public void GetNumberOfActiveCoursesAtCentreFilteredByCategory_includes_courses_from_archived_applications()
         {
             // When
             var count = courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(101, null);
 
             // Then
-            count.Should().Be(141);
+            count.Should().Be(144);
         }
 
         [Test]
@@ -324,6 +324,40 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // When
             var result = courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId).ToList();
+
+            // Then
+            var expectedFirstCourse = new CourseStatistics
+            {
+                CustomisationId = 100,
+                CentreId = 101,
+                Active = false,
+                AllCentres = false,
+                ApplicationId = 1,
+                ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
+                CustomisationName = "Standard",
+                DelegateCount = 25,
+                AllAttempts = 49,
+                AttemptsPassed = 34,
+                CompletedCount = 5,
+                HideInLearnerPortal = false,
+                CategoryName = "Office 2007",
+                CourseTopic = "Microsoft Office",
+                LearningMinutes = "N/A",
+            };
+
+            result.Should().HaveCount(259);
+            result.First().Should().BeEquivalentTo(expectedFirstCourse);
+        }
+
+        [Test]
+        public void GetNonArchivedCourseStatisticsAtCentreFilteredByCategory_should_return_course_statistics_correctly()
+        {
+            // Given
+            const int centreId = 101;
+            int? categoryId = null;
+
+            // When
+            var result = courseDataService.GetNonArchivedCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId).ToList();
 
             // Then
             var expectedFirstCourse = new CourseStatistics
@@ -446,6 +480,37 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // When
             var result = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
+
+            // Then
+            var expectedFirstCourse = new CourseAssessmentDetails
+            {
+                CustomisationId = 100,
+                CentreId = 101,
+                ApplicationId = 1,
+                ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
+                CustomisationName = "Standard",
+                Active = false,
+                CategoryName = "Undefined",
+                CourseTopic = "Undefined",
+                HasDiagnostic = false,
+                HasLearning = true,
+                IsAssessed = false,
+            };
+
+            result.Should().HaveCount(259);
+            result.First().Should().BeEquivalentTo(expectedFirstCourse);
+        }
+
+        [Test]
+        public void GetNonArchivedCoursesAvailableToCentreByCategory_returns_expected_values()
+        {
+            // Given
+            const int centreId = 101;
+            int? categoryId = null;
+
+            // When
+            var result = courseDataService.GetNonArchivedCoursesAvailableToCentreByCategory(centreId, categoryId)
+                .ToList();
 
             // Then
             var expectedFirstCourse = new CourseAssessmentDetails

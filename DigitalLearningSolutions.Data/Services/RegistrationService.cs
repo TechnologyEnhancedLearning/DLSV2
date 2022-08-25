@@ -183,6 +183,20 @@ namespace DigitalLearningSolutions.Data.Services
                     categoryId
                 );
             }
+            else if (adminUser?.Active == true && adminUser.CentreId == delegateUser.CentreId)
+            {
+                userDataService.UpdateAdminUserPermissions(
+                    adminUser.Id,
+                    adminRoles.IsCentreAdmin || adminUser.IsCentreAdmin,
+                    adminRoles.IsSupervisor || adminUser.IsSupervisor,
+                    adminRoles.IsNominatedSupervisor || adminUser.IsNominatedSupervisor,
+                    adminRoles.IsTrainer = adminRoles.IsTrainer || adminUser.IsTrainer,
+                    adminRoles.IsContentCreator || adminUser.IsContentCreator,
+                    adminRoles.IsContentManager || adminUser.IsContentManager,
+                    adminRoles.ImportOnly = adminRoles.ImportOnly || adminUser.ImportOnly,
+                    adminUser.CategoryId
+                );
+            }
             else if (adminUser == null)
             {
                 var adminRegistrationModel = new AdminRegistrationModel(

@@ -6,7 +6,6 @@
     <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0 @(Model.AbsentInLearningHub ? "nhsuk-u-padding-bottom-0" : null)">
       <span class="nhsuk-details__summary-text searchable-element-title"
             id="@Model.Id-name-lhr"
-            name="name"
             role="heading"
             aria-level="2">
         @Model.Name
@@ -27,9 +26,9 @@
           @Html.Raw(Model.ResourceDescription)
         </div>
       </div>
-      <div class="nhsuk-grid-row">
+      <dl class="nhsuk-summary-list">
         <partial name="Shared/_Dates" model="@Model" />
-      </div>
+      </dl>
     </div>
   </details>
 
