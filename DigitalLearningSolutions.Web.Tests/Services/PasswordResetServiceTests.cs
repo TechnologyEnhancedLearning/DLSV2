@@ -39,7 +39,7 @@
             registrationConfirmationDataService = A.Fake<IRegistrationConfirmationDataService>();
             passwordService = A.Fake<IPasswordService>();
 
-            A.CallTo(() => userService.GetUserByEmailAddress(A<string>._))
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(A<string>._))
                 .Returns(UserTestHelper.GetDefaultUserAccount());
 
             passwordResetService = new PasswordResetService(
@@ -56,7 +56,7 @@
         public void Trying_to_get_null_user_should_throw_an_exception()
         {
             // Given
-            A.CallTo(() => userService.GetUserByEmailAddress(A<string>._)).Returns(null);
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(A<string>._)).Returns(null);
 
             // Then
             Assert.ThrowsAsync<UserAccountNotFoundException>(
@@ -79,7 +79,7 @@
                 PrimaryEmail = emailAddress,
             };
 
-            A.CallTo(() => userService.GetUserByEmailAddress(emailAddress)).Returns(user);
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(emailAddress)).Returns(user);
 
             // When
             await passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");
@@ -112,7 +112,7 @@
                 ResetPasswordId = resetPasswordId,
             };
 
-            A.CallTo(() => userService.GetUserByEmailAddress(emailAddress)).Returns(user);
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(emailAddress)).Returns(user);
 
             // When
             await passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");
@@ -131,7 +131,7 @@
                 ResetPasswordId = null,
             };
 
-            A.CallTo(() => userService.GetUserByEmailAddress(emailAddress)).Returns(user);
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(emailAddress)).Returns(user);
 
             // When
             await passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");

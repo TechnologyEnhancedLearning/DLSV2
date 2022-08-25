@@ -44,6 +44,7 @@
         private IRegistrationService registrationService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
@@ -54,6 +55,7 @@
             );
 
             userDataService = A.Fake<IUserDataService>(x => x.Strict());
+            userService = A.Fake<IUserService>();
             registrationService = A.Fake<IRegistrationService>(x => x.Strict());
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
             passwordResetService = A.Fake<IPasswordResetService>();
@@ -69,6 +71,7 @@
             delegateUploadFileService = new DelegateUploadFileService(
                 jobGroupsDataService,
                 userDataService,
+                userService,
                 registrationService,
                 supervisorDelegateService,
                 passwordResetService,
@@ -311,6 +314,30 @@
         }
 
         [Test]
+        public void ProcessDelegateTable_has_email_in_use_error_if_new_delegate_has_email_matching_existing_delegate()
+        {
+            var row = GetSampleDelegateDataRow(emailAddress: "email@centre.com", candidateNumber: "");
+            var table = CreateTableFromData(new[] { row });
+            A.CallTo(() => userService.EmailIsHeldAtCentre("email@centre.com", CentreId)).Returns(true);
+
+            // When
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, WelcomeEmailDate);
+
+            // Then
+            using (var _ = new AssertionScope())
+            {
+                AssertBulkUploadResultHasOnlyOneError(result);
+                result.Errors.First().RowNumber.Should().Be(2);
+                result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.EmailAddressInUse);
+                A.CallTo(() => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
+                    A<DelegateRegistrationModel>._,
+                    A<bool>._,
+                    A<bool>._
+                )).MustNotHaveHappened();
+            }
+        }
+
+        [Test]
         public void
             ProcessDelegateTable_has_email_in_use_error_if_delegate_is_found_by_delegateId_but_email_exists_on_another_delegate()
         {
@@ -407,8 +434,7 @@
             var row = GetSampleDelegateDataRow(candidateNumber: string.Empty);
             var table = CreateTableFromData(new[] { row });
 
-            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email@test.com", CentreId))
-                .Returns(false);
+            A.CallTo(() => userService.EmailIsHeldAtCentre("email@test.com", CentreId)).Returns(false);
             A.CallTo(
                     () => registrationService.CreateAccountAndReturnCandidateNumberAndDelegateId(
                         A<DelegateRegistrationModel>._,
@@ -820,7 +846,7 @@
                             Guid.TryParse(model.PrimaryEmail, out primaryEmailIsGuid) &&
                             model.NotifyDate == WelcomeEmailDate &&
                             model.IsSelfRegistered == false &&
-                            model.UserIsActive == false &&
+                            model.UserIsActive == true &&
                             model.CentreAccountIsActive == true &&
                             model.Approved == true &&
                             model.PasswordHash == null

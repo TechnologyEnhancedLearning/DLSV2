@@ -9,5 +9,6 @@
         AccountsHaveMismatchedPasswords,
         AccountLocked,
         UnverifiedEmail,
+        UnclaimedDelegateAccount,
     }
 }

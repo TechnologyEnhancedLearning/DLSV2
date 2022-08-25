@@ -1,12 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using NUnit.Framework;
@@ -22,12 +22,14 @@
 
         private static ModelStateDictionary modelState = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
         private ICentresService centresService = null!;
 
         [SetUp]
         public void Setup()
         {
             userDataService = A.Fake<IUserDataService>();
+            userService = A.Fake<IUserService>();
             centresService = A.Fake<ICentresService>();
             modelState = new ModelStateDictionary();
         }
@@ -457,6 +459,84 @@
                 )
             ).MustNotHaveHappened();
 
+            modelState.IsValid.Should().BeTrue();
+        }
+
+        [Test]
+        public void ValidateEmailNotHeldAtCentre_raises_error_if_email_held_at_centre()
+        {
+            // Given
+            A.CallTo(() => userService.EmailIsHeldAtCentre("email", 1)).Returns(true);
+
+            // When
+            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetValidated(
+                "email",
+                1,
+                "EmailField",
+                modelState,
+                userService
+            );
+
+            // Then
+            modelState["EmailField"].Errors.Should()
+                .Contain(e => e.ErrorMessage == CommonValidationErrorMessages.EmailInUseAtCentre);
+        }
+
+        [Test]
+        public void ValidateEmailNotHeldAtCentre_does_not_raise_error_if_email_not_held_at_centre()
+        {
+            // Given
+            A.CallTo(() => userService.EmailIsHeldAtCentre("email", 1)).Returns(false);
+
+            // When
+            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetValidated(
+                "email",
+                1,
+                "EmailField",
+                modelState,
+                userService
+            );
+
+            // Then
+            modelState.IsValid.Should().BeTrue();
+        }
+
+        [Test]
+        public void ValidateEmailNotHeldAtCentre_does_not_raise_error_if_email_already_validated()
+        {
+            // Given
+            A.CallTo(() => userService.EmailIsHeldAtCentre("email", 1)).Returns(true);
+            modelState.AddModelError("EmailField", DefaultErrorMessage);
+
+            // When
+            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetValidated(
+                "email",
+                1,
+                "EmailField",
+                modelState,
+                userService
+            );
+
+            // Then
+            modelState["EmailField"].Errors.Count.Should().Be(1);
+        }
+
+        [Test]
+        public void ValidateEmailNotHeldAtCentre_does_not_raise_error_if_email_is_null()
+        {
+            // Given
+            string? email = null;
+
+            // When
+            RegistrationEmailValidator.ValidateEmailNotHeldAtCentreIfEmailNotYetValidated(
+                email,
+                1,
+                "EmailField",
+                modelState,
+                userService
+            );
+
+            // Then
             modelState.IsValid.Should().BeTrue();
         }
 

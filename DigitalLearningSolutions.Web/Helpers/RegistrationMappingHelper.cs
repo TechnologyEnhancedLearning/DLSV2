@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System;
+    using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Models;
@@ -97,10 +98,39 @@
                 data.Answer6,
                 false,
                 true,
-                false,
+                true,
                 data.ProfessionalRegistrationNumber,
                 true,
                 data.WelcomeEmailDate
+            );
+        }
+
+        public static DelegateRegistrationModel MapDelegateUploadTableRowToDelegateRegistrationModel(
+            DelegateTableRow delegateTableRow,
+            DateTime welcomeEmailDate,
+            int centreId
+        )
+        {
+            return new DelegateRegistrationModel(
+                delegateTableRow.FirstName!,
+                delegateTableRow.LastName!,
+                Guid.NewGuid().ToString(),
+                delegateTableRow.Email,
+                centreId,
+                delegateTableRow.JobGroupId!.Value,
+                null,
+                delegateTableRow.Answer1,
+                delegateTableRow.Answer2,
+                delegateTableRow.Answer3,
+                delegateTableRow.Answer4,
+                delegateTableRow.Answer5,
+                delegateTableRow.Answer6,
+                false,
+                delegateTableRow.Active!.Value,
+                true,
+                delegateTableRow.Prn,
+                true,
+                welcomeEmailDate
             );
         }
     }

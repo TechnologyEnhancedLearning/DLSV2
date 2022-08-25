@@ -2,12 +2,15 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Data.ViewModels;
     using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
@@ -141,6 +144,27 @@
                 result.UserEntity.Should().BeNull();
                 result.CentreToLogInto.Should().BeNull();
             }
+        }
+
+        [Test]
+        public void Valid_creds_for_unclaimed_delegate_returns_unclaimed_delegate()
+        {
+            // Given
+            var unclaimedUserEntity = new UserEntity(
+                Builder<UserAccount>.CreateNew().Build(),
+                new AdminAccount[] { },
+                new[]
+                {
+                    Builder<DelegateAccount>.CreateNew().With(da => da.RegistrationConfirmationHash = "hash").Build(),
+                }
+            );
+            GivenCredsMatchUserEntity(Username, Password, unclaimedUserEntity);
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            result.LoginAttemptResult.Should().Be(LoginAttemptResult.UnclaimedDelegateAccount);
         }
 
         [Test]
@@ -851,6 +875,20 @@
 
             // Then
             result.Should().BeFalse();
+        }
+
+        private void GivenCredsMatchUserEntity(string username, string password, UserEntity unclaimedUserEntity)
+        {
+            A.CallTo(() => userService.GetUserByUsername(username)).Returns(unclaimedUserEntity);
+            A.CallTo(() => userVerificationService.VerifyUserEntity(password, unclaimedUserEntity))
+                .Returns(
+                    new UserEntityVerificationResult(
+                        true,
+                        unclaimedUserEntity.DelegateAccounts.Select(da => da.Id),
+                        new List<int>(),
+                        new List<int>()
+                    )
+                );
         }
     }
 }

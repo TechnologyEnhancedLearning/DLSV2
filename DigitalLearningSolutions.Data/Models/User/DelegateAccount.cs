@@ -25,5 +25,7 @@
         public DateTime? CentreSpecificDetailsLastChecked { get; set; }
         public string? RegistrationConfirmationHash { get; set; }
         public DateTime? RegistrationConfirmationHashCreationDateTime { get; set; }
+
+        public bool IsYetToBeClaimed => RegistrationConfirmationHash != null;
     }
 }

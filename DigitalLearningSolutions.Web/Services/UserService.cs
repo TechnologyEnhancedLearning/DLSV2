@@ -79,7 +79,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         public UserAccount? GetUserAccountById(int userId);
 
-        UserAccount? GetUserByEmailAddress(string emailAddress);
+        UserAccount? GetUserAccountByEmailAddress(string emailAddress);
 
         string? GetCentreEmail(int userId, int centreId);
 
@@ -97,6 +97,8 @@ namespace DigitalLearningSolutions.Web.Services
         EmailVerificationDetails? GetEmailVerificationDetails(string email, string code);
 
         void SetEmailVerified(int userId, string email, DateTime verifiedDateTime);
+
+        bool EmailIsHeldAtCentre(string? email, int centreId);
     }
 
     public class UserService : IUserService
@@ -284,7 +286,7 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetUserAccountById(userId);
         }
 
-        public UserAccount? GetUserByEmailAddress(string emailAddress)
+        public UserAccount? GetUserAccountByEmailAddress(string emailAddress)
         {
             return userDataService.GetUserAccountByPrimaryEmail(emailAddress);
         }
@@ -326,9 +328,8 @@ namespace DigitalLearningSolutions.Web.Services
             return userDataService.GetCentreEmail(userId, centreId);
         }
 
-        public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)> GetAllActiveCentreEmailsForUser(
-            int userId
-        )
+        public IEnumerable<(int centreId, string centreName, string? centreSpecificEmail)>
+            GetAllActiveCentreEmailsForUser(int userId)
         {
             return userDataService.GetAllActiveCentreEmailsForUser(userId);
         }
@@ -497,6 +498,23 @@ namespace DigitalLearningSolutions.Web.Services
         {
             userDataService.SetPrimaryEmailVerified(userId, email, verifiedDateTime);
             userDataService.SetCentreEmailVerified(userId, email, verifiedDateTime);
+        }
+
+        public bool EmailIsHeldAtCentre(string email, int centreId)
+        {
+            var inUseAsCentreEmailAtCentre = userDataService.CentreSpecificEmailIsInUseAtCentre(email!, centreId);
+
+            var primaryEmailOwnerIsAtCentre = EmailIsHeldAsPrimaryEmailByUserAtCentre(email, centreId);
+
+            return inUseAsCentreEmailAtCentre || primaryEmailOwnerIsAtCentre;
+        }
+
+        private bool EmailIsHeldAsPrimaryEmailByUserAtCentre(string email, int centreId)
+        {
+            var primaryEmailOwner = userDataService.GetUserAccountByPrimaryEmail(email);
+            var primaryEmailOwnerIsAtCentre = primaryEmailOwner != null && userDataService
+                .GetDelegateAccountsByUserId(primaryEmailOwner.Id).Any(da => da.CentreId == centreId);
+            return primaryEmailOwnerIsAtCentre;
         }
 
         private bool NewUserRolesExceedAvailableSpots(
