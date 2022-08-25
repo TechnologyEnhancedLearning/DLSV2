@@ -76,7 +76,7 @@
 
         public async Task GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
         {
-            var user = userService.GetUserByEmailAddress(emailAddress);
+            var user = userService.GetUserAccountByEmailAddress(emailAddress);
 
             if (user == null)
             {

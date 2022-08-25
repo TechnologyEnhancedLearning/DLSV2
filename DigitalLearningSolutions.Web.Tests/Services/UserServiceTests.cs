@@ -1328,6 +1328,76 @@
             result.Should().BeNull();
         }
 
+        [Test]
+        public void EmailIsHeldAtCentre_returns_true_if_email_used_as_centre_email()
+        {
+            // Given
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email", 1)).Returns(true);
+
+            // When
+            var result = userService.EmailIsHeldAtCentre("email", 1);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void EmailIsHeldAtCentre_returns_true_if_used_as_primary_email_by_user_at_centre()
+        {
+            // Given
+            GivenPrimaryEmailHolderDelegateAccountIsAtCentre("email", 1);
+
+            // When
+            var result = userService.EmailIsHeldAtCentre("email", 1);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void EmailIsHeldAtCentre_returns_false_if_email_not_used_at_all()
+        {
+            // Given
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email", 1)).Returns(false);
+            A.CallTo(() => userDataService.GetUserAccountByPrimaryEmail("email")).Returns(null);
+
+            // When
+            var result = userService.EmailIsHeldAtCentre("email", 1);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void EmailIsHeldAtCentre_returns_false_if_email_used_only_at_other_centres()
+        {
+            // Given
+            GivenPrimaryEmailHolderDelegateAccountIsAtCentre("email", 2);
+            A.CallTo(() => userDataService.CentreSpecificEmailIsInUseAtCentre("email", 1)).Returns(false);
+
+            // When
+            var result = userService.EmailIsHeldAtCentre("email", 1);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        private void GivenPrimaryEmailHolderDelegateAccountIsAtCentre(string emailAddress, int centreId)
+        {
+            var primaryEmailHolderUserAccount = Builder<UserAccount>.CreateNew()
+                .With(u => u.Id = 1)
+                .Build();
+
+            var primaryEmailHolderDelegateAccount = Builder<DelegateAccount>.CreateNew()
+                .With(da => da.CentreId = centreId)
+                .Build();
+
+            A.CallTo(() => userDataService.GetUserAccountByPrimaryEmail(emailAddress))
+                .Returns(primaryEmailHolderUserAccount);
+            A.CallTo(() => userDataService.GetDelegateAccountsByUserId(1))
+                .Returns(new[] { primaryEmailHolderDelegateAccount });
+        }
+
         private void AssertAdminPermissionsCalledCorrectly(
             int adminId,
             AdminRoles adminRoles,

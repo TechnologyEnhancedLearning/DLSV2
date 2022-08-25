@@ -404,7 +404,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
             var userAccount = UserTestHelper.GetDefaultUserAccount();
 
-            A.CallTo(() => userService.GetUserByEmailAddress(primaryEmail)).Returns(userAccount);
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(primaryEmail)).Returns(userAccount);
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
@@ -422,7 +422,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // Then
-            A.CallTo(() => userService.GetUserByEmailAddress(primaryEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(primaryEmail)).MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     userAccount,
@@ -451,7 +451,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
             var userAccount = UserTestHelper.GetDefaultUserAccount();
 
-            A.CallTo(() => userService.GetUserByEmailAddress(A<string>._)).Returns(userAccount);
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(A<string>._)).Returns(userAccount);
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     A<UserAccount>._,
@@ -469,7 +469,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             );
 
             // Then
-            A.CallTo(() => userService.GetUserByEmailAddress(primaryEmail)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => userService.GetUserAccountByEmailAddress(primaryEmail)).MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => emailVerificationService.CreateEmailVerificationHashesAndSendVerificationEmails(
                     userAccount,
@@ -1055,6 +1055,34 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                         )
                 )
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void RegisterDelegateByCentre_throws_if_email_already_held_by_a_user_at_the_centre()
+        {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                centreSpecificEmail: "email",
+                centre: 1
+            );
+            A.CallTo(
+                    () => userService.EmailIsHeldAtCentre(
+                        "email",
+                        1
+                    )
+                )
+                .Returns(true);
+
+            // When
+            Action action = () => registrationService.RegisterDelegateByCentre(
+                model,
+                "",
+                false
+            );
+
+            // Then
+            action.Should().Throw<DelegateCreationFailedException>().Which.Error.Should()
+                .Be(DelegateCreationError.EmailAlreadyInUse);
         }
 
         [Test]

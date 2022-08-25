@@ -72,6 +72,7 @@
             switch (loginResult.LoginAttemptResult)
             {
                 case LoginAttemptResult.InvalidCredentials:
+                case LoginAttemptResult.UnclaimedDelegateAccount:
                     ModelState.AddModelError("Password", "The credentials you have entered are incorrect");
                     return View("Index", model);
                 case LoginAttemptResult.AccountsHaveMismatchedPasswords:

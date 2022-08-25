@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
+namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 {
     using System;
     using System.Collections.Generic;
@@ -243,6 +243,22 @@
             // Given
             A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
                 new LoginResult(LoginAttemptResult.InvalidCredentials)
+            );
+
+            // When
+            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Index").ModelAs<LoginViewModel>();
+            Assert.IsFalse(controller.ModelState.IsValid);
+        }
+
+        [Test]
+        public async Task Login_to_unclaimed_delegate_account_should_render_basic_form_with_error()
+        {
+            // Given
+            A.CallTo(() => loginService.AttemptLogin(A<string>._, A<string>._)).Returns(
+                new LoginResult(LoginAttemptResult.UnclaimedDelegateAccount)
             );
 
             // When
