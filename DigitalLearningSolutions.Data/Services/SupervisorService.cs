@@ -603,7 +603,7 @@ WHERE (ca.SelfAssessmentID = @selfAssessmentId) AND (cas.SupervisorDelegateId = 
             connection.Execute(@"UPDATE SelfAssessmentResultSupervisorVerifications SET Superceded = 1 WHERE CandidateAssessmentSupervisorID = @candidateAssessmentSupervisorId AND SelfAssessmentResultId = @resultId", new { candidateAssessmentSupervisorId, resultId });
             //Insert a new SelfAssessmentResultSupervisorVerifications record:
             var numberOfAffectedRows = connection.Execute(
-                     @"INSERT INTO SelfAssessmentResultSupervisorVerifications (CandidateAssessmentSupervisorID, SelfAssessmentResultId, EmailSent) VALUES (@candidateAssessmentSupervisorId, @resultId, GETUTCDATE())",  new { candidateAssessmentSupervisorId, resultId });
+                     @"INSERT INTO SelfAssessmentResultSupervisorVerifications (CandidateAssessmentSupervisorID, SelfAssessmentResultId, EmailSent) VALUES (@candidateAssessmentSupervisorId, @resultId, GETUTCDATE())", new { candidateAssessmentSupervisorId, resultId });
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(

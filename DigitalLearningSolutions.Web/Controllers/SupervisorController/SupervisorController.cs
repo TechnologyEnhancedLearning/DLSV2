@@ -55,7 +55,7 @@
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.multiPageFormService = multiPageFormService;
             this.registrationService = registrationService;
-    }
+        }
 
         private int GetCentreId()
         {
