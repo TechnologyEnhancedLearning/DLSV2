@@ -8,17 +8,17 @@
     }
 }
 
-<td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+<td class="nhsuk-table__cell nhsuk-u-font-size-16">
   <span class="nhsuk-table-responsive__heading">Questions </span>
   @Model.Question
 </td>
-<td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+<td class="nhsuk-table__cell nhsuk-u-font-size-16">
   <span class="nhsuk-table-responsive__heading">Self-assessment status </span>
   <partial name="../../Supervisor/Shared/_AssessmentQuestionResponse" model="Model" />
 </td>
 @if (((CurrentSelfAssessment)ViewData["selfAssessment"])?.IsSupervisorResultsReviewed ?? true)
 {
-  <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+  <td class="nhsuk-table__cell nhsuk-u-font-size-16">
     <span class="nhsuk-table-responsive__heading">Questions </span>
     <partial name="Shared/_AssessmentQuestionStatusTag" model="Model" />
 

@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
 @model AssessmentQuestion
 @{
-    var actionLinkText = Model.Requested != null && Model.Verified == null ? "Confirm" : "View";
+    var actionLinkText = Model.Requested != null && Model.Verified == null ? "Review" : "View";
     if (!String.IsNullOrEmpty(Model.SupportingComments) || !String.IsNullOrEmpty(Model.SupervisorComments))
     {
         var commentStr = ViewData["ReviewerCommentsLabel"] ?? "comments";

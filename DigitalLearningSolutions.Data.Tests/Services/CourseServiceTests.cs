@@ -550,14 +550,14 @@
             const int categoryId = 1;
             const int centreId = 1;
             var courseOptions = new List<CourseAssessmentDetails>();
-            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+            A.CallTo(() => courseDataService.GetNonArchivedCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courseOptions);
 
             // When
             var result = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryId);
 
             // Then
-            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+            A.CallTo(() => courseDataService.GetNonArchivedCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .MustHaveHappened();
             result.Should().BeEquivalentTo(courseOptions);
         }

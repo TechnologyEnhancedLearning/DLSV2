@@ -1,30 +1,45 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model NumericInputViewModel
-
+@{
+    var describedBy = "";
+    @if (Model.HasError)
+    {
+        describedBy = @Model.Name + "-error";
+    }
+    @if (Model.HintText != null)
+    {
+        describedBy += (describedBy != "" ? " " : "");
+        describedBy += @Model.Name + "-hint";
+    }
+}
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
-  <label class="nhsuk-label" for="@Model.Name">
-    @Model.Label
-  </label>
-  @if (Model.HintText != null) {
-    <div class="nhsuk-hint" id="@Model.Name-hint">
-      @Model.HintText
-    </div>
-  }
-  @if (Model.HasError) {
-    <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
-      @foreach (var errorMessage in Model.ErrorMessages) {
-        <span class="error-message--margin-bottom-1 nhsuk-error-message">
-          <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
-        </span>
-      }
-    </div>
-  }
-  <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
-         id="@Model.Id"
-         name="@Model.Name"
-         value="@Model.Value"
-         type="@Model.Type"
-         pattern="[0-9]*"
-         inputmode="numeric"
-         aria-describedby="@Model.Name-error @Model.Name-hint" />
+    <label class="nhsuk-label" for="@Model.Name">
+        @Model.Label
+    </label>
+    @if (Model.HintText != null)
+    {
+        <div class="nhsuk-hint" id="@Model.Name-hint">
+            @Model.HintText
+        </div>
+    }
+    @if (Model.HasError)
+    {
+        <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+            @foreach (var errorMessage in Model.ErrorMessages)
+            {
+                <span class="error-message--margin-bottom-1 nhsuk-error-message">
+                    <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
+                </span>
+            }
+        </div>
+    }
+    <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
+           id="@Model.Id"
+           name="@Model.Name"
+           value="@Model.Value"
+           type="@Model.Type"
+           pattern="[0-9]*"
+           inputmode="numeric"
+           aria-invalid="@(Model.HasError ? "true" : null)"
+           aria-describedby="@(describedBy!= "" ? @describedBy : null)" />
 </div>

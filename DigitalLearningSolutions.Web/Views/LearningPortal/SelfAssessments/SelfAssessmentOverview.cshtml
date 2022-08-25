@@ -30,6 +30,8 @@
   ViewData["Title"] = "Self Assessment";
   ViewData["SelfAssessmentTitle"] = Model.SelfAssessment.Name;
 }
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessmentOverview.css")" asp-append-version="true">
 @section breadcrumbs {
   <li class="nhsuk-breadcrumb__item">
     <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.SelfAssessment.Name) introduction</a>
@@ -46,14 +48,15 @@
     </a>
   </p>
 }
-
-<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
-<div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
-  <partial name="SelfAssessments/_SelfAssessmentOverallProgress"
-           model="@competencySummaries"
-           view-data="@(new ViewDataDictionary(ViewData) { { "IsSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed } })" />
-</div>
+    @if (Model.SelfAssessment.IsSupervised && Model.CompetencyGroups.Count() > 5)
+{
+    <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
+        <partial name="SelfAssessments/_SelfAssessmentOverallProgress"
+             model="@competencySummaries"
+             view-data="@(new ViewDataDictionary(ViewData) { { "IsSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed } })" />
+    </div>
+}
 <partial name="SelfAssessments/_SearchSelfAssessmentOverview"
          model="@Model.SearchViewModel"
          view-data="@(new ViewDataDictionary(ViewData) { { "parent", Model } })" />
@@ -94,34 +97,6 @@
             <partial name="SelfAssessments/_MeanScores"
                      view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
           }
-          <style>
-            .nhsuk-expander[open] details.nhsuk-details[open] .nhsuk-details__summary-text::before {
-              display: block;
-              width: 0;
-              height: 0;
-              border-style: solid;
-              border-color: transparent;
-              clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
-              border-width: 12.124px 7px 0 7px;
-              border-top-color: inherit;
-            }
-            .nhsuk-details[open] .nhsuk-details .nhsuk-details__summary-text::before {
-              bottom: 0;
-              content: "";
-              left: 0;
-              margin: auto;
-              position: absolute;
-              top: 0;
-              display: block;
-              width: 0;
-              height: 0;
-              border-style: solid;
-              border-color: transparent;
-              clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
-              border-width: 7px 0 7px 12.124px;
-              border-left-color: inherit;
-            }
-          </style>
           <partial name="SelfAssessments/_OverviewTable"
                    view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation }, { "selfAssessment", Model.SelfAssessment }, { "ReviewerCommentsLabel", Model.SelfAssessment.ReviewerCommentsLabel } })"
                    model="competencyGroup" />

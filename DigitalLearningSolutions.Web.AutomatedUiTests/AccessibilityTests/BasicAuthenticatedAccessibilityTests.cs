@@ -14,7 +14,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/MyAccount", "My account")]
         [InlineData("/MyAccount/EditDetails", "Edit details")]
         [InlineData("/FindYourCentre", "Find your centre")]
-        [InlineData("/Signposting/LaunchLearningResource/3", "View resource \"Test image resource\"")]
+        //[InlineData("/Signposting/LaunchLearningResource/3", "View resource \"Test image resource\"")]
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData(
             "/TrackingSystem/Centre/Administrators/1/EditAdminRoles?returnPageQuery=pageNumber%3D1",
