@@ -61,6 +61,7 @@
     <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.2.9" />
     <PackageReference Include="FuzzySharp" Version="2.0.2" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.28" />
+    <PackageReference Include="HtmlSanitizer" Version="7.1.542" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.4" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
     <PackageReference Include="Microsoft.FeatureManagement" Version="2.0.0" />

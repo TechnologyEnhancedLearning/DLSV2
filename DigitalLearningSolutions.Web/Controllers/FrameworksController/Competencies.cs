@@ -1,12 +1,14 @@
 ﻿using DigitalLearningSolutions.Data.Models.Frameworks;
 using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 using DigitalLearningSolutions.Data.Models.SelfAssessments;
+using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System.Web;
 using System.Net;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
@@ -64,10 +66,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (userRole < 2) return StatusCode(403);
             if (competencyGroupBase.ID > 0)
             {
-                frameworkService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupBase.CompetencyGroupID, competencyGroupBase.Name, competencyGroupBase.Description, adminId);
+                frameworkService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupBase.CompetencyGroupID, competencyGroupBase.Name, SanitizerHelper.SanitizeHtmlData
+             (competencyGroupBase.Description), adminId);
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
             }
-            var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyGroupBase.Name, competencyGroupBase.Description, adminId);
+            var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyGroupBase.Name, SanitizerHelper.SanitizeHtmlData(competencyGroupBase.Description), adminId);
             if (newCompetencyGroupId > 0)
             {
                 var newFrameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminId);
@@ -133,6 +136,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/{frameworkId}/Competency/")]
         public IActionResult AddEditFrameworkCompetency(int frameworkId, FrameworkCompetency frameworkCompetency, int? frameworkCompetencyGroupId, int frameworkCompetencyId = 0, int[] selectedFlagIds = null)
         {
+            frameworkCompetency.Description = SanitizerHelper.SanitizeHtmlData(frameworkCompetency.Description);
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(FrameworkCompetency.Name));
