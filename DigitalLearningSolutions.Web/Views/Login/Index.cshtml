@@ -1,54 +1,43 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Login
+@using DigitalLearningSolutions.Web.Extensions
 @model LoginViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Log in" : "Log in";
-  var usernameError = ViewData.ModelState["Username"]?.Errors?.Count > 0;
-  var passwordError = ViewData.ModelState["Password"]?.Errors?.Count > 0;
-  var passwordInputErrorClass = passwordError ? "nhsuk-input--error" : "";
-  var passwordFormErrorClass = passwordError ? "nhsuk-form-group--error" : "";
-  var usernameInputErrorClass = usernameError ? "nhsuk-input--error" : "";
-  var usernameFormGroupError = usernameError ? "nhsuk-form-group--error" : "";
 }
-
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="Index">
 
-      @if (errorHasOccurred) {
+      @if (errorHasOccurred)
+      {
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Username), nameof(Model.Password) })" />
       }
 
-      <input type="hidden" value="@Model.ReturnUrl" asp-for="ReturnUrl"/>
+      <input type="hidden" value="@Model.ReturnUrl" asp-for="ReturnUrl" />
 
       <div class="nhsuk-u-margin-bottom-8">
         <h1 id="page-heading" class="nhsuk-heading-xl">Log in</h1>
         <p class="nhsuk-body-l">Enter your details to log into your account.</p>
       </div>
 
-      <div class="nhsuk-form-group @usernameFormGroupError">
-        <label class="nhsuk-label" for="Username">
-          Email or user ID
-        </label>
-        @if (usernameError) {
-          <span class="nhsuk-error-message" id="username-error">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Username"].Errors[0].ErrorMessage
-          </span>
-        }
-        <input class="nhsuk-input nhsuk-u-width-one-half @usernameInputErrorClass" type="text" id="Username" spellcheck="false" autocomplete="email" aria-describedby="username-error" asp-for="Username"/>
-      </div>
+      <vc:text-input asp-for="Username"
+                     label="Email or user ID"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="username"
+                     css-class="nhsuk-u-width-one-half" />
 
-      <div class="nhsuk-form-group @passwordFormErrorClass">
-        <label class="nhsuk-label" for="Password">
-          Password
-        </label>
-        @if (passwordError) {
-          <span class="nhsuk-error-message" id="password-error">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Password"].Errors[0].ErrorMessage
-          </span>
-        }
-        <input class="nhsuk-input nhsuk-u-width-one-half @passwordInputErrorClass" type="password" id="Password" spellcheck="false" aria-describedby="password-error" asp-for="Password"/>
-      </div>
+      <vc:text-input asp-for="Password"
+                     label="Password"
+                     populate-with-current-value="true"
+                     type="password"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="current-password"
+                     css-class="nhsuk-u-width-one-half" />
 
       <div class="nhsuk-checkboxes__item">
         <input class="nhsuk-checkboxes__input" type="checkbox" id="RememberMe" spellcheck="false" asp-for="RememberMe"/>
@@ -66,7 +55,6 @@
           <a target="_blank" asp-controller="LearningSolutions" asp-action="Terms">Terms of Use</a>
         </p>
       </div>
-
       <button class="nhsuk-button" type="submit">Log in</button>
       <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-2" asp-controller="ForgotPassword" asp-action="Index" role="button">
         Forgot password

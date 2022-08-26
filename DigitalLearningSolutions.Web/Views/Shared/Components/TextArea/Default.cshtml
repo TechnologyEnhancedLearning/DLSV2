@@ -1,34 +1,57 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model TextAreaViewModel
-
+@{
+    var describedBy = "";
+    @if (Model.HasError)
+    {
+        describedBy = @Model.Name + "-error";
+    }
+    @if (Model.HintText != null)
+    {
+        describedBy += (describedBy != "" ? " " : "");
+        describedBy += @Model.Name + "-hint";
+    }
+    @if (Model.CharacterCount.HasValue)
+    {
+        describedBy += (describedBy != "" ? " " : "");
+        describedBy += @Model.Name + "-info";
+    }
+}
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
-  <label class="nhsuk-label" for="@Model.Name">
-    @Model.Label
-  </label>
-  @if (Model.HintText != null) {
-    <div class="nhsuk-hint" id="@Model.Name-hint">
-      @Model.HintText
-    </div>
-  }
-  @if (Model.HasError) {
-    <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
-      @foreach (var errorMessage in Model.ErrorMessages) {
-        <span class="error-message--margin-bottom-1 nhsuk-error-message">
-          <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
-        </span>
-      }
-    </div>
-  }
-  <textarea class="nhsuk-textarea @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
-         id="@Model.Id"
-         name="@Model.Name"
-         value="@Model.Value"
-         rows="@Model.Rows"
-         spellcheck="@Model.SpellCheck"
-         aria-describedby="@Model.Name-error @Model.Name-hint @Model.Name-info">@Model.Value</textarea>
-  @if (Model.CharacterCount.HasValue) {
-    <div id="@Model.Name-info" class="nhsuk-hint">
-      You can enter up to @Model.CharacterCount characters
-    </div>
-  }
+    <label class="nhsuk-label" for="@Model.Name">
+        @Model.Label
+    </label>
+    @if (Model.HintText != null)
+    {
+        <div class="nhsuk-hint" id="@Model.Name-hint">
+            @Model.HintText
+        </div>
+    }
+    @if (Model.HasError)
+    {
+        <div id="@Model.Name-error" class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+            @foreach (var errorMessage in Model.ErrorMessages)
+            {
+                <span class="error-message--margin-bottom-1 nhsuk-error-message">
+                    <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
+                </span>
+            }
+        </div>
+    }
+    <textarea class="nhsuk-textarea @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
+              id="@Model.Id"
+              name="@Model.Name"
+              value="@Model.Value"
+              rows="@Model.Rows"
+              spellcheck="@Model.SpellCheck"
+              aria-invalid="@(Model.HasError ? "true" : null)"
+              aria-describedby="@(describedBy!= "" ? @describedBy : null)">
+              @Model.Value
+</textarea>
+    @if (Model.CharacterCount.HasValue)
+    {
+        <div id="@Model.Name-info" class="nhsuk-hint">
+            You can enter up to @Model.CharacterCount characters
+        </div>
+    }
 </div>

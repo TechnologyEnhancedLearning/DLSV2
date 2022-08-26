@@ -28,6 +28,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId);
 
+        IEnumerable<CourseStatistics> GetNonArchivedCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId);
+
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
 
         DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId);
@@ -37,6 +39,8 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
         IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
+
+        IEnumerable<CourseAssessmentDetails> GetNonArchivedCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
 
         IEnumerable<ApplicationDetails> GetApplicationsAvailableToCentreByCategory(int centreId, int? categoryId);
 
@@ -141,8 +145,50 @@ namespace DigitalLearningSolutions.Data.DataServices
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
                 AND can.CandidateId = ca.CandidateId) AS AttemptsPassed";
 
+        private const string TutorialWithLearningCountQuery =
+            @"SELECT COUNT(ct.TutorialID)
+                FROM CustomisationTutorials AS ct
+                INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
+                WHERE ct.Status = 1 AND ct.CustomisationID = c.CustomisationID";
+
+        private const string TutorialWithDiagnosticCountQuery =
+            @"SELECT COUNT(ct.TutorialID)
+                FROM CustomisationTutorials AS ct
+                INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
+                INNER JOIN Customisations AS c ON c.CustomisationID = ct.CustomisationID
+                INNER JOIN Applications AS a ON a.ApplicationID = c.ApplicationID
+                WHERE ct.DiagStatus = 1 AND a.DiagAssess = 1 AND ct.CustomisationID = c.CustomisationID
+                    AND a.ArchivedDate IS NULL AND a.DefaultContentTypeID <> 4";
+
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
+
+        private readonly string CourseStatisticsQuery = @$"SELECT
+                        cu.CustomisationID,
+                        cu.CentreID,
+                        cu.Active,
+                        cu.AllCentres,
+                        ap.ApplicationId,
+                        ap.ApplicationName,
+                        cu.CustomisationName,
+                        {DelegateCountQuery},
+                        {CompletedCountQuery},
+                        {AllAttemptsQuery},
+                        {AttemptsPassedQuery},
+                        cu.HideInLearnerPortal,
+                        cc.CategoryName,
+                        ct.CourseTopic,
+                        cu.LearningTimeMins AS LearningMinutes,
+                        cu.IsAssessed
+                    FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                    INNER JOIN dbo.CourseCategories AS cc ON cc.CourseCategoryID = ap.CourseCategoryID
+                    INNER JOIN dbo.CourseTopics AS ct ON ct.CourseTopicID = ap.CourseTopicId
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                        AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
+                        AND ca.CentreID = @centreId
+                        AND ap.DefaultContentTypeID <> 4";
 
         private readonly string selectDelegateCourseInfoQuery =
             @$"SELECT
@@ -193,6 +239,27 @@ namespace DigitalLearningSolutions.Data.DataServices
             LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = pr.SupervisorAdminId
             LEFT OUTER JOIN AdminUsers auEnrolledBy ON auEnrolledBy.AdminID = pr.EnrolledByAdminID
             INNER JOIN Candidates AS ca ON ca.CandidateID = pr.CandidateID";
+
+        private readonly string courseAssessmentDetailsQuery = $@"SELECT
+                        c.CustomisationID,
+                        c.CentreID,
+                        c.ApplicationID,
+                        ap.ApplicationName,
+                        c.CustomisationName,
+                        c.Active,
+                        c.IsAssessed,
+                        cc.CategoryName,
+                        ct.CourseTopic,
+                        CASE WHEN ({TutorialWithLearningCountQuery}) > 0 THEN 1 ELSE 0 END  AS HasLearning,
+                        CASE WHEN ({TutorialWithDiagnosticCountQuery}) > 0 THEN 1 ELSE 0 END AS HasDiagnostic
+                    FROM Customisations AS c
+                    INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
+                    INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
+                    WHERE (c.CentreID = @centreId OR c.AllCentres = 1)
+                        AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                        AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreID) AND (Active = 1))
+                        AND ap.DefaultContentTypeID <> 4";
 
         public CourseDataService(IDbConnection connection, ILogger<CourseDataService> logger)
         {
@@ -309,7 +376,6 @@ namespace DigitalLearningSolutions.Data.DataServices
                             AND cu.Active = 1
                             AND cu.CentreID = @centreId
                             AND ca.CentreID = @centreId
-                            AND ap.ArchivedDate IS NULL
                             AND ap.DefaultContentTypeID <> 4",
                 new { centreId, adminCategoryId }
             );
@@ -321,33 +387,18 @@ namespace DigitalLearningSolutions.Data.DataServices
         )
         {
             return connection.Query<CourseStatistics>(
-                @$"SELECT
-                        cu.CustomisationID,
-                        cu.CentreID,
-                        cu.Active,
-                        cu.AllCentres,
-                        ap.ApplicationId,
-                        ap.ApplicationName,
-                        cu.CustomisationName,
-                        {DelegateCountQuery},
-                        {CompletedCountQuery},
-                        {AllAttemptsQuery},
-                        {AttemptsPassedQuery},
-                        cu.HideInLearnerPortal,
-                        cc.CategoryName,
-                        ct.CourseTopic,
-                        cu.LearningTimeMins AS LearningMinutes,
-                        cu.IsAssessed
-                    FROM dbo.Customisations AS cu
-                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
-                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
-                    INNER JOIN dbo.CourseCategories AS cc ON cc.CourseCategoryID = ap.CourseCategoryID
-                    INNER JOIN dbo.CourseTopics AS ct ON ct.CourseTopicID = ap.CourseTopicId
-                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                        AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
-                        AND ca.CentreID = @centreId
-                        AND ap.ArchivedDate IS NULL
-                        AND ap.DefaultContentTypeID <> 4",
+                CourseStatisticsQuery,
+                new { centreId, categoryId }
+            );
+        }
+
+        public IEnumerable<CourseStatistics> GetNonArchivedCourseStatisticsAtCentreFilteredByCategory(
+            int centreId,
+            int? categoryId
+        )
+        {
+            return connection.Query<CourseStatistics>(
+                @$"{CourseStatisticsQuery} AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
         }
@@ -357,7 +408,6 @@ namespace DigitalLearningSolutions.Data.DataServices
             return connection.Query<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
-                        AND ap.ArchivedDate IS NULL
                         AND pr.RemovedDate IS NULL
                         AND ap.DefaultContentTypeID <> 4",
                 new { delegateId }
@@ -369,7 +419,6 @@ namespace DigitalLearningSolutions.Data.DataServices
             return connection.QuerySingleOrDefault<DelegateCourseInfo>(
                 $@"{selectDelegateCourseInfoQuery}
                     WHERE pr.ProgressID = @progressId
-                        AND ap.ArchivedDate IS NULL
                         AND ap.DefaultContentTypeID <> 4",
                 new { progressId }
             );
@@ -464,43 +513,16 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
         {
-            const string tutorialWithLearningCountQuery =
-                @"SELECT COUNT(ct.TutorialID)
-                FROM CustomisationTutorials AS ct
-                INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
-                WHERE ct.Status = 1 AND ct.CustomisationID = c.CustomisationID";
-
-            const string tutorialWithDiagnosticCountQuery =
-                @"SELECT COUNT(ct.TutorialID)
-                FROM CustomisationTutorials AS ct
-                INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
-                INNER JOIN Customisations AS c ON c.CustomisationID = ct.CustomisationID
-                INNER JOIN Applications AS a ON a.ApplicationID = c.ApplicationID
-                WHERE ct.DiagStatus = 1 AND a.DiagAssess = 1 AND ct.CustomisationID = c.CustomisationID
-                    AND a.ArchivedDate IS NULL AND a.DefaultContentTypeID <> 4";
-
             return connection.Query<CourseAssessmentDetails>(
-                $@"SELECT
-                        c.CustomisationID,
-                        c.CentreID,
-                        c.ApplicationID,
-                        ap.ApplicationName,
-                        c.CustomisationName,
-                        c.Active,
-                        c.IsAssessed,
-                        cc.CategoryName,
-                        ct.CourseTopic,
-                        CASE WHEN ({tutorialWithLearningCountQuery}) > 0 THEN 1 ELSE 0 END  AS HasLearning,
-                        CASE WHEN ({tutorialWithDiagnosticCountQuery}) > 0 THEN 1 ELSE 0 END AS HasDiagnostic
-                    FROM Customisations AS c
-                    INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
-                    INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
-                    INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
-                    WHERE ap.ArchivedDate IS NULL
-                        AND (c.CentreID = @centreId OR c.AllCentres = 1)
-                        AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                        AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreID) AND (Active = 1))
-                        AND ap.DefaultContentTypeID <> 4",
+                courseAssessmentDetailsQuery,
+                new { centreId, categoryId }
+            );
+        }
+
+        public IEnumerable<CourseAssessmentDetails> GetNonArchivedCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
+        {
+            return connection.Query<CourseAssessmentDetails>(
+                @$"{courseAssessmentDetailsQuery} AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
         }
@@ -567,7 +589,6 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     WHERE cn.CentreID = @centreID
                         AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                        AND ap.ArchivedDate IS NULL
                         AND ap.DefaultContentTypeID <> 4",
                 new { centreId, categoryId }
             );

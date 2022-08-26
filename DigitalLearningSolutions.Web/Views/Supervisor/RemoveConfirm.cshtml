@@ -18,7 +18,7 @@
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred)
     {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ConfirmedRemove) })" />
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
     }
     <h1 id="page-heading">Confirm Remove Staff Member</h1>
     <div class="nhsuk-grid-row">
@@ -34,7 +34,7 @@
     <p class="nhsuk-body-m">You are supervising @Model.CandidateAssessmentCount profile assessments for this member of staff.</p>
     <form method="post" asp-controller="Supervisor">
       <div class="nhsuk-checkboxes__item">
-        <vc:single-checkbox asp-for="@nameof(Model.ConfirmedRemove)"
+        <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"
                             label="I am sure that I wish to remove @Model.FirstName @Model.LastName from my staff list"
                             hint-text="This action will remove the staff member from your staff list and you will no longer be able to review their self assessments." />
       </div>

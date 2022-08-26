@@ -235,6 +235,7 @@
         {
             return connection.Query<CandidateAssessment>(
                 @"SELECT
+                        ID,
                         CandidateId AS DelegateId,
                         SelfAssessmentID,
                         CompletedDate,

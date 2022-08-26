@@ -24,6 +24,7 @@
         private readonly IConfiguration config;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IMultiPageFormService multiPageFormService;
+        private readonly IRegistrationService registrationService;
 
         public SupervisorController(
            ISupervisorService supervisorService,
@@ -37,7 +38,8 @@
            ILogger<SupervisorController> logger,
            IConfiguration config,
            ISearchSortFilterPaginateService searchSortFilterPaginateService,
-           IMultiPageFormService multiPageFormService
+           IMultiPageFormService multiPageFormService,
+           IRegistrationService registrationService
         )
         {
             this.supervisorService = supervisorService;
@@ -52,7 +54,8 @@
             this.config = config;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.multiPageFormService = multiPageFormService;
-    }
+            this.registrationService = registrationService;
+        }
 
         private int GetCentreId()
         {
