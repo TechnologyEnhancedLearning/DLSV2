@@ -111,7 +111,23 @@
                 learningResourceReferenceId
             );
 
-            learningLogItemsDataService.InsertCandidateAssessmentLearningLogItem(selfAssessmentId, learningLogItemId);
+            // We can assume a single Candidate Assessment because we'll be adding a uniqueness constraint
+            // on CandidateAssessments (candidateId, selfAssessmentId) before releasing (see HEEDLS-932)
+            var candidateAssessmentIdIfAny = selfAssessmentDataService
+                .GetCandidateAssessments(delegateId, selfAssessmentId)
+                .SingleOrDefault()?.Id;
+
+            if (candidateAssessmentIdIfAny == null)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot add resource to action plan as user {delegateId} is not enrolled on self assessment {selfAssessmentId}"
+                );
+            }
+
+            learningLogItemsDataService.InsertCandidateAssessmentLearningLogItem(
+                candidateAssessmentIdIfAny!.Value,
+                learningLogItemId
+            );
 
             foreach (var competencyId in learningLogCompetenciesToAdd)
             {

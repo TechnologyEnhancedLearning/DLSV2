@@ -11,6 +11,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
+    using JsonSerializer = System.Text.Json.JsonSerializer;
 
     public interface ILearningHubApiClient
     {
@@ -75,18 +76,19 @@
             IEnumerable<int> resourceReferenceIds
         )
         {
-            var referenceIdQueryStrings =
-                resourceReferenceIds.Select(id => GetQueryString("resourceReferenceIds", id.ToString()));
-            var queryString = string.Join("&", referenceIdQueryStrings);
+            var referenceIds = resourceReferenceIds.ToList();
+            var objectWithReferenceIds = new { referenceIds = referenceIds.ToList() };
 
-            var response = await GetStringAsync($"/Resource/Bulk?{queryString}");
+            var jsonString = JsonSerializer.Serialize(objectWithReferenceIds);
+            var response = await GetStringAsync($"/Resource/BulkJson?{jsonString}");
+
             var result = JsonConvert.DeserializeObject<BulkResourceReferences>(response);
             return result;
         }
 
         public async Task<CataloguesResult> GetCatalogues()
         {
-            var response = await GetStringAsync($"/Catalogues");
+            var response = await GetStringAsync("/Catalogues");
             var result = JsonConvert.DeserializeObject<CataloguesResult>(response);
             return result;
         }
@@ -104,7 +106,8 @@
             var offSetQueryString = GetQueryString("offset", offset?.ToString());
             var limitQueryString = GetQueryString("limit", limit?.ToString());
 
-            var queryStrings = new List<string> { textQueryString, catalogueIdString, offSetQueryString, limitQueryString };
+            var queryStrings = new List<string>
+                { textQueryString, catalogueIdString, offSetQueryString, limitQueryString };
 
             if (resourceTypes != null)
             {

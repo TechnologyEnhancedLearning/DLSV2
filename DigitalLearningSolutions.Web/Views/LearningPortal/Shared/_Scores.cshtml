@@ -3,23 +3,27 @@
 
 @if (Model.HasDiagnosticScore() || Model.HasPassedSections())
   {
-    <div class="nhsuk-grid-row">
       @if (Model.HasDiagnosticScore())
       {
-        <div class="nhsuk-grid-column-one-quarter">
-          <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-diagnostic-score-title" aria-describedby="@Model.Id-name">Diagnostic Score</span>
-          <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
-          <p aria-describedby="@Model.Id-name @Model.Id-diagnostic-score-title" name="diagnostic-score">@Model.DiagnosticScore</p>
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Diagnostic Score
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+               @Model.DiagnosticScore
+            </dd>
         </div>
       }
       @if (Model.HasPassedSections())
       {
-        <div class="nhsuk-grid-column-one-quarter">
-          <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-passed-sections-title" aria-describedby="@Model.Id-name">Passed Sections</span>
-          <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
-          <p aria-describedby="@Model.Id-name @Model.Id-passed-sections-title" name="passed-sections">@Model.DisplayPassedSections()</p>
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Passed Sections
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+               @Model.DisplayPassedSections()
+            </dd>
         </div>
       }
-    </div>
   }
 

@@ -14,7 +14,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/MyAccount", "My account")]
         [InlineData("/MyAccount/EditDetails", "Edit details")]
         [InlineData("/FindYourCentre", "Find your centre")]
-        [InlineData("/Signposting/LaunchLearningResource/3", "View resource \"Test image resource\"")]
+        //[InlineData("/Signposting/LaunchLearningResource/3", "View resource \"Test image resource\"")]
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData(
             "/TrackingSystem/Centre/Administrators/1/EditAdminRoles?returnPageQuery=pageNumber%3D1",
@@ -39,7 +39,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Centre/Configuration/RegistrationPrompts/1/Remove",
             "Remove delegate registration prompt"
         )]
-        [InlineData("/TrackingSystem/Centre/Reports/Courses", "Centre reports")]
+        [InlineData("/TrackingSystem/Centre/Reports/Courses", "Course reports")]
         [InlineData("/TrackingSystem/Centre/SystemNotifications", "New system notifications")]
         [InlineData("/TrackingSystem/Centre/TopCourses", "Top courses")]
         [InlineData("/TrackingSystem/CourseSetup", "Centre course setup")]

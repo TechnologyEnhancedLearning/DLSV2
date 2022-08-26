@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FizzWare.NBuilder;
@@ -64,6 +65,7 @@
             const int learningResourceReferenceId = 1;
             const int delegateId = 2;
             const int selfAssessmentId = 3;
+            const int candidateAssessmentId = 4;
             const string resourceName = "Activity";
             const string resourceLink = "www.test.com";
             const int learningLogId = 4;
@@ -93,6 +95,11 @@
             A.CallTo(() => selfAssessmentDataService.GetCompetencyIdsForSelfAssessment(selfAssessmentId))
                 .Returns(assessmentCompetencies);
 
+            A.CallTo(() => selfAssessmentDataService.GetCandidateAssessments(delegateId, selfAssessmentId))
+                .Returns(
+                    new[] { Builder<CandidateAssessment>.CreateNew().With(ca => ca.Id = candidateAssessmentId).Build() }
+                );
+
             A.CallTo(
                 () => learningLogItemsDataService.InsertLearningLogItem(
                     A<int>._,
@@ -120,7 +127,7 @@
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
                 () => learningLogItemsDataService.InsertCandidateAssessmentLearningLogItem(
-                    selfAssessmentId,
+                    candidateAssessmentId,
                     learningLogId
                 )
             ).MustHaveHappenedOnceExactly();

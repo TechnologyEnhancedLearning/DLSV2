@@ -21,7 +21,7 @@
             int learningResourceReferenceId
         );
 
-        void InsertCandidateAssessmentLearningLogItem(int assessmentId, int learningLogId);
+        void InsertCandidateAssessmentLearningLogItem(int candidateAssessmentId, int learningLogId);
 
         void InsertLearningLogItemCompetencies(int learningLogId, int competencyId, DateTime associatedDate);
 
@@ -156,13 +156,13 @@
             return learningLogItemId;
         }
 
-        public void InsertCandidateAssessmentLearningLogItem(int assessmentId, int learningLogId)
+        public void InsertCandidateAssessmentLearningLogItem(int candidateAssessmentId, int learningLogId)
         {
             connection.Execute(
                 @"INSERT INTO CandidateAssessmentLearningLogItems
                     (CandidateAssessmentID, LearningLogItemID)
-                    VALUES (@assessmentId, @learningLogId)",
-                new { assessmentId, learningLogId }
+                    VALUES (@candidateAssessmentId, @learningLogId)",
+                new { candidateAssessmentId, learningLogId }
             );
         }
 

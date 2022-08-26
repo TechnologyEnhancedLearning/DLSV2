@@ -1,6 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 @model IBasePaginatedViewModel
 
-<nav class="nhsuk-pagination @(Model.TotalPages == 1 ? "pagination-hidden" : "")" role="navigation" aria-label="Bottom Pagination">
+<nav class="nhsuk-pagination @(Model.TotalPages == 1 ? "pagination-hidden" : "")" aria-label="Bottom Pagination">
   <partial name="PaginatedPage/_BaseConfigurablePaginationNav" model="(Model, true)" />
 </nav>
