@@ -32,17 +32,17 @@
   <feature name="@(FeatureFlags.SupervisorProfileAssessmentInterface)" negate="true">
     <li class="nhsuk-grid-column-full nhsuk-card-group__item">
   </feature>
-  <div class="nhsuk-card">
-    <div class="nhsuk-card__content">
-      <p class="nhsuk-heading-xl nhsuk-u-font-size-32 nhsuk-u-margin-bottom-3">
-        @Model.DashboardData.StaffCount Staff  @if (Model.DashboardData.StaffUnregisteredCount > 0)
-        {
-          <span class="nhsuk-u-secondary-text-color nhsuk-u-font-weight-normal">
-            (@Model.DashboardData.StaffUnregisteredCount unregistered)
-          </span>
-        }
-      </p>
-      <ul class="nhsuk-contents-list__list">
+      <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+          <p class="nhsuk-heading-xl nhsuk-u-font-size-32 nhsuk-u-margin-bottom-3">
+            @Model.DashboardData.StaffCount Staff  @if (Model.DashboardData.StaffUnregisteredCount > 0)
+            {
+              <span class="nhsuk-u-secondary-text-color nhsuk-u-font-weight-normal">
+                (@Model.DashboardData.StaffUnregisteredCount not registered)
+              </span>
+            }
+          </p>
+          <ul class="nhsuk-contents-list__list">
 
         <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="MyStaffList">View My Staff List</a></li>
       </ul>
