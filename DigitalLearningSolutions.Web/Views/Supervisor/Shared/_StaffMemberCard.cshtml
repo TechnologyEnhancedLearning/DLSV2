@@ -72,14 +72,14 @@
                     <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" view-data="@(new ViewDataDictionary(ViewData){{"isSupervisor", Model.IsUserSupervisor}})" />
                 }
             </div>
-            @if (Model.SupervisorDelegateDetail.DlsRole == DlsRole.Learner && Model.IsUserSupervisor)
+            @if (Model.SupervisorDelegateDetail.DlsRole == DlsRole.Learner && Model.IsUserSupervisor && Model.SupervisorDelegateDetail.CandidateID != null)
             {
                 <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4 button-small"
                data-return-page-enabled="true"
                asp-action="NominateSupervisor"
                asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
                asp-route-returnPageQuery="@Model.ReturnPageQuery">
-                    Nominate supervisor
+                    Promote to Nominated supervisor
                 </a>
             }
             @if (Model.SupervisorDelegateDetail.CandidateAssessmentCount == 0)

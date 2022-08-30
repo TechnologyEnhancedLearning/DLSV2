@@ -1,4 +1,5 @@
 import { Jodit } from 'jodit';
+import DOMPurify from 'dompurify';
 
 let jodited = false;
 if (jodited === false) {
@@ -65,5 +66,9 @@ if (jodited === false) {
 
   if (editor != null) {
     jodited = true;
+    editor.e.on('blur', () => {
+      const clean = DOMPurify.sanitize(editor.editor.innerHTML);
+      editor.editor.innerHTML = clean;
+    });
   }
 }

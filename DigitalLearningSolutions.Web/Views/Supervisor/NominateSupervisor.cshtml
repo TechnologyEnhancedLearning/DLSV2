@@ -3,53 +3,53 @@
 @model SupervisorDelegateViewModel;
 @inject IConfiguration Configuration;
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Application"] = "Supervisor";
-  ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "My Staff - Nominate Supervisor";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/Supervisor/MyStaff";
-  ViewData["HeaderPathName"] = "My Staff";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Application"] = "Supervisor";
+    ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "Confirm Nominated supervisor";
+    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/Supervisor/MyStaff";
+    ViewData["HeaderPathName"] = "My Staff";
 }
 
 @section NavMenuItems {
-  <partial name="Shared/_NavMenuItems" />
+    <partial name="Shared/_NavMenuItems" />
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
-    }
-    <h1 id="page-heading">Confirm Nominate Supervisor</h1>
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
-        <div class="nhsuk-u-font-weight-bold">
-          Staff member:
+        <div class="nhsuk-grid-column-full">
+            @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
+        }
+        <h1 id="page-heading">@ViewData["Title"]</h1>
+        <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
+                <div class="nhsuk-u-font-weight-bold">
+                    Staff member:
+                </div>
+            </div>
+            <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal">
+                @Model.FirstName @Model.LastName (@Model.DelegateEmail)
+            </div>
         </div>
-      </div>
-      <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal">
-        @Model.FirstName @Model.LastName (@Model.DelegateEmail)
-      </div>
-    </div>
-    <p class="nhsuk-body-m">By nominating this member of staff as a supervisor, you are confirming there competence to assess the capability of others.</p>
-    <p>Once the nominated supervisor role has been assigned, it can only be removed by a Centre Manager or Clinical Centre Manager.</p>
-    <form method="post" asp-controller="Supervisor">
-      <div class="nhsuk-checkboxes__item">
-        <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"
-                            label="I am sure that I wish to nominate @Model.FirstName @Model.LastName as a supervisor"
-                            hint-text="This action will grant the staff member nominated supervisor role and I understand that this role can only be removed by a Centre Manager or Clinical Centre Manager." />
-      </div>
-      <button type="submit" class="nhsuk-button nhsuk-u-margin-top-4" asp-action="ConfirmNominateSupervisor">
-        Confirm
-      </button>
-      @Html.HiddenFor(m => m.Id)
-      @Html.HiddenFor(m => m.FirstName)
-      @Html.HiddenFor(m => m.LastName)
-      @Html.HiddenFor(m => m.DelegateEmail)
-      @Html.HiddenFor(m => m.CandidateAssessmentCount)
-      @Html.HiddenFor(m => m.ReturnPageQuery)
-    </form>
+        <p class="nhsuk-body-m">By promoting this member of staff to the Nominated supervisor role, you are confirming there competence to assess the capability of others.</p>
+        <p>Once the Nominated supervisor role has been assigned, it can only be removed by a Centre Manager or Clinical Centre Manager.</p>
+        <form method="post" asp-controller="Supervisor">
+            <div class="nhsuk-checkboxes__item">
+                <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"
+                                    label="I am sure that I wish to promote @Model.FirstName @Model.LastName to the Nominated supervisor role"
+                                    hint-text="I understand that the Nominated Supervisor role can only be removed by a Centre Manager or Clinical Centre Manager." />
+            </div>
+            <button type="submit" class="nhsuk-button nhsuk-u-margin-top-4" asp-action="ConfirmNominateSupervisor">
+                Confirm
+            </button>
+            @Html.HiddenFor(m => m.Id)
+            @Html.HiddenFor(m => m.FirstName)
+            @Html.HiddenFor(m => m.LastName)
+            @Html.HiddenFor(m => m.DelegateEmail)
+            @Html.HiddenFor(m => m.CandidateAssessmentCount)
+            @Html.HiddenFor(m => m.ReturnPageQuery)
+        </form>
 
-    <vc:cancel-link-with-return-page-query asp-controller="Supervisor" asp-action="MyStaffList" return-page-query="@Model.ReturnPageQuery" />
-  </div>
+        <vc:cancel-link-with-return-page-query asp-controller="Supervisor" asp-action="MyStaffList" return-page-query="@Model.ReturnPageQuery" />
+    </div>
 </div>
