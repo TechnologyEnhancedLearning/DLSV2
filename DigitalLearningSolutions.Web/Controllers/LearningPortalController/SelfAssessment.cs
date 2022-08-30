@@ -166,7 +166,7 @@
                     assessment.Id,
                     candidateId,
                     assessmentQuestion.Id,
-                    assessmentQuestion.Result ?? 0,
+                    assessmentQuestion.Result,
                     assessmentQuestion.SupportingComments
                 );
             }
