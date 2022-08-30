@@ -20,75 +20,79 @@
   </nav>
 }
 <h1>Supervisor Dashboard</h1>
+@if (Model.BannerText != null)
+{
+  <h2 class="page-subheading word-break">@Model.BannerText</h2>
+}
 <ul class="nhsuk-grid-row nhsuk-card-group">
 
   <feature name="@(FeatureFlags.SupervisorProfileAssessmentInterface)">
-   <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
   </feature>
   <feature name="@(FeatureFlags.SupervisorProfileAssessmentInterface)" negate="true">
     <li class="nhsuk-grid-column-full nhsuk-card-group__item">
   </feature>
+  <div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <p class="nhsuk-heading-xl nhsuk-u-font-size-32 nhsuk-u-margin-bottom-3">
+        @Model.DashboardData.StaffCount Staff  @if (Model.DashboardData.StaffUnregisteredCount > 0)
+        {
+          <span class="nhsuk-u-secondary-text-color nhsuk-u-font-weight-normal">
+            (@Model.DashboardData.StaffUnregisteredCount unregistered)
+          </span>
+        }
+      </p>
+      <ul class="nhsuk-contents-list__list">
+
+        <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="MyStaffList">View My Staff List</a></li>
+      </ul>
+    </div>
+  </div>
+  </li>
+  <feature name="@(FeatureFlags.SupervisorProfileAssessmentInterface)">
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card">
         <div class="nhsuk-card__content">
           <p class="nhsuk-heading-xl nhsuk-u-font-size-32 nhsuk-u-margin-bottom-3">
-            @Model.DashboardData.StaffCount Staff  @if (Model.DashboardData.StaffUnregisteredCount > 0)
-            {
-              <span class="nhsuk-u-secondary-text-color nhsuk-u-font-weight-normal">
-                (@Model.DashboardData.StaffUnregisteredCount unregistered)
-              </span>
-            }
+            @Model.DashboardData.ProfileCount Role Profiles
           </p>
           <ul class="nhsuk-contents-list__list">
-
-            <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="MyStaffList">View My Staff List</a></li>
+            @if (Model.DashboardData.AwaitingReviewCount > 0)
+            {
+              <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="RoleProfileReviewRequests" asp-route-tabname="Mine">Profile Assessment Sign-off Requests (@Model.DashboardData.AwaitingReviewCount)</a></li>
+            }
+            <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewRoleProfileAssessments" asp-route-tabname="All">View Profile Assessments (@Model.DashboardData.ProfileSelfAssessmentCount)</a></li>
           </ul>
         </div>
       </div>
     </li>
-    <feature name="@(FeatureFlags.SupervisorProfileAssessmentInterface)">
-      <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-        <div class="nhsuk-card">
-          <div class="nhsuk-card__content">
-            <p class="nhsuk-heading-xl nhsuk-u-font-size-32 nhsuk-u-margin-bottom-3">
-              @Model.DashboardData.ProfileCount Role Profiles
-            </p>
-            <ul class="nhsuk-contents-list__list">
-              @if (Model.DashboardData.AwaitingReviewCount > 0)
-              {
-                <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="RoleProfileReviewRequests" asp-route-tabname="Mine">Profile Assessment Sign-off Requests (@Model.DashboardData.AwaitingReviewCount)</a></li>
-              }
-              <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewRoleProfileAssessments" asp-route-tabname="All">View Profile Assessments (@Model.DashboardData.ProfileSelfAssessmentCount)</a></li>
-            </ul>
-          </div>
-        </div>
-      </li>
-    </feature>
+  </feature>
 </ul>
 <h2>Your to do list</h2>
 @if (Model.SupervisorDashboardToDoItems.Count() > 0)
 {
-<ul class="nhsuk-contents-list__list">
-  @foreach (var toDoItem in Model.SupervisorDashboardToDoItems)
-  {
+  <ul class="nhsuk-contents-list__list">
+    @foreach (var toDoItem in Model.SupervisorDashboardToDoItems)
+    {
 
-    if (toDoItem.SignOffRequest)
-    {
-      <li class="nhsuk-contents-list__item">
-        <a class="nhsuk-link--no-visited-state" asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@toDoItem.SupervisorDelegateId" asp-route-candidateAssessmentId="@toDoItem.ID">
-          Review and sign-off @toDoItem.DelegateName's @toDoItem.ProfileName
-        </a>. Requested @toDoItem.Requested.ToShortDateString()
-      </li>
+      if (toDoItem.SignOffRequest)
+      {
+        <li class="nhsuk-contents-list__item">
+          <a class="nhsuk-link--no-visited-state" asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@toDoItem.SupervisorDelegateId" asp-route-candidateAssessmentId="@toDoItem.ID">
+            Review and sign-off @toDoItem.DelegateName's @toDoItem.ProfileName
+          </a>. Requested @toDoItem.Requested.ToShortDateString()
+        </li>
+      }
+      else if (toDoItem.ResultsReviewRequest)
+      {
+        <li class="nhsuk-contents-list__item">
+          <a class="nhsuk-link--no-visited-state" asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@toDoItem.SupervisorDelegateId" asp-route-candidateAssessmentId="@toDoItem.ID">
+            Confirm self-assessment results for @toDoItem.DelegateName's @toDoItem.ProfileName
+          </a>. Requested @toDoItem.Requested.ToShortDateString()
+        </li>
+      }
     }
-    else if(toDoItem.ResultsReviewRequest)
-    {
-      <li class="nhsuk-contents-list__item">
-        <a class="nhsuk-link--no-visited-state" asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@toDoItem.SupervisorDelegateId" asp-route-candidateAssessmentId="@toDoItem.ID">
-          Confirm self-assessment results for @toDoItem.DelegateName's @toDoItem.ProfileName
-        </a>. Requested @toDoItem.Requested.ToShortDateString()
-      </li>
-    }
-  }
-</ul>
+  </ul>
 }
 else
 {

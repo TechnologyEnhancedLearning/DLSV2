@@ -24,10 +24,12 @@
             var signOffRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedSignOffs(adminId);
             var reviewRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedReviews(adminId);
             var supervisorDashboardToDoItems = Enumerable.Concat(signOffRequests, reviewRequests);
+            var bannerText = GetBannerText();
             var model = new SupervisorDashboardViewModel()
             {
                 DashboardData = dashboardData,
-                SupervisorDashboardToDoItems = supervisorDashboardToDoItems
+                SupervisorDashboardToDoItems = supervisorDashboardToDoItems,
+                BannerText = bannerText
             };
             return View(model);
         }
@@ -168,7 +170,7 @@
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
-            if(superviseDelegate == null)
+            if (superviseDelegate == null)
             {
                 return RedirectToAction("MyStaffList");
             }
