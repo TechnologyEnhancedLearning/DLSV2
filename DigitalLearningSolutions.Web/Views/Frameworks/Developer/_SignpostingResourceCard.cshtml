@@ -8,7 +8,7 @@
 <details class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3">
   <summary class="nhsuk-details__summary">
     <span class="nhsuk-details__summary-text">
-      @SignpostingHelper.DisplayText(Model.Resource.Title)
+      @DisplayStringHelper.RemoveMarkup(Model.Resource.Title)
     </span>
   </summary>
   <div class="nhsuk-card__content nhsuk-u-padding-bottom-3 nhsuk-u-padding-top-0 nhsuk-u-margin-1">
@@ -19,7 +19,7 @@
       </div>
     }
     <div class="nhsuk-u-margin-left-1 nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-3">
-      @Html.Raw(SignpostingHelper.DisplayText(Model.Description))
+      @Html.Raw(DisplayStringHelper.RemoveMarkup(Model.Description))
     </div>
     @if (Model.Catalogues.Count() > 0)
     {

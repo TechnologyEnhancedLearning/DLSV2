@@ -32,7 +32,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource/{page=1:int}")]
         public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, int? catalogueId, string searchText, int page)
-        {
+            {
             
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
             Catalogues = Catalogues ?? (await this.learningHubApiClient.GetCatalogues())?.Catalogues?.OrderBy(c => c.Name).ToList();
@@ -103,7 +103,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult ConfirmAddCompetencyLearningResourceSummary(CompetencyResourceSummaryViewModel model)
         {
             var frameworkCompetency = frameworkService.GetFrameworkCompetencyById(model.FrameworkCompetencyId.Value);
-            string plainTextDescription = SignpostingHelper.DisplayText(model.Description);
+            string plainTextDescription = DisplayStringHelper.RemoveMarkup(model.Description);
             int competencyLearningResourceId = competencyLearningResourcesDataService.AddCompetencyLearningResource(model.ReferenceId, model.ResourceName, plainTextDescription, model.ResourceType, model.Link, model.SelectedCatalogue, model.Rating.Value, frameworkCompetency.CompetencyID, GetAdminId());
             return RedirectToAction("StartSignpostingParametersSession", "Frameworks", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId, competencyLearningResourceId });
         }
