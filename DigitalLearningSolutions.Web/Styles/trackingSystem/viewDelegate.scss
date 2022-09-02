@@ -30,7 +30,20 @@
   .nhsuk-summary-list__value {
     width: 40%;
   }
+
   .nhsuk-summary-list__actions {
     width: 30%;
+  }
+}
+
+.nhsuk-expander-group {
+  &.completed {
+    background-color: #fff;
+    border-left: 6px solid $color_nhsuk-green;
+  }
+
+  &.removed {
+    background-color: #fff;
+    border-left: 6px solid $color_nhsuk-red;
   }
 }
