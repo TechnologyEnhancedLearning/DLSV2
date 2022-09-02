@@ -80,7 +80,7 @@
             var objectWithReferenceIds = new { referenceIds = referenceIds.ToList() };
 
             var jsonString = JsonSerializer.Serialize(objectWithReferenceIds);
-            var response = await GetStringAsync($"/Resource/BulkJson?{jsonString}");
+            var response = await GetStringAsync($"/Resource/BulkJson?resourceReferences={jsonString}");
 
             var result = JsonConvert.DeserializeObject<BulkResourceReferences>(response);
             return result;
