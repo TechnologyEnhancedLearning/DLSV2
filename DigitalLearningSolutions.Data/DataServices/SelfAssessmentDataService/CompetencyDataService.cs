@@ -375,16 +375,13 @@
 
             var minValue = assessmentQuestion.MinValue;
             var maxValue = assessmentQuestion.MaxValue;
-            if (result != null)
+            if (result < minValue || result > maxValue)
             {
-                if (result < minValue || result > maxValue)
-                {
-                    logger.LogWarning(
-                        "Not saving self assessment result as result is invalid. " +
-                        $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
-                    );
-                    return;
-                }
+                logger.LogWarning(
+                    "Not saving self assessment result as result is invalid. " +
+                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
+                );
+                return;
             }
 
             var numberOfAffectedRows = connection.Execute(

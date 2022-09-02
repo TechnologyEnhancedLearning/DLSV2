@@ -161,17 +161,14 @@
 
             foreach (var assessmentQuestion in assessmentQuestions)
             {
-                if (assessmentQuestion.Result != null || assessmentQuestion.SupportingComments != null)
-                {
-                    selfAssessmentService.SetResultForCompetency(
-                        competencyId,
-                        assessment.Id,
-                        candidateId,
-                        assessmentQuestion.Id,
-                        assessmentQuestion.Result,
-                        assessmentQuestion.SupportingComments
-                    );
-                }
+                selfAssessmentService.SetResultForCompetency(
+                    competencyId,
+                    assessment.Id,
+                    candidateId,
+                    assessmentQuestion.Id,
+                    assessmentQuestion.Result,
+                    assessmentQuestion.SupportingComments
+                );
             }
 
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateId, true);
