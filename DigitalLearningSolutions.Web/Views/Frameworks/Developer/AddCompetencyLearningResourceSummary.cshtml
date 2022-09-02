@@ -1,10 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @using DigitalLearningSolutions.Web.Helpers;
 @model CompetencyResourceSummaryViewModel
-@{
-  ViewData["Title"] = "Add Competency Learning Resource Summary";
-  ViewData["Application"] = "Framework Service";
-}
+@{ ViewData["Title"] = "Add Competency Learning Resource Summary";
+        ViewData["Application"] = "Framework Service"; }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 
 @section NavMenuItems {
@@ -45,7 +43,7 @@
     </div>
     <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">Description</dt>
-    <dd class="nhsuk-summary-list__value">@SignpostingHelper.DisplayText(Model.Description)</dd>
+    <dd class="nhsuk-summary-list__value">@DisplayStringHelper.RemoveMarkup(Model.Description)</dd>
     </div>
     <div class="nhsuk-summary-list__row">
     <dd class="nhsuk-summary-list__key">
