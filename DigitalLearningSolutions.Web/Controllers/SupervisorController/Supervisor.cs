@@ -301,7 +301,7 @@
         }
 
         [Route(
-            "/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/{viewMode}/{resultId}/"
+            "/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/{viewMode}/{resultId}/Confirm"
         )]
         public IActionResult ReviewCompetencySelfAssessment(
             int supervisorDelegateId,
@@ -317,7 +317,7 @@
 
         [HttpPost]
         [Route(
-            "/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/{viewMode}/{resultId}/"
+            "/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/{viewMode}/{resultId}/Confirm"
         )]
         public IActionResult SubmitReviewCompetencySelfAssessment(
             int supervisorDelegateId,
