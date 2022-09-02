@@ -323,7 +323,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                     SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
                     CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID INNER JOIN
                     Candidates AS c ON ca.CandidateID = c.CandidateID
-                WHERE (sd.SupervisorAdminID = @adminId) AND (casv.Verified IS NULL)", new { adminId }
+                WHERE (sd.SupervisorAdminID = @adminId) AND (casv.Verified IS NULL) AND (sd.Removed IS NULL)", new { adminId }
                 );
         }
         public IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId)
@@ -343,7 +343,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
 						    FROM SelfAssessmentResults AS sar2
 						    WHERE sar2.SelfAssessmentID = sar.SelfAssessmentID AND sar2.CompetencyID = co.ID
 					)
-                WHERE (sd.SupervisorAdminID = @adminId) AND (sasv.Verified IS NULL)
+                WHERE (sd.SupervisorAdminID = @adminId) AND (sasv.Verified IS NULL) AND (sd.Removed IS NULL)
 				GROUP BY sa.ID, ca.ID, sd.ID, c.FirstName, c.LastName, sa.Name", new { adminId }
                 );
         }
