@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System;
     using System.Transactions;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.Attributes;
@@ -11,6 +12,8 @@
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class VerifyEmailController : Controller
     {
+        private static readonly TimeSpan EmailVerificationHashLifetime = TimeSpan.FromDays(3);
+
         private readonly IClockUtility clockUtility;
         private readonly IUserService userService;
 
@@ -27,21 +30,15 @@
                 return NotFound();
             }
 
-            var emailVerificationDetails = userService.GetEmailVerificationDetails(email, code);
+            var emailVerificationData =
+                userService.GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(email, code);
 
-            if (emailVerificationDetails == null)
+            if (emailVerificationData == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new EmailVerifiedViewModel(emailVerificationDetails.CentreIdIfEmailIsForUnapprovedDelegate);
-
-            if (emailVerificationDetails.IsEmailVerified)
-            {
-                return View(viewModel);
-            }
-
-            if (emailVerificationDetails.HasVerificationExpired(clockUtility))
+            if (emailVerificationData.HashCreationDate + EmailVerificationHashLifetime < clockUtility.UtcNow)
             {
                 return View("VerificationLinkExpired");
             }
@@ -49,14 +46,14 @@
             using var transaction = new TransactionScope();
 
             userService.SetEmailVerified(
-                emailVerificationDetails.UserId,
-                emailVerificationDetails.Email,
+                emailVerificationData.UserId,
+                email,
                 clockUtility.UtcNow
             );
 
             transaction.Complete();
 
-            return View(viewModel);
+            return View(new EmailVerifiedViewModel(emailVerificationData.CentreIdIfEmailIsForUnapprovedDelegate));
         }
     }
 }

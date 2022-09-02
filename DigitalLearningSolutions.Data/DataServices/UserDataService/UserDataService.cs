@@ -196,7 +196,7 @@
 
         EmailVerificationDetails? GetPrimaryEmailVerificationDetails(string code);
 
-        EmailVerificationDetails? GetCentreEmailVerificationDetails(string code);
+        IEnumerable<EmailVerificationDetails> GetCentreEmailVerificationDetails(string code);
 
         void SetPrimaryEmailVerified(int userId, string email, DateTime verifiedDateTime);
 

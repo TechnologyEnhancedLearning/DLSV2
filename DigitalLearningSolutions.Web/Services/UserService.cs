@@ -94,7 +94,10 @@ namespace DigitalLearningSolutions.Web.Services
         (string? primaryEmail, List<(int centreId, string centreName, string centreEmail)> centreEmails)
             GetUnverifiedEmailsForUser(int userId);
 
-        EmailVerificationDetails? GetEmailVerificationDetails(string email, string code);
+        EmailVerificationTransactionData? GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(
+            string email,
+            string code
+        );
 
         void SetEmailVerified(int userId, string email, DateTime verifiedDateTime);
 
@@ -471,27 +474,48 @@ namespace DigitalLearningSolutions.Web.Services
             }
         }
 
-        public EmailVerificationDetails? GetEmailVerificationDetails(string email, string code)
+        public EmailVerificationTransactionData? GetEmailVerificationDataIfCodeMatchesAnyUnverifiedEmails(
+            string email,
+            string code
+        )
         {
             var primaryEmailVerificationDetails = userDataService.GetPrimaryEmailVerificationDetails(code);
             var centreEmailVerificationDetails = userDataService.GetCentreEmailVerificationDetails(code);
 
-            if (primaryEmailVerificationDetails != null && centreEmailVerificationDetails != null)
+            var allVerificationDetails = centreEmailVerificationDetails
+                .Concat(new[] { primaryEmailVerificationDetails })
+                .Where(details => details != null)
+                .ToList();
+
+            var usersMatchedByCode = allVerificationDetails.Select(d => d.UserId).Distinct().ToList();
+
+            if (usersMatchedByCode.Count > 1)
             {
-                throw new Exception("Did not expect multiple records to match email verification code");
+                throw new InvalidOperationException(
+                    $"Email verification hash matches multiple users: {string.Join(", ", usersMatchedByCode)}"
+                );
             }
 
-            if (email == primaryEmailVerificationDetails?.Email)
+            var unverifiedEmailDataMatchingEmail = allVerificationDetails
+                .Where(details => details != null && details.Email == email && !details.IsEmailVerified)
+                .ToList();
+
+            if (!unverifiedEmailDataMatchingEmail.Any())
             {
-                return primaryEmailVerificationDetails;
+                return null;
             }
 
-            if (email == centreEmailVerificationDetails?.Email)
-            {
-                return centreEmailVerificationDetails;
-            }
+            // We can assume the hash entity is the same for all the records as we searched by hash
+            var hashCreationDate = unverifiedEmailDataMatchingEmail.First().EmailVerificationHashCreatedDate;
 
-            return null;
+            return new EmailVerificationTransactionData(
+                email,
+                hashCreationDate,
+                unverifiedEmailDataMatchingEmail
+                    .FirstOrDefault(details => details.CentreIdIfEmailIsForUnapprovedDelegate != null)
+                    ?.CentreIdIfEmailIsForUnapprovedDelegate,
+                usersMatchedByCode.SingleOrDefault()
+            );
         }
 
         public void SetEmailVerified(int userId, string email, DateTime verifiedDateTime)
