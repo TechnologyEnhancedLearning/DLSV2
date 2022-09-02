@@ -2,8 +2,8 @@
 @using DigitalLearningSolutions.Web.Helpers;
 @model SignpostingCardViewModel
 @{
-    var parent = (CompetencyResourceSignpostingViewModel)ViewData["parent"];
-    bool displayLevelLabels = Model.AssessmentQuestionInputTypeId != 2;
+  var parent = (CompetencyResourceSignpostingViewModel)ViewData["parent"];
+  bool displayLevelLabels = Model.AssessmentQuestionInputTypeId != 2;
 }
 <details class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3">
   <summary class="nhsuk-details__summary">
@@ -34,14 +34,11 @@
       }
       @if (!String.IsNullOrEmpty(Model.ResourceType))
       {
-          <strong class="nhsuk-tag nhsuk-tag--@(SignpostingHelper.DisplayTagColour(Model.ResourceType))">@Model.ResourceType</strong>
+        <strong class="nhsuk-tag nhsuk-tag--@(SignpostingHelper.DisplayTagColour(Model.ResourceType))">@Model.ResourceType</strong>
       }
       @*<div class="nhsuk-tag nhsuk-tag--grey centre-role-tag nhsuk-u-margin-right-1">Digital Learn</div> <!--Hidden for now-->*@
     </div>
-    @if (!String.IsNullOrEmpty(Model.Description))
-    {
-      <p>@SignpostingHelper.DisplayText(Model.Description)</p>
-    }
+    <p>@DisplayStringHelper.RemoveMarkup(Model.Description)</p>
     <h5 class="mnhsuk-u-margin-bottom-2">Rated @Model.Rating/5</h5>
     @if (Model.ParameterHasNotBeenSet)
     {
@@ -58,39 +55,39 @@
         <dd class="nhsuk-summary-list__value">
           @Model.AssessmentQuestion
         </dd>
-      </div>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Trigger @(displayLevelLabels ? "responses" : "range")
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @if (displayLevelLabels)
+        {
+          <label class="nhsuk-label">@Model.GetLevelLabel(Model.MinimumResultMatch)</label>
+          @if (Model.MinimumResultMatch != Model.MaximumResultMatch)
+          {
+            <label class="nhsuk-label">@Model.GetLevelLabel(Model.MaximumResultMatch)</label>
+          }
+        }
+        else
+        {
+          <label class="nhsuk-label">@Model.MinimumResultMatch to @Model.MaximumResultMatch</label>
+        }
+      </dd>
+    </div>
+    @if (!String.IsNullOrEmpty(Model.CompareResultTo))
+    {
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Trigger @(displayLevelLabels ? "responses" : "range")
+          Compare result to
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @if (displayLevelLabels)
-          {
-            <label class="nhsuk-label">@Model.GetLevelLabel(Model.MinimumResultMatch)</label>
-            @if (Model.MinimumResultMatch != Model.MaximumResultMatch)
-            {
-              <label class="nhsuk-label">@Model.GetLevelLabel(Model.MaximumResultMatch)</label>
-            }
-          }
-          else
-          {
-            <label class="nhsuk-label">@Model.MinimumResultMatch to @Model.MaximumResultMatch</label>
-          }
+          @Model.CompareResultTo
         </dd>
       </div>
-      @if (!String.IsNullOrEmpty(Model.CompareResultTo))
-      {
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Compare result to
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.CompareResultTo
-          </dd>
-        </div>
-      }
-      </dl>
     }
+    </dl>
+  }
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
         <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1"
@@ -110,5 +107,5 @@
            asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
            asp-route-competencyLearningResourceId="@Model.CompetencyLearningResourceId">Remove resource link</a>
       </div>
-      </div>
+    </div>
   </details>
