@@ -1270,7 +1270,8 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 );
                 numberOfAffectedRows = connection.Execute(
                     @"DELETE FROM CompetencyAssessmentQuestions WHERE CompetencyID = @competencyId;
-                        DELETE FROM Competencies WHERE ID = @competencyId",
+                        DELETE FROM CompetencyFlags WHERE CompetencyID = @competencyId;
+                            DELETE FROM Competencies WHERE ID = @competencyId;",
                     new { competencyId }
                 );
                 if (numberOfAffectedRows < 1)
