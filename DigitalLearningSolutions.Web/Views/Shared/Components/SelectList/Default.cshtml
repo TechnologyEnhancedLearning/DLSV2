@@ -31,14 +31,13 @@
 
     <select asp-for="@Model.Name" asp-items="@Model.SelectListOptions" class="nhsuk-select @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
             aria-describedby="@(describedBy!= "" ? @describedBy : null)"
-            value="@(Model.Value != null ? @Model.Value : null)"
+            value="@(Model.Value != null ? Model.Value : null)"
             aria-invalid="@(Model.HasError ? "true" : null)"
             id="@Model.Id"
             name="@Model.Name">
             @if (Model.DefaultOption != null)
             {
-                <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value != null ? "" : "selected")>@Model.DefaultOption</option>
+                <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value == null ? "" : null)>@Model.DefaultOption</option>
             }
         </select>
-    }
 </div>
