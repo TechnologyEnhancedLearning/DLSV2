@@ -19,7 +19,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         private static List<Catalogue> Catalogues { get; set; }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting")]
-        public IActionResult EditCompetencyLearningResources(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId)
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Signposting")]
+        public IActionResult EditCompetencyLearningResources(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId)
         {
             var model = GetSignpostingResourceParameters(frameworkId, frameworkCompetencyId);
             multiPageFormService.SetMultiPageFormData(
@@ -32,8 +33,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource/{page=1:int}")]
         public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, int? catalogueId, string searchText, int page)
-            {
-            
+        {
+
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
             Catalogues = Catalogues ?? (await this.learningHubApiClient.GetCatalogues())?.Catalogues?.OrderBy(c => c.Name).ToList();
             if (catalogueId.HasValue)
@@ -96,7 +97,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 MultiPageFormDataFeature.AddCompetencyLearningResourceSummary,
                 TempData
             );
-            return RedirectToAction("AddCompetencyLearningResourceSummary", "Frameworks", new { model.FrameworkId , model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId});
+                 return RedirectToAction("AddCompetencyLearningResourceSummary", "Frameworks", new { model.FrameworkId , model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId});
         }
 
         [HttpPost]
@@ -189,7 +190,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     parameter.RelevanceAssessmentQuestion = session.Questions.FirstOrDefault(q => q.ID == compareToQuestionId);
                     parameter.RelevanceAssessmentQuestionId = parameter.RelevanceAssessmentQuestion?.ID;
                     parameter.CompareToRoleRequirements = false;
-                    break;                
+                    break;
             }
             multiPageFormService.SetMultiPageFormData(
                 session,
@@ -407,8 +408,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     MultiPageFormDataFeature.EditSignpostingParameter,
                     TempData
                 );
-                return RedirectToAction("SignpostingSetStatus", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId }); 
-            }                
+                return RedirectToAction("SignpostingSetStatus", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
+            }
             else
                 return RedirectToAction("CompareSelfAssessmentResult", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
         }
@@ -421,7 +422,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         private CompetencyResourceSignpostingViewModel GetSignpostingResourceParameters(int frameworkId, int frameworkCompetencyId)
-        {            
+        {
             var frameworkCompetency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
             var parameters = frameworkService.GetSignpostingResourceParametersByFrameworkAndCompetencyId(frameworkId, frameworkCompetency.CompetencyID);
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyId)
