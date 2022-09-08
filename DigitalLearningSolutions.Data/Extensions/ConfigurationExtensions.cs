@@ -27,6 +27,8 @@
         private const string JavascriptSearchSortFilterPaginateItemLimitKey =
             "JavascriptSearchSortFilterPaginateItemLimit";
 
+        private const string ExcelPassword = "ExcelPassword";
+
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName];
@@ -105,6 +107,11 @@
         public static int GetJavascriptSearchSortFilterPaginateItemLimit(this IConfiguration config)
         {
             return int.Parse(config[JavascriptSearchSortFilterPaginateItemLimitKey]);
+        }
+
+        public static string GetExcelPassword(this IConfiguration config)
+        {
+            return config[ExcelPassword];
         }
     }
 }

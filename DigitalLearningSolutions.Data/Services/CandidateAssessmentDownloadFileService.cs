@@ -2,7 +2,9 @@
 {
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.SelfAssessments.Export;
+    using Microsoft.Extensions.Configuration;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -10,22 +12,24 @@
 
     public interface ICandidateAssessmentDownloadFileService
     {
-        public byte[] GetCandidateAssessmentDownloadFileForCentre(int candidateAssessmentId, int candidateId);
+        public byte[] GetCandidateAssessmentDownloadFileForCentre(int candidateAssessmentId, int candidateId, bool isProtected);
     }
 
     public class CandidateAssessmentDownloadFileService : ICandidateAssessmentDownloadFileService
     {
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
+        private readonly IConfiguration config;
 
         public CandidateAssessmentDownloadFileService(
-            ISelfAssessmentDataService selfAssessmentDataService
+            ISelfAssessmentDataService selfAssessmentDataService,
+            IConfiguration config
         )
         {
             this.selfAssessmentDataService = selfAssessmentDataService;
+            this.config = config;
         }
-        public byte[] GetCandidateAssessmentDownloadFileForCentre(int candidateAssessmentId, int candidateId)
+        public byte[] GetCandidateAssessmentDownloadFileForCentre(int candidateAssessmentId, int candidateId, bool isProtected)
         {
-
             var summaryData = selfAssessmentDataService.GetCandidateAssessmentExportSummary(candidateAssessmentId, candidateId);
             var detailData = selfAssessmentDataService.GetCandidateAssessmentExportDetails(candidateAssessmentId, candidateId);
             var details = detailData.Select(
@@ -47,20 +51,26 @@
                 }
             );
             using var workbook = new XLWorkbook();
-            AddSummarySheet(workbook, summaryData);
-            AddSheetToWorkbook(workbook, "Details", details);
+            var excelPassword = config.GetExcelPassword();
+            AddSummarySheet(workbook, summaryData, excelPassword, isProtected);
+            AddSheetToWorkbook(workbook, "Details", details, excelPassword, isProtected);
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
             return stream.ToArray();
         }
-        private static void AddSheetToWorkbook(IXLWorkbook workbook, string sheetName, IEnumerable<object>? dataObjects)
+        private static void AddSheetToWorkbook(IXLWorkbook workbook, string sheetName, IEnumerable<object>? dataObjects,string excelPassword, bool isProtected)
         {
             var sheet = workbook.Worksheets.Add(sheetName);
             var table = sheet.Cell(1, 1).InsertTable(dataObjects);
             table.Theme = XLTableTheme.TableStyleLight9;
             sheet.Columns().AdjustToContents();
+            if (isProtected)
+            {
+                sheet.Protect(excelPassword);
+                sheet.Columns().Style.Protection.SetLocked(true);
+            }
         }
-        private static void AddSummarySheet(IXLWorkbook workbook, CandidateAssessmentExportSummary candidateAssessmentExportSummary)
+        private static void AddSummarySheet(IXLWorkbook workbook, CandidateAssessmentExportSummary candidateAssessmentExportSummary,string excelPassword, bool isProtected)
         {
             var sheet = workbook.Worksheets.Add("Summary");
             var rowNum = 1;
@@ -99,7 +109,7 @@
                     sheet.Cell(rowNum, 1).Value = "Questions with no role requirements set";
                     sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
                     sheet.Cell(rowNum, 2).Value = candidateAssessmentExportSummary.NoRequirementsSetCount;
-                rowNum++;
+                    rowNum++;
 
                 }
                 if (candidateAssessmentExportSummary.MeetingCount > 0)
