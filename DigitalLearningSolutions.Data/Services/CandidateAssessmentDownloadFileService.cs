@@ -58,19 +58,19 @@
             workbook.SaveAs(stream);
             return stream.ToArray();
         }
-        private static void AddSheetToWorkbook(IXLWorkbook workbook, string sheetName, IEnumerable<object>? dataObjects,string excelPassword, bool? isProtected = false)
+        private static void AddSheetToWorkbook(IXLWorkbook workbook, string sheetName, IEnumerable<object>? dataObjects,string excelPassword, bool isProtected)
         {
             var sheet = workbook.Worksheets.Add(sheetName);
             var table = sheet.Cell(1, 1).InsertTable(dataObjects);
             table.Theme = XLTableTheme.TableStyleLight9;
             sheet.Columns().AdjustToContents();
-            if (isProtected.Value)
+            if (isProtected)
             {
                 sheet.Protect(excelPassword);
                 sheet.Columns().Style.Protection.SetLocked(true);
             }
         }
-        private static void AddSummarySheet(IXLWorkbook workbook, CandidateAssessmentExportSummary candidateAssessmentExportSummary,string excelPassword, bool? isProtected = false)
+        private static void AddSummarySheet(IXLWorkbook workbook, CandidateAssessmentExportSummary candidateAssessmentExportSummary,string excelPassword, bool isProtected)
         {
             var sheet = workbook.Worksheets.Add("Summary");
             var rowNum = 1;
@@ -164,7 +164,7 @@
             sheet.Rows().AdjustToContents();
             sheet.Columns().AdjustToContents();
             sheet.Columns("2").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right).Font.SetBold();
-            if (isProtected.Value)
+            if (isProtected)
             {
                 sheet.Protect(excelPassword);
                 sheet.Columns().Style.Protection.SetLocked(true);
