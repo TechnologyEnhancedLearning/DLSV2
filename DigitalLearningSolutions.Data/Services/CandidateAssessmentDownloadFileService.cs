@@ -163,12 +163,7 @@
             sheet.Cells(true).Style.Font.FontSize = 16;
             sheet.Rows().AdjustToContents();
             sheet.Columns().AdjustToContents();
-            sheet.Columns("2").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right).Font.SetBold();
-            if (isProtected)
-            {
-                sheet.Protect(excelPassword);
-                sheet.Columns().Style.Protection.SetLocked(true);
-            }
+            sheet.Columns("2").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right).Font.SetBold(); 
         }
     }
 }
