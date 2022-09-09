@@ -8,7 +8,6 @@
     ViewData["Application"] = "Framework Service";
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     var cancelLinkData = Html.GetRouteValues();
-    cancelLinkData.Add("tabname", "Structure");
 }
 <link rel="stylesheet" href="@Url.Content(" ~ /css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
