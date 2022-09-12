@@ -773,7 +773,7 @@
 
         public IActionResult RemoveSupervisor(int selfAssessmentId, int supervisorDelegateId)
         {
-            supervisorService.RemoveCandidateAssessmentSupervisor(supervisorDelegateId);
+            supervisorService.RemoveCandidateAssessmentSupervisor(selfAssessmentId, supervisorDelegateId);
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
 
