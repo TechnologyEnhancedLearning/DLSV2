@@ -17,7 +17,6 @@
             string? hintText = null,
             string? errorMessage = null,
             bool hasError = false,
-            bool deselectable = false,
             bool required = false
         )
         {
@@ -31,7 +30,6 @@
             HintText = hintText;
             ErrorMessage = errorMessage;
             HasError = hasError;
-            Deselectable = deselectable;
             Required = required;
         }
 
@@ -45,7 +43,6 @@
         public string? HintText { get; set; }
         public string? ErrorMessage { get; set; }
         public bool HasError { get; set; }
-        public bool Deselectable { get; set; }
         public bool Required { get; set; }
     }
 }

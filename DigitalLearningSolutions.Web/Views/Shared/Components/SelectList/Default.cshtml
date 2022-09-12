@@ -39,7 +39,7 @@
             aria-required="@(Model.Required ? "true" : "false" )">
         @if (Model.DefaultOption != null)
         {
-            <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value != null ? "" : "selected")>@Model.DefaultOption</option>
+            <option value="" disabled="@(Model.Required)" selected=@(Model.Value != null ? "" : "selected")>@Model.DefaultOption</option>
         }
     </select>
     </div>
