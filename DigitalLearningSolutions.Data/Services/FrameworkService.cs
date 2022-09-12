@@ -891,7 +891,7 @@
         public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId)
         {
             return connection.Query<FrameworkCompetency>(
-                @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
+                @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions,(select COUNT(CompetencyId) from CompetencyLearningResources where CompetencyID=c.ID) AS CompetencyLearningResourcesCount
                     FROM FrameworkCompetencies AS fc 
                         INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
                         LEFT OUTER JOIN
