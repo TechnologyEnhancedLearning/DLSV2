@@ -41,7 +41,8 @@
                         populate-with-current-value="true"
                         type="text"
                         hint-text="How many months prior to expiry of the previous course should the learner be enrolled on the refresher course?"
-                        css-class="nhsuk-input--width-10" />
+                        css-class="nhsuk-input--width-10"
+                        required="false"/>
 
       <vc:single-checkbox asp-for="@nameof(Model.ApplyLpDefaultsToSelfEnrol)"
                           label="Apply to self-enrolments"

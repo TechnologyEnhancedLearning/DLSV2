@@ -22,21 +22,23 @@
           asp-route-customisationId="@Model.CustomisationId">
 
       <vc:numeric-input asp-for="@nameof(Model.CompleteWithinMonths)"
-                        label="Completion within (in months)"
+                        label="Completion within - months"
                         populate-with-current-value="true"
                         type="text"
                         hint-text="Within how many months of enrolment (up to 48) should the learner complete the
                                      course? Enter 0 or leave blank if you do not wish to configure this value."
-                        css-class="nhsuk-input--width-10" />
+                        css-class="nhsuk-input--width-10"
+                        required="false"/>
 
       <vc:numeric-input asp-for="@nameof(Model.ValidityMonths)"
-                        label="Completion valid for (in months)"
+                        label="Completion valid for - months"
                         populate-with-current-value="true"
                         type="text"
                         hint-text="For how many months after completion (up to 48) will the completion remain valid, before the
                                      learner is expected to complete the course again? Enter 0 or leave blank if you do not wish
                                      to configure this value."
-                        css-class="nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
+                        css-class="nhsuk-input--width-10 nhsuk-u-margin-bottom-2"
+                        required="false" />
 
       <vc:single-checkbox asp-for="@nameof(Model.Mandatory)"
                           label="Course is mandatory"

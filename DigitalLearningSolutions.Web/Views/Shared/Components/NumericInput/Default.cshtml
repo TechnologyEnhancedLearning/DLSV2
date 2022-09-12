@@ -41,5 +41,6 @@
            pattern="[0-9]*"
            inputmode="numeric"
            aria-invalid="@(Model.HasError ? "true" : null)"
-           aria-describedby="@(describedBy!= "" ? @describedBy : null)" />
+           aria-describedby="@(describedBy!= "" ? @describedBy : null)"
+           aria-required="@(Model.Required ? "true" : "false" )"/>
 </div>
