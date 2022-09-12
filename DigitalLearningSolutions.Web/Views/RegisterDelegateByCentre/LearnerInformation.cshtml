@@ -35,6 +35,7 @@
                       value="@Model.JobGroup?.ToString()"
                       hint-text=""
                       deselectable="false"
+                      required="true"
                       css-class="nhsuk-u-width-one-half"
                       default-option="Select a job group"
                       select-list-options="@Model.JobGroupOptions" />
@@ -48,6 +49,7 @@
                           value="@customField.Answer"
                           hint-text=""
                           deselectable="@(!customField.Mandatory)"
+                          required="@(customField.Mandatory)"
                           css-class="nhsuk-u-width-one-half"
                           default-option="Select a @customField.Prompt.ToLower()"
                           select-list-options="@customField.Options" />

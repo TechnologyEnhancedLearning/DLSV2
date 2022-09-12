@@ -35,7 +35,8 @@
             value="@(Model.Value != null ? Model.Value : null)"
             asp-items="Model.SelectListOptions"
             aria-describedby="@(describedBy!= "" ? @describedBy : null)"
-            aria-invalid="@(Model.HasError ? "true" : null)">
+            aria-invalid="@(Model.HasError ? "true" : null)"
+            aria-required="@(Model.Required ? "true" : "false" )">
         @if (Model.DefaultOption != null)
         {
             <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value != null ? "" : "selected")>@Model.DefaultOption</option>

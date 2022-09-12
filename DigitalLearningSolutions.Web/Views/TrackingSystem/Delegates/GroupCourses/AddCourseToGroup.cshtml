@@ -33,7 +33,8 @@
                       deselectable="true"
                       css-class="nhsuk-u-width-one-half"
                       default-option="No supervisor"
-                      select-list-options="@Model.Supervisors" />
+                      select-list-options="@Model.Supervisors"
+                      required="false"/>
 
       <vc:numeric-input asp-for="@nameof(Model.MonthsToComplete)"
                         label="Months that course needs to be completed within"

@@ -34,6 +34,7 @@
                       value="@Model.JobGroupId.ToString()"
                       hint-text=""
                       deselectable="true"
+                      required="false"
                       css-class="nhsuk-u-width-one-half"
                       default-option="All"
                       select-list-options="@Model.JobGroupOptions" />
@@ -58,6 +59,7 @@
                       value="@reportIntervalValue.ToString()"
                       hint-text=""
                       deselectable="false"
+                      required="true"
                       css-class="nhsuk-u-width-one-half"
                       default-option=""
                       select-list-options="@Model.ReportIntervalOptions" />

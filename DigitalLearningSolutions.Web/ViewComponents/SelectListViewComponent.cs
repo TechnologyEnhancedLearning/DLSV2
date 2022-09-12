@@ -15,7 +15,8 @@
             IEnumerable<SelectListItem> selectListOptions,
             string? hintText,
             string? cssClass,
-            bool? deselectable
+            bool? deselectable,
+            bool? required
         )
         {
             var model = ViewData.Model;
@@ -36,7 +37,8 @@
                 string.IsNullOrEmpty(hintText) ? null : hintText,
                 errorMessage,
                 hasError,
-                deselectable ?? false
+                deselectable ?? false,
+                required ?? false
             );
             return View(selectListViewModel);
         }

@@ -28,6 +28,7 @@
                       value="@Model.RegionId.ToString()"
                       hint-text=""
                       deselectable="true"
+                      required="false"
                       css-class="nhsuk-u-width-full"
                       default-option="All"
                       select-list-options="@Model.RegionOptions" />
@@ -38,6 +39,7 @@
                       value="@Model.Period?.Id.ToString()"
                       hint-text=""
                       deselectable="true"
+                      required="false"
                       css-class="nhsuk-u-width-full"
                       default-option="@null"
                       select-list-options="@Model.PeriodOptions" />
