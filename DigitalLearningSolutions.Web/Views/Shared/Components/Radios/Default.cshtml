@@ -17,7 +17,7 @@
       </div>
     }
 
-    <div class="nhsuk-radios">
+     <div class="nhsuk-radios" aria-required="@(Model.Required ? "true" : "false" )">
       @foreach (var (radio, index) in Model.Radios.Select((r, i) => (r, i))) {
         var radioId = $"{radio.Value}-{index}";
         <div class="nhsuk-radios__item">

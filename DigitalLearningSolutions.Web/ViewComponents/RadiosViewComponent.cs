@@ -13,7 +13,8 @@
             string label,
             IEnumerable<RadiosListItemViewModel> radios,
             bool populateWithCurrentValues,
-            string? hintText
+            string? hintText,
+            bool required
         )
         {
             var radiosList = radios.Select(
