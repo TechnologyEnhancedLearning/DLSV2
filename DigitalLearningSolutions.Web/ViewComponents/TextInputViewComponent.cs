@@ -17,6 +17,7 @@
         /// <param name="hintText">Leave blank for no hint.</param>
         /// <param name="autocomplete">Leave blank to set no autocomplete on the input element.</param>
         /// <param name="cssClass"></param>
+        /// <param name="required"></param>
         /// <returns></returns>
         public IViewComponentResult Invoke(
             string aspFor,
@@ -26,7 +27,8 @@
             bool spellCheck,
             string hintText,
             string autocomplete,
-            string cssClass
+            string cssClass,
+            bool required
         )
         {
             var model = ViewData.Model;
@@ -47,7 +49,8 @@
                 string.IsNullOrEmpty(autocomplete) ? null : autocomplete,
                 errorMessages,
                 string.IsNullOrEmpty(cssClass) ? null : cssClass,
-                string.IsNullOrEmpty(hintText) ? null : hintText
+                string.IsNullOrEmpty(hintText) ? null : hintText,
+                required
             );
             return View(textBoxViewModel);
         }

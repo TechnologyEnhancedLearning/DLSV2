@@ -51,7 +51,8 @@
         spell-check="false"
         autocomplete="given-name"
         hint-text=""
-        css-class="nhsuk-u-width-one-half" />
+        css-class="nhsuk-u-width-one-half"
+        required="true"/>
 
       <vc:text-input
         asp-for="@nameof(Model.LastName)"
@@ -61,7 +62,8 @@
         spell-check="false"
         autocomplete="family-name"
         hint-text=""
-        css-class="nhsuk-u-width-one-half" />
+        css-class="nhsuk-u-width-one-half"
+        required="true" />
 
       <vc:text-input
         asp-for="@nameof(Model.Email)"
@@ -71,7 +73,8 @@
         spell-check="false"
         autocomplete="email"
         hint-text=""
-        css-class="nhsuk-u-width-one-half" />
+        css-class="nhsuk-u-width-one-half"
+        required="true" />
 
       @if (Model.IsDelegateUser) {
         <partial name="_EditRegistrationNumber" model="@Model" />
@@ -113,7 +116,8 @@
               spell-check="false"
               autocomplete=""
               hint-text=""
-              css-class="nhsuk-u-width-one-half" />
+              css-class="nhsuk-u-width-one-half"
+              required="@customField.Mandatory" />
           }
         }
       </div>
@@ -158,7 +162,8 @@
         spell-check="false"
         autocomplete=""
         hint-text=""
-        css-class="nhsuk-u-width-one-half" />
+        css-class="nhsuk-u-width-one-half"
+        required="true"/>
 
       <button name="action" class="nhsuk-button" value="save">Save</button>
     </div>

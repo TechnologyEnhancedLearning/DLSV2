@@ -40,6 +40,7 @@
            type="@Model.Type"
            spellcheck="@Model.SpellCheck"
            autocomplete="@Model.Autocomplete"
-           aria-invalid="@(Model.HasError ? "true" : null)"
-           aria-describedby="@(describedBy!= "" ? @describedBy : null)" />
+           aria-invalid="@(Model.HasError ? "true" : null )"
+           aria-describedby="@(describedBy!= "" ? @describedBy : null)"
+           aria-required="@(Model.Required ? "true" : "false" )" />
 </div>

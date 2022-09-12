@@ -43,7 +43,8 @@
                        spell-check="false"
                        autocomplete="given-name"
                        hint-text=""
-                       css-class="nhsuk-u-width-one-half" />
+                       css-class="nhsuk-u-width-one-half"
+                       required="true" />
 
         <vc:text-input asp-for="@nameof(Model.LastName)"
                        label="Last name"
@@ -52,7 +53,8 @@
                        spell-check="false"
                        autocomplete="family-name"
                        hint-text=""
-                       css-class="nhsuk-u-width-one-half" />
+                       css-class="nhsuk-u-width-one-half"
+                       required="true" />
 
         <vc:text-input asp-for="@nameof(Model.Email)"
                        label="Email"
@@ -61,7 +63,8 @@
                        spell-check="false"
                        autocomplete="email"
                        hint-text=""
-                       css-class="nhsuk-u-width-one-half" />
+                       css-class="nhsuk-u-width-one-half"
+                       required="true" />
 
         <vc:text-input asp-for="@nameof(Model.AliasId)"
                        label="Alias"
@@ -70,7 +73,8 @@
                        spell-check="false"
                        autocomplete=""
                        hint-text=""
-                       css-class="nhsuk-u-width-one-half" />
+                       css-class="nhsuk-u-width-one-half"
+                       required="false" />
 
         <partial name="_EditRegistrationNumber" model="@Model" />
       </div>
@@ -102,7 +106,8 @@
                          spell-check="false"
                          autocomplete=""
                          hint-text=""
-                         css-class="nhsuk-u-width-one-half" />
+                         css-class="nhsuk-u-width-one-half"
+                         required="@customField.Mandatory" />
         }
       }
 
