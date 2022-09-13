@@ -147,19 +147,19 @@
             <form method="post">
                 <fieldset class="nhsuk-fieldset">
                     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                      <h2 class="nhsuk-fieldset__heading">
-                        Confirm Self Assessment of @Model.Competency.Vocabulary
-                      </h2>
+                        <h2 class="nhsuk-fieldset__heading">
+                            Confirm Self Assessment of @Model.Competency.Vocabulary
+                        </h2>
                     </legend>
                     <input name="ResultSupervisorVerificationId" type="hidden" asp-for="ResultSupervisorVerificationId" />
                     <nhs-form-group nhs-validation-for="SupervisorComments">
-                      <vc:text-area asp-for="SupervisorComments" character-count="null" label=@(Model.DelegateSelfAssessment.ReviewerCommentsLabel == null ? "Reviewer comments": Model.DelegateSelfAssessment.ReviewerCommentsLabel.ToString()) rows="5" css-class="" hint-text="" populate-with-current-value="true" spell-check="false"></vc:text-area>
+                        <vc:text-area asp-for="SupervisorComments" character-count="null" label=@(Model.DelegateSelfAssessment.ReviewerCommentsLabel == null ? "Reviewer comments": Model.DelegateSelfAssessment.ReviewerCommentsLabel.ToString()) rows="5" css-class="" hint-text="" populate-with-current-value="true" spell-check="false"></vc:text-area>
                     </nhs-form-group>
 
                     <nhs-form-group nhs-validation-for="SignedOff">
                         <div class="nhsuk-radios nhsuk-radios--inline">
                             <div class="nhsuk-radios__item">
-                                <input class="nhsuk-radios__input" id="rb-verify" name="SignedOff" required="required" type="radio" value="true" @(Model.SignedOff ? "checked" : String.Empty)>
+                                <input class="nhsuk-radios__input" id="rb-verify" name="SignedOff" required="required" type="radio" value="true">
                                 <label class="nhsuk-label nhsuk-radios__label" for="rb-verify">
                                     Confirm self-assessment response
                                 </label>
@@ -168,7 +168,7 @@
                                 </div>
                             </div>
                             <div class="nhsuk-radios__item">
-                                <input class="nhsuk-radios__input" id="rb-reject" name="SignedOff" required="required" type="radio" value="false" @(!Model.SignedOff ? "checked" : String.Empty)>
+                                <input class="nhsuk-radios__input" id="rb-reject" name="SignedOff" required="required" type="radio" value="false">
                                 <label class="nhsuk-label nhsuk-radios__label" for="rb-reject">
                                     Reject self-assessment response
                                 </label>
