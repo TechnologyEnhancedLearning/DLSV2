@@ -49,14 +49,14 @@
   }
   else
   {
-    <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
+    <h2 class="nhsuk-u-margin-bottom-2 nhsuk-u-font-size-24">
       @Model.Competency.Name
     </h2>
     @if (Model.Competency.Description != null)
     {
-      <p class="nhsuk-body-l">
+      <div class="nhsuk-body-l">
         @(Html.Raw(@Model.Competency.Description))
-      </p>
+      </div>
     }
   }
 </div>
