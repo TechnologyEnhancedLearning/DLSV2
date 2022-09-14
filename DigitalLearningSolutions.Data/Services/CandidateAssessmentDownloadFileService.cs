@@ -58,7 +58,7 @@
             workbook.SaveAs(stream);
             return stream.ToArray();
         }
-        private static void AddSheetToWorkbook(IXLWorkbook workbook, string sheetName, IEnumerable<object>? dataObjects,string excelPassword, bool isProtected)
+        private static void AddSheetToWorkbook(IXLWorkbook workbook, string sheetName, IEnumerable<object>? dataObjects, string excelPassword, bool isProtected)
         {
             var sheet = workbook.Worksheets.Add(sheetName);
             var table = sheet.Cell(1, 1).InsertTable(dataObjects);
@@ -70,19 +70,19 @@
                 sheet.Columns().Style.Protection.SetLocked(true);
             }
         }
-        private static void AddSummarySheet(IXLWorkbook workbook, CandidateAssessmentExportSummary candidateAssessmentExportSummary,string excelPassword, bool isProtected)
+        private static void AddSummarySheet(IXLWorkbook workbook, CandidateAssessmentExportSummary candidateAssessmentExportSummary, string excelPassword, bool isProtected)
         {
             var sheet = workbook.Worksheets.Add("Summary");
             var rowNum = 1;
-            sheet.Cell(rowNum, 1).Value= "Learner";
+            sheet.Cell(rowNum, 1).Value = "Learner";
             sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
             sheet.Cell(rowNum, 2).Value = candidateAssessmentExportSummary.CandidateName;
             rowNum++;
-            sheet.Cell(rowNum, 1).Value ="Learner PRN";
+            sheet.Cell(rowNum, 1).Value = "Learner PRN";
             sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
             sheet.Cell(rowNum, 2).Value = (!string.IsNullOrEmpty(candidateAssessmentExportSummary.CandidatePrn) ? candidateAssessmentExportSummary.CandidatePrn.ToString() : "Not Recorded");
             rowNum++;
-            sheet.Cell(rowNum, 1).Value ="Self Assessment";
+            sheet.Cell(rowNum, 1).Value = "Self Assessment";
             sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
             sheet.Cell(rowNum, 2).Value = candidateAssessmentExportSummary.SelfAssessment;
             rowNum++;
@@ -102,7 +102,7 @@
             sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
             sheet.Cell(rowNum, 2).Value = candidateAssessmentExportSummary.ResponsesVerifiedCount;
             rowNum++;
-            if (candidateAssessmentExportSummary.QuestionCount> candidateAssessmentExportSummary.NoRequirementsSetCount)
+            if (candidateAssessmentExportSummary.QuestionCount > candidateAssessmentExportSummary.NoRequirementsSetCount)
             {
                 if (candidateAssessmentExportSummary.NoRequirementsSetCount > 0)
                 {
@@ -150,7 +150,7 @@
                 rowNum++;
                 sheet.Cell(rowNum, 1).Value = "Signatory PRN";
                 sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
-                sheet.Cell(rowNum, 2).Value = (!string.IsNullOrEmpty(candidateAssessmentExportSummary.SignatoryPrn) ? "Recorded"  :"Not Recorded");
+                sheet.Cell(rowNum, 2).Value = (!string.IsNullOrEmpty(candidateAssessmentExportSummary.SignatoryPrn) ? "Recorded" : "Not Recorded");
                 rowNum++;
             }
             else
@@ -163,7 +163,12 @@
             sheet.Cells(true).Style.Font.FontSize = 16;
             sheet.Rows().AdjustToContents();
             sheet.Columns().AdjustToContents();
-            sheet.Columns("2").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right).Font.SetBold(); 
+            sheet.Columns("2").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right).Font.SetBold();
+            if (isProtected)
+            {
+                sheet.Protect(excelPassword);
+                sheet.Columns().Style.Protection.SetLocked(true);
+            }
         }
     }
 }
