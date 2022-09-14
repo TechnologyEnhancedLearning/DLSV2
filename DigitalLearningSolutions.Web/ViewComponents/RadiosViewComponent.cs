@@ -30,7 +30,8 @@
                 aspFor,
                 label,
                 string.IsNullOrEmpty(hintText) ? null : hintText,
-                radiosList
+                radiosList,
+                required
             );
 
             return View(viewModel);
