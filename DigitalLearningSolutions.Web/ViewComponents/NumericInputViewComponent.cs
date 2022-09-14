@@ -12,7 +12,8 @@
             bool populateWithCurrentValue,
             string type,
             string hintText,
-            string cssClass
+            string cssClass,
+            bool required
         )
         {
             var model = ViewData.Model;
@@ -31,7 +32,8 @@
                 type,
                 errorMessages,
                 string.IsNullOrEmpty(cssClass) ? null : cssClass,
-                string.IsNullOrEmpty(hintText) ? null : hintText
+                string.IsNullOrEmpty(hintText) ? null : hintText,
+                required
             );
             return View(numericInputViewModel);
         }

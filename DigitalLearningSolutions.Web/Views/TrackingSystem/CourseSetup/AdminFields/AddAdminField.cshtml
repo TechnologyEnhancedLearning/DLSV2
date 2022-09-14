@@ -23,7 +23,7 @@
                       label="Field name"
                       value="@Model.AdminFieldId.ToString()"
                       hint-text=""
-                      deselectable="false"
+                      required="true"
                       css-class="nhsuk-u-width-one-half"
                       default-option="Select a field name"
                       select-list-options="@ViewBag.AdminFieldNameOptions" />
@@ -49,7 +49,8 @@
                          spell-check="true"
                          autocomplete=""
                          hint-text=""
-                         css-class="nhsuk-u-width-full" />
+                         css-class="nhsuk-u-width-full"
+                         required="false" />
           <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.AddPromptAction">Add</button>
         </div>
       </div>

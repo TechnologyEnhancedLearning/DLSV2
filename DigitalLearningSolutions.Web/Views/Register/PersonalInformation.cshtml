@@ -37,13 +37,13 @@
           </p>
 
           <vc:select-list asp-for="Centre"
-                          label="Centre"
-                          value="@Model.Centre?.ToString()"
-                          hint-text=""
-                          deselectable="false"
-                          css-class="nhsuk-u-width-full"
-                          default-option="Select a centre"
-                          select-list-options="@Model.CentreOptions" />
+                        label="Centre"
+                        value="@Model.Centre?.ToString()"
+                        hint-text="Visit the <a href='../FindYourCentre'>Find your centre</a> page for help locating your DLS centre."
+                        required="true"
+                        css-class="nhsuk-u-width-full"
+                        default-option="Select a centre"
+                        select-list-options="@Model.CentreOptions" />
         }
       </div>
 
@@ -61,7 +61,8 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="given-name"
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"
+                     required="true" />
 
       <vc:text-input asp-for="LastName"
                      label="Last name"
@@ -70,7 +71,8 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="family-name"
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"
+                     required="true" />
 
       <vc:text-input asp-for="Email"
                      label="Email"
@@ -79,7 +81,8 @@
                      spell-check="false"
                      hint-text=""
                      autocomplete="email"
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"
+                     required="true" />
 
       <button class="nhsuk-button" type="submit">Next</button>
     </form>

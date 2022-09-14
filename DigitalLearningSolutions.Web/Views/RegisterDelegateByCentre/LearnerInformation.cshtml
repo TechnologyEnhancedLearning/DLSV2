@@ -34,7 +34,7 @@
                       label="Job Group"
                       value="@Model.JobGroup?.ToString()"
                       hint-text=""
-                      deselectable="false"
+                      required="true"
                       css-class="nhsuk-u-width-one-half"
                       default-option="Select a job group"
                       select-list-options="@Model.JobGroupOptions" />
@@ -47,7 +47,7 @@
                           label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
                           value="@customField.Answer"
                           hint-text=""
-                          deselectable="@(!customField.Mandatory)"
+                          required="@(customField.Mandatory)"
                           css-class="nhsuk-u-width-one-half"
                           default-option="Select a @customField.Prompt.ToLower()"
                           select-list-options="@customField.Options" />
@@ -59,7 +59,8 @@
                          spell-check="false"
                          hint-text=""
                          autocomplete=""
-                         css-class="nhsuk-u-width-one-half" />
+                         css-class="nhsuk-u-width-one-half"
+                         required="@customField.Mandatory" />
         }
       }
 

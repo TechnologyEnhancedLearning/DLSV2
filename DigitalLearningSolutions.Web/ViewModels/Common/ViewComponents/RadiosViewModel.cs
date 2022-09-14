@@ -8,13 +8,15 @@
             string aspFor,
             string label,
             string? hintText,
-            IEnumerable<RadiosItemViewModel> radios
+            IEnumerable<RadiosItemViewModel> radios,
+            bool required
         )
         {
             AspFor = aspFor;
-            Label = label;
+            Label = (!required && !label.EndsWith("(optional)") ? label + " (optional)" : label);
             HintText = hintText;
             Radios = radios;
+            Required = required;
         }
 
         public string AspFor { get; set; }
@@ -24,5 +26,6 @@
         public string? HintText { get; set; }
 
         public IEnumerable<RadiosItemViewModel> Radios { get; set; }
+        public bool Required { get; set; }
     }
 }

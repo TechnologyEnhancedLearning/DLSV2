@@ -17,20 +17,20 @@
             string? hintText = null,
             string? errorMessage = null,
             bool hasError = false,
-            bool deselectable = false
+            bool required = false
         )
         {
             Id = id;
             Class = cssClass;
             Name = name;
-            Label = label;
+            Label = (!required && !label.EndsWith("(optional)") ? label + " (optional)" : label);
             Value = value;
             DefaultOption = defaultOption;
             SelectListOptions = selectListOptions;
             HintText = hintText;
             ErrorMessage = errorMessage;
             HasError = hasError;
-            Deselectable = deselectable;
+            Required = required;
         }
 
         public string Id { get; set; }
@@ -43,6 +43,6 @@
         public string? HintText { get; set; }
         public string? ErrorMessage { get; set; }
         public bool HasError { get; set; }
-        public bool Deselectable { get; set; }
+        public bool Required { get; set; }
     }
 }

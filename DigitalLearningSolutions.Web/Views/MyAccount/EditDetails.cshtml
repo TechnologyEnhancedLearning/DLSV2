@@ -51,7 +51,8 @@
         spell-check="false"
         autocomplete="given-name"
         hint-text=""
-        css-class="nhsuk-u-width-one-half" />
+        css-class="nhsuk-u-width-one-half"
+        required="true"/>
 
       <vc:text-input
         asp-for="@nameof(Model.LastName)"
@@ -61,7 +62,8 @@
         spell-check="false"
         autocomplete="family-name"
         hint-text=""
-        css-class="nhsuk-u-width-one-half" />
+        css-class="nhsuk-u-width-one-half"
+        required="true" />
 
       <vc:text-input
         asp-for="@nameof(Model.Email)"
@@ -71,7 +73,8 @@
         spell-check="false"
         autocomplete="email"
         hint-text=""
-        css-class="nhsuk-u-width-one-half" />
+        css-class="nhsuk-u-width-one-half"
+        required="true" />
 
       @if (Model.IsDelegateUser) {
         <partial name="_EditRegistrationNumber" model="@Model" />
@@ -88,7 +91,7 @@
           label="Job group"
           value="@Model.JobGroupId.ToString()"
           hint-text=""
-          deselectable="false"
+          required="true"
           css-class="nhsuk-u-width-one-half"
           default-option="Select a job group"
           select-list-options="@Model.JobGroups" />
@@ -100,7 +103,7 @@
               label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
               value="@customField.Answer"
               hint-text=""
-              deselectable="@(!customField.Mandatory)"
+              required="@(customField.Mandatory)"
               css-class="nhsuk-u-width-one-half"
               default-option="Select a @customField.Prompt.ToLower()"
               select-list-options="@customField.Options" />
@@ -113,7 +116,8 @@
               spell-check="false"
               autocomplete=""
               hint-text=""
-              css-class="nhsuk-u-width-one-half" />
+              css-class="nhsuk-u-width-one-half"
+              required="@customField.Mandatory" />
           }
         }
       </div>
@@ -158,7 +162,8 @@
         spell-check="false"
         autocomplete=""
         hint-text=""
-        css-class="nhsuk-u-width-one-half" />
+        css-class="nhsuk-u-width-one-half"
+        required="true"/>
 
       <button name="action" class="nhsuk-button" value="save">Save</button>
     </div>

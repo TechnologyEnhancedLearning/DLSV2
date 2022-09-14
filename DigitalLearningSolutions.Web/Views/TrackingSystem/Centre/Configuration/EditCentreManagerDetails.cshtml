@@ -22,7 +22,8 @@
                      spell-check="false"
                      autocomplete="given-name"
                      hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"
+                     required="true"/>
 
       <vc:text-input asp-for="LastName"
                      label="Last name"
@@ -30,7 +31,8 @@
                      type="text" spell-check="false"
                      autocomplete="family-name"
                      hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"
+                     required="true" />
 
       <vc:text-input asp-for="Email"
                      label="Email"
@@ -39,7 +41,8 @@
                      spell-check="false"
                      autocomplete="email"
                      hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"
+                     required="true" />
 
       <vc:text-input asp-for="Telephone"
                      label="Telephone (optional)"
@@ -48,7 +51,8 @@
                      spell-check="false"
                      autocomplete=""
                      hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"
+                     required="false"/>
 
       <button class="nhsuk-button" type="submit" value="save">Save</button>
     </form>

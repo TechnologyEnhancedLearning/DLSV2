@@ -55,7 +55,8 @@
                    label="Please select a content manager role for this user."
                    populate-with-current-values="true"
                    radios="@Model.Radios"
-                   hint-text="" />
+                   hint-text=""
+                   required="true" />
       </div>
 
       <h2 class="nhsuk-heading-l nhsuk-u-margin-top-8">Learning category</h2>
@@ -64,7 +65,7 @@
                       label="Learning category"
                       value="@Model.LearningCategory.ToString()"
                       hint-text="Limits the permissions of the administrator to view and manage courses in a particular category."
-                      deselectable="true"
+                      required="false"
                       css-class="nhsuk-u-width-one-half"
                       default-option=""
                       select-list-options="@Model.LearningCategories" />

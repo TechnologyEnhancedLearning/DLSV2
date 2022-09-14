@@ -6,7 +6,8 @@
                   populate-with-current-value="true"
                   type="text"
                   hint-text=""
-                  css-class="nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
+                  css-class="nhsuk-input--width-10 nhsuk-u-margin-bottom-2"
+                  required="false" />
 
 @if (Model.DiagAssess) {
   <vc:numeric-input asp-for="@nameof(Model.DiagCompletionThreshold)"
@@ -14,5 +15,6 @@
                     populate-with-current-value="true"
                     type="text"
                     hint-text=""
-                    css-class="nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
+                    css-class="nhsuk-input--width-10 nhsuk-u-margin-bottom-2"
+                    required="false"/>
 }
