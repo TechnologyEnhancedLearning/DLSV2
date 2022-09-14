@@ -24,7 +24,7 @@
   @if (Model.HintText != null)
   {
     <div class="nhsuk-hint" id="@Model.Name-hint">
-      @Model.HintText
+      @Html.Raw(Model.HintText)
     </div>
   }
   @if (Model.HasError)

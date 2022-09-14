@@ -6,9 +6,10 @@
     <legend class="nhsuk-fieldset__legend nhsuk-label nhsuk-heading-m">
       @Model.Label
     </legend>
-    @if (Model.HintText != null) {
+    @if (Model.HintText != null)
+    {
       <div class="nhsuk-hint" id="@Model.Id-hint">
-        @Model.HintText
+        @Html.Raw(Model.HintText)
       </div>
     }
 
@@ -27,7 +28,8 @@
         <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.EndDateCheckbox.Id">
           Set end date
         </label>
-        @if (Model.EndDateCheckbox.HintText != null) {
+        @if (Model.EndDateCheckbox.HintText != null)
+        {
           <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@Model.EndDateCheckbox.Id-item-hint">
             @Model.EndDateCheckbox.HintText
           </div>

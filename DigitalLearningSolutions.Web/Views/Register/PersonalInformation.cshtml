@@ -37,13 +37,13 @@
           </p>
 
           <vc:select-list asp-for="Centre"
-                          label="Centre"
-                          value="@Model.Centre?.ToString()"
-                          hint-text=""
-                          required="true"
-                          css-class="nhsuk-u-width-full"
-                          default-option="Select a centre"
-                          select-list-options="@Model.CentreOptions" />
+                        label="Centre"
+                        value="@Model.Centre?.ToString()"
+                        hint-text="Visit the <a href='../FindYourCentre'>Find your centre</a> page for help locating your DLS centre."
+                        required="true"
+                        css-class="nhsuk-u-width-full"
+                        default-option="Select a centre"
+                        select-list-options="@Model.CentreOptions" />
         }
       </div>
 
@@ -62,7 +62,7 @@
                      hint-text=""
                      autocomplete="given-name"
                      css-class="nhsuk-u-width-one-half"
-                     required="true"/>
+                     required="true" />
 
       <vc:text-input asp-for="LastName"
                      label="Last name"

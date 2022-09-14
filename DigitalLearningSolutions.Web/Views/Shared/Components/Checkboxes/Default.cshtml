@@ -11,14 +11,16 @@
       </label>
     </legend>
 
-    @if (Model.HintText != null) {
+    @if (Model.HintText != null)
+    {
       <div class="nhsuk-hint" id="@Model.Label.RemoveWhitespace()-hint">
-        @Model.HintText
+        @Html.Raw(Model.HintText)
       </div>
     }
 
     <div class="nhsuk-checkboxes">
-      @foreach (var checkbox in Model.Checkboxes) {
+      @foreach (var checkbox in Model.Checkboxes)
+      {
         <partial name="_CheckboxItem" model="checkbox" />
       }
     </div>
