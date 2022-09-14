@@ -22,10 +22,10 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="ConfirmDeleteGroup">
-      <input type="hidden" aria-hidden="true" asp-for="GroupLabel" />
-      <input type="hidden" aria-hidden="true" asp-for="DelegateCount" />
-      <input type="hidden" aria-hidden="true" asp-for="CourseCount" />
-      <input type="hidden" aria-hidden="true" asp-for="ReturnPageQuery" />
+      <input type="hidden" asp-for="GroupLabel" />
+      <input type="hidden" asp-for="DelegateCount" />
+      <input type="hidden" asp-for="CourseCount" />
+      <input type="hidden" asp-for="ReturnPageQuery" />
 
       <p>
         This group has @Model.DelegateCount delegate@(DisplayStringHelper.GetPluralitySuffix(Model.DelegateCount))

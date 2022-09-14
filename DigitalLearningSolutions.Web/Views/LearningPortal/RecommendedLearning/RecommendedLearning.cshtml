@@ -46,8 +46,8 @@
 
     <partial name="SearchablePage/_Search" model="Model" />
     <span id="selfAssessmentID" class="display-none">@Model.SelfAssessment.Id</span>
-    <input type="hidden" aria-hidden="true" id="select-sort-by" value="@Model.SortBy" />
-    <input type="hidden" aria-hidden="true" id="select-sort-direction" value="@Model.SortDirection" />
+    <input type="hidden" id="select-sort-by" value="@Model.SortBy" />
+    <input type="hidden" id="select-sort-direction" value="@Model.SortDirection" />
 
     @if (Model.NoDataFound)
     {

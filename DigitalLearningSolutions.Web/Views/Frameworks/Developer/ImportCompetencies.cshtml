@@ -50,7 +50,7 @@
       </ul>
     </p>
     <form class="nhsuk-u-margin-bottom-3" method="post" enctype="multipart/form-data">
-      <input type="hidden" aria-hidden="true" asp-for="@Model.FrameworkId" />
+      <input type="hidden" asp-for="@Model.FrameworkId" />
       <vc:file-input asp-for="@nameof(Model.ImportFile)" label="Excel file ready for import" hint-text="" css-class="nhsuk-u-width-one-half" />
       <button class="nhsuk-button" type="submit">Upload and import</button>
     </form>

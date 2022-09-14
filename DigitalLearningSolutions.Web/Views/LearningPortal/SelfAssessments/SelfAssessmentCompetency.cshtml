@@ -91,7 +91,7 @@
       <partial name="SelfAssessments/_CommentsInput" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
     }
   }
-  <input type="hidden" aria-hidden="true" name="competencyGroupId" value="@Model.Competency.CompetencyGroupID" />
+  <input type="hidden" name="competencyGroupId" value="@Model.Competency.CompetencyGroupID" />
   <div class="nhsuk-u-margin-top-4">
     Question @Model.CompetencyNumber of @Model.TotalNumberOfCompetencies
   </div>

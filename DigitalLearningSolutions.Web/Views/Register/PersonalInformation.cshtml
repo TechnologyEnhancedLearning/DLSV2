@@ -16,7 +16,7 @@
 
       <div class="nhsuk-u-margin-bottom-8">
         <h1 class="nhsuk-heading-xl">Register</h1>
-        <input type="hidden" aria-hidden="true" asp-for="IsCentreSpecificRegistration" value="@Model.IsCentreSpecificRegistration" />
+        <input type="hidden" asp-for="IsCentreSpecificRegistration" value="@Model.IsCentreSpecificRegistration" />
 
         @if (Model.IsCentreSpecificRegistration)
         {
@@ -27,7 +27,7 @@
               Not the right centre? Click here to change.
             </a>
           </p>
-          <input type="hidden" aria-hidden="true" asp-for="Centre" />
+          <input type="hidden" asp-for="Centre" />
         }
         else
         {

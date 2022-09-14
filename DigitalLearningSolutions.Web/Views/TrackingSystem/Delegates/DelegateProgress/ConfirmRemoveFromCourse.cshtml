@@ -33,12 +33,12 @@
           asp-action="ExecuteRemoveFromCourse"
           asp-route-progressId="@Model.ProgressId"
           asp-route-accessedVia="@Model.AccessedVia">
-      <input type="hidden" aria-hidden="true" asp-for="DelegateId" />
-      <input type="hidden" aria-hidden="true" asp-for="ProgressId" />
-      <input type="hidden" aria-hidden="true" asp-for="CustomisationId" />
-      <input type="hidden" aria-hidden="true" asp-for="@Model.Name" />
-      <input type="hidden" aria-hidden="true" asp-for="@Model.CourseName" />
-      <input type="hidden" aria-hidden="true" asp-for="@Model.ReturnPageQuery" />
+      <input type="hidden" asp-for="DelegateId" />
+      <input type="hidden" asp-for="ProgressId" />
+      <input type="hidden" asp-for="CustomisationId" />
+      <input type="hidden" asp-for="@Model.Name" />
+      <input type="hidden" asp-for="@Model.CourseName" />
+      <input type="hidden" asp-for="@Model.ReturnPageQuery" />
 
       <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
                           label="I am sure that I wish to remove this enrolment"

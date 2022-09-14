@@ -19,8 +19,8 @@
     <h1 class="nhsuk-heading-xl word-break">@title</h1>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="AddCourseToGroup" novalidate>
-      <input type="hidden" aria-hidden="true" asp-for="CourseName" />
-      <input type="hidden" aria-hidden="true" asp-for="GroupName" />
+      <input type="hidden" asp-for="CourseName" />
+      <input type="hidden" asp-for="GroupName" />
 
       <vc:single-checkbox asp-for="@nameof(Model.CohortLearners)"
                           label="Cohort learners"

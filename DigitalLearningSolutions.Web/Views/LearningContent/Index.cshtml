@@ -57,7 +57,7 @@
     <partial name="SearchablePage/_BottomPagination" model="Model" />
   }
 </div>
-<input type="hidden" aria-hidden="true" id="brand-id" asp-for="BrandId" />
+<input type="hidden" id="brand-id" asp-for="BrandId" />
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {
 @section scripts {
   <script src="@Url.Content("~/js/learningContent/brands.js")" asp-append-version="true"></script>

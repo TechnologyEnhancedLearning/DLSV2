@@ -27,7 +27,7 @@
 
     <h1 class="nhsuk-heading-xl">Edit report filters</h1>
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditFilters">
-      <input type="hidden" aria-hidden="true" name="dataStart" value="@Model.DataStart" />
+      <input type="hidden" name="dataStart" value="@Model.DataStart" />
 
       <vc:select-list asp-for="@nameof(Model.JobGroupId)"
                       label="Choose job group filter"

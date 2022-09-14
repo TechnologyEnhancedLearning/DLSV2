@@ -12,9 +12,9 @@
   <form class="filter-form" method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
 
     @if (Model.ActionParameterName == "topicFilterString") {
-      <input type="hidden" aria-hidden="true" name="CategoryFilterString" value="@Model.CategoryFilterString" />
+      <input type="hidden" name="CategoryFilterString" value="@Model.CategoryFilterString" />
     } else {
-      <input type="hidden" aria-hidden="true" name="TopicFilterString" value="@Model.TopicFilterString" />
+      <input type="hidden" name="TopicFilterString" value="@Model.TopicFilterString" />
     }
 
     <div class="filter-value-container">

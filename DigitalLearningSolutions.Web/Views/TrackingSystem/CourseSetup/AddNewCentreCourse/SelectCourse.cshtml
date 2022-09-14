@@ -26,9 +26,9 @@
     }
 
     <form method="post" novalidate asp-controller="CourseSetup" asp-action="SelectCourse">
-      <input type="hidden" aria-hidden="true" id="existing-filter-string" name="existingFilterString" value="@Model.ExistingFilterString" />
-      <input type="hidden" aria-hidden="true" id="category-filter-string" name="CategoryFilterString" value="@Model.CategoryFilterString" />
-      <input type="hidden" aria-hidden="true" id="topic-filter-string" name="TopicFilterString" value="@Model.TopicFilterString" />
+      <input type="hidden" id="existing-filter-string" name="existingFilterString" value="@Model.ExistingFilterString" />
+      <input type="hidden" id="category-filter-string" name="CategoryFilterString" value="@Model.CategoryFilterString" />
+      <input type="hidden" id="topic-filter-string" name="TopicFilterString" value="@Model.TopicFilterString" />
 
       <div class="nhsuk-u-width-full">
         <div class="nhsuk-form-group @(errorHasOccurred ? "nhsuk-form-group--error" : "")">

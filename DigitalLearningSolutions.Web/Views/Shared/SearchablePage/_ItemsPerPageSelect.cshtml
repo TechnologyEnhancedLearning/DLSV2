@@ -2,14 +2,14 @@
 @model IBaseSearchablePageViewModel
 
 <form method="get" role="search">
-  <input type="hidden" aria-hidden="true" name="searchString" value="@Model.SearchString" />
-  <input type="hidden" aria-hidden="true" name="sortBy" value="@Model.SortBy" />
-  <input type="hidden" aria-hidden="true" name="sortDirection" value="@Model.SortDirection" />
+  <input type="hidden" name="searchString" value="@Model.SearchString" />
+  <input type="hidden" name="sortBy" value="@Model.SortBy" />
+  <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
   @if (Model.FilterEnabled) {
-    <input type="hidden" aria-hidden="true" name="existingFilterString" value="@Model.ExistingFilterString" />
+    <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
   }
   @foreach (var (key, value) in Model.RouteData) {
-    <input type="hidden" aria-hidden="true" name="@key" value="@value" />
+    <input type="hidden" name="@key" value="@value" />
   }
 
   <div class="nhsuk-form-group items-per-page-select-container">

@@ -34,10 +34,10 @@
           asp-action="RemoveGroupCourse"
           asp-route-groupCustomisationid="@Model.GroupCourseId">
 
-      <input type="hidden" aria-hidden="true" asp-for="GroupCourseId" />
-      <input type="hidden" aria-hidden="true" asp-for="CourseName" />
-      <input type="hidden" aria-hidden="true" asp-for="GroupName" />
-      <input type="hidden" aria-hidden="true" asp-for="ReturnPageQuery"/>
+      <input type="hidden" asp-for="GroupCourseId" />
+      <input type="hidden" asp-for="CourseName" />
+      <input type="hidden" asp-for="GroupName" />
+      <input type="hidden" asp-for="ReturnPageQuery"/>
 
       <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
                           label="I am sure that I wish to remove @Model.CourseName course from this group."

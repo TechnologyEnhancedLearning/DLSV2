@@ -14,7 +14,7 @@
     <vc:field-name-value-display display-name="Section" field-value="@Model.SectionName" />
 
     <form method="post" novalidate asp-action="SetSectionContent">
-      <input type="hidden" aria-hidden="true" asp-for="Index" />
+      <input type="hidden" asp-for="Index" />
 
       <partial name="../CourseContent/_EditSectionContentFormInputs" model="Model" />
 

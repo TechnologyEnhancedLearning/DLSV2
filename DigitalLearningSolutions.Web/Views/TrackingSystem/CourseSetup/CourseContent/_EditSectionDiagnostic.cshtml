@@ -23,8 +23,8 @@
 
   <div class="nhsuk-checkboxes">
     @foreach (var (tutorial, tutIndex) in Model.Tutorials.Select((t, i) => (t, i))) {
-      <input type="hidden" aria-hidden="true" name="@($"{nameof(Model.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialId)}")" value="@tutorial.TutorialId" />
-      <input type="hidden" aria-hidden="true" name="@($"{nameof(Model.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialName)}")" value="@tutorial.TutorialName" />
+      <input type="hidden" name="@($"{nameof(Model.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialId)}")" value="@tutorial.TutorialId" />
+      <input type="hidden" name="@($"{nameof(Model.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialName)}")" value="@tutorial.TutorialName" />
       <div class="nhsuk-checkboxes__item">
         <input class="nhsuk-checkboxes__input diagnostic-checkbox"
                type="checkbox"

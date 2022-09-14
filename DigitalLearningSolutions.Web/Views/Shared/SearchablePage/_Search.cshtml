@@ -3,14 +3,14 @@
 
 <form method="get" role="search">
   @if (Model.FilterEnabled) {
-    <input type="hidden" aria-hidden="true" name="existingFilterString" value="@Model.ExistingFilterString" />
+    <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
   }
   @foreach (var (key, value) in Model.RouteData) {
-    <input type="hidden" aria-hidden="true" name="@key" value="@value" />
+    <input type="hidden" name="@key" value="@value" />
   }
-  <input type="hidden" aria-hidden="true" name="sortBy" value="@Model.SortBy" />
-  <input type="hidden" aria-hidden="true" name="sortDirection" value="@Model.SortDirection" />
-  <input type="hidden" aria-hidden="true" name="itemsPerPage" value="@Model.ItemsPerPage" />
+  <input type="hidden" name="sortBy" value="@Model.SortBy" />
+  <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
+  <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
   <div class="search-box-container" id="search">
     <label class="nhsuk-u-visually-hidden" for="search-field">
       @Model.SearchLabel
