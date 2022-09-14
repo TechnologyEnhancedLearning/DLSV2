@@ -7,8 +7,8 @@
 <div class="hidden-submit">
   <button name="action" class="nhsuk-button" value="@CourseContentController.SaveAction" aria-hidden="true" tabindex="-1">Save</button>
 </div>
-<input type="hidden" asp-for="SectionName" />
-<input type="hidden" asp-for="ShowDiagnostic" />
+<input type="hidden" aria-hidden="true" asp-for="SectionName" />
+<input type="hidden" aria-hidden="true" asp-for="ShowDiagnostic" />
 
 <div class="nhsuk-grid-row  nhsuk-u-margin-bottom-4">
   <div @(Model.ShowDiagnostic ? "" : "hidden")>

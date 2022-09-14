@@ -19,7 +19,7 @@
   var capitalisedSubject = Model.IsSelfRegistrationOrEdit ? "You" : "They";
 }
 
-<input type="hidden" asp-for="IsSelfRegistrationOrEdit"/>
+<input type="hidden" aria-hidden="true" asp-for="IsSelfRegistrationOrEdit"/>
 
 <div class="nhsuk-form-group @(hasPrnErrorHasOccurred ? " nhsuk-form-group--error" : "" )">
   <fieldset id="HasProfessionalRegistrationNumber" class="nhsuk-fieldset" aria-describedby="professional-registration-hint">

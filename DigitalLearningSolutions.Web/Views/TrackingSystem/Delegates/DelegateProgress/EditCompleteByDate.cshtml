@@ -31,12 +31,12 @@
     <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="EditCompleteByDate">
-      <input type="hidden" asp-for="DelegateId" />
-      <input type="hidden" asp-for="ProgressId" />
-      <input type="hidden" asp-for="DelegateName" />
-      <input type="hidden" asp-for="CourseName" />
-      <input type="hidden" asp-for="ReturnPageQuery" />
-      <input type="hidden" asp-for="CustomisationId" />
+      <input type="hidden" aria-hidden="true" asp-for="DelegateId" />
+      <input type="hidden" aria-hidden="true" asp-for="ProgressId" />
+      <input type="hidden" aria-hidden="true" asp-for="DelegateName" />
+      <input type="hidden" aria-hidden="true" asp-for="CourseName" />
+      <input type="hidden" aria-hidden="true" asp-for="ReturnPageQuery" />
+      <input type="hidden" aria-hidden="true" asp-for="CustomisationId" />
       <vc:date-input id="complete-by-date"
                      label="Complete by date"
                      day-id="Day"

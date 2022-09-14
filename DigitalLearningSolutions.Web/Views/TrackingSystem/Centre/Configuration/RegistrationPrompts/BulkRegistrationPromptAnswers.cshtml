@@ -16,8 +16,8 @@
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="@(Model.IsAddPromptJourney ? "AddRegistrationPromptBulkPost" : "EditRegistrationPromptBulkPost")">
 
-      <input type="hidden" asp-for="IsAddPromptJourney" />
-      <input type="hidden" asp-for="PromptNumber" />
+      <input type="hidden" aria-hidden="true" asp-for="IsAddPromptJourney" />
+      <input type="hidden" aria-hidden="true" asp-for="PromptNumber" />
 
       <vc:text-area asp-for="OptionsString"
                     label="Enter each response option on a separate line (max 4000 characters). The order of responses will be the order they appear on the dropdown for users."

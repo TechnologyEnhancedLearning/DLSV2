@@ -17,10 +17,10 @@
     <vc:field-name-value-display display-name="User" field-value="@Model.Name" />
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index">
-      <input type="hidden" asp-for="Name" />
-      <input type="hidden" asp-for="DelegateId" />
-      <input type="hidden" asp-for="IsFromViewDelegatePage" />
-      <input type="hidden" asp-for="ReturnPageQuery" />
+      <input type="hidden" aria-hidden="true" asp-for="Name" />
+      <input type="hidden" aria-hidden="true" asp-for="DelegateId" />
+      <input type="hidden" aria-hidden="true" asp-for="IsFromViewDelegatePage" />
+      <input type="hidden" aria-hidden="true" asp-for="ReturnPageQuery" />
       <vc:text-input asp-for="@nameof(Model.Password)"
                      label="Password"
                      populate-with-current-value="false"

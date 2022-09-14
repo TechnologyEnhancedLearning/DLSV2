@@ -3,7 +3,7 @@
 
 <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Filter by</label>
 <div class="filter-container">
-  <input type="hidden" id="existing-filter-string" name="existingFilterString" value="@Model.ExistingFilterString" />
+  <input type="hidden" aria-hidden="true" id="existing-filter-string" name="existingFilterString" value="@Model.ExistingFilterString" />
   <select class="nhsuk-select filter-dropdown-selector"
           id="filter-selector"
           name="filterCategorySelector"
@@ -17,13 +17,13 @@
     @foreach (var filter in Model.Filters) {
       <div class="filter-dropdown-container" id="filter-@filter.FilterProperty">
         <form class="filter-form" method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
-          <input type="hidden" name="searchString" value="@Model.SearchString" />
-          <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
-          <input type="hidden" name="sortBy" value="@Model.SortBy" />
-          <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
-          <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
+          <input type="hidden" aria-hidden="true" name="searchString" value="@Model.SearchString" />
+          <input type="hidden" aria-hidden="true" name="existingFilterString" value="@Model.ExistingFilterString" />
+          <input type="hidden" aria-hidden="true" name="sortBy" value="@Model.SortBy" />
+          <input type="hidden" aria-hidden="true" name="sortDirection" value="@Model.SortDirection" />
+          <input type="hidden" aria-hidden="true" name="itemsPerPage" value="@Model.ItemsPerPage" />
           @foreach (var (key, value) in Model.RouteData) {
-            <input type="hidden" name="@key" value="@value" />
+            <input type="hidden" aria-hidden="true" name="@key" value="@value" />
           }
           <div class="filter-value-container">
             <select class="nhsuk-select filter-dropdown"

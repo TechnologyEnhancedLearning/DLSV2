@@ -33,8 +33,8 @@
     </div>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditAdminRoles">
-      <input type="hidden" asp-for="ReturnPageQuery" />
-      <input type="hidden" asp-for="FullName" />
+      <input type="hidden" aria-hidden="true" asp-for="ReturnPageQuery" />
+      <input type="hidden" aria-hidden="true" asp-for="FullName" />
       <vc:checkboxes label="Please select all the roles this user has."
                      populate-with-current-values="true"
                      checkboxes="@Model.Checkboxes"

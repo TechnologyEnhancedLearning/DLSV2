@@ -83,7 +83,7 @@
   </div>
 
   @if (Model.IsDelegateUser) {
-    <input type="hidden" asp-for="IsDelegateUser" />
+    <input type="hidden" aria-hidden="true" asp-for="IsDelegateUser" />
     <div class="nhsuk-grid-row divider">
       <div class="nhsuk-grid-column-full">
         <vc:select-list
@@ -129,7 +129,7 @@
       @{ var hintText = @"To change your profile picture, select a new image and click the Preview button to preview it.
                                 To remove your profile picture click the remove button.
                                 Changes will not be made until the Save button below is clicked."; }
-      <input type="hidden" asp-for="ProfileImage" />
+      <input type="hidden" aria-hidden="true" asp-for="ProfileImage" />
       <vc:file-input
         asp-for="@nameof(Model.ProfileImageFile)"
         label="Profile picture (optional)"

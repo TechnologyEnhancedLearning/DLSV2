@@ -47,7 +47,7 @@
     </dl>
 
     <form class="nhsuk-u-margin-bottom-5" asp-controller="DelegateApprovals" asp-action="RejectDelegate" method="post">
-      <input type="hidden" name="delegateId" value="@Model.Id" />
+      <input type="hidden" aria-hidden="true" name="delegateId" value="@Model.Id" />
       <button class="nhsuk-button delete-button" type="submit">
         Reject
       </button>

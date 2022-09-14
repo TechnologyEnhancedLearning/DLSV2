@@ -30,10 +30,10 @@
     }
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
-      <input type="hidden" asp-for="ResourceName" />
-      <input type="hidden" asp-for="AbsentInLearningHub" />
-      <input type="hidden" asp-for="ApiIsAccessible" />
-      <input type="hidden" asp-for="ReturnPageQuery"/>
+      <input type="hidden" aria-hidden="true" asp-for="ResourceName" />
+      <input type="hidden" aria-hidden="true" asp-for="AbsentInLearningHub" />
+      <input type="hidden" aria-hidden="true" asp-for="ApiIsAccessible" />
+      <input type="hidden" aria-hidden="true" asp-for="ReturnPageQuery"/>
 
       <vc:date-input id="completion-date"
                      label="Completion date"

@@ -79,7 +79,7 @@
 
   <div class="flex-row nhsuk-u-margin-left-4" aria-hidden="false">
     <form method="post" aria-hidden="false">
-      <input type="hidden" name="delegateId" value="@Model.DelegateInfo.Id" />
+      <input type="hidden" aria-hidden="true" name="delegateId" value="@Model.DelegateInfo.Id" />
       <button class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-right-2"
               asp-controller="GroupDelegates"
               asp-action="AddDelegate"

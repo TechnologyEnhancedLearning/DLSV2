@@ -70,7 +70,7 @@
     </fieldset>
   </div>
 } else {
-  <input type="hidden" asp-for="FilterType" value="@CourseFilterType.Course" />
+  <input type="hidden" aria-hidden="true" asp-for="FilterType" value="@CourseFilterType.Course" />
   <vc:select-list asp-for="@nameof(Model.CustomisationId)"
                   label="Choose a course filter"
                   value="@Model.CustomisationId.ToString()"

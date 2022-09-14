@@ -49,8 +49,8 @@
               <partial name="SearchablePage/_TopPagination" model="Model" />
               <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
 
-              <input type="hidden" id="select-sort-by" value="SearchableName" />
-              <input type="hidden" id="select-sort-direction" value="Ascending" />
+              <input type="hidden" aria-hidden="true" id="select-sort-by" value="SearchableName" />
+              <input type="hidden" aria-hidden="true" id="select-sort-direction" value="Ascending" />
               @if (Model.SuperviseDelegateDetailViewModels.Any()) {
                 <div id="searchable-elements">
                   @foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetailViewModels) {

@@ -74,7 +74,7 @@
                 <label class="nhsuk-label" for="new-comment">
                   Post a reply
                 </label>
-                <input type="hidden" value="@Model.Comments" name="parentComment" />
+                <input type="hidden" aria-hidden="true" value="@Model.Comments" name="parentComment" />
                 <textarea class="nhsuk-textarea" id="new-comment" name="Comment" rows="3"></textarea>
               </div>
               <button class="nhsuk-button" type="submit">

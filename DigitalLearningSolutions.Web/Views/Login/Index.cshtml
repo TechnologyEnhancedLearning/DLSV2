@@ -14,7 +14,7 @@
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Username), nameof(Model.Password) })" />
       }
 
-      <input type="hidden" value="@Model.ReturnUrl" asp-for="ReturnUrl" />
+      <input type="hidden" aria-hidden="true" value="@Model.ReturnUrl" asp-for="ReturnUrl" />
 
       <div class="nhsuk-u-margin-bottom-8">
         <h1 id="page-heading" class="nhsuk-heading-xl">Log in</h1>

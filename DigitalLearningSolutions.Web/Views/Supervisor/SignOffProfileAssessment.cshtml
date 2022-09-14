@@ -163,7 +163,7 @@
             Sign-off Self Assessment
           </h2>
         </legend>
-        <input type="hidden" asp-for="CandidateAssessmentSupervisorVerificationId" />
+        <input type="hidden" aria-hidden="true" asp-for="CandidateAssessmentSupervisorVerificationId" />
         <nhs-form-group nhs-validation-for="SupervisorComments">
           <vc:text-area asp-for="SupervisorComments" character-count="null" label="@(Model.SelfAssessmentResultSummary.ReviewerCommentsLabel == null ? "Reviewer comments": Model.SelfAssessmentResultSummary.ReviewerCommentsLabel.ToString())" rows="5" css-class="" hint-text="" populate-with-current-value="true" spell-check="false"></vc:text-area>
         </nhs-form-group>
