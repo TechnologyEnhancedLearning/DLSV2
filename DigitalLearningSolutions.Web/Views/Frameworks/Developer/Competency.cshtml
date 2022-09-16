@@ -53,10 +53,16 @@
         <input class="nhsuk-input" asp-for="FrameworkCompetency.Name" id="competency-name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-name-label">
       </nhs-form-group>
       <div class="nhsuk-form-group">
-        <label class="nhsuk-label" id="competency-description-label" for="competency-description">
-          @Model.VocabSingular() description
-        </label>
-        <textarea class="nhsuk-input html-editor" asp-for="FrameworkCompetency.Description" id="competency-description" name="Description" type="text" aria-describedby="competency-description-label"></textarea>
+        <vc:text-area asp-for="FrameworkCompetency.Description"
+                      label="@Model.VocabSingular() description"
+                      populate-with-current-value="true"
+                      rows="5"
+                      spell-check="false"
+                      hint-text=""
+                      css-class="html-editor"
+                      character-count="null"
+                      populate-with-current-value="true"
+                      />
       </div>
       @if (Model.CompetencyFlags?.Count() > 0)
       {

@@ -54,7 +54,14 @@
       <div class="nhsuk-hint" id="tb-scoringInstructions-hint">
         When this question is presented to the user, what instructions (if any) should be presented to assist them in answering?
       </div>
-      <textarea class="nhsuk-input html-editor" placeholder="Optional" id="tb-scoringInstructions" asp-for="AssessmentQuestionDetail.ScoringInstructions" name="ScoringInstructions" type="text"></textarea>
+      <vc:text-area asp-for="AssessmentQuestionDetail.ScoringInstructions"
+                    label=""
+                    populate-with-current-value="true"
+                    rows="5"
+                    spell-check="false"
+                    hint-text=""
+                    css-class="html-editor"
+                    character-count="null" />
     </div>
     <div class="nhsuk-form-group">
       <label class="nhsuk-label" asp-for="AssessmentQuestionDetail.IncludeComments">
