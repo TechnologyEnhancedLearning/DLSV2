@@ -239,3 +239,8 @@ h1.truncate-overflow::after {
 .searchable-element .nhsuk-expander {
   border: none
 }
+
+.text-wrap {
+  inline-size: 882px;
+  overflow-wrap: break-word;
+}
