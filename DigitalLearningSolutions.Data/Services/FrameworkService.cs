@@ -540,6 +540,7 @@
                 );
                 return -2;
             }
+            groupDescription = (groupDescription?.Trim() == "" ? null : groupDescription);
             var existingId = (int)connection.ExecuteScalar(
                 @"SELECT COALESCE ((SELECT TOP(1)ID FROM CompetencyGroups WHERE [Name] = @groupName AND (@groupDescription IS NULL OR Description = @groupDescription)), 0) AS CompetencyGroupID",
                 new { groupName, groupDescription }
@@ -622,7 +623,7 @@
                 );
                 return -2;
             }
-
+            description = (description?.Trim() == "" ? null : description);
             var existingId = 0;
             if (description == null)
             {
