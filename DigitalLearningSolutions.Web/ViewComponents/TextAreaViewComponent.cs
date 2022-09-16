@@ -35,8 +35,15 @@
             string[] types = aspFor.Split('.');
             IEnumerable<string> errorMessages;
 
-            if (types.Length == 1) valueToSet = ValueToSetForSimpleType(model, aspFor, populateWithCurrentValue, out errorMessages);
-            else valueToSet = ValueToSetForComplexType(model, aspFor, populateWithCurrentValue, types, out errorMessages);
+            if (types.Length == 1)
+            {
+                valueToSet = ValueToSetForSimpleType(model, aspFor, populateWithCurrentValue, out errorMessages);
+            }
+            else
+            {
+                valueToSet = ValueToSetForComplexType(model, aspFor, populateWithCurrentValue, types, out errorMessages);
+                aspFor = types[1];
+            }
 
             var textBoxViewModel = new TextAreaViewModel(
                 aspFor,
@@ -75,6 +82,7 @@
 
             errorMessages = ViewData.ModelState[firstProperty?.Name]?.Errors.Select(e => e.ErrorMessage) ??
                                 new string[] { };
+
 
             return valueToSetOfNestedProperty;
         }
