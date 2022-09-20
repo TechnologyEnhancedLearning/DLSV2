@@ -486,7 +486,7 @@
             // Given
             string? userEmail = null;
             const bool canModify = false;
-            
+
             // When
             var result = frameworkService.AddCollaboratorToFramework(ValidFrameworkId, userEmail, canModify);
 
