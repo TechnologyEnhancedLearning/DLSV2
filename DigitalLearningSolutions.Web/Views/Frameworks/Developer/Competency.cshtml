@@ -9,7 +9,7 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -21,10 +21,10 @@
     </div>
   </nav>
 }
-<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-row">
 
-  <div class="nhsuk-grid-column-full">
-    @if (Model.FrameworkCompetency.Id > 0)
+    <div class="nhsuk-grid-column-full">
+      @if (Model.FrameworkCompetency.Id > 0)
     {
       <h1>
         Edit @Model.VocabSingular().ToLower()
@@ -61,25 +61,24 @@
                       hint-text=""
                       css-class="html-editor"
                       character-count="null"
-                      populate-with-current-value="true"
-                      />
+                      populate-with-current-value="true" />
       </div>
       @if (Model.CompetencyFlags?.Count() > 0)
       {
-      <div class="nhsuk-form-group">
-        <label class="nhsuk-label nhsuk-u-margin-bottom-2" id="competency-description-label" for="competency-description">
-          @Model.VocabSingular() tags
-        </label>
-        @foreach (var flag in Model.CompetencyFlags)
-        {
-          <div class="nhsuk-checkboxes__item">
-            <input class="nhsuk-checkboxes__input" name="selectedFlagIds" type="checkbox" value="@flag.FlagId" @(flag.Selected ? "checked" : string.Empty) />
-            <label class="nhsuk-label nhsuk-checkboxes__label">
-              @flag.FlagName
-            </label>
-          </div>
-        }
-      </div>
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label nhsuk-u-margin-bottom-2" id="competency-description-label" for="competency-description">
+            @Model.VocabSingular() tags
+          </label>
+          @foreach (var flag in Model.CompetencyFlags)
+          {
+            <div class="nhsuk-checkboxes__item">
+              <input class="nhsuk-checkboxes__input" name="selectedFlagIds" type="checkbox" value="@flag.FlagId" @(flag.Selected ? "checked" : string.Empty) />
+              <label class="nhsuk-label nhsuk-checkboxes__label">
+                @flag.FlagName
+              </label>
+            </div>
+          }
+        </div>
       }
 
       <input name="Id" type="hidden" asp-for="FrameworkCompetency.Id" />

@@ -1,160 +1,160 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @model AssessmentQuestionViewModel;
 @{
-  ViewData["Title"] = "Assessment Question";
-  ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Assessment Question";
+    ViewData["Application"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
 @section NavMenuItems {
-  <partial name="Shared/_NavMenuItems" />
+    <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-        @if (Model.FrameworkCompetencyId == 0)
-        {
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Details">Framework Details</a></li>
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Default Questions</a></li>
-          <li class="nhsuk-breadcrumb__item">@(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") Assessment Question</li>
-        }
-        else
-        {
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">@Model.VocabSingular() Assessment Questions</a></li>
-          <li class="nhsuk-breadcrumb__item">@(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") Assessment Question</li>
-        }
+    @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                @if (Model.FrameworkCompetencyId == 0)
+                {
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Details">Framework Details</a></li>
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Default Questions</a></li>
+                    <li class="nhsuk-breadcrumb__item">@(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") Assessment Question</li>
+                }
+                else
+                {
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">@Model.VocabSingular() Assessment Questions</a></li>
+                    <li class="nhsuk-breadcrumb__item">@(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") Assessment Question</li>
+                }
 
-      </ol>
-      @if (Model.FrameworkCompetencyId == 0)
-      {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Back to Default Questions</a></p>
-      }
-      else
-      {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Back to @Model.VocabSingular() Assessment Questions</a></p>
-      }
-    </div>
-  </nav>
+            </ol>
+            @if (Model.FrameworkCompetencyId == 0)
+            {
+                <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Back to Default Questions</a></p>
+            }
+            else
+            {
+                <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Back to @Model.VocabSingular() Assessment Questions</a></p>
+            }
+        </div>
+    </nav>
 }
-<h1>@Model.AssessmentQuestionDetail.Question</h1>
-<form method="post">
-  <fieldset class="nhsuk-fieldset">
-    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-      <span class="nhsuk-fieldset__heading">
-         Assessment Question Options
-      </span>
-    </legend>
-    <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="tb-scoringInstructions">
-        Scoring instructions
-      </label>
-      <div class="nhsuk-hint" id="tb-scoringInstructions-hint">
-        When this question is presented to the user, what instructions (if any) should be presented to assist them in answering?
-      </div>
-      <vc:text-area asp-for="AssessmentQuestionDetail.ScoringInstructions"
-                    label=""
-                    populate-with-current-value="true"
-                    rows="5"
-                    spell-check="false"
-                    hint-text=""
-                    css-class="html-editor"
-                    character-count="null" />
-    </div>
-    <div class="nhsuk-form-group">
-      <label class="nhsuk-label" asp-for="AssessmentQuestionDetail.IncludeComments">
-        Comments field
-      </label>
-      <div class="nhsuk-hint" id="includeComments-hint">
-        When this question is presented, should the user be prompted for supporting comments by default?
-      </div>
-      <div class="nhsuk-radios nhsuk-radios--conditional">
-        <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" id="rb-includeComments-yes" asp-for="AssessmentQuestionDetail.IncludeComments" name="IncludeComments" type="radio" value="true" aria-controls="conditional-comments-options" aria-expanded="@(Model.AssessmentQuestionDetail.IncludeComments == true)">
-          <label class="nhsuk-label nhsuk-radios__label" for="rb-includeComments-yes">
-            Yes
-          </label>
-        </div>
-        <div class="@(Model.AssessmentQuestionDetail.IncludeComments == true ? "nhsuk-radios__conditional" : "nhsuk-radios__conditional nhsuk-radios__conditional--hidden")" id="conditional-comments-options">
-          <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.CommentsPrompt">
-            <label class="nhsuk-label" for="comments-prompt">
-              Comments field prompt (optional)
-            </label>
-            <div class="nhsuk-hint" id="custom-prompt-text-hint">
-              By default the comments field will be labelled "Supporting comments". If required, enter a custom label for the comments box.
+    <h1>@Model.AssessmentQuestionDetail.Question</h1>
+    <form method="post">
+        <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                <span class="nhsuk-fieldset__heading">
+                    Assessment Question Options
+                </span>
+            </legend>
+            <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="tb-scoringInstructions">
+                    Scoring instructions
+                </label>
+                <div class="nhsuk-hint" id="tb-scoringInstructions-hint">
+                    When this question is presented to the user, what instructions (if any) should be presented to assist them in answering?
+                </div>
+                <vc:text-area asp-for="AssessmentQuestionDetail.ScoringInstructions"
+                          label=""
+                          populate-with-current-value="true"
+                          rows="5"
+                          spell-check="false"
+                          hint-text=""
+                          css-class="html-editor"
+                          character-count="null" />
             </div>
-            <input class="nhsuk-input nhsuk-u-width-two-thirds" id="comments-prompt" name="CommentsPrompt" asp-for="AssessmentQuestionDetail.CommentsPrompt" type="text">
-          </nhs-form-group>
-          <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.CommentsHint">
-            <label class="nhsuk-label" for="comments-hint">
-              Comments field hint text (optional)
-            </label>
-            <div class="nhsuk-hint" id="custom-prompt-text-hint">
-              Briefly describe what the user should include in the commments field, if required.
+            <div class="nhsuk-form-group">
+                <label class="nhsuk-label" asp-for="AssessmentQuestionDetail.IncludeComments">
+                    Comments field
+                </label>
+                <div class="nhsuk-hint" id="includeComments-hint">
+                    When this question is presented, should the user be prompted for supporting comments by default?
+                </div>
+                <div class="nhsuk-radios nhsuk-radios--conditional">
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="rb-includeComments-yes" asp-for="AssessmentQuestionDetail.IncludeComments" name="IncludeComments" type="radio" value="true" aria-controls="conditional-comments-options" aria-expanded="@(Model.AssessmentQuestionDetail.IncludeComments == true)">
+                        <label class="nhsuk-label nhsuk-radios__label" for="rb-includeComments-yes">
+                            Yes
+                        </label>
+                    </div>
+                    <div class="@(Model.AssessmentQuestionDetail.IncludeComments == true ? "nhsuk-radios__conditional" : "nhsuk-radios__conditional nhsuk-radios__conditional--hidden")" id="conditional-comments-options">
+                        <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.CommentsPrompt">
+                            <label class="nhsuk-label" for="comments-prompt">
+                                Comments field prompt (optional)
+                            </label>
+                            <div class="nhsuk-hint" id="custom-prompt-text-hint">
+                                By default the comments field will be labelled "Supporting comments". If required, enter a custom label for the comments box.
+                            </div>
+                            <input class="nhsuk-input nhsuk-u-width-two-thirds" id="comments-prompt" name="CommentsPrompt" asp-for="AssessmentQuestionDetail.CommentsPrompt" type="text">
+                        </nhs-form-group>
+                        <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.CommentsHint">
+                            <label class="nhsuk-label" for="comments-hint">
+                                Comments field hint text (optional)
+                            </label>
+                            <div class="nhsuk-hint" id="custom-prompt-text-hint">
+                                Briefly describe what the user should include in the commments field, if required.
+                            </div>
+                            <input class="nhsuk-input nhsuk-u-width-two-thirds" id="comments-hint" name="CommentsHint" asp-for="AssessmentQuestionDetail.CommentsHint" type="text">
+                        </nhs-form-group>
+                    </div>
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="rb-includeComments-no" asp-for="AssessmentQuestionDetail.IncludeComments" name="IncludeComments" type="radio" value="false">
+                        <label class="nhsuk-label nhsuk-radios__label" for="rb-includeComments-no">
+                            No
+                        </label>
+                    </div>
+                </div>
             </div>
-            <input class="nhsuk-input nhsuk-u-width-two-thirds" id="comments-hint" name="CommentsHint" asp-for="AssessmentQuestionDetail.CommentsHint" type="text">
-          </nhs-form-group>
-        </div>
-        <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" id="rb-includeComments-no" asp-for="AssessmentQuestionDetail.IncludeComments" name="IncludeComments" type="radio" value="false">
-          <label class="nhsuk-label nhsuk-radios__label" for="rb-includeComments-no">
-            No
-          </label>
-        </div>
-      </div>
-    </div>
-    <input name="ID" type="hidden" asp-for="AssessmentQuestionDetail.ID" />
-    <input name="MinValue" type="hidden" asp-for="AssessmentQuestionDetail.MinValue" />
-    <input name="MaxValue" type="hidden" asp-for="AssessmentQuestionDetail.MaxValue" />
-    <input name="MaxValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MaxValueDescription" />
-    <input name="MinValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MinValueDescription" />
-    <input name="Question" type="hidden" asp-for="AssessmentQuestionDetail.Question" />
-    <input name="AssessmentQuestionInputTypeID" type="hidden" asp-for="AssessmentQuestionDetail.AssessmentQuestionInputTypeID" />
-    <input name="InputTypeName" type="hidden" asp-for="AssessmentQuestionDetail.InputTypeName" />
-    <input name="AddedByAdminId" type="hidden" asp-for="AssessmentQuestionDetail.AddedByAdminId" />
-    <input name="UserIsOwner" type="hidden" asp-for="AssessmentQuestionDetail.UserIsOwner" />
-  </fieldset>
-  @if (Model.AssessmentQuestionDetail.AssessmentQuestionInputTypeID != 2)
-  {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="AssessmentQuestionLevelDescriptor" asp-route-level="@Model.AssessmentQuestionDetail.MaxValue" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
-      Back
-    </a>
-  }
-  else
-  {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditAssessmentQuestionScoring" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
-      Back
-    </a>
-  }
+            <input name="ID" type="hidden" asp-for="AssessmentQuestionDetail.ID" />
+            <input name="MinValue" type="hidden" asp-for="AssessmentQuestionDetail.MinValue" />
+            <input name="MaxValue" type="hidden" asp-for="AssessmentQuestionDetail.MaxValue" />
+            <input name="MaxValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MaxValueDescription" />
+            <input name="MinValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MinValueDescription" />
+            <input name="Question" type="hidden" asp-for="AssessmentQuestionDetail.Question" />
+            <input name="AssessmentQuestionInputTypeID" type="hidden" asp-for="AssessmentQuestionDetail.AssessmentQuestionInputTypeID" />
+            <input name="InputTypeName" type="hidden" asp-for="AssessmentQuestionDetail.InputTypeName" />
+            <input name="AddedByAdminId" type="hidden" asp-for="AssessmentQuestionDetail.AddedByAdminId" />
+            <input name="UserIsOwner" type="hidden" asp-for="AssessmentQuestionDetail.UserIsOwner" />
+        </fieldset>
+        @if (Model.AssessmentQuestionDetail.AssessmentQuestionInputTypeID != 2)
+    {
+        <a class="nhsuk-button nhsuk-button--secondary" asp-action="AssessmentQuestionLevelDescriptor" asp-route-level="@Model.AssessmentQuestionDetail.MaxValue" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+            Back
+        </a>
+    }
+    else
+    {
+        <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditAssessmentQuestionScoring" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+            Back
+        </a>
+    }
 
-  <button class="nhsuk-button" type="submit">
-    Next
-  </button>
-  @if (Model.FrameworkCompetencyId == 0)
-  {
-    <div class="nhsuk-back-link">
-      <a class="nhsuk-back-link__link" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-        </svg>
-        Cancel
-      </a>
-    </div>
-  }
-  else
-  {
-    <div class="nhsuk-back-link">
-      <a class="nhsuk-back-link__link" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-        </svg>
-        Cancel
-      </a>
-    </div>
-  }
+    <button class="nhsuk-button" type="submit">
+        Next
+    </button>
+    @if (Model.FrameworkCompetencyId == 0)
+    {
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    }
 </form>
 @section scripts {
-  <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
 }
