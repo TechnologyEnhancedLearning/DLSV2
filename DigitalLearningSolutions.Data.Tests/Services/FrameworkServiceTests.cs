@@ -481,6 +481,19 @@
             result.Should().Be(-3);
         }
         [Test]
+        public void AddCollaboratorToFramework_should_return_minus_3_if_collaborator_email_is_null()
+        {
+            // Given
+            string? userEmail = null;
+            const bool canModify = false;
+
+            // When
+            var result = frameworkService.AddCollaboratorToFramework(ValidFrameworkId, userEmail, canModify);
+
+            // Then
+            result.Should().Be(-3);
+        }
+        [Test]
         public void GetFrameworkCompetencyGroups_returns_list_with_more_than_one_framework_competency_groups_for_valid_framework_id()
         {
             // When

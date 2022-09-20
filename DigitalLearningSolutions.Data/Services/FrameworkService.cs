@@ -777,9 +777,9 @@
             );
         }
 
-        public int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify)
+        public int AddCollaboratorToFramework(int frameworkId, string? userEmail, bool canModify)
         {
-            if (userEmail.Length == 0)
+            if (userEmail is null || userEmail.Length == 0)
             {
                 logger.LogWarning(
                     $"Not adding collaborator to framework as it failed server side valiidation. frameworkId: {frameworkId}, userEmail: {userEmail}, canModify:{canModify}"
