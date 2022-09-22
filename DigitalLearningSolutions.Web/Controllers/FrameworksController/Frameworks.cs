@@ -157,7 +157,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
                 {
-                    return StatusCode((int)HttpStatusCode.NotFound);
+                    return StatusCode((int)HttpStatusCode.Gone);
                 }
 
                 var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
@@ -281,7 +281,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
                 {
-                    return StatusCode((int)HttpStatusCode.NotFound);
+                    return StatusCode((int)HttpStatusCode.Gone);
                 }
                 else
                 {
@@ -354,7 +354,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
                 {
-                    return StatusCode((int)HttpStatusCode.NotFound);
+                    return StatusCode((int)HttpStatusCode.Gone);
                 }
                 else
                 {
