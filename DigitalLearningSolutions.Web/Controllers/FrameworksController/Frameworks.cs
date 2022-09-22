@@ -183,7 +183,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             if (actionname == "New")
             {
-                if(TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
                 {
                     return StatusCode((int)HttpStatusCode.NotFound);
                 }
@@ -279,7 +279,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             DetailFramework? framework;
             if (actionname == "New")
             {
-                if(TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
                 {
                     return StatusCode((int)HttpStatusCode.NotFound);
                 }
@@ -317,7 +317,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             if (actionname == "New")
             {
-                if(TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
                 {
                     return StatusCode((int)HttpStatusCode.NotFound);
                 }
@@ -585,7 +585,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult RemoveFrameworkFlag(int flagId, int frameworkId)
         {
             var flag = frameworkService.GetCustomFlagsByFrameworkId(frameworkId, flagId).FirstOrDefault();
-            if(flag == null)
+            if (flag == null)
             {
                 return StatusCode((int)HttpStatusCode.NotFound);
             }
@@ -624,7 +624,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 }
                 return RedirectToAction("EditFrameworkFlags", "Frameworks", new { frameworkId });
             }
-            return View("Developer/EditCustomFlag", model);            
+            return View("Developer/EditCustomFlag", model);
         }
 
         [HttpGet]
