@@ -49,7 +49,7 @@
 <div class="nhsuk-card nhsuk-u-padding-4">
   <partial name="../Shared/_AssessmentQuestionPreview.cshtml" model="Model.AssessmentQuestion" />
 </div>
-<a class="nhsuk-button nhsuk-button--secondary" asp-action="EditAssessmentQuestionOptions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+<a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="EditAssessmentQuestionOptions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
   Back
 </a>
 @if (Model.FrameworkCompetencyId == 0 && Model.AssessmentQuestion.Id == 0)
@@ -58,16 +58,16 @@
   {
     <partial name="Shared/_PublishedWarning" />
   }
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit and apply to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
+  <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="SubmitAssessmentQuestion" title="Submit and apply to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
     Submit and apply <span class="nhsuk-u-visually-hidden">to existing @Model.VocabPlural().ToLower()</span>
   </a>
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit without applying to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
+  <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="SubmitAssessmentQuestion" title="Submit without applying to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
     Submit <span class="nhsuk-u-visually-hidden">without applying to existing @Model.VocabPlural().ToLower()</span>
   </a>
 }
 else
 {
-  <a class="nhsuk-button" asp-action="SubmitAssessmentQuestion" asp-route-addToExisting="False" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
+  <a class="nhsuk-button" role="button" asp-action="SubmitAssessmentQuestion" asp-route-addToExisting="False" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
     Submit
   </a>
 }

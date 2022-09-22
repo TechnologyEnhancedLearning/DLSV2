@@ -115,7 +115,7 @@
     <input name="CommentsPrompt" type="hidden" asp-for="AssessmentQuestionDetail.CommentsPrompt" />
     <input name="CommentsHint" type="hidden" asp-for="AssessmentQuestionDetail.CommentsHint" />
   </fieldset>
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditAssessmentQuestion" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]"  asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+  <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="EditAssessmentQuestion" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
     Back
   </a>
   <button class="nhsuk-button" type="submit">

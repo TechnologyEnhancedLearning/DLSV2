@@ -143,13 +143,13 @@ else
 <div class=" nhsuk-u-margin-top-6">
   @if ((string)ViewContext.RouteData.Values["actionname"] == "Review")
   {
-    <a class="nhsuk-button" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+    <a class="nhsuk-button" role="button" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
       Done
     </a>
   }
   else
   {
-    <a class="nhsuk-button" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">
+    <a class="nhsuk-button" role="button" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">
       Done
     </a>
   }

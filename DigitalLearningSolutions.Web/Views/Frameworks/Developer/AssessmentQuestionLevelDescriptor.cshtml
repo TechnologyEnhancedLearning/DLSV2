@@ -127,13 +127,13 @@
 </fieldset>
   @if (Model.LevelDescriptor.LevelValue > Model.AssessmentQuestionDetail.MinValue)
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="AssessmentQuestionLevelDescriptor" asp-route-level="@((int)Model.LevelDescriptor.LevelValue-1)" asp-route-frameworkId="@Model.FrameworkId" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="AssessmentQuestionLevelDescriptor" asp-route-level="@((int)Model.LevelDescriptor.LevelValue-1)" asp-route-frameworkId="@Model.FrameworkId" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
       Back
     </a>
   }
   else
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditAssessmentQuestionScoring" asp-route-frameworkId="@Model.FrameworkId" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="EditAssessmentQuestionScoring" asp-route-frameworkId="@Model.FrameworkId" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
       Back
     </a>
   }

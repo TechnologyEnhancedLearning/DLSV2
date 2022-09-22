@@ -52,7 +52,7 @@
         <div class="flex-row">
             @if (Model.IsSelfAssessment)
             {
-                <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2"
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" role="button"
            aria-describedby="@Model.Id-name"
            aria-label="@Model.EnrolButtonAriaLabel" asp-action="EnrolOnSelfAssessment" asp-route-selfAssessmentId="@Model.Id">
                     @Model.EnrolButtonText
@@ -60,7 +60,7 @@
             }
             else
             {
-                <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2"
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" role="button"
            aria-describedby="@Model.Id-name"
            aria-label="@Model.EnrolButtonAriaLabel"
            asp-controller="LearningMenu"

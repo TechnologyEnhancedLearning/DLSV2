@@ -81,13 +81,13 @@
   @if (Model.FinaliseText != null)
   {
     <div>
-      <a class="nhsuk-button nhsuk-button" href="@Model.FinaliseUrl" aria-label="@Model.FinaliseAriaLabel">
+      <a class="nhsuk-button nhsuk-button" role="button" href="@Model.FinaliseUrl" aria-label="@Model.FinaliseAriaLabel">
         @Model.FinaliseText
       </a>
     </div>
   }
   <div>
-    <a class="nhsuk-button nhsuk-button--secondary" target="_blank" href="@Model.DownloadSummaryUrl">
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" target="_blank" href="@Model.DownloadSummaryUrl">
       Download summary
     </a>
   </div>

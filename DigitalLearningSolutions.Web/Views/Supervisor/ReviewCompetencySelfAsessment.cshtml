@@ -246,7 +246,7 @@ else if (ViewContext.RouteData.Values["viewMode"].ToString() == "View" && Model.
         </dl>
         @if ((bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
         {
-            <a class="nhsuk-button nhsuk-button--secondary" asp-action="ReviewCompetencySelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-viewMode="Review" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]" asp-route-resultId="@ViewContext.RouteData.Values["resultId"]">Update</a>
+      <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="ReviewCompetencySelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-viewMode="Review" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]" asp-route-resultId="@ViewContext.RouteData.Values["resultId"]">Update</a>
         }
     }
 }

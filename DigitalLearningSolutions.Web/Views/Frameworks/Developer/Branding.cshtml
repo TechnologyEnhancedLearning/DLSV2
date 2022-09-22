@@ -89,10 +89,10 @@ else
   </fieldset>
   @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworkType" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="FrameworkType" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
       Back
     </a>
-    <button class="nhsuk-button" type="submit">
+    <button class="nhsuk-button" role="button" type="submit">
       Next
     </button>
     <div class="nhsuk-back-link">

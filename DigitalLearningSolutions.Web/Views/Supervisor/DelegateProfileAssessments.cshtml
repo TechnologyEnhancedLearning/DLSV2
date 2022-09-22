@@ -43,7 +43,7 @@ else
 }
 @if (!Model.IsNominatedSupervisor)
 {
-  <a class="nhsuk-button nhsuk-u-margin-top-4" asp-action="StartEnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+  <a class="nhsuk-button nhsuk-u-margin-top-4" role="button" asp-action="StartEnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
     Enrol on new assessment
   </a>
 }

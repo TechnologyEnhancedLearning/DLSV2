@@ -77,7 +77,7 @@ else
   <input name="publishStatusId" type="hidden" asp-for="PublishStatusID" />
   @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="CreateNewFramework" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="CreateNewFramework" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
       Back
     </a>
     <button class="nhsuk-button" type="submit">

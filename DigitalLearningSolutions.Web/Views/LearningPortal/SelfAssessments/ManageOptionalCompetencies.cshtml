@@ -59,8 +59,8 @@
         @if (competencyGroup.Count() > 1) {
           <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
             <div class="nhsuk-grid-column-full">
-              <a class="nhsuk-button select-all-button select-all status-tag" data-group="@competencyGroup.Key" name="selectAll" value="true">Select all @Model.VocabPlural().ToLower()</a>
-              <a class="nhsuk-button select-all-button deselect-all status-tag" data-group="@competencyGroup.Key" id="" name="selectAll" value="false">Deselect all @Model.VocabPlural().ToLower()</a>
+              <a class="nhsuk-button select-all-button select-all status-tag" role="button" data-group="@competencyGroup.Key" name="selectAll" value="true">Select all @Model.VocabPlural().ToLower()</a>
+              <a class="nhsuk-button select-all-button deselect-all status-tag" role="button" data-group="@competencyGroup.Key" id="" name="selectAll" value="false">Deselect all @Model.VocabPlural().ToLower()</a>
             </div>
           </div>
         }
