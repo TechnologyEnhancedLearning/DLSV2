@@ -143,7 +143,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 ModelState.AddModelError(nameof(FrameworkCompetency.Name), "Please enter a valid competency statement (between 3 and 500 characters)");
                 var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
                 var competencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, frameworkCompetency?.CompetencyID).ToList();
-                if(competencyFlags != null)
+                if (competencyFlags != null)
                     competencyFlags.ForEach(f => f.Selected = selectedFlagIds.Contains(f.FlagId));
                 if (detailFramework == null)
                     return StatusCode((int)HttpStatusCode.NotFound);
@@ -153,7 +153,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     FrameworkCompetencyGroupId = frameworkCompetencyId,
                     FrameworkCompetency = frameworkCompetency,
                     CompetencyFlags = competencyFlags
-            };
+                };
                 return View("Developer/Competency", model);
             }
             var adminId = GetAdminId();

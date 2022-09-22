@@ -57,7 +57,14 @@ else
       Provide a description for your framework including any key information for people who wish to use it. Who was it created by? What is its purpose? What is the benefit of using it? This can be added or changed later.
     </div>
     <span nhs-validation-for="FrameworkName"></span>
-    <textarea class="nhsuk-input html-editor" placeholder="Optional" id="tb-description" asp-for="Description" name="Description" type="text"></textarea>
+    <vc:text-area asp-for="Description"
+                  character-count="null"
+                  label="Description"
+                  rows="5"
+                  css-class="html-editor"
+                  hint-text=""
+                  populate-with-current-value="true"
+                  spell-check="false" />
   </nhs-form-group>
   <input name="ID" type="hidden" asp-for="ID" />
   <input name="FrameworkName" type="hidden" asp-for="FrameworkName" />
