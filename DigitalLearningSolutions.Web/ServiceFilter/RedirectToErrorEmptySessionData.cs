@@ -13,29 +13,31 @@
     /// </summary>
     public class RedirectToErrorEmptySessionData : IActionFilter
     {
-        private readonly MultiPageFormDataFeature feature;
-        private readonly IMultiPageFormService multiPageFormService;
+        private readonly MultiPageFormDataFeature _feature;
+        private readonly IMultiPageFormService _multiPageFormService;
 
         public RedirectToErrorEmptySessionData(
             IMultiPageFormService multiPageFormService,
             string feature
         )
         {
-            this.feature = feature;
-            this.multiPageFormService = multiPageFormService;
+            _feature = feature;
+            _multiPageFormService = multiPageFormService;
         }
 
         public void OnActionExecuted(ActionExecutedContext context) { }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            if (context.Controller is Controller controller)
+            if (!(context.Controller is Controller controller) || _feature.Name != "AddNewFramework")
             {
-                var tempDataObject = controller.TempData.Peek(feature.TempDataKey);
-                if (tempDataObject == null || !(tempDataObject is Guid tempDataGuid) || !multiPageFormService.FormDataExistsForGuidAndFeature(feature, tempDataGuid))
-                {
-                    context.Result = new StatusCodeResult((int)HttpStatusCode.Gone);
-                }
+                return;
+            }
+
+            var tempDataObject = controller.TempData.Peek(_feature.TempDataKey);
+            if (tempDataObject == null || !(tempDataObject is Guid tempDataGuid) || !_multiPageFormService.FormDataExistsForGuidAndFeature(_feature, tempDataGuid))
+            {
+                context.Result = new StatusCodeResult((int)HttpStatusCode.Gone);
             }
         }
     }
