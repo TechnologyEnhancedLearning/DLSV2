@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Controllers.FrameworksController;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -19,16 +18,14 @@
     using Microsoft.AspNetCore.Mvc.Abstractions;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.AspNetCore.Routing;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
-    using Newtonsoft.Json;
     using NUnit.Framework;
 
     public class RedirectToErrorEmptySessionDataTests
     {
         private ActionExecutingContext? _context;
         private FrameworksController? _controller;
-        
+
         [SetUp]
         public void Setup()
         {
