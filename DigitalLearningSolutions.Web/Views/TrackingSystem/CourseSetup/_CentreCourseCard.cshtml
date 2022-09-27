@@ -14,8 +14,9 @@
 
       <partial name="_CentreCourseCardDetails" model="@Model" />
 
-      <input type="hidden" data-filter-value="@Model.HasAdminFieldsFilter"/>
-      @if (Model.HasAdminFields) {
+      <input type="hidden" data-filter-value="@Model.HasAdminFieldsFilter" />
+      @if (Model.HasAdminFields)
+      {
         <partial name="_CentreCourseCardAdminFields" model="@Model" />
       }
 
