@@ -3,13 +3,14 @@
 @{
   ViewData["Title"] = "Competency";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -21,9 +22,9 @@
     </div>
   </nav>
 }
-<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-row">
 
-  <div class="nhsuk-grid-column-full">
+    <div class="nhsuk-grid-column-full">
     @if (Model.FrameworkCompetency.Id > 0)
     {
       <h1>
@@ -53,27 +54,32 @@
         <input class="nhsuk-input" asp-for="FrameworkCompetency.Name" id="competency-name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-name-label">
       </nhs-form-group>
       <div class="nhsuk-form-group">
-        <label class="nhsuk-label" id="competency-description-label" for="competency-description">
-          @Model.VocabSingular() description
-        </label>
-        <textarea class="nhsuk-input html-editor" asp-for="FrameworkCompetency.Description" id="competency-description" name="Description" type="text" aria-describedby="competency-description-label"></textarea>
+        <vc:text-area asp-for="FrameworkCompetency.Description"
+                      label="@Model.VocabSingular() description"
+                      populate-with-current-value="true"
+                      rows="5"
+                      spell-check="false"
+                      hint-text=""
+                      css-class="html-editor"
+                      character-count="null"
+                      populate-with-current-value="true" />
       </div>
       @if (Model.CompetencyFlags?.Count() > 0)
       {
-      <div class="nhsuk-form-group">
-        <label class="nhsuk-label nhsuk-u-margin-bottom-2" id="competency-description-label" for="competency-description">
-          @Model.VocabSingular() tags
-        </label>
-        @foreach (var flag in Model.CompetencyFlags)
-        {
-          <div class="nhsuk-checkboxes__item">
-            <input class="nhsuk-checkboxes__input" name="selectedFlagIds" type="checkbox" value="@flag.FlagId" @(flag.Selected ? "checked" : string.Empty) />
-            <label class="nhsuk-label nhsuk-checkboxes__label">
-              @flag.FlagName
-            </label>
-          </div>
-        }
-      </div>
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label nhsuk-u-margin-bottom-2" id="competency-description-label" for="competency-description">
+            @Model.VocabSingular() tags
+          </label>
+          @foreach (var flag in Model.CompetencyFlags)
+          {
+            <div class="nhsuk-checkboxes__item">
+              <input class="nhsuk-checkboxes__input" name="selectedFlagIds" type="checkbox" value="@flag.FlagId" @(flag.Selected ? "checked" : string.Empty) />
+              <label class="nhsuk-label nhsuk-checkboxes__label">
+                @flag.FlagName
+              </label>
+            </div>
+          }
+        </div>
       }
 
       <input name="Id" type="hidden" asp-for="FrameworkCompetency.Id" />

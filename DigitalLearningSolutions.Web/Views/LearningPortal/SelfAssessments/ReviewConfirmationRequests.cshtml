@@ -61,7 +61,7 @@
       <tr role="row" class="nhsuk-table__row">
         <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
           <span class="nhsuk-table-responsive__heading">Comptenecy </span>
-          @DisplayStringHelper.RemoveMarkup(competency.Description)
+          @competency.Name
         </td>
         <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
           <span class="nhsuk-table-responsive__heading">Question </span>
@@ -98,6 +98,7 @@
   <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
     <div class="nhsuk-grid-column-full">
       <a class="nhsuk-button"
+       role="button"
           asp-action="StartRequestVerification"
           asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
         New confirmation request
@@ -121,11 +122,13 @@ else
     There are no outstanding confirmation requests.
   </p>
   <a class="nhsuk-button nhsuk-button nhsuk-u-margin-right-3"
+   role="button"
       asp-action="StartRequestVerification"
       asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
     New confirmation request
   </a>
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+  <a class="nhsuk-button nhsuk-button--secondary"
+   role="button" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
     Cancel
   </a>
 }

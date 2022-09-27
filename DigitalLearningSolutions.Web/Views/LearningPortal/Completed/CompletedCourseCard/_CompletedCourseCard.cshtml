@@ -4,7 +4,7 @@
 <div class="searchable-element nhsuk-panel" id="@Model.Id-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
-      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name" role="heading" aria-level="2">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" role="heading" aria-level="2">
         @Model.Name @(Model.ArchivedDate == null ? "" : " - ARCHIVED")
       </span>
     </summary>
@@ -12,32 +12,34 @@
       <div class="nhsuk-grid-row">
         <partial name="Shared/_TagRow" model="@Model" />
       </div>
-      <div class="nhsuk-grid-row">
-        <partial name="Shared/_Dates" model="@Model" />
-      </div>
-      <partial name="Shared/_Scores" model="@Model" />
+      <dl class="nhsuk-summary-list">
+        <partial name="Shared/_Dates" model="@Model" view-data="@(new ViewDataDictionary(ViewData) { { "showActions", true } })" />
+        <partial name="Shared/_Scores" model="@Model" view-data="@(new ViewDataDictionary(ViewData) { { "showActions", true } })" />
+      </dl>
     </div>
   </details>
 
   <div class="flex-row">
-    @if (Model.ArchivedDate == null) {
+    @if (Model.ArchivedDate == null)
+    {
       <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-right-2"
-         aria-describedby="@Model.Id-name"
-         asp-controller="LearningMenu"
-         asp-action="Index"
-         asp-route-customisationId="@Model.Id"
-         role="button">
-        Launch course
+       aria-describedby="@Model.Id-name"
+       asp-controller="LearningMenu"
+       asp-action="Index"
+       asp-route-customisationId="@Model.Id"
+       role="button">
+        Launch course <span class="nhsuk-u-visually-hidden">@Model.Name</span>
       </a>
     }
-    @if (Model.HasFinaliseButton()) {
+    @if (Model.HasFinaliseButton())
+    {
       <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
-         aria-describedby="@Model.Id-name"
-         aria-label="@Model.FinaliseButtonAriaLabel()"
-         href="@Model.EvaluateUrl"
-         role="button">
+       aria-describedby="@Model.Id-name"
+       aria-label="@Model.FinaliseButtonAriaLabel()"
+       href="@Model.EvaluateUrl"
+       role="button">
         <span aria-hidden="true">
-          @Model.FinaliseButtonText()
+          @Model.FinaliseButtonText()  <span class="nhsuk-u-visually-hidden">@Model.Name</span>
         </span>
       </a>
     }

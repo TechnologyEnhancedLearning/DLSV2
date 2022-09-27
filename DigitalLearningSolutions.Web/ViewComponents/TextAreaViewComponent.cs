@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
-    using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
@@ -30,11 +29,7 @@
         {
             var model = ViewData.Model;
 
-            var property = model.GetType().GetProperty(aspFor);
-            var valueToSet = populateWithCurrentValue ? property?.GetValue(model)?.ToString() : null;
-
-            var errorMessages = ViewData.ModelState[property?.Name]?.Errors.Select(e => e.ErrorMessage) ??
-                                new string[] { };
+            var valueToSet = ViewComponentValueToSetHelper.DeriveValueToSet(ref aspFor, populateWithCurrentValue, model, ViewData, out var errorMessages);
 
             var textBoxViewModel = new TextAreaViewModel(
                 aspFor,

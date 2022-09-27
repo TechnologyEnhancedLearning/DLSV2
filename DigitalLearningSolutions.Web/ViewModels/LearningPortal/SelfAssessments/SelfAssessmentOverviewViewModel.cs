@@ -10,40 +10,33 @@
     {
         public CurrentSelfAssessment SelfAssessment { get; set; }
         public IEnumerable<IGrouping<string, Competency>> CompetencyGroups { get; set; }
-
         public IEnumerable<SupervisorSignOff>? SupervisorSignOffs { get; set; }
         public int PreviousCompetencyNumber { get; set; }
         public int NumberOfOptionalCompetencies { get; set; }
+        public bool AllQuestionsVerifiedOrNotRequired { get; set; }
         public SearchSelfAssessmentOvervieviewViewModel SearchViewModel { get; set; }
         public string VocabPlural()
         {
             return FrameworkVocabularyHelper.VocabularyPlural(SelfAssessment.Vocabulary);
         }
-        public bool AllQuestionsVerifiedOrNotRequired()
+        public void Initialise(List<Competency> unfilteredCompetencies)
         {
-            bool allVerifiedOrNotRequired = true;
-            foreach (var competencyGroup in CompetencyGroups)
+            AllQuestionsVerifiedOrNotRequired = true;
+            foreach (var assessmentQuestion in unfilteredCompetencies.SelectMany(c => c.AssessmentQuestions))
             {
-                foreach (var competency in competencyGroup)
+                if ((assessmentQuestion.Result == null || assessmentQuestion.Verified == null) && assessmentQuestion.Required)
                 {
-                    foreach (var assessmentQuestion in competency.AssessmentQuestions)
-                    {
-                        if ((assessmentQuestion.Result == null || assessmentQuestion.Verified == null) && assessmentQuestion.Required)
-                        {
-                            allVerifiedOrNotRequired = false;
-                            break;
-                        }
+                    AllQuestionsVerifiedOrNotRequired = false;
+                    break;
+                }
 
-                        if (SelfAssessment.EnforceRoleRequirementsForSignOff &&
-                            assessmentQuestion.ResultRAG == 1 | assessmentQuestion.ResultRAG == 2)
-                        {
-                            allVerifiedOrNotRequired = false;
-                            break;
-                        }
-                    }
+                if (SelfAssessment.EnforceRoleRequirementsForSignOff &&
+                    (assessmentQuestion.ResultRAG == 1 || assessmentQuestion.ResultRAG == 2))
+                {
+                    AllQuestionsVerifiedOrNotRequired = false;
+                    break;
                 }
             }
-            return allVerifiedOrNotRequired;
         }
     }
 }

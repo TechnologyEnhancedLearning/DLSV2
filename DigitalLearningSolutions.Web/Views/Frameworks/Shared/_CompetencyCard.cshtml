@@ -19,39 +19,48 @@
       @Model.FrameworkCompetency.Name
     </h4>
   }
-    <p class="nhsuk-u-secondary-text-color">
-      @if (Model.CanModify)
-      {
-        <a asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
-          Manage assessment questions (@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "None" : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assigned)
-        </a>
-        <br />
-        <a asp-controller="Frameworks" asp-action="EditCompetencyLearningResources"
-           asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
-           asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
-           asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
-          Manage resource signposting (@(Model.FrameworkCompetency.CompetencyLearningResourcesCount == 0 ? "No" : Model.FrameworkCompetency.CompetencyLearningResourcesCount.ToString()) resources)
-        </a>
-      }
-      else
-      {
-        <span>@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "No " : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assessment questions assigned</span>
-      }
-    </p>
+  <p class="nhsuk-u-secondary-text-color">
+    @if (Model.CanModify)
+    {
+      <a asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
+        Manage assessment questions (@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "None" : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assigned)
+      </a><br />
+          @if (Model.FrameworkCompetencyGroupId != null)
+          {
+          <a asp-controller="Frameworks" asp-action="EditCompetencyLearningResources"
+             asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
+             asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
+             asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
+            Manage resource signposting (@(Model.FrameworkCompetency.CompetencyLearningResourcesCount == 0 ? "No" : Model.FrameworkCompetency.CompetencyLearningResourcesCount.ToString()) resources)
+          </a>
+          }
+          else
+          {
+            <a asp-controller="Frameworks" asp-action="EditCompetencyLearningResources"
+               asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
+               asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
+              Manage resource signposting (@(Model.FrameworkCompetency.CompetencyLearningResourcesCount == 0 ? "No" : Model.FrameworkCompetency.CompetencyLearningResourcesCount.ToString()) resources)
+            </a>
+          }
+     }
+else
+{
+  <span>@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "No " : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assessment questions assigned</span>      }
+  </p>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-three-quarters">
         @if (Model.CanModify)
         {
-          <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Edit <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
-          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveFrameworkCompetency" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-step="true" asp-route-direction="UP" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Move up <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
-          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveFrameworkCompetency" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-step="true" asp-route-direction="DOWN" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Move down <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
-          <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="DeleteFrameworkCompetency" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Delete <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
+          <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Edit <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
+          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveFrameworkCompetency" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-step="true" asp-route-direction="UP" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Move up <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
+          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveFrameworkCompetency" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-step="true" asp-route-direction="DOWN" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Move down <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
+          <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="DeleteFrameworkCompetency" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Delete <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
         }
       </div>
       @if (Model.FrameworkCompetency.AssessmentQuestions > 0)
       {
         <div class="nhsuk-grid-column-one-quarter">
-          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="PreviewCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Preview <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
+          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="PreviewCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Preview <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
         </div>
       }
     </div>

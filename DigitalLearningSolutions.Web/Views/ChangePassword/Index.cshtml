@@ -30,7 +30,8 @@
         spell-check="false"
         hint-text=""
         autocomplete="current-password"
-        css-class="nhsuk-u-width-one-half" />
+        css-class="nhsuk-u-width-one-half"
+        required="true" />
 
       <partial name="_SetPasswordFields" model="@(new SetPasswordViewModel(Model, "New password"))" />
       <button class="nhsuk-button" type="submit">Change password</button>

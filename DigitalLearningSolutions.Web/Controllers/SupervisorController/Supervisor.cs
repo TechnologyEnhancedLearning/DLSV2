@@ -13,6 +13,7 @@
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models;
 
     public partial class SupervisorController
     {
@@ -23,10 +24,12 @@
             var signOffRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedSignOffs(adminId);
             var reviewRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedReviews(adminId);
             var supervisorDashboardToDoItems = Enumerable.Concat(signOffRequests, reviewRequests);
+            var bannerText = GetBannerText();
             var model = new SupervisorDashboardViewModel()
             {
                 DashboardData = dashboardData,
-                SupervisorDashboardToDoItems = supervisorDashboardToDoItems
+                SupervisorDashboardToDoItems = supervisorDashboardToDoItems,
+                BannerText = bannerText
             };
             return View(model);
         }
@@ -166,8 +169,12 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {
-            var superviseDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+            if (superviseDelegate == null)
+            {
+                return RedirectToAction("MyStaffList");
+            }
+
             var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
             return View("RemoveConfirm", model);
         }
@@ -175,13 +182,14 @@
         [HttpPost]
         public IActionResult RemoveSupervisorDelegate(SupervisorDelegateViewModel supervisorDelegate)
         {
-            if (ModelState.IsValid && supervisorDelegate.ConfirmedRemove)
+            if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
                 supervisorService.RemoveSupervisorDelegateById(supervisorDelegate.Id, 0, GetAdminId());
                 return RedirectToAction("MyStaffList");
             }
             else
             {
+                ModelState.ClearErrorsOnField("ActionConfirmed");
                 return View("RemoveConfirm", supervisorDelegate);
             }
         }
@@ -295,7 +303,7 @@
         }
 
         [Route(
-            "/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/{viewMode}/{resultId}/"
+            "/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/{viewMode}/{resultId}/Confirm"
         )]
         public IActionResult ReviewCompetencySelfAssessment(
             int supervisorDelegateId,
@@ -311,7 +319,7 @@
 
         [HttpPost]
         [Route(
-            "/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/{viewMode}/{resultId}/"
+            "/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/{viewMode}/{resultId}/Confirm"
         )]
         public IActionResult SubmitReviewCompetencySelfAssessment(
             int supervisorDelegateId,
@@ -387,7 +395,9 @@
                 Competency = competency,
                 ResultSupervisorVerificationId = assessmentQuestion.SelfAssessmentResultSupervisorVerificationId,
                 SupervisorComments = assessmentQuestion.SupervisorComments,
-                SignedOff = assessmentQuestion.SignedOff != null ? (bool)assessmentQuestion.SignedOff : false
+                SignedOff = assessmentQuestion.SignedOff != null ? (bool)assessmentQuestion.SignedOff : false,
+                Verified = assessmentQuestion.Verified,
+                SupervisorName = supervisorDelegate.SupervisorName
             };
             ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
             return model;
@@ -871,6 +881,34 @@
             }
 
             return View("SignOffHistory", model);
+        }
+
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/NominateSupervisor")]
+        public IActionResult NominateSupervisor(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
+        {
+            var superviseDelegate =
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+            var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
+            return View("NominateSupervisor", model);
+        }
+        [HttpPost]
+        public IActionResult ConfirmNominateSupervisor(SupervisorDelegateViewModel supervisorDelegate)
+        {
+            if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
+            {
+                var categoryId = User.GetAdminCourseCategoryFilter();
+                var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminID(), 0);
+                var adminRoles = new AdminRoles(false, false, true, false, false, false, false);
+                if (supervisorDelegateDetail.CandidateID != null)
+                {
+                    registrationService.PromoteDelegateToAdmin(adminRoles, (categoryId ?? 0), (int)supervisorDelegateDetail.CandidateID);
+                }
+                return RedirectToAction("MyStaffList");
+            }
+            else
+            {
+                return View("NominateSupervisor", supervisorDelegate);
+            }
         }
     }
 }

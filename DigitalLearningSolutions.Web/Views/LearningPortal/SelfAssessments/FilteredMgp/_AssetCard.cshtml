@@ -25,7 +25,7 @@
       </div>
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
-          <a class="nhsuk-button button-small nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 trigger-loader" aria-describedby="@Model.Id-name" asp-controller="RecommendedLearning" asp-action="FilteredLearningAsset" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">
+        <a class="nhsuk-button button-small nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 trigger-loader" role="button" aria-describedby="@Model.Id-name" asp-controller="RecommendedLearning" asp-action="FilteredLearningAsset" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">
             View resource
           </a>
         </div>

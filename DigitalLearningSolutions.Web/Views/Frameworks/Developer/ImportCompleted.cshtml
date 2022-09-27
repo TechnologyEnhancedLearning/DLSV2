@@ -4,17 +4,17 @@
 @using Microsoft.Extensions.Configuration
 @model ImportCompetenciesResultsViewModel
 @{
-    ViewData["Title"] = "Framework - Import Competencies";
-    ViewData["Application"] = "Framework Service";
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    var cancelLinkData = Html.GetRouteValues();
-    cancelLinkData.Add("tabname", "Structure");
+  ViewData["Title"] = "Framework - Import Competencies";
+  ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var cancelLinkData = Html.GetRouteValues();
 }
 <link rel="stylesheet" href="@Url.Content(" ~ /css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -27,13 +27,13 @@
   </nav>
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Import competencies complete</h1>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl">Import competencies complete</h1>
 
-    <h2>Summary of results:</h2>
-    <ul>
-      <li>@Model.ProcessedCount @(Model.ProcessedCount == 1 ? "line" : "lines") processed</li>
+      <h2>Summary of results:</h2>
+      <ul>
+        <li>@Model.ProcessedCount @(Model.ProcessedCount == 1 ? "line" : "lines") processed</li>
       <li>@Model.CompetencyGroupsInsertedCount new @(Model.CompetencyGroupsInsertedCount == 1 ? "competency group" : "competency groups") inserted</li>
       <li>@Model.CompetenciesInsertedCount new @(Model.CompetenciesInsertedCount == 1 ? "competency" : "competencies") inserted</li>
       <li>@Model.SkippedCount rows @(Model.SkippedCount == 1 ? "record" : "records") skipped (nothing inserted but no errors)</li>

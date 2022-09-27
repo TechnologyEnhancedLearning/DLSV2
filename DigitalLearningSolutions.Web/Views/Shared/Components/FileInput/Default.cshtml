@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@using DigitalLearningSolutions.Web.Helpers
 @model FileInputViewModel
-
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
-  <label class="nhsuk-label" for="@Model.Id">
+  <label class="nhsuk-label" for="@Model.Name">
     @Model.Label
   </label>
   @if (Model.HintText != null) {
@@ -10,14 +10,17 @@
       @Model.HintText
     </div>
   }
-  @if (Model.HasError) {
+  @if (Model.HasError)
+  {
     <span class="nhsuk-error-message" id="@Model.Name-error">
       <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
     </span>
   }
-  <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
+  <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")" 
          id="@Model.Id"
          name="@Model.Name"
          type="file"
-         aria-describedby="@Model.Name-error @Model.Name-hint" />
+         aria-invalid="@(Model.HasError ? "true" : null)"
+         aria-describedby="@ViewComponentDynamicAttributeHelper.GetAriaDescribedByAttribute(Model.Name, Model.HasError, Model.HintText)" />
 </div>
+==== BASE ====

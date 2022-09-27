@@ -27,7 +27,9 @@
         private const string JavascriptSearchSortFilterPaginateItemLimitKey =
             "JavascriptSearchSortFilterPaginateItemLimit";
 
-        private const string MonthsToPromptUserDetailsCheckKey = "MonthsToPromptUserDetailsCheck";
+        private const string ExcelPassword = "ExcelPassword";
+
+	private const string MonthsToPromptUserDetailsCheckKey = "MonthsToPromptUserDetailsCheck";
 
         public static string GetAppRootPath(this IConfiguration config)
         {
@@ -109,7 +111,12 @@
             return int.Parse(config[JavascriptSearchSortFilterPaginateItemLimitKey]);
         }
 
-        public static int GetMonthsToPromptUserDetailsCheck(this IConfiguration config)
+	public static int GetMonthsToPromptUserDetailsCheck(this IConfiguration config)
+        {
+            return int.Parse(config[MonthsToPromptUserDetailsCheckKey]);
+        }
+
+        public static string GetExcelPassword(this IConfiguration config)
         {
             return int.Parse(config[MonthsToPromptUserDetailsCheckKey]);
         }

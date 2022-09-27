@@ -1,14 +1,15 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyLearningResourceSignpostingParametersViewModel
 @{
-    var addOrEdit = Model.AssessmentQuestionParameter.IsNew ? "Add" : "Edit";
-    ViewData["Title"] = $"{addOrEdit} Signposting Parameters";
-    ViewData["Application"] = "Framework Service";
+  var addOrEdit = Model.AssessmentQuestionParameter.IsNew ? "Add" : "Edit";
+  ViewData["Title"] = $"{addOrEdit} Signposting Parameters";
+  ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -21,25 +22,25 @@
     </div>
   </nav>
 }
-<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+  <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 
-<partial name="Developer/_SignpostingParametersHeader" model="Model" />
-<h2>Choose assessment question for signposting</h2>
-<label class="nhsuk-label">Which assessment question will be used to determine whether this learning resource is at the right level for the learner?</label>
-<form method="post" asp-controller="Frameworks">
-  <nhs-form-group nhs-validation-for="SelectedQuestion.ID">
-    <fieldset class="nhsuk-fieldset nhsuk-u-margin-top-5">
-      <div class="nhsuk-radios">
+  <partial name="Developer/_SignpostingParametersHeader" model="Model" />
+  <h2>Choose assessment question for signposting</h2>
+  <label class="nhsuk-label">Which assessment question will be used to determine whether this learning resource is at the right level for the learner?</label>
+  <form method="post" asp-controller="Frameworks">
+    <nhs-form-group nhs-validation-for="SelectedQuestion.ID">
+      <fieldset class="nhsuk-fieldset nhsuk-u-margin-top-5">
+        <div class="nhsuk-radios">
         @foreach (var question in Model.Questions)
         {
           <div class="nhsuk-radios__item">
             <input type="radio"
-                   id="Question@(question.ID)"
-                   name="SelectedQuestion.ID"
-                   @(question.ID == Model.SelectedQuestion?.ID ? "checked" : String.Empty)
-                   required="required"
-                   value="@question.ID"
-                   class="nhsuk-radios__input">
+                 id="Question@(question.ID)"
+                 name="SelectedQuestion.ID"
+                 @(question.ID == Model.SelectedQuestion?.ID ? "checked" : String.Empty)
+                 required="required"
+                 value="@question.ID"
+                 class="nhsuk-radios__input">
             <label class="nhsuk-label nhsuk-radios__label" for="Question@(question.ID)">
               @question.Question
             </label>

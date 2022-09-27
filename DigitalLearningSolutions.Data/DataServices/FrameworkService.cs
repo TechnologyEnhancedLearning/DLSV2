@@ -540,6 +540,7 @@
                 );
                 return -2;
             }
+            groupDescription = (groupDescription?.Trim() == "" ? null : groupDescription);
             var existingId = (int)connection.ExecuteScalar(
                 @"SELECT COALESCE ((SELECT TOP(1)ID FROM CompetencyGroups WHERE [Name] = @groupName AND (@groupDescription IS NULL OR Description = @groupDescription)), 0) AS CompetencyGroupID",
                 new { groupName, groupDescription }
@@ -622,7 +623,7 @@
                 );
                 return -2;
             }
-
+            description = (description?.Trim() == "" ? null : description);
             var existingId = 0;
             if (description == null)
             {
@@ -776,9 +777,9 @@
             );
         }
 
-        public int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify)
+        public int AddCollaboratorToFramework(int frameworkId, string? userEmail, bool canModify)
         {
-            if (userEmail.Length == 0)
+            if (userEmail is null || userEmail.Length == 0)
             {
                 logger.LogWarning(
                     $"Not adding collaborator to framework as it failed server side valiidation. frameworkId: {frameworkId}, userEmail: {userEmail}, canModify:{canModify}"
@@ -891,12 +892,12 @@
         public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId)
         {
             return connection.Query<FrameworkCompetency>(
-                @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
-                    FROM FrameworkCompetencies AS fc 
+                @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions,(select COUNT(CompetencyId) from CompetencyLearningResources where CompetencyID=c.ID) AS CompetencyLearningResourcesCount
+                    FROM FrameworkCompetencies AS fc
                         INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
                         LEFT OUTER JOIN
                       CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
-                    WHERE fc.FrameworkID = @frameworkId 
+                    WHERE fc.FrameworkID = @frameworkId
                         AND fc.FrameworkCompetencyGroupID IS NULL
 GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                     ORDER BY fc.Ordering",
@@ -987,7 +988,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
         {
             return connection.QueryFirstOrDefault<FrameworkCompetency>(
                 @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering
-                    FROM FrameworkCompetencies AS fc 
+                    FROM FrameworkCompetencies AS fc
                         INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
                     WHERE fc.ID = @Id",
                 new { Id }
@@ -1087,10 +1088,10 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 commaSeparatedSelectedFlagIds = String.Join(',', selectedFlagIds);
                 connection.Execute(
                     @$"INSERT INTO CompetencyFlags(CompetencyID, FlagID, Selected)
-						SELECT @competencyId, f.ID, 1 
+						SELECT @competencyId, f.ID, 1
 						FROM Flags f
 						WHERE f.ID IN ({commaSeparatedSelectedFlagIds}) AND NOT EXISTS(
-							SELECT FlagID FROM CompetencyFlags 
+							SELECT FlagID FROM CompetencyFlags
 							WHERE FlagID = f.ID AND CompetencyID = @competencyId
 						)",
                     new { competencyId, selectedFlagIds });
@@ -1270,7 +1271,10 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 );
                 numberOfAffectedRows = connection.Execute(
                     @"DELETE FROM CompetencyAssessmentQuestions WHERE CompetencyID = @competencyId;
-                        DELETE FROM Competencies WHERE ID = @competencyId",
+                     DELETE FROM CompetencyFlags WHERE CompetencyID = @competencyId;
+                     DELETE FROM CompetencyResourceAssessmentQuestionParameters WHERE CompetencyLearningResourceID IN (SELECT ID FROM CompetencyLearningResources WHERE CompetencyID = @competencyId);
+                     DELETE FROM CompetencyLearningResources WHERE CompetencyID = @competencyId;
+                     DELETE FROM Competencies WHERE ID = @competencyId;",
                     new { competencyId }
                 );
                 if (numberOfAffectedRows < 1)
@@ -1929,7 +1933,7 @@ WHERE (FrameworkID = @frameworkId)",
         {
             return (string?)connection.ExecuteScalar(
                 @"SELECT FrameworkConfig
-                FROM Frameworks 
+                FROM Frameworks
                 WHERE ID = @frameworkId",
                 new { frameworkId }
             );
@@ -2096,7 +2100,7 @@ WHERE (ID = @commentId)",
                         FR.SignedOff,
                         FR.FrameworkCommentID,
                         FC1.Comments AS Comment,
-                        FR.SignOffRequired, 
+                        FR.SignOffRequired,
                         AU.Forename AS ReviewerFirstName,
                         AU.Surname AS ReviewerLastName,
                         AU.Active AS ReviewerActive,
@@ -2173,10 +2177,10 @@ WHERE (ID = @commentId)",
         public DashboardData GetDashboardDataForAdminID(int adminId)
         {
             return connection.Query<DashboardData>(
-                $@"SELECT (SELECT COUNT(*) 
+                $@"SELECT (SELECT COUNT(*)
   FROM [dbo].[Frameworks]) AS FrameworksCount,
 
-  (SELECT COUNT(*) FROM {FrameworkTables} 
+  (SELECT COUNT(*) FROM {FrameworkTables}
 WHERE (OwnerAdminID = @adminId) OR
              (@adminId IN
                  (SELECT AdminID
@@ -2186,7 +2190,7 @@ WHERE (OwnerAdminID = @adminId) OR
                  (SELECT COUNT(*) FROM SelfAssessments) AS RoleProfileCount,
 
                  (SELECT COUNT(*) FROM SelfAssessments AS RP LEFT OUTER JOIN
-             SelfAssessmentCollaborators AS RPC ON RPC.SelfAssessmentID = RP.ID AND RPC.AdminID = @adminId 
+             SelfAssessmentCollaborators AS RPC ON RPC.SelfAssessmentID = RP.ID AND RPC.AdminID = @adminId
 WHERE (RP.CreatedByAdminID = @adminId) OR
              (@adminId IN
                  (SELECT AdminID
@@ -2290,9 +2294,9 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             return connection.Query<CompetencyResourceAssessmentQuestionParameter>(
                 @"SELECT clr.ID AS CompetencyLearningResourceID, lrr.ResourceRefID AS ResourceRefId, lrr.OriginalResourceName, lrr.OriginalResourceType, lrr.OriginalRating,
                           q.ID AS AssessmentQuestionId, q.Question, q.AssessmentQuestionInputTypeID, q.MinValue AS AssessmentQuestionMinValue, q.MaxValue AS AssessmentQuestionMaxValue,
-                          p.Essential, p.MinResultMatch, p.MaxResultMatch, 
-                    CASE 
-                        WHEN p.CompareToRoleRequirements = 1 THEN 'Role requirements'  
+                          p.Essential, p.MinResultMatch, p.MaxResultMatch,
+                    CASE
+                        WHEN p.CompareToRoleRequirements = 1 THEN 'Role requirements'
                         WHEN p.RelevanceAssessmentQuestionID IS NOT NULL THEN raq.Question
                         ELSE 'Don''t compare result'
                     END AS CompareResultTo,

@@ -36,7 +36,7 @@
                           label="Choose a course"
                           value="@Model.CustomisationId.ToString()"
                           hint-text=""
-                          deselectable="true"
+                          required="false"
                           css-class="nhsuk-u-width-one-half"
                           default-option="All"
                           select-list-options="@Model.CustomisationOptions" />
@@ -61,7 +61,7 @@
                           label="Choose course category from the list below"
                           value="@Model.CourseCategoryId.ToString()"
                           hint-text=""
-                          deselectable="true"
+                          required="false"
                           css-class="nhsuk-u-width-one-half"
                           default-option="All"
                           select-list-options="@Model.CourseCategoryOptions" />
@@ -75,7 +75,7 @@
                   label="Choose a course filter"
                   value="@Model.CustomisationId.ToString()"
                   hint-text=""
-                  deselectable="true"
+                  required="false"
                   css-class="nhsuk-u-width-one-half"
                   default-option="All"
                   select-list-options="@Model.CustomisationOptions" />

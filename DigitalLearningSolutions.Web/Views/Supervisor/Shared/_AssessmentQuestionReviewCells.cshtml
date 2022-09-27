@@ -13,12 +13,12 @@
 <partial name="Shared/_AssessmentQuestionCells" model="Model" />
 @if ((bool)(ViewData["isSupervisorResultsReviewed"] ?? true))
 {
-  <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+  <td class="nhsuk-table__cell nhsuk-u-font-size-16">
     <span class="nhsuk-table-responsive__heading">Questions </span>
     <partial name="Shared/_AssessmentQuestionStatusTag" model="Model" />
   </td>
 }
-<td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+<td class="nhsuk-table__cell nhsuk-u-font-size-16">
   @if (Model.ResultId != null)
   {
     <span class="nhsuk-table-responsive__heading">Actions </span>

@@ -1,11 +1,12 @@
-﻿namespace DigitalLearningSolutions.Web.Services
+﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models.SelfAssessments.Export;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
 
     public interface ICandidateAssessmentDownloadFileService
     {
@@ -153,6 +154,11 @@
             sheet.Rows().AdjustToContents();
             sheet.Columns().AdjustToContents();
             sheet.Columns("2").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right).Font.SetBold();
+            if (isProtected)
+            {
+                sheet.Protect(excelPassword);
+                sheet.Columns().Style.Protection.SetLocked(true);
+            }
         }
     }
 }

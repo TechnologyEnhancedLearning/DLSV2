@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.Models.SessionData.Frameworks;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public partial class FrameworksController
     {
@@ -431,6 +432,7 @@
             {
                 return RedirectToAction("EditAssessmentQuestionOptions", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
             }
+            assessmentQuestionDetail.ScoringInstructions = SanitizerHelper.SanitizeHtmlData(assessmentQuestionDetail.ScoringInstructions);
             SessionAssessmentQuestion sessionAssessmentQuestion = multiPageFormService.GetMultiPageFormData<SessionAssessmentQuestion>(
                 MultiPageFormDataFeature.EditAssessmentQuestion,
                 TempData

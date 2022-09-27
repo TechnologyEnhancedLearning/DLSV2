@@ -60,7 +60,8 @@
         spell-check="false"
         autocomplete="given-name"
         hint-text=""
-        css-class="nhsuk-u-width-one-half" />
+        css-class="nhsuk-u-width-one-half"
+        required="true"/>
 
       <vc:text-input
         asp-for="@nameof(Model.LastName)"
@@ -70,7 +71,8 @@
         spell-check="false"
         autocomplete="family-name"
         hint-text=""
-        css-class="nhsuk-u-width-one-half" />
+        css-class="nhsuk-u-width-one-half"
+        required="true" />
 
       @{ var primaryEmailHintText = @"This will be used for logging into the system.
                                     All communications will be sent to this email by default."; }
@@ -81,18 +83,19 @@
         type="text"
         spell-check="false"
         autocomplete="email"
-        hint-text="@primaryEmailHintText"
-        css-class="nhsuk-u-width-one-half" />
-
-      <vc:select-list
-        asp-for="@nameof(Model.JobGroupId)"
-        label="Job group"
-        value="@Model.JobGroupId.ToString()"
         hint-text=""
         deselectable="false"
         css-class="nhsuk-u-width-one-half"
-        default-option="Select a job group"
-        select-list-options="@Model.JobGroups" />
+        required="true" />
+      <vc:select-list
+          asp-for="@nameof(Model.JobGroupId)"
+          label="Job group"
+          value="@Model.JobGroupId.ToString()"
+          hint-text=""
+          required="true"
+          css-class="nhsuk-u-width-one-half"
+          default-option="Select a job group"
+          select-list-options="@Model.JobGroups" />
 
       <partial name="_EditRegistrationNumber" model="@Model" />
 

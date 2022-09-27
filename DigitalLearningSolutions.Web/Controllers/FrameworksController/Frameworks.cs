@@ -14,6 +14,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using System.Net;
@@ -335,6 +336,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 }
                 return RedirectToAction("FrameworkType", "Frameworks", new { actionname });
             }
+            detailFramework.Description = SanitizerHelper.SanitizeHtmlData(detailFramework.Description);
             frameworkService.UpdateFrameworkDescription(frameworkId, GetAdminId(), detailFramework.Description);
             return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
 
@@ -739,6 +741,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 logger.LogWarning($"Failed to create framework: adminId: {adminId}");
                 return StatusCode(500);
             }
+            detailFramework.Description = SanitizerHelper.SanitizeHtmlData(detailFramework.Description);
             var newFramework = frameworkService.CreateFramework(detailFramework, adminId);
             TempData.Clear();
             return RedirectToAction("AddCollaborators", "Frameworks", new { actionname = "New", frameworkId = newFramework.ID });

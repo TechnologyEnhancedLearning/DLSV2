@@ -14,8 +14,9 @@
 
       <partial name="_CentreCourseCardDetails" model="@Model" />
 
-      <input type="hidden" data-filter-value="@Model.HasAdminFieldsFilter"/>
-      @if (Model.HasAdminFields) {
+      <input type="hidden" data-filter-value="@Model.HasAdminFieldsFilter" />
+      @if (Model.HasAdminFields)
+      {
         <partial name="_CentreCourseCardAdminFields" model="@Model" />
       }
 
@@ -23,7 +24,7 @@
       <a href="@Model.EmailHref">Generate email</a>
       <button class="copy-course-button js-only-block button-as-link nhsuk-u-padding-0 nhsuk-link--no-visited-state"
               id="copy-course-@Model.CustomisationId"
-              role="button">
+              role="link">
         Copy course link
       </button>
       <p class="non-js-only">To share this course with others, click Launch Course and copy the URL to the clipboard.</p>

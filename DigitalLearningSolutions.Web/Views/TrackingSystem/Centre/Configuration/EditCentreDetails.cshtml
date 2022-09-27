@@ -32,7 +32,8 @@
                          spell-check="false"
                          autocomplete="email"
                          hint-text=""
-                         css-class="nhsuk-u-width-one-half" />
+                         css-class="nhsuk-u-width-one-half"
+                         required="true" />
 
           <vc:text-input asp-for="BannerText"
                          label="Centre support details"
@@ -41,13 +42,14 @@
                          spell-check="true"
                          autocomplete="off"
                          hint-text=""
-                         css-class="nhsuk-u-width-one-half" />
+                         css-class="nhsuk-u-width-one-half"
+                         required="true" />
         </div>
       </div>
 
       <div class="nhsuk-grid-row nhsuk-u-margin-bottom-2">
         <div class="nhsuk-grid-column-one-half">
-          <input type="hidden" asp-for="CentreSignature" />
+          <input type="hidden" aria-hidden="true" asp-for="CentreSignature" />
           <vc:file-input asp-for="CentreSignatureFile" label="Centre signature" hint-text="@string.Format(hintText, "signature")" css-class="nhsuk-u-width-full" />
         </div>
         <div class="nhsuk-grid-column-one-half">
@@ -68,7 +70,7 @@
 
       <div class="nhsuk-grid-row nhsuk-u-margin-bottom-2">
         <div class="nhsuk-grid-column-one-half">
-          <input type="hidden" asp-for="CentreLogo" />
+          <input type="hidden" aria-hidden="true" asp-for="CentreLogo" />
           <vc:file-input asp-for="CentreLogoFile" label="Centre logo" hint-text="@string.Format(hintText, "logo")" css-class="nhsuk-u-width-full" />
         </div>
         <div class="nhsuk-grid-column-one-half">

@@ -4,7 +4,7 @@
 <div class="searchable-element nhsuk-panel" id="@Model.Id-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
-      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name" role="heading" aria-level="2">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" role="heading" aria-level="2">
         @Model.Name
       </span>
     </summary>
@@ -12,59 +12,64 @@
       <div class="nhsuk-grid-row">
         <partial name="Shared/_TagRow" model="@Model" />
       </div>
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-one-third">
-          <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-brand" aria-describedby="@Model.Id-name">Brand</span>
-          <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true"/>
-
-          <p aria-describedby="@Model.Id-name @Model.Id-brand" name="brand">@Model.Brand</p>
+      <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-4">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Brand
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.Brand
+          </dd>
         </div>
         @if (Model.Category != null)
         {
-          <div class="nhsuk-grid-column-one-third">
-            <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-category" aria-describedby="@Model.Id-name">Category</span>
-            <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
-
-            <p aria-describedby="@Model.Id-name @Model.Id-category" name="category">@Model.Category</p>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Category
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.Category
+            </dd>
           </div>
         }
         @if (Model.Topic != null)
         {
-          <div class="nhsuk-grid-column-one-third">
-            <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-topic" aria-describedby="@Model.Id-name">Topic</span>
-            <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
-
-            <p aria-describedby="@Model.Id-name @Model.Id-topic" name="topic">@Model.Topic</p>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Topic
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.Topic
+            </dd>
           </div>
         }
-      </div>
+      </dl>
     </div>
   </details>
 
   @if (Model.EnrolButtonText != null)
   {
     <div class="flex-row">
-      @if(Model.IsSelfAssessment)
+      @if (Model.IsSelfAssessment)
       {
-      <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2"
-         aria-describedby="@Model.Id-name"
-         aria-label="@Model.EnrolButtonAriaLabel" asp-action="EnrolOnSelfAssessment" asp-route-selfAssessmentId="@Model.Id"
-         >
-        @Model.EnrolButtonText
-      </a>
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" role="button"
+       aria-describedby="@Model.Id-name"
+       aria-label="@Model.EnrolButtonAriaLabel" asp-action="EnrolOnSelfAssessment" asp-route-selfAssessmentId="@Model.Id">
+          @Model.EnrolButtonText <span class="nhsuk-u-visually-hidden">@Model.Name</span>
+        </a>
       }
       else
       {
-    <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2"
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" role="button"
        aria-describedby="@Model.Id-name"
        aria-label="@Model.EnrolButtonAriaLabel"
        asp-controller="LearningMenu"
        asp-action="Index"
        asp-route-customisationId="@Model.Id">
-      @Model.EnrolButtonText
-    </a>
+          @Model.EnrolButtonText <span class="nhsuk-u-visually-hidden">@Model.Name</span>
+        </a>
       }
-      
+
     </div>
   }
 </div>

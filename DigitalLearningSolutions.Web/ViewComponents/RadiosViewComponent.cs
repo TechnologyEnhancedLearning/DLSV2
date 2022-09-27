@@ -13,7 +13,8 @@
             string label,
             IEnumerable<RadiosListItemViewModel> radios,
             bool populateWithCurrentValues,
-            string? hintText
+            string? hintText,
+            bool required
         )
         {
             var radiosList = radios.Select(
@@ -29,7 +30,8 @@
                 aspFor,
                 label,
                 string.IsNullOrEmpty(hintText) ? null : hintText,
-                radiosList
+                radiosList,
+                required
             );
 
             return View(viewModel);

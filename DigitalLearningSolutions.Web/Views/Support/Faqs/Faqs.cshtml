@@ -29,8 +29,8 @@
       <h1 class="nhsuk-heading-xl">FAQs</h1>
 
       <partial name="SearchablePage/_Search" model="Model" />
-      <input type="hidden" id="select-sort-by" value="@Model.SortBy" data-sort-by-multiple="true" />
-      <input type="hidden" id="select-sort-direction" value="@Model.SortDirection" />
+      <input type="hidden" aria-hidden="true" id="select-sort-by" value="@Model.SortBy" data-sort-by-multiple="true" />
+      <input type="hidden" aria-hidden="true" id="select-sort-direction" value="@Model.SortDirection" />
 
       @if (Model.NoDataFound) {
         <p class="nhsuk-u-margin-top-4" role="alert">

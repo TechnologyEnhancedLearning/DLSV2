@@ -4,7 +4,7 @@
 <div class="searchable-element nhsuk-card nhsuk-u-margin-bottom-3" id="@Model.LearningHubReferenceId-card">
   <details class="nhsuk-details nhsuk-expander expander-on-card">
     <summary class="nhsuk-details__summary">
-      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.LearningHubReferenceId-name" name="name">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.LearningHubReferenceId-name">
         @Model.ResourceName
       </span>
     </summary>
@@ -44,6 +44,7 @@
       <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
          role="button"
          data-return-page-enabled="true"
+         aria-label="Add to action plan '@Model.ResourceName'"
          asp-controller="RecommendedLearning"
          asp-action="AddResourceToActionPlan"
          asp-route-selfAssessmentId="@Model.SelfAssessmentId"
@@ -55,6 +56,7 @@
 
     <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
        role="button"
+       aria-label="Preview resource '@Model.ResourceName'"
        asp-controller="Signposting"
        asp-action="LaunchLearningResource"
        asp-route-resourceReferenceId="@Model.LearningHubReferenceId">

@@ -30,7 +30,7 @@
                       label="Course to refresh to"
                       value="@Model.RefreshToCustomisationId.ToString()"
                       hint-text="Which course should the learner be enrolled on when auto-refreshing?"
-                      deselectable="false"
+                      required="true"
                       css-class="nhsuk-u-width-one-half"
                       default-option="Select a course"
                       select-list-options="@Model.CourseOptions" />
@@ -40,7 +40,8 @@
                         populate-with-current-value="true"
                         type="text"
                         hint-text="How many months prior to expiry of the previous course should the learner be enrolled on the refresher course?"
-                        css-class="nhsuk-input--width-10" />
+                        css-class="nhsuk-input--width-10"
+                        required="false"/>
 
       <vc:single-checkbox asp-for="@nameof(Model.ApplyLpDefaultsToSelfEnrol)"
                           label="Apply to self-enrolments"

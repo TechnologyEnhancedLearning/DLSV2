@@ -1,12 +1,13 @@
-﻿@using DigitalLearningSolutions.Data.Utilities
+﻿﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+@using DigitalLearningSolutions.Data.Utilities
 @using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @inject IClockUtility ClockUtility
 @model EnrolDelegateSetCompletByDateViewModel;
-
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Enrol on Profile Assessment";
   ViewData["Application"] = "Supervisor";
+  ViewData["HeaderPathName"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
@@ -21,8 +22,8 @@
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
         <li class="nhsuk-breadcrumb__item">
           <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
-             asp-action="DelegateProfileAssessments"
-             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+           asp-action="DelegateProfileAssessments"
+           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
             @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
           </a>
         </li>
@@ -120,7 +121,7 @@
         </div>
       </fieldset>
       <div class=" nhsuk-u-margin-top-5">
-        <a class="nhsuk-button nhsuk-button--secondary" asp-action="EnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+        <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="EnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
           Back
         </a>
         <button class="nhsuk-button" id="save-button" type="submit">Next</button>

@@ -20,7 +20,8 @@
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly ISupervisorService supervisorService;
         private readonly IUserDataService userDataService;
-
+        private readonly IRegistrationService registrationService;
+        private readonly ICentresDataService centresDataService;
         public SupervisorController(
            ISupervisorService supervisorService,
            ICommonService commonService,
@@ -33,7 +34,9 @@
            ILogger<SupervisorController> logger,
            IConfiguration config,
            ISearchSortFilterPaginateService searchSortFilterPaginateService,
-           IMultiPageFormService multiPageFormService
+           IMultiPageFormService multiPageFormService,
+           IRegistrationService registrationService,
+           ICentresDataService centresDataService
         )
         {
             this.supervisorService = supervisorService;
@@ -44,7 +47,9 @@
             this.userDataService = userDataService;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.multiPageFormService = multiPageFormService;
-    }
+            this.registrationService = registrationService;
+            this.centresDataService = centresDataService;
+        }
 
         private int GetCentreId()
         {
@@ -61,6 +66,13 @@
             var adminId = GetAdminId();
             var adminEntity = userDataService.GetAdminById(adminId);
             return adminEntity!.EmailForCentreNotifications;
+        }
+
+        private string? GetBannerText()
+        {
+            var centreId = User.GetCentreId();
+            var bannerText = centresDataService.GetBannerText(centreId);
+            return bannerText;
         }
     }
 }
