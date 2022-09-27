@@ -13,7 +13,7 @@
   <partial name="Shared/_NavMenuItems" />
 }
 
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -25,15 +25,15 @@
         </li>
         <li class="nhsuk-breadcrumb__item">
           <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
-             asp-action="DelegateProfileAssessments"
-             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+           asp-action="DelegateProfileAssessments"
+           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
             @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
           </a>
         </li>
         <li class="nhsuk-breadcrumb__item">
           <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="ReviewDelegateSelfAssessment"
-             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
-             asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]">
+           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+           asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]">
             @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName)
           </a>
         </li>
@@ -44,31 +44,33 @@
     </div>
     <p class="nhsuk-breadcrumb__back">
       <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-         asp-action="ReviewDelegateSelfAssessment"
-         asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
-         asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]">
+       asp-action="ReviewDelegateSelfAssessment"
+       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+       asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]">
         Back to @(Model.DelegateSelfAssessment.RoleName.Length > 35 ?
-                  Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName)
+      Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName)
       </a>
     </p>
   </nav>
 }
 
-<details class="nhsuk-details nhsuk-expander">
-  <summary class="nhsuk-details__summary">
-    <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
-      @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
-    </h1>
-  </summary>
-  <div class="nhsuk-details__text">
-    <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
-  </div>
-</details>
-<h2>Confirm Multiple Results for @Model.DelegateSelfAssessment.RoleName</h2>
-@if (Model.CompetencyGroups.Any()) {
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
+        @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+      </h1>
+    </summary>
+    <div class="nhsuk-details__text">
+      <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
+    </div>
+  </details>
+  <h2>Confirm Multiple Results for @Model.DelegateSelfAssessment.RoleName</h2>
+@if (Model.CompetencyGroups.Any())
+{
   <h3>Tick each self assessment result that you wish to confirm and then click Submit</h3>
   <form method="post">
-    @foreach (var competencyGroup in Model.CompetencyGroups) {
+    @foreach (var competencyGroup in Model.CompetencyGroups)
+    {
       var vocabulary = competencyGroup.First().Vocabulary;
       <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-4">
         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
@@ -77,7 +79,8 @@
           </span>
         </legend>
       </fieldset>
-      @if (competencyGroup.Count() > 1) {
+      @if (competencyGroup.Count() > 1)
+      {
         <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
           <div class="nhsuk-grid-column-full">
             <a class="nhsuk-button select-all-button select-all status-tag" role="button" data-group="@competencyGroup.Key" name="selectAll" value="true">Select all @Model.VocabPlural(vocabulary).ToLower()</a>
@@ -87,35 +90,37 @@
       }
       <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
         <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
-          <th role="columnheader" class="" scope="col">
-            @vocabulary
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Question
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Response
-          </th>
-        </tr>
+          <tr role="row">
+            <th role="columnheader" class="" scope="col">
+              @vocabulary
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Question
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Response
+            </th>
+          </tr>
         </thead>
         <tbody class="nhsuk-table__body">
-        @foreach (var competency in competencyGroup) {
-          @foreach (var question in competency.AssessmentQuestions) {
-            <tr role="row" class="nhsuk-table__row">
-              <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
-                <div class="nhsuk-checkboxes__item">
-                  <input data-group="@competencyGroup.Key" class="nhsuk-checkboxes__input select-all-checkbox" id="result-check-@question.SelfAssessmentResultSupervisorVerificationId" name="resultChecked" type="checkbox" value="@question.SelfAssessmentResultSupervisorVerificationId">
-                  <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@question.SelfAssessmentResultSupervisorVerificationId">
-                    @competency.Name
-                  </label>
-                </div>
-              </td>
-              <partial name="Shared/_AssessmentQuestionCells" model="question" />
-            </tr>
+          @foreach (var competency in competencyGroup)
+          {
+            @foreach (var question in competency.AssessmentQuestions)
+            {
+              <tr role="row" class="nhsuk-table__row">
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                  <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
+                  <div class="nhsuk-checkboxes__item">
+                    <input data-group="@competencyGroup.Key" class="nhsuk-checkboxes__input select-all-checkbox" id="result-check-@question.SelfAssessmentResultSupervisorVerificationId" name="resultChecked" type="checkbox" value="@question.SelfAssessmentResultSupervisorVerificationId">
+                    <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@question.SelfAssessmentResultSupervisorVerificationId">
+                      @competency.Name
+                    </label>
+                  </div>
+                </td>
+                <partial name="Shared/_AssessmentQuestionCells" model="question" />
+              </tr>
+            }
           }
-        }
         </tbody>
       </table>
     }
@@ -126,7 +131,9 @@
       </div>
     </div>
   </form>
-} else {
+}
+else
+{
   <p>
     Oops. There are no results awaiting confirmation.
   </p>

@@ -1,127 +1,127 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model EnrolDelegateOnProfileAssessmentViewModel;
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = "Enrol on Profile Assessment";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Enrol on Profile Assessment";
   ViewData["Application"] = "Supervisor";
   ViewData["HeaderPathName"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
 @section NavMenuItems {
-<partial name="Shared/_NavMenuItems" />
+  <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
-<nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+  @section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
-        <ol class="nhsuk-breadcrumb__list">
-            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a></li>
-            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
-            <li class="nhsuk-breadcrumb__item">
-                <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
-                   asp-action="DelegateProfileAssessments"
-                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
-                    @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
-                </a>
-            </li>
-            <li class="nhsuk-breadcrumb__item">
-                Enrol
-            </li>
-        </ol>
-    </div>
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
            asp-action="DelegateProfileAssessments"
            asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
-            Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
-        </a>
+            @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+          </a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+          Enrol
+        </li>
+      </ol>
+    </div>
+    <p class="nhsuk-breadcrumb__back">
+      <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
+       asp-action="DelegateProfileAssessments"
+       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+        Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+      </a>
     </p>
-</nav>
+  </nav>
 }
 @if (errorHasOccurred)
 {
-    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SessionEnrolOnRoleProfile.SelfAssessmentID) })" />
+  <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SessionEnrolOnRoleProfile.SelfAssessmentID) })" />
 }
 <details class="nhsuk-details nhsuk-expander">
-    <summary class="nhsuk-details__summary">
-        <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
-            @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
-        </h1>
-    </summary>
-    <div class="nhsuk-details__text">
-        <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
-    </div>
+  <summary class="nhsuk-details__summary">
+    <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
+      @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+    </h1>
+  </summary>
+  <div class="nhsuk-details__text">
+    <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
+  </div>
 </details>
 <h2>Enrol on Self Assessment</h2>
 @if (Model.RoleProfiles.Any())
 {
-    <h3>Choose a self assessment</h3>
-    <form method="post">
-        <table class="nhsuk-table-responsive">
-            <thead role="rowgroup" class="nhsuk-table__head">
-                <tr role="row">
-                    <th role="columnheader" class="" scope="col">
-                        Self assessment
-                    </th>
-                    <th role="columnheader" class="" scope="col">
-                        Brand
-                    </th>
-                    <th role="columnheader" class="" scope="col">
-                        Linked to role
-                    </th>
-                    <th role="columnheader" class="" scope="col">
-                        Scope
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="nhsuk-table__body">
-                @foreach (var roleProfile in Model.RoleProfiles)
-                {
-                    <tr role="row" class="nhsuk-table__row collaborator-row">
-                        <td role="cell" class="nhsuk-table__cell">
-                            <span class="nhsuk-table-responsive__heading">Self assessment </span>
-                            <div class="nhsuk-radios__item">
-                                <input class="nhsuk-radios__input" id="role-profile-check-@roleProfile.ID" asp-for="SessionEnrolOnRoleProfile.SelfAssessmentID" name="SelfAssessmentID" type="radio" value="@roleProfile.ID">
-                                <label class="nhsuk-label nhsuk-radios__label" for="role-profile-check-@roleProfile.ID">
-                                    @roleProfile.RoleProfileName
-                                </label>
-                            </div>
-                        </td>
-                        <td role="cell" class="nhsuk-table__cell">
-                            <span class="nhsuk-table-responsive__heading">Brand </span>
-                            @roleProfile.Brand
-                        </td>
-                        <td role="cell" class="nhsuk-table__cell">
-                            <span class="nhsuk-table-responsive__heading">Linked to role </span>
-                            @(roleProfile.NRPProfessionalGroup != null ? @roleProfile.NRPProfessionalGroup : "None/Generic")
-                            @(roleProfile.NRPSubGroupID != null ? " / " + roleProfile.NRPSubGroup : "")
-                            @(roleProfile.NRPRoleID != null ? " / " + roleProfile.NRPRole : "")
-                        </td>
-                        <td role="cell" class="nhsuk-table__cell">
-                            <span class="nhsuk-table-responsive__heading">Scope </span>
-                            @(roleProfile.National ? "National" : "Local")
-                        </td>
-                    </tr>
-                }
+  <h3>Choose a self assessment</h3>
+  <form method="post">
+    <table class="nhsuk-table-responsive">
+      <thead role="rowgroup" class="nhsuk-table__head">
+        <tr role="row">
+          <th role="columnheader" class="" scope="col">
+            Self assessment
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Brand
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Linked to role
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Scope
+          </th>
+        </tr>
+      </thead>
+      <tbody class="nhsuk-table__body">
+        @foreach (var roleProfile in Model.RoleProfiles)
+        {
+          <tr role="row" class="nhsuk-table__row collaborator-row">
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Self assessment </span>
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="role-profile-check-@roleProfile.ID" asp-for="SessionEnrolOnRoleProfile.SelfAssessmentID" name="SelfAssessmentID" type="radio" value="@roleProfile.ID">
+                <label class="nhsuk-label nhsuk-radios__label" for="role-profile-check-@roleProfile.ID">
+                  @roleProfile.RoleProfileName
+                </label>
+              </div>
+            </td>
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Brand </span>
+              @roleProfile.Brand
+            </td>
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Linked to role </span>
+              @(roleProfile.NRPProfessionalGroup != null ? @roleProfile.NRPProfessionalGroup : "None/Generic")
+              @(roleProfile.NRPSubGroupID != null ? " / " + roleProfile.NRPSubGroup : "")
+              @(roleProfile.NRPRoleID != null ? " / " + roleProfile.NRPRole : "")
+            </td>
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Scope </span>
+              @(roleProfile.National ? "National" : "Local")
+            </td>
+          </tr>
+        }
 
-            </tbody>
-        </table>
-        <button class="nhsuk-button nhsuk-u-margin-top-5" id="save-button" type="submit">Next</button>
-    </form>
+      </tbody>
+    </table>
+    <button class="nhsuk-button nhsuk-u-margin-top-5" id="save-button" type="submit">Next</button>
+  </form>
 }
 else
 {
-    <h3>No self assessments available</h3>
-    <p>No self assessments are available for enrolment for this member of staff.</p>
+  <h3>No self assessments available</h3>
+  <p>No self assessments are available for enrolment for this member of staff.</p>
 }
 
 <div class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link" asp-controller="Supervisor"
-       asp-action="DelegateProfileAssessments"
-       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-        </svg>
-        Cancel
-    </a>
+  <a class="nhsuk-back-link__link" asp-controller="Supervisor"
+     asp-action="DelegateProfileAssessments"
+     asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+    </svg>
+    Cancel
+  </a>
 </div>

@@ -10,7 +10,7 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -25,21 +25,21 @@
   </nav>
 }
 
-  @if (errorHasOccurred)
-  {
-    <vc:error-summary order-of-property-names="@new []{ nameof(AddMultipleSupervisorDelegatesViewModel.DelegateEmails) }" />
-  }
-  <h1>Add staff members to your team</h1>
-  <form method="post" novalidate>
-    <vc:text-area asp-for="DelegateEmails"
-                  label="User email addresses"
-                  populate-with-current-value="false"
-                  rows="8"
-                  spell-check="false"
-                  hint-text="Provide the work email address of each member of staff to add to your supervision list on a separate line."
-                  css-class=""
-                  character-count="null" />
-    <button class="nhsuk-button" type="submit">
-      Submit
-    </button>
-  </form>
+@if (errorHasOccurred)
+{
+  <vc:error-summary order-of-property-names="@new []{ nameof(AddMultipleSupervisorDelegatesViewModel.DelegateEmails) }" />
+}
+<h1>Add staff members to your team</h1>
+<form method="post" novalidate>
+  <vc:text-area asp-for="DelegateEmails"
+                label="User email addresses"
+                populate-with-current-value="false"
+                rows="8"
+                spell-check="false"
+                hint-text="Provide the work email address of each member of staff to add to your supervision list on a separate line."
+                css-class=""
+                character-count="null" />
+  <button class="nhsuk-button" type="submit">
+    Submit
+  </button>
+</form>
