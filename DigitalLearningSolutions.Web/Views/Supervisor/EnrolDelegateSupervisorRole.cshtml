@@ -2,8 +2,9 @@
 @model EnrolDelegateSupervisorRoleViewModel;
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = "Enrol on Profile Assessment";
-    ViewData["Application"] = "Supervisor";
+  ViewData["Title"] = errorHasOccurred ? "Error: Enrol on Profile Assessment" : "Enrol on Profile Assessment";
+  ViewData["Application"] = "Supervisor";
+  ViewData["HeaderPathName"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">

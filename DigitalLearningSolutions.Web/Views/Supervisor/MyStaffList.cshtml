@@ -1,9 +1,13 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 @model MyStaffListViewModel;
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: My Staff List" : "My Staff List";
   ViewData["Application"] = "Supervisor";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/Supervisor";
+  ViewData["HeaderPathName"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
