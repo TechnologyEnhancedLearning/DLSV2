@@ -9,60 +9,68 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-<h1>New framework summary</h1>
-<p class="nhsuk-lede-text">Please check the summary below before saving your framework. All details can be modified later.</p>
-<dl class="nhsuk-summary-list">
-  <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Name
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.FrameworkName
-    </dd>
-    <dd class="nhsuk-summary-list__actions">
-      <a asp-action="CreateNewFramework" asp-route-actionname="New">
-        Change
-      </a>
-    </dd>
-  </div>
-  <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Description
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Html.Raw(Model.Description)
-    </dd>
-    <dd class="nhsuk-summary-list__actions">
-      <a asp-action="FrameworkDescription" asp-route-actionname="New">
-        Change
-      </a>
-    </dd>
-  </div>
-  <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Vocabulary
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.FrameworkConfig
-    </dd>
-    <dd class="nhsuk-summary-list__actions">
-      <a asp-action="FrameworkType" asp-route-actionname="New">
-        Change
-      </a>
-    </dd>
-  </div>
-  <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Branding
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      <span class="framework-brand">
-        @Model.Brand
-      </span>
+  <h1>New framework summary</h1>
+  <p class="nhsuk-lede-text">Please check the summary below before saving your framework. All details can be modified later.</p>
+  <dl class="nhsuk-summary-list">
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Name
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.FrameworkName
+      </dd>
+      <dd class="nhsuk-summary-list__actions">
+        <a asp-action="CreateNewFramework" asp-route-actionname="New">
+          Change
+        </a>
+      </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Description
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Html.Raw(Model.Description)
+      </dd>
+      <dd class="nhsuk-summary-list__actions">
+        <a asp-action="FrameworkDescription" asp-route-actionname="New">
+          Change
+        </a>
+      </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Vocabulary
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.FrameworkConfig
+      </dd>
+      <dd class="nhsuk-summary-list__actions">
+        <a asp-action="FrameworkType" asp-route-actionname="New">
+          Change
+        </a>
+      </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Branding
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        <span class="framework-brand">
+          @Model.Brand
+        </span>
       @if (Model.Category != null)
-      {<span>/</span><span class="framework-category"> @Model.Category </span>}
+      {
+        <span>/</span>
+
+        <span class="framework-category"> @Model.Category </span>
+      }
       @if (Model.Topic != null)
-      {<span>/</span><span class="framework-topic"> @Model.Topic </span>}
+      {
+        <span>/</span>
+
+        <span class="framework-topic"> @Model.Topic </span>
+      }
     </dd>
     <dd class="nhsuk-summary-list__actions">
       <a asp-action="SetNewFrameworkBrand" asp-route-actionname="New">
