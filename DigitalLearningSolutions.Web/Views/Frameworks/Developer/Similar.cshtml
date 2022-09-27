@@ -3,13 +3,14 @@
 @{
   ViewData["Title"] = "Similar Frameworks";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
 
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -20,7 +21,7 @@
     </div>
   </nav>
 }
-<h1>Create a new framework</h1>
+  <h1>Create a new framework</h1>
 @if (Model.SameFrameworks.Count() > 0)
 {
   <div class="nhsuk-form-group nhsuk-form-group--error">
@@ -43,9 +44,13 @@ else
   <h2>Possible duplications</h2>
   <p>
     Your framework <span class="nhsuk-u-font-weight-bold">@Model.FrameworkName</span> is a possible duplicate of the following @if (Model.MatchingSearchResults == 1)
-    {<span>framework</span>}
+    {
+      <span>framework</span>
+    }
     else
-    { <span class="nhsuk-u-font-weight-bold">@Model.MatchingSearchResults</span> <span>frameworks</span>}:
+    {
+      <span class="nhsuk-u-font-weight-bold">@Model.MatchingSearchResults</span> <span>frameworks</span>
+    }:
   </p>
   <partial name="Shared/_BrandedFrameworkTable" model="Model.SimilarFrameworks" />
   <div class="nhsuk-warning-callout nhsuk-u-margin-top-6">
@@ -57,9 +62,13 @@ else
     </h3>
     <p>
       Please review these frameworks to check for possible duplication. If the @if (Model.MatchingSearchResults == 1)
-      {<span>framework listed above is</span>}
+      {
+        <span>framework listed above is</span>
+      }
       else
-      {<span>frameworks listed above are</span>} distinct from <span class="nhsuk-u-font-weight-bold">@Model.FrameworkName</span>, you can continue to create it.
+      {
+        <span>frameworks listed above are</span>
+      } distinct from <span class="nhsuk-u-font-weight-bold">@Model.FrameworkName</span>, you can continue to create it.
     </p>
   </div>
   <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="CreateNewFramework" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">

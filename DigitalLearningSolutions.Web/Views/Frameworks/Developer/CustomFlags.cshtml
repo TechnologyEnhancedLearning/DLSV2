@@ -1,15 +1,16 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @model CustomFlagsViewModel
 @{
-    var frameworkId = @ViewContext.RouteData.Values["frameworkId"];
-    ViewData["Title"] = "Framework Custom Flags";
-    ViewData["Application"] = "Framework Service";
+  var frameworkId = @ViewContext.RouteData.Values["frameworkId"];
+  ViewData["Title"] = "Framework Custom Flags";
+  ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -21,9 +22,9 @@
     </div>
   </nav>
 }
-<h1>Framework custom flags</h1>
-<div class="nhsuk-table__panel-with-heading-tab">
-  <h2 class="nhsuk-table__heading-tab">Custom flags</h2>
+  <h1>Framework custom flags</h1>
+  <div class="nhsuk-table__panel-with-heading-tab">
+    <h2 class="nhsuk-table__heading-tab">Custom flags</h2>
   @if (Model.Flags.Any())
   {
     <table role="presentation" class="nhsuk-table-responsive">
@@ -63,13 +64,13 @@
               <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
                 <span class="nhsuk-table-responsive__heading">Actions </span>
                 <a asp-action="EditFrameworkFlag"
-                   asp-route-frameworkId="@frameworkId"
-                   asp-route-flagId="@flag.FlagId"
-                   asp-route-actionname="Edit"
-                   class="nhsuk-u-padding-right-1">Edit</a>
+             asp-route-frameworkId="@frameworkId"
+             asp-route-flagId="@flag.FlagId"
+             asp-route-actionname="Edit"
+             class="nhsuk-u-padding-right-1">Edit</a>
                 <a asp-action="RemoveFrameworkFlag"
-                   asp-route-frameworkId="@frameworkId"
-                   asp-route-flagId="@flag.FlagId">Remove</a>
+             asp-route-frameworkId="@frameworkId"
+             asp-route-flagId="@flag.FlagId">Remove</a>
               </td>
             }
           </tr>
@@ -87,7 +88,8 @@
           asp-action="EditFrameworkFlag"
           asp-route-frameworkId="@frameworkId"
           asp-route-flagId="0"
-          asp-route-actionname="New">Add custom flag
+          asp-route-actionname="New">
+    Add custom flag
   </button>
 </form>
 <div class=" nhsuk-u-margin-top-6">

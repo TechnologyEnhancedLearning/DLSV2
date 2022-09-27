@@ -3,12 +3,13 @@
 @{
   ViewData["Title"] = "Assessment Question";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -38,9 +39,9 @@
     </div>
   </nav>
 }
-<h1>@Model.AssessmentQuestionDetail.Question</h1>
-<form method="post">
-  <fieldset class="nhsuk-fieldset">
+  <h1>@Model.AssessmentQuestionDetail.Question</h1>
+  <form method="post">
+    <fieldset class="nhsuk-fieldset">
     @if (Model.AssessmentQuestionDetail.AssessmentQuestionInputTypeID == 2)
     {
       <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">

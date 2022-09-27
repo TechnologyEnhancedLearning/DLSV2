@@ -3,11 +3,12 @@
 @{
   ViewData["Title"] = "Competency Resource Signposting";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -19,14 +20,14 @@
     </div>
   </nav>
 }
-<h1>Competency Resource Signposting</h1>
-<div class="nhsuk-inset-text">
-  <span class="nhsuk-u-visually-hidden">Information: </span>
-  <p>
-    @Model.NameOfCompetency
-  </p>
-</div>
-<h2>Competency Resource Links</h2>
+  <h1>Competency Resource Signposting</h1>
+  <div class="nhsuk-inset-text">
+    <span class="nhsuk-u-visually-hidden">Information: </span>
+    <p>
+      @Model.NameOfCompetency
+    </p>
+  </div>
+  <h2>Competency Resource Links</h2>
 @if (Model.LearningHubApiError)
 {
   <div class="nhsuk-warning-callout">

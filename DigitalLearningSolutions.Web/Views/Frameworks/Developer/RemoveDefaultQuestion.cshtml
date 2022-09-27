@@ -3,12 +3,13 @@
 @{
   ViewData["Title"] = "Remove Default Questions";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -21,8 +22,8 @@
     </div>
   </nav>
 }
-<h1>Remove default assessment question</h1>
-<p>You have chosen to remove the default question <strong>@Model.FrameworkDefaultQuestionUsage.Question</strong>.</p>
+  <h1>Remove default assessment question</h1>
+  <p>You have chosen to remove the default question <strong>@Model.FrameworkDefaultQuestionUsage.Question</strong>.</p>
 @if (Model.FrameworkDefaultQuestionUsage.CompetencyAssessmentQuestions == Model.FrameworkDefaultQuestionUsage.Competencies)
 {
   <p>The question is currently applied to all @Model.FrameworkDefaultQuestionUsage.Competencies competencies in this framework.</p>
