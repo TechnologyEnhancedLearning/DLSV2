@@ -1,17 +1,6 @@
 @using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@using DigitalLearningSolutions.Web.Helpers
 @model SelectListViewModel
-@{
-  var describedBy = "";
-  @if (Model.HasError)
-  {
-    describedBy = @Model.Name + "-error";
-  }
-  @if (Model.HintText != null)
-  {
-    describedBy += (describedBy != "" ? " " : "");
-    describedBy += @Model.Name + "-hint";
-  }
-}
 
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
   <label class="nhsuk-label" for="@Model.Name">
@@ -34,7 +23,7 @@
           name="@Model.Name"
           value="@(Model.Value != null ? Model.Value : null)"
           asp-items="Model.SelectListOptions"
-          aria-describedby="@(describedBy!= "" ? @describedBy : null)"
+          aria-describedby="@ViewComponentDynamicAttributeHelper.GetAriaDescribedByAttribute(Model.Name, Model.HasError, Model.HintText)"
           aria-invalid="@(Model.HasError ? "true" : null)"
           aria-required="@(Model.Required ? "true" : "false" )">
     @if (Model.DefaultOption != null)
