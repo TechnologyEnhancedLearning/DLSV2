@@ -3,6 +3,7 @@
 @{
   ViewData["Title"] = "Assessment Question";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
@@ -10,7 +11,7 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -40,34 +41,34 @@
     </div>
   </nav>
 }
-<legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-  <h1 class="nhsuk-fieldset__heading">
-    Confirm Assessment Question
-  </h1>
-</legend>
-<p class="nhsuk-label">Use this preview to confirm the assessment question appears as expected before submitting.</p>
-<div class="nhsuk-card nhsuk-u-padding-4">
-  <partial name="../Shared/_AssessmentQuestionPreview.cshtml" model="Model.AssessmentQuestion" />
-</div>
-<a class="nhsuk-button nhsuk-button--secondary" asp-action="EditAssessmentQuestionOptions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
-  Back
-</a>
+  <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+    <h1 class="nhsuk-fieldset__heading">
+      Confirm Assessment Question
+    </h1>
+  </legend>
+  <p class="nhsuk-label">Use this preview to confirm the assessment question appears as expected before submitting.</p>
+  <div class="nhsuk-card nhsuk-u-padding-4">
+    <partial name="../Shared/_AssessmentQuestionPreview.cshtml" model="Model.AssessmentQuestion" />
+  </div>
+  <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="EditAssessmentQuestionOptions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+    Back
+  </a>
 @if (Model.FrameworkCompetencyId == 0 && Model.AssessmentQuestion.Id == 0)
 {
   @if (Model.DetailFramework.PublishStatusID == 3)
   {
     <partial name="Shared/_PublishedWarning" />
   }
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit and apply to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
+  <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="SubmitAssessmentQuestion" title="Submit and apply to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
     Submit and apply <span class="nhsuk-u-visually-hidden">to existing @Model.VocabPlural().ToLower()</span>
   </a>
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit without applying to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
+  <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="SubmitAssessmentQuestion" title="Submit without applying to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
     Submit <span class="nhsuk-u-visually-hidden">without applying to existing @Model.VocabPlural().ToLower()</span>
   </a>
 }
 else
 {
-  <a class="nhsuk-button" asp-action="SubmitAssessmentQuestion" asp-route-addToExisting="False" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
+  <a class="nhsuk-button" role="button" asp-action="SubmitAssessmentQuestion" asp-route-addToExisting="False" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
     Submit
   </a>
 }

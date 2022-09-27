@@ -3,12 +3,13 @@
 @{
   ViewData["Title"] = "Assessment Question";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -38,49 +39,49 @@
     </div>
   </nav>
 }
-<form method="post">
+  <form method="post">
   @if (!ViewData.ModelState.IsValid)
   {
     <partial name="_ErrorSummary" />
   }
-<fieldset class="nhsuk-fieldset">
-  <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-    <h1 class="nhsuk-fieldset__heading">
-      @(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") assessment question
-    </h1>
-  </legend>
-  <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.Question">
-    <label class="nhsuk-label" for="tb-question">
-      Question
-    </label>
-    <div class="nhsuk-hint" id="tb-question-hint">
-      What question will the user be asked? Try to choose a generic question that can be asked about multiple @Model.VocabPlural().ToLower().
+  <fieldset class="nhsuk-fieldset">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+      <h1 class="nhsuk-fieldset__heading">
+        @(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") assessment question
+      </h1>
+    </legend>
+    <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.Question">
+      <label class="nhsuk-label" for="tb-question">
+        Question
+      </label>
+      <div class="nhsuk-hint" id="tb-question-hint">
+        What question will the user be asked? Try to choose a generic question that can be asked about multiple @Model.VocabPlural().ToLower().
+      </div>
+      <span nhs-validation-for="AssessmentQuestionDetail.Question"></span>
+      <input class="nhsuk-input" id="tb-question" asp-for="AssessmentQuestionDetail.Question" name="Question" error-class-toggle="nhsuk-input--error" type="text">
+    </nhs-form-group>
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="select-input-type">
+        Input type
+      </label>
+      <div class="nhsuk-hint" id="select-input-type-hint">
+        How will the user answer?
+      </div>
+      <select class="nhsuk-input" id="select-input-type" asp-items="Model.InputTypeSelectList" asp-for="AssessmentQuestionDetail.AssessmentQuestionInputTypeID" name="AssessmentQuestionInputTypeID"></select>
     </div>
-    <span nhs-validation-for="AssessmentQuestionDetail.Question"></span>
-    <input class="nhsuk-input" id="tb-question" asp-for="AssessmentQuestionDetail.Question" name="Question" error-class-toggle="nhsuk-input--error" type="text">
-  </nhs-form-group>
-  <div class="nhsuk-form-group">
-    <label class="nhsuk-label" for="select-input-type">
-      Input type
-    </label>
-    <div class="nhsuk-hint" id="select-input-type-hint">
-      How will the user answer?
-    </div>
-    <select class="nhsuk-input" id="select-input-type" asp-items="Model.InputTypeSelectList" asp-for="AssessmentQuestionDetail.AssessmentQuestionInputTypeID" name="AssessmentQuestionInputTypeID"></select>
-  </div>
-  <input name="ID" type="hidden" asp-for="AssessmentQuestionDetail.ID" />
-  <input name="MinValue" type="hidden" asp-for="AssessmentQuestionDetail.MinValue" />
-  <input name="MaxValue" type="hidden" asp-for="AssessmentQuestionDetail.MaxValue" />
-  <input name="InputTypeName" type="hidden" asp-for="AssessmentQuestionDetail.InputTypeName" />
-  <input name="AddedByAdminId" type="hidden" asp-for="AssessmentQuestionDetail.AddedByAdminId" />
-  <input name="UserIsOwner" type="hidden" asp-for="AssessmentQuestionDetail.UserIsOwner" />
-  <input name="MaxValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MaxValueDescription" />
-  <input name="MinValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MinValueDescription" />
-  <input name="IncludeComments" type="hidden" asp-for="AssessmentQuestionDetail.IncludeComments" />
-  <input name="ScoringInstructions" type="hidden" asp-for="AssessmentQuestionDetail.ScoringInstructions" />
-  <input name="CommentsPrompt" type="hidden" asp-for="AssessmentQuestionDetail.CommentsPrompt" />
-  <input name="CommentsHint" type="hidden" asp-for="AssessmentQuestionDetail.CommentsHint" />
-</fieldset>
+    <input name="ID" type="hidden" asp-for="AssessmentQuestionDetail.ID" />
+    <input name="MinValue" type="hidden" asp-for="AssessmentQuestionDetail.MinValue" />
+    <input name="MaxValue" type="hidden" asp-for="AssessmentQuestionDetail.MaxValue" />
+    <input name="InputTypeName" type="hidden" asp-for="AssessmentQuestionDetail.InputTypeName" />
+    <input name="AddedByAdminId" type="hidden" asp-for="AssessmentQuestionDetail.AddedByAdminId" />
+    <input name="UserIsOwner" type="hidden" asp-for="AssessmentQuestionDetail.UserIsOwner" />
+    <input name="MaxValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MaxValueDescription" />
+    <input name="MinValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MinValueDescription" />
+    <input name="IncludeComments" type="hidden" asp-for="AssessmentQuestionDetail.IncludeComments" />
+    <input name="ScoringInstructions" type="hidden" asp-for="AssessmentQuestionDetail.ScoringInstructions" />
+    <input name="CommentsPrompt" type="hidden" asp-for="AssessmentQuestionDetail.CommentsPrompt" />
+    <input name="CommentsHint" type="hidden" asp-for="AssessmentQuestionDetail.CommentsHint" />
+  </fieldset>
   <button class="nhsuk-button" type="submit">
     Next
   </button>

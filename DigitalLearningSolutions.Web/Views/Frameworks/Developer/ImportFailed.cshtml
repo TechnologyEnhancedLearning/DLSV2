@@ -6,39 +6,40 @@
 @{
   ViewData["Title"] = "Framework - Import Failed";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   var cancelLinkData = Html.GetRouteValues();
-    cancelLinkData.Add("tabname", "Structure");
+  cancelLinkData.Add("tabname", "Structure");
 }
 <link rel="stylesheet" href="@Url.Content(" ~ /css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
-<partial name="Shared/_NavMenuItems" />
+  <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
-<nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-  <div class="nhsuk-width-container">
-    <ol class="nhsuk-breadcrumb__list">
-      <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-      <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
-      <li class="nhsuk-breadcrumb__item">Excel import</li>
-    </ol>
-    <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Back to framework structure</a></p>
-  </div>
-</nav>
+  @section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item">Excel import</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Back to framework structure</a></p>
+    </div>
+  </nav>
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Import failed</h1>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl">Import failed</h1>
 
-    <p class="nhsuk-body-m">
-      The file that you uploaded either does not have the correct column headers on the first row or is not formatted as a table.
-    </p>
+      <p class="nhsuk-body-m">
+        The file that you uploaded either does not have the correct column headers on the first row or is not formatted as a table.
+      </p>
 
-    <p class="nhsuk-body-m">Refer to the instructions on the Import Competencies page to make sure your Excel file has the correct column headers.</p>
+      <p class="nhsuk-body-m">Refer to the instructions on the Import Competencies page to make sure your Excel file has the correct column headers.</p>
 
-    <vc:action-link asp-controller="Frameworks" asp-action="ViewFramework" asp-all-route-data="@cancelLinkData" link-text="Back to framework structure" />
+      <vc:action-link asp-controller="Frameworks" asp-action="ViewFramework" asp-all-route-data="@cancelLinkData" link-text="Back to framework structure" />
 
-    <vc:back-link asp-controller="Frameworks" asp-action="ImportCompetencies" asp-all-route-data="@cancelLinkData" link-text="Try again" />
+      <vc:back-link asp-controller="Frameworks" asp-action="ImportCompetencies" asp-all-route-data="@cancelLinkData" link-text="Try again" />
+    </div>
   </div>
-</div>
