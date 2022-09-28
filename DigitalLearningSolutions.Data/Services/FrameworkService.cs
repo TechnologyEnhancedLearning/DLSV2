@@ -803,7 +803,7 @@
                 @"SELECT AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1",
                 new { userEmail }
             );
-            if(adminId is null)
+            if (adminId is null)
             {
                 return -4;
             }
