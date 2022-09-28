@@ -54,8 +54,8 @@
         {
           <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
             <div class="nhsuk-grid-column-full">
-              <a class="nhsuk-button select-all-button select-all status-tag" data-group="@competencyGroup.Key" name="selectAll" value="true">Select all @Model.VocabPlural().ToLower()</a>
-              <a class="nhsuk-button select-all-button deselect-all status-tag" data-group="@competencyGroup.Key" id="" name="selectAll" value="false">Deselect all @Model.VocabPlural().ToLower()</a>
+              <a class="nhsuk-button select-all-button select-all status-tag" role="button" data-group="@competencyGroup.Key" name="selectAll" value="true">Select all @Model.VocabPlural().ToLower()</a>
+              <a class="nhsuk-button select-all-button deselect-all status-tag" role="button" data-group="@competencyGroup.Key" id="" name="selectAll" value="false">Deselect all @Model.VocabPlural().ToLower()</a>
             </div>
           </div>
         }
@@ -108,7 +108,7 @@
     <input type="hidden" asp-for="Vocabulary" />
     <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
       <div class="nhsuk-grid-column-full">
-        <a class="nhsuk-button nhsuk-button--secondary" asp-action="VerificationPickSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+        <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="VerificationPickSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
           Back
         </a>
         <button class="nhsuk-button" type="submit">Next</button>
@@ -131,7 +131,7 @@ else
   <p>
     There are no self assessment results ready for confirmation.
   </p>
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+  <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
     Cancel
   </a>
 }

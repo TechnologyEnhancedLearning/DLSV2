@@ -5,12 +5,13 @@
 @{
   ViewData["Title"] = "Dashboard";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -19,8 +20,8 @@
     </div>
   </nav>
 }
-<h1>Frameworks Dashboard</h1>
-<p class="nhsuk-body-m">Welcome <span class="nhsuk-u-font-weight-bold">@Model.Username</span>. You are accessing as a <span class="nhsuk-u-font-weight-bold">@(Model.IsFrameworkDeveloper ? "Framework Developer" : Model.IsFrameworkContributor ? "Framework Contributor" : "Framework Viewer")</span><feature name="@(FeatureFlags.WorkforceManagerInterface)"> and a <span class="nhsuk-u-font-weight-bold">@(Model.IsWorkforceManager ? "Workforce Manager" : Model.IsWorkforceContributor ? "Role Profile Contributor" : "Role Profile Viewer")</span></feature>.</p>
+  <h1>Frameworks Dashboard</h1>
+  <p class="nhsuk-body-m">Welcome <span class="nhsuk-u-font-weight-bold">@Model.Username</span>. You are accessing as a <span class="nhsuk-u-font-weight-bold">@(Model.IsFrameworkDeveloper ? "Framework Developer" : Model.IsFrameworkContributor ? "Framework Contributor" : "Framework Viewer")</span><feature name="@(FeatureFlags.WorkforceManagerInterface)"> and a <span class="nhsuk-u-font-weight-bold">@(Model.IsWorkforceManager ? "Workforce Manager" : Model.IsWorkforceContributor ? "Role Profile Contributor" : "Role Profile Viewer")</span></feature>.</p>
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <feature name="@(FeatureFlags.WorkforceManagerInterface)">
     <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
@@ -60,7 +61,7 @@
         </div>
       </div>
     </li>
-    </feature>
+  </feature>
 </ul>
 <h2>Your to do list</h2>
 @if (Model.DashboardToDoItems.Count() > 0)

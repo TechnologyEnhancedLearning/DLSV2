@@ -84,7 +84,7 @@
   @if (Model.TutorialPath != null)
   {
     <div>
-      <a class="nhsuk-button @Model.TutorialStartButtonAdditionalStyling"
+      <a class="nhsuk-button @Model.TutorialStartButtonAdditionalStyling" role="button"
          asp-action="ContentViewer"
          asp-controller="LearningMenu"
          asp-route-customisationId="@Model.CustomisationId"
@@ -98,7 +98,7 @@
   @if (Model.VideoPath != null)
   {
     <div>
-      <a class="nhsuk-button nhsuk-button--secondary"
+      <a class="nhsuk-button nhsuk-button--secondary" role="button"
          asp-controller="LearningMenu"
          asp-action="TutorialVideo"
          asp-route-customisationId="@Model.CustomisationId"
@@ -112,7 +112,7 @@
   @if (Model.SupportingMaterialPath != null)
   {
     <div>
-      <a class="nhsuk-button nhsuk-button--secondary" href="@Model.SupportingMaterialPath" download>
+      <a class="nhsuk-button nhsuk-button--secondary" role="button" href="@Model.SupportingMaterialPath" download>
         @Model.SupportingMaterialsLabel
       </a>
     </div>

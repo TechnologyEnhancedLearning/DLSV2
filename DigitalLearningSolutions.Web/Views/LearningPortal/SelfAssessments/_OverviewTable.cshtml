@@ -63,9 +63,9 @@
         </td>
         <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo } })" />
         <td rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
-          <span class="nhsuk-table-responsive__heading nhsuk-u-visually-hidden">Action </span>
-          <a aria-label="Review @competency.Vocabulary" asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]" asp-route-competencyNumber="@competency.RowNo">
-            Review <span class="nhsuk-u-visually-hidden">@competency.Vocabulary</span>
+          <span class="nhsuk-table-responsive__heading">Action </span>
+          <a aria-label="Review @competency.Name" asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]" asp-route-competencyNumber="@competency.RowNo">
+            Review <span class="nhsuk-u-visually-hidden">@competency.Name</span>
           </a>
         </td>
       </tr>

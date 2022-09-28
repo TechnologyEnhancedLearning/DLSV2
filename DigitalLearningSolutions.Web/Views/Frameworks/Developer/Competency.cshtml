@@ -3,6 +3,7 @@
 @{
   ViewData["Title"] = "Competency";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
@@ -24,7 +25,7 @@
   <div class="nhsuk-grid-row">
 
     <div class="nhsuk-grid-column-full">
-      @if (Model.FrameworkCompetency.Id > 0)
+    @if (Model.FrameworkCompetency.Id > 0)
     {
       <h1>
         Edit @Model.VocabSingular().ToLower()

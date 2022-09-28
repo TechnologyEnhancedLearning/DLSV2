@@ -1,9 +1,13 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 @model MyStaffListViewModel;
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: My Staff List" : "My Staff List";
   ViewData["Application"] = "Supervisor";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/Supervisor";
+  ViewData["HeaderPathName"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
@@ -102,7 +106,7 @@
     </div>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
-        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" asp-action="AddMultipleSuperviseDelegates">
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" role="button" asp-action="AddMultipleSuperviseDelegates">
           Add multiple staff members
         </a>
       </div>

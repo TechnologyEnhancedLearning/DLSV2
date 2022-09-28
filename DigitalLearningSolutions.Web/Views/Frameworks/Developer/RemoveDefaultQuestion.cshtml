@@ -3,12 +3,13 @@
 @{
   ViewData["Title"] = "Remove Default Questions";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -21,8 +22,8 @@
     </div>
   </nav>
 }
-<h1>Remove default assessment question</h1>
-<p>You have chosen to remove the default question <strong>@Model.FrameworkDefaultQuestionUsage.Question</strong>.</p>
+  <h1>Remove default assessment question</h1>
+  <p>You have chosen to remove the default question <strong>@Model.FrameworkDefaultQuestionUsage.Question</strong>.</p>
 @if (Model.FrameworkDefaultQuestionUsage.CompetencyAssessmentQuestions == Model.FrameworkDefaultQuestionUsage.Competencies)
 {
   <p>The question is currently applied to all @Model.FrameworkDefaultQuestionUsage.Competencies competencies in this framework.</p>
@@ -37,13 +38,13 @@ else
 }
 <p>Do you want to remove the question from those competencies, too?</p>
 <div class=" nhsuk-u-margin-top-6">
-  <a class="nhsuk-button" asp-action="ConfirmRemoveDefaultQuestion" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-deleteFromExisting="True" asp-route-assessmentQuestionId="@Model.AssessmentQuestionId" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+  <a class="nhsuk-button" role="button" asp-action="ConfirmRemoveDefaultQuestion" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-deleteFromExisting="True" asp-route-assessmentQuestionId="@Model.AssessmentQuestionId" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
     Yes
   </a>
-  <a class="nhsuk-button" asp-action="ConfirmRemoveDefaultQuestion" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-deleteFromExisting="False" asp-route-assessmentQuestionId="@Model.AssessmentQuestionId" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+  <a class="nhsuk-button" role="button" asp-action="ConfirmRemoveDefaultQuestion" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-deleteFromExisting="False" asp-route-assessmentQuestionId="@Model.AssessmentQuestionId" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
     No
   </a>
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+  <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
     Cancel
   </a>
 </div>

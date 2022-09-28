@@ -1,19 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@using DigitalLearningSolutions.Web.Helpers
 @model TextAreaViewModel
 @{
-  var describedBy = "";
-  @if (Model.HasError)
-  {
-    describedBy = @Model.Name + "-error";
-  }
-  @if (Model.HintText != null)
-  {
-    describedBy += (describedBy != "" ? " " : "");
-    describedBy += @Model.Name + "-hint";
-  }
+  string? describedBy = ViewComponentDynamicAttributeHelper.GetAriaDescribedByAttribute(Model.Name, Model.HasError, Model.HintText);
   @if (Model.CharacterCount.HasValue)
   {
-    describedBy += (describedBy != "" ? " " : "");
+    describedBy = describedBy == null ? "" : describedBy += " ";
     describedBy += @Model.Name + "-info";
   }
 }
@@ -45,7 +37,7 @@
             rows="@Model.Rows"
             spellcheck="@Model.SpellCheck"
             aria-invalid="@(Model.HasError ? "true" : null)"
-            aria-describedby="@(describedBy!= "" ? @describedBy : null)">@Model.Value</textarea>
+            aria-describedby="@describedBy">@Model.Value</textarea>
   @if (Model.CharacterCount.HasValue)
   {
     <div id="@Model.Name-info" class="nhsuk-hint">

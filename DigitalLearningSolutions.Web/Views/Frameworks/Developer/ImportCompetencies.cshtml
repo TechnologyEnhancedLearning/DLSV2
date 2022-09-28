@@ -2,16 +2,17 @@
 @using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @model ImportCompetenciesViewModel
 @{
-    ViewData["Title"] = "Framework - Import Competencies";
-    ViewData["Application"] = "Framework Service";
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    var cancelLinkData = Html.GetRouteValues();
+  ViewData["Title"] = "Framework - Import Competencies";
+  ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var cancelLinkData = Html.GetRouteValues();
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -23,8 +24,8 @@
     </div>
   </nav>
 }
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred)
     {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ImportFile) })" />
