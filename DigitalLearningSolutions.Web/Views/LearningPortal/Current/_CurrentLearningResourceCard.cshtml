@@ -19,9 +19,10 @@
           <partial name="Shared/_TagRow" model="@Model" />
         </div>
 
-        @if (Model.AbsentInLearningHub) {
+        @if (Model.AbsentInLearningHub)
+        {
           <vc:inset-text css-class="nhsuk-u-margin-0"
-                         text="This resource has been removed from the Learning Hub so its details may be out of date. You should remove this resource from your action plan." />
+                       text="This resource has been removed from the Learning Hub so its details may be out of date. You should remove this resource from your action plan." />
         }
 
         <div class="nhsuk-grid-row">
@@ -41,7 +42,7 @@
          asp-route-learningLogItemId="@Model.Id"
          asp-route-returnPageQuery="@Model.ReturnPageQuery"
          role="button">
-        Mark as complete
+        Mark <span class="nhsuk-u-visually-hidden">@Model.Name</span> as complete
       </a>
       <a class="nhsuk-button delete-button small-edit-button"
          aria-describedby="@Model.Id-name-lhr"
@@ -50,22 +51,23 @@
          asp-route-learningLogItemId="@Model.Id"
          asp-route-returnPageQuery="@Model.ReturnPageQuery"
          role="button">
-        Remove learning resource
+        Remove learning resource <span class="nhsuk-u-visually-hidden">@Model.Name</span>
       </a>
 
     </div>
   </details>
 
-  @if (!Model.AbsentInLearningHub) {
+  @if (!Model.AbsentInLearningHub)
+  {
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
         <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
-           aria-describedby="@Model.Id-name-lhr"
-           asp-controller="Signposting"
-           asp-action="LaunchLearningResource"
-           asp-route-resourceReferenceId="@Model.ResourceReferenceId"
-           role="button">
-          Launch learning resource
+         aria-describedby="@Model.Id-name-lhr"
+         asp-controller="Signposting"
+         asp-action="LaunchLearningResource"
+         asp-route-resourceReferenceId="@Model.ResourceReferenceId"
+         role="button">
+          Launch learning resource  <span class="nhsuk-u-visually-hidden">@Model.Name</span>
         </a>
       </div>
     </div>

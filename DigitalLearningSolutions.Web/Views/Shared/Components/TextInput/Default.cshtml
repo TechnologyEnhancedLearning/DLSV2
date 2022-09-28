@@ -1,17 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@using DigitalLearningSolutions.Web.Helpers
 @model TextInputViewModel
-@{
-  var describedBy = "";
-  @if (Model.HasError)
-  {
-    describedBy = @Model.Name + "-error";
-  }
-  @if (Model.HintText != null)
-  {
-    describedBy += (describedBy != "" ? " " : "");
-    describedBy += @Model.Name + "-hint";
-  }
-}
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")" style="white-space:nowrap">
   <label class="nhsuk-label" for="@Model.Name">
     @Model.Label
@@ -41,6 +30,6 @@
          spellcheck="@Model.SpellCheck"
          autocomplete="@Model.Autocomplete"
          aria-invalid="@(Model.HasError ? "true" : null )"
-         aria-describedby="@(describedBy!= "" ? @describedBy : null)"
+         aria-describedby="@ViewComponentDynamicAttributeHelper.GetAriaDescribedByAttribute(Model.Name, Model.HasError, Model.HintText)"
          aria-required="@(Model.Required ? "true" : "false" )" />
 </div>

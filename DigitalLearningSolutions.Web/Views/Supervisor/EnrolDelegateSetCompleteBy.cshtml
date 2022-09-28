@@ -4,13 +4,14 @@
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Enrol on Profile Assessment";
   ViewData["Application"] = "Supervisor";
+  ViewData["HeaderPathName"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -18,8 +19,8 @@
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
         <li class="nhsuk-breadcrumb__item">
           <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
-             asp-action="DelegateProfileAssessments"
-             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+           asp-action="DelegateProfileAssessments"
+           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
             @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
           </a>
         </li>
@@ -30,14 +31,14 @@
     </div>
     <p class="nhsuk-breadcrumb__back">
       <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-         asp-action="DelegateProfileAssessments"
-         asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+       asp-action="DelegateProfileAssessments"
+       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
         Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
       </a>
     </p>
   </nav>
 }
-@{
+  @{
   var exampleDate = @DateTime.Today + TimeSpan.FromDays(7);
   string prefillDay;
   string prefillMonth;
@@ -117,7 +118,7 @@
         </div>
       </fieldset>
       <div class=" nhsuk-u-margin-top-5">
-        <a class="nhsuk-button nhsuk-button--secondary" asp-action="EnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+        <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="EnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
           Back
         </a>
         <button class="nhsuk-button" id="save-button" type="submit">Next</button>

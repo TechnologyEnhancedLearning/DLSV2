@@ -3,12 +3,13 @@
 @{
   ViewData["Title"] = (string)ViewContext.RouteData.Values["tabname"] == "Mine" ? "My Frameworks" : "All Frameworks";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -18,10 +19,10 @@
   </nav>
 }
 
-  @if (Model.IsFrameworkContributor | Model.IsFrameworkDeveloper)
-  {
-    <partial name="_SecondaryTabsNavMenu" model="Model.TabsNavLinks"/>
-  }
+@if (Model.IsFrameworkContributor | Model.IsFrameworkDeveloper)
+{
+  <partial name="_SecondaryTabsNavMenu" model="Model.TabsNavLinks" />
+}
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">

@@ -4,51 +4,52 @@
 @inject IConfiguration Configuration
 
 @{
-    ViewData["Title"] = "Competency Group - Confirm remove";
-    ViewData["Application"] = "Framework Service";
+  ViewData["Title"] = "Competency Group - Confirm remove";
+  ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 
 @section NavMenuItems {
-<partial name="Shared/_NavMenuItems" />
+  <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
-<nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+  @section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
-        <ol class="nhsuk-breadcrumb__list">
-            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.CompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
-            <li class="nhsuk-breadcrumb__item">Confirm Remove Group</li>
-        </ol>
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-fragment="fcgroup-@Model.CompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to framework structure</a></p>
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.CompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item">Confirm Remove Group</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-fragment="fcgroup-@Model.CompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to framework structure</a></p>
     </div>
-</nav>
+  </nav>
 }
-<div>
+  <div>
     <div class="nhsuk-form-group" id="form-group">
-        <form asp-action="DeleteFrameworkCompetencyGroup" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-competencyGroupId="@Model.CompetencyGroupId">
-            <div class="nhsuk-u-reading-width">
-                <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
-                    Remove Competency Group and @Model.CompetencyCount Competencies
-                </h1>
-                <p>
-                    This action will remove the competency group and the @Model.CompetencyCount competencies it contains. Are you sure you wish to continue?
-                </p>
-                <p>
-                    Are you sure that you wish to proceed?
-                </p>
-            </div>
-            <button class="nhsuk-button delete-button" type="submit">
-                Remove group
-            </button>
-        </form>
+      <form asp-action="DeleteFrameworkCompetencyGroup" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-competencyGroupId="@Model.CompetencyGroupId">
+        <div class="nhsuk-u-reading-width">
+          <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+            Remove Competency Group and @Model.CompetencyCount Competencies
+          </h1>
+          <p>
+            This action will remove the competency group and the @Model.CompetencyCount competencies it contains. Are you sure you wish to continue?
+          </p>
+          <p>
+            Are you sure that you wish to proceed?
+          </p>
+        </div>
+        <button class="nhsuk-button delete-button" type="submit">
+          Remove group
+        </button>
+      </form>
     </div>
     <div class="nhsuk-back-link">
-        <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.CompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
-            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-            </svg>
-            Cancel
-        </a>
+      <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.CompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+      </a>
     </div>
     @*<vc:cancel-link-with-return-page-query asp-controller="LearningPortal" asp-action="Current" return-page-query="@Model.ReturnPageQuery" />*@
-</div>
+  </div>
