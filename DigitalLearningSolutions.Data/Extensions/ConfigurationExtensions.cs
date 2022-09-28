@@ -111,14 +111,14 @@
             return int.Parse(config[JavascriptSearchSortFilterPaginateItemLimitKey]);
         }
 
-	public static int GetMonthsToPromptUserDetailsCheck(this IConfiguration config)
+        public static int GetMonthsToPromptUserDetailsCheck(this IConfiguration config)
         {
             return int.Parse(config[MonthsToPromptUserDetailsCheckKey]);
         }
 
         public static string GetExcelPassword(this IConfiguration config)
         {
-            return int.Parse(config[MonthsToPromptUserDetailsCheckKey]);
+            return config[ExcelPassword];
         }
     }
 }
