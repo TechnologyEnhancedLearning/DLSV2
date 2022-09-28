@@ -88,6 +88,12 @@
     </div>
   </div>
 </form>
+
+<form method="get">
+  <partial name="PaginatedPage/_TopPaginationNav" model="Model" />
+  @Html.Hidden("SearchText", Model.SearchText)
+</form>
+
 @if (Model.LearningHubApiError) {
   <span class="nhsuk-u-margin-1 nhsuk-u-clear">This service is unavailable. Please try again later.</span>
 } else if (Model.SearchResult?.Results != null) {
