@@ -257,7 +257,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault(),
                     sessionEnrol.CompleteByDate.GetValueOrDefault()
                     );
-                
+
             }
             return RedirectToAction("Index", "AllDelegates");
         }

@@ -55,12 +55,12 @@
         public void Index_calls_expected_methods_and_returns_view()
         {
             //When
-            var result = enrolController.Index(1,"DelegateName");
+            var result = enrolController.Index(1, "DelegateName");
 
             //Then
             using (new AssertionScope())
             {
-                A.CallTo(() => courseDataService.GetAvailableCourses(1, A<int>._,A<int>._)).MustHaveHappened();
+                A.CallTo(() => courseDataService.GetAvailableCourses(1, A<int>._, A<int>._)).MustHaveHappened();
 
                 result.Should().BeViewResult().WithDefaultViewName();
             }
@@ -85,7 +85,7 @@
 
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
 
-                Assert.AreEqual(0,tempDataDictionary.Keys.Count);
+                Assert.AreEqual(0, tempDataDictionary.Keys.Count);
             }
         }
     }

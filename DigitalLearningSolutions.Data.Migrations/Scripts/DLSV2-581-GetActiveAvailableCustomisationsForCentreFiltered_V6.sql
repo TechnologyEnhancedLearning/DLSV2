@@ -1,6 +1,3 @@
-USE [mbdbx101]
-GO
-
 /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
 SET ANSI_NULLS ON
 GO

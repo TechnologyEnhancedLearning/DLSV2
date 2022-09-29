@@ -212,7 +212,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     WHERE (Supervisor = 1) AND (CentreID = @CentreID) AND (CategoryID = 0 OR
                          CategoryID = (SELECT au.CategoryID FROM Applications AS a INNER JOIN
                            Customisations AS c ON a.ApplicationID = c.ApplicationID WHERE        (c.CustomisationID = @CustomisationID))) AND (Active = 1) AND (Approved = 1) GROUP BY AdminID, Surname, Forename, Email ORDER BY Surname, Forename",
-                new{ CentreID, CustomisationID });
+                new { CentreID, CustomisationID });
         }
 
         public bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId)
@@ -601,7 +601,7 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                     new { selfAssessmentId, supervisorDelegateId });
             }
 
-            if(deletedCandidateAssessmentSupervisors >= 1)
+            if (deletedCandidateAssessmentSupervisors >= 1)
             {
                 connection.Execute(
                     @"UPDATE SupervisorDelegates SET Removed = getUTCDate() 
