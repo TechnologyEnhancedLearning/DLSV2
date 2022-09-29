@@ -29,15 +29,29 @@
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            if (!(context.Controller is Controller controller) || _feature.Name != "AddNewFramework")
+            if (!(context.Controller is Controller controller))
             {
                 return;
             }
 
-            var tempDataObject = controller.TempData.Peek(_feature.TempDataKey);
-            if (tempDataObject == null || !(tempDataObject is Guid tempDataGuid) || !_multiPageFormService.FormDataExistsForGuidAndFeature(_feature, tempDataGuid))
+            if (_feature.TempDataKey != string.Empty && (controller.TempData == null || controller.TempData.Peek(_feature.TempDataKey) == null))
             {
                 context.Result = new StatusCodeResult((int)HttpStatusCode.Gone);
+            }
+            else
+            {
+                var tempDataKey = controller.TempData.Peek(_feature.TempDataKey);
+                var tempDataGuid = Guid.Parse(tempDataKey.ToString()!);
+
+                if (!_multiPageFormService.FormDataExistsForGuidAndFeature(_feature, tempDataGuid))
+                {
+                    return;
+                }
+
+                if (controller.TempData == null)
+                {
+                    context.Result = new StatusCodeResult((int)HttpStatusCode.Gone);
+                }
             }
         }
     }
