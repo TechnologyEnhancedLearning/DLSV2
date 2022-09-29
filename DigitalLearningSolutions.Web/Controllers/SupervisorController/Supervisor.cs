@@ -14,6 +14,7 @@
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Web.ServiceFilter;
 
     public partial class SupervisorController
     {
@@ -486,6 +487,10 @@
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/Profile")]
+        //[TypeFilter(
+        //    typeof(RedirectToErrorEmptySessionData),
+        //    Arguments = new object[] { nameof(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment) }
+        //)]
         public IActionResult EnrolDelegateOnProfileAssessment(int supervisorDelegateId)
         {
             var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
@@ -557,6 +562,10 @@
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/CompleteBy")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment) }
+        )]
         public IActionResult EnrolDelegateCompleteBy(int supervisorDelegateId, int? day, int? month, int? year)
         {
             var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
@@ -640,6 +649,10 @@
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/SupervisorRole")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment) }
+        )]
         public IActionResult EnrolDelegateSupervisorRole(int supervisorDelegateId)
         {
             var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
