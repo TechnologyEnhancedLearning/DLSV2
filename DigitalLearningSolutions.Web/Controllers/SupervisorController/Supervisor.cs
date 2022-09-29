@@ -169,7 +169,7 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {
-            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             if (superviseDelegate == null)
             {
                 return RedirectToAction("MyStaffList");
@@ -887,7 +887,7 @@
         public IActionResult NominateSupervisor(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
         {
             var superviseDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
             return View("NominateSupervisor", model);
         }
@@ -896,12 +896,12 @@
         {
             if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
-                var categoryId = User.GetAdminCourseCategoryFilter();
-                var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminID(), 0);
+                var categoryId = User.GetAdminCategoryId();
+                var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminId(), 0);
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false);
                 if (supervisorDelegateDetail.CandidateID != null)
                 {
-                    registrationService.PromoteDelegateToAdmin(adminRoles, (categoryId ?? 0), (int)supervisorDelegateDetail.CandidateID);
+                    registrationService.PromoteDelegateToAdmin(adminRoles, (categoryId ?? 0), (int)supervisorDelegateDetail.CandidateID, (int)User.GetCentreId());
                 }
                 return RedirectToAction("MyStaffList");
             }

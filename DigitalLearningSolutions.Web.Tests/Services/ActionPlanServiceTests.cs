@@ -10,7 +10,7 @@
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Utilities;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Services;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
@@ -65,6 +65,7 @@
             const int learningResourceReferenceId = 1;
             const int delegateId = 2;
             const int selfAssessmentId = 3;
+            const int candidateAssessmentId = 4;
             const string resourceName = "Activity";
             const string resourceLink = "www.test.com";
             const int learningLogId = 4;

@@ -68,7 +68,8 @@ namespace DigitalLearningSolutions.Data.Migrations
                     0,
                     GETUTCDATE(),
                     CASE WHEN TRIM(Email) IS NOT NULL AND TRIM(Email) <> '' THEN GETUTCDATE() ELSE NULL END
-                    FROM AdminAccounts"
+                    FROM AdminAccounts
+                    WHERE Email IS NOT NULL"
             );
 
             // Transfer all delegates with unique emails not already in the Users table

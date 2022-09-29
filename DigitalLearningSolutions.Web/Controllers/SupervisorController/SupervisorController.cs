@@ -70,7 +70,7 @@
 
         private string? GetBannerText()
         {
-            var centreId = User.GetCentreId();
+            var centreId = (int)User.GetCentreId();
             var bannerText = centresDataService.GetBannerText(centreId);
             return bannerText;
         }

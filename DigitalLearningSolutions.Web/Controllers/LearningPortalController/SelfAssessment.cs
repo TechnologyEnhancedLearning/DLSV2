@@ -1233,6 +1233,7 @@
         }
         public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string vocabulary)
         {
+            var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, GetCandidateId(), true);
             var fileName = $"DLS {vocabulary} Assessment Export {DateTime.Today:yyyy-MM-dd}.xlsx";
             return File(
                 content,
