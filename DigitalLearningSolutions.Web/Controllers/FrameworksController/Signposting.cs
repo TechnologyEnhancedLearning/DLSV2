@@ -14,6 +14,8 @@ using DigitalLearningSolutions.Data.Enums;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
+    using DigitalLearningSolutions.Web.ServiceFilter;
+
     public partial class FrameworksController
     {
         private static List<Catalogue> Catalogues { get; set; }
@@ -124,6 +126,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters")]
+        //[TypeFilter(
+        //    typeof(RedirectToErrorEmptySessionData),
+        //    Arguments = new object[] { nameof(MultiPageFormDataFeature.EditSignpostingParameter) }
+        //)]
         public IActionResult StartSignpostingParametersSession(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId, int? competencyLearningResourceID)
         {
             var adminId = GetAdminId();
@@ -201,6 +207,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/SetStatus")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditSignpostingParameter) }
+        )]
         public IActionResult SignpostingSetStatus(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
             return ViewFromSession("Developer/SignpostingSetStatus", frameworkId, frameworkCompetencyId, frameworkCompetencyId);
@@ -294,6 +304,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/Edit")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditSignpostingParameter) }
+        )]
         public IActionResult EditSignpostingParameters(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, int? competencyLearningResourceId)
         {
             var adminId = GetAdminId();
@@ -378,6 +392,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/SetTriggerValues")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditSignpostingParameter) }
+        )]
         public IActionResult SignpostingParametersSetTriggerValues(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
             return ViewFromSession("Developer/SignpostingParametersSetTriggerValues", frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
