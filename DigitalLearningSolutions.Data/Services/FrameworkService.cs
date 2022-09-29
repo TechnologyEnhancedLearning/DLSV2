@@ -1063,7 +1063,10 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 );
                 return;
             }
-
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                description = null;
+            }
             //DO WE NEED SOMETHING IN HERE TO CHECK WHETHER IT IS USED ELSEWHERE AND WARN THE USER?
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Competencies SET Name = @name, Description = @description, UpdatedByAdminID = @adminId
