@@ -1063,6 +1063,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 );
                 return;
             }
+            description?.Trim();
             if (string.IsNullOrWhiteSpace(description))
             {
                 description = null;
