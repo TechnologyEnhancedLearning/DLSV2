@@ -6,6 +6,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
@@ -79,7 +80,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<CourseDataService>>();
-            courseDataService = new CourseDataService(connection, logger);
+            var selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
+            courseDataService = new CourseDataService(connection, logger, selfAssessmentDataService);
         }
 
         [Test]

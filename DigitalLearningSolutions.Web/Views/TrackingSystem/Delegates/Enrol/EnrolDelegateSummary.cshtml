@@ -1,0 +1,97 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
+@model EnrolSummaryViewModel
+@{
+    ViewData["Title"] = "EnrolDelegateSummary";
+    var prefillDay = Model.CompleteByDate?.Day.ToString() ?? "";
+    var prefillMonth = Model.CompleteByDate?.Month.ToString() ?? "";
+    var prefillYear = Model.CompleteByDate?.Year.ToString() ?? "";
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <form method="post">
+            <div class="nhsuk-u-margin-bottom-4">
+                <h1 class="nhsuk-heading-xl">Enrol delegate on activity - summary</h1>
+            </div>
+            <dl class="nhsuk-summary-list">
+                <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Delegate
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                        @Model.DelegateName
+                </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Activity
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+            @Model.ActivityName
+        </dd>
+
+        <dd class="nhsuk-summary-list__actions">
+            <a asp-action="Index" asp-route-delegateId="@Model.DelegateId" asp-route-delegateName="@Model.DelegateName">
+                Change
+            </a>
+        </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Complete by date
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+                        @Model.CompleteByDate
+        </dd>
+
+        <dd class="nhsuk-summary-list__actions">
+            <a asp-action="EnrolCompleteBy" asp-route-delegateId="@Model.DelegateId" asp-route-delegateName="@Model.DelegateName"
+               asp-route-day="@prefillDay" asp-route-month="@prefillMonth" asp-route-year="@prefillYear">
+                Change
+            </a>
+        </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Supervisor
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+                        @Model.SupervisorName
+        </dd>
+
+        <dd class="nhsuk-summary-list__actions">
+            <a asp-action="EnrolDelegateSupervisor" asp-route-delegateId="@Model.DelegateId"
+               asp-route-delegateName="@Model.DelegateName">
+                Change<span class="nhsuk-u-visually-hidden">change supervisor</span>
+            </a>
+        </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Mandatory
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+                        @(Model.IsMandatory == true ? "Yes": "No")
+        </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Valid for
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+                        @( Model.ValidFor != "" ? Model.ValidFor + " Months": "")
+        </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Auto-refresh
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+                        @(Model.IsAutoRefresh == true ? "Yes" : "No" )
+        </dd>
+    </div>
+    </dl>
+    <input class="nhsuk-button" type="submit" value="Confirm" />
+    </form>
+    <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+</div>
+</div>

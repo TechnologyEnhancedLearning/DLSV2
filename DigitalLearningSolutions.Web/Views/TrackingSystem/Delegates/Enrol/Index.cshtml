@@ -1,0 +1,31 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
+@model EnrolCurrentLearningViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    var errorClass = Model.SelectedActivity < 1 ? "nhsuk-input--error" : "";
+}
+
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedActivity) })" />
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <form method="post">
+            <div class="nhsuk-u-margin-bottom-4">
+                <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 1</h1>
+                <h3>Delegate: @Model.DelegateName</h3>
+            </div>
+            <div class="nhsuk-u-margin-bottom-4">
+                <h4>Choose an activity:</h4>
+
+                <select class="nhsuk-select sort-by-dropdown @errorClass" asp-for="@Model.SelectedActivity" asp-items="@(new SelectList(Model.LearningItems, "Id", "Name"))">
+                    <option value="0">--Select--</option>
+                </select>
+            </div>
+
+            <input class="nhsuk-button" type="submit" value="Next" />
+        </form>
+        <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+    </div>
+</div>

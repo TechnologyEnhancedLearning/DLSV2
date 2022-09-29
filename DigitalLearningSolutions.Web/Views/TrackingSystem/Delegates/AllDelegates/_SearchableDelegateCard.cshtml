@@ -83,6 +83,15 @@
          asp-route-returnPageQuery="@Model.ReturnPageQuery?.ToString()">
         Set password
       </a>
+       <a class="nhsuk-button nhsuk-button--secondary"
+         role="button"
+         asp-controller="Enrol"
+         asp-action="StartEnrolProcess"
+         asp-route-delegateId="@Model.DelegateInfo.Id"
+         asp-route-delegateName="@Model.DelegateInfo.Name"
+       >
+        Enrol on activity
+      </a>
     </div>
   </details>
 </div>
