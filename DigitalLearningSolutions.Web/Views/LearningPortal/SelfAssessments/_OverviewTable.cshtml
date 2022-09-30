@@ -31,6 +31,7 @@
     <tbody class="nhsuk-table__body row-outer" id="comp-@competency.RowNo">
       <tr class="nhsuk-table__row first-row">
         <td rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
+          <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
           <partial name="_CompetencyFlags"
                    model="competency.CompetencyFlags"
                    view-data="@(new ViewDataDictionary(ViewData) {{ "cssClass", $"{(competency.AlwaysShowDescription ? "" : "nhsuk-u-padding-left-4")}" }})" />
@@ -39,7 +40,6 @@
             <details class="nhsuk-details">
               <summary class="nhsuk-details__summary">
                 <span class="nhsuk-u-margin-bottom-0">
-                  <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
                   <span class="nhsuk-details__summary-text">@competency.Name</span>
                 </span>
               </summary>
@@ -51,7 +51,7 @@
           else
           {
             <p class="@(competency.Description != null ? "nhsuk-u-font-weight-bold" : "") nhsuk-u-margin-bottom-0">
-              <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
+              @competency.Name
             </p>
             @if (competency.Description != null)
             {
