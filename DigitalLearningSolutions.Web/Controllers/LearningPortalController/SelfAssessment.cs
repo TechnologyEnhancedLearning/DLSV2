@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
@@ -698,6 +699,10 @@
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewSupervisor) }
+        )]
         public IActionResult AddSupervisorSummary(int selfAssessmentId)
         {
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
@@ -837,6 +842,10 @@
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/ChooseSupervisor")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification) }
+        )]
         public IActionResult VerificationPickSupervisor(int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
@@ -909,8 +918,11 @@
             );
             return RedirectToAction("VerificationPickResults", new { sessionRequestVerification.SelfAssessmentID });
         }
-
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/PickResults")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification) }
+        )]
         public IActionResult VerificationPickResults(int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
@@ -982,6 +994,10 @@
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/Summary")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification) }
+        )]
         public IActionResult VerificationSummary(int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
