@@ -126,10 +126,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters")]
-        //[TypeFilter(
-        //    typeof(RedirectToErrorEmptySessionData),
-        //    Arguments = new object[] { nameof(MultiPageFormDataFeature.EditSignpostingParameter) }
-        //)]
         public IActionResult StartSignpostingParametersSession(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId, int? competencyLearningResourceID)
         {
             var adminId = GetAdminId();
@@ -267,6 +263,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/Summary")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditSignpostingParameter) }
+        )]
         public IActionResult AddSignpostingParametersSummary(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId)
         {
             var session = multiPageFormService.GetMultiPageFormData<SessionCompetencyLearningResourceSignpostingParameter>(
