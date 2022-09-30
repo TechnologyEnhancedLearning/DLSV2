@@ -493,6 +493,22 @@
             // Then
             result.Should().Be(-3);
         }
+
+        [Test]
+        public void AddCollaboratorToFramework_should_return_minus_4_if_collaborator_email_is_not_admin()
+        {
+            // Given
+            string? userAdminEmail = "4dfbbaca-0055-44ea-b630-b08659aa82d0@xx";
+            const bool canModify = false;
+
+            // When
+            var result = frameworkService.AddCollaboratorToFramework(ValidFrameworkId, userAdminEmail, canModify);
+
+            // Then
+            result.Should().Be(-4);
+        }
+
+
         [Test]
         public void GetFrameworkCompetencyGroups_returns_list_with_more_than_one_framework_competency_groups_for_valid_framework_id()
         {

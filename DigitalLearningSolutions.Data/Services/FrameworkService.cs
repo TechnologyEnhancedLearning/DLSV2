@@ -803,6 +803,10 @@
                 @"SELECT AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1",
                 new { userEmail }
             );
+            if (adminId is null)
+            {
+                return -4;
+            }
 
             var numberOfAffectedRows = connection.Execute(
                 @"INSERT INTO FrameworkCollaborators (FrameworkID, AdminID, UserEmail, CanModify)
