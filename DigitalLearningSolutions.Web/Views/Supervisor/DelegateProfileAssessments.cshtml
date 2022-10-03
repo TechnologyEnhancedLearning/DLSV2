@@ -3,13 +3,14 @@
 @{
   ViewData["Title"] = "My Staff List";
   ViewData["Application"] = "Supervisor";
+  ViewData["HeaderPathName"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
-@section NavBreadcrumbs {
+  @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -23,16 +24,16 @@
     </p>
   </nav>
 }
-<details class="nhsuk-details nhsuk-expander">
-  <summary class="nhsuk-details__summary">
-    <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
-      @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
-    </h1>
-  </summary>
-  <div class="nhsuk-details__text">
-    <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
-  </div>
-</details>
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
+        @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+      </h1>
+    </summary>
+    <div class="nhsuk-details__text">
+      <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
+    </div>
+  </details>
 @if (Model.DelegateSelfAssessments.Any())
 {
   <partial name="Shared/_DelegateProfileAssessmentGrid" model="Model.DelegateSelfAssessments" />
@@ -43,7 +44,7 @@ else
 }
 @if (!Model.IsNominatedSupervisor)
 {
-  <a class="nhsuk-button nhsuk-u-margin-top-4" asp-action="StartEnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+  <a class="nhsuk-button nhsuk-u-margin-top-4" role="button" asp-action="StartEnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
     Enrol on new assessment
   </a>
 }

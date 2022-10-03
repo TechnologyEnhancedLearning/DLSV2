@@ -9,7 +9,7 @@ describe('enterFullscreen', () => {
     <html>
     <head></head>
     <body>
-      <a class="nhsuk-button nhsuk-button--secondary exit-fullscreen-button hidden" id="content-viewer_exit-fullscreen-button" href="#">
+      <a class="nhsuk-button nhsuk-button--secondary exit-fullscreen-button hidden" role="button" id="content-viewer_exit-fullscreen-button" href="#">
         Exit fullscreen
       </a>
     </body>
@@ -30,7 +30,7 @@ describe('enterFullscreen', () => {
       <html>
       <head></head>
       <body>
-        <a class="nhsuk-button js-only-inline" id="content-viewer_enter-fullscreen-button" href="#">
+        <a class="nhsuk-button js-only-inline" role="button" id="content-viewer_enter-fullscreen-button" href="#">
           Fullscreen
         </a>
       </body>
@@ -161,7 +161,7 @@ describe('exitFullscreen', () => {
       <html>
       <head></head>
       <body>
-        <a class="nhsuk-button nhsuk-button--secondary exit-fullscreen-button" id="content-viewer_exit-fullscreen-button" href="#">
+        <a class="nhsuk-button nhsuk-button--secondary exit-fullscreen-button" role="button" id="content-viewer_exit-fullscreen-button" href="#">
           Exit fullscreen
         </a>
       </body>
@@ -182,7 +182,7 @@ describe('exitFullscreen', () => {
       <html>
       <head></head>
       <body>
-        <a class="nhsuk-button js-only-inline hidden" id="content-viewer_enter-fullscreen-button" href="#">
+        <a class="nhsuk-button js-only-inline hidden" role="button" id="content-viewer_enter-fullscreen-button" href="#">
           Fullscreen
         </a>
       </body>

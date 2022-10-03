@@ -1,42 +1,45 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model CheckboxItemViewModel
 @{
-    var describedBy = "";
-    @if (Model.HasError)
+  var describedBy = "";
+  @if (Model.HasError)
+  {
+    describedBy = @Model.Name + "-error";
+  }
+  @if (Model.HintText != null)
+  {
+    if (Model.HintText != "")
     {
-        describedBy = @Model.Name + "-error";
+      describedBy += (describedBy != "" ? " " : "");
+      describedBy += @Model.Name + "-hint";
     }
-    @if (Model.HintText != null)
-    {
-        describedBy += (describedBy != "" ? " " : "");
-        describedBy += @Model.Name + "-hint";
-    }
+  }
 }
 <div class="nhsuk-checkboxes">
-    <div class="nhsuk-checkboxes__item @(Model.HintText == null ? "nhsuk-u-margin-bottom-4" : "")">
-        <input class="nhsuk-checkboxes__input"
-               id="@Model.Id"
-               name="@Model.Name"
-               type="checkbox"
-               @if(describedBy != "" ) {
-        <text>
-            aria-describedby="@describedBy"
-        </text>
-        }
-        value="true"
-        @if(Model.HasError)
-        {
-        <text>aria-invalid="true"</text>
-        }
-        @(Model.Value ? "checked" : string.Empty) />
-        <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.Id">
-            @Model.Label
-        </label>
-        @if (Model.HintText != null)
-        {
-            <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@Model.Id-item-hint">
-                @Model.HintText
-            </div>
-        }
-    </div>
+  <div class="nhsuk-checkboxes__item @(Model.HintText == null ? "nhsuk-u-margin-bottom-4" : "")">
+    <input class="nhsuk-checkboxes__input"
+           id="@Model.Id"
+           name="@Model.Name"
+           type="checkbox"
+           @if(describedBy != "" ) {
+    <text>
+      aria-describedby="@describedBy"
+    </text>
+    }
+    value="true"
+    @if(Model.HasError)
+    {
+    <text>aria-invalid="true"</text>
+    }
+    @(Model.Value ? "checked" : string.Empty) />
+    <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.Id">
+      @Model.Label
+    </label>
+    @if (Model.HintText != null)
+    {
+      <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@Model.Id-item-hint">
+        @Model.HintText
+      </div>
+    }
+  </div>
 </div>

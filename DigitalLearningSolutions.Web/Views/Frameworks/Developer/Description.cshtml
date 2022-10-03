@@ -3,6 +3,7 @@
 @{
   ViewData["Title"] = "Framework Description";
   ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -11,44 +12,45 @@
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
   @section NavBreadcrumbs {
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-      <div class="nhsuk-width-container">
-        <ol class="nhsuk-breadcrumb__list">
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-          <li class="nhsuk-breadcrumb__item">Create framework</li>
-        </ol>
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFrameworks" asp-route-tabname="Mine">Back to frameworks</a></p>
-      </div>
-    </nav>
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item">Create framework</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFrameworks" asp-route-tabname="Mine">Back to frameworks</a></p>
+    </div>
+  </nav>
   }
 }
 else
 {
   @section NavBreadcrumbs {
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-      <div class="nhsuk-width-container">
-        <ol class="nhsuk-breadcrumb__list">
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.ID" asp-route-tabname="Details">Framework Details</a></li>
-          <li class="nhsuk-breadcrumb__item">Name</li>
-        </ol>
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.ID" asp-route-tabname="Details">Back to framework detail</a></p>
-      </div>
-    </nav>
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.ID" asp-route-tabname="Details">Framework Details</a></li>
+        <li class="nhsuk-breadcrumb__item">Name</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.ID" asp-route-tabname="Details">Back to framework detail</a></p>
+    </div>
+  </nav>
   }
 }
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
-<h1>Framework description</h1>
+  <h1>Framework description</h1>
 }
 else
 {
-<h1>Edit framework description</h1>
+  <h1>Edit framework description</h1>
 }
 <form method="post">
   @if (!ViewData.ModelState.IsValid)
   {
-    <partial name="_ErrorSummary" />}
+    <partial name="_ErrorSummary" />
+  }
   <nhs-form-group nhs-validation-for="FrameworkName">
     <label class="nhsuk-label" for="framework-name-hint">
       <h2>Describe your framework</h2>
@@ -77,7 +79,7 @@ else
   <input name="publishStatusId" type="hidden" asp-for="PublishStatusID" />
   @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="CreateNewFramework" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="CreateNewFramework" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
       Back
     </a>
     <button class="nhsuk-button" type="submit">
