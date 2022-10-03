@@ -419,6 +419,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             DetailFramework? framework;
             if (actionname == "New")
             {
+                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                {
+                    return StatusCode((int)HttpStatusCode.NotFound);
+                }
                 var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
                     MultiPageFormDataFeature.AddNewFramework,
                     TempData
@@ -463,11 +467,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         [Route("/Frameworks/Categorise/{actionname}/")]
         [Route("/Frameworks/Categorise/{actionname}/{frameworkId}/")]
-        [ResponseCache(CacheProfileName = "Never")]
-        [TypeFilter(
-            typeof(RedirectToErrorEmptySessionData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
-        )]
         public IActionResult SetNewFrameworkBrand(DetailFramework? detailFramework, string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminId();
@@ -643,6 +642,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
+        [ResponseCache(CacheProfileName = "Never")]
         public IActionResult AddCollaborators(string actionname, int frameworkId, bool error = false)
         {
             var adminId = GetAdminId();
