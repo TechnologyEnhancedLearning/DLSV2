@@ -841,13 +841,9 @@
 
         public void RemoveCollaboratorFromFramework(int frameworkId, int id)
         {
-            var adminId = (int?)connection.ExecuteScalar(
-                @"SELECT AdminID FROM FrameworkCollaborators WHERE  (FrameworkID = @frameworkId) AND (ID = @id)",
-                new { frameworkId, id }
-            );
             connection.Execute(
-                @"DELETE FROM  FrameworkCollaborators WHERE (FrameworkID = @frameworkId) AND (ID = @id);UPDATE AdminUsers SET IsFrameworkContributor = 0 WHERE AdminID = @adminId AND AdminID NOT IN (SELECT DISTINCT AdminID FROM FrameworkCollaborators);",
-                new { frameworkId, id, adminId }
+                @"DELETE FROM FrameworkReviews WHERE FrameworkCollaboratorID=@id and FrameworkID=@frameworkId;DELETE FROM FrameworkCollaborators WHERE (FrameworkID = @frameworkId) AND (ID = @id);",
+                new { frameworkId, id }
             );
         }
 
