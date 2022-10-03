@@ -146,6 +146,7 @@
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/")]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
@@ -208,6 +209,7 @@
         [HttpPost]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/")]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
@@ -319,6 +321,7 @@
             }
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Scoring/")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
@@ -366,6 +369,7 @@
         }
         [HttpPost]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Scoring/")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
@@ -406,6 +410,7 @@
             }
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Options/")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
@@ -474,6 +479,7 @@
             return RedirectToAction("AssessmentQuestionConfirm", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/LevelDescriptor/{level}")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
@@ -574,6 +580,7 @@
             );
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Confirm/")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }

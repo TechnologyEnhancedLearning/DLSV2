@@ -140,6 +140,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Name/{actionname}/{frameworkId}")]
         [Route("/Frameworks/Name/{actionname}")]
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
@@ -173,6 +174,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Name/{actionname}/{frameworkId}")]
         [Route("/Frameworks/Name/{actionname}")]
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
@@ -269,6 +271,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Description/{actionname}/")]
         [Route("/Frameworks/Description/{actionname}/{frameworkId}/")]
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
@@ -307,6 +310,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         [Route("/Frameworks/Description/{actionname}/")]
         [Route("/Frameworks/Description/{actionname}/{frameworkId}/")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
@@ -336,6 +340,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Type/{actionname}/")]
         [Route("/Frameworks/Type/{actionname}/{frameworkId}/")]
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
@@ -374,6 +379,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         [Route("/Frameworks/Type/{actionname}/")]
         [Route("/Frameworks/Type/{actionname}/{frameworkId}/")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
@@ -401,6 +407,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Categorise/{actionname}/")]
         [Route("/Frameworks/Categorise/{actionname}/{frameworkId}/")]
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
@@ -456,6 +463,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         [Route("/Frameworks/Categorise/{actionname}/")]
         [Route("/Frameworks/Categorise/{actionname}/{frameworkId}/")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }

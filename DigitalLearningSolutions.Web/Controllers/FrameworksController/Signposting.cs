@@ -82,7 +82,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddCompetencyLearningResourceSummary(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
             var feature = MultiPageFormDataFeature.AddCompetencyLearningResourceSummary;
-            if(TempData[feature.TempDataKey] == null)
+            if (TempData[feature.TempDataKey] == null)
             {
                 return RedirectToAction("SearchLearningResources", "Frameworks", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
             }
@@ -99,7 +99,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 MultiPageFormDataFeature.AddCompetencyLearningResourceSummary,
                 TempData
             );
-                 return RedirectToAction("AddCompetencyLearningResourceSummary", "Frameworks", new { model.FrameworkId , model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId});
+            return RedirectToAction("AddCompetencyLearningResourceSummary", "Frameworks", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId });
         }
 
         [HttpPost]
@@ -114,7 +114,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         private string ResourceNameFromCompetencyResourceLinks(int competencyLearningResourceId)
         {
             string resourceName = null;
-            if(TempData[MultiPageFormDataFeature.EditCompetencyLearningResources.TempDataKey] != null)
+            if (TempData[MultiPageFormDataFeature.EditCompetencyLearningResources.TempDataKey] != null)
             {
                 var session = multiPageFormService.GetMultiPageFormData<CompetencyResourceSignpostingViewModel>(
                     MultiPageFormDataFeature.EditCompetencyLearningResources,
@@ -154,7 +154,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 TempData
             );
 
-            if(session.Questions.Count() == 0)
+            if (session.Questions.Count() == 0)
                 return RedirectToAction("SignpostingSetStatus", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
             else
                 return RedirectToAction("EditSignpostingParameters", "Frameworks", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId, competencyLearningResourceID });
@@ -203,6 +203,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/SetStatus")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.EditSignpostingParameter) }
@@ -263,6 +264,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/Summary")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.EditSignpostingParameter) }
@@ -304,6 +306,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/Edit")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.EditSignpostingParameter) }
@@ -392,6 +395,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/SetTriggerValues")]
+        [ResponseCache(CacheProfileName = "Never")]
         [TypeFilter(
             typeof(RedirectToErrorEmptySessionData),
             Arguments = new object[] { nameof(MultiPageFormDataFeature.EditSignpostingParameter) }
