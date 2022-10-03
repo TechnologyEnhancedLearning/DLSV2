@@ -545,6 +545,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 
         [Route("/Frameworks/New/Summary")]
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        [ResponseCache(CacheProfileName = "Never")]
         public IActionResult FrameworkSummary()
         {
             if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
@@ -718,6 +719,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/Framework", model);
         }
 
+        [ResponseCache(CacheProfileName = "Never")]
         public IActionResult InsertFramework()
         {
             var adminId = GetAdminId();
