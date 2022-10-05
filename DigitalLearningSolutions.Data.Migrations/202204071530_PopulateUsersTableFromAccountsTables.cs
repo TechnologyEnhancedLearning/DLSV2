@@ -6,11 +6,13 @@ namespace DigitalLearningSolutions.Data.Migrations
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Security.Cryptography.X509Certificates;
     using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.Migrations.Properties;
     using FluentMigrator;
     using Microsoft.Data.SqlClient;
+    using Microsoft.VisualBasic;
 
     [Migration(202204071530, TransactionBehavior.None)]
     public class PopulateUsersTableFromAccountsTables : Migration
@@ -27,10 +29,15 @@ namespace DigitalLearningSolutions.Data.Migrations
 
             // Delete from Users (this should be empty)
             connection.Execute("DELETE Users");
-
+            // Set email for AdminAccounts where currently NULL
+            connection.Execute(
+                @"UPDATE AdminUsers
+                    SET       Email = Forename + '.' + Surname + '@not.given'
+                    WHERE (Email IS NULL) OR TRIM(Email) = ''"
+                );
             // Add index to AdminAccounts Email to fix slow queries
             connection.Execute("CREATE INDEX IX_AdminAccounts_Email ON AdminAccounts (Email)");
-
+            
             // Copy AdminAccounts to Users table
             connection.Execute(
                 @"INSERT INTO dbo.Users (
@@ -67,9 +74,8 @@ namespace DigitalLearningSolutions.Data.Migrations
                     NULL,
                     0,
                     GETUTCDATE(),
-                    CASE WHEN TRIM(Email) IS NOT NULL AND TRIM(Email) <> '' THEN GETUTCDATE() ELSE NULL END
-                    FROM AdminAccounts
-                    WHERE Email IS NOT NULL"
+                    CASE WHEN Email IS NOT NULL AND TRIM(Email) <> '' THEN GETUTCDATE() ELSE NULL END
+                    FROM AdminAccounts"
             );
 
             // Transfer all delegates with unique emails not already in the Users table
