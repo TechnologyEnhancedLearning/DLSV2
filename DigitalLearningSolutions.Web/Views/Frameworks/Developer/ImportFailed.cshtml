@@ -4,14 +4,13 @@
 @using Microsoft.Extensions.Configuration
 @model ImportCompetenciesResultsViewModel
 @{
-  ViewData["Title"] = "Framework - Import Failed";
-  ViewData["Application"] = "Framework Service";
-  ViewData["HeaderPathName"] = "Framework Service";
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  var cancelLinkData = Html.GetRouteValues();
-  cancelLinkData.Add("tabname", "Structure");
+    ViewData["Title"] = "Framework - Import Failed";
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    var cancelLinkData = Html.GetRouteValues();
 }
-<link rel="stylesheet" href="@Url.Content(" ~ /css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
