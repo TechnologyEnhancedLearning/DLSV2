@@ -24,7 +24,7 @@
             AllQuestionsVerifiedOrNotRequired = true;
             foreach (var assessmentQuestion in unfilteredCompetencies.SelectMany(c => c.AssessmentQuestions))
             {
-                if ((assessmentQuestion.Result == null || assessmentQuestion.Verified == null) && assessmentQuestion.Required)
+                if ((assessmentQuestion.Result == null || assessmentQuestion.Verified == null || assessmentQuestion.SignedOff != true) && assessmentQuestion.Required)
                 {
                     AllQuestionsVerifiedOrNotRequired = false;
                     break;
