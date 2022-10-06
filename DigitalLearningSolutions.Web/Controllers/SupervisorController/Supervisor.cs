@@ -487,6 +487,10 @@
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/Profile")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment) }
+        )]
         public IActionResult EnrolDelegateOnProfileAssessment(int supervisorDelegateId)
         {
             var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
