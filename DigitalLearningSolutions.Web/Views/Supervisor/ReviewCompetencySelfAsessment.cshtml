@@ -142,7 +142,7 @@
       Supervisor
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.SupervisorName
+      @Model.Competency.AssessmentQuestions.First().SupervisorName
     </dd>
     </div>
     @if (Model.Competency.AssessmentQuestions.First().Requested != null)
