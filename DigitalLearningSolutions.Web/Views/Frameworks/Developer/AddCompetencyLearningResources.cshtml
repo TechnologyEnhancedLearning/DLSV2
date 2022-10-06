@@ -64,7 +64,7 @@
   <form method="get" role="search" asp-action="SearchLearningResourcesAsync">
     <h2>Search the Learning Hub</h2>
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-three-quarters">
+      <div class="nhsuk-grid-column-full">
         <div class="search-box-container" id="search">
           @Html.LabelFor(m => m.SearchText, "Search", new { @class = "nhsuk-u-visually-hidden", @for = "search-field" })
           @Html.TextBoxFor(m => m.SearchText, new { @class = "search-box nhsuk-input", id = "search-field", name = "searchString", type = "search", placeholder = "Search", autocomplete = "off" })
@@ -90,11 +90,6 @@
     </div>
   </form>
 
-  <form method="get">
-    <partial name="PaginatedPage/_TopPaginationNav" model="Model" />
-    @Html.Hidden("SearchText", Model.SearchText)
-  </form>
-
   @if (Model.LearningHubApiError)
 {
   <span class="nhsuk-u-margin-1 nhsuk-u-clear">This service is unavailable. Please try again later.</span>
@@ -102,6 +97,12 @@
 else if (Model.SearchResult?.Results != null)
 {
   <span class="nhsuk-u-margin-1 nhsuk-u-clear">@Model.TotalNumResources matches for "@Model.SearchText"</span>
+
+  <form method="get">
+    <partial name="PaginatedPage/_TopPaginationNav" model="Model" />
+    @Html.Hidden("SearchText", Model.SearchText)
+  </form>
+
   @foreach (var result in Model.SearchResult.Results)
   {
     <partial name="Developer/_SignpostingResourceCard" model="new CompetencyResourceSummaryViewModel(result)" view-data="@(new ViewDataDictionary(ViewData) { { "parent", Model } })" />
