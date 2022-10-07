@@ -1,6 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
 @model CompletedByDateViewModel
 @{
+    var routeParamsForCancelLink = new Dictionary<string, string> {
+    { "delegateId", Model.DelegateId.ToString() },
+  };
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     var exampleDate = @DateTime.Today + TimeSpan.FromDays(7);
     string prefillDay;
@@ -82,6 +85,6 @@
                 </a>
             </div>
         </form>
-        <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+        <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForCancelLink" />
     </div>
 </div>

@@ -9,15 +9,17 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
 
         public EnrolCurrentLearningViewModel() { }
         public EnrolCurrentLearningViewModel(
+            int delegateId,
             string delegateName,
             IEnumerable<AvailableCourse> learningItems
         )
-        {            
+        {
+            DelegateId = delegateId;
             DelegateName = delegateName;
             LearningItems = learningItems;
 
         }
-
+        public int DelegateId { get; set; } 
         public string? DelegateName { get; set; }
         public int? SelectedActivity { get; set; } = 0;
         public IEnumerable<AvailableCourse>? LearningItems { get; set; }

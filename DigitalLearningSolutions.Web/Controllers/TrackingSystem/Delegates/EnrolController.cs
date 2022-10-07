@@ -65,6 +65,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var selfAssessments = courseDataService.GetAvailableCourses(delegateId, centreId, categoryId ?? default(int));
 
             var model = new EnrolCurrentLearningViewModel(
+                delegateId,
                 delegateName,
                selfAssessments);
             return View(model);
@@ -90,6 +91,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     TempData
                 );
                 var model = new EnrolCurrentLearningViewModel(
+                    delegateId,
                     enrolCurrentLearningViewModel.DelegateName,
                    selfAssessments
                );
@@ -206,6 +208,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 sessionEnrol.SupervisorName = supervisorList.FirstOrDefault(x => x.AdminId == model.SelectedSupervisor).Name;
                 sessionEnrol.SupervisorID = model.SelectedSupervisor;
             }
+            if (model.SelectedSupervisorRoleId.HasValue && model.SelectedSupervisorRoleId.Value > 0)
+            {
+                var roles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
+                sessionEnrol.SelfAssessmentSupervisorRoleName = roles.FirstOrDefault(x => x.ID == model.SelectedSupervisorRoleId).RoleName;
+            }
             sessionEnrol.SelfAssessmentSupervisorRoleId = model.SelectedSupervisorRoleId;
             multiPageFormService.SetMultiPageFormData(
                         sessionEnrol,
@@ -234,6 +241,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             model.DelegateId = delegateId;
             model.DelegateName = delegateName;
             model.ValidFor = monthDiffrence;
+            model.IsSelfAssessment = sessionEnrol.IsSelfAssessment;
+            model.SupervisorRoleName = sessionEnrol.SelfAssessmentSupervisorRoleName;
             return View(model);
         }
 
@@ -259,7 +268,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     );
 
             }
-            return RedirectToAction("Index", "AllDelegates");
+            return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
 
         private int? GetCentreId()

@@ -2,6 +2,9 @@
 @model EnrolSupervisorViewModel
 @{
     ViewData["Title"] = "EnrolDelegateSupervisor";
+    var routeParamsForCancelLink = new Dictionary<string, string> {
+    { "delegateId", Model.DelegateId.ToString() },
+  };
 }
 
 <div class="nhsuk-grid-row">
@@ -18,7 +21,7 @@
                     <option value="0">--Select--</option>
                 </select>
             </div>
-            @if (Model.IsSelfAssessment)
+            @if (Model.IsSelfAssessment && Model.SupervisorRoleList.Count() > 1)
             {
                 <fieldset class="nhsuk-fieldset">
                     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
@@ -48,7 +51,7 @@
                 </a>
             </div>
         </form>
-        <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+        <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForCancelLink" />
     </div>
 </div>
 

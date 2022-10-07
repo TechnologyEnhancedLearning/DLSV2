@@ -2,6 +2,9 @@
 @model EnrolSummaryViewModel
 @{
     ViewData["Title"] = "EnrolDelegateSummary";
+    var routeParamsForCancelLink = new Dictionary<string, string> {
+    { "delegateId", Model.DelegateId.ToString() },
+  };
     var prefillDay = Model.CompleteByDate?.Day.ToString() ?? "";
     var prefillMonth = Model.CompleteByDate?.Month.ToString() ?? "";
     var prefillYear = Model.CompleteByDate?.Year.ToString() ?? "";
@@ -10,7 +13,7 @@
     <div class="nhsuk-grid-column-full">
         <form method="post">
             <div class="nhsuk-u-margin-bottom-4">
-                <h1 class="nhsuk-heading-xl">Enrol delegate on activity - summary</h1>
+                <h2 class="nhsuk-heading-xl">Enrolment details</h2>
             </div>
             <dl class="nhsuk-summary-list">
                 <div class="nhsuk-summary-list__row">
@@ -20,6 +23,7 @@
                 <dd class="nhsuk-summary-list__value">
                         @Model.DelegateName
                 </dd>
+                <dd></dd>
     </div>
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
@@ -40,7 +44,14 @@
             Complete by date
         </dt>
         <dd class="nhsuk-summary-list__value">
-                        @Model.CompleteByDate
+                        @if (Model.CompleteByDate.HasValue)
+                        {
+                            @Model.CompleteByDate
+                        }
+                        else
+                        {
+                            <text>Not Set</text>
+                        }
         </dd>
 
         <dd class="nhsuk-summary-list__actions">
@@ -55,7 +66,14 @@
             Supervisor
         </dt>
         <dd class="nhsuk-summary-list__value">
-                        @Model.SupervisorName
+                        @if (!string.IsNullOrEmpty(Model.SupervisorName))
+                        {
+                            @Model.SupervisorName
+                        }
+                        else
+                        {
+                            <text>Not Set</text>
+                        }
         </dd>
 
         <dd class="nhsuk-summary-list__actions">
@@ -65,20 +83,52 @@
             </a>
         </dd>
     </div>
-    <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-            Mandatory
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-                        @(Model.IsMandatory == true ? "Yes": "No")
-        </dd>
+                @if (Model.IsSelfAssessment)
+                {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Supervisor role
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @if (!string.IsNullOrEmpty(Model.SupervisorRoleName))
+                        {
+                            @Model.SupervisorRoleName
+                        }
+                        else
+                        {
+                            <text>Not Set</text>
+                        }
+            </dd>
+
+            <dd class="nhsuk-summary-list__actions">
+                <a asp-action="EnrolDelegateSupervisor" asp-route-delegateId="@Model.DelegateId"
+               asp-route-delegateName="@Model.DelegateName">
+                    Change<span class="nhsuk-u-visually-hidden">change supervisor</span>
+                </a>
+            </dd>
+        </div>
+                }
+    </dl>
+            @if (!Model.IsSelfAssessment)
+            {
+        <div class="nhsuk-u-margin-bottom-4">
+            <h2 class="nhsuk-heading-xl">Learning Pathway Defaults</h2>
+        </div>
+        <dl class="nhsuk-summary-list">
+            <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Mandatory
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                            @(Model.IsMandatory == true ? "Yes": "No")
+            </dd>
     </div>
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
             Valid for
         </dt>
         <dd class="nhsuk-summary-list__value">
-                        @( Model.ValidFor != "" ? Model.ValidFor + " Months": "")
+                            @( Model.ValidFor != "" ? Model.ValidFor + " Months": "Not set")
         </dd>
     </div>
     <div class="nhsuk-summary-list__row">
@@ -86,12 +136,15 @@
             Auto-refresh
         </dt>
         <dd class="nhsuk-summary-list__value">
-                        @(Model.IsAutoRefresh == true ? "Yes" : "No" )
+                            @(Model.IsAutoRefresh == true ? "Yes" : "No" )
         </dd>
     </div>
-    </dl>
-    <input class="nhsuk-button" type="submit" value="Confirm" />
+                                            </dl>
+            }
+
+<input class="nhsuk-button" type="submit" value="Confirm" />
     </form>
-    <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+<vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForCancelLink" />
 </div>
 </div>
+

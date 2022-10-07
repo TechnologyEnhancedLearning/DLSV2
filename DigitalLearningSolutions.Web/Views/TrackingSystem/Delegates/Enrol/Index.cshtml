@@ -3,6 +3,9 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     var errorClass = Model.SelectedActivity < 1 ? "nhsuk-input--error" : "";
+    var routeParamsForCancelLink = new Dictionary<string, string> {
+    { "delegateId", Model.DelegateId.ToString() },
+  };
 }
 
 @if (errorHasOccurred)
@@ -26,6 +29,6 @@
 
             <input class="nhsuk-button" type="submit" value="Next" />
         </form>
-        <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+        <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForCancelLink" />
     </div>
 </div>

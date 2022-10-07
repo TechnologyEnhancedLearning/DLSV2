@@ -12,6 +12,7 @@
         public string? AssessmentName { get; set; }
         public DateTime? CompleteByDate { get; set; }
         public int? SelfAssessmentSupervisorRoleId { get; set; }
+        public string? SelfAssessmentSupervisorRoleName { get; set; }
         public int? SupervisorID { get; set; }
         public string? SupervisorName { get; set; }
         public bool IsSelfAssessment { get; set; }
