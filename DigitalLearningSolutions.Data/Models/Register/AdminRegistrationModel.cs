@@ -65,6 +65,9 @@
 
         public bool IsContentCreator { get; set; }
 
+        public bool IsCmsAdmin { get; set; }
+        public bool IsCmsManager { get; set; }
+
         public int CategoryId { get; set; }
 
         public byte[]? ProfileImage { get; set; }

@@ -221,11 +221,83 @@ namespace DigitalLearningSolutions.Data.Services
                 );
 
                 registrationDataService.RegisterAdmin(adminRegistrationModel, false);
+                SendEmailNotification(adminRegistrationModel);
             }
             else
             {
                 throw new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse);
             }
+        }
+
+        private void SendEmailNotification(AdminRegistrationModel adminRegistrationModel)
+        {
+            var emailSubjectLine = "New Digital Learning Solutions permissions granted";
+
+            var builder = new BodyBuilder();
+
+            builder.TextBody = $@"Dear {adminRegistrationModel.FirstName},
+                                The user {adminRegistrationModel.FirstName} {adminRegistrationModel.LastName} has granted you new access permissions in the Digital Learning Solutions system.
+                                The permissions you have been granted are:";
+
+
+            //TODO: Email and name should be the current user/admin
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
+                                <p>Dear {adminRegistrationModel.FirstName},</p>
+                                <p>The user <a href = 'mailto:{adminRegistrationModel.Email}'>{adminRegistrationModel.FirstName} {adminRegistrationModel.LastName}</a> has granted you new access permissions in the Digital Learning Solutions system.</p>
+                                <p>The permissions you have been granted are:</p>";
+
+            builder.HtmlBody += "<ul>";
+
+            if (adminRegistrationModel.IsCentreAdmin)
+            {
+                builder.TextBody += "• Centre Admin";
+                builder.HtmlBody += "<li>Centre Admin</li>";
+            }
+            if (adminRegistrationModel.IsCentreManager)
+            {
+                builder.TextBody += "• Centre Manager";
+                builder.HtmlBody += "<li>Centre Manager</li>";
+            }
+            if (adminRegistrationModel.IsSupervisor)
+            {
+                builder.TextBody += "• Supervisor";
+                builder.HtmlBody += "<li>Supervisor</li>";
+            }
+            if (adminRegistrationModel.IsNominatedSupervisor)
+            {
+                builder.TextBody += "• Nominated Supervisor";
+                builder.HtmlBody += "<li>Nominated Supervisor</li>";
+            }
+            if (adminRegistrationModel.IsTrainer)
+            {
+                builder.TextBody += "• Trainer";
+                builder.HtmlBody += "<li>Trainer</li>";
+            }
+            if (adminRegistrationModel.IsContentCreator)
+            {
+                builder.TextBody += "• Content Creator";
+                builder.HtmlBody += "<li>Content Creator</li>";
+            }
+            if (adminRegistrationModel.IsCmsAdmin)
+            {
+                builder.TextBody += "• Cms Administrator";
+                builder.HtmlBody += "<li>Cms Administrator</li>";
+            }
+
+            if (adminRegistrationModel.IsCmsManager)
+            {
+                builder.TextBody += "• Cms Manager";
+                builder.HtmlBody += "<li>Cms Manager</li>";
+            }
+
+            builder.HtmlBody += "</ul>";
+
+            builder.TextBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.";
+            builder.HtmlBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.</body>";
+
+            //supervisorService.UpdateNotificationSent(supervisorDelegateId);
+
+            emailService.SendEmail(new Email(emailSubjectLine, builder, adminRegistrationModel.Email));
         }
 
         public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
