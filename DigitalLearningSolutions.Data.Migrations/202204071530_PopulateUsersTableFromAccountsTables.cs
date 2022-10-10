@@ -31,9 +31,20 @@ namespace DigitalLearningSolutions.Data.Migrations
             connection.Execute("DELETE Users");
             // Set email for AdminAccounts where currently NULL
             connection.Execute(
-                @"UPDATE AdminUsers
-                    SET       Email = Forename + '.' + Surname + '@not.given'
+                @"UPDATE AdminAccounts
+                    SET       Email = Forename_deprecated + '.' + Surname_deprecated + '@not.given'
                     WHERE (Email IS NULL) OR TRIM(Email) = ''"
+                );
+            // Set unique email for delegate accounts where email + centreId combination is duplicated
+            connection.Execute(
+                @"UPDATE DelegateAccounts
+                    SET        Email = CandidateNumber + '.' + Email
+                    WHERE (Email <> '') AND (Email IS NOT NULL) AND (Email NOT IN
+                    (SELECT ExclusionEmail
+                    FROM    EmailDupExclude)) AND (ID <
+                    (SELECT MAX(ID) AS Expr1
+                    FROM    DelegateAccounts AS ca2
+                    WHERE (ca2.Email = DelegateAccounts.Email) AND (DelegateAccounts.CentreID = ca2.CentreID)))"
                 );
             // Add index to AdminAccounts Email to fix slow queries
             connection.Execute("CREATE INDEX IX_AdminAccounts_Email ON AdminAccounts (Email)");
