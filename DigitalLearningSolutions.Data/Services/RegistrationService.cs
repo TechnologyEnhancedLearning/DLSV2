@@ -10,6 +10,7 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using MimeKit;
@@ -31,7 +32,7 @@ namespace DigitalLearningSolutions.Data.Services
             bool registerJourneyContainsTermsAndConditions
         );
 
-        void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId);
+        void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser adminUser);
     }
 
     public class RegistrationService : IRegistrationService
@@ -144,7 +145,7 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId)
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser supervisorUser)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
@@ -217,10 +218,13 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsContentCreator,
                     adminRoles.IsCmsAdministrator,
                     adminRoles.IsCmsManager,
+                    supervisorUser.EmailAddress ?? string.Empty,
+                    supervisorUser.FirstName ?? string.Empty,
+                    supervisorUser.LastName,
                     delegateUser.ProfileImage
                 );
 
-                registrationDataService.RegisterAdmin(adminRegistrationModel, false);
+                //registrationDataService.RegisterAdmin(adminRegistrationModel, false);
                 SendEmailNotification(adminRegistrationModel);
             }
             else
@@ -236,14 +240,12 @@ namespace DigitalLearningSolutions.Data.Services
             var builder = new BodyBuilder();
 
             builder.TextBody = $@"Dear {adminRegistrationModel.FirstName},
-                                The user {adminRegistrationModel.FirstName} {adminRegistrationModel.LastName} has granted you new access permissions in the Digital Learning Solutions system.
+                                The user {adminRegistrationModel.SupervisorFirstName} {adminRegistrationModel.SupervisorLastName} has granted you new access permissions in the Digital Learning Solutions system.
                                 The permissions you have been granted are:";
 
-
-            //TODO: Email and name should be the current user/admin
             builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {adminRegistrationModel.FirstName},</p>
-                                <p>The user <a href = 'mailto:{adminRegistrationModel.Email}'>{adminRegistrationModel.FirstName} {adminRegistrationModel.LastName}</a> has granted you new access permissions in the Digital Learning Solutions system.</p>
+                                <p>The user <a href = 'mailto:{adminRegistrationModel.SupervisorEmail}'>{adminRegistrationModel.SupervisorFirstName} {adminRegistrationModel.SupervisorLastName}</a> has granted you new access permissions in the Digital Learning Solutions system.</p>
                                 <p>The permissions you have been granted are:</p>";
 
             builder.HtmlBody += "<ul>";
@@ -297,7 +299,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             //supervisorService.UpdateNotificationSent(supervisorDelegateId);
 
-            emailService.SendEmail(new Email(emailSubjectLine, builder, adminRegistrationModel.Email));
+            emailService.SendEmail(new Email(emailSubjectLine, builder, adminRegistrationModel.Email, adminRegistrationModel.SupervisorEmail));
         }
 
         public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)

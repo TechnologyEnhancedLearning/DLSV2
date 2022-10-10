@@ -31,13 +31,15 @@
         private readonly ILogger<PromoteToAdminController> logger;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
-
+        private readonly IUserService userService;
+        
         public PromoteToAdminController(
             IUserDataService userDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
             ICentreContractAdminUsageService centreContractAdminUsageService,
             IRegistrationService registrationService,
-            ILogger<PromoteToAdminController> logger
+            ILogger<PromoteToAdminController> logger,
+            IUserService userService
         )
         {
             this.userDataService = userDataService;
@@ -45,6 +47,7 @@
             this.centreContractAdminUsageService = centreContractAdminUsageService;
             this.registrationService = registrationService;
             this.logger = logger;
+            this.userService = userService;
         }
 
         [HttpGet]
@@ -69,12 +72,17 @@
         [HttpPost]
         public IActionResult Index(AdminRolesFormData formData, int delegateId)
         {
+            var userAdminId = User.GetAdminId();
+            var userDelegateId = User.GetCandidateId();
+            var (supervisorUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+
             try
             {
                 registrationService.PromoteDelegateToAdmin(
                     formData.GetAdminRoles(),
                     formData.LearningCategory,
-                    delegateId
+                    delegateId,
+                    supervisorUser
                 );
             }
             catch (AdminCreationFailedException e)
