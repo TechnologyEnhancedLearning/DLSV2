@@ -82,6 +82,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             {
                 404 => View("Error/PageNotFound", model),
                 403 => View("Error/Forbidden", model),
+                410 => View("Error/Gone", model),
                 _ => View("Error/UnknownError", model),
             };
         }

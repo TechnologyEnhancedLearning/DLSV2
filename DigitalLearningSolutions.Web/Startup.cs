@@ -152,6 +152,14 @@ namespace DigitalLearningSolutions.Web
                         options.ModelBinderProviders.Insert(0, new EnumerationQueryStringModelBinderProvider());
                         options.ModelBinderProviders.Insert(0, new DlsSubApplicationModelBinderProvider());
                         options.ModelBinderProviders.Insert(0, new ReturnPageQueryModelBinderProvider());
+                        options.CacheProfiles.Add(
+                            "Never",
+                            new CacheProfile()
+                            {
+                                Location = ResponseCacheLocation.None,
+                                NoStore = true
+                            }
+                        );
                     }
                 );
 

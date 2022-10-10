@@ -13,6 +13,7 @@
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
@@ -511,7 +512,7 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add")]
         public IActionResult AddNewSupervisor(int selfAssessmentId)
         {
-            if(TempData[MultiPageFormDataFeature.AddNewSupervisor.TempDataKey] == null)
+            if (TempData[MultiPageFormDataFeature.AddNewSupervisor.TempDataKey] == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = (int)HttpStatusCode.Forbidden });
             }
@@ -700,6 +701,11 @@
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewSupervisor) }
+        )]
         public IActionResult AddSupervisorSummary(int selfAssessmentId)
         {
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
@@ -840,6 +846,11 @@
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/ChooseSupervisor")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification) }
+        )]
         public IActionResult VerificationPickSupervisor(int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
@@ -912,8 +923,12 @@
             );
             return RedirectToAction("VerificationPickResults", new { sessionRequestVerification.SelfAssessmentID });
         }
-
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/PickResults")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification) }
+        )]
         public IActionResult VerificationPickResults(int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
@@ -985,6 +1000,11 @@
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/ConfirmationRequests/New/Summary")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddSelfAssessmentRequestVerification) }
+        )]
         public IActionResult VerificationSummary(int selfAssessmentId)
         {
             var sessionRequestVerification = multiPageFormService.GetMultiPageFormData<SessionRequestVerification>(
@@ -1096,6 +1116,8 @@
                     User.GetCandidateIdKnownNotNull()
                 );
             }
+
+            TempData.Clear();
 
             return RedirectToAction(
                 "SelfAssessmentOverview",

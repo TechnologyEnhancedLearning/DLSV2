@@ -161,6 +161,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (userRole < 2) return StatusCode((int)HttpStatusCode.Forbidden);
             if (frameworkCompetency.Id > 0)
             {
+                frameworkCompetency.Description?.Trim();
+                var description = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(frameworkCompetency.Description));
+                if (string.IsNullOrWhiteSpace(description)) { frameworkCompetency.Description = null; }
+
                 frameworkService.UpdateFrameworkCompetency(frameworkCompetencyId, frameworkCompetency.Name, frameworkCompetency.Description, adminId);
                 frameworkService.UpdateCompetencyFlags(frameworkId, frameworkCompetency.CompetencyID, selectedFlagIds);
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId, frameworkCompetencyId }) + "#fc-" + frameworkCompetencyId.ToString());

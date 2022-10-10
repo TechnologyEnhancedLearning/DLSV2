@@ -103,7 +103,7 @@
         @foreach (var competency in competencyGroup)
         {
           <tr role="row" class="nhsuk-table__row first-row">
-            <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
+            <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
               <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
               <partial name="_CompetencyFlags" model="competency.CompetencyFlags" />
               @if (competency.Description != null && !competency.AlwaysShowDescription)

@@ -10,6 +10,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
 
     public partial class FrameworksController
     {
@@ -145,6 +146,11 @@
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/")]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+        )]
         public IActionResult EditAssessmentQuestion(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
             var adminId = GetAdminId();
@@ -203,6 +209,11 @@
         [HttpPost]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/")]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+        )]
         public IActionResult EditAssessmentQuestion(AssessmentQuestionDetail assessmentQuestionDetail, int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
             if (!ModelState.IsValid)
@@ -310,6 +321,11 @@
             }
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Scoring/")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+        )]
         public IActionResult EditAssessmentQuestionScoring(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
@@ -353,6 +369,11 @@
         }
         [HttpPost]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Scoring/")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+        )]
         public IActionResult EditAssessmentQuestionScoring(AssessmentQuestionDetail assessmentQuestionDetail, int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
             if (!ModelState.IsValid)
@@ -389,6 +410,11 @@
             }
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Options/")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+        )]
         public IActionResult EditAssessmentQuestionOptions(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
@@ -453,6 +479,11 @@
             return RedirectToAction("AssessmentQuestionConfirm", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/LevelDescriptor/{level}")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+        )]
         public IActionResult AssessmentQuestionLevelDescriptor(int frameworkId, int level, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
@@ -549,6 +580,11 @@
             );
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Confirm/")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.EditAssessmentQuestion) }
+        )]
         public IActionResult AssessmentQuestionConfirm(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);

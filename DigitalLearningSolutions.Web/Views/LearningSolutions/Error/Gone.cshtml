@@ -1,0 +1,17 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningSolutions
+@model ErrorViewModel
+@{
+  ViewData["Title"] = "Digital Learning Solutions - Page no longer available";
+}
+
+@section NavMenuItems {
+  <partial name="_NavMenuItems" />
+}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds nhsuk-u-reading-width">
+      <h1>This page is no longer valid</h1>
+      <p>Please return to the <a href="https://www.dls.nhs.uk/Home">Digital Learning Solutions homepage</a>.</p>
+      <p>@Model.HelpText()</p>
+    </div>
+  </div>

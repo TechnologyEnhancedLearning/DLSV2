@@ -269,7 +269,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                     WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS ResultsVerificationRequests
                 FROM CandidateAssessmentSupervisors AS cas INNER JOIN
                          CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
-                SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID 
+                SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID
                  LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
                 WHERE  (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = @supervisorDelegateId) AND (sa.ID = @selfAssessmentId)", new { selfAssessmentId, supervisorDelegateId }
                ).FirstOrDefault();
@@ -290,7 +290,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                     WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS ResultsVerificationRequests
                 FROM CandidateAssessmentSupervisors AS cas INNER JOIN
                          CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
-                SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID 
+                SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID
                 WHERE (ca.ID = @candidateAssessmentId)", new { candidateAssessmentId }
                ).FirstOrDefault();
         }
@@ -307,7 +307,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                     WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS ResultsVerificationRequests
                 FROM CandidateAssessmentSupervisors AS cas INNER JOIN
                          CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
-                SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID 
+                SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID
                  LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
                 WHERE  (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = @supervisorDelegateId) AND (ca.ID = @candidateAssessmentId)", new { candidateAssessmentId, supervisorDelegateId }
                ).FirstOrDefault();
@@ -589,7 +589,7 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                     new { selfAssessmentId, supervisorDelegateId });
             }
 
-            if(deletedCandidateAssessmentSupervisors >= 1)
+            if (deletedCandidateAssessmentSupervisors >= 1)
             {
                 connection.Execute(
                     @"UPDATE SupervisorDelegates SET Removed = getUTCDate() 

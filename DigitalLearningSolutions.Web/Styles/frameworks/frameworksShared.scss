@@ -243,4 +243,8 @@ h1.truncate-overflow::after {
 .text-wrap {
   inline-size: 882px;
   overflow-wrap: break-word;
+
+  @media (max-width: 40.0525em) {
+    inline-size: 305px;
+  }
 }

@@ -18,7 +18,8 @@
         public int MaxValue { get; set; }
         public int AssessmentQuestionInputTypeID { get; set; }
         public bool IncludeComments { get; set; }
-        public IEnumerable<LevelDescriptor> LevelDescriptors {get; set;}
+        public IEnumerable<LevelDescriptor> LevelDescriptors { get; set; }
+        public string? SupervisorName { get; set; }
         public string? SupportingComments { get; set; }
         public int? SelfAssessmentResultSupervisorVerificationId { get; set; }
         public DateTime? Requested { get; set; }

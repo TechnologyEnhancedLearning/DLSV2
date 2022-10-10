@@ -99,6 +99,17 @@
         }
 
         [Test]
+        public void StatusCode_should_render_gone_view_when_code_is_410()
+        {
+            // When
+            var result = controller.StatusCode(410);
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Error/Gone");
+            controller.Response.StatusCode.Should().Be(410);
+        }
+
+        [Test]
         public void StatusCode_should_render_unknown_error_view_when_code_is_500()
         {
             // When
@@ -118,6 +129,22 @@
 
             // When
             var result = controller.StatusCode(404);
+
+            // Then
+            var expectedModel = new ErrorViewModel(bannerText);
+            result.Should().BeViewResult()
+                .ModelAs<ErrorViewModel>().HelpText().Should().Be(expectedModel.HelpText());
+        }
+
+        [Test]
+        public void StatusCode_should_set_banner_text_when_code_is_410()
+        {
+            // Given
+            const string bannerText = "Banner text";
+            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
+
+            // When
+            var result = controller.StatusCode(410);
 
             // Then
             var expectedModel = new ErrorViewModel(bannerText);

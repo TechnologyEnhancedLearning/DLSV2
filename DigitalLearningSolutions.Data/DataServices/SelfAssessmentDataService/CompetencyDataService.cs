@@ -61,7 +61,8 @@
                     sv.Requested,
                     sv.Verified,
                     sv.Comments,
-                    sv.SignedOff, 
+                    sv.SignedOff,
+                    adu.Forename + ' ' + adu.Surname AS SupervisorName,
                     CAST(CASE WHEN COALESCE(sd.SupervisorAdminID, 0) = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsVerifier,
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
                 FROM CandidateAssessments ca
@@ -82,6 +83,8 @@
                     ON sv.CandidateAssessmentSupervisorID = cas.ID
                 LEFT OUTER JOIN SupervisorDelegates AS sd
                     ON cas.SupervisorDelegateId = sd.ID
+                LEFT OUTER JOIN AdminUsers AS adu
+						     ON sd.SupervisorAdminID = adu.AdminID
                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
                     ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID
                         AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
@@ -129,6 +132,7 @@
             LAR.SelfAssessmentResultSupervisorVerificationId,
             LAR.Requested,
             LAR.Verified,
+            LAR.SupervisorName,
             LAR.Comments AS SupervisorComments,
             LAR.SignedOff,
             LAR.UserIsVerifier,
