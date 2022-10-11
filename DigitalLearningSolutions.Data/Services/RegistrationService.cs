@@ -180,7 +180,8 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsContentCreator,
                     adminRoles.IsContentManager,
                     adminRoles.ImportOnly,
-                    categoryId
+                    categoryId,
+                    adminRoles.IsCentreManager
                 );
             }
             else if (adminUser?.Active == true && adminUser.CentreId == delegateUser.CentreId)
@@ -194,7 +195,8 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsContentCreator || adminUser.IsContentCreator,
                     adminRoles.IsContentManager || adminUser.IsContentManager,
                     adminRoles.ImportOnly = adminRoles.ImportOnly || adminUser.ImportOnly,
-                    adminUser.CategoryId
+                    adminUser.CategoryId,
+                    adminRoles.IsCentreManager || adminUser.IsCentreManager
                 );
             }
             else if (adminUser == null)

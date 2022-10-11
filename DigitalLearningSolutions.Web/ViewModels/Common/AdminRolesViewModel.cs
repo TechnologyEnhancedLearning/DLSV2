@@ -14,6 +14,7 @@
 
         public readonly List<CheckboxListItemViewModel> Checkboxes = new List<CheckboxListItemViewModel>
         {
+            AdminRoleInputs.CentreManagerCheckbox,
             AdminRoleInputs.CentreAdminCheckbox,
             AdminRoleInputs.SupervisorCheckbox,
             AdminRoleInputs.NominatedSupervisorCheckbox

@@ -9,7 +9,8 @@
             bool isContentCreator,
             bool isTrainer,
             bool isContentManager,
-            bool importOnly
+            bool importOnly,
+            bool isCentreManager
         )
         {
             IsCentreAdmin = isCentreAdmin;
@@ -19,6 +20,7 @@
             IsTrainer = isTrainer;
             IsContentManager = isContentManager;
             ImportOnly = importOnly;
+            IsCentreManager = isCentreManager;
         }
 
         public bool IsCentreAdmin { get; set; }
@@ -28,6 +30,7 @@
         public bool IsContentCreator { get; set; }
         public bool IsContentManager { get; set; }
         public bool ImportOnly { get; set; }
+        public bool IsCentreManager { get; set; }
 
         public bool IsCmsAdministrator => IsContentManager && ImportOnly;
         public bool IsCmsManager => IsContentManager && !ImportOnly;
