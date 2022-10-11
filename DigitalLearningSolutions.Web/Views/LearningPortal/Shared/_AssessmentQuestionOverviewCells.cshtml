@@ -1,15 +1,15 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
 @model AssessmentQuestion
 @{
-  string commentsLinkText = "View notes";
-  if (ViewData["ReviewerCommentsLabel"] != null)
-  {
-    commentsLinkText = ViewData["ReviewerCommentsLabel"].ToString();
-  }
+    string commentsLinkText = "View notes";
+    if (ViewData["ReviewerCommentsLabel"] != null)
+    {
+      commentsLinkText = ViewData["ReviewerCommentsLabel"].ToString();
+    }
 }
 
 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
-  <span class="nhsuk-table-responsive__heading">Assessment</span>
+  <span class="nhsuk-table-responsive__heading">@ViewData["QuestionLabel"]</span>
   @Model.Question
 </td>
 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
