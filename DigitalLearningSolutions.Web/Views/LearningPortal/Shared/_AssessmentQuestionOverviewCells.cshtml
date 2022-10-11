@@ -1,11 +1,11 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
 @model AssessmentQuestion
 @{
-    string commentsLinkText = "View notes";
-    if (ViewData["ReviewerCommentsLabel"] != null)
-    {
-      commentsLinkText = ViewData["ReviewerCommentsLabel"].ToString();
-    }
+  string commentsLinkText = "View notes";
+  if (ViewData["ReviewerCommentsLabel"] != null)
+  {
+    commentsLinkText = ViewData["ReviewerCommentsLabel"].ToString();
+  }
 }
 
 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
