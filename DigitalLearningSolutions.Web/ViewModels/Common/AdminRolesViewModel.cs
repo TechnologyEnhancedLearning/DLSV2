@@ -10,7 +10,7 @@
     {
         private const int MaxNumberOfCmsRoleRadios = 3;
         private const int MinNumberOfCmsRoleRadios = 1;
-        private const int MaxNumberOfRoleCheckboxes = 5;
+        private const int MaxNumberOfRoleCheckboxes = 6;
 
         public readonly List<CheckboxListItemViewModel> Checkboxes = new List<CheckboxListItemViewModel>
         {
