@@ -132,7 +132,6 @@
             LAR.SelfAssessmentResultSupervisorVerificationId,
             LAR.Requested,
             LAR.Verified,
-            LAR.SupervisorName,
             LAR.Comments AS SupervisorComments,
             LAR.SignedOff,
             LAR.UserIsVerifier,
@@ -241,7 +240,8 @@
             var resultIdFilter = selfAssessmentResultId.HasValue ? $"ResultID = {selfAssessmentResultId.Value}" : "1=1";
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {SpecificAssessmentResults}
-                    SELECT {CompetencyFields}
+                    SELECT {CompetencyFields},
+                    LAR.SupervisorName
                     FROM {SpecificCompetencyTables}
                     WHERE (CAOC.IncludedInSelfAssessment = 1 OR SAS.Optional = 0) AND {resultIdFilter}
                     ORDER BY SAS.Ordering, CAQ.Ordering",
