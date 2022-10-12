@@ -34,6 +34,11 @@
                 return;
             }
 
+            if (context.ActionArguments["actionname"].ToString() == "Edit")
+            {
+                return;
+            }
+
             if (_feature.TempDataKey != string.Empty && (controller.TempData == null || controller.TempData.Peek(_feature.TempDataKey) == null))
             {
                 context.Result = new StatusCodeResult((int)HttpStatusCode.Gone);
