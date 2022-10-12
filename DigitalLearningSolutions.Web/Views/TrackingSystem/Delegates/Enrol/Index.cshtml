@@ -8,24 +8,24 @@
   };
 }
 
-@if (errorHasOccurred)
-{
-    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedActivity) })" />
-}
+
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedActivity) })" />
+        }<h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 1</h1>
+        <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
         <form method="post">
-            <div class="nhsuk-u-margin-bottom-4">
-                <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 1</h1>
-                <h3>Delegate: @Model.DelegateName</h3>
-            </div>
-            <div class="nhsuk-u-margin-bottom-4">
-                <h4>Choose an activity:</h4>
 
-                <select class="nhsuk-select sort-by-dropdown @errorClass" asp-for="@Model.SelectedActivity" asp-items="@(new SelectList(Model.LearningItems, "Id", "Name"))">
-                    <option value="0">--Select--</option>
-                </select>
-            </div>
+            <vc:select-list asp-for="@nameof(Model.SelectedActivity)"
+                            label="Choose an activity:"
+                            value="@Model.SelectedActivity"
+                            hint-text=""
+                            required="true"
+                            css-class="nhsuk-select sort-by-dropdown"
+                            default-option="--Select--"
+                            select-list-options="@Model.LearningItems" />
 
             <input class="nhsuk-button" type="submit" value="Next" />
         </form>

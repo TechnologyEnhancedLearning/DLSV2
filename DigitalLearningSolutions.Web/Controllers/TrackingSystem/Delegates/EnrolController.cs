@@ -62,12 +62,17 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         {
             var categoryId = User.GetAdminCourseCategoryFilter();
             var centreId = GetCentreId();
+            var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
+               MultiPageFormDataFeature.EnrolDelegateInActivity,
+               TempData
+           );
             var selfAssessments = courseDataService.GetAvailableCourses(delegateId, centreId, categoryId ?? default(int));
 
             var model = new EnrolCurrentLearningViewModel(
                 delegateId,
                 delegateName,
-               selfAssessments);
+               selfAssessments,
+               sessionEnrol.AssessmentID.GetValueOrDefault());
             return View(model);
         }
 
@@ -93,7 +98,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 var model = new EnrolCurrentLearningViewModel(
                     delegateId,
                     enrolCurrentLearningViewModel.DelegateName,
-                   selfAssessments
+                   selfAssessments, 0
                );
                 return View(model);
             }
@@ -184,14 +189,14 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     delegateId,
                     delegateName,
                     sessionEnrol.IsSelfAssessment,
-                   supervisorList);
+                   supervisorList, sessionEnrol.SupervisorID.GetValueOrDefault());
                 return View(model);
             }
             else
             {
                 var roles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
                 var model = new EnrolSupervisorViewModel(delegateId, delegateName, sessionEnrol.IsSelfAssessment,
-                   supervisorList, roles);
+                   supervisorList, sessionEnrol.SupervisorID.GetValueOrDefault(), roles);
                 return View(model);
             }
         }

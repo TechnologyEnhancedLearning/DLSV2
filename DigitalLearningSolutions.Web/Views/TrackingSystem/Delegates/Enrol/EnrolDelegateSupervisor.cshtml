@@ -9,20 +9,27 @@
 
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
+        <div class="nhsuk-u-margin-bottom-4">
+            <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 3</h1>
+            <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
+        </div>
         <form method="post">
-            <div class="nhsuk-u-margin-bottom-4">
-                <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 3</h1>
-                <h3>Delegate: @Model.DelegateName</h3>
-            </div>
-            <div class="nhsuk-u-margin-bottom-4">
-                <h4>Choose a supervisor (optional):</h4>
-
-                <select class="nhsuk-select sort-by-dropdown" asp-for="@Model.SelectedSupervisor" asp-items="@(new SelectList(Model.SupervisorList, "AdminId", "Name"))">
-                    <option value="0">--Select--</option>
-                </select>
-            </div>
+            <vc:select-list asp-for="@nameof(Model.SelectedSupervisor)"
+                            label="Choose a supervisor (optional):"
+                            value="@Model.SelectedSupervisor"
+                            hint-text=""
+                            required="true"
+                            css-class="nhsuk-select sort-by-dropdown"
+                            default-option="--Select--"
+                            select-list-options="@Model.SupervisorList" />
             @if (Model.IsSelfAssessment && Model.SupervisorRoleList.Count() > 1)
             {
+                @*<vc:radios asp-for="@nameof(Model.SelectedSupervisorRoleId)"
+                    label="Choose your supervisor role."
+                    populate-with-current-values="true"
+                    radios="@(new SelectList(Model.SupervisorList, "AdminId", "Name"))"
+                    hint-text=""
+                    required="false"/>*@
                 <fieldset class="nhsuk-fieldset">
                     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                         <h3 class="nhsuk-fieldset__heading">
