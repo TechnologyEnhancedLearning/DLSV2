@@ -45,7 +45,10 @@
                 isTrainer,
                 isContentCreator,
                 isCmsAdmin,
-                isCmsManager
+                isCmsManager,
+                "supervisor@example.com",
+                "Test",
+                "Supervisor"
             );
         }
 
@@ -86,7 +89,10 @@
                 isTrainer,
                 isContentCreator,
                 isCmsAdmin,
-                isCmsManager
+                isCmsManager,
+                "supervisor@example.com",
+                "Test",
+                "Supervisor"
             );
         }
 

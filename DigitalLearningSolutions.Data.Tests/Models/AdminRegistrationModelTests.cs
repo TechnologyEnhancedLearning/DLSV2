@@ -66,7 +66,10 @@
                 true,
                 true,
                 true,
-                true
+                true,
+                "supervisor@example.com",
+                "Test",
+                "Supervisor"
             );
 
             // When

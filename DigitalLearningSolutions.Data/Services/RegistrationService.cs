@@ -32,7 +32,7 @@ namespace DigitalLearningSolutions.Data.Services
             bool registerJourneyContainsTermsAndConditions
         );
 
-        void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser adminUser);
+        void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser supervisorUser);
     }
 
     public class RegistrationService : IRegistrationService

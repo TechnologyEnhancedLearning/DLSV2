@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -22,6 +23,7 @@
         private ICourseCategoriesDataService courseCategoriesDataService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -30,12 +32,14 @@
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             registrationService = A.Fake<IRegistrationService>();
+            userService = A.Fake<IUserService>();            
             controller = new PromoteToAdminController(
                     userDataService,
                     courseCategoriesDataService,
                     centreContractAdminUsageService,
                     registrationService,
-                    new NullLogger<PromoteToAdminController>()
+                    new NullLogger<PromoteToAdminController>(),
+                    userService
                 )
                 .WithDefaultContext();
         }
@@ -54,7 +58,7 @@
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole,
                 LearningCategory = 0
             };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._))
+            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._, A<AdminUser>._))
                 .DoesNothing();
 
             // When
@@ -70,10 +74,13 @@
                                     !a.IsContentManager
                             ),
                             0,
-                            delegateId
+                            delegateId,
+                            A<AdminUser>._
                         )
                 )
                 .MustHaveHappened();
+
+            
             result.Should().BeRedirectToActionResult().WithControllerName("ViewDelegate").WithActionName("Index");
         }
 
@@ -90,7 +97,7 @@
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole,
                 LearningCategory = 0
             };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._))
+            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._, A<AdminUser>._))
                 .Throws(new AdminCreationFailedException(AdminCreationError.UnexpectedError));
 
             // When
@@ -113,7 +120,7 @@
                 ContentManagementRole = ContentManagementRole.NoContentManagementRole,
                 LearningCategory = 0
             };
-            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._))
+            A.CallTo(() => registrationService.PromoteDelegateToAdmin(A<AdminRoles>._, A<int>._, A<int>._, A<AdminUser>._))
                 .Throws(new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse));
 
             // When
