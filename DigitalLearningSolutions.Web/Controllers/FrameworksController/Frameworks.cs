@@ -183,7 +183,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             if (actionname == "New")
             {
-                if(TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
                 {
                     return StatusCode((int)HttpStatusCode.NotFound);
                 }
@@ -279,7 +279,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             DetailFramework? framework;
             if (actionname == "New")
             {
-                if(TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
                 {
                     return StatusCode((int)HttpStatusCode.NotFound);
                 }
@@ -317,7 +317,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             if (actionname == "New")
             {
-                if(TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
+                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
                 {
                     return StatusCode((int)HttpStatusCode.NotFound);
                 }
@@ -585,7 +585,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult RemoveFrameworkFlag(int flagId, int frameworkId)
         {
             var flag = frameworkService.GetCustomFlagsByFrameworkId(frameworkId, flagId).FirstOrDefault();
-            if(flag == null)
+            if (flag == null)
             {
                 return StatusCode((int)HttpStatusCode.NotFound);
             }
@@ -624,7 +624,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 }
                 return RedirectToAction("EditFrameworkFlags", "Frameworks", new { frameworkId });
             }
-            return View("Developer/EditCustomFlag", model);            
+            return View("Developer/EditCustomFlag", model);
         }
 
         [HttpGet]
@@ -647,7 +647,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
-        public IActionResult AddCollaborators(string actionname, int frameworkId, bool error = false)
+        public IActionResult AddCollaborators(string actionname, int frameworkId)
         {
             var adminId = GetAdminId();
             var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
@@ -659,7 +659,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 BaseFramework = framework,
                 Collaborators = collaborators,
-                Error = error,
+                Error = false,
             };
             return View("Developer/Collaborators", model);
         }
@@ -676,7 +676,24 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             else
             {
-                return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname, error = true });
+                if (collaboratorId == -3)
+                {
+                    TempData["FrameworkError"] = "Email address should not be empty";
+
+                }
+                else if (collaboratorId == -2)
+                {
+                    TempData["FrameworkError"] = $"User with the email address {userEmail} has been previously added";
+                }
+                else if (collaboratorId == -4)
+                {
+                    TempData["FrameworkError"] = $"The email address {userEmail}  must match registered DLS Admin account";
+                }
+                else
+                {
+                    TempData["FrameworkError"] = "User not added,Kindly try again;";
+                }
+                return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
             }
 
         }
