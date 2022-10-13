@@ -26,6 +26,8 @@
         private readonly IMultiPageFormService multiPageFormService;
         private readonly IRegistrationService registrationService;
         private readonly ICentresDataService centresDataService;
+        private readonly IUserService userService;
+        
         public SupervisorController(
            ISupervisorService supervisorService,
            ICommonService commonService,
@@ -40,7 +42,8 @@
            ISearchSortFilterPaginateService searchSortFilterPaginateService,
            IMultiPageFormService multiPageFormService,
            IRegistrationService registrationService,
-           ICentresDataService centresDataService
+           ICentresDataService centresDataService,
+           IUserService userService
         )
         {
             this.supervisorService = supervisorService;
@@ -57,6 +60,7 @@
             this.multiPageFormService = multiPageFormService;
             this.registrationService = registrationService;
             this.centresDataService = centresDataService;
+            this.userService = userService;
         }
 
         private int GetCentreId()

@@ -46,6 +46,7 @@
                 isContentCreator,
                 isCmsAdmin,
                 isCmsManager,
+                1,
                 "supervisor@example.com",
                 "Test",
                 "Supervisor"
@@ -90,6 +91,7 @@
                 isContentCreator,
                 isCmsAdmin,
                 isCmsManager,
+                1,
                 "supervisor@example.com",
                 "Test",
                 "Supervisor"

@@ -22,6 +22,7 @@
             bool isContentCreator,
             bool isCmsAdmin,
             bool isCmsManager,
+            int supervisorDelegateId,
             string supervisorEmail,
             string supervisorFirstName,
             string supervisorLastName,
@@ -37,6 +38,7 @@
             IsTrainer = isTrainer;
             IsContentCreator = isContentCreator;
             ProfileImage = profileImage;
+            SupervisorDelegateId = supervisorDelegateId;
             SupervisorEmail = supervisorEmail;
             SupervisorFirstName = supervisorFirstName;
             SupervisorLastName = supervisorLastName;
@@ -78,11 +80,12 @@
         public int CategoryId { get; set; }
 
         public byte[]? ProfileImage { get; set; }
-        
+
+        public int SupervisorDelegateId { get; set; }
         public string? SupervisorEmail { get; set; }
         public string SupervisorFirstName { get; set; }
         public string SupervisorLastName { get; set; }
-        
+
         public IEnumerable<int> GetNotificationRoles()
         {
             var roles = new List<int>();

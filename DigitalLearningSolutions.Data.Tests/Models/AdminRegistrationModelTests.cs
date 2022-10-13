@@ -67,6 +67,7 @@
                 true,
                 true,
                 true,
+                1,
                 "supervisor@example.com",
                 "Test",
                 "Supervisor"

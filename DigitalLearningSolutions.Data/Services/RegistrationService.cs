@@ -32,7 +32,12 @@ namespace DigitalLearningSolutions.Data.Services
             bool registerJourneyContainsTermsAndConditions
         );
 
-        void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser supervisorUser);
+        void PromoteDelegateToAdmin(
+            AdminRoles adminRoles,
+            int categoryId,
+            int delegateId,
+            AdminUser supervisorAdminUser,
+            DelegateUser supervisorDelegateUser);
     }
 
     public class RegistrationService : IRegistrationService
@@ -47,6 +52,7 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
         private readonly INotificationDataService notificationDataService;
+        private readonly ISupervisorService supervisorService;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
@@ -58,8 +64,9 @@ namespace DigitalLearningSolutions.Data.Services
             ISupervisorDelegateService supervisorDelegateService,
             IUserDataService userDataService,
             INotificationDataService notificationDataService,
-            ILogger<RegistrationService> logger
-        )
+            ILogger<RegistrationService> logger,
+            ISupervisorService supervisorService
+            )
         {
             this.registrationDataService = registrationDataService;
             this.passwordDataService = passwordDataService;
@@ -72,6 +79,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.userDataService = userDataService;
             this.notificationDataService = notificationDataService;
             this.logger = logger;
+            this.supervisorService = supervisorService;
         }
 
         public (string candidateNumber, bool approved) RegisterDelegate(
@@ -145,7 +153,7 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser supervisorUser)
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser supervisorAdminUser, DelegateUser supervisorDelegateUser)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
@@ -218,13 +226,14 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsContentCreator,
                     adminRoles.IsCmsAdministrator,
                     adminRoles.IsCmsManager,
-                    supervisorUser.EmailAddress ?? string.Empty,
-                    supervisorUser.FirstName ?? string.Empty,
-                    supervisorUser.LastName,
+                    supervisorDelegateUser.Id,
+                    supervisorDelegateUser.EmailAddress ?? string.Empty,
+                    supervisorDelegateUser.FirstName ?? string.Empty,
+                    supervisorDelegateUser.LastName,
                     delegateUser.ProfileImage
                 );
 
-                //registrationDataService.RegisterAdmin(adminRegistrationModel, false);
+                registrationDataService.RegisterAdmin(adminRegistrationModel, false);
                 SendEmailNotification(adminRegistrationModel);
             }
             else
@@ -297,7 +306,7 @@ namespace DigitalLearningSolutions.Data.Services
             builder.TextBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.";
             builder.HtmlBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.</body>";
 
-            //supervisorService.UpdateNotificationSent(supervisorDelegateId);
+            supervisorService.UpdateNotificationSent(adminRegistrationModel.SupervisorDelegateId);
 
             emailService.SendEmail(new Email(emailSubjectLine, builder, adminRegistrationModel.Email, adminRegistrationModel.SupervisorEmail));
         }

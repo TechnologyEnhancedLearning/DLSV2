@@ -29,6 +29,7 @@
 
         public string? PasswordHash { get; set; }
 
+        public int SupervisorDelegateId { get; set; }
         public string SupervisorUserEmail { get; set; }
         public string SupervisorUserFirstName { get; set; }
         public string SupervisorUserLastName { get; set; }
