@@ -135,43 +135,31 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 MultiPageFormDataFeature.EnrolDelegateInActivity,
                 TempData
             );
-            var model = new CompletedByDateViewModel()
-            {
-                DelegateId = delegateId,
-                DelegateName = delegateName,
-                CompleteByDate = sessionEnrol.CompleteByDate
-            };
-            if (day != null && month != null && year != null)
-            {
-                model.CompleteByValidationResult = OldDateValidator.ValidateDate(day.Value, month.Value, year.Value);
-            }
+            var model = new CompletedByDateViewModel(
+                delegateId,
+                delegateName,
+                day,
+                month,
+                year
+            );
+
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult EnrolCompleteBy(int delegateId, string delegateName, int day, int month, int year)
+        public IActionResult EnrolCompleteBy(int delegateId, string delegateName, CompletedByDateViewModel model)
         {
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
-               MultiPageFormDataFeature.EnrolDelegateInActivity,
-               TempData);
-            if (day != 0 | month != 0 | year != 0)
+               MultiPageFormDataFeature.EnrolDelegateInActivity, TempData);
+            if (!ModelState.IsValid)
             {
-                var validationResult = OldDateValidator.ValidateDate(day, month, year);
-                if (!validationResult.DateValid)
-                {
-                    return RedirectToAction("EnrolCompleteBy", new { delegateId, delegateName, day, month, year });
-                }
-                else
-                {
-                    var completeByDate = new DateTime(year, month, day);
-                    sessionEnrol.CompleteByDate = completeByDate;
-                    multiPageFormService.SetMultiPageFormData(
-                        sessionEnrol,
-                        MultiPageFormDataFeature.EnrolDelegateInActivity,
-                        TempData
-                    );
-                }
+                return View(model);
             }
+            var completeByDate = (model.Day.HasValue | model.Month.HasValue | model.Year.HasValue)
+                ? new DateTime(model.Year.Value, model.Month.Value, model.Day.Value)
+                : (DateTime?)null;
+            sessionEnrol.CompleteByDate = completeByDate;
+            multiPageFormService.SetMultiPageFormData(sessionEnrol, MultiPageFormDataFeature.EnrolDelegateInActivity, TempData);
             return RedirectToAction("EnrolDelegateSupervisor", new { delegateId, delegateName });
         }
 

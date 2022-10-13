@@ -5,78 +5,33 @@
     { "delegateId", Model.DelegateId.ToString() },
   };
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-    var exampleDate = @DateTime.Today + TimeSpan.FromDays(7);
-    string prefillDay;
-    string prefillMonth;
-    string prefillYear;
-    if (Model.CompleteByValidationResult?.DateValid == false)
-    {
-        prefillDay = Model.CompleteByValidationResult?.Day.ToString() ?? "";
-        prefillMonth = Model.CompleteByValidationResult?.Month.ToString() ?? "";
-        prefillYear = Model.CompleteByValidationResult?.Year.ToString() ?? "";
-        prefillDay = prefillDay == "0" ? "" : prefillDay;
-        prefillMonth = prefillMonth == "0" ? "" : prefillMonth;
-        prefillYear = prefillYear == "0" ? "" : prefillYear;
-    }
-    else
-    {
-        prefillDay = Model.CompleteByDate?.Day.ToString() ?? "";
-        prefillMonth = Model.CompleteByDate?.Month.ToString() ?? "";
-        prefillYear = Model.CompleteByDate?.Year.ToString() ?? "";
-    }
-    var dayErrorClass = Model.CompleteByValidationResult?.DayValid == false ? "nhsuk-input--error" : "";
-    var monthErrorClass = Model.CompleteByValidationResult?.MonthValid == false ? "nhsuk-input--error" : "";
-    var yearErrorClass = Model.CompleteByValidationResult?.YearValid == false ? "nhsuk-input--error" : "";
-    var formErrorClass = Model.CompleteByValidationResult?.DateValid == false ? "nhsuk-form-group--error" : "";
+
+    var exampleDate = DateTime.Today + TimeSpan.FromDays(7);
+    var hintTextLines = new List<string> {
+    $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the complete by date.",
+    "Activities with no complete by date will be removed after 6 months of inactivity.",
+  };
 }
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-        <form method="post" class="@formErrorClass">
-            <div class="nhsuk-u-margin-bottom-4">
+        @if (errorHasOccurred)
+        {
+          <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
+        }
+      <div class="nhsuk-u-margin-bottom-4">
                 <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 2</h1>
-                <h3>Delegate: @Model.DelegateName</h3>
+                <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
             </div>
-            <fieldset class="nhsuk-fieldset" aria-labelledby="form-heading" aria-describedby="example-hint" role="group">
-                <h2 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
-                    Set a complete by date (optional):
-                </h2>
-                <span class="nhsuk-hint" id="example-hint">
-                    For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank if you don't want to specify a completion date.
-                    <p>Activities with no complete by date will be removed after 6 months of inactivity</p>
-                </span>
-                @if (Model.CompleteByValidationResult?.DateValid == false)
-                {
-                    <span class="nhsuk-error-message" id="validation-message" role="alert">
-                        <span class="nhsuk-u-visually-hidden">Error:</span>@Model.CompleteByValidationResult?.ErrorMessage
-                    </span>
-                }
-                <div class="nhsuk-date-input" id="date">
-                    <div class="nhsuk-date-input__item">
-                        <div class="nhsuk-form-group">
-                            <label class="nhsuk-label nhsuk-date-input__label" for="day">
-                                Day
-                            </label>
-                            <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @dayErrorClass" id="day" name="day" type="number" value="@prefillDay">
-                        </div>
-                    </div>
-                    <div class="nhsuk-date-input__item">
-                        <div class="nhsuk-form-group">
-                            <label class="nhsuk-label nhsuk-date-input__label" for="month">
-                                Month
-                            </label>
-                            <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @monthErrorClass" id="month" name="month" type="number" value="@prefillMonth">
-                        </div>
-                    </div>
-                    <div class="nhsuk-date-input__item">
-                        <div class="nhsuk-form-group">
-                            <label class="nhsuk-label nhsuk-date-input__label" for="year">
-                                Year
-                            </label>
-                            <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-4 @yearErrorClass" id="year" name="year" type="number" value="@prefillYear">
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
+        <form method="post">
+            <input type="hidden" asp-for="DelegateId" />
+            <input type="hidden" asp-for="DelegateName" />
+            <vc:date-input id="complete-by-date"
+                     label="Set a complete by date (optional):"
+                     day-id="Day"
+                     month-id="Month"
+                     year-id="Year"
+                     css-class="nhsuk-u-margin-bottom-4"
+                     hint-text-lines="@hintTextLines" />
             <div class=" nhsuk-u-margin-top-5">
                 <input class="nhsuk-button" type="submit" value="Next" />
                 <a class="nhsuk-button nhsuk-button--secondary" asp-action="EnrolDelegateSupervisor"

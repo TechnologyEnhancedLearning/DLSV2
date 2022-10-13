@@ -14,6 +14,8 @@
             <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
         </div>
         <form method="post">
+           @* @Html.HiddenFor(m => m.Id);
+            @Html.HiddenFor(m => m.Name);*@
             <vc:select-list asp-for="@nameof(Model.SelectedSupervisor)"
                             label="Choose a supervisor (optional):"
                             value="@Model.SelectedSupervisor"
@@ -25,11 +27,11 @@
             @if (Model.IsSelfAssessment && Model.SupervisorRoleList.Count() > 1)
             {
                 @*<vc:radios asp-for="@nameof(Model.SelectedSupervisorRoleId)"
-                    label="Choose your supervisor role."
-                    populate-with-current-values="true"
-                    radios="@(new SelectList(Model.SupervisorList, "AdminId", "Name"))"
-                    hint-text=""
-                    required="false"/>*@
+                       label="Choose your supervisor role"
+                       populate-with-current-values="false"
+                       radios="Model.SupervisorRoleList1"
+                       hint-text=""
+                       required="false" />*@
                 <fieldset class="nhsuk-fieldset">
                     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                         <h3 class="nhsuk-fieldset__heading">
