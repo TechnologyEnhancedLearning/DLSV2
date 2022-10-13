@@ -36,7 +36,7 @@ namespace DigitalLearningSolutions.Data.Services
             AdminRoles adminRoles,
             int categoryId,
             int delegateId,
-            AdminUser supervisorAdminUser,
+            AdminUser? supervisorAdminUser,
             DelegateUser supervisorDelegateUser);
     }
 
@@ -153,7 +153,7 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser supervisorAdminUser, DelegateUser supervisorDelegateUser)
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser? supervisorAdminUser, DelegateUser supervisorDelegateUser)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
