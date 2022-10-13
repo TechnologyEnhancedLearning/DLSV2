@@ -1,10 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @model CollaboratorsViewModel
 @{
-    ViewData["Title"] = "Framework Collaborators";
-    ViewData["Application"] = "Framework Service";
-    string errMsg = TempData["FrameworkError"]?.ToString();
-    if (!string.IsNullOrWhiteSpace(errMsg)) { Model.Error = true; }
+  ViewData["Title"] = "Framework Collaborators";
+  ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
+  string errMsg = TempData["FrameworkError"]?.ToString();
+  if (!string.IsNullOrWhiteSpace(errMsg)) { Model.Error = true; }
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -13,46 +14,46 @@
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
   @section NavBreadcrumbs {
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-      <div class="nhsuk-width-container">
-        <ol class="nhsuk-breadcrumb__list">
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-          <li class="nhsuk-breadcrumb__item">Create framework</li>
-        </ol>
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFrameworks" asp-route-tabname="Mine">Back to frameworks</a></p>
-      </div>
-    </nav>
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item">Create framework</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFrameworks" asp-route-tabname="Mine">Back to frameworks</a></p>
+    </div>
+  </nav>
   }
 }
 else if ((string)ViewContext.RouteData.Values["actionname"] == "Review")
 {
   @section NavBreadcrumbs {
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-      <div class="nhsuk-width-container">
-          <ol class="nhsuk-breadcrumb__list">
-            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
-            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Send for Review</a></li>
-            <li class="nhsuk-breadcrumb__item">Collaborators</li>
-          </ol>
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Back to Send for Review</a></p>
-      </div>
-    </nav>
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Send for Review</a></li>
+        <li class="nhsuk-breadcrumb__item">Collaborators</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Back to Send for Review</a></p>
+    </div>
+  </nav>
   }
 }
 else
 {
   @section NavBreadcrumbs {
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-      <div class="nhsuk-width-container">
-        <ol class="nhsuk-breadcrumb__list">
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Framework Details</a></li>
-          <li class="nhsuk-breadcrumb__item">Collaborators</li>
-        </ol>
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Back to framework detail</a></p>
-      </div>
-    </nav>
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Framework Details</a></li>
+        <li class="nhsuk-breadcrumb__item">Collaborators</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Back to framework detail</a></p>
+    </div>
+  </nav>
   }
 }
 <h1>Choose working group members</h1>
@@ -129,15 +130,15 @@ else
         User email address
       </label>
 
-            <div class="nhsuk-hint" id="add-user-hint">
+      <div class="nhsuk-hint" id="add-user-hint">
         Provide the email address of a user with a registered DLS admin account to add as a Contributor (to help create your framework) or Reviewer (to sign off your framework). Working group members can be added and removed later.
       </div>
-      @if(Model.Error)
-            {
-                <span class="nhsuk-error-message" id="no-admin-error">
-    <span class="nhsuk-u-visually-hidden">Error:</span> @errMsg
-  </span>
-            }
+      @if (Model.Error)
+      {
+        <span class="nhsuk-error-message" id="no-admin-error">
+          <span class="nhsuk-u-visually-hidden">Error:</span> @errMsg
+        </span>
+      }
       <input class="@(Model.Error? "nhsuk-input nhsuk-input--error" : "nhsuk-input")" id="userEmail" aria-describedby="add-user-hint" type="email" name="userEmail" />
     </div>
   </div>
@@ -151,13 +152,13 @@ else
 <div class=" nhsuk-u-margin-top-6">
   @if ((string)ViewContext.RouteData.Values["actionname"] == "Review")
   {
-    <a class="nhsuk-button" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+    <a class="nhsuk-button" role="button" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
       Done
     </a>
   }
   else
   {
-    <a class="nhsuk-button" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">
+    <a class="nhsuk-button" role="button" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">
       Done
     </a>
   }

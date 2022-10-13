@@ -1,11 +1,15 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
+@using Microsoft.Extensions.Configuration
 @model CompletedPageViewModel
-
+@inject IConfiguration Configuration
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/completed.css")" asp-append-version="true">
 
 @{
-  ViewData["Title"] = "Learning Portal - Completed";
+  ViewData["Application"] = "Learning Portal";
+  ViewData["Title"] = "My Completed Activities";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Completed";
+  ViewData["HeaderPathName"] = "Learning Portal";
 }
 
 @if (Model.JavascriptSearchSortFilterPaginateEnabled) {

@@ -18,6 +18,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using System.Net;
+    using DigitalLearningSolutions.Web.ServiceFilter;
 
     public partial class FrameworksController
     {
@@ -139,6 +140,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Name/{actionname}/{frameworkId}")]
         [Route("/Frameworks/Name/{actionname}")]
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
+        )]
         public IActionResult CreateNewFramework(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminId();
@@ -155,11 +161,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             else
             {
-                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
-                {
-                    return StatusCode((int)HttpStatusCode.NotFound);
-                }
-
                 var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
                     MultiPageFormDataFeature.AddNewFramework,
                     TempData
@@ -173,6 +174,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Name/{actionname}/{frameworkId}")]
         [Route("/Frameworks/Name/{actionname}")]
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
+        )]
         public IActionResult CreateNewFramework(DetailFramework detailFramework, string actionname, int frameworkId = 0)
         {
             if (!ModelState.IsValid)
@@ -183,23 +189,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             if (actionname == "New")
             {
-                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
-                {
-                    return StatusCode((int)HttpStatusCode.NotFound);
-                }
-                else
-                {
-                    SessionNewFramework sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
-                        MultiPageFormDataFeature.AddNewFramework,
-                        TempData
-                    );
-                    sessionNewFramework.DetailFramework = detailFramework;
-                    multiPageFormService.SetMultiPageFormData(
-                        sessionNewFramework,
-                        MultiPageFormDataFeature.AddNewFramework,
-                        TempData
-                    );
-                }
+                SessionNewFramework sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
+                    MultiPageFormDataFeature.AddNewFramework,
+                    TempData
+                );
+                sessionNewFramework.DetailFramework = detailFramework;
+                multiPageFormService.SetMultiPageFormData(
+                    sessionNewFramework,
+                    MultiPageFormDataFeature.AddNewFramework,
+                    TempData
+                );
                 return RedirectToAction("SetNewFrameworkName", new { frameworkname = detailFramework.FrameworkName, actionname });
             }
             var adminId = GetAdminId();
@@ -272,6 +271,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Description/{actionname}/")]
         [Route("/Frameworks/Description/{actionname}/{frameworkId}/")]
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
+        )]
         public IActionResult FrameworkDescription(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminId();
@@ -279,23 +283,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             DetailFramework? framework;
             if (actionname == "New")
             {
-                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
-                {
-                    return StatusCode((int)HttpStatusCode.NotFound);
-                }
-                else
-                {
-                    var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
-                        MultiPageFormDataFeature.AddNewFramework,
-                        TempData
-                    );
-                    framework = sessionNewFramework.DetailFramework;
-                    multiPageFormService.SetMultiPageFormData(
-                        sessionNewFramework,
-                        MultiPageFormDataFeature.AddNewFramework,
-                        TempData
-                    );
-                }
+                var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
+                    MultiPageFormDataFeature.AddNewFramework,
+                    TempData
+                );
+                framework = sessionNewFramework.DetailFramework;
+                multiPageFormService.SetMultiPageFormData(
+                    sessionNewFramework,
+                    MultiPageFormDataFeature.AddNewFramework,
+                    TempData
+                );
             }
             else
             {
@@ -313,27 +310,25 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         [Route("/Frameworks/Description/{actionname}/")]
         [Route("/Frameworks/Description/{actionname}/{frameworkId}/")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
+        )]
         public IActionResult FrameworkDescription(DetailFramework detailFramework, string actionname, int frameworkId = 0)
         {
             if (actionname == "New")
             {
-                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
-                {
-                    return StatusCode((int)HttpStatusCode.NotFound);
-                }
-                else
-                {
-                    var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
-                        MultiPageFormDataFeature.AddNewFramework,
-                        TempData
-                    );
-                    sessionNewFramework.DetailFramework = detailFramework;
-                    multiPageFormService.SetMultiPageFormData(
-                        sessionNewFramework,
-                        MultiPageFormDataFeature.AddNewFramework,
-                        TempData
-                    );
-                }
+                var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
+                    MultiPageFormDataFeature.AddNewFramework,
+                    TempData
+                );
+                sessionNewFramework.DetailFramework = detailFramework;
+                multiPageFormService.SetMultiPageFormData(
+                    sessionNewFramework,
+                    MultiPageFormDataFeature.AddNewFramework,
+                    TempData
+                );
                 return RedirectToAction("FrameworkType", "Frameworks", new { actionname });
             }
             detailFramework.Description = SanitizerHelper.SanitizeHtmlData(detailFramework.Description);
@@ -345,6 +340,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Type/{actionname}/")]
         [Route("/Frameworks/Type/{actionname}/{frameworkId}/")]
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
+        )]
         public IActionResult FrameworkType(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminId();
@@ -352,23 +352,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             DetailFramework? framework;
             if (actionname == "New")
             {
-                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
-                {
-                    return StatusCode((int)HttpStatusCode.NotFound);
-                }
-                else
-                {
-                    var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
-                        MultiPageFormDataFeature.AddNewFramework,
-                        TempData
-                    );
-                    framework = sessionNewFramework.DetailFramework;
-                    multiPageFormService.SetMultiPageFormData(
-                        sessionNewFramework,
-                        MultiPageFormDataFeature.AddNewFramework,
-                        TempData
-                    );
-                }
+                var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
+                    MultiPageFormDataFeature.AddNewFramework,
+                    TempData
+                );
+                framework = sessionNewFramework.DetailFramework;
+                multiPageFormService.SetMultiPageFormData(
+                    sessionNewFramework,
+                    MultiPageFormDataFeature.AddNewFramework,
+                    TempData
+                );
             }
             else
             {
@@ -386,14 +379,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         [Route("/Frameworks/Type/{actionname}/")]
         [Route("/Frameworks/Type/{actionname}/{frameworkId}/")]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
+        )]
         public IActionResult FrameworkType(DetailFramework detailFramework, string actionname, int frameworkId = 0)
         {
             if (actionname == "New")
             {
-                if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
-                {
-                    return StatusCode((int)HttpStatusCode.NotFound);
-                }
                 var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
                     MultiPageFormDataFeature.AddNewFramework,
                     TempData
@@ -413,6 +407,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Categorise/{actionname}/")]
         [Route("/Frameworks/Categorise/{actionname}/{frameworkId}/")]
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        [ResponseCache(CacheProfileName = "Never")]
+        [TypeFilter(
+            typeof(RedirectToErrorEmptySessionData),
+            Arguments = new object[] { nameof(MultiPageFormDataFeature.AddNewFramework) }
+        )]
         public IActionResult SetNewFrameworkBrand(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminId();
@@ -482,10 +481,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 logger.LogWarning($"Failed to update branding for frameworkID: {frameworkId} adminId: {adminId}, centreId: {centreId}");
                 return StatusCode(500);
             }
-            if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null | detailFramework == null)
-            {
-                return StatusCode((int)HttpStatusCode.NotFound);
-            }
             var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(
                 MultiPageFormDataFeature.AddNewFramework,
                 TempData
@@ -550,6 +545,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 
         [Route("/Frameworks/New/Summary")]
         [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
+        [ResponseCache(CacheProfileName = "Never")]
         public IActionResult FrameworkSummary()
         {
             if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
@@ -647,7 +643,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
-        public IActionResult AddCollaborators(string actionname, int frameworkId)
+        [ResponseCache(CacheProfileName = "Never")]
+        public IActionResult AddCollaborators(string actionname, int frameworkId, bool error = false)
         {
             var adminId = GetAdminId();
             var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
@@ -739,12 +736,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/Framework", model);
         }
 
+        [ResponseCache(CacheProfileName = "Never")]
         public IActionResult InsertFramework()
         {
             var adminId = GetAdminId();
             if (TempData[MultiPageFormDataFeature.AddNewFramework.TempDataKey] == null)
             {
-                return StatusCode((int)HttpStatusCode.NotFound);
+                return StatusCode((int)HttpStatusCode.Gone);
             }
 
             var sessionNewFramework = multiPageFormService.GetMultiPageFormData<SessionNewFramework>(

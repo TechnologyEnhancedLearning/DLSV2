@@ -44,28 +44,28 @@ else
 
 @if (Model.LinearNavigation)
 {
-    <a class="nhsuk-button @(Model.UserBookmark != null || bookmarkIsRelevant ? "nhsuk-button--secondary" : "") trigger-loader" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.Id" asp-route-vocabulary="@Model.VocabPlural">View @Model.VocabPlural</a>
+  <a role="button" class="nhsuk-button @(Model.UserBookmark != null || bookmarkIsRelevant ? "nhsuk-button--secondary" : "") trigger-loader" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.Id" asp-route-vocabulary="@Model.VocabPlural">View @Model.VocabPlural</a>
     @if (Model.UserBookmark != null)
     {
         if (bookmarkIsRelevant)
         {
-            <a class="nhsuk-button trigger-loader" href="@Configuration["AppRootPath"]@Model.UserBookmark">
+      <a class="nhsuk-button trigger-loader" role="button" href="@Configuration["AppRootPath"]@Model.UserBookmark">
                 Continue where I left off
             </a>
         }
     }
     else
     {
-        <a class=@(Model.UserBookmark != null ? "nhsuk-button nhsuk-button--secondary" : "nhsuk-button") asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@Model.Id" asp-route-competencyNumber="1">Go to @Model.Vocabulary 1</a>
+    <a role="button" class=@(Model.UserBookmark != null ? "nhsuk-button nhsuk-button--secondary" : "nhsuk-button") asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@Model.Id" asp-route-competencyNumber="1">Go to @Model.Vocabulary 1</a>
     }
 
 }
 else
 {
-    <a class="nhsuk-button trigger-loader" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural" asp-route-selfAssessmentId="@Model.Id">View @Model.VocabPlural</a>
+  <a class="nhsuk-button trigger-loader" role="button" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural" asp-route-selfAssessmentId="@Model.Id">View @Model.VocabPlural</a>
     @if (Model.UserBookmark != null && bookmarkIsRelevant)
     {
-        <a class="nhsuk-button nhsuk-button--secondary trigger-loader" href="@Configuration["AppRootPath"]@Model.UserBookmark">Continue where I left off</a>
+        <a role="button" class="nhsuk-button nhsuk-button--secondary trigger-loader" href="@Configuration["AppRootPath"]@Model.UserBookmark">Continue where I left off</a>
     }
 }
 
