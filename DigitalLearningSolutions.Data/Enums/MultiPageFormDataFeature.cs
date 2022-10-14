@@ -89,6 +89,12 @@
             "EnrolDelegateOnProfileAssessmentDataGuid"
         );
 
+        public static readonly MultiPageFormDataFeature EnrolDelegateInActivity = new MultiPageFormDataFeature(
+            14,
+            nameof(EnrolDelegateInActivity),
+            "EnrolDelegateInActivity"
+        );
+
         public readonly string TempDataKey;
 
         private MultiPageFormDataFeature(int id, string name, string tempDataKey) : base(id, name)

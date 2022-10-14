@@ -11,7 +11,7 @@
         public bool IsAssessed { get; set; }
         public bool IsSelfAssessment { get; set; }
         public bool IncludesSignposting { get; set; }
-
+        public int? CurrentVersion { get; set; }
         public override string SearchableName
         {
             get => SearchableNameOverrideForFuzzySharp ?? Name;
