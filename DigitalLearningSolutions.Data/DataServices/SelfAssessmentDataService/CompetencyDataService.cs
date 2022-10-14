@@ -25,6 +25,7 @@
                     sv.Verified,
                     sv.Comments,
                     sv.SignedOff,
+                    NULL AS SupervisorName,
                     sv.CandidateAssessmentSupervisorID,
                     sv.EmailSent,
                     0 AS UserIsVerifier,
