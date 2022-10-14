@@ -912,12 +912,16 @@
         {
             if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
+                var userAdminId = User.GetAdminId();
+                var userDelegateId = User.GetCandidateId();
+                var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+
                 var categoryId = User.GetAdminCourseCategoryFilter();
                 var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminID(), 0);
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
                 if (supervisorDelegateDetail.CandidateID != null)
                 {
-                    registrationService.PromoteDelegateToAdmin(adminRoles, (categoryId ?? 0), (int)supervisorDelegateDetail.CandidateID);
+                    registrationService.PromoteDelegateToAdmin(adminRoles, (categoryId ?? 0), (int)supervisorDelegateDetail.CandidateID, adminUser, delegateUser);
                 }
                 return RedirectToAction("MyStaffList");
             }
