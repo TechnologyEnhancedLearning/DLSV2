@@ -656,7 +656,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 BaseFramework = framework,
                 Collaborators = collaborators,
-                Error = error,
+                Error = false,
             };
             return View("Developer/Collaborators", model);
         }
@@ -673,7 +673,24 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             else
             {
-                return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname, error = true });
+                if (collaboratorId == -3)
+                {
+                    TempData["FrameworkError"] = "Email address should not be empty";
+
+                }
+                else if (collaboratorId == -2)
+                {
+                    TempData["FrameworkError"] = $"User with the email address {userEmail} has been previously added";
+                }
+                else if (collaboratorId == -4)
+                {
+                    TempData["FrameworkError"] = $"The email address {userEmail}  must match registered DLS Admin account";
+                }
+                else
+                {
+                    TempData["FrameworkError"] = "User not added,Kindly try again;";
+                }
+                return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
             }
 
         }

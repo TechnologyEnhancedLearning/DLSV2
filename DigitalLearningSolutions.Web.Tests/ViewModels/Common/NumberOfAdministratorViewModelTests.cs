@@ -12,9 +12,9 @@
         {
             // Given
             var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
-                7,
-                6,
-                1,
+                admins: 7,
+                supervisors: 6,
+                trainers: 1,
                 trainerSpots: 15,
                 cmsAdministrators: 3,
                 cmsAdministratorSpots: 12,
