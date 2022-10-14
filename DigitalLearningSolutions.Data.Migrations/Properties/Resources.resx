@@ -122,7 +122,7 @@
     <value>..\Scripts\ApplyLPDefaultsSPChanges.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="DLSV2_106_CreateOrAlterInsertCustomisation_V3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-106-CreateOrAlterInsertCustomisation_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -175,11 +175,17 @@
   <data name="DLSV2_379_ReorderCompetencyAssessmentQuestionsSP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-379-ReorderCompetencyAssessmentQuestionsSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+  <data name="DLSV2_581_GetActiveAvailableCustomisationsForCentreFiltered_V6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\DLSV2-581-GetActiveAvailableCustomisationsForCentreFiltered_V6.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="DLSV2_95_AddSystemVersioning" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-95_AddSystemVersioning.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="DLSV2_95_RemoveSystemVersioning" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-95_RemoveSystemVersioning.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="DropActiveAvailableV6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\DropActiveAvailableV6.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="DropApplyLPDefaultsSPChanges" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DropApplyLPDefaultsSPChanges.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>

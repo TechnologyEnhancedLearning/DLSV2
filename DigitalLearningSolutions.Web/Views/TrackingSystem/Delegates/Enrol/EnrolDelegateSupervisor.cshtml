@@ -1,0 +1,58 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
+@model EnrolSupervisorViewModel
+@{
+    ViewData["Title"] = "EnrolDelegateSupervisor";
+    var routeParamsForCancelLink = new Dictionary<string, string> {
+    { "delegateId", Model.DelegateId.ToString() },
+  };
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <div class="nhsuk-u-margin-bottom-4">
+            <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 3</h1>
+            <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
+        </div>
+        <form method="post">
+            <vc:select-list asp-for="@nameof(Model.SelectedSupervisor)"
+                            label="Choose a supervisor (optional):"
+                            value="@Model.SelectedSupervisor"
+                            hint-text=""
+                            required="true"
+                            css-class="nhsuk-select sort-by-dropdown"
+                            default-option="--Select--"
+                            select-list-options="@Model.SupervisorList" />
+            @if (Model.IsSelfAssessment && Model.SupervisorRoleList.Count() > 1)
+            {              
+                <fieldset class="nhsuk-fieldset">
+                    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                        <h3 class="nhsuk-fieldset__heading">
+                            Choose your supervisor role
+                        </h3>
+                    </legend>
+                    <nhs-form-group nhs-validation-for="SelectedSupervisorRoleId">
+                        <div class="nhsuk-radios">
+                            @foreach (var role in Model.SupervisorRoleList)
+                            {
+                                <div class="nhsuk-radios__item">
+                                    <input class="nhsuk-radios__input" id="role-@role.ID" name="SelectedSupervisorRoleId" asp-for="SelectedSupervisorRoleId" type="radio" value="@role.ID">
+                                    <label class="nhsuk-label nhsuk-radios__label" for="role-@role.ID">
+                                        @role.RoleName
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </nhs-form-group>
+                </fieldset>
+            }
+            <div class=" nhsuk-u-margin-top-5">
+                <input class="nhsuk-button" type="submit" value="Next" />
+                <a class="nhsuk-button nhsuk-button--secondary" asp-action="EnrolDelegateSummary" asp-route-delegateId="@Model.DelegateId" asp-route-delegateName="@Model.DelegateName">
+                    Skip
+                </a>
+            </div>
+        </form>
+        <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForCancelLink" />
+    </div>
+</div>
+

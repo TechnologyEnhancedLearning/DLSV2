@@ -25,7 +25,11 @@
                 false,
                 false,
                 false,
-                false
+                false,
+                data.SupervisorDelegateId,
+                data.SupervisorUserEmail,
+                data.SupervisorUserFirstName,
+                data.SupervisorUserLastName
             );
         }
 
