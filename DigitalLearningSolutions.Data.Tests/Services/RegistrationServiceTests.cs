@@ -786,7 +786,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                                 a.Active &&
                                 a.Approved &&
                                 a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
-                                !a.IsCentreManager &&
+                                a.IsCentreManager == adminRoles.IsCentreManager &&
                                 a.IsContentManager == adminRoles.IsContentManager &&
                                 a.ImportOnly == adminRoles.IsCmsAdministrator &&
                                 a.IsContentCreator == adminRoles.IsContentCreator &&
