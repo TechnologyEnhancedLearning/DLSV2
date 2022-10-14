@@ -1092,7 +1092,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             // Given
             const int userId = 2;
             var adminAccount = UserTestHelper.GetDefaultAdminAccount(userId: userId);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, true);
 
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
 
@@ -1123,7 +1123,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                 categoryId: categoryId,
                 userId: userId
             );
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, true);
 
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(new[] { adminAccount });
 
@@ -1144,7 +1144,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                         adminRoles.IsContentCreator,
                         adminRoles.IsContentManager,
                         adminRoles.ImportOnly,
-                        categoryId
+                        categoryId,
+                        adminRoles.IsCentreManager
                     )
                 ).MustHaveHappenedOnceExactly();
                 A.CallTo(
@@ -1165,7 +1166,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
             const int centreId = 2;
             var activeAdminAtDifferentCentre = UserTestHelper.GetDefaultAdminAccount(centreId: 3, active: true);
             var inactiveAdminAtDifferentCentre = UserTestHelper.GetDefaultAdminAccount(centreId: 4, active: false);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, true);
             A.CallTo(() => userDataService.GetAdminAccountsByUserId(userId)).Returns(
                 new[] { activeAdminAtDifferentCentre, inactiveAdminAtDifferentCentre }
             );
@@ -1805,7 +1806,8 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                     A<bool>._,
                     A<bool>._,
                     A<bool>._,
-                    A<int>._
+                    A<int>._,
+                    A<bool>._
                 )
             ).MustNotHaveHappened();
         }

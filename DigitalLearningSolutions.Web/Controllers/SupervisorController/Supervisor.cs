@@ -916,11 +916,9 @@
         {
             if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
-==== BASE ====
-                var categoryId = User.GetAdminCourseCategoryFilter();
-                var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminID(), 0);
-                var adminRoles = new AdminRoles(false, false, true, false, false, false, false);
-==== BASE ====
+                var categoryId = User.GetAdminCategoryId();
+                var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminId(), 0);
+                var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
                 if (supervisorDelegateDetail.CandidateID != null)
                 {
                     registrationService.PromoteDelegateToAdmin(adminRoles, (categoryId ?? 0), (int)supervisorDelegateDetail.CandidateID, (int)User.GetCentreId());

@@ -209,7 +209,8 @@ namespace DigitalLearningSolutions.Web.Services
                 adminRoles.IsContentCreator,
                 adminRoles.IsContentManager,
                 adminRoles.ImportOnly,
-                categoryId
+                (int)categoryId,
+                adminRoles.IsCentreManager
             );
         }
 

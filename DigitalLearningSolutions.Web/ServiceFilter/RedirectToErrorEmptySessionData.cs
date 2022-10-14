@@ -3,7 +3,7 @@
     using System;
     using System.Net;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
