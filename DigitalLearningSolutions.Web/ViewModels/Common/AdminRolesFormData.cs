@@ -29,6 +29,7 @@
         public bool IsCentreAdmin { get; set; }
         public bool IsSupervisor { get; set; }
         public bool IsNominatedSupervisor { get; set; }
+        public bool IsCenterManager { get; set; }
         public bool IsTrainer { get; set; }
         public bool IsContentCreator { get; set; }
         public ContentManagementRole ContentManagementRole { get; set; }
@@ -44,7 +45,8 @@
                 IsContentCreator,
                 IsTrainer,
                 ContentManagementRole.IsContentManager,
-                ContentManagementRole.ImportOnly
+                ContentManagementRole.ImportOnly,
+                IsCenterManager
             );
         }
     }

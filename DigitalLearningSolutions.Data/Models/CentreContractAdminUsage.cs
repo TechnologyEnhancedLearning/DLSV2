@@ -14,6 +14,7 @@
             AdminCount = adminUsers.Count(a => a.IsCentreAdmin);
             SupervisorCount = adminUsers.Count(a => a.IsSupervisor);
             NominatedSupervisorCount = adminUsers.Count(a => a.IsNominatedSupervisor);
+            CentreManagerCheckCount = adminUsers.Count(a => a.IsCentreManager);
             TrainerCount = adminUsers.Count(a => a.IsTrainer);
             CmsAdministratorCount = adminUsers.Count(a => a.IsCmsAdministrator);
             CmsManagerCount = adminUsers.Count(a => a.IsCmsManager);
@@ -27,6 +28,7 @@
         public int AdminCount { get; set; }
         public int SupervisorCount { get; set; }
         public int NominatedSupervisorCount { get; set; }
+        public int CentreManagerCheckCount { get; set; }
         public int TrainerCount { get; set; }
         public int CmsAdministratorCount { get; set; }
         public int CmsManagerCount { get; set; }

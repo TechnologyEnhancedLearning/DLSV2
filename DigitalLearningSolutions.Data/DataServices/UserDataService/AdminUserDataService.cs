@@ -220,7 +220,8 @@
             bool isContentCreator,
             bool isContentManager,
             bool importOnly,
-            int? categoryId
+            int categoryId,
+            bool isCentreManager
         )
         {
             connection.Execute(
@@ -233,8 +234,9 @@
                             IsContentCreator = @isContentCreator,
                             IsContentManager = @isContentManager,
                             ImportOnly = @importOnly,
-                            CategoryID = @categoryId
-                        WHERE ID = @adminId",
+                            CategoryID = @categoryId,
+                            IsCentreManager = @isCentreManager
+                        WHERE AdminID = @adminId",
                 new
                 {
                     isCentreAdmin,
@@ -246,6 +248,7 @@
                     importOnly,
                     categoryId,
                     adminId,
+                    isCentreManager
                 }
             );
         }

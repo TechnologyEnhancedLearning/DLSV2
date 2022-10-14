@@ -175,7 +175,7 @@
             try
             {
                 // When
-                userDataService.UpdateAdminUserPermissions(7, true, true, true, true, true, true, true, 1);
+                userDataService.UpdateAdminUserPermissions(7, true, true, true, true, true, true, true, 1, false);
                 var updatedUser = userDataService.GetAdminUserById(7)!;
 
                 // Then

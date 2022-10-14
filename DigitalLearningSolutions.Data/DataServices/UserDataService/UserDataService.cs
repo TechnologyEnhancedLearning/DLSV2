@@ -32,7 +32,8 @@
             bool isContentCreator,
             bool isContentManager,
             bool importOnly,
-            int? categoryId
+            int categoryId,
+            bool isCentreManager
         );
 
         void UpdateUserFailedLoginCount(int userId, int updatedCount);
