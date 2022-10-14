@@ -42,6 +42,8 @@
             SupervisorEmail = supervisorEmail;
             SupervisorFirstName = supervisorFirstName;
             SupervisorLastName = supervisorLastName;
+            IsCmsAdmin = isCmsAdmin;
+            IsCmsManager = isCmsManager;
 
             if (isCmsAdmin)
             {

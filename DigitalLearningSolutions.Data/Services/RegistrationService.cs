@@ -221,7 +221,7 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateUser.ProfessionalRegistrationNumber,
                     categoryId,
                     adminRoles.IsCentreAdmin,
-                    false,
+                    adminRoles.IsCentreManager,
                     adminRoles.IsSupervisor,
                     adminRoles.IsNominatedSupervisor,
                     adminRoles.IsTrainer,
