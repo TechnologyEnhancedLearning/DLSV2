@@ -1,5 +1,9 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
 @model IGrouping<string, Competency>;
+@{
+  string QuestionLabel = string.IsNullOrWhiteSpace(Model.FirstOrDefault().QuestionLabel) ?
+  "Question" : Model.FirstOrDefault().QuestionLabel;
+}
 
 <table class="nhsuk-table-responsive nhsuk-u-margin-top-4">
   <thead class="nhsuk-table__head">
@@ -8,8 +12,7 @@
         @Model.First().Vocabulary
       </th>
       <th class="" scope="col">
-        @(string.IsNullOrWhiteSpace(Model.FirstOrDefault().QuestionLabel) ?
-            "Question" : Model.FirstOrDefault().QuestionLabel)
+        @QuestionLabel
       </th>
       <th class="" scope="col">
         Self-assessment<br />status
@@ -33,8 +36,8 @@
         <td rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
           <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
           <partial name="_CompetencyFlags"
-                 model="competency.CompetencyFlags"
-                 view-data="@(new ViewDataDictionary(ViewData) {{ "cssClass", $"{(competency.AlwaysShowDescription ? "" : "nhsuk-u-padding-left-4")}" }})" />
+                   model="competency.CompetencyFlags"
+                   view-data="@(new ViewDataDictionary(ViewData) {{ "cssClass", $"{(competency.AlwaysShowDescription ? "" : "nhsuk-u-padding-left-4")}" }})" />
           @if (competency.Description != null && !competency.AlwaysShowDescription)
           {
             <details class="nhsuk-details">
@@ -61,7 +64,7 @@
             }
           }
         </td>
-        <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo } })" />
+        <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo },{ "QuestionLabel", QuestionLabel } })" />
         <td rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
           <span class="nhsuk-table-responsive__heading">Action </span>
           <a aria-label="Review @competency.Name" asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]" asp-route-competencyNumber="@competency.RowNo">
@@ -72,7 +75,7 @@
       @foreach (var question in competency.AssessmentQuestions.Skip(1))
       {
         <tr class="nhsuk-table__row">
-          <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo } })" />
+          <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo },{ "QuestionLabel", QuestionLabel } })" />
 
         </tr>
 
