@@ -252,54 +252,54 @@ namespace DigitalLearningSolutions.Data.Services
 
             builder.TextBody = $@"Dear {adminRegistrationModel.FirstName},
                                 The user {adminRegistrationModel.SupervisorFirstName} {adminRegistrationModel.SupervisorLastName} has granted you new access permissions in the Digital Learning Solutions system.
-                                The permissions you have been granted are:";
+                                You have been granted the following permissions:";
 
             builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {adminRegistrationModel.FirstName},</p>
                                 <p>The user <a href = 'mailto:{adminRegistrationModel.SupervisorEmail}'>{adminRegistrationModel.SupervisorFirstName} {adminRegistrationModel.SupervisorLastName}</a> has granted you new access permissions in the Digital Learning Solutions system.</p>
-                                <p>The permissions you have been granted are:</p>";
+                                <p>You have been granted the following permissions:</p>";
 
             builder.HtmlBody += "<ul>";
 
             if (adminRegistrationModel.IsCentreAdmin)
             {
-                builder.TextBody += "• Centre Admin";
+                builder.TextBody += "Â• Centre Admin";
                 builder.HtmlBody += "<li>Centre Admin</li>";
             }
             if (adminRegistrationModel.IsCentreManager)
             {
-                builder.TextBody += "• Centre Manager";
+                builder.TextBody += "Â• Centre Manager";
                 builder.HtmlBody += "<li>Centre Manager</li>";
             }
             if (adminRegistrationModel.IsSupervisor)
             {
-                builder.TextBody += "• Supervisor";
+                builder.TextBody += "Â• Supervisor";
                 builder.HtmlBody += "<li>Supervisor</li>";
             }
             if (adminRegistrationModel.IsNominatedSupervisor)
             {
-                builder.TextBody += "• Nominated Supervisor";
+                builder.TextBody += "Â• Nominated Supervisor";
                 builder.HtmlBody += "<li>Nominated Supervisor</li>";
             }
             if (adminRegistrationModel.IsTrainer)
             {
-                builder.TextBody += "• Trainer";
+                builder.TextBody += "Â• Trainer";
                 builder.HtmlBody += "<li>Trainer</li>";
             }
             if (adminRegistrationModel.IsContentCreator)
             {
-                builder.TextBody += "• Content Creator";
+                builder.TextBody += "Â• Content Creator";
                 builder.HtmlBody += "<li>Content Creator</li>";
             }
             if (adminRegistrationModel.IsCmsAdmin)
             {
-                builder.TextBody += "• Cms Administrator";
+                builder.TextBody += "Â• Cms Administrator";
                 builder.HtmlBody += "<li>Cms Administrator</li>";
             }
 
             if (adminRegistrationModel.IsCmsManager)
             {
-                builder.TextBody += "• Cms Manager";
+                builder.TextBody += "Â• Cms Manager";
                 builder.HtmlBody += "<li>Cms Manager</li>";
             }
 
