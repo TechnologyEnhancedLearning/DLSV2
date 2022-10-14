@@ -349,7 +349,8 @@ namespace DigitalLearningSolutions.Data.Services
                 adminRoles.IsContentCreator,
                 adminRoles.IsContentManager,
                 adminRoles.ImportOnly,
-                categoryId
+                categoryId,
+                adminRoles.IsCentreManager
             );
         }
 
