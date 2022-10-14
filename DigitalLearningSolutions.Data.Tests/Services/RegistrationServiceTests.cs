@@ -626,7 +626,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(firstName: null);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, false);
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
 
             // When
@@ -643,7 +643,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: null);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, false);
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
 
             // When
@@ -662,7 +662,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, false);
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
 
@@ -682,7 +682,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         adminRoles.IsContentCreator || adminUser.IsContentCreator,
                         adminRoles.IsContentManager || adminUser.IsContentManager,
                         adminRoles.ImportOnly || adminUser.ImportOnly,
-                        adminUser.CategoryId
+                        adminUser.CategoryId,
+                        adminRoles.IsCentreManager || adminUser.IsCentreManager
                     )
                 ).MustHaveHappenedOnceExactly();
             }
@@ -695,7 +696,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var adminUser = UserTestHelper.GetDefaultAdminUser(centreId: 3, active: false);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, false);
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
 
@@ -719,7 +720,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             const int categoryId = 1;
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var adminUser = UserTestHelper.GetDefaultAdminUser(active: false);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, true);
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
 
@@ -751,7 +752,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         adminRoles.IsContentCreator,
                         adminRoles.IsContentManager,
                         adminRoles.ImportOnly,
-                        categoryId
+                        categoryId,
+                        adminRoles.IsCentreManager
                     )
                 ).MustHaveHappenedOnceExactly();
             }
@@ -762,7 +764,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, true);
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(null);
 
@@ -853,7 +855,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     A<bool>._,
                     A<bool>._,
                     A<bool>._,
-                    A<int>._
+                    A<int>._,
+                    A<bool>._
                 )
             ).MustNotHaveHappened();
         }

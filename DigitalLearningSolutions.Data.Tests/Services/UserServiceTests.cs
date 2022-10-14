@@ -790,7 +790,7 @@
             );
             var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
             GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true, true);
 
             // When
             userService.UpdateAdminUserPermissions(currentAdminUser.Id, adminRoles, 0);
@@ -816,7 +816,7 @@
 
             var numberOfAdmins = GetFullCentreContractAdminUsage();
             GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true, importOnly);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, importOnly, true);
 
             // When
             userService.UpdateAdminUserPermissions(currentAdminUser.Id, adminRoles, 0);
@@ -845,7 +845,7 @@
             );
             var numberOfAdmins = GetFullCentreContractAdminUsage();
             GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
-            var adminRoles = new AdminRoles(true, true, newIsContentCreator, true, newIsTrainer, true, newImportOnly);
+            var adminRoles = new AdminRoles(true, true, newIsContentCreator, true, newIsTrainer, true, newImportOnly, true);
 
             // Then
             Assert.Throws<AdminRoleFullException>(
@@ -1318,7 +1318,8 @@
                     adminRoles.IsContentCreator,
                     adminRoles.IsContentManager,
                     adminRoles.ImportOnly,
-                    categoryId
+                    categoryId,
+                    adminRoles.IsCentreManager
                 )
             ).MustHaveHappened();
         }
@@ -1335,7 +1336,8 @@
                     A<bool>._,
                     A<bool>._,
                     A<bool>._,
-                    A<int>._
+                    A<int>._,
+                    A<bool>._
                 )
             ).MustNotHaveHappened();
         }
