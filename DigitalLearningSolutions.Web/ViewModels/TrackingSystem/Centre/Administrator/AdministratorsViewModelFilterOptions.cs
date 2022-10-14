@@ -15,6 +15,7 @@
     {
         public static readonly IEnumerable<FilterOptionModel> RoleOptions = new[]
         {
+            AdminRoleFilterOptions.CentreManager,
             AdminRoleFilterOptions.CentreAdministrator,
             AdminRoleFilterOptions.Supervisor,
             AdminRoleFilterOptions.NominatedSupervisor,
