@@ -9,10 +9,7 @@ using System.Linq;
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
 {
     public class EnrolSupervisorViewModel
-        //: Enumeration
     {
-        //public EnrolSupervisorViewModel(int delegateId, string delegateName)
-        //    : base(delegateId, delegateName) { }
         public EnrolSupervisorViewModel() { }
         public EnrolSupervisorViewModel(
             int delegateId,
@@ -21,7 +18,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
             IEnumerable<SupervisorForEnrolDelegate> supervisorList,
             int selectedSupervisor
         )
-            //: base(delegateId, delegateName)
         {
             DelegateId = delegateId;
             DelegateName = delegateName;
@@ -34,16 +30,16 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
             bool isSelfAssessment,
             IEnumerable<SupervisorForEnrolDelegate> supervisorList,
             int selectedSupervisor,
-            IEnumerable<SelfAssessmentSupervisorRole>? supervisorRoleList
+            IEnumerable<SelfAssessmentSupervisorRole>? supervisorRoleList,
+            int selectedSupervisorRole
         )
-            //: base(delegateId, delegateName)
         {
             DelegateId = delegateId;
             DelegateName = delegateName;
             IsSelfAssessment = isSelfAssessment;
             SupervisorList = PopulateItems(supervisorList, selectedSupervisor);
             SupervisorRoleList = supervisorRoleList;
-            //SupervisorRoleList1 = PopulateRadioItems(supervisorRoleList);
+            SelectedSupervisorRoleId = selectedSupervisorRole;
         }
         public int DelegateId { get; set; }
         public string? DelegateName { get; set; }
@@ -65,22 +61,5 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
                 LearningItemIdNames, selected
            );
         }
-
-        //private static IEnumerable<RadiosListItemViewModel> PopulateRadioItems(
-        //    IEnumerable<SelfAssessmentSupervisorRole> roleList
-        //)
-        //{
-        //    List<RadiosListItemViewModel> radioItems = new List<RadiosListItemViewModel>();
-        //    roleList.ToList().ForEach(role =>
-        //    {
-        //        RadiosListItemViewModel objRadiosListItemViewModel = new RadiosListItemViewModel();
-        //        objRadiosListItemViewModel.HintText = role.RoleName;
-        //        objRadiosListItemViewModel.Label = role.RoleName;
-        //        objRadiosListItemViewModel.Enumeration = new EnrolSupervisorViewModel(role.ID, role.RoleName);
-        //        radioItems.Add(objRadiosListItemViewModel);
-        //    });
-
-        //    return radioItems;
-        //}
     }
 }

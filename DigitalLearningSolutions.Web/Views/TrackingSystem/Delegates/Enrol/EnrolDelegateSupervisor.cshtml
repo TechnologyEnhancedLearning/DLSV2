@@ -25,13 +25,7 @@
                             default-option="--Select--"
                             select-list-options="@Model.SupervisorList" />
             @if (Model.IsSelfAssessment && Model.SupervisorRoleList.Count() > 1)
-            {
-                @*<vc:radios asp-for="@nameof(Model.SelectedSupervisorRoleId)"
-                       label="Choose your supervisor role"
-                       populate-with-current-values="false"
-                       radios="Model.SupervisorRoleList1"
-                       hint-text=""
-                       required="false" />*@
+            {              
                 <fieldset class="nhsuk-fieldset">
                     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                         <h3 class="nhsuk-fieldset__heading">

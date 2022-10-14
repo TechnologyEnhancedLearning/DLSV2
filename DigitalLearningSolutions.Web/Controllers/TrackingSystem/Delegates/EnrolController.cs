@@ -184,7 +184,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             {
                 var roles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
                 var model = new EnrolSupervisorViewModel(delegateId, delegateName, sessionEnrol.IsSelfAssessment,
-                   supervisorList, sessionEnrol.SupervisorID.GetValueOrDefault(), roles);
+                   supervisorList, sessionEnrol.SupervisorID.GetValueOrDefault(), roles,sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault());
                 return View(model);
             }
         }
