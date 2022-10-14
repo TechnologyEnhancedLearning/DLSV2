@@ -15,7 +15,7 @@
     .DefaultIfEmpty(DateTime.MinValue)
     .Max();
   var competencySummaries = from g in Model.CompetencyGroups
-      let questions = g.SelectMany(c => c.AssessmentQuestions).Where(q => q.Required)
+      let questions = g.SelectMany(c => c.AssessmentQuestions)
       let selfAssessedCount = questions.Count(q => q.ResultId.HasValue)
       let verifiedCount = questions.Count(q => q.Verified.HasValue && q.SignedOff is true)
       select new ViewDataDictionary(ViewData)
