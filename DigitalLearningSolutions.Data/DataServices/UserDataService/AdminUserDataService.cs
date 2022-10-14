@@ -236,7 +236,7 @@
                             ImportOnly = @importOnly,
                             CategoryID = @categoryId,
                             IsCentreManager = @isCentreManager
-                        WHERE AdminID = @adminId",
+                        WHERE ID = @adminId",
                 new
                 {
                     isCentreAdmin,
