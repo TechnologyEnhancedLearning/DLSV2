@@ -14,8 +14,6 @@
             <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
         </div>
         <form method="post">
-           @* @Html.HiddenFor(m => m.Id);
-            @Html.HiddenFor(m => m.Name);*@
             <vc:select-list asp-for="@nameof(Model.SelectedSupervisor)"
                             label="Choose a supervisor (optional):"
                             value="@Model.SelectedSupervisor"
