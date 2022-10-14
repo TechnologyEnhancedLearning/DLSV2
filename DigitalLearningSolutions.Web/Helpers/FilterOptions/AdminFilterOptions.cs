@@ -11,6 +11,12 @@
     {
         private const string Group = "Role";
 
+        public static readonly FilterOptionModel CentreManager = new FilterOptionModel(
+            "Centre manager",
+            FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsCentreManager), "true"),
+            FilterStatus.Default
+        );
+
         public static readonly FilterOptionModel CentreAdministrator = new FilterOptionModel(
             "Centre administrator",
             FilteringHelper.BuildFilterValueString(Group, nameof(AdminUser.IsCentreAdmin), "true"),

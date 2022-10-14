@@ -22,6 +22,11 @@
                 tags.Add(new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsNotLocked, true));
             }
 
+            if (adminUser.IsCentreManager)
+            {
+                tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CentreManager));
+            }
+
             if (adminUser.IsCentreAdmin)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CentreAdministrator));
@@ -32,7 +37,7 @@
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.Supervisor));
             }
 
-            if(adminUser.IsNominatedSupervisor)
+            if (adminUser.IsNominatedSupervisor)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.NominatedSupervisor));
             }
