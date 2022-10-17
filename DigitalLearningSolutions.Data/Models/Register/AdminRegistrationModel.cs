@@ -22,7 +22,12 @@
             bool isContentCreator,
             bool isCmsAdmin,
             bool isCmsManager,
+            int supervisorDelegateId,
+            string supervisorEmail,
+            string supervisorFirstName,
+            string supervisorLastName,
             byte[]? profileImage = null
+
         ) : base(firstName, lastName, email, centre, passwordHash, active, approved, professionalRegistrationNumber)
         {
             CategoryId = categoryId;
@@ -33,6 +38,12 @@
             IsTrainer = isTrainer;
             IsContentCreator = isContentCreator;
             ProfileImage = profileImage;
+            SupervisorDelegateId = supervisorDelegateId;
+            SupervisorEmail = supervisorEmail;
+            SupervisorFirstName = supervisorFirstName;
+            SupervisorLastName = supervisorLastName;
+            IsCmsAdmin = isCmsAdmin;
+            IsCmsManager = isCmsManager;
 
             if (isCmsAdmin)
             {
@@ -65,9 +76,17 @@
 
         public bool IsContentCreator { get; set; }
 
+        public bool IsCmsAdmin { get; set; }
+        public bool IsCmsManager { get; set; }
+
         public int CategoryId { get; set; }
 
         public byte[]? ProfileImage { get; set; }
+
+        public int SupervisorDelegateId { get; set; }
+        public string? SupervisorEmail { get; set; }
+        public string SupervisorFirstName { get; set; }
+        public string SupervisorLastName { get; set; }
 
         public IEnumerable<int> GetNotificationRoles()
         {

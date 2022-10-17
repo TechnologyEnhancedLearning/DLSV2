@@ -10,6 +10,7 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using MimeKit;
@@ -31,7 +32,12 @@ namespace DigitalLearningSolutions.Data.Services
             bool registerJourneyContainsTermsAndConditions
         );
 
-        void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId);
+        void PromoteDelegateToAdmin(
+            AdminRoles adminRoles,
+            int categoryId,
+            int delegateId,
+            AdminUser? supervisorAdminUser,
+            DelegateUser supervisorDelegateUser);
     }
 
     public class RegistrationService : IRegistrationService
@@ -46,6 +52,7 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
         private readonly INotificationDataService notificationDataService;
+        private readonly ISupervisorService supervisorService;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
@@ -57,8 +64,9 @@ namespace DigitalLearningSolutions.Data.Services
             ISupervisorDelegateService supervisorDelegateService,
             IUserDataService userDataService,
             INotificationDataService notificationDataService,
-            ILogger<RegistrationService> logger
-        )
+            ILogger<RegistrationService> logger,
+            ISupervisorService supervisorService
+            )
         {
             this.registrationDataService = registrationDataService;
             this.passwordDataService = passwordDataService;
@@ -71,6 +79,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.userDataService = userDataService;
             this.notificationDataService = notificationDataService;
             this.logger = logger;
+            this.supervisorService = supervisorService;
         }
 
         public (string candidateNumber, bool approved) RegisterDelegate(
@@ -144,7 +153,7 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId)
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser? supervisorAdminUser, DelegateUser supervisorDelegateUser)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
@@ -180,7 +189,8 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsContentCreator,
                     adminRoles.IsContentManager,
                     adminRoles.ImportOnly,
-                    categoryId
+                    categoryId,
+                    adminRoles.IsCentreManager
                 );
             }
             else if (adminUser?.Active == true && adminUser.CentreId == delegateUser.CentreId)
@@ -194,7 +204,8 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsContentCreator || adminUser.IsContentCreator,
                     adminRoles.IsContentManager || adminUser.IsContentManager,
                     adminRoles.ImportOnly = adminRoles.ImportOnly || adminUser.ImportOnly,
-                    adminUser.CategoryId
+                    adminUser.CategoryId,
+                    adminRoles.IsCentreManager || adminUser.IsCentreManager
                 );
             }
             else if (adminUser == null)
@@ -210,22 +221,96 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateUser.ProfessionalRegistrationNumber,
                     categoryId,
                     adminRoles.IsCentreAdmin,
-                    false,
+                    adminRoles.IsCentreManager,
                     adminRoles.IsSupervisor,
                     adminRoles.IsNominatedSupervisor,
                     adminRoles.IsTrainer,
                     adminRoles.IsContentCreator,
                     adminRoles.IsCmsAdministrator,
                     adminRoles.IsCmsManager,
+                    supervisorDelegateUser.Id,
+                    supervisorDelegateUser.EmailAddress ?? string.Empty,
+                    supervisorDelegateUser.FirstName ?? string.Empty,
+                    supervisorDelegateUser.LastName,
                     delegateUser.ProfileImage
                 );
 
                 registrationDataService.RegisterAdmin(adminRegistrationModel, false);
+                SendEmailNotification(adminRegistrationModel);
             }
             else
             {
                 throw new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse);
             }
+        }
+
+        private void SendEmailNotification(AdminRegistrationModel adminRegistrationModel)
+        {
+            var emailSubjectLine = "New Digital Learning Solutions permissions granted";
+
+            var builder = new BodyBuilder();
+
+            builder.TextBody = $@"Dear {adminRegistrationModel.FirstName},
+                                The user {adminRegistrationModel.SupervisorFirstName} {adminRegistrationModel.SupervisorLastName} has granted you new access permissions in the Digital Learning Solutions system.
+                                You have been granted the following permissions:";
+
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
+                                <p>Dear {adminRegistrationModel.FirstName},</p>
+                                <p>The user <a href = 'mailto:{adminRegistrationModel.SupervisorEmail}'>{adminRegistrationModel.SupervisorFirstName} {adminRegistrationModel.SupervisorLastName}</a> has granted you new access permissions in the Digital Learning Solutions system.</p>
+                                <p>You have been granted the following permissions:</p>";
+
+            builder.HtmlBody += "<ul>";
+
+            if (adminRegistrationModel.IsCentreAdmin)
+            {
+                builder.TextBody += " Centre Admin";
+                builder.HtmlBody += "<li>Centre Admin</li>";
+            }
+            if (adminRegistrationModel.IsCentreManager)
+            {
+                builder.TextBody += " Centre Manager";
+                builder.HtmlBody += "<li>Centre Manager</li>";
+            }
+            if (adminRegistrationModel.IsSupervisor)
+            {
+                builder.TextBody += " Supervisor";
+                builder.HtmlBody += "<li>Supervisor</li>";
+            }
+            if (adminRegistrationModel.IsNominatedSupervisor)
+            {
+                builder.TextBody += " Nominated Supervisor";
+                builder.HtmlBody += "<li>Nominated Supervisor</li>";
+            }
+            if (adminRegistrationModel.IsTrainer)
+            {
+                builder.TextBody += " Trainer";
+                builder.HtmlBody += "<li>Trainer</li>";
+            }
+            if (adminRegistrationModel.IsContentCreator)
+            {
+                builder.TextBody += " Content Creator";
+                builder.HtmlBody += "<li>Content Creator</li>";
+            }
+            if (adminRegistrationModel.IsCmsAdmin)
+            {
+                builder.TextBody += " Cms Administrator";
+                builder.HtmlBody += "<li>Cms Administrator</li>";
+            }
+
+            if (adminRegistrationModel.IsCmsManager)
+            {
+                builder.TextBody += " Cms Manager";
+                builder.HtmlBody += "<li>Cms Manager</li>";
+            }
+
+            builder.HtmlBody += "</ul>";
+
+            builder.TextBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.";
+            builder.HtmlBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.</body>";
+
+            supervisorService.UpdateNotificationSent(adminRegistrationModel.SupervisorDelegateId);
+
+            emailService.SendEmail(new Email(emailSubjectLine, builder, adminRegistrationModel.Email, adminRegistrationModel.SupervisorEmail));
         }
 
         public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)

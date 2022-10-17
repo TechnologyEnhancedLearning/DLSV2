@@ -24,6 +24,7 @@
         {
             IsCentreAdmin = user.IsCentreAdmin;
             IsSupervisor = user.IsSupervisor;
+            IsCenterManager =  user.IsCentreManager;
             IsNominatedSupervisor = user.IsNominatedSupervisor;
             IsTrainer = user.IsTrainer;
             IsContentCreator = user.IsContentCreator;

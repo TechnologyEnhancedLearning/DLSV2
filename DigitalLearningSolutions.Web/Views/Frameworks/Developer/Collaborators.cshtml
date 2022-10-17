@@ -1,9 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @model CollaboratorsViewModel
 @{
-    ViewData["Title"] = "Framework Collaborators";
-    ViewData["Application"] = "Framework Service";
-    ViewData["HeaderPathName"] = "Framework Service";
+  ViewData["Title"] = "Framework Collaborators";
+  ViewData["Application"] = "Framework Service";
+  ViewData["HeaderPathName"] = "Framework Service";
+  string errMsg = TempData["FrameworkError"]?.ToString();
+  if (!string.IsNullOrWhiteSpace(errMsg)) { Model.Error = true; }
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -62,6 +64,12 @@ else
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
   <p class="nhsuk-lede-text">Your framework has been created. Use this page to identify individuals who will be working on it with you.</p>
+}
+@if (Model.Error)
+{
+<span class="nhsuk-error-message" id="no-admin-error">
+  <span class="nhsuk-u-visually-hidden">Error:</span> @errMsg
+</span>
 }
 <div class="nhsuk-table__panel-with-heading-tab">
   <h2 class="nhsuk-table__heading-tab">Working Group Members</h2>
@@ -122,7 +130,7 @@ else
   </label>
   <div class="@(Model.Error? "nhsuk-form-group nhsuk-form-group--error" : "nhsuk-form-group")">
     <div class=" sort-select-container">
-      <label class="nhsuk-label" for="example">
+      <label class="nhsuk-label" for="userEmail">
         User email address
       </label>
 
@@ -132,7 +140,7 @@ else
       @if (Model.Error)
       {
         <span class="nhsuk-error-message" id="no-admin-error">
-          <span class="nhsuk-u-visually-hidden">Error:</span> The email address must match a registered DLS admin account.
+          <span class="nhsuk-u-visually-hidden">Error:</span> @errMsg
         </span>
       }
       <input class="@(Model.Error? "nhsuk-input nhsuk-input--error" : "nhsuk-input")" id="userEmail" aria-describedby="add-user-hint" type="email" name="userEmail" />
