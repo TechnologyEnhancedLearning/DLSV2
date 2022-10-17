@@ -658,7 +658,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 Collaborators = collaborators,
                 Error = false,
             };
-            if (TempData["FrameworkError"] !=null)
+            if (TempData["FrameworkError"] != null)
             {
                 ModelState.AddModelError("userEmail", TempData.Peek("FrameworkError").ToString());
             }
