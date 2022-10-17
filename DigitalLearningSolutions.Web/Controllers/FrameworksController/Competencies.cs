@@ -137,6 +137,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddEditFrameworkCompetency(int frameworkId, FrameworkCompetency frameworkCompetency, int? frameworkCompetencyGroupId, int frameworkCompetencyId = 0, int[] selectedFlagIds = null)
         {
             frameworkCompetency.Description = SanitizerHelper.SanitizeHtmlData(frameworkCompetency.Description);
+            frameworkCompetency.Description?.Trim();
+            var description = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(frameworkCompetency.Description));
+            if (string.IsNullOrWhiteSpace(description)) { frameworkCompetency.Description = null; }
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(FrameworkCompetency.Name));
@@ -161,9 +164,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (userRole < 2) return StatusCode((int)HttpStatusCode.Forbidden);
             if (frameworkCompetency.Id > 0)
             {
-                frameworkCompetency.Description?.Trim();
-                var description = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(frameworkCompetency.Description));
-                if (string.IsNullOrWhiteSpace(description)) { frameworkCompetency.Description = null; }
+                
 
                 frameworkService.UpdateFrameworkCompetency(frameworkCompetencyId, frameworkCompetency.Name, frameworkCompetency.Description, adminId);
                 frameworkService.UpdateCompetencyFlags(frameworkId, frameworkCompetency.CompetencyID, selectedFlagIds);
