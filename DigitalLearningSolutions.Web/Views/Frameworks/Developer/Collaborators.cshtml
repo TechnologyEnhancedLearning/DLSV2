@@ -13,7 +13,19 @@
 }
 @if (Model.Error)
 {
-    <vc:error-summary order-of-property-names="@(new string[] { "userEmail" })" />
+    @*<vc:error-summary order-of-property-names="@(new string[] { "userEmail" })" />*@
+    <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+        <h2 class="nhsuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="nhsuk-error-summary__body">
+            <ul class="nhsuk-list nhsuk-error-summary__list">
+                <li>
+                    <a href="#userEmail">@errMsg</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 }
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
@@ -64,12 +76,6 @@ else
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
   <p class="nhsuk-lede-text">Your framework has been created. Use this page to identify individuals who will be working on it with you.</p>
-}
-@if (Model.Error)
-{
-<span class="nhsuk-error-message" id="no-admin-error">
-  <span class="nhsuk-u-visually-hidden">Error:</span> @errMsg
-</span>
 }
 <div class="nhsuk-table__panel-with-heading-tab">
   <h2 class="nhsuk-table__heading-tab">Working Group Members</h2>

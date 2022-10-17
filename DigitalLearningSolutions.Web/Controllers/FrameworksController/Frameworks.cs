@@ -680,11 +680,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 }
                 else if (collaboratorId == -2)
                 {
-                    TempData["FrameworkError"] = $"User with the email address {userEmail} has been previously added";
+                    TempData["FrameworkError"] = $"User with the email address has been previously added";
                 }
                 else if (collaboratorId == -4)
                 {
-                    TempData["FrameworkError"] = $"The email address {userEmail}  must match registered DLS Admin account";
+                    TempData["FrameworkError"] = $"The email address must match registered DLS Admin account";
                 }
                 else
                 {
