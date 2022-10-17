@@ -1,13 +1,17 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @model CollaboratorsViewModel
 @{
-  ViewData["Title"] = "Framework Collaborators";
-  ViewData["Application"] = "Framework Service";
-  ViewData["HeaderPathName"] = "Framework Service";
+    ViewData["Title"] = "Framework Collaborators";
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
+}
+@if (Model.Error)
+{
+    <vc:error-summary order-of-property-names="@(new string[] { "userEmail" })" />
 }
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
