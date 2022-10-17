@@ -143,14 +143,17 @@
         <partial name="_DelegateCourseInfoCard" model="delegateCourseInfoViewModel" />
       }
     }
-    <a class="nhsuk-button nhsuk-button--secondary"
-         role="button"
-         asp-controller="Enrol"
-         asp-action="StartEnrolProcess"
-         asp-route-delegateId="@Model.DelegateInfo.Id"
-         asp-route-delegateName="@Model.DelegateInfo.Name"
-       >
-        Enrol on activity
-      </a>
+     @if (Model.DelegateInfo.IsActive)
+        {
+          <a class="nhsuk-button nhsuk-button--secondary"
+             role="button"
+             asp-controller="Enrol"
+             asp-action="StartEnrolProcess"
+             asp-route-delegateId="@Model.DelegateInfo.Id"
+             asp-route-delegateName="@Model.DelegateInfo.Name"
+           >
+            Enrol on activity
+          </a>
+        }
   </div>
 </div>

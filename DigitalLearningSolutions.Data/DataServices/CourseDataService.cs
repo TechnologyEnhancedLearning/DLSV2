@@ -392,7 +392,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
             int supervisorDelegateId = (int)connection.ExecuteScalar(
                     @"SELECT COALESCE
-                 ((SELECT ID FROM SupervisorDelegates WHERE [SupervisorAdminId] = @supervisorId), 0) AS ID",
+                 ((SELECT TOP 1 ID FROM SupervisorDelegates WHERE [SupervisorAdminId] = @supervisorId), 0) AS ID",
                     new { supervisorId }
                 );
 
