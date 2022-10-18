@@ -4,7 +4,6 @@ using DigitalLearningSolutions.Data.Models.Courses;
 using DigitalLearningSolutions.Data.Models.SessionData.Tracking.Delegate.Enrol;
 using DigitalLearningSolutions.Data.Services;
 using DigitalLearningSolutions.Web.Attributes;
-
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol;
