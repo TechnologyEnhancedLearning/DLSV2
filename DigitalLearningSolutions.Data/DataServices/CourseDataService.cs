@@ -357,10 +357,10 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             DateTime startedDate = DateTime.Now;
             DateTime lastAccessed = startedDate;
-            string completedDate = "";
+            dynamic completedDate = "";
             if (completeByDate.Year > 1753)
             {
-                completedDate = completeByDate.ToString();
+                completedDate = completeByDate;
             }
             var candidateAssessmentId = (int)connection.ExecuteScalar(
                 @"SELECT COALESCE
@@ -395,7 +395,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                  ((SELECT TOP 1 ID FROM SupervisorDelegates WHERE SupervisorAdminID = @supervisorId AND CandidateID = @candidateId), 0) AS ID",
                     new { supervisorId, candidateId }
                 );
-            if (supervisorDelegateId == 0)
+            if (supervisorDelegateId == 0 && supervisorId > 0)
             {
                 supervisorDelegateId = connection.QuerySingle<int>(@"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, SupervisorEmail, AddedByDelegate)
                     SELECT @supervisorId, EmailAddress, @candidateId, @adminEmail, 0
