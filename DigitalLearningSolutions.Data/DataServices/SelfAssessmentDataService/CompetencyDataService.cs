@@ -341,7 +341,8 @@
             Competency? competencyResult = null;
             return connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {SpecificAssessmentResults}
-                    SELECT {CompetencyFields}
+                    SELECT {CompetencyFields},
+                    LAR.SupervisorName
                     FROM {SpecificCompetencyTables}
                     WHERE ResultId = @resultId",
                 (competency, assessmentQuestion) =>
