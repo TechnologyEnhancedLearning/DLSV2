@@ -357,10 +357,10 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             DateTime startedDate = DateTime.Now;
             DateTime lastAccessed = startedDate;
-            string completedDate = "";
+            dynamic completeByDateDynamic = "";
             if (completeByDate.Year > 1753)
             {
-                completedDate = completeByDate.ToString();
+                completeByDateDynamic = completeByDate;
             }
             var candidateAssessmentId = (int)connection.ExecuteScalar(
                 @"SELECT COALESCE
@@ -385,8 +385,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                            @selfAssessmentId,
                            @startedDate,
                            @lastAccessed,
-                           @completedDate)",
-                    new { selfAssessmentId, candidateId, startedDate, lastAccessed, completedDate }
+                           @completeByDateDynamic);",
+                    new { selfAssessmentId, candidateId, startedDate, lastAccessed, completeByDateDynamic }
                 );
             }
 
@@ -395,13 +395,13 @@ namespace DigitalLearningSolutions.Data.DataServices
                  ((SELECT TOP 1 ID FROM SupervisorDelegates WHERE SupervisorAdminID = @supervisorId AND CandidateID = @candidateId), 0) AS ID",
                     new { supervisorId, candidateId }
                 );
-            if (supervisorDelegateId == 0)
+            if (supervisorDelegateId == 0 && supervisorId > 0)
             {
                 supervisorDelegateId = connection.QuerySingle<int>(@"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, SupervisorEmail, AddedByDelegate)
+                    OUTPUT INSERTED.Id
                     SELECT @supervisorId, EmailAddress, @candidateId, @adminEmail, 0
                         FROM Candidates
-                        WHERE CandidateID = @candidateId;
-                        SELECT CAST(SCOPE_IDENTITY() as int)", new { supervisorId, candidateId, adminEmail });
+                        WHERE CandidateID = @candidateId", new { supervisorId, candidateId, adminEmail });
             }
 
             if (candidateAssessmentId > 0 && supervisorDelegateId > 0 && selfAssessmentSupervisorRoleId > 0)
