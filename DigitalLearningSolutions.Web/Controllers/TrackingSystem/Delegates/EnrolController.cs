@@ -4,6 +4,7 @@ using DigitalLearningSolutions.Data.Models.Courses;
 using DigitalLearningSolutions.Data.Models.SessionData.Tracking.Delegate.Enrol;
 using DigitalLearningSolutions.Data.Services;
 using DigitalLearningSolutions.Web.Attributes;
+
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol;
@@ -89,7 +90,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             if (enrolCurrentLearningViewModel.SelectedActivity < 1)
             {
-                ModelState.AddModelError("SelectedAvailableCourse", "You must select a activity");
+                ModelState.Clear();
+                ModelState.AddModelError("SelectedAvailableCourse", "You must select an activity");
                 multiPageFormService.SetMultiPageFormData(
                     sessionEnrol,
                     MultiPageFormDataFeature.EnrolDelegateInActivity,
