@@ -143,7 +143,7 @@
         <partial name="_DelegateCourseInfoCard" model="delegateCourseInfoViewModel" />
       }
     }
-     @if (Model.DelegateInfo.IsActive)
+     @if (Model.DelegateInfo.IsActive && !string.IsNullOrEmpty(Model.DelegateInfo.Email))
         {
           <a class="nhsuk-button nhsuk-button--secondary"
              role="button"
