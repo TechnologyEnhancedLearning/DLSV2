@@ -252,10 +252,12 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             }
             else
             {
+                var adminEmail = User.GetUserEmail();
                 var selfAssessmentId = courseDataService.EnrolOnActivitySelfAssessment(
                     sessionEnrol.AssessmentID.GetValueOrDefault(),
                     delegateId,
                     sessionEnrol.SupervisorID.GetValueOrDefault(),
+                    adminEmail,
                     sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault(),
                     sessionEnrol.CompleteByDate.GetValueOrDefault()
                     );
