@@ -9,7 +9,7 @@ const toggleableActivityRowClass = 'js-toggleable-activity-row';
 const activityGraphId = 'activity-graph';
 const activityGraphDataErrorId = 'activity-graph-data-error';
 
-const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
+const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Courses/Data');
 const activityToggleableRowDisplayNone = 'none';
 const activityToggleableRowDisplayTableRow = 'table-row';
 
