@@ -13,13 +13,13 @@
             <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 3</h1>
             <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
         </div>
-        <form method="post">
+        <form method="post" class="nhsuk-u-margin-bottom-3">
             <vc:select-list asp-for="@nameof(Model.SelectedSupervisor)"
                             label="Choose a supervisor (optional):"
                             value="@Model.SelectedSupervisor"
                             hint-text=""
                             required="true"
-                            css-class="nhsuk-select sort-by-dropdown"
+                            css-class="nhsuk-u-width-one-half"
                             default-option="--Select--"
                             select-list-options="@Model.SupervisorList" />
             @if (Model.IsSelfAssessment && Model.SupervisorRoleList.Count() > 1)
