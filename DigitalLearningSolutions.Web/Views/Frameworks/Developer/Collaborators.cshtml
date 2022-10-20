@@ -11,6 +11,10 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+@if (Model.Error)
+{
+    <vc:error-summary order-of-property-names="@(new string[] { "userEmail" })" />
+}
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
   @section NavBreadcrumbs {
@@ -60,12 +64,6 @@ else
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
   <p class="nhsuk-lede-text">Your framework has been created. Use this page to identify individuals who will be working on it with you.</p>
-}
-@if (Model.Error)
-{
-<span class="nhsuk-error-message" id="no-admin-error">
-  <span class="nhsuk-u-visually-hidden">Error:</span> @errMsg
-</span>
 }
 <div class="nhsuk-table__panel-with-heading-tab">
   <h2 class="nhsuk-table__heading-tab">Working Group Members</h2>

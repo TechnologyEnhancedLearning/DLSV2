@@ -658,6 +658,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 Collaborators = collaborators,
                 Error = false,
             };
+            if (TempData["FrameworkError"] != null)
+            {
+                ModelState.AddModelError("userEmail", TempData.Peek("FrameworkError").ToString());
+            }
             return View("Developer/Collaborators", model);
         }
 
@@ -680,11 +684,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 }
                 else if (collaboratorId == -2)
                 {
-                    TempData["FrameworkError"] = $"User with the email address {userEmail} has been previously added";
+                    TempData["FrameworkError"] = $"A user with the email address has been previously added";
                 }
                 else if (collaboratorId == -4)
                 {
-                    TempData["FrameworkError"] = $"The email address {userEmail}  must match registered DLS Admin account";
+                    TempData["FrameworkError"] = $"The email address must match a registered DLS Admin account";
                 }
                 else
                 {

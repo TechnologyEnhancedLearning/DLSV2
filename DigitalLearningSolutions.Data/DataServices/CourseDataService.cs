@@ -95,7 +95,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<CourseDelegateForExport> GetDelegatesOnCourseForExport(int customisationId, int centreId);
 
-        int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId,
+        int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
             int selfAssessmentSupervisorRoleId, DateTime completeByDate);
     }
 
@@ -352,15 +352,15 @@ namespace DigitalLearningSolutions.Data.DataServices
             }
         }
 
-        public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId,
+        public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
             int selfAssessmentSupervisorRoleId, DateTime completeByDate)
         {
             DateTime startedDate = DateTime.Now;
             DateTime lastAccessed = startedDate;
-            string completedDate = "";
+            dynamic completeByDateDynamic = "";
             if (completeByDate.Year > 1753)
             {
-                completedDate = completeByDate.ToString();
+                completeByDateDynamic = completeByDate;
             }
             var candidateAssessmentId = (int)connection.ExecuteScalar(
                 @"SELECT COALESCE
@@ -385,16 +385,24 @@ namespace DigitalLearningSolutions.Data.DataServices
                            @selfAssessmentId,
                            @startedDate,
                            @lastAccessed,
-                           @completedDate)",
-                    new { selfAssessmentId, candidateId, startedDate, lastAccessed, completedDate }
+                           @completeByDateDynamic);",
+                    new { selfAssessmentId, candidateId, startedDate, lastAccessed, completeByDateDynamic }
                 );
             }
 
             int supervisorDelegateId = (int)connection.ExecuteScalar(
                     @"SELECT COALESCE
-                 ((SELECT ID FROM SupervisorDelegates WHERE [SupervisorAdminId] = @supervisorId), 0) AS ID",
-                    new { supervisorId }
+                 ((SELECT TOP 1 ID FROM SupervisorDelegates WHERE SupervisorAdminID = @supervisorId AND CandidateID = @candidateId), 0) AS ID",
+                    new { supervisorId, candidateId }
                 );
+            if (supervisorDelegateId == 0 && supervisorId > 0)
+            {
+                supervisorDelegateId = connection.QuerySingle<int>(@"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, SupervisorEmail, AddedByDelegate)
+                    OUTPUT INSERTED.Id
+                    SELECT @supervisorId, EmailAddress, @candidateId, @adminEmail, 0
+                        FROM Candidates
+                        WHERE CandidateID = @candidateId", new { supervisorId, candidateId, adminEmail });
+            }
 
             if (candidateAssessmentId > 0 && supervisorDelegateId > 0 && selfAssessmentSupervisorRoleId > 0)
             {

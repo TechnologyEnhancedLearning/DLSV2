@@ -89,7 +89,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             if (enrolCurrentLearningViewModel.SelectedActivity < 1)
             {
-                ModelState.AddModelError("SelectedAvailableCourse", "You must select a activity");
+                ModelState.Clear();
+                ModelState.AddModelError("SelectedAvailableCourse", "You must select an activity");
                 multiPageFormService.SetMultiPageFormData(
                     sessionEnrol,
                     MultiPageFormDataFeature.EnrolDelegateInActivity,
@@ -252,10 +253,12 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             }
             else
             {
+                var adminEmail = User.GetUserEmail();
                 var selfAssessmentId = courseDataService.EnrolOnActivitySelfAssessment(
                     sessionEnrol.AssessmentID.GetValueOrDefault(),
                     delegateId,
                     sessionEnrol.SupervisorID.GetValueOrDefault(),
+                    adminEmail,
                     sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault(),
                     sessionEnrol.CompleteByDate.GetValueOrDefault()
                     );
