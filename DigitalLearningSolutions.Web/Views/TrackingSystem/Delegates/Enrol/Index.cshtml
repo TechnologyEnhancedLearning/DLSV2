@@ -7,23 +7,22 @@
     { "delegateId", Model.DelegateId.ToString() },
   };
 }
-
-
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         @if (errorHasOccurred)
         {
             <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedActivity) })" />
-        }<h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 1</h1>
+        }
+        <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 1</h1>
         <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
-        <form method="post">
+        <form method="post" class="nhsuk-u-margin-bottom-3">
 
             <vc:select-list asp-for="@nameof(Model.SelectedActivity)"
                             label="Choose an activity:"
                             value="@Model.SelectedActivity"
                             hint-text=""
                             required="true"
-                            css-class="nhsuk-select sort-by-dropdown"
+                            css-class="nhsuk-u-width-one-half"
                             default-option="--Select--"
                             select-list-options="@Model.LearningItems" />
 
