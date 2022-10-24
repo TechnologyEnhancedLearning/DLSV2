@@ -1,4 +1,7 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
+﻿using DigitalLearningSolutions.Web.Helpers;
+using System.ComponentModel.DataAnnotations;
+
+namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
 {
     public class AddMultipleSupervisorDelegatesViewModel
     {
@@ -7,6 +10,9 @@
         {
             DelegateEmails = delegateEmails;
         }
+
+        [Required(ErrorMessage = "Enter an email")]
+        [RegularExpression(CommonValidationErrorMessages.EmailsRegexWithNewLineSeparator, ErrorMessage = CommonValidationErrorMessages.InvalidMultiLineEmail)]
         public string? DelegateEmails { get; set; }
     }
 }

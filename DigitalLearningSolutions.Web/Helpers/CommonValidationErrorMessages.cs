@@ -9,6 +9,8 @@
         public const string TooLongEmail = "Email must be 255 characters or fewer";
         public const string InvalidEmail = "Enter an email in the correct format, like name@example.com";
         public const string WhitespaceInEmail = "Email must not contain any whitespace characters";
+        public const string EmailsRegexWithNewLineSeparator = @"(([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)(\s*\r\n\s*|\s*$))*";
+        public const string InvalidMultiLineEmail = "Enter an email in the correct format (like name@example.com). Note: Each email address should be on separate lines";
 
         public const string PasswordRegex = @"(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Za-z]).*";
         public const string PasswordInvalidCharacters = "Password must contain at least 1 letter, 1 number and 1 symbol";
