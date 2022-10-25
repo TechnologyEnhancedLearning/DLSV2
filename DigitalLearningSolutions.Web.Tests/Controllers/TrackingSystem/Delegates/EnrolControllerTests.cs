@@ -1,18 +1,18 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
-{
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models.SessionData.Tracking.Delegate.Enrol;
-    using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
-    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using FakeItEasy;
-    using FluentAssertions.AspNetCore.Mvc;
-    using FluentAssertions.Execution;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures;
-    using NUnit.Framework;
+﻿using DigitalLearningSolutions.Web.Services;
+using DigitalLearningSolutions.Data.Enums;
+using DigitalLearningSolutions.Data.Models.SessionData.Tracking.Delegate.Enrol;
+using DigitalLearningSolutions.Data.DataServices;
+using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
+using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+using FakeItEasy;
+using FluentAssertions.AspNetCore.Mvc;
+using FluentAssertions.Execution;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using NUnit.Framework;
 
+namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
+{
     public class EnrolControllerTests
     {
         private EnrolController enrolController = null!;

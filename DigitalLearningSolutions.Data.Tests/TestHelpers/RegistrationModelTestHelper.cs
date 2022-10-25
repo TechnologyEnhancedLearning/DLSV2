@@ -1,8 +1,8 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
-{
-    using System;
-    using DigitalLearningSolutions.Data.Models.Register;
+﻿using DigitalLearningSolutions.Data.Models.Register;
+using System;
 
+namespace DigitalLearningSolutions.Data.Tests.TestHelpers
+{
     public static class RegistrationModelTestHelper
     {
         public const int Centre = 2;
@@ -83,10 +83,7 @@
                 isContentCreator,
                 isCmsAdmin,
                 isCmsManager,
-                1,
-                "supervisor@example.com",
-                "Test",
-                "Supervisor"
+                null
             );
         }
 
@@ -132,10 +129,7 @@
                 isContentCreator,
                 isCmsAdmin,
                 isCmsManager,
-                1,
-                "supervisor@example.com",
-                "Test",
-                "Supervisor"
+                null
             );
         }
 

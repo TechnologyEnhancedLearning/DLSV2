@@ -28,7 +28,7 @@
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CentreManager));
             }
 
-            if (adminUser.IsCentreAdmin)
+            if (admin.AdminAccount.IsCentreAdmin)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CentreAdministrator));
             }

@@ -22,10 +22,6 @@
             bool isContentCreator,
             bool isCmsAdmin,
             bool isCmsManager,
-            int supervisorDelegateId,
-            string supervisorEmail,
-            string supervisorFirstName,
-            string supervisorLastName,
             byte[]? profileImage = null
         ) : base(
             firstName,
@@ -48,12 +44,6 @@
             IsTrainer = isTrainer;
             IsContentCreator = isContentCreator;
             ProfileImage = profileImage;
-            SupervisorDelegateId = supervisorDelegateId;
-            SupervisorEmail = supervisorEmail;
-            SupervisorFirstName = supervisorFirstName;
-            SupervisorLastName = supervisorLastName;
-            IsCmsAdmin = isCmsAdmin;
-            IsCmsManager = isCmsManager;
 
             if (isCmsAdmin)
             {
@@ -89,52 +79,5 @@
         public int? CategoryId { get; set; }
 
         public byte[]? ProfileImage { get; set; }
-
-        public int SupervisorDelegateId { get; set; }
-        public string? SupervisorEmail { get; set; }
-        public string SupervisorFirstName { get; set; }
-        public string SupervisorLastName { get; set; }
-
-        public IEnumerable<int> GetNotificationRoles()
-        {
-            var roles = new List<int>();
-
-            if (IsCentreAdmin)
-            {
-                roles.Add(1);
-            }
-
-            if (IsCentreManager)
-            {
-                roles.Add(2);
-            }
-
-            if (IsContentManager)
-            {
-                roles.Add(3);
-            }
-
-            if (IsContentCreator)
-            {
-                roles.Add(4);
-            }
-
-            if (IsSupervisor)
-            {
-                roles.Add(6);
-            }
-
-            if (IsTrainer)
-            {
-                roles.Add(7);
-            }
-
-            if (IsNominatedSupervisor)
-            {
-                roles.Add(8);
-            }
-
-            return roles;
-        }
     }
 }

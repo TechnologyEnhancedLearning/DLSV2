@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DigitalLearningSolutions.Data.Tests\DigitalLearningSolutions.Data.Tests.csproj" />
+    <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
     <ProjectReference Include="..\DigitalLearningSolutions.Web\DigitalLearningSolutions.Web.csproj" />
   </ItemGroup>
 

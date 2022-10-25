@@ -2,7 +2,7 @@
 using DigitalLearningSolutions.Data.Enums;
 using DigitalLearningSolutions.Data.Models.Courses;
 using DigitalLearningSolutions.Data.Models.SessionData.Tracking.Delegate.Enrol;
-using DigitalLearningSolutions.Data.Services;
+using DigitalLearningSolutions.Web.Services;
 using DigitalLearningSolutions.Web.Attributes;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.Models.Enums;
@@ -60,7 +60,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         [HttpGet]
         public IActionResult Index(int delegateId, string delegateName)
         {
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var categoryId = User.GetAdminCategoryId();
             var centreId = GetCentreId();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
                MultiPageFormDataFeature.EnrolDelegateInActivity,
@@ -79,7 +79,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         [HttpPost]
         public IActionResult Index(int delegateId, EnrolCurrentLearningViewModel enrolCurrentLearningViewModel)
         {
-            var categoryId = User.GetAdminCourseCategoryFilter();
+            var categoryId = User.GetAdminCategoryId();
             var centreId = GetCentreId();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
                MultiPageFormDataFeature.EnrolDelegateInActivity,
@@ -253,7 +253,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             }
             else
             {
-                var adminEmail = User.GetUserEmail();
+                var adminEmail = User.GetUserPrimaryEmailKnownNotNull();
                 var selfAssessmentId = courseDataService.EnrolOnActivitySelfAssessment(
                     sessionEnrol.AssessmentID.GetValueOrDefault(),
                     delegateId,
