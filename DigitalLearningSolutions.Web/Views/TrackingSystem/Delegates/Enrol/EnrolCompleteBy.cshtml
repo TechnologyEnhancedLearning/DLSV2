@@ -1,0 +1,45 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
+@model CompletedByDateViewModel
+@{
+    var routeParamsForCancelLink = new Dictionary<string, string> {
+    { "delegateId", Model.DelegateId.ToString() },
+  };
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+
+    var exampleDate = DateTime.Today + TimeSpan.FromDays(7);
+    var hintTextLines = new List<string> {
+    $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the complete by date.",
+    "Activities with no complete by date will be removed after 6 months of inactivity.",
+  };
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+          <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
+        }
+      <div class="nhsuk-u-margin-bottom-4">
+                <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 2</h1>
+                <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
+            </div>
+        <form method="post">
+            <input type="hidden" asp-for="DelegateId" />
+            <input type="hidden" asp-for="DelegateName" />
+            <vc:date-input id="complete-by-date"
+                     label="Set a complete by date (optional):"
+                     day-id="Day"
+                     month-id="Month"
+                     year-id="Year"
+                     css-class="nhsuk-u-margin-bottom-4"
+                     hint-text-lines="@hintTextLines" />
+            <div class=" nhsuk-u-margin-top-5">
+                <input class="nhsuk-button" type="submit" value="Next" />
+                <a class="nhsuk-button nhsuk-button--secondary" asp-action="EnrolDelegateSupervisor"
+                   asp-route-delegateId="@Model.DelegateId" asp-route-delegateName="@Model.DelegateName">
+                    Skip
+                </a>
+            </div>
+        </form>
+        <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForCancelLink" />
+    </div>
+</div>

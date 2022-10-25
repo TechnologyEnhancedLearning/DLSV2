@@ -31,6 +31,7 @@
         CandidateAssessmentSupervisor GetCandidateAssessmentSupervisorById(int candidateAssessmentSupervisorId);
         SelfAssessmentResultSummary GetSelfAssessmentResultSummary(int candidateAssessmentId, int supervisorDelegateId);
         IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId);
+        IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
@@ -201,6 +202,16 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     FROM   {supervisorDelegateDetailTables}
                     WHERE (sd.ID = @supervisorDelegateId) AND (sd.CandidateID = @delegateId OR sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new { supervisorDelegateId, adminId, delegateId }
                ).FirstOrDefault();
+        }
+
+        public IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CustomisationID, int CentreID)
+        {
+            return connection.Query<SupervisorForEnrolDelegate>(
+                $@"SELECT AdminID, Forename + ' ' + Surname AS Name, Email FROM AdminUsers AS au
+                    WHERE (Supervisor = 1) AND (CentreID = @CentreID) AND (CategoryID = 0 OR
+                         CategoryID = (SELECT au.CategoryID FROM Applications AS a INNER JOIN
+                           Customisations AS c ON a.ApplicationID = c.ApplicationID WHERE        (c.CustomisationID = @CustomisationID))) AND (Active = 1) AND (Approved = 1) GROUP BY AdminID, Surname, Forename, Email ORDER BY Surname, Forename",
+                new { CentreID, CustomisationID });
         }
 
         public bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId)

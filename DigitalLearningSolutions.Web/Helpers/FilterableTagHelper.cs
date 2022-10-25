@@ -23,7 +23,12 @@
                 tags.Add(new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsNotLocked, true));
             }
 
-            if (admin.AdminAccount.IsCentreAdmin)
+            if (admin.AdminAccount.IsCentreManager)
+            {
+                tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CentreManager));
+            }
+
+            if (adminUser.IsCentreAdmin)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CentreAdministrator));
             }

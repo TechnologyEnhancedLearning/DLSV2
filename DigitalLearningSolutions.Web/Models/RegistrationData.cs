@@ -30,7 +30,12 @@
 
         public string? PasswordHash { get; set; }
 
-        public void SetPersonalInformation(PersonalInformationViewModel model)
+        public int SupervisorDelegateId { get; set; }
+        public string SupervisorUserEmail { get; set; }
+        public string SupervisorUserFirstName { get; set; }
+        public string SupervisorUserLastName { get; set; }
+
+        public virtual void SetPersonalInformation(PersonalInformationViewModel model)
         {
             Centre = model.Centre;
             PrimaryEmail = model.PrimaryEmail;

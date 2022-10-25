@@ -82,6 +82,10 @@
         [HttpPost]
         public IActionResult Index(AdminRolesFormData formData, int delegateId)
         {
+            var userAdminId = User.GetAdminId();
+            var userDelegateId = User.GetCandidateId();
+            var (supervisorAdminUser, supervisorDelegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+
             try
             {
                 registrationService.PromoteDelegateToAdmin(

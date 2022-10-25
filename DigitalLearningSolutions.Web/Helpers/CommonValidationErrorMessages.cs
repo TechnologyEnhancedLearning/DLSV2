@@ -8,7 +8,9 @@
         public const string TooLongEmail = "Email must be 255 characters or fewer";
         public const string InvalidEmail = "Enter an email in the correct format, like name@example.com";
         public const string WhitespaceInEmail = "Email must not contain any whitespace characters";
-        public const string EmailInUse = "This email is already in use";
+        public const string EmailsRegexWithNewLineSeparator = @"(([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)(\s*\r\n\s*|\s*$))*";
+        public const string InvalidMultiLineEmail = "Enter an email in the correct format (like name@example.com). Note: Each email address should be on separate lines";
+	public const string EmailInUse = "This email is already in use";
         public const string EmailInUseAtCentre = "This email is already in use by another user at the centre";
 
         public const string EmailInUseDuringDelegateRegistration =

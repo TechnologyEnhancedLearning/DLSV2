@@ -876,7 +876,8 @@
                     ORDER BY fcg.Ordering, fc.Ordering",
                 (frameworkCompetencyGroup, frameworkCompetency) =>
                 {
-                    frameworkCompetencyGroup.FrameworkCompetencies.Add(frameworkCompetency);
+                    if (frameworkCompetency != null)
+                        frameworkCompetencyGroup.FrameworkCompetencies.Add(frameworkCompetency);
                     return frameworkCompetencyGroup;
                 },
                 new { frameworkId }
@@ -885,7 +886,8 @@
                 group =>
                 {
                     var groupedFrameworkCompetencyGroup = group.First();
-                    groupedFrameworkCompetencyGroup.FrameworkCompetencies = group.Select(
+                    groupedFrameworkCompetencyGroup.FrameworkCompetencies = group.Where(frameworkCompetencyGroup => frameworkCompetencyGroup.FrameworkCompetencies.Count > 0)
+                    .Select(
                         frameworkCompetencyGroup => frameworkCompetencyGroup.FrameworkCompetencies.Single()
                     ).ToList();
                     return groupedFrameworkCompetencyGroup;

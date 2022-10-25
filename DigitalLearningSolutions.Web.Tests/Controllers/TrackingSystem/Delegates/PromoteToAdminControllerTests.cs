@@ -32,6 +32,7 @@
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
             courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             registrationService = A.Fake<IRegistrationService>();
+            userService = A.Fake<IUserService>();            
             controller = new PromoteToAdminController(
                     userDataService,
                     courseCategoriesDataService,
@@ -80,6 +81,8 @@
                         )
                 )
                 .MustHaveHappened();
+
+            
             result.Should().BeRedirectToActionResult().WithControllerName("ViewDelegate").WithActionName("Index");
         }
 

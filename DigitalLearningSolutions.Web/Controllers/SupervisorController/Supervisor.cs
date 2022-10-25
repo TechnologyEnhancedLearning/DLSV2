@@ -97,9 +97,13 @@
             var adminId = GetAdminId();
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
-            AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
+
+            ModelState.Remove("Page");
             if (ModelState.IsValid)
+            {
+                AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
                 return RedirectToAction("MyStaffList", model.Page);
+            }
             else
             {
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
@@ -121,19 +125,27 @@
             var adminId = GetAdminId();
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
-            var delegateEmailsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.DelegateEmails);
-            foreach (var delegateEmail in delegateEmailsList)
+
+            if (ModelState.IsValid)
             {
-                if (delegateEmail.Length > 0)
+                var delegateEmailsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.DelegateEmails);
+                foreach (var delegateEmail in delegateEmailsList)
                 {
-                    if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
+                    if (delegateEmail.Length > 0)
                     {
-                        AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
+                        if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
+                        {
+                            AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
+                        }
                     }
                 }
+                return RedirectToAction("MyStaffList");
             }
-
-            return RedirectToAction("MyStaffList");
+            else
+            {
+                ModelState.ClearErrorsForAllFieldsExcept("DelegateEmails");
+                return View("AddMultipleSupervisorDelegates", model);
+            }
         }
 
         private void AddSupervisorDelegateAndReturnId(

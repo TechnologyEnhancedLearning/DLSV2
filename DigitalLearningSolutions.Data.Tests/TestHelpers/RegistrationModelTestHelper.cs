@@ -82,7 +82,11 @@
                 isTrainer,
                 isContentCreator,
                 isCmsAdmin,
-                isCmsManager
+                isCmsManager,
+                1,
+                "supervisor@example.com",
+                "Test",
+                "Supervisor"
             );
         }
 
@@ -127,7 +131,11 @@
                 isTrainer,
                 isContentCreator,
                 isCmsAdmin,
-                isCmsManager
+                isCmsManager,
+                1,
+                "supervisor@example.com",
+                "Test",
+                "Supervisor"
             );
         }
 

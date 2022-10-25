@@ -22,6 +22,7 @@
             {
                 new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsLocked),
                 new SearchableTagViewModel(AdminRoleFilterOptions.CentreAdministrator),
+                new SearchableTagViewModel(AdminRoleFilterOptions.CentreManager),
                 new SearchableTagViewModel(AdminRoleFilterOptions.Supervisor),
                 new SearchableTagViewModel(AdminRoleFilterOptions.Trainer),
                 new SearchableTagViewModel(AdminRoleFilterOptions.CmsAdministrator),

@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -98,7 +98,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@SingleStep bit
         ///AS
         ///BEGIN
-        ///	-- SET NOCOUNT ON added to prevent e [rest of string was truncated]&quot;;.
+        ///	-- SET NOCOUNT ON added  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs {
             get {
@@ -123,8 +123,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@Active as bit,
         ///	@ApplicationID as int,
         ///	@CentreID as int,
-        ///	@CustomisationName as nvarchar(250),
-        ///	@Passw [rest of string was truncated]&quot;;.
+        ///	@CustomisationName as nvarch [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_106_CreateOrAlterInsertCustomisation_V3 {
             get {
@@ -158,7 +157,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
-        ///	-- Add the paramete [rest of string was truncated]&quot;;.
+        ///	-- Add t [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_133_AdjustScoresForFilteredSP {
             get {
@@ -178,7 +177,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
-        ///	-- Add the paramete [rest of string was truncated]&quot;;.
+        ///	-- Add t [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_133_UnAdjustScoresForFilteredSP {
             get {
@@ -211,7 +210,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///BEGIN
         ///INSERT INTO @ResTable
         ///	SELECT CompetencyGroupID, [1] AS Confidence, [2] AS Relevance
-        ///FROM   (SELECT comp.CompetencyG [rest of string was truncated]&quot;;.
+        ///FROM    [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_153_DropFilteredFunctionTweak {
             get {
@@ -235,7 +234,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
-        ///	-- Add the para [rest of string was truncated]&quot;;.
+        ///	 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_153_DropFilteredSPFixes {
             get {
@@ -479,6 +478,27 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Manish Agarwal
+        ///-- Create date: 26/09/2022
+        ///-- Description:	Returns active available customisations for centre v6 adds SelfAssessments.
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsFo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_581_GetActiveAvailableCustomisationsForCentreFiltered_V6 {
+            get {
+                return ResourceManager.GetString("DLSV2_581_GetActiveAvailableCustomisationsForCentreFiltered_V6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to --DLSV2-95 Adds System Versioning to auditable tables (UP)
         ///
         ///--Frameworks table
@@ -491,8 +511,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///        PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime);
         ///GO
         ///
-        ///ALTER TABLE Frameworks
-        ///    SET (S [rest of string was truncated]&quot;;.
+        ///ALTER TABLE Framework [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_95_AddSystemVersioning {
             get {
@@ -516,11 +535,24 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///DROP TABLE dbo.FrameworkCompetencyGroupsHistory;
         ///GO
         ///
-        ///-- Remove versioni [rest of string was truncated]&quot;;.
+        ///--  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_95_RemoveSystemVersioning {
             get {
                 return ResourceManager.GetString("DLSV2_95_RemoveSystemVersioning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 03/10/2022 06:00:00 ******/
+        ///DROP PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]
+        ///GO
+        ///
+        ///.
+        /// </summary>
+        internal static string DropActiveAvailableV6 {
+            get {
+                return ResourceManager.GetString("DropActiveAvailableV6", resourceCulture);
             }
         }
         
@@ -622,8 +654,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 05/10/2020
         ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
         ///-- =============================================
-        ///CREATE PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]
-        /// [rest of string was truncated]&quot;;.
+        ///CREATE PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreF [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GetActiveAvailableV5 {
             get {
