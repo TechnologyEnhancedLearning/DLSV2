@@ -917,6 +917,13 @@
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
             var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
+            if (TempData["NominateSupervisorError"] != null)
+            {
+                if (Convert.ToBoolean(TempData["NominateSupervisorError"].ToString()))
+                {
+                    ModelState.AddModelError("ActionConfirmed", "Nominated supervisor not confirmed");
+                }
+            }
             return View("NominateSupervisor", model);
         }
         [HttpPost]
@@ -939,7 +946,9 @@
             }
             else
             {
-                return View("NominateSupervisor", supervisorDelegate);
+                TempData["NominateSupervisorError"] = true;
+                return RedirectToAction("NominateSupervisor", new { supervisorDelegateId = supervisorDelegate.Id, returnPageQuery = supervisorDelegate.ReturnPageQuery });
+               
             }
         }
     }
