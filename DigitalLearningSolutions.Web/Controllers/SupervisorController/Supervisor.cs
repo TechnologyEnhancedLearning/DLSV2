@@ -178,6 +178,10 @@
 
             return RedirectToAction("MyStaffList");
         }
+        public IActionResult RemoveSupervisorDelegate()
+        {
+            return RedirectToAction("MyStaffList");
+        }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
@@ -202,7 +206,12 @@
             }
             else
             {
-                ModelState.ClearErrorsOnField("ActionConfirmed");
+                
+                if (supervisorDelegate.ConfirmedRemove)
+                {
+                    supervisorDelegate.ConfirmedRemove = false;
+                    ModelState.ClearErrorsOnField("ActionConfirmed");
+                }
                 return View("RemoveConfirm", supervisorDelegate);
             }
         }
