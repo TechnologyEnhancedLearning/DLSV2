@@ -237,6 +237,7 @@
             const string delegateOnlyCentreEmail = "centre2@email.com";
             const string adminOnlyCentreEmail = "centre3@email.com";
             const string adminAndDelegateCentreEmail = "centre101@email.com";
+            const string candidateNumber = "AAAAA";
 
             var delegateOnlyCentreName = connection.QuerySingleOrDefault<string>(
                 @"SELECT CentreName FROM Centres WHERE CentreID = @delegateOnlyCentreId",
@@ -266,6 +267,12 @@
             );
 
             connection.Execute(
+                @"INSERT INTO DelegateAccounts (UserId, CentreId, DateRegistered, CandidateNumber, Active) VALUES
+                    (@userId, @delegateOnlyCentreId, GETDATE(), @candidateNumber, 1)",
+                new { userId, delegateOnlyCentreId, candidateNumber }
+            );
+
+            connection.Execute(
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email) VALUES
                     (@userId, @delegateOnlyCentreId, @delegateOnlyCentreEmail),
                     (@userId, @adminOnlyCentreId, @adminOnlyCentreEmail),
@@ -283,9 +290,8 @@
             var result = userDataService.GetAllActiveCentreEmailsForUser(userId).ToList();
 
             // Then
-            result.Count.Should().Be(3);
-            result.Should()
-                .ContainEquivalentOf((delegateOnlyCentreId, delegateOnlyCentreName, delegateOnlyCentreEmail));
+            result.Count.Should().Be(4);
+            result.Should().ContainEquivalentOf((delegateOnlyCentreId, delegateOnlyCentreName, delegateOnlyCentreEmail));
             result.Should().ContainEquivalentOf((adminOnlyCentreId, adminOnlyCentreName, adminOnlyCentreEmail));
             result.Should().ContainEquivalentOf(
                 (adminAndDelegateCentreId, adminAndDelegateCentreName, adminAndDelegateCentreEmail)
@@ -388,7 +394,17 @@
 
             // Given
             const int userId = 777;
+            const int adminId = 805;
+
             connection.Execute(@"DELETE FROM DelegateAccounts WHERE UserID = @userId", new { userId });
+
+            connection.Execute(@"DELETE FROM TicketComments WHERE TCAdminUserID = @adminId", new { adminId });
+
+
+
+            //TODO: Error due to FK_Tickets_AdminUsers contsraint
+
+
             connection.Execute(@"DELETE FROM AdminAccounts WHERE UserID = @userId", new { userId });
 
             // When
@@ -450,6 +466,9 @@
 
             // Given
             const int userIdForUserCentreDetailsAfterUpdate = 2;
+
+
+            //TODO: 'CLAIMABLEUSER1' does not exist in table [DelegateAccounts]
 
             var delegateEntity = userDataService.GetDelegateByCandidateNumber("CLAIMABLEUSER1")!;
             var currentUserIdForUserCentreDetails = delegateEntity.UserAccount.Id;

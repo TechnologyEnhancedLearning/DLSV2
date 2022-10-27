@@ -31,6 +31,12 @@
                 repoRootDir
             ).Trim().Split("\n");
 
+
+            //TODO: Currently fails on:
+            //DigitalLearningSolutions.Web/Controllers/TrackingSystem/Delegates/EnrolController.cs
+            ////DigitalLearningSolutions.Web/Views/TrackingSystem/Delegates/Enrol/EnrolCompleteBy.cshtml
+
+
             using (var _ = new AssertionScope())
             {
                 filenames

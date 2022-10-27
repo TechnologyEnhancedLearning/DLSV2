@@ -20,6 +20,9 @@
 
             // When
             var returnedDelegateEntity = userDataService.GetDelegateById(2);
+            returnedDelegateEntity!.DelegateAccount.CentreSpecificDetailsLastChecked = expectedDelegateEntity.DelegateAccount.CentreSpecificDetailsLastChecked;
+            returnedDelegateEntity!.UserAccount.EmailVerified = expectedDelegateEntity.UserAccount.EmailVerified;
+            returnedDelegateEntity!.UserAccount.DetailsLastChecked = expectedDelegateEntity.UserAccount.DetailsLastChecked;
 
             // Then
             returnedDelegateEntity.Should().BeEquivalentTo(expectedDelegateEntity);
@@ -33,7 +36,7 @@
             // Given
             connection.Execute(
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
-                    VALUES (61188, 2, 'centre@email.com')"
+                    VALUES (40005, 2, 'centre@email.com')"
             );
             // We set userCentreDetailsId here so that UserTestHelper.GetDefaultDelegateEntity returns an
             // DelegateEntity with a non-null UserCentreDetails
@@ -66,7 +69,7 @@
                            CentreID,
                            Active)
                     OUTPUT Inserted.ID
-                    VALUES (61188, 2, 1)"
+                    VALUES (40005, 2, 1)"
             );
 
             // When
@@ -177,6 +180,9 @@
         [Test]
         public void UpdateUser_updates_user()
         {
+
+            //TODO: UAR has Candidates table has been replaced by a view
+
             using var transaction = new TransactionScope();
             try
             {
@@ -357,6 +363,9 @@
         [Test]
         public void UpdateUserDetails_updates_user()
         {
+
+            //TODO: UAR has Candidates table has been replaced by a view
+
             using var transaction = new TransactionScope();
             try
             {
@@ -478,25 +487,34 @@
         [Test]
         public void GetDelegateAccountsByUserId_returns_expected_accounts()
         {
+            // Given
+            var expectedResult = UserTestHelper.GetDefaultDelegateAccount();
+
             // When
-            var result = userDataService.GetDelegateAccountsByUserId(61188).ToList();
+            var result = userDataService.GetDelegateAccountsByUserId(40005).ToList();
+            result[0].CentreSpecificDetailsLastChecked = expectedResult.CentreSpecificDetailsLastChecked;
 
             // Then
             using (new AssertionScope())
             {
                 result.Should().HaveCount(1);
-                result.Single().Should().BeEquivalentTo(UserTestHelper.GetDefaultDelegateAccount());
+                result.Single().Should().BeEquivalentTo(expectedResult);
             }
         }
 
         [Test]
         public void GetDelegateAccountById_returns_expected_account()
         {
+            // Given
+            var expectedResult = UserTestHelper.GetDefaultDelegateAccount();
+            expectedResult.UserId = 40005;
+
             // When
             var result = userDataService.GetDelegateAccountById(2);
+            result!.CentreSpecificDetailsLastChecked = expectedResult.CentreSpecificDetailsLastChecked;
 
             // Then
-            result.Should().BeEquivalentTo(UserTestHelper.GetDefaultDelegateAccount());
+            result.Should().BeEquivalentTo(expectedResult);
         }
 
         [Test]
@@ -531,7 +549,11 @@
             // Given
             const int userIdForDelegateAccountAfterUpdate = 2;
 
+
+            //TODO: 'CLAIMABLEUSER1' does not exist in table [DelegateAccounts]
+
             var delegateEntity = userDataService.GetDelegateByCandidateNumber("CLAIMABLEUSER1")!;
+
             var currentUserIdForDelegateAccount = delegateEntity.UserAccount.Id;
             var delegateId = delegateEntity.DelegateAccount.Id;
             var centreId = delegateEntity.DelegateAccount.CentreId;

@@ -439,7 +439,7 @@
                 var delegateAfterUpdate = userDataService.GetDelegateAccountById(existingDelegateId);
 
                 var oldDateRegistered = new DateTime(2014, 12, 24, 10, 44, 53, 257);
-                var oldCentreSpecificDetailsLastChecked = new DateTime(2022, 04, 27, 16, 31, 29, 897);
+
                 userBeforeUpdate.Should().NotBeNull();
                 delegateBeforeUpdate.Should().NotBeNull();
                 userAfterUpdate.Should().NotBeNull();
@@ -471,8 +471,7 @@
                 delegateBeforeUpdate.ExternalReg.Should().BeFalse();
                 delegateBeforeUpdate.SelfReg.Should().BeFalse();
                 delegateBeforeUpdate.DateRegistered.Should().Be(oldDateRegistered);
-                delegateBeforeUpdate.CentreSpecificDetailsLastChecked.Should().Be(oldCentreSpecificDetailsLastChecked);
-
+                
                 delegateAfterUpdate!.CentreId.Should().Be(delegateBeforeUpdate.CentreId);
                 delegateAfterUpdate.Id.Should().Be(existingDelegateId);
                 delegateAfterUpdate.CandidateNumber.Should().Be(delegateBeforeUpdate.CandidateNumber);

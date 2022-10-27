@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.UserDataServiceTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
@@ -15,10 +16,15 @@
         public void GetAdminById_returns_admin()
         {
             // Given
+            var dateOverride = DateTime.Now;
             var expectedAdminEntity = UserTestHelper.GetDefaultAdminEntity();
+            expectedAdminEntity.UserAccount.DetailsLastChecked = dateOverride;
+            expectedAdminEntity.UserAccount.EmailVerified = dateOverride;
 
             // When
             var returnedAdminEntity = userDataService.GetAdminById(7);
+            returnedAdminEntity!.UserAccount.DetailsLastChecked = dateOverride;
+            returnedAdminEntity!.UserAccount.EmailVerified = dateOverride;
 
             // Then
             returnedAdminEntity.Should().BeEquivalentTo(expectedAdminEntity);
@@ -63,15 +69,17 @@
             var returnedAdmins =
                 userDataService.GetActiveAdminsByCentreId(expectedAdminEntity.AdminAccount.CentreId).ToList();
 
+            var firstAdmin = returnedAdmins.First();
+            firstAdmin.UserAccount.EmailVerified = expectedAdminEntity.UserAccount.EmailVerified;
+            firstAdmin.UserAccount.DetailsLastChecked = expectedAdminEntity.UserAccount.DetailsLastChecked;
+
             // Then
             using (new AssertionScope())
             {
-                returnedAdmins.Should().ContainEquivalentOf(expectedAdminEntity);
-                returnedAdmins.ForEach(
-                    admin => admin.AdminAccount.CentreId.Should().Be(expectedAdminEntity.AdminAccount.CentreId)
-                );
-                returnedAdmins.ForEach(admin => admin.AdminAccount.Active.Should().BeTrue());
-                returnedAdmins.ForEach(admin => admin.UserAccount.Active.Should().BeTrue());
+                firstAdmin.Should().BeEquivalentTo(expectedAdminEntity);
+                firstAdmin.AdminAccount.CentreId.Should().Be(expectedAdminEntity.AdminAccount.CentreId);
+                firstAdmin.AdminAccount.Active.Should().BeTrue();
+                firstAdmin.UserAccount.Active.Should().BeTrue();
             }
         }
 

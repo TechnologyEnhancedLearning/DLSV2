@@ -26,17 +26,17 @@
         public void GetDelegateUserCardById_populates_DelegateUserCard_fields_correctly()
         {
             // When
-            var userCard = userDataService.GetDelegateUserCardById(3)!;
+            var userCard = userDataService.GetDelegateUserCardById(254480)!;
 
             // Then
             using (new AssertionScope())
             {
                 userCard.Active.Should().BeTrue();
-                userCard.SelfReg.Should().BeFalse();
-                userCard.ExternalReg.Should().BeFalse();
+                userCard.SelfReg.Should().BeTrue();
+                userCard.ExternalReg.Should().BeTrue();
                 userCard.AdminId.Should().Be(1);
                 userCard.EmailAddress.Should().Be("kevin.whittaker1@nhs.net");
-                userCard.JobGroupId.Should().Be(10);
+                userCard.JobGroupId.Should().Be(9);
             }
         }
 
@@ -89,15 +89,15 @@
             var userCards = userDataService.GetDelegateUserCardsByCentreId(101);
 
             // Then
-            var userCard = userCards.Single(user => user.Id == 3);
+            var userCard = userCards.Single(user => user.Id == 254480);
             using (new AssertionScope())
             {
                 userCard.Active.Should().BeTrue();
-                userCard.SelfReg.Should().BeFalse();
-                userCard.ExternalReg.Should().BeFalse();
+                userCard.SelfReg.Should().BeTrue();
+                userCard.ExternalReg.Should().BeTrue();
                 userCard.AdminId.Should().Be(1);
                 userCard.EmailAddress.Should().Be("kevin.whittaker1@nhs.net");
-                userCard.JobGroupId.Should().Be(10);
+                userCard.JobGroupId.Should().Be(9);
             }
         }
 
