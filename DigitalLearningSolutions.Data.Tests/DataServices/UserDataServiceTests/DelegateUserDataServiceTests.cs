@@ -109,6 +109,9 @@
 
             // When
             var returnedDelegateEntity = userDataService.GetDelegateByCandidateNumber("SV1234");
+            returnedDelegateEntity!.DelegateAccount.CentreSpecificDetailsLastChecked = expectedDelegateEntity.DelegateAccount.CentreSpecificDetailsLastChecked;
+            returnedDelegateEntity!.UserAccount.EmailVerified = expectedDelegateEntity.UserAccount.EmailVerified;
+            returnedDelegateEntity!.UserAccount.DetailsLastChecked = expectedDelegateEntity.UserAccount.DetailsLastChecked;
 
             // Then
             returnedDelegateEntity.Should().BeEquivalentTo(expectedDelegateEntity);
@@ -122,7 +125,7 @@
             // Given
             connection.Execute(
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
-                    VALUES (61188, 2, 'centre@email.com')"
+                    VALUES (40005, 2, 'centre@email.com')"
             );
             var expectedUserCentreDetails = UserTestHelper.GetDefaultDelegateEntity(
                 userCentreDetailsId: 1,
@@ -180,16 +183,13 @@
         [Test]
         public void UpdateUser_updates_user()
         {
-
-            //TODO: UAR has Candidates table has been replaced by a view
-
             using var transaction = new TransactionScope();
             try
             {
                 // Given
                 const string firstName = "TestFirstName";
                 const string lastName = "TestLastName";
-                const string email = "test@email.com";
+                const string email = "update.test@email.com";
                 const string professionalRegNumber = "test-1234";
                 const int jobGroupId = 1;
 
@@ -204,7 +204,7 @@
                     jobGroupId,
                     DateTime.Now,
                     null,
-                    61188,
+                    40005,
                     true
                 );
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
@@ -363,20 +363,17 @@
         [Test]
         public void UpdateUserDetails_updates_user()
         {
-
-            //TODO: UAR has Candidates table has been replaced by a view
-
             using var transaction = new TransactionScope();
             try
             {
                 // Given
                 const string firstName = "TestFirstName";
                 const string lastName = "TestLastName";
-                const string email = "test@email.com";
+                const string email = "update.test@email.com";
                 const int jobGroupId = 1;
 
                 // When
-                userDataService.UpdateUserDetails(firstName, lastName, email, jobGroupId, 61188);
+                userDataService.UpdateUserDetails(firstName, lastName, email, jobGroupId, 40005);
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
 
                 // Then
@@ -548,11 +545,8 @@
 
             // Given
             const int userIdForDelegateAccountAfterUpdate = 2;
-
-
-            //TODO: 'CLAIMABLEUSER1' does not exist in table [DelegateAccounts]
-
-            var delegateEntity = userDataService.GetDelegateByCandidateNumber("CLAIMABLEUSER1")!;
+            
+            var delegateEntity = userDataService.GetDelegateByCandidateNumber("KW969")!;
 
             var currentUserIdForDelegateAccount = delegateEntity.UserAccount.Id;
             var delegateId = delegateEntity.DelegateAccount.Id;
