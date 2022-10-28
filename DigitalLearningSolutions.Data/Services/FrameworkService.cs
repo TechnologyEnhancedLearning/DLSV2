@@ -808,6 +808,14 @@
                 return -4;
             }
 
+            var ownerEmail = (string?)connection.ExecuteScalar(@"SELECT AU.Email FROM Frameworks F
+                INNER JOIN AdminUsers AU ON AU.AdminID=F.OwnerAdminID
+                WHERE F.ID=@frameworkId", new { frameworkId });
+            if (ownerEmail == userEmail)
+            {
+                return -5;
+            }
+
             var numberOfAffectedRows = connection.Execute(
                 @"INSERT INTO FrameworkCollaborators (FrameworkID, AdminID, UserEmail, CanModify)
                     VALUES (@frameworkId, @adminId, @userEmail, @canModify)",
