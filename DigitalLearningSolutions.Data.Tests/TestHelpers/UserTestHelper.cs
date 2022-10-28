@@ -59,7 +59,6 @@
 
         public static DelegateAccount GetDefaultDelegateAccount(
             int id = 2,
-            //int userId = 61188,
             int userId = 40005,
             bool active = true,
             int centreId = 2,
@@ -176,7 +175,6 @@
 
         public static DelegateEntity GetDefaultDelegateEntity(
             int delegateId = 2,
-            //int userId = 61188,
             int userId = 40005,
             bool active = true,
             int centreId = 2,

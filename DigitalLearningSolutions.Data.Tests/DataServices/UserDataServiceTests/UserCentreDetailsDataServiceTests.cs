@@ -280,9 +280,12 @@
                 new
                 {
                     userId,
-                    delegateOnlyCentreId, delegateOnlyCentreEmail,
-                    adminOnlyCentreId, adminOnlyCentreEmail,
-                    adminAndDelegateCentreId, adminAndDelegateCentreEmail,
+                    delegateOnlyCentreId,
+                    delegateOnlyCentreEmail,
+                    adminOnlyCentreId,
+                    adminOnlyCentreEmail,
+                    adminAndDelegateCentreId,
+                    adminAndDelegateCentreEmail,
                 }
             );
 
@@ -397,7 +400,7 @@
             const int adminId = 805;
 
             connection.Execute(@"DELETE FROM DelegateAccounts WHERE UserID = @userId", new { userId });
-            
+
             connection.Execute(@"DELETE FROM TicketComments WHERE TicketId IN (SELECT TicketId FROM Tickets WHERE AdminUserId = @adminId)", new { adminId });
 
             connection.Execute(@"DELETE FROM Tickets WHERE AdminUserID = @adminId", new { adminId });
@@ -480,10 +483,10 @@
                            ,[EmailVerificationHashID])
                     OUTPUT Inserted.ID
                     VALUES
-                           (1, 101, N'test@example.com', CURRENT_TIMESTAMP, @emailVerificationHashId)", new {emailVerificationHashId});
+                           (1, 101, N'test@example.com', CURRENT_TIMESTAMP, @emailVerificationHashId)", new { emailVerificationHashId });
 
             const int userIdForUserCentreDetailsAfterUpdate = 2;
-            
+
             var delegateEntity = userDataService.GetDelegateByCandidateNumber("KW969")!;
             var currentUserIdForUserCentreDetails = delegateEntity.UserAccount.Id;
             var centreId = delegateEntity.DelegateAccount.CentreId;
@@ -507,7 +510,7 @@
 
             // Then
             newUser.Should().NotBeNull();
-            
+
             newUserUserCentreDetailsBeforeUpdate.Should()
                 .NotContain(row => row.Item1 == centreId && row.Item2 == email);
 

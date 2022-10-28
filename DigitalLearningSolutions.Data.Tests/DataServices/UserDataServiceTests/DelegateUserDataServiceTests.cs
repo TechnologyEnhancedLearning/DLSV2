@@ -545,7 +545,7 @@
 
             // Given
             const int userIdForDelegateAccountAfterUpdate = 2;
-            
+
             var delegateEntity = userDataService.GetDelegateByCandidateNumber("KW969")!;
 
             var currentUserIdForDelegateAccount = delegateEntity.UserAccount.Id;

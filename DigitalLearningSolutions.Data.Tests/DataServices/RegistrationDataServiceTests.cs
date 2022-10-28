@@ -471,7 +471,7 @@
                 delegateBeforeUpdate.ExternalReg.Should().BeFalse();
                 delegateBeforeUpdate.SelfReg.Should().BeFalse();
                 delegateBeforeUpdate.DateRegistered.Should().Be(oldDateRegistered);
-                
+
                 delegateAfterUpdate!.CentreId.Should().Be(delegateBeforeUpdate.CentreId);
                 delegateAfterUpdate.Id.Should().Be(existingDelegateId);
                 delegateAfterUpdate.CandidateNumber.Should().Be(delegateBeforeUpdate.CandidateNumber);
