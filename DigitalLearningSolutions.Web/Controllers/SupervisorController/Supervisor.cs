@@ -921,7 +921,8 @@
             {
                 if (Convert.ToBoolean(TempData["NominateSupervisorError"].ToString()))
                 {
-                    ModelState.AddModelError("ActionConfirmed", "Nominated supervisor not confirmed");
+                    ModelState.AddModelError("ActionConfirmed", "Please tick the checkbox to confirm you wish to perform this action");
+
                 }
             }
             return View("NominateSupervisor", model);
@@ -948,7 +949,7 @@
             {
                 TempData["NominateSupervisorError"] = true;
                 return RedirectToAction("NominateSupervisor", new { supervisorDelegateId = supervisorDelegate.Id, returnPageQuery = supervisorDelegate.ReturnPageQuery });
-               
+
             }
         }
     }
