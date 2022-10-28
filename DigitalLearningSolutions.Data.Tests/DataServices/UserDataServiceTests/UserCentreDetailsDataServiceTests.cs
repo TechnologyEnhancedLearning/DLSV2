@@ -482,14 +482,12 @@
                     VALUES
                            (1, 101, N'test@example.com', CURRENT_TIMESTAMP, @emailVerificationHashId)", new {emailVerificationHashId});
 
-            const int userIdForUserCentreDetailsAfterUpdate = 1;
+            const int userIdForUserCentreDetailsAfterUpdate = 2;
             
             var delegateEntity = userDataService.GetDelegateByCandidateNumber("KW969")!;
             var currentUserIdForUserCentreDetails = delegateEntity.UserAccount.Id;
             var centreId = delegateEntity.DelegateAccount.CentreId;
-
             var userCentreDetailsId = delegateEntity.UserCentreDetails!.Id;
-
             var email = delegateEntity.UserCentreDetails.Email;
 
             var newUser = userDataService.GetUserAccountById(userIdForUserCentreDetailsAfterUpdate);
@@ -509,16 +507,9 @@
 
             // Then
             newUser.Should().NotBeNull();
-
-
-
             
-            //TODO: This is failing because the UserCentreDetails is null
             newUserUserCentreDetailsBeforeUpdate.Should()
                 .NotContain(row => row.Item1 == centreId && row.Item2 == email);
-
-
-            
 
             var updatedUserCentreDetails = connection.QuerySingle<(int, int, string)>(
                 @"SELECT UserID, CentreID, Email FROM UserCentreDetails
