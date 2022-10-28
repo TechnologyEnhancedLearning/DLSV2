@@ -42,6 +42,12 @@
             var adminId = User.GetAdminId();
             var delegateId = User.GetCandidateId();
 
+            if (!ModelState.IsValid)
+            {
+                var model = new ChangePasswordViewModel(formData, dlsSubApplication);
+                return View(model);
+            }
+
             var verifiedLinkedUsersAccounts = string.IsNullOrEmpty(formData.CurrentPassword)
                 ? new UserAccountSet()
                 : userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, formData.CurrentPassword!);
@@ -54,11 +60,11 @@
                 );
             }
 
-            if (!ModelState.IsValid)
-            {
-                var model = new ChangePasswordViewModel(formData, dlsSubApplication);
-                return View(model);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    var model = new ChangePasswordViewModel(formData, dlsSubApplication);
+            //    return View(model);
+            //}
 
             var newPassword = formData.Password!;
 
