@@ -42,7 +42,7 @@
             var adminId = User.GetAdminId();
             var delegateId = User.GetCandidateId();
 
-          
+
 
             var verifiedLinkedUsersAccounts = string.IsNullOrEmpty(formData.CurrentPassword)
                 ? new UserAccountSet()
@@ -63,7 +63,7 @@
                 return View(new ChangePasswordViewModel(formData, dlsSubApplication));
             }
 
-           
+
             var newPassword = formData.Password!;
 
             await passwordService.ChangePasswordAsync(verifiedLinkedUsersAccounts.GetUserRefs(), newPassword);
