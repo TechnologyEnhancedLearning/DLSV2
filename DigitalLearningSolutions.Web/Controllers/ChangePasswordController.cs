@@ -42,15 +42,17 @@
             var adminId = User.GetAdminId();
             var delegateId = User.GetCandidateId();
 
+          
+
+            var verifiedLinkedUsersAccounts = string.IsNullOrEmpty(formData.CurrentPassword)
+                ? new UserAccountSet()
+                : userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, formData.CurrentPassword!);
+
             if (!ModelState.IsValid)
             {
                 var model = new ChangePasswordViewModel(formData, dlsSubApplication);
                 return View(model);
             }
-
-            var verifiedLinkedUsersAccounts = string.IsNullOrEmpty(formData.CurrentPassword)
-                ? new UserAccountSet()
-                : userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, formData.CurrentPassword!);
 
             if (!verifiedLinkedUsersAccounts.Any())
             {
@@ -58,14 +60,10 @@
                     nameof(ChangePasswordFormData.CurrentPassword),
                     CommonValidationErrorMessages.IncorrectPassword
                 );
+                return View(new ChangePasswordViewModel(formData, dlsSubApplication));
             }
 
-            //if (!ModelState.IsValid)
-            //{
-            //    var model = new ChangePasswordViewModel(formData, dlsSubApplication);
-            //    return View(model);
-            //}
-
+           
             var newPassword = formData.Password!;
 
             await passwordService.ChangePasswordAsync(verifiedLinkedUsersAccounts.GetUserRefs(), newPassword);
