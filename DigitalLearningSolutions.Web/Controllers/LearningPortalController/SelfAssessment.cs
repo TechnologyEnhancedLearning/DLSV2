@@ -154,7 +154,6 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
             var competency = selfAssessmentService.GetNthCompetency(competencyNumber, assessment.Id, candidateId);
-
             if (competency.AssessmentQuestions.Any(x => x.SignedOff == true))
             {
 
@@ -272,12 +271,6 @@
                     assessmentQuestion.Result,
                     assessmentQuestion.SupportingComments
                 );
-            }
-
-            selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateId, true);
-            if (assessment.LinearNavigation)
-            {
-                return RedirectToAction("SelfAssessmentCompetency", new { competencyNumber = competencyNumber + 1 });
             }
 
             return new RedirectResult(
