@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Text.Json;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
@@ -14,6 +15,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using Microsoft.AspNetCore.Mvc;
@@ -151,6 +153,106 @@
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
+            var competency = selfAssessmentService.GetNthCompetency(competencyNumber, assessment.Id, candidateId); ;
+
+            if (competency.AssessmentQuestions.Any(x => x.SignedOff == true))
+            {
+
+                TempData["assessmentQuestions"] = JsonSerializer.Serialize(assessmentQuestions);
+                TempData["competencyId"] = competencyId;
+                TempData["competencyGroupId"] = competencyGroupId;
+                TempData["competencyName"] = competency.Name;
+
+                return RedirectToAction("ConfirmOverwriteSelfAssessment", new { selfAssessmentId = selfAssessmentId, competencyNumber = competencyId });
+            }
+            else
+            {
+                return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, candidateId, assessmentQuestions);
+            }
+        }
+
+        [Route(
+            "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}/confirm"
+        )]
+        [HttpGet]
+        public IActionResult ConfirmOverwriteSelfAssessment(
+           int selfAssessmentId, int competencyNumber
+        )
+        {
+            if (TempData["competencyName"] != null)
+            {
+                var assessmentQuestions = JsonSerializer.Deserialize<List<AssessmentQuestion>>(TempData["assessmentQuestions"] as string);
+                var competencyName = TempData["competencyName"];
+                var competencyId = TempData["competencyId"];
+                var competencyGroupId = TempData["competencyGroupId"];
+                var checkBoxes = new List<CheckboxListItemViewModel>();
+                checkBoxes.Add(ConfirmOverwrite.checkbox);
+
+                var model = new ConfirmOverwrite(Convert.ToInt32(competencyId), competencyNumber, Convert.ToInt32(competencyGroupId), competencyName.ToString(), checkBoxes, selfAssessmentId);
+
+                TempData["assessmentQuestions"] = JsonSerializer.Serialize(assessmentQuestions);
+                TempData["competencyName"] = competencyName;
+                TempData["competencyId"] = competencyId;
+                TempData["competencyGroupId"] = competencyGroupId;
+                TempData["competencyNumber"] = competencyNumber;
+
+                return View("SelfAssessments/ConfirmOverwriteSelfAssessment", model);
+            }
+            else
+            {
+                return RedirectToAction("SelfAssessmentCompetency", new { selfAssessmentId, competencyNumber });
+            }
+
+        }
+
+        [Route(
+           "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}/confirm"
+       )]
+        [HttpPost]
+        public IActionResult ConfirmOverwriteSelfAssessment(int selfAssessmentId,
+            int competencyNumber,
+            int competencyId,
+            int competencyGroupId,
+            ConfirmOverwrite model)
+        {
+            if (model.isChecked)
+            {
+                var candidateId = User.GetCandidateIdKnownNotNull();
+                var assessmentQuestions = JsonSerializer.Deserialize<List<AssessmentQuestion>>(TempData["assessmentQuestions"] as string);
+                var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+                return SubmitSelfAssessment(assessment, selfAssessmentId, competencyNumber, competencyId, competencyGroupId, candidateId, assessmentQuestions);
+            }
+            else
+            {
+                ModelState.Clear();
+                ModelState.AddModelError("isChecked", "You must check the checkbox to continue");
+                var assessmentQuestions = JsonSerializer.Deserialize<List<AssessmentQuestion>>(TempData["assessmentQuestions"] as string);
+                var competencyName = TempData["competencyName"];
+                var checkBoxes = new List<CheckboxListItemViewModel>();
+                checkBoxes.Add(ConfirmOverwrite.checkbox);
+
+                model = new ConfirmOverwrite(Convert.ToInt32(competencyId), competencyNumber, Convert.ToInt32(competencyGroupId), competencyName.ToString(), checkBoxes, selfAssessmentId);
+
+                TempData["assessmentQuestions"] = JsonSerializer.Serialize(assessmentQuestions);
+                TempData["competencyName"] = competencyName;
+                TempData["competencyId"] = competencyId;
+                TempData["competencyGroupId"] = competencyGroupId;
+                TempData["competencyNumber"] = competencyNumber;
+
+                return View("SelfAssessments/ConfirmOverwriteSelfAssessment", model);
+            }
+        }
+
+        IActionResult SubmitSelfAssessment(CurrentSelfAssessment assessment, int selfAssessmentId, int competencyNumber, int competencyId, int? competencyGroupId, int candidateId, ICollection<AssessmentQuestion> assessmentQuestions)
+        {
+            if (assessment == null)
+            {
+                logger.LogWarning(
+                    $"Attempt to set self assessment competency for candidate {candidateId} with no self assessment"
+                );
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+            var competency = selfAssessmentService.GetNthCompetency(competencyNumber, assessment.Id, candidateId);
 
             var unansweredRadioQuestion = assessmentQuestions.FirstOrDefault(q => q.AssessmentQuestionInputTypeID != 2 && q.Result == null && q.SupportingComments != null);
             if (unansweredRadioQuestion?.SupportingComments != null)
@@ -172,28 +274,22 @@
                 );
             }
 
-            selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateId, true);
-            if (assessment.LinearNavigation)
-            {
-                return RedirectToAction("SelfAssessmentCompetency", new { competencyNumber = competencyNumber + 1 });
-            }
-
             return new RedirectResult(
-                Url.Action(
-                    "SelfAssessmentOverview",
-                    new
-                    {
-                        selfAssessmentId,
-                        vocabulary = assessment.Vocabulary,
-                        competencyGroupId,
-                    }
-                ) + "#comp-" + competencyNumber
-            );
+                    Url.Action(
+                        "SelfAssessmentOverview",
+                        new
+                        {
+                            selfAssessmentId,
+                            vocabulary = assessment.Vocabulary,
+                            competencyGroupId,
+                        }
+                    ) + "#comp-" + competencyNumber
+                );
         }
 
         [Route(
-            "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Proficiencies/{competencyNumber:int}/{resultId:int}/ViewNotes"
-        )]
+        "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Proficiencies/{competencyNumber:int}/{resultId:int}/ViewNotes"
+    )]
         public IActionResult SupervisorComments(int selfAssessmentId, int competencyNumber, int resultId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();

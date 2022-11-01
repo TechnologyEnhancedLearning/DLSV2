@@ -1,0 +1,36 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@using DigitalLearningSolutions.Web.Helpers
+@model ConfirmOverwrite
+@{
+    ViewData["Title"] = "Self Assessments - Confirm Overwrite";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    var errorClass = Model.isChecked == false ? "nhsuk-input--error" : "";
+    var routeParamsForCancelLink = new Dictionary<string, string>();
+    routeParamsForCancelLink.Add("selfAssessmentId", Model.SelfAssessmentId.ToString());
+    routeParamsForCancelLink.Add("competencyNumber", Model.CompetencyNumber.ToString());
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.isChecked) })" />
+        }
+        <h2 class="nhsuk-heading-xl">Overwrite confirmed self assessment result?</h2>
+        <p class="nhsuk-body-m word-break">
+            <span class="nhsuk-u-font-weight-bold">Competency: </span> @Model.CompetencyName
+        </p>
+        <form asp-action="ConfirmOverwriteSelfAssessment"
+              asp-route-competencyNumber="@Model.CompetencyNumber"
+              asp-route-competencyId="@Model.CompetencyId"
+              asp-route-competencyGroupId="@Model.CompetencyGroupId">
+
+            <vc:checkboxes label="Please select all the roles this user has."
+                           populate-with-current-values="true"
+                           checkboxes="@Model.CheckBoxes"
+                           hint-text="" />
+
+            <input class="nhsuk-button nhsuk-button--danger" type="submit" value="Confirm overwrite result" />
+        </form>
+        <vc:cancel-link asp-controller="LearningPortal" asp-action="SelfAssessmentCompetency" asp-all-route-data="@routeParamsForCancelLink" link-text="Cancel" />
+    </div>
+</div>
