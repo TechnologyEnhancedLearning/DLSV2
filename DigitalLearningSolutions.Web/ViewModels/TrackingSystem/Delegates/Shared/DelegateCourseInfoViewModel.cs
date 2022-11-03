@@ -2,7 +2,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
 {
     using System;
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -138,6 +137,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
             {
                 return "archived";
             }
+            if (RemovedDate != null)
+            {
+                return "removed";
+            }
             if (IsCourseActive != true)
             {
                 return "inactive";
@@ -145,10 +148,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
             if (Completed != null)
             {
                 return "completed";
-            }
-            if (RemovedDate != null)
-            {
-                return "removed";
             }
             return "active";
         }
