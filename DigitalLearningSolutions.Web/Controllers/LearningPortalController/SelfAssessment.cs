@@ -17,9 +17,6 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
-    using DocumentFormat.OpenXml.EMMA;
-    using DocumentFormat.OpenXml.InkML;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
@@ -756,19 +753,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            var currentToken = HttpContext.Request.Form["__RequestVerificationToken"].ToString();
-            var lastToken = HttpContext.Session.GetString("LastProcessedToken");
-
-            if (lastToken == currentToken)
-            {
-                return RedirectToAction("ManageSupervisors", new { sessionAddSupervisor.SelfAssessmentID });
-            }
-            else
-            {
-                HttpContext.Session.SetString("LastProcessedToken", currentToken);
-                await HttpContext.Session.CommitAsync();
-            }
-
+            if (await HttpContext.IsDuplicateSubmission()) return RedirectToAction("ManageSupervisors", new { sessionAddSupervisor.SelfAssessmentID });
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
                 MultiPageFormDataFeature.AddNewSupervisor,
