@@ -99,13 +99,14 @@
             var supervisorEmail = GetUserEmail();
 
             ModelState.Remove("Page");
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && supervisorEmail != model.DelegateEmail)
             {
                 AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
                 return RedirectToAction("MyStaffList", model.Page);
             }
             else
             {
+                if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "A supervisor cannot be added as a member"); }
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
                 return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
             }
@@ -131,7 +132,7 @@
                 var delegateEmailsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.DelegateEmails);
                 foreach (var delegateEmail in delegateEmailsList)
                 {
-                    if (delegateEmail.Length > 0)
+                    if (delegateEmail.Length > 0 && supervisorEmail != delegateEmail)
                     {
                         if (RegexStringValidationHelper.IsValidEmail(delegateEmail))
                         {
