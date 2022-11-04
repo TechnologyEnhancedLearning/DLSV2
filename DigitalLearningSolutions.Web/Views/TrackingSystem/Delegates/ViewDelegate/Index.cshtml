@@ -105,16 +105,17 @@
            asp-route-delegateId="@Model.DelegateInfo.Id"
            asp-route-isFromViewDelegatePage="true">
           Set password
-        </a>
-        @if (User.HasCentreManagerPermissions() && !Model.DelegateInfo.IsAdmin && Model.DelegateInfo.IsPasswordSet) {
-          <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
-             role="button"
-             asp-controller="PromoteToAdmin"
-             asp-action="Index"
-             asp-route-delegateId="@Model.DelegateInfo.Id">
-            Promote to admin
-          </a>
-        }
+                </a>
+                @if (User.HasCentreManagerPermissions() && !Model.DelegateInfo.IsAdmin && Model.DelegateInfo.IsPasswordSet && !string.IsNullOrWhiteSpace(Model.DelegateInfo.Email) && !string.IsNullOrWhiteSpace(Model.DelegateInfo.Name))
+                {
+                    <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
+               role="button"
+               asp-controller="PromoteToAdmin"
+               asp-action="Index"
+               asp-route-delegateId="@Model.DelegateInfo.Id">
+                        Promote to admin
+                    </a>
+                }
         <form asp-action="DeactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
           <button
             class="nhsuk-button delete-button view-delegate-button"
