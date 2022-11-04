@@ -23,6 +23,6 @@
         public int CompetencyId { get; set; }   
         public int CompetencyNumber { get; set; }
         public string CompetencyName { get; set; }
-        public bool isChecked { get; set; } = false;
+        public bool IsChecked { get; set; } = false;
     }
 }
