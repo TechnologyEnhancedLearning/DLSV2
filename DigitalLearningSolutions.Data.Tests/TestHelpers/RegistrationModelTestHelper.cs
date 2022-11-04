@@ -83,6 +83,10 @@ namespace DigitalLearningSolutions.Data.Tests.TestHelpers
                 isContentCreator,
                 isCmsAdmin,
                 isCmsManager,
+                null,
+                null,
+                null,
+                null,
                 null
             );
         }
@@ -129,6 +133,10 @@ namespace DigitalLearningSolutions.Data.Tests.TestHelpers
                 isContentCreator,
                 isCmsAdmin,
                 isCmsManager,
+                null,
+                null,
+                null,
+                null,
                 null
             );
         }

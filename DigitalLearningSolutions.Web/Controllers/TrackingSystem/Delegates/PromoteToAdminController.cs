@@ -6,6 +6,8 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Common;
+    using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -32,6 +34,7 @@
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
+        private readonly IEmailGenerationService emailGenerationService;
 
         public PromoteToAdminController(
             IUserDataService userDataService,
@@ -39,7 +42,8 @@
             ICentreContractAdminUsageService centreContractAdminUsageService,
             IRegistrationService registrationService,
             ILogger<PromoteToAdminController> logger,
-            IUserService userService
+            IUserService userService,
+            IEmailGenerationService emailGenerationService
         )
         {
             this.userDataService = userDataService;
@@ -48,6 +52,7 @@
             this.registrationService = registrationService;
             this.logger = logger;
             this.userService = userService;
+            this.emailGenerationService = emailGenerationService;
         }
 
         [HttpGet]
@@ -86,6 +91,11 @@
             var userDelegateId = User.GetCandidateId();
             var (supervisorAdminUser, supervisorDelegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
+
+            // TODO: Need CourseCategoryID here
+
+            
+
             try
             {
                 registrationService.PromoteDelegateToAdmin(
@@ -93,6 +103,29 @@
                     AdminCategoryHelper.AdminCategoryToCategoryId(formData.LearningCategory),
                     formData.UserId,
                     formData.CentreId
+                );
+
+                // TODO: This seems overkill here - need a DTO maybe?
+                // var adminRegistrationModel = new AdminRegistrationModel();
+
+
+
+
+
+                this.emailGenerationService.GenerateAndSendDelegateRolesNotificationEmail(
+                    "",
+                    supervisorAdminUser!.FirstName,
+                    supervisorAdminUser.LastName,
+                    supervisorAdminUser.EmailAddress,
+                    formData.IsCentreAdmin,
+                    false,
+                    formData.IsSupervisor,
+                    formData.IsNominatedSupervisor,
+                    formData.IsTrainer,
+                    formData.IsContentCreator,
+                    false,
+                    false,
+                    ""
                 );
             }
             catch (AdminCreationFailedException e)

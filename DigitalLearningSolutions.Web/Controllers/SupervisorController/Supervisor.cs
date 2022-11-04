@@ -929,7 +929,12 @@
             if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
                 var categoryId = User.GetAdminCategoryId();
+
+
+
                 var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminId(), 0);
+
+
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
                 if (supervisorDelegateDetail.CandidateID != null)
                 {

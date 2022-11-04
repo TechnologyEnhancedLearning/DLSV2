@@ -403,6 +403,10 @@ namespace DigitalLearningSolutions.Web.Services
                 false,
                 false,
                 false,
+                null,
+                null,
+                null,
+                null,
                 userAccount.ProfileImage
             );
 
