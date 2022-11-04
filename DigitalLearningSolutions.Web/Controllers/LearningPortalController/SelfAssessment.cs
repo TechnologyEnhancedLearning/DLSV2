@@ -184,10 +184,9 @@
                 var competencyName = TempData["competencyName"];
                 var competencyId = TempData["competencyId"];
                 var competencyGroupId = TempData["competencyGroupId"];
-                var checkBoxes = new List<CheckboxListItemViewModel>();
-                checkBoxes.Add(ConfirmOverwrite.checkbox);
 
-                var model = new ConfirmOverwrite(Convert.ToInt32(competencyId), competencyNumber, Convert.ToInt32(competencyGroupId), competencyName.ToString(), checkBoxes, selfAssessmentId);
+                var model = new ConfirmOverwrite(Convert.ToInt32(competencyId), competencyNumber, Convert.ToInt32(competencyGroupId), competencyName.ToString(),
+                    selfAssessmentId);
 
                 TempData["assessmentQuestions"] = JsonSerializer.Serialize(assessmentQuestions);
                 TempData["competencyName"] = competencyName;
@@ -227,10 +226,9 @@
                 ModelState.AddModelError("isChecked", "You must check the checkbox to continue");
                 var assessmentQuestions = JsonSerializer.Deserialize<List<AssessmentQuestion>>(TempData["assessmentQuestions"] as string);
                 var competencyName = TempData["competencyName"];
-                var checkBoxes = new List<CheckboxListItemViewModel>();
-                checkBoxes.Add(ConfirmOverwrite.checkbox);
 
-                model = new ConfirmOverwrite(Convert.ToInt32(competencyId), competencyNumber, Convert.ToInt32(competencyGroupId), competencyName.ToString(), checkBoxes, selfAssessmentId);
+                model = new ConfirmOverwrite(Convert.ToInt32(competencyId), competencyNumber, Convert.ToInt32(competencyGroupId), competencyName.ToString(),
+                    selfAssessmentId);
 
                 TempData["assessmentQuestions"] = JsonSerializer.Serialize(assessmentQuestions);
                 TempData["competencyName"] = competencyName;
