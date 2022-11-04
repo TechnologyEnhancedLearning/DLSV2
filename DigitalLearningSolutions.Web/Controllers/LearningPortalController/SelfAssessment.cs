@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
@@ -739,17 +740,20 @@
 
         [HttpPost]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
-        public IActionResult SubmitSummary()
+        public async Task<IActionResult> SubmitSummary()
         {
             var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
             );
+
+
             if (sessionAddSupervisor == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
+            if (await HttpContext.IsDuplicateSubmission()) return RedirectToAction("ManageSupervisors", new { sessionAddSupervisor.SelfAssessmentID });
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
                 MultiPageFormDataFeature.AddNewSupervisor,
