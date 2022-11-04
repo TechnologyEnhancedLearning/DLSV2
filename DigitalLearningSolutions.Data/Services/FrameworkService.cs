@@ -1825,8 +1825,8 @@ WHERE (FrameworkID = @frameworkId)",
                                                   AQ.CommentsPrompt,
                                                   AQ.CommentsHint
                                                   FROM   Competencies AS C INNER JOIN
-             FrameworkCompetencies AS FC ON C.ID = FC.CompetencyID INNER JOIN
-             FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID INNER JOIN
+             FrameworkCompetencies AS FC ON C.ID = FC.CompetencyID LEFT JOIN
+             FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID LEFT JOIN
              CompetencyGroups AS CG ON FCG.CompetencyGroupID = CG.ID INNER JOIN
              CompetencyAssessmentQuestions AS CAQ ON C.ID = CAQ.CompetencyID INNER JOIN
              AssessmentQuestions AS AQ ON CAQ.AssessmentQuestionID = AQ.ID
