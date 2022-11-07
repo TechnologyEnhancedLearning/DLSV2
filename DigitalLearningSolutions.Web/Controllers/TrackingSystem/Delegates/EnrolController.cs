@@ -25,19 +25,19 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         private readonly ICourseDataService courseDataService;
         private readonly IMultiPageFormService multiPageFormService;
         private readonly ISupervisorService supervisorService;
-        private readonly IProgressDataService progressDataService;
+        private readonly IEnrolService enrolService;
 
         public EnrolController(
             ICourseDataService courseDataService,
             IMultiPageFormService multiPageFormService,
             ISupervisorService supervisorService,
-            IProgressDataService progressDataService
+            IEnrolService enrolService
         )
         {
             this.courseDataService = courseDataService;
             this.multiPageFormService = multiPageFormService;
             this.supervisorService = supervisorService;
-            this.progressDataService = progressDataService;
+            this.enrolService = enrolService;
         }
 
         public IActionResult StartEnrolProcess(int delegateId, string delegateName)
@@ -248,8 +248,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                TempData);
             if (!sessionEnrol.IsSelfAssessment)
             {
-                progressDataService.CreateNewDelegateProgress(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion,
-                    DateTime.Now, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault());
+                enrolService.EnrolDelegateOnCourse(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault());
             }
             else
             {
