@@ -692,7 +692,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 }
                 else if(collaboratorId == -5)
                 {
-                    TempData["FrameworkError"] = $"The owner can not be the collaborator of the framework.";
+                    TempData["FrameworkError"] = $"The owner cannot be the collaborator of the framework.";
                 }
                 else
                 {
