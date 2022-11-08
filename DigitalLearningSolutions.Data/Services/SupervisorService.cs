@@ -40,8 +40,7 @@
         bool UpdateSelfAssessmentResultSupervisorVerificationsEmailSent(int selfAssessmentResultSupervisorVerificationId);
         int RemoveSelfAssessmentResultSupervisorVerificationById(int id);
         bool RemoveCandidateAssessment(int candidateAssessmentId);
-        //void UpdateNotificationSent(int supervisorDelegateId);
-        void UpdateNotificationSent(int? supervisorId);
+        void UpdateNotificationSent(int supervisorDelegateId);
         void UpdateCandidateAssessmentSupervisorVerificationById(int? candidateAssessmentSupervisorVerificationId, string? supervisorComments, bool signedOff);
         //INSERT DATA
         int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId);
@@ -624,7 +623,7 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
             return true;
         }
 
-        public void UpdateNotificationSent(int? supervisorDelegateId)
+        public void UpdateNotificationSent(int supervisorDelegateId)
         {
             connection.Execute(
                 @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 

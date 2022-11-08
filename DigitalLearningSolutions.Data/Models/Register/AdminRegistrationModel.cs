@@ -22,7 +22,7 @@
             bool isContentCreator,
             bool isCmsAdmin,
             bool isCmsManager,
-            int? supervisorDelegateId,
+            int supervisorDelegateId,
             string supervisorEmail,
             string supervisorFirstName,
             string supervisorLastName,
@@ -83,7 +83,7 @@
 
         public byte[]? ProfileImage { get; set; }
 
-        public int? SupervisorDelegateId { get; set; }
+        public int SupervisorDelegateId { get; set; }
         public string? SupervisorEmail { get; set; }
         public string SupervisorFirstName { get; set; }
         public string SupervisorLastName { get; set; }
