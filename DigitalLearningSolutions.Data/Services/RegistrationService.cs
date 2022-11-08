@@ -36,11 +36,8 @@ namespace DigitalLearningSolutions.Data.Services
             AdminRoles adminRoles,
             int categoryId,
             int delegateId,
-            AdminUser supervisorAdminUser
-            );
-
-        //AdminUser? supervisorAdminUser,
-        //DelegateUser supervisorDelegateUser);
+            AdminUser? supervisorAdminUser,
+            DelegateUser? supervisorDelegateUser);
     }
 
     public class RegistrationService : IRegistrationService
@@ -156,11 +153,10 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        //public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser? supervisorAdminUser, DelegateUser supervisorDelegateUser)
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser supervisorAdminUser)
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser supervisorAdminUser, DelegateUser? supervisorDelegateUser)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId);
-            
+
             if (delegateUser == null ||
                 string.IsNullOrWhiteSpace(delegateUser.EmailAddress) ||
                 string.IsNullOrWhiteSpace(delegateUser.FirstName) ||
@@ -233,15 +229,10 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsContentCreator,
                     adminRoles.IsCmsAdministrator,
                     adminRoles.IsCmsManager,
-                    //supervisorDelegateUser.Id,
-                    //supervisorDelegateUser.EmailAddress ?? string.Empty,
-                    //supervisorDelegateUser.FirstName ?? string.Empty,
-                    //supervisorDelegateUser.LastName,
-                    supervisorAdminUser.Id,
+                    supervisorDelegateUser != null ? supervisorDelegateUser.Id : 0,
                     supervisorAdminUser.EmailAddress ?? string.Empty,
                     supervisorAdminUser.FirstName ?? string.Empty,
                     supervisorAdminUser.LastName,
-
                     delegateUser.ProfileImage
                 );
 
@@ -318,8 +309,10 @@ namespace DigitalLearningSolutions.Data.Services
             builder.TextBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.";
             builder.HtmlBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.</body>";
 
-            //supervisorService.UpdateNotificationSent(adminRegistrationModel.SupervisorDelegateId);
-            supervisorService.UpdateNotificationSent(adminRegistrationModel.SupervisorId);
+            if (adminRegistrationModel.SupervisorDelegateId != null && adminRegistrationModel.SupervisorDelegateId != 0)
+            {
+                supervisorService.UpdateNotificationSent(adminRegistrationModel.SupervisorDelegateId);
+            }
 
             emailService.SendEmail(new Email(emailSubjectLine, builder, adminRegistrationModel.Email, adminRegistrationModel.SupervisorEmail));
         }

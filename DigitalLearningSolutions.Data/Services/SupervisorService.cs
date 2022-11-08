@@ -41,7 +41,7 @@
         int RemoveSelfAssessmentResultSupervisorVerificationById(int id);
         bool RemoveCandidateAssessment(int candidateAssessmentId);
         //void UpdateNotificationSent(int supervisorDelegateId);
-        void UpdateNotificationSent(int supervisorId);
+        void UpdateNotificationSent(int? supervisorId);
         void UpdateCandidateAssessmentSupervisorVerificationById(int? candidateAssessmentSupervisorVerificationId, string? supervisorComments, bool signedOff);
         //INSERT DATA
         int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId);
@@ -624,21 +624,12 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
             return true;
         }
 
-        //public void UpdateNotificationSent(int supervisorDelegateId)
-        public void UpdateNotificationSent(int supervisorId)
+        public void UpdateNotificationSent(int? supervisorDelegateId)
         {
-
-            // TODO: Should this be Where SupervisorAdminID = x
-            // not just table pk ID?
-            // Or maybe make a new version of this which updates via SupervisorAdminID instead of pk ID?
-
             connection.Execute(
-            //    @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
-            //WHERE ID = @supervisorDelegateId",
-            //    new { supervisorDelegateId });
-            @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
-            WHERE ID = @supervisorId",
-            new { supervisorId });
+                @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
+            WHERE ID = @supervisorDelegateId",
+                new { supervisorDelegateId });
         }
 
         public bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId)
