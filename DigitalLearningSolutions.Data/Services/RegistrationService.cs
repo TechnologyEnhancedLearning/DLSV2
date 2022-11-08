@@ -159,7 +159,7 @@ namespace DigitalLearningSolutions.Data.Services
         //public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser? supervisorAdminUser, DelegateUser supervisorDelegateUser)
         public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser supervisorAdminUser)
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+            var delegateUser = userDataService.GetDelegateUserById(delegateId);
             
             if (delegateUser == null ||
                 string.IsNullOrWhiteSpace(delegateUser.EmailAddress) ||
