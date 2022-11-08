@@ -73,17 +73,21 @@
         public IActionResult Index(AdminRolesFormData formData, int delegateId)
         {
             var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetCandidateId();
-            var (supervisorAdminUser, supervisorDelegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            //var userDelegateId = User.GetCandidateId();
+
+            //var (supervisorAdminUser, supervisorDelegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var (supervisorAdminUser, supervisorDelegateUser)  = userService.GetUsersById(userAdminId, null);
 
             try
             {
+
+
                 registrationService.PromoteDelegateToAdmin(
                     formData.GetAdminRoles(),
                     formData.LearningCategory,
                     delegateId,
-                    supervisorAdminUser,
-                    supervisorDelegateUser
+                    supervisorAdminUser//,
+                    //supervisorDelegateUser
                 );
             }
             catch (AdminCreationFailedException e)

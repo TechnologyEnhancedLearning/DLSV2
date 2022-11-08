@@ -631,7 +631,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // When
             var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser, supervisorDelegateUser)
+                //() => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser, supervisorDelegateUser)
+                    () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser)
             );
 
             // Then
@@ -648,7 +649,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // When
             var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser, supervisorDelegateUser)
+                //() => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser, supervisorDelegateUser)
+                    () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser)
             );
 
             // Then
@@ -667,7 +669,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, 0, 1, supervisorAdminUser, supervisorDelegateUser);
+            //registrationService.PromoteDelegateToAdmin(adminRoles, 0, 1, supervisorAdminUser, supervisorDelegateUser);
+            registrationService.PromoteDelegateToAdmin(adminRoles, 0, 1, supervisorAdminUser);
 
             // Then
             using (new AssertionScope())
@@ -702,7 +705,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // When
             var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser, supervisorDelegateUser)
+                //() => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser, supervisorDelegateUser)
+                    () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser)
             );
 
             // Then
@@ -725,8 +729,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, 1, supervisorAdminUser, supervisorDelegateUser);
-
+            //registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, 1, supervisorAdminUser, supervisorDelegateUser);
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, 1, supervisorAdminUser);
+            
             // Then
             using (new AssertionScope())
             {
@@ -769,8 +774,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(null);
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser, supervisorDelegateUser);
-
+            //registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser, supervisorDelegateUser);
+            registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser);
+            
             // Then
             using (new AssertionScope())
             {
