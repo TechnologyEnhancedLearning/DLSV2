@@ -74,8 +74,8 @@
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
-
-            var (supervisorAdminUser, supervisorDelegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            
+            var (currentAdminUser, delegateUserToPromote) = userService.GetUsersById(userAdminId, delegateId);
 
             try
             {
@@ -83,9 +83,9 @@
                     formData.GetAdminRoles(),
                     formData.LearningCategory,
                     delegateId,
-                    supervisorAdminUser,
-                    supervisorDelegateUser
-                );
+                    currentAdminUser,
+                    delegateUserToPromote
+                    );
             }
             catch (AdminCreationFailedException e)
             {
