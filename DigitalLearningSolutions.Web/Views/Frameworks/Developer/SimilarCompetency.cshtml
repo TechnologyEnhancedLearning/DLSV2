@@ -13,11 +13,11 @@
 <div class="nhsuk-form-group nhsuk-form-group--error">
     <h2>Duplicate framework competency name</h2>
     <p class="nhsuk-error-message">
-        Your framework competeny <span class="nhsuk-u-font-weight-bold">@Model.Competency.Name</span> has the same name as an existing framework:
+        Your framework competeny <span class="nhsuk-u-font-weight-bold">@Model.Competency.Name</span> has the same name as an existing competency.
     </p>
 </div>
 <p class="nhsuk-u-margin-top-6">
-    Your competency is name is not distinct, you can still create it but we recommand you to take a distinct name.
+    Your competency name is not distinct, you can still create it but we recommend that you give it a distinct name.
 </p>
 <h2>Duplications</h2>
 <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-bottom-6">
@@ -58,7 +58,7 @@
       asp-route-competencyName="@Model.Competency.Name" asp-route-competencyDescription="@Model.Competency.Description"
       asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkGroupId="@Model.FrameworkGroupId">
     <button class="nhsuk-button" type="submit">
-        Save competency
+        Confirm save
     </button>
 </form>
 <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="ViewFramework" asp-route-tabname="Structure" asp-route-frameworkId="@Model.FrameworkId">
