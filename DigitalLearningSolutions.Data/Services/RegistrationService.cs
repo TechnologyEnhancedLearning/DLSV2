@@ -36,8 +36,8 @@ namespace DigitalLearningSolutions.Data.Services
             AdminRoles adminRoles,
             int categoryId,
             int delegateId,
-            AdminUser? supervisorAdminUser,
-            DelegateUser? supervisorDelegateUser);
+            AdminUser? currentAdminUser,
+            DelegateUser? delegateUserToPromote);
     }
 
     public class RegistrationService : IRegistrationService
@@ -165,7 +165,7 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser supervisorAdminUser, DelegateUser? supervisorDelegateUser)
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser currentAdminUser, DelegateUser? delegateUserToPromote)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId);
 
@@ -241,10 +241,10 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsContentCreator,
                     adminRoles.IsCmsAdministrator,
                     adminRoles.IsCmsManager,
-                    supervisorDelegateUser?.Id ?? 0,
-                    supervisorAdminUser.EmailAddress ?? string.Empty,
-                    supervisorAdminUser.FirstName ?? string.Empty,
-                    supervisorAdminUser.LastName,
+                    delegateUserToPromote?.Id ?? 0,
+                    currentAdminUser.EmailAddress ?? string.Empty,
+                    currentAdminUser.FirstName ?? string.Empty,
+                    currentAdminUser.LastName,
                     delegateUser.ProfileImage
                 );
 
@@ -321,9 +321,9 @@ namespace DigitalLearningSolutions.Data.Services
             builder.TextBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.";
             builder.HtmlBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.</body>";
 
-            if (adminRegistrationModel.SupervisorDelegateId != 0)
+            if (adminRegistrationModel.DelegateIdToPromote != 0)
             {
-                supervisorService.UpdateNotificationSent(adminRegistrationModel.SupervisorDelegateId);
+                supervisorService.UpdateNotificationSent(adminRegistrationModel.DelegateIdToPromote);
             }
 
             emailService.SendEmail(new Email(emailSubjectLine, builder, adminRegistrationModel.Email, adminRegistrationModel.SupervisorEmail));
