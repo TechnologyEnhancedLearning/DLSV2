@@ -628,10 +628,10 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
         public void UpdateNotificationSent(int supervisorId)
         {
 
-            // TODO: Should this be WHERE SupervisorAdminID =
+            // TODO: Should this be Where SupervisorAdminID = x
             // not just table pk ID?
+            // Or maybe make a new version of this which updates via SupervisorAdminID instead of pk ID?
 
-            
             connection.Execute(
             //    @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
             //WHERE ID = @supervisorDelegateId",

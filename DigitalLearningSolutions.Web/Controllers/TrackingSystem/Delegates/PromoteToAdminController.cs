@@ -80,8 +80,6 @@
 
             try
             {
-
-
                 registrationService.PromoteDelegateToAdmin(
                     formData.GetAdminRoles(),
                     formData.LearningCategory,
