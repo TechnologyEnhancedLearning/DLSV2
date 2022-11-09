@@ -178,6 +178,10 @@
 
             return RedirectToAction("MyStaffList");
         }
+        public IActionResult RemoveSupervisorDelegate()
+        {
+            return RedirectToAction("MyStaffList");
+        }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, ReturnPageQuery returnPageQuery)
@@ -202,7 +206,12 @@
             }
             else
             {
-                ModelState.ClearErrorsOnField("ActionConfirmed");
+                
+                if (supervisorDelegate.ConfirmedRemove)
+                {
+                    supervisorDelegate.ConfirmedRemove = false;
+                    ModelState.ClearErrorsOnField("ActionConfirmed");
+                }
                 return View("RemoveConfirm", supervisorDelegate);
             }
         }
@@ -917,6 +926,14 @@
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
             var model = new SupervisorDelegateViewModel(superviseDelegate, returnPageQuery);
+            if (TempData["NominateSupervisorError"] != null)
+            {
+                if (Convert.ToBoolean(TempData["NominateSupervisorError"].ToString()))
+                {
+                    ModelState.AddModelError("ActionConfirmed", "Please tick the checkbox to confirm you wish to perform this action");
+
+                }
+            }
             return View("NominateSupervisor", model);
         }
         [HttpPost]
@@ -939,7 +956,9 @@
             }
             else
             {
-                return View("NominateSupervisor", supervisorDelegate);
+                TempData["NominateSupervisorError"] = true;
+                return RedirectToAction("NominateSupervisor", new { supervisorDelegateId = supervisorDelegate.Id, returnPageQuery = supervisorDelegate.ReturnPageQuery });
+
             }
         }
     }

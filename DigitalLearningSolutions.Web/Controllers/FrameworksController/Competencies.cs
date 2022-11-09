@@ -194,7 +194,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             frameworkService.DeleteFrameworkCompetency(frameworkCompetencyId, GetAdminId());
             return frameworkCompetencyGroupId != null ? new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString()) : new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-ungrouped");
         }
-        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}/{frameworkCompetencyId}/Preview/")]
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId:int=0}/{frameworkCompetencyId}/Preview/")]
         public IActionResult PreviewCompetency(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId)
         {
             var adminId = GetAdminId();

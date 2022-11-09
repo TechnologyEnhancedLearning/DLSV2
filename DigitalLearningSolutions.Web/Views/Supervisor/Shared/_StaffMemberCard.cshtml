@@ -91,8 +91,10 @@
                         Remove staff member
                     </button>
                     @Html.Hidden("Id", Model.SupervisorDelegateDetail.ID)
+                    @Html.Hidden("FirstName",@Model.SupervisorDelegateDetail.FirstName)
+                    @Html.Hidden("LastName",@Model.SupervisorDelegateDetail.LastName)
                     @Html.Hidden("DelegateEmail", Model.SupervisorDelegateDetail.DelegateEmail)
-                    @Html.Hidden("ConfirmedRemove", true)
+                    @Html.Hidden("ConfirmedRemove",true)
                     @Html.HiddenFor(m => m.ReturnPageQuery)
                 </form>
             }

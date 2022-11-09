@@ -4,7 +4,8 @@
 @model DelegateCourseInfoViewModel
 
 <dl class="nhsuk-summary-list details-list-with-button word-break">
-  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates))
+  {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
         Delegate ID
@@ -22,7 +23,11 @@
       <dd class="nhsuk-summary-list__actions" />
     </div>
   }
-
+  <div class="tags @(@Model.Status() != string.Empty ? string.Empty : "nhsuk-u-visually-hidden")">
+    <dt class="card-filter-tag">
+      <strong class="nhsuk-tag @Model.StatusTagStyle() capitalise">@Model.Status()</strong>
+    </dt>
+  </div>
   <div class="nhsuk-summary-list__row details-list-with-button__row">
     <dt class="nhsuk-summary-list__key">
       Enrolled
@@ -106,7 +111,8 @@
     <dd class="nhsuk-summary-list__actions"></dd>
   </div>
 
-  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates)) {
+  @if (Model.AccessedVia.Equals(DelegateAccessRoute.CourseDelegates))
+  {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
         Removed
@@ -150,7 +156,8 @@
     <dd class="nhsuk-summary-list__actions"></dd>
   </div>
 
-  @foreach (var courseCustomPrompt in Model.CourseAdminFieldsWithAnswers) {
+  @foreach (var courseCustomPrompt in Model.CourseAdminFieldsWithAnswers)
+  {
     <div class="nhsuk-summary-list__row details-list-with-button__row">
       <dt class="nhsuk-summary-list__key">
         @courseCustomPrompt.PromptText
@@ -159,19 +166,20 @@
       <div hidden data-filter-value="@FilteringHelper.GetFilterValueForAdminField(courseCustomPrompt)"></div>
       <dd class="nhsuk-summary-list__actions">
         <a data-return-page-enabled="true"
-           asp-controller="DelegateProgress"
-           asp-action="EditDelegateCourseAdminField"
-           asp-route-progressId="@Model.ProgressId"
-           asp-route-promptNumber="@courseCustomPrompt.PromptNumber"
-           asp-route-accessedVia="@Model.AccessedVia"
-           asp-route-returnPageQuery="@Model.ReturnPageQuery">
+         asp-controller="DelegateProgress"
+         asp-action="EditDelegateCourseAdminField"
+         asp-route-progressId="@Model.ProgressId"
+         asp-route-promptNumber="@courseCustomPrompt.PromptNumber"
+         asp-route-accessedVia="@Model.AccessedVia"
+         asp-route-returnPageQuery="@Model.ReturnPageQuery">
           Edit<span class="nhsuk-u-visually-hidden"> @courseCustomPrompt.PromptText</span>
         </a>
       </dd>
     </div>
   }
 
-  @if (Model.IsAssessed) {
+  @if (Model.IsAssessed)
+  {
     <div class="nhsuk-summary-list__row details-list-with-button__row">
       <dt class="nhsuk-summary-list__key">
         Assessments passed

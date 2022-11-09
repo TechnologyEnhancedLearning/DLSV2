@@ -148,6 +148,18 @@ namespace DigitalLearningSolutions.Data.Services
                         emailService.SendEmail(approvalEmail);
                     }
                 }
+
+                var notificationEmailForCentre = centresDataService.GetCentreDetailsById(delegateRegistrationModel.Centre).NotifyEmail;
+                if (notificationEmailForCentre != null)
+                {
+                    var approvalEmail = GenerateApprovalEmail(
+                       notificationEmailForCentre,
+                       notificationEmailForCentre,
+                       delegateRegistrationModel.FirstName,
+                       delegateRegistrationModel.LastName,
+                       refactoredTrackingSystemEnabled);
+                    emailService.SendEmail(approvalEmail);
+                }
             }
 
             return (candidateNumber, delegateRegistrationModel.Approved);
@@ -263,13 +275,13 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (adminRegistrationModel.IsCentreAdmin)
             {
-                builder.TextBody += " Centre Admin";
-                builder.HtmlBody += "<li>Centre Admin</li>";
+                builder.TextBody += " Centre admin";
+                builder.HtmlBody += "<li>Centre admin</li>";
             }
             if (adminRegistrationModel.IsCentreManager)
             {
-                builder.TextBody += " Centre Manager";
-                builder.HtmlBody += "<li>Centre Manager</li>";
+                builder.TextBody += " Centre manager";
+                builder.HtmlBody += "<li>Centre manager</li>";
             }
             if (adminRegistrationModel.IsSupervisor)
             {
@@ -278,8 +290,8 @@ namespace DigitalLearningSolutions.Data.Services
             }
             if (adminRegistrationModel.IsNominatedSupervisor)
             {
-                builder.TextBody += " Nominated Supervisor";
-                builder.HtmlBody += "<li>Nominated Supervisor</li>";
+                builder.TextBody += " Nominated supervisor";
+                builder.HtmlBody += "<li>Nominated supervisor</li>";
             }
             if (adminRegistrationModel.IsTrainer)
             {
@@ -288,19 +300,19 @@ namespace DigitalLearningSolutions.Data.Services
             }
             if (adminRegistrationModel.IsContentCreator)
             {
-                builder.TextBody += " Content Creator";
-                builder.HtmlBody += "<li>Content Creator</li>";
+                builder.TextBody += " Content creator license";
+                builder.HtmlBody += "<li>Content creator license</li>";
             }
             if (adminRegistrationModel.IsCmsAdmin)
             {
-                builder.TextBody += " Cms Administrator";
-                builder.HtmlBody += "<li>Cms Administrator</li>";
+                builder.TextBody += " Cms administrator";
+                builder.HtmlBody += "<li>Cms administrator</li>";
             }
 
             if (adminRegistrationModel.IsCmsManager)
             {
-                builder.TextBody += " Cms Manager";
-                builder.HtmlBody += "<li>Cms Manager</li>";
+                builder.TextBody += " Cms manager";
+                builder.HtmlBody += "<li>Cms manager</li>";
             }
 
             builder.HtmlBody += "</ul>";
