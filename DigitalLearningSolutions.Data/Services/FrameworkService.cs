@@ -297,7 +297,7 @@
 
         private const string FrameworkTables =
             @"Frameworks AS FW LEFT OUTER JOIN
-             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId
+             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId 
             LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL";
 
         private const string AssessmentQuestionFields =
@@ -428,7 +428,7 @@
              (@adminId IN
                  (SELECT AdminID
                  FROM    FrameworkCollaborators
-                 WHERE (FrameworkID = FW.ID)))",
+                 WHERE (FrameworkID = FW.ID) AND (IsDeleted=0) ))",
                 new { adminId }
             );
         }
@@ -772,6 +772,7 @@
                         CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole
                     FROM FrameworkCollaborators fc
                     INNER JOIN AdminUsers AS au ON fc.AdminID = au.AdminID
+                    AND fc.IsDeleted = 0
                     WHERE (FrameworkID = @FrameworkID)",
                 new { frameworkId }
             );
@@ -791,7 +792,7 @@
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    FrameworkCollaborators
-                  WHERE (FrameworkID = @frameworkId) AND (UserEmail = @userEmail)), 0) AS ID",
+                  WHERE (FrameworkID = @frameworkId) AND (UserEmail = @userEmail) AND (IsDeleted=0)), 0) AS ID",
                 new { frameworkId, userEmail }
             );
             if (existingId > 0)
@@ -841,7 +842,7 @@
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    FrameworkCollaborators
-                  WHERE (FrameworkID = @frameworkId) AND (UserEmail = @userEmail)), 0) AS AdminID",
+                  WHERE (FrameworkID = @frameworkId) AND (UserEmail = @userEmail) AND (IsDeleted=0)), 0) AS AdminID",
                 new { frameworkId, adminId, userEmail }
             );
             return existingId;
@@ -854,7 +855,7 @@
                 new { frameworkId, id }
             );
             connection.Execute(
-                @"DELETE FROM  FrameworkCollaborators WHERE (FrameworkID = @frameworkId) AND (ID = @id);UPDATE AdminUsers SET IsFrameworkContributor = 0 WHERE AdminID = @adminId AND AdminID NOT IN (SELECT DISTINCT AdminID FROM FrameworkCollaborators);",
+                @"UPDATE FrameworkCollaborators SET IsDeleted=1 WHERE (FrameworkID = @frameworkId) AND (ID = @id);UPDATE AdminUsers SET IsFrameworkContributor = 0 WHERE AdminID = @adminId AND AdminID NOT IN (SELECT DISTINCT AdminID FROM FrameworkCollaborators);",
                 new { frameworkId, id, adminId }
             );
         }
@@ -1969,7 +1970,7 @@ WHERE (FrameworkID = @frameworkId)",
                     FROM FrameworkCollaborators AS fc
                     INNER JOIN Frameworks AS f ON fc.FrameworkID = f.ID
                     INNER JOIN AdminUsers AS au ON fc.AdminID = au.AdminID
-                    WHERE (fc.ID = @id)",
+                    WHERE (fc.ID = @id) AND (fc.IsDeleted=0)",
                 new { invitedByAdminId, id }
             ).FirstOrDefault();
         }
@@ -2021,8 +2022,8 @@ WHERE (ID = @commentId)",
                     FROM FrameworkCollaborators fc
                     INNER JOIN AdminUsers AS au ON fc.AdminID = au.AdminID
                     LEFT OUTER JOIN FrameworkReviews ON fc.ID = FrameworkReviews.FrameworkCollaboratorID
-                    WHERE (fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.ID IS NULL) OR
-                            (fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.Archived IS NOT NULL)",
+                    WHERE (fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.ID IS NULL) AND (fc.IsDeleted=0) OR
+                            (fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.Archived IS NOT NULL) AND (fc.IsDeleted=0)",
                 new { frameworkId }
             );
         }
@@ -2066,7 +2067,7 @@ WHERE (ID = @commentId)",
                     FROM   FrameworkReviews AS FR INNER JOIN
                          FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
                          FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
-                    WHERE FR.FrameworkID = @frameworkId AND FR.Archived IS NULL",
+                    WHERE FR.FrameworkID = @frameworkId AND FR.Archived IS NULL  AND (FC.IsDeleted = 0)",
                 new { frameworkId }
             );
         }
@@ -2078,7 +2079,7 @@ WHERE (ID = @commentId)",
                     FROM   FrameworkReviews AS FR INNER JOIN
                          FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
                          FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
-                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND FC.AdminID = @adminId AND FR.Archived IS NULL",
+                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND FC.AdminID = @adminId AND FR.Archived IS NULL AND IsDeleted = 0",
                 new { frameworkId, adminId, reviewId }
             ).FirstOrDefault();
         }
@@ -2122,7 +2123,7 @@ WHERE (ID = @commentId)",
                         AU1.Email AS OwnerEmail,
                         FW.FrameworkName
                     FROM FrameworkReviews AS FR
-                    INNER JOIN FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID
+                    INNER JOIN FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID  AND FWC.IsDeleted = 0
                     INNER JOIN AdminUsers AS AU ON FC.AdminID = AU.AdminID
                     INNER JOIN Frameworks AS FW ON FR.FrameworkID = FW.ID
                     INNER JOIN AdminUsers AS AU1 ON FW.OwnerAdminID = AU1.AdminID
@@ -2199,7 +2200,7 @@ WHERE (OwnerAdminID = @adminId) OR
              (@adminId IN
                  (SELECT AdminID
                  FROM    FrameworkCollaborators
-                 WHERE (FrameworkID = FW.ID)))) AS MyFrameworksCount,
+                 WHERE (FrameworkID = FW.ID) AND (IsDeleted=0)))) AS MyFrameworksCount,
 
                  (SELECT COUNT(*) FROM SelfAssessments) AS RoleProfileCount,
 
@@ -2226,7 +2227,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                         FWR.ReviewRequested AS Requested
                     FROM FrameworkReviews AS FWR
                     INNER JOIN Frameworks AS FW ON FWR.FrameworkID = FW.ID
-                    INNER JOIN FrameworkCollaborators AS FWC ON FWR.FrameworkCollaboratorID = FWC.ID
+                    INNER JOIN FrameworkCollaborators AS FWC ON FWR.FrameworkCollaboratorID = FWC.ID AND FWC.IsDeleted = 0
                     INNER JOIN AdminUsers AS AU ON FW.OwnerAdminID = AU.AdminID
                     WHERE (FWC.AdminID = @adminId) AND (FWR.ReviewComplete IS NULL) AND (FWR.Archived IS NULL)
                     UNION ALL
