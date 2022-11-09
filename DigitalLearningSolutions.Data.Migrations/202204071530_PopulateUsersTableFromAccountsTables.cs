@@ -33,7 +33,7 @@ namespace DigitalLearningSolutions.Data.Migrations
             connection.Execute(
                 @"UPDATE AdminAccounts
                     SET       Email = Forename_deprecated + '.' + Surname_deprecated + '@not.given'
-                    WHERE (Email IS NULL) OR TRIM(Email) = ''"
+                    WHERE (Email IS NULL) OR RTRIM(LTRIM(Email)) = ''"
                 );
             // Set unique email for delegate accounts where email + centreId combination is duplicated
             connection.Execute(
@@ -85,7 +85,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                     NULL,
                     0,
                     GETUTCDATE(),
-                    CASE WHEN Email IS NOT NULL AND TRIM(Email) <> '' THEN GETUTCDATE() ELSE NULL END
+                    CASE WHEN Email IS NOT NULL AND RTRIM(LTRIM(Email)) <> '' THEN GETUTCDATE() ELSE NULL END
                     FROM AdminAccounts"
             );
 
@@ -128,7 +128,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                     FROM DelegateAccounts
                     WHERE Email IN (
                         SELECT Email FROM DelegateAccounts
-                        WHERE Email IS NOT NULL AND TRIM(Email) IS NOT NULL AND TRIM(Email) <> ''
+                        WHERE Email IS NOT NULL AND RTRIM(LTRIM(Email)) <> ''
                         GROUP BY Email
                         HAVING COUNT(*) = 1
                         EXCEPT
@@ -144,7 +144,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                         CentreSpecificDetailsLastChecked = GETUTCDATE()
                     WHERE Email IN (
                         SELECT Email FROM DelegateAccounts
-                        WHERE Email IS NOT NULL AND TRIM(Email) IS NOT NULL AND TRIM(Email) <> ''
+                        WHERE Email IS NOT NULL AND RTRIM(LTRIM(Email)) <> ''
                         GROUP BY Email
                         HAVING COUNT(*) = 1
                         EXCEPT
