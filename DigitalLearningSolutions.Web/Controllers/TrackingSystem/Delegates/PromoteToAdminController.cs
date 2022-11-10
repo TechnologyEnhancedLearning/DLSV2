@@ -35,6 +35,7 @@
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
         private readonly IEmailGenerationService emailGenerationService;
+        private readonly IEmailService emailService;
 
         public PromoteToAdminController(
             IUserDataService userDataService,
@@ -43,7 +44,8 @@
             IRegistrationService registrationService,
             ILogger<PromoteToAdminController> logger,
             IUserService userService,
-            IEmailGenerationService emailGenerationService
+            IEmailGenerationService emailGenerationService,
+            IEmailService emailService
         )
         {
             this.userDataService = userDataService;
@@ -53,6 +55,7 @@
             this.logger = logger;
             this.userService = userService;
             this.emailGenerationService = emailGenerationService;
+            this.emailService = emailService;
         }
 
         [HttpGet]
@@ -89,44 +92,41 @@
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
-            var (supervisorAdminUser, supervisorDelegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var (currentAdminUser, currentDelegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
-
-            // TODO: Need CourseCategoryID here
-
-            
+            var adminRoles = formData.GetAdminRoles();
 
             try
             {
                 registrationService.PromoteDelegateToAdmin(
-                    formData.GetAdminRoles(),
+                    adminRoles,
                     AdminCategoryHelper.AdminCategoryToCategoryId(formData.LearningCategory),
                     formData.UserId,
                     formData.CentreId
                 );
 
-                // TODO: This seems overkill here - need a DTO maybe?
-                // var adminRegistrationModel = new AdminRegistrationModel();
+                var delegateUserEmailDetails = userDataService.GetDelegateById(delegateId);
 
+                if (delegateUserEmailDetails != null)
+                {
+                    var adminRolesEmail = emailGenerationService.GenerateDelegateAdminRolesNotificationEmail(
+                        firstName: delegateUserEmailDetails.UserAccount.FirstName,
+                        supervisorFirstName: currentAdminUser.FirstName!,
+                        supervisorLastName: currentAdminUser.LastName,
+                        supervisorEmail: currentAdminUser.EmailAddress!,
+                        isCentreAdmin: adminRoles.IsCentreAdmin,
+                        isCentreManager: adminRoles.IsCentreManager,
+                        isSupervisor: adminRoles.IsSupervisor,
+                        isNominatedSupervisor: adminRoles.IsNominatedSupervisor,
+                        isTrainer: adminRoles.IsTrainer,
+                        isContentCreator: adminRoles.IsContentCreator,
+                        isCmsAdmin: adminRoles.IsCmsAdministrator,
+                        isCmsManager: adminRoles.IsCmsManager,
+                        primaryEmail: delegateUserEmailDetails.UserAccount.PrimaryEmail
+                    );
 
-
-
-
-                this.emailGenerationService.GenerateAndSendDelegateRolesNotificationEmail(
-                    "",
-                    supervisorAdminUser!.FirstName,
-                    supervisorAdminUser.LastName,
-                    supervisorAdminUser.EmailAddress,
-                    formData.IsCentreAdmin,
-                    false,
-                    formData.IsSupervisor,
-                    formData.IsNominatedSupervisor,
-                    formData.IsTrainer,
-                    formData.IsContentCreator,
-                    false,
-                    false,
-                    ""
-                );
+                    emailService.SendEmail(adminRolesEmail);
+                }
             }
             catch (AdminCreationFailedException e)
             {

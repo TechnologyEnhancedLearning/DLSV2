@@ -1,14 +1,11 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Web.Services
 {
     using DigitalLearningSolutions.Data.Models.Email;
-    using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Web.Services;
     using MimeKit;
 
     public interface IEmailGenerationService
     {
-        //void GenerateAndSendDelegateRolesNotificationEmail(AdminRegistrationModel adminRegistrationModel);
-        void GenerateAndSendDelegateRolesNotificationEmail(
+        Email GenerateDelegateAdminRolesNotificationEmail(
             string firstName,
             string supervisorFirstName,
             string supervisorLastName,
@@ -25,17 +22,9 @@
         );
     }
 
-    public class EmailGenerationService
+    public class EmailGenerationService : IEmailGenerationService
     {
-        private readonly IEmailService _emailService;
-
-        public EmailGenerationService(IEmailService emailService)
-        {
-            _emailService = emailService;
-        }
-
-        //private void GenerateAndSendDelegateRolesNotificationEmail(AdminRegistrationModel adminRegistrationModel)
-        private void GenerateAndSendDelegateRolesNotificationEmail(
+        public Email GenerateDelegateAdminRolesNotificationEmail(
             string firstName,
             string supervisorFirstName,
             string supervisorLastName,
@@ -112,8 +101,8 @@
 
             builder.TextBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.";
             builder.HtmlBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.</body>";
-
-            _emailService.SendEmail(new Email(emailSubjectLine, builder, primaryEmail, supervisorEmail));
+            
+            return new Email(emailSubjectLine, builder, primaryEmail, supervisorEmail);
         }
     }
 }

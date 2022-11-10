@@ -2,7 +2,6 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
@@ -23,7 +22,9 @@
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
-
+        private readonly IEmailGenerationService emailGenerationService = null!;
+        private readonly IEmailService emailService = null!;
+        
         [SetUp]
         public void Setup()
         {
@@ -33,13 +34,16 @@
             courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userService = A.Fake<IUserService>();            
+
             controller = new PromoteToAdminController(
                     userDataService,
                     courseCategoriesDataService,
                     centreContractAdminUsageService,
                     registrationService,
                     new NullLogger<PromoteToAdminController>(),
-                    userService
+                    userService,
+                    emailGenerationService,
+                    emailService
                 )
                 .WithDefaultContext();
         }
