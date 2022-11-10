@@ -106,7 +106,7 @@
             }
             else
             {
-                if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "A supervisor cannot be added as a member"); }
+                if (supervisorEmail == model.DelegateEmail) { ModelState.AddModelError("DelegateEmail", "The email address must not match the email address you are logged in with."); }
                 ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
                 return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
             }
