@@ -36,7 +36,7 @@
             // Given
             connection.Execute(
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
-                    VALUES (40005, 2, 'centre@email.com')"
+                    VALUES (61188, 2, 'centre@email.com')"
             );
             // We set userCentreDetailsId here so that UserTestHelper.GetDefaultDelegateEntity returns an
             // DelegateEntity with a non-null UserCentreDetails
@@ -69,7 +69,7 @@
                            CentreID,
                            Active)
                     OUTPUT Inserted.ID
-                    VALUES (40005, 2, 1)"
+                    VALUES (61188, 2, 1)"
             );
 
             // When
@@ -125,7 +125,7 @@
             // Given
             connection.Execute(
                 @"INSERT INTO UserCentreDetails (UserID, CentreID, Email)
-                    VALUES (40005, 2, 'centre@email.com')"
+                    VALUES (61188, 2, 'centre@email.com')"
             );
             var expectedUserCentreDetails = UserTestHelper.GetDefaultDelegateEntity(
                 userCentreDetailsId: 1,
@@ -204,7 +204,7 @@
                     jobGroupId,
                     DateTime.Now,
                     null,
-                    40005,
+                    61188,
                     true
                 );
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
@@ -373,7 +373,7 @@
                 const int jobGroupId = 1;
 
                 // When
-                userDataService.UpdateUserDetails(firstName, lastName, email, jobGroupId, 40005);
+                userDataService.UpdateUserDetails(firstName, lastName, email, jobGroupId, 61188);
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
 
                 // Then
@@ -484,18 +484,14 @@
         [Test]
         public void GetDelegateAccountsByUserId_returns_expected_accounts()
         {
-            // Given
-            var expectedResult = UserTestHelper.GetDefaultDelegateAccount();
-
             // When
-            var result = userDataService.GetDelegateAccountsByUserId(40005).ToList();
-            result[0].CentreSpecificDetailsLastChecked = expectedResult.CentreSpecificDetailsLastChecked;
-
+            var result = userDataService.GetDelegateAccountsByUserId(61188).ToList();
+         
             // Then
             using (new AssertionScope())
             {
                 result.Should().HaveCount(1);
-                result.Single().Should().BeEquivalentTo(expectedResult);
+                result.Single().Should().BeEquivalentTo(UserTestHelper.GetDefaultDelegateAccount());
             }
         }
 
@@ -504,7 +500,7 @@
         {
             // Given
             var expectedResult = UserTestHelper.GetDefaultDelegateAccount();
-            expectedResult.UserId = 40005;
+            expectedResult.UserId = 61188;
 
             // When
             var result = userDataService.GetDelegateAccountById(2);

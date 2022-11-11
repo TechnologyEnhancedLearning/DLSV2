@@ -57,7 +57,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             20,
             "xxxx",
             "xxxxxx",
-            "81a5fa43-a814-4384-9dbc-a31511426a96",
+            "87487c85-7d35-4b3f-9979-eb734ce90df2",
             101,
             false,
             "HG1",

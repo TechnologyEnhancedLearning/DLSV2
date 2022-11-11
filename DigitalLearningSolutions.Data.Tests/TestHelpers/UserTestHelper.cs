@@ -59,7 +59,7 @@
 
         public static DelegateAccount GetDefaultDelegateAccount(
             int id = 2,
-            int userId = 40005,
+            int userId = 61188,
             bool active = true,
             int centreId = 2,
             string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
@@ -175,7 +175,7 @@
 
         public static DelegateEntity GetDefaultDelegateEntity(
             int delegateId = 2,
-            int userId = 40005,
+            int userId = 61188,
             bool active = true,
             int centreId = 2,
             string centreName = "North West Boroughs Healthcare NHS Foundation Trust",

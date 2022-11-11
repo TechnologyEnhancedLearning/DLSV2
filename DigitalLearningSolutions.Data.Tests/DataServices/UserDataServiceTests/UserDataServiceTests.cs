@@ -29,8 +29,8 @@
         }
 
         [Test]
-        [TestCase("email@test.com", 40005)]
-        [TestCase("ES2", 106599)]
+        [TestCase("email@test.com", 61188)]
+        [TestCase("ES2", 1)]
         public void GetUserIdFromUsername_returns_expected_id_for_username(string username, int expectedUserId)
         {
             // When
@@ -47,7 +47,7 @@
             var result = userDataService.GetUserIdFromDelegateId(1);
 
             // Then
-            result.Should().Be(36702);
+            result.Should().Be(48157);
         }
 
         [Test]
