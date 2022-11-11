@@ -1,0 +1,38 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@using DigitalLearningSolutions.Web.Helpers
+@model ConfirmOverwrite
+@{
+    Layout = "../SelfAssessments/_Layout";
+    ViewData["Title"] = "Self Assessments - Confirm Overwrite";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    var errorClass = Model.IsChecked == false ? "nhsuk-input--error" : "";
+}
+@section breadcrumbs {
+  <li class="nhsuk-breadcrumb__item">
+    <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentId">@(Model.CompetencyName)</a>
+  </li>
+}
+<div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.IsChecked) })" />
+        }
+        <h2 class="nhsuk-heading-xl">Overwrite confirmed self assessment result?</h2>
+        <p class="nhsuk-body-m word-break">
+            <span class="nhsuk-u-font-weight-bold">Competency: </span> @Model.CompetencyName
+        </p>
+        <form asp-action="ConfirmOverwriteSelfAssessment"
+              asp-route-competencyNumber="@Model.CompetencyNumber"
+              asp-route-competencyId="@Model.CompetencyId"
+              asp-route-competencyGroupId="@Model.CompetencyGroupId">
+
+            <vc:single-checkbox asp-for="@nameof(Model.IsChecked)"
+                                label="I am sure that i wish to overwrite my confirmed self assessment result"
+                                hint-text="this action will result in your new response being stored in place of previous one and the confirmation status being reset." />
+
+            <input class="nhsuk-button nhsuk-button--danger" type="submit" value="Confirm overwrite result" />
+        </form>
+    </div>
+</div>
+<vc:cancel-link asp-controller="LearningPortal" asp-action="Current" link-text="Cancel" />
