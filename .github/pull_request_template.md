@@ -19,4 +19,4 @@ I have:
 - [ ] Updated/added documentation in [Confluence](https://hee-tis.atlassian.net/wiki/spaces/TP/pages/3546939432/DLS+Code) and/or [GitHub Readme](https://github.com/TechnologyEnhancedLearning/DLSV2/blob/master/README.md). List of documentation links added/changed:
   - [doc_1_here](link_1_here)
 - [ ] Updated my Jira ticket with information about other parts of the system that were touched as part of the MR and have to be sanity tested to ensure nothing’s broken
-- [ ] Scanned over my own MR to ensure everything is as expected and it looks right in the browser
+- [ ] Scanned over my pull request in GitHub and addressed any warnings from the GitHub Build and Test checks.
