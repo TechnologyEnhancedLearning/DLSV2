@@ -39,9 +39,7 @@ namespace DigitalLearningSolutions.Data.Migrations
             connection.Execute(
                 @"UPDATE DelegateAccounts
                     SET        Email = CandidateNumber + '.' + Email
-                    WHERE (Email <> '') AND (Email IS NOT NULL) AND (Email NOT IN
-                    (SELECT ExclusionEmail
-                    FROM    EmailDupExclude)) AND (ID <
+                    WHERE (Email <> '') AND (Email IS NOT NULL) AND (ID <
                     (SELECT MAX(ID) AS Expr1
                     FROM    DelegateAccounts AS ca2
                     WHERE (ca2.Email = DelegateAccounts.Email) AND (DelegateAccounts.CentreID = ca2.CentreID)))"
