@@ -36,8 +36,7 @@ namespace DigitalLearningSolutions.Data.Services
             AdminRoles adminRoles,
             int categoryId,
             int delegateId,
-            AdminUser? currentAdminUser,
-            DelegateUser? delegateUserToPromote);
+            AdminUser currentAdminUser);
     }
 
     public class RegistrationService : IRegistrationService
@@ -164,8 +163,8 @@ namespace DigitalLearningSolutions.Data.Services
 
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
-
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser currentAdminUser, DelegateUser? delegateUserToPromote)
+        
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser currentAdminUser)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId);
 
@@ -241,7 +240,7 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsContentCreator,
                     adminRoles.IsCmsAdministrator,
                     adminRoles.IsCmsManager,
-                    delegateUserToPromote?.Id ?? 0,
+                    delegateId,
                     currentAdminUser.EmailAddress ?? string.Empty,
                     currentAdminUser.FirstName ?? string.Empty,
                     currentAdminUser.LastName,
@@ -320,11 +319,6 @@ namespace DigitalLearningSolutions.Data.Services
 
             builder.TextBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.";
             builder.HtmlBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.</body>";
-
-            if (adminRegistrationModel.DelegateIdToPromote != 0)
-            {
-                supervisorService.UpdateNotificationSent(adminRegistrationModel.DelegateIdToPromote);
-            }
 
             emailService.SendEmail(new Email(emailSubjectLine, builder, adminRegistrationModel.Email, adminRegistrationModel.SupervisorEmail));
         }

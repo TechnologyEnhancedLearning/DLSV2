@@ -73,9 +73,7 @@
         public IActionResult Index(AdminRolesFormData formData, int delegateId)
         {
             var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetCandidateId();
-            
-            var (currentAdminUser, delegateUserToPromote) = userService.GetUsersById(userAdminId, delegateId);
+            var (currentAdminUser, delegateUser) = userService.GetUsersById(userAdminId, null);
 
             try
             {
@@ -83,9 +81,8 @@
                     formData.GetAdminRoles(),
                     formData.LearningCategory,
                     delegateId,
-                    currentAdminUser,
-                    delegateUserToPromote
-                    );
+                    currentAdminUser
+                );
             }
             catch (AdminCreationFailedException e)
             {
