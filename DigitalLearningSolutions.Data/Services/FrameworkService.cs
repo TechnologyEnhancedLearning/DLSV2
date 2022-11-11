@@ -124,6 +124,8 @@
 
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
+        IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId);
+
         int InsertCompetency(string name, string? description, int adminId);
 
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
@@ -442,6 +444,14 @@
             );
         }
 
+        public IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId)
+        {
+            return connection.Query<FrameworkCompetency>(
+                $@"SELECT * FROM Competencies WHERE [Name] = @name AND [UpdatedByAdminID] = @adminId",
+                new { name, adminId }
+            );
+        }
+
         public BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId)
         {
             string frameworkName = detailFramework.FrameworkName;
@@ -624,54 +634,13 @@
                 return -2;
             }
             description = (description?.Trim() == "" ? null : description);
-            var existingId = 0;
-            if (description == null)
-            {
-                existingId = (int)connection.ExecuteScalar(
-                    @"SELECT COALESCE ((SELECT TOP(1) ID FROM Competencies WHERE [Name] = @name AND [Description] IS NULL), 0) AS CompetencyID",
-                    new { name, description }
-                );
-            }
-            else
-            {
-                existingId = (int)connection.ExecuteScalar(
-                    @"SELECT COALESCE ((SELECT TOP(1) ID FROM Competencies WHERE [Name] = @name AND [Description] = @description), 0) AS CompetencyID",
-                    new { name, description }
-                );
-            }
 
-            if (existingId > 0)
-            {
-                return existingId;
-            }
-
-            var numberOfAffectedRows = connection.Execute(
+            var existingId = connection.QuerySingle<int>(
                 @"INSERT INTO Competencies ([Name], [Description], UpdatedByAdminID)
+                    OUTPUT INSERTED.Id
                     VALUES (@name, @description, @adminId)",
                 new { name, description, adminId }
             );
-            if (numberOfAffectedRows < 1)
-            {
-                logger.LogWarning(
-                    $"Not inserting competency as db insert failed. AdminId: {adminId}, name: {name}, description:{description}"
-                );
-                return -1;
-            }
-
-            if (description == null)
-            {
-                existingId = (int)connection.ExecuteScalar(
-                    @"SELECT COALESCE ((SELECT TOP(1) ID FROM Competencies WHERE [Name] = @name AND [Description] IS NULL), 0) AS CompetencyID",
-                    new { name, description }
-                );
-            }
-            else
-            {
-                existingId = (int)connection.ExecuteScalar(
-                    @"SELECT COALESCE ((SELECT TOP(1) ID FROM Competencies WHERE [Name] = @name AND [Description] = @description), 0) AS CompetencyID",
-                    new { name, description }
-                );
-            }
 
             return existingId;
         }

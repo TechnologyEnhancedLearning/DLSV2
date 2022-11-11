@@ -1,7 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Frameworks
 {
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using System.ComponentModel.DataAnnotations;
-    public class FrameworkCompetency
+    public class FrameworkCompetency : BaseSearchableItem
     {
         public int Id { get; set; }
         public int CompetencyID { get; set; }
@@ -12,5 +13,11 @@
         public int Ordering { get; set; }
         public int AssessmentQuestions { get; set; }
         public int CompetencyLearningResourcesCount { get; set; }
+
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? Name;
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
     }
 }
