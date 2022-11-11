@@ -416,16 +416,25 @@
             result.Should().Be(-2);
         }
         [Test]
-        public void InsertCompetency_should_return_id_of_existing_competency_if_name_matches()
+        public void InsertCompetency_should_create_new_competency_and_return_id_of_new_competency_even_if_name_matches()
         {
             // Given
             var name = "I can help others with technical issues";
             var description = "I can help others with technical issues";
 
-            // When
-            var result = frameworkService.InsertCompetency(name, description, ValidAdminId);
-            // Then
-            result.Should().Be(20);
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                var result = frameworkService.InsertCompetency(name, description, ValidAdminId);
+                // Then
+                result.Should().NotBe(20);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+
         }
         [Test]
         public void InsertCompetency_should_return_minus_2_if_name_is_blank()
