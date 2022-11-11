@@ -33,22 +33,20 @@ namespace DigitalLearningSolutions.Data.Migrations
             connection.Execute(
                 @"UPDATE AdminAccounts
                     SET       Email = Forename_deprecated + '.' + Surname_deprecated + '@not.given'
-                    WHERE (Email IS NULL) OR TRIM(Email) = ''"
+                    WHERE (Email IS NULL) OR RTRIM(LTRIM(Email)) = ''"
                 );
             // Set unique email for delegate accounts where email + centreId combination is duplicated
             connection.Execute(
                 @"UPDATE DelegateAccounts
                     SET        Email = CandidateNumber + '.' + Email
-                    WHERE (Email <> '') AND (Email IS NOT NULL) AND (Email NOT IN
-                    (SELECT ExclusionEmail
-                    FROM    EmailDupExclude)) AND (ID <
+                    WHERE (Email <> '') AND (Email IS NOT NULL) AND (ID <
                     (SELECT MAX(ID) AS Expr1
                     FROM    DelegateAccounts AS ca2
                     WHERE (ca2.Email = DelegateAccounts.Email) AND (DelegateAccounts.CentreID = ca2.CentreID)))"
                 );
-            // Add index to AdminAccounts Email to fix slow queries
-            connection.Execute("CREATE INDEX IX_AdminAccounts_Email ON AdminAccounts (Email)");
-            
+            // Add index to AdminAccounts and DelegateAccounts Email to fix slow queries
+            connection.Execute("CREATE NONCLUSTERED INDEX IX_AdminAccounts_Email ON AdminAccounts (Email)");
+            connection.Execute("CREATE NONCLUSTERED INDEX IX_DelegateAccounts_Email ON [dbo].[DelegateAccounts] ([Email])");
             // Copy AdminAccounts to Users table
             connection.Execute(
                 @"INSERT INTO dbo.Users (
@@ -85,8 +83,8 @@ namespace DigitalLearningSolutions.Data.Migrations
                     NULL,
                     0,
                     GETUTCDATE(),
-                    CASE WHEN Email IS NOT NULL AND TRIM(Email) <> '' THEN GETUTCDATE() ELSE NULL END
-                    FROM AdminAccounts"
+                    CASE WHEN Email IS NOT NULL AND RTRIM(LTRIM(Email)) <> '' THEN GETUTCDATE() ELSE NULL END
+                    FROM AdminAccounts", null, null, 0
             );
 
             // Transfer all delegates with unique emails not already in the Users table
@@ -128,11 +126,11 @@ namespace DigitalLearningSolutions.Data.Migrations
                     FROM DelegateAccounts
                     WHERE Email IN (
                         SELECT Email FROM DelegateAccounts
-                        WHERE Email IS NOT NULL AND TRIM(Email) IS NOT NULL AND TRIM(Email) <> ''
+                        WHERE Email IS NOT NULL AND RTRIM(LTRIM(Email)) <> ''
                         GROUP BY Email
                         HAVING COUNT(*) = 1
                         EXCEPT
-                        SELECT Email FROM AdminAccounts)"
+                        SELECT Email FROM AdminAccounts)", null, null, 0
             );
 
             // Link all these User records we just created to the DelegateAccounts.
@@ -144,11 +142,11 @@ namespace DigitalLearningSolutions.Data.Migrations
                         CentreSpecificDetailsLastChecked = GETUTCDATE()
                     WHERE Email IN (
                         SELECT Email FROM DelegateAccounts
-                        WHERE Email IS NOT NULL AND TRIM(Email) IS NOT NULL AND TRIM(Email) <> ''
+                        WHERE Email IS NOT NULL AND RTRIM(LTRIM(Email)) <> ''
                         GROUP BY Email
                         HAVING COUNT(*) = 1
                         EXCEPT
-                        SELECT Email FROM AdminAccounts)"
+                        SELECT Email FROM AdminAccounts)", null, null, 0
             );
 
             // Update AdminAccounts to reference Users.ID
@@ -156,7 +154,7 @@ namespace DigitalLearningSolutions.Data.Migrations
                 @"UPDATE AdminAccounts
                     SET
                         UserID = (SELECT ID FROM Users WHERE Email = PrimaryEmail),
-                        Email = NULL"
+                        Email = NULL", null, null, 0
             );
 
             // Get the rest of the delegate accounts we've not resolved yet
