@@ -964,6 +964,8 @@
                         );
 
                         emailService.SendEmail(adminRolesEmail);
+
+                        supervisorService.UpdateNotificationSent(supervisorDelegate.Id);
                     }
                 }
                 return RedirectToAction("MyStaffList");
