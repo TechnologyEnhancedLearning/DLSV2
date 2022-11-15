@@ -92,7 +92,7 @@
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
-            var (currentAdminUser, currentDelegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var (currentAdminUser, _) = userService.GetUsersById(userAdminId, userDelegateId);
 
             var adminRoles = formData.GetAdminRoles();
 
