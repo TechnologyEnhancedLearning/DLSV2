@@ -461,69 +461,69 @@
             result.Should().Be((userId, centreId, centreName));
         }
 
-        [Test]
-        public void LinkUserCentreDetailsToNewUser_updates_UserId_in_claimed_UserCentreDetails()
-        {
-            using var transaction = new TransactionScope();
+        //[Test]
+        //public void LinkUserCentreDetailsToNewUser_updates_UserId_in_claimed_UserCentreDetails()
+        //{
+        //    using var transaction = new TransactionScope();
 
-            // Given
-            var emailVerificationHashId = connection.QuerySingle<int>(
-                @"INSERT INTO [dbo].[EmailVerificationHashes]
-                        ([EmailVerificationHash]
-                        ,[CreatedDate])
-                    OUTPUT Inserted.ID
-                    VALUES (N'hash', GETDATE())");
+        //    // Given
+        //    var emailVerificationHashId = connection.QuerySingle<int>(
+        //        @"INSERT INTO [dbo].[EmailVerificationHashes]
+        //                ([EmailVerificationHash]
+        //                ,[CreatedDate])
+        //            OUTPUT Inserted.ID
+        //            VALUES (N'hash', GETDATE())");
 
-            var adminId = connection.QuerySingle<int>(
-                @"INSERT INTO [dbo].[UserCentreDetails]
-                           ([UserID]
-                           ,[CentreID]
-                           ,[Email]
-                           ,[EmailVerified]
-                           ,[EmailVerificationHashID])
-                    OUTPUT Inserted.ID
-                    VALUES
-                           (1, 101, N'test@example.com', CURRENT_TIMESTAMP, @emailVerificationHashId)", new { emailVerificationHashId });
+        //    var adminId = connection.QuerySingle<int>(
+        //        @"INSERT INTO [dbo].[UserCentreDetails]
+        //                   ([UserID]
+        //                   ,[CentreID]
+        //                   ,[Email]
+        //                   ,[EmailVerified]
+        //                   ,[EmailVerificationHashID])
+        //            OUTPUT Inserted.ID
+        //            VALUES
+        //                   (1, 101, N'test@example.com', CURRENT_TIMESTAMP, @emailVerificationHashId)", new { emailVerificationHashId });
 
-            const int userIdForUserCentreDetailsAfterUpdate = 2;
+        //    const int userIdForUserCentreDetailsAfterUpdate = 2;
 
-            var delegateEntity = userDataService.GetDelegateByCandidateNumber("KW969")!;
-            var currentUserIdForUserCentreDetails = delegateEntity.UserAccount.Id;
-            var centreId = delegateEntity.DelegateAccount.CentreId;
-            var userCentreDetailsId = delegateEntity.UserCentreDetails!.Id;
-            var email = delegateEntity.UserCentreDetails.Email;
+        //    var delegateEntity = userDataService.GetDelegateByCandidateNumber("KW969")!;
+        //    var currentUserIdForUserCentreDetails = delegateEntity.UserAccount.Id;
+        //    var centreId = delegateEntity.DelegateAccount.CentreId;
+        //    var userCentreDetailsId = delegateEntity.UserCentreDetails!.Id;
+        //    var email = delegateEntity.UserCentreDetails.Email;
 
-            var newUser = userDataService.GetUserAccountById(userIdForUserCentreDetailsAfterUpdate);
+        //    var newUser = userDataService.GetUserAccountById(userIdForUserCentreDetailsAfterUpdate);
 
-            var newUserUserCentreDetailsBeforeUpdate = connection.Query<(int, string)>(
-                @"SELECT CentreID, Email FROM UserCentreDetails
-                    WHERE UserID = @userIdForUserCentreDetailsAfterUpdate",
-                new { userIdForUserCentreDetailsAfterUpdate }
-            );
+        //    var newUserUserCentreDetailsBeforeUpdate = connection.Query<(int, string)>(
+        //        @"SELECT CentreID, Email FROM UserCentreDetails
+        //            WHERE UserID = @userIdForUserCentreDetailsAfterUpdate",
+        //        new { userIdForUserCentreDetailsAfterUpdate }
+        //    );
 
-            // When
-            userDataService.LinkUserCentreDetailsToNewUser(
-                currentUserIdForUserCentreDetails,
-                userIdForUserCentreDetailsAfterUpdate,
-                centreId
-            );
+        //    // When
+        //    userDataService.LinkUserCentreDetailsToNewUser(
+        //        currentUserIdForUserCentreDetails,
+        //        userIdForUserCentreDetailsAfterUpdate,
+        //        centreId
+        //    );
 
-            // Then
-            newUser.Should().NotBeNull();
+        //    // Then
+        //    newUser.Should().NotBeNull();
 
-            newUserUserCentreDetailsBeforeUpdate.Should()
-                .NotContain(row => row.Item1 == centreId && row.Item2 == email);
+        //    newUserUserCentreDetailsBeforeUpdate.Should()
+        //        .NotContain(row => row.Item1 == centreId && row.Item2 == email);
 
-            var updatedUserCentreDetails = connection.QuerySingle<(int, int, string)>(
-                @"SELECT UserID, CentreID, Email FROM UserCentreDetails
-                        WHERE ID = @userCentreDetailsId",
-                new { userCentreDetailsId }
-            );
+        //    var updatedUserCentreDetails = connection.QuerySingle<(int, int, string)>(
+        //        @"SELECT UserID, CentreID, Email FROM UserCentreDetails
+        //                WHERE ID = @userCentreDetailsId",
+        //        new { userCentreDetailsId }
+        //    );
 
-            updatedUserCentreDetails.Item1.Should().Be(userIdForUserCentreDetailsAfterUpdate);
-            updatedUserCentreDetails.Item2.Should().Be(centreId);
-            updatedUserCentreDetails.Item3.Should().Be(email);
-        }
+        //    updatedUserCentreDetails.Item1.Should().Be(userIdForUserCentreDetailsAfterUpdate);
+        //    updatedUserCentreDetails.Item2.Should().Be(centreId);
+        //    updatedUserCentreDetails.Item3.Should().Be(email);
+        //}
 
         [Test]
         public void GetCentreEmailVerificationDetails_returns_expected_value()
