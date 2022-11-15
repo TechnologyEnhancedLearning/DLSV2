@@ -434,7 +434,6 @@
             {
                 transaction.Dispose();
             }
-
         }
         [Test]
         public void InsertCompetency_should_return_minus_2_if_name_is_blank()

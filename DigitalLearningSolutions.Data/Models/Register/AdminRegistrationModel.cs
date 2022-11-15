@@ -22,7 +22,7 @@
             bool isContentCreator,
             bool isCmsAdmin,
             bool isCmsManager,
-            int supervisorDelegateId,
+            int delegateIdToPromote,
             string supervisorEmail,
             string supervisorFirstName,
             string supervisorLastName,
@@ -38,7 +38,7 @@
             IsTrainer = isTrainer;
             IsContentCreator = isContentCreator;
             ProfileImage = profileImage;
-            SupervisorDelegateId = supervisorDelegateId;
+            DelegateIdToPromote = delegateIdToPromote;
             SupervisorEmail = supervisorEmail;
             SupervisorFirstName = supervisorFirstName;
             SupervisorLastName = supervisorLastName;
@@ -83,7 +83,7 @@
 
         public byte[]? ProfileImage { get; set; }
 
-        public int SupervisorDelegateId { get; set; }
+        public int DelegateIdToPromote { get; set; }
         public string? SupervisorEmail { get; set; }
         public string SupervisorFirstName { get; set; }
         public string SupervisorLastName { get; set; }
