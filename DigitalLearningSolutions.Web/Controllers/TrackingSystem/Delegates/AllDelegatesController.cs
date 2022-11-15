@@ -79,7 +79,7 @@
             );
 
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
-                new SearchOptions(searchString),
+                new SearchOptions(searchString, 90, scorer: FuzzySharp.SimilarityRatio.ScorerCache.Get<FuzzySharp.SimilarityRatio.Scorer.StrategySensitive.PartialTokenAbbreviationScorer>()),
                 new SortOptions(sortBy, sortDirection),
                 new FilterOptions(
                     existingFilterString,
