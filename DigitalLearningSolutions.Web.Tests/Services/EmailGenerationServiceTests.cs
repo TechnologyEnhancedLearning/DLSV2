@@ -24,7 +24,7 @@
         [TestCase(true, true, true, true, true, true, true, true)]
         [TestCase(false, false, false, false, false, false, false, false)]
         [TestCase(true, false, true, false, true, false, true, false)]
-        [TestCase(false, true, false, true, false, true, false, true)]
+        [TestCase(false, true, false, false, false, true, false, true)]
         [TestCase(false, false, false, false, true, true, true, true)]
         [TestCase(true, true, true, true, false, false, false, false)]
         public void GenerateDelegateAdminRolesNotificationEmail_Returned_Populated_Email(
