@@ -16,6 +16,8 @@ using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.Utilities;
+
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
@@ -185,7 +187,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             {
                 var roles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
                 var model = new EnrolSupervisorViewModel(delegateId, delegateName, sessionEnrol.IsSelfAssessment,
-                   supervisorList, sessionEnrol.SupervisorID.GetValueOrDefault(), roles,sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault());
+                   supervisorList, sessionEnrol.SupervisorID.GetValueOrDefault(), roles, sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault());
                 return View(model);
             }
         }
@@ -222,10 +224,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                MultiPageFormDataFeature.EnrolDelegateInActivity,
                TempData);
 
+            var clockUtility = new ClockUtility();
             var monthDiffrence = "";
             if (sessionEnrol.CompleteByDate.HasValue)
             {
-                monthDiffrence = (((sessionEnrol.CompleteByDate.Value.Year - DateTime.Now.Year) * 12) + sessionEnrol.CompleteByDate.Value.Month - DateTime.Now.Month).ToString();
+                monthDiffrence = (((sessionEnrol.CompleteByDate.Value.Year - clockUtility.UtcNow.Year) * 12) + sessionEnrol.CompleteByDate.Value.Month - clockUtility.UtcNow.Month).ToString();
             }
 
             var model = new EnrolSummaryViewModel();
@@ -243,13 +246,14 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         [HttpPost]
         public IActionResult EnrolDelegateSummary(int delegateId)
         {
+            var clockUtility = new ClockUtility();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
                MultiPageFormDataFeature.EnrolDelegateInActivity,
                TempData);
             if (!sessionEnrol.IsSelfAssessment)
             {
                 progressDataService.CreateNewDelegateProgress(delegateId, sessionEnrol.AssessmentID.GetValueOrDefault(), sessionEnrol.AssessmentVersion,
-                    DateTime.Now, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault());
+                    clockUtility.UtcNow, 0, GetAdminID(), sessionEnrol.CompleteByDate, sessionEnrol.SupervisorID.GetValueOrDefault());
             }
             else
             {
