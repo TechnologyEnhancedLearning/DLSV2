@@ -207,7 +207,7 @@
             }
             else
             {
-                
+
                 if (supervisorDelegate.ConfirmedRemove)
                 {
                     supervisorDelegate.ConfirmedRemove = false;
@@ -942,17 +942,16 @@
         {
             if (ModelState.IsValid && supervisorDelegate.ActionConfirmed)
             {
-                var userAdminId = User.GetAdminId();
-                var userDelegateId = User.GetCandidateId();
-                var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
-
-                var categoryId = User.GetAdminCourseCategoryFilter();
+                var currentAdminUserId = User.GetAdminId();
+                var (currentAdminUser, delegateUser) = userService.GetUsersById(currentAdminUserId, null);
+                var categoryId = User.GetAdminCourseCategoryFilter() ?? 0;
                 var supervisorDelegateDetail = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegate.Id, GetAdminID(), 0);
+                var delegateIdToPromote = supervisorDelegateDetail.CandidateID ?? 0;
                 var adminRoles = new AdminRoles(false, false, true, false, false, false, false, false);
-                if (supervisorDelegateDetail.CandidateID != null)
-                {
-                    registrationService.PromoteDelegateToAdmin(adminRoles, (categoryId ?? 0), (int)supervisorDelegateDetail.CandidateID, adminUser, delegateUser);
-                }
+
+                registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, delegateIdToPromote, currentAdminUser);
+                supervisorService.UpdateNotificationSent(supervisorDelegate.Id);
+
                 return RedirectToAction("MyStaffList");
             }
             else

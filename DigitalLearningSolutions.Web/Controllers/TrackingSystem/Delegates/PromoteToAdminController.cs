@@ -32,7 +32,7 @@
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
-        
+
         public PromoteToAdminController(
             IUserDataService userDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
@@ -73,8 +73,7 @@
         public IActionResult Index(AdminRolesFormData formData, int delegateId)
         {
             var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetCandidateId();
-            var (supervisorAdminUser, supervisorDelegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var (currentAdminUser, delegateUser) = userService.GetUsersById(userAdminId, null);
 
             try
             {
@@ -82,8 +81,7 @@
                     formData.GetAdminRoles(),
                     formData.LearningCategory,
                     delegateId,
-                    supervisorAdminUser,
-                    supervisorDelegateUser
+                    currentAdminUser
                 );
             }
             catch (AdminCreationFailedException e)

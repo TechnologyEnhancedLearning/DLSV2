@@ -36,8 +36,7 @@ namespace DigitalLearningSolutions.Data.Services
             AdminRoles adminRoles,
             int categoryId,
             int delegateId,
-            AdminUser? supervisorAdminUser,
-            DelegateUser supervisorDelegateUser);
+            AdminUser currentAdminUser);
     }
 
     public class RegistrationService : IRegistrationService
@@ -164,12 +163,13 @@ namespace DigitalLearningSolutions.Data.Services
 
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
-
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser? supervisorAdminUser, DelegateUser supervisorDelegateUser)
+        
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId, AdminUser currentAdminUser)
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+            var delegateUser = userDataService.GetDelegateUserById(delegateId);
 
-            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress) ||
+            if (delegateUser == null ||
+                string.IsNullOrWhiteSpace(delegateUser.EmailAddress) ||
                 string.IsNullOrWhiteSpace(delegateUser.FirstName) ||
                 string.IsNullOrWhiteSpace(delegateUser.Password))
             {
@@ -179,21 +179,21 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
-            var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
+            var delegateAdminAccount = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
 
-            if (adminUser?.Active == false && adminUser.CentreId == delegateUser.CentreId)
+            if (delegateAdminAccount?.Active == false && delegateAdminAccount.CentreId == delegateUser.CentreId)
             {
-                userDataService.ReactivateAdmin(adminUser.Id);
+                userDataService.ReactivateAdmin(delegateAdminAccount.Id);
                 userDataService.UpdateAdminUser(
                     delegateUser.FirstName,
                     delegateUser.LastName,
                     delegateUser.EmailAddress,
                     delegateUser.ProfileImage,
-                    adminUser.Id
+                    delegateAdminAccount.Id
                 );
-                passwordDataService.SetPasswordByAdminId(adminUser.Id, delegateUser.Password);
+                passwordDataService.SetPasswordByAdminId(delegateAdminAccount.Id, delegateUser.Password);
                 userDataService.UpdateAdminUserPermissions(
-                    adminUser.Id,
+                    delegateAdminAccount.Id,
                     adminRoles.IsCentreAdmin,
                     adminRoles.IsSupervisor,
                     adminRoles.IsNominatedSupervisor,
@@ -205,22 +205,22 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsCentreManager
                 );
             }
-            else if (adminUser?.Active == true && adminUser.CentreId == delegateUser.CentreId)
+            else if (delegateAdminAccount?.Active == true && delegateAdminAccount.CentreId == delegateUser.CentreId)
             {
                 userDataService.UpdateAdminUserPermissions(
-                    adminUser.Id,
-                    adminRoles.IsCentreAdmin || adminUser.IsCentreAdmin,
-                    adminRoles.IsSupervisor || adminUser.IsSupervisor,
-                    adminRoles.IsNominatedSupervisor || adminUser.IsNominatedSupervisor,
-                    adminRoles.IsTrainer = adminRoles.IsTrainer || adminUser.IsTrainer,
-                    adminRoles.IsContentCreator || adminUser.IsContentCreator,
-                    adminRoles.IsContentManager || adminUser.IsContentManager,
-                    adminRoles.ImportOnly = adminRoles.ImportOnly || adminUser.ImportOnly,
-                    adminUser.CategoryId,
-                    adminRoles.IsCentreManager || adminUser.IsCentreManager
+                    delegateAdminAccount.Id,
+                    adminRoles.IsCentreAdmin || delegateAdminAccount.IsCentreAdmin,
+                    adminRoles.IsSupervisor || delegateAdminAccount.IsSupervisor,
+                    adminRoles.IsNominatedSupervisor || delegateAdminAccount.IsNominatedSupervisor,
+                    adminRoles.IsTrainer = adminRoles.IsTrainer || delegateAdminAccount.IsTrainer,
+                    adminRoles.IsContentCreator || delegateAdminAccount.IsContentCreator,
+                    adminRoles.IsContentManager || delegateAdminAccount.IsContentManager,
+                    adminRoles.ImportOnly = adminRoles.ImportOnly || delegateAdminAccount.ImportOnly,
+                    delegateAdminAccount.CategoryId,
+                    adminRoles.IsCentreManager || delegateAdminAccount.IsCentreManager
                 );
             }
-            else if (adminUser == null)
+            else if (delegateAdminAccount == null)
             {
                 var adminRegistrationModel = new AdminRegistrationModel(
                     delegateUser.FirstName,
@@ -240,10 +240,10 @@ namespace DigitalLearningSolutions.Data.Services
                     adminRoles.IsContentCreator,
                     adminRoles.IsCmsAdministrator,
                     adminRoles.IsCmsManager,
-                    supervisorDelegateUser.Id,
-                    supervisorDelegateUser.EmailAddress ?? string.Empty,
-                    supervisorDelegateUser.FirstName ?? string.Empty,
-                    supervisorDelegateUser.LastName,
+                    delegateId,
+                    currentAdminUser.EmailAddress ?? string.Empty,
+                    currentAdminUser.FirstName ?? string.Empty,
+                    currentAdminUser.LastName,
                     delegateUser.ProfileImage
                 );
 
@@ -319,8 +319,6 @@ namespace DigitalLearningSolutions.Data.Services
 
             builder.TextBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.";
             builder.HtmlBody += "You will be able to access the Digital Learning Solutions platform with these new access permissions the next time you login.</body>";
-
-            supervisorService.UpdateNotificationSent(adminRegistrationModel.SupervisorDelegateId);
 
             emailService.SendEmail(new Email(emailSubjectLine, builder, adminRegistrationModel.Email, adminRegistrationModel.SupervisorEmail));
         }

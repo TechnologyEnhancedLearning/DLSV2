@@ -3,7 +3,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -16,7 +15,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
-    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
@@ -42,8 +40,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private IUserDataService userDataService = null!;
         private INotificationDataService notificationDataService = null!;
         private ISupervisorService supervisorService = null!;
-        private AdminUser? supervisorAdminUser;
-        private DelegateUser? supervisorDelegateUser;
+        private AdminUser supervisorAdminUser = null!;
 
         [SetUp]
         public void Setup()
@@ -59,8 +56,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             userDataService = A.Fake<IUserDataService>();
             supervisorService = A.Fake<ISupervisorService>();
             supervisorAdminUser = A.Fake<AdminUser>();
-            supervisorDelegateUser = A.Fake<DelegateUser>();
-            
+
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(OldSystemBaseUrl);
             A.CallTo(() => config["AppRootPath"]).Returns(RefactoredSystemBaseUrl);
 
@@ -631,7 +627,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // When
             var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser, supervisorDelegateUser)
+                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser)
             );
 
             // Then
@@ -648,7 +644,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // When
             var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser, supervisorDelegateUser)
+                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser)
             );
 
             // Then
@@ -667,7 +663,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, 0, 1, supervisorAdminUser, supervisorDelegateUser);
+            registrationService.PromoteDelegateToAdmin(adminRoles, 0, 1, supervisorAdminUser);
 
             // Then
             using (new AssertionScope())
@@ -702,7 +698,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // When
             var result = Assert.Throws<AdminCreationFailedException>(
-                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser, supervisorDelegateUser)
+                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser)
             );
 
             // Then
@@ -725,7 +721,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, 1, supervisorAdminUser, supervisorDelegateUser);
+            registrationService.PromoteDelegateToAdmin(adminRoles, categoryId, 1, supervisorAdminUser);
 
             // Then
             using (new AssertionScope())
@@ -769,7 +765,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(null);
 
             // When
-            registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser, supervisorDelegateUser);
+            registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1, supervisorAdminUser);
 
             // Then
             using (new AssertionScope())
@@ -797,11 +793,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     )
                 ).MustHaveHappened();
                 UpdateToExistingAdminAccountMustNotHaveHappened();
-
-                A.CallTo(
-                    () => supervisorService.UpdateNotificationSent(
-                        A<int>._)
-                ).MustHaveHappened();
 
                 A.CallTo(
                     () => emailService.SendEmail(A<Email>._)
