@@ -220,7 +220,7 @@
             bool isContentCreator,
             bool isContentManager,
             bool importOnly,
-            int categoryId,
+            int? categoryId,
             bool isCentreManager
         )
         {
