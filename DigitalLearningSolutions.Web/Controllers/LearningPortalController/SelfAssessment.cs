@@ -214,7 +214,7 @@
             int competencyGroupId,
             ConfirmOverwrite model)
         {
-            if (model.IsChecked)
+            if (ModelState.IsValid && model.IsChecked)
             {
                 var candidateId = User.GetCandidateIdKnownNotNull();
                 var assessmentQuestions = JsonSerializer.Deserialize<List<AssessmentQuestion>>(TempData["assessmentQuestions"] as string);
