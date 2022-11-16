@@ -1,4 +1,6 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+﻿using DigitalLearningSolutions.Web.Attributes;
+using System.ComponentModel;
+namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
     public class ConfirmOverwrite
     {
@@ -23,6 +25,8 @@
         public int CompetencyId { get; set; }   
         public int CompetencyNumber { get; set; }
         public string CompetencyName { get; set; }
-        public bool IsChecked { get; set; } = false;
+        [BooleanMustBeTrue(ErrorMessage = "You must check the checkbox to continue")]
+        [DefaultValue(false)]
+        public bool IsChecked { get; set; }
     }
 }

@@ -214,7 +214,7 @@
             int competencyGroupId,
             ConfirmOverwrite model)
         {
-            if (model.IsChecked)
+            if (ModelState.IsValid && model.IsChecked)
             {
                 var candidateId = User.GetCandidateIdKnownNotNull();
                 var assessmentQuestions = JsonSerializer.Deserialize<List<AssessmentQuestion>>(TempData["assessmentQuestions"] as string);
@@ -224,7 +224,7 @@
             else
             {
                 ModelState.Clear();
-                ModelState.AddModelError("isChecked", "You must check the checkbox to continue");
+                ModelState.AddModelError("IsChecked", "You must check the checkbox to continue");
                 var assessmentQuestions = JsonSerializer.Deserialize<List<AssessmentQuestion>>(TempData["assessmentQuestions"] as string);
                 var competencyName = TempData["competencyName"];
 
