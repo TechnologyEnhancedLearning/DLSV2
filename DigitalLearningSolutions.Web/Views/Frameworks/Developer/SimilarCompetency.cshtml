@@ -38,14 +38,14 @@
         @foreach (var competency in Model.SameCompetency)
         {
             <tr role="row" class="nhsuk-table__row framework-row">
-                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                    <span class="nhsuk-table-responsive__heading">Framework </span>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-19">
+                    <span class="nhsuk-table-responsive__heading">Name </span>
                     <span class="framework-brand">
                         @competency.Name
                     </span>
                 </td>
                 <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                    <span class="nhsuk-table-responsive__heading">Created </span>
+                    <span class="nhsuk-table-responsive__heading">Description </span>
                     <span class="framework-created-date">
                         @Html.Raw(competency.Description)
                     </span>
