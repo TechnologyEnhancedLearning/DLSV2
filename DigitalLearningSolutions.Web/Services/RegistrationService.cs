@@ -460,7 +460,7 @@ namespace DigitalLearningSolutions.Web.Services
                     centreId,
                     categoryId,
                     adminRoles.IsCentreAdmin,
-                    false,
+                    adminRoles.IsCentreManager,
                     adminRoles.IsContentManager,
                     adminRoles.IsContentCreator,
                     adminRoles.IsTrainer,
