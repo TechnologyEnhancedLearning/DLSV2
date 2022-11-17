@@ -9,6 +9,7 @@ namespace DigitalLearningSolutions.Data.DataServices
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Utilities;
     using Microsoft.Extensions.Logging;
 
     public interface ICourseDataService
@@ -359,7 +360,8 @@ namespace DigitalLearningSolutions.Data.DataServices
         public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
             int selfAssessmentSupervisorRoleId, DateTime completeByDate)
         {
-            DateTime startedDate = DateTime.Now;
+            IClockUtility clockUtility = new ClockUtility();
+            DateTime startedDate = clockUtility.UtcNow;
             DateTime lastAccessed = startedDate;
             dynamic completeByDateDynamic = "";
             if (completeByDate.Year > 1753)

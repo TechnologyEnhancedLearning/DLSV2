@@ -1,12 +1,15 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
+﻿@using DigitalLearningSolutions.Data.Utilities
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model CompletedByDateViewModel
 @{
     var routeParamsForCancelLink = new Dictionary<string, string> {
     { "delegateId", Model.DelegateId.ToString() },
   };
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-
-    var exampleDate = DateTime.Today + TimeSpan.FromDays(7);
+    var clockUtility = new ClockUtility();
+    var exampleDate = clockUtility.UtcToday + TimeSpan.FromDays(7);
     var hintTextLines = new List<string> {
     $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the complete by date.",
     "Activities with no complete by date will be removed after 6 months of inactivity.",

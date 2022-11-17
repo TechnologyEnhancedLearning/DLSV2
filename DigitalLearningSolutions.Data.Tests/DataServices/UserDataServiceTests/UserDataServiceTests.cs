@@ -53,8 +53,13 @@
         [Test]
         public void GetUserAccountById_returns_expected_user_account()
         {
+            // Given
+            var defaultUser = UserTestHelper.GetDefaultUserAccount();
+
             // When
             var result = userDataService.GetUserAccountById(2);
+            result.EmailVerified = defaultUser.EmailVerified;
+            result.DetailsLastChecked = defaultUser.DetailsLastChecked;
 
             // Then
             result.Should().BeEquivalentTo(
@@ -65,12 +70,17 @@
         [Test]
         public void GetUserAccountByPrimaryEmail_returns_expected_user_account()
         {
+            // Given
+            var defaultUser = UserTestHelper.GetDefaultUserAccount();
+
             // When
             var result = userDataService.GetUserAccountByPrimaryEmail("test@gmail.com");
+            result.EmailVerified = defaultUser.EmailVerified;
+            result.DetailsLastChecked = defaultUser.DetailsLastChecked;
 
             // Then
             result.Should().BeEquivalentTo(
-                UserTestHelper.GetDefaultUserAccount()
+                defaultUser
             );
         }
 

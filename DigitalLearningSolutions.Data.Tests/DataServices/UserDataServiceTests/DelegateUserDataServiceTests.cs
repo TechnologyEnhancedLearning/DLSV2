@@ -20,6 +20,9 @@
 
             // When
             var returnedDelegateEntity = userDataService.GetDelegateById(2);
+            returnedDelegateEntity!.DelegateAccount.CentreSpecificDetailsLastChecked = expectedDelegateEntity.DelegateAccount.CentreSpecificDetailsLastChecked;
+            returnedDelegateEntity!.UserAccount.EmailVerified = expectedDelegateEntity.UserAccount.EmailVerified;
+            returnedDelegateEntity!.UserAccount.DetailsLastChecked = expectedDelegateEntity.UserAccount.DetailsLastChecked;
 
             // Then
             returnedDelegateEntity.Should().BeEquivalentTo(expectedDelegateEntity);
@@ -106,6 +109,9 @@
 
             // When
             var returnedDelegateEntity = userDataService.GetDelegateByCandidateNumber("SV1234");
+            returnedDelegateEntity!.DelegateAccount.CentreSpecificDetailsLastChecked = expectedDelegateEntity.DelegateAccount.CentreSpecificDetailsLastChecked;
+            returnedDelegateEntity!.UserAccount.EmailVerified = expectedDelegateEntity.UserAccount.EmailVerified;
+            returnedDelegateEntity!.UserAccount.DetailsLastChecked = expectedDelegateEntity.UserAccount.DetailsLastChecked;
 
             // Then
             returnedDelegateEntity.Should().BeEquivalentTo(expectedDelegateEntity);
@@ -183,7 +189,7 @@
                 // Given
                 const string firstName = "TestFirstName";
                 const string lastName = "TestLastName";
-                const string email = "test@email.com";
+                const string email = "update.test@email.com";
                 const string professionalRegNumber = "test-1234";
                 const int jobGroupId = 1;
 
@@ -363,7 +369,7 @@
                 // Given
                 const string firstName = "TestFirstName";
                 const string lastName = "TestLastName";
-                const string email = "test@email.com";
+                const string email = "update.test@email.com";
                 const int jobGroupId = 1;
 
                 // When
@@ -480,7 +486,7 @@
         {
             // When
             var result = userDataService.GetDelegateAccountsByUserId(61188).ToList();
-
+         
             // Then
             using (new AssertionScope())
             {
@@ -492,11 +498,16 @@
         [Test]
         public void GetDelegateAccountById_returns_expected_account()
         {
+            // Given
+            var expectedResult = UserTestHelper.GetDefaultDelegateAccount();
+            expectedResult.UserId = 61188;
+
             // When
             var result = userDataService.GetDelegateAccountById(2);
+            result!.CentreSpecificDetailsLastChecked = expectedResult.CentreSpecificDetailsLastChecked;
 
             // Then
-            result.Should().BeEquivalentTo(UserTestHelper.GetDefaultDelegateAccount());
+            result.Should().BeEquivalentTo(expectedResult);
         }
 
         [Test]
@@ -531,7 +542,8 @@
             // Given
             const int userIdForDelegateAccountAfterUpdate = 2;
 
-            var delegateEntity = userDataService.GetDelegateByCandidateNumber("CLAIMABLEUSER1")!;
+            var delegateEntity = userDataService.GetDelegateByCandidateNumber("KW969")!;
+
             var currentUserIdForDelegateAccount = delegateEntity.UserAccount.Id;
             var delegateId = delegateEntity.DelegateAccount.Id;
             var centreId = delegateEntity.DelegateAccount.CentreId;
