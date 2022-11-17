@@ -1182,7 +1182,7 @@ namespace DigitalLearningSolutions.Web.Tests.Services
                             a.CentreId == centreId &&
                             a.Active &&
                             a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
-                            !a.IsCentreManager &&
+                            a.IsCentreManager == adminRoles.IsCentreManager &&
                             a.IsContentManager == adminRoles.IsContentManager &&
                             a.ImportOnly == adminRoles.IsCmsAdministrator &&
                             a.IsContentCreator == adminRoles.IsContentCreator &&
