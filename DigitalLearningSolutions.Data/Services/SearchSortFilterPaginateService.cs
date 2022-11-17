@@ -47,7 +47,8 @@
                     : GenericSearchHelper.SearchItems(
                         itemsToReturn,
                         searchSortFilterAndPaginateOptions.SearchOptions.SearchString,
-                        searchSortFilterAndPaginateOptions.SearchOptions.SearchMatchCutoff
+                        searchSortFilterAndPaginateOptions.SearchOptions.SearchMatchCutoff,
+                        scorer: searchSortFilterAndPaginateOptions.SearchOptions.Scorer
                     )).ToList();
             }
 
