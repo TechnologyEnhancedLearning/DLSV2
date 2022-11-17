@@ -224,7 +224,7 @@
             else
             {
                 ModelState.Clear();
-                ModelState.AddModelError("isChecked", "You must check the checkbox to continue");
+                ModelState.AddModelError("IsChecked", "You must check the checkbox to continue");
                 var assessmentQuestions = JsonSerializer.Deserialize<List<AssessmentQuestion>>(TempData["assessmentQuestions"] as string);
                 var competencyName = TempData["competencyName"];
 
