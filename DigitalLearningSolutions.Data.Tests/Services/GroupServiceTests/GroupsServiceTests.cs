@@ -47,10 +47,12 @@
         private IGroupsDataService groupsDataService = null!;
         private IGroupsService groupsService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private IEnrolService enrolService = null!;
         private ILogger<IGroupsService> logger = null!;
         private IProgressDataService progressDataService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
-
+        private IUserService userService = null!;
+        private ICourseService courseService = null!;
         [SetUp]
         public void Setup()
         {
@@ -63,25 +65,32 @@
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             logger = A.Fake<ILogger<IGroupsService>>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>(x => x.Strict());
-
-            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
-                JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
-            );
-            A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
-
-            DatabaseModificationsDoNothing();
-
+            userService = A.Fake<IUserService>();
+            courseService = A.Fake<ICourseService>();
+            enrolService = new EnrolService(
+                clockService,
+                tutorialContentDataService,
+                progressDataService,
+                userService,
+                courseService,
+                configuration,
+                emailService
+                );
             groupsService = new GroupsService(
                 groupsDataService,
                 clockService,
-                tutorialContentDataService,
-                emailService,
                 jobGroupsDataService,
-                progressDataService,
                 configuration,
                 centreRegistrationPromptsService,
+                enrolService,
                 logger
             );
+            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
+               JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
+           );
+            A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
+
+            DatabaseModificationsDoNothing();
         }
 
         [Test]
