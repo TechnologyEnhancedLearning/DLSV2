@@ -39,6 +39,7 @@
                           deselectable="false"
                           css-class="nhsuk-u-width-full"
                           default-option="Select a centre"
+                          required="true"
                           select-list-options="@Model.CentreOptions" />
         }
       </div>
@@ -48,8 +49,9 @@
                      populate-with-current-value="true"
                      type="text"
                      spell-check="false"
-                     hint-text="If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address. Your primary email address will still be used for logging in and notifications for managing your account."
+                     hint-text="If you supply a centre email, all notifications relating to your activity at this centre will be sent to this email address.<br />Your primary email address will still be used for logging in and notifications for managing your account."
                      autocomplete="email"
+                     required="true"
                      css-class="nhsuk-u-width-one-half" />
 
       <button class="nhsuk-button" type="submit">Next</button>
