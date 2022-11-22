@@ -6,10 +6,13 @@
 
     <details class="nhsuk-details nhsuk-expander">
         <summary class="nhsuk-details__summary">
-            <span class="nhsuk-details__summary-text" id="@Model.DelegateInfo.Id-name">
-                <span class="searchable-element-title" name="name">@Model.DelegateInfo.TitleName</span>
-                @DisplayStringHelper.GetEmailDisplayString(Model.DelegateInfo.Email)
-            </span>
+          <span class="nhsuk-details__summary-text" id="@Model.DelegateInfo.Id-name">
+            <span class="searchable-element-title" name="name">@Model.DelegateInfo.TitleName</span>
+            @if (Model.DelegateInfo.Email==null)
+              @("(Email address not set)")
+            else
+              @DisplayStringHelper.GetEmailDisplayString(Model.DelegateInfo.Email)
+          </span>
         </summary>
 
         <div class="nhsuk-details__text">

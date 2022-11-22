@@ -67,6 +67,9 @@
 
             var model = new ViewDelegateViewModel(delegateUserCard, customFields, delegateCourses);
 
+            if (DisplayStringHelper.IsGuid(model.DelegateInfo.Email))
+                model.DelegateInfo.Email = null;
+
             return View(model);
         }
 
